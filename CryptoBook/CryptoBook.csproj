@@ -8,4 +8,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Converters\" />
+    <Folder Include="Infrastrucrure\" />
+    <Folder Include="Styles\" />
+  </ItemGroup>
+
 </Project>
