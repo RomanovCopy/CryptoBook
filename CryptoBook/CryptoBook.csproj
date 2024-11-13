@@ -11,21 +11,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Converters\**" />
     <Compile Remove="Infrastrucrure\**" />
-    <EmbeddedResource Remove="Converters\**" />
     <EmbeddedResource Remove="Infrastrucrure\**" />
-    <None Remove="Converters\**" />
     <None Remove="Infrastrucrure\**" />
-    <Page Remove="Converters\**" />
     <Page Remove="Infrastrucrure\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Styles\" />
     <Folder Include="Behaviors\" />
     <Folder Include="Injections\" />
-    <Folder Include="Locators\" />
+    <Folder Include="Converters\" />
+    <Folder Include="Styles\MainWindow\" />
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.1.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
   </ItemGroup>
 
   <ItemGroup>
