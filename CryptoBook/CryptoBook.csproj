@@ -2,16 +2,45 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
+    <StartupObject>CryptoBook.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Converters\" />
-    <Folder Include="Infrastrucrure\" />
+    <Compile Remove="Converters\**" />
+    <Compile Remove="Infrastrucrure\**" />
+    <EmbeddedResource Remove="Converters\**" />
+    <EmbeddedResource Remove="Infrastrucrure\**" />
+    <None Remove="Converters\**" />
+    <None Remove="Infrastrucrure\**" />
+    <Page Remove="Converters\**" />
+    <Page Remove="Infrastrucrure\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Styles\" />
+    <Folder Include="Behaviors\" />
+    <Folder Include="Injections\" />
+    <Folder Include="Locators\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
