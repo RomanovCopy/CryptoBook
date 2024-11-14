@@ -14,11 +14,17 @@ namespace CryptoBook.Locators
     public class Converters
     {
 
-        public static BitmapConverter? bitmapConverter => App.Container?.Resolve<BitmapConverter>();
+        public static BitmapConverter bitmapConverter => App.Container.Resolve<BitmapConverter>();
 
-        public static ColorToColorConverter? colorToColorConverter => App.Container?.Resolve<ColorToColorConverter>();
+        public static ColorToColorConverter colorToColorConverter => App.Container.Resolve<ColorToColorConverter>();
 
-        public static ColumnsWidthConverter? columnsWidthConverter => App.Container?.Resolve<ColumnsWidthConverter>();
+        public static ColumnsWidthConverter columnsWidthConverter => App.Container.Resolve<ColumnsWidthConverter>();
+
+        public static EncodingConverter encodingConverter => App.Container.Resolve<EncodingConverter>();
+
+        public static FlowDocumentToXamlConverter flowDocumentToXamlConverter => App.Container.Resolve<FlowDocumentToXamlConverter>();
+
+        
 
     }
 }

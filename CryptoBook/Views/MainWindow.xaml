@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
-        xmlns:converters="clr-namespace:Converters"
+        xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">

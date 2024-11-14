@@ -17,10 +17,10 @@ namespace CryptoBook.Converters
         {
             try
             {
-                object result;
-                if (value is byte[] bytes && targetType == typeof(string) && parameter is HomeViewModel view)
+                string result="";
+                if (value is byte[] bytes && targetType == typeof(string) )
                 {
-                        //result = view.HomeEncoding.GetString(bytes);
+                    //result = view.HomeEncoding.GetString(bytes);
                 }
                 return result;
             }
@@ -34,10 +34,10 @@ namespace CryptoBook.Converters
         {
             try
             {
-                object result = null;
-                if (value is string str && targetType == typeof(byte[]) && parameter is HomeViewModel view)
+                byte[] result = [];
+                if (value is string str && targetType == typeof(byte[]))
                 {
-                        //result = view.HomeEncoding.GetBytes(str);
+                    //result = view.HomeEncoding.GetBytes(str);
                 }
                 return result;
             }

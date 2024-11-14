@@ -14,11 +14,11 @@ namespace CryptoBook.Converters
 {
     public class FontPropertiesConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
-                object result = DependencyProperty.UnsetValue;
+                object? result = DependencyProperty.UnsetValue;
                 if (value is PropertyInfo propertyInfo)
                 {
                     result = propertyInfo.GetValue(null);
@@ -32,11 +32,11 @@ namespace CryptoBook.Converters
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
-                object result = null;
+                object? result = null;
                 result = DependencyProperty.UnsetValue;
                 return result;
             }

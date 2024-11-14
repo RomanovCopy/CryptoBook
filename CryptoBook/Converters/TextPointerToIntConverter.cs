@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Controls;
+using Controls = System.Windows.Controls;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
@@ -19,7 +19,7 @@ namespace CryptoBook.Converters
         {
             try
             {
-                return GetCaretPosition((RichTextBox)parameter);
+                return GetCaretPosition((Controls.RichTextBox)parameter);
             }
             catch (Exception ex) { ErrorWindow(ex); return -1; }
         }
@@ -27,10 +27,10 @@ namespace CryptoBook.Converters
         public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture )
         {
 
-            return GetCaretPosition((RichTextBox)parameter);
+            return GetCaretPosition((Controls.RichTextBox)parameter);
         }
 
-        private int GetCaretPosition( RichTextBox textBox )
+        private int GetCaretPosition( Controls.RichTextBox textBox )
         {
             try
             {
@@ -44,7 +44,7 @@ namespace CryptoBook.Converters
             catch (Exception e) { ErrorWindow(e); return -1; }
         }
 
-        private TextPointer GetTextPointer( RichTextBox textBox, int length )
+        private TextPointer GetTextPointer(Controls.RichTextBox textBox, int length )
         {
             try
             {

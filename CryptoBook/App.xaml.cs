@@ -14,17 +14,23 @@ namespace CryptoBook
     /// </summary>
     public partial class App: System.Windows.Application
     {
-        public static IContainer? Container { get; private set; }
+
+        public static IContainer Container { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            Container = (IContainer)Injections.Startup.ConfigureServices();
+            var container = (IContainer)Injections.Startup.ConfigureServices();
 
-            // Разрешение и запуск главного окна
-            var mainWindow = Container?.Resolve<MainWindow>();
-            mainWindow?.Show();
+            if(container != null)
+            {
+                Container = container;
+                // Разрешение и запуск главного окна
+                var mainWindow = Container?.Resolve<MainWindow>();
+                mainWindow?.Show();
+            } 
+
         }
     }
 

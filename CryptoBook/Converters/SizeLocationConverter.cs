@@ -8,14 +8,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+
+using Autofac;
+
 using CryptoBook.ViewModels;
 
 namespace CryptoBook.Converters
 {
-    public class SizeLocationConverter : IValueConverter
+    public class SizeLocationConverter: IValueConverter
     {
-        internal MainWindowViewModel MainWindowViewModel => mainWindowViewModel ??= (MainWindowViewModel)Application.Current.MainWindow.DataContext;
-        MainWindowViewModel mainWindowViewModel;
 
 
         /// <summary>
@@ -28,59 +29,57 @@ namespace CryptoBook.Converters
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            double size = 0;
             try
             {
-                double size = 0;
-                if (value is double temp)
+                if(value is double temp)
                 {
-                    switch (parameter.ToString())
+                    switch(parameter.ToString())
                     {//размеры и положение окна задается в процентном отношении от разрешения основного манитора
                         case "width":
-                            {
-                                size = SystemParameters.FullPrimaryScreenWidth / 100 * temp;
-                                break;
-                            }
+                        {
+                            size = SystemParameters.FullPrimaryScreenWidth / 100 * temp;
+                            break;
+                        }
                         case "height":
-                            {
-                                size = SystemParameters.FullPrimaryScreenHeight / 100 * temp;
-                                break;
-                            }
+                        {
+                            size = SystemParameters.FullPrimaryScreenHeight / 100 * temp;
+                            break;
+                        }
                         case "top":
-                            {
-                                size = SystemParameters.FullPrimaryScreenHeight / 100 * temp;
-                                break;
-                            }
+                        {
+                            size = SystemParameters.FullPrimaryScreenHeight / 100 * temp;
+                            break;
+                        }
                         case "left":
-                            {
-                                size = SystemParameters.FullPrimaryScreenWidth / 100 * temp;
-                                break;
-                            }
+                        {
+                            size = SystemParameters.FullPrimaryScreenWidth / 100 * temp;
+                            break;
+                        }
                     }
-                }
-                else if (value is string str && parameter.ToString() == "state")
+                } else if(value is string str && parameter.ToString() == "state")
                 {//задания режима отображения окна
-                    switch (str)
+                    switch(str)
                     {
                         case "Maximized":
-                            {
-                                return WindowState.Maximized;//полноэкранный режим
-                            }
+                        {
+                            return WindowState.Maximized;//полноэкранный режим
+                        }
                         case "Normal":
-                            {
-                                return WindowState.Normal;//оконный режим
-                            }
+                        {
+                            return WindowState.Normal;//оконный режим
+                        }
                         case "Minimized":
-                            {
-                                return WindowState.Minimized;//окно свернуто в панели задач
-                            }
+                        {
+                            return WindowState.Minimized;//окно свернуто в панели задач
+                        }
                     }
                 }
                 return size;
-            }
-            catch (Exception e)
+            } catch(Exception e)
             {
                 ErrorWindow(e);
-                return null;
+                return size;
             }
         }
 
@@ -94,54 +93,52 @@ namespace CryptoBook.Converters
         /// <returns></returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            double percent = 0;
             try
             {
-                double percent = 0;
-                if (value is double temp)
+                if(value is double temp)
                 {
-                    switch (parameter.ToString())
+                    switch(parameter.ToString())
                     {
                         case "width":
-                            {
-                                percent = temp / SystemParameters.FullPrimaryScreenWidth * 100;
-                                break;
-                            }
+                        {
+                            percent = temp / SystemParameters.FullPrimaryScreenWidth * 100;
+                            break;
+                        }
                         case "height":
-                            {
-                                percent = temp / SystemParameters.FullPrimaryScreenHeight * 100;
-                                break;
-                            }
+                        {
+                            percent = temp / SystemParameters.FullPrimaryScreenHeight * 100;
+                            break;
+                        }
                         case "top":
-                            {
-                                percent = temp / SystemParameters.FullPrimaryScreenHeight * 100;
-                                break;
-                            }
+                        {
+                            percent = temp / SystemParameters.FullPrimaryScreenHeight * 100;
+                            break;
+                        }
                         case "left":
-                            {
-                                percent = temp / SystemParameters.FullPrimaryScreenWidth * 100;
-                                break;
-                            }
+                        {
+                            percent = temp / SystemParameters.FullPrimaryScreenWidth * 100;
+                            break;
+                        }
                     }
-                }
-                else if (value is WindowState str && parameter.ToString() == "state")
+                } else if(value is WindowState str && parameter.ToString() == "state")
                 {
                     return str.ToString();
                 }
                 return percent;
 
-            }
-            catch (Exception e)
+            } catch(Exception e)
             {
                 ErrorWindow(e);
-                return null;
+                return percent;
             }
         }
 
-        private void ErrorWindow( Exception e, [CallerMemberName] string name = "" )
+        private void ErrorWindow(Exception e, [CallerMemberName] string name = "")
         {
-            var mytype = GetType().ToString().Split( '.' ).LastOrDefault();
-            System.Windows.Application.Current.Dispatcher.Invoke( (Action)(() =>
-            { System.Windows.MessageBox.Show( e.Message, $"{mytype}.{name}" ); }) );
+            var mytype = GetType().ToString().Split('.').LastOrDefault();
+            System.Windows.Application.Current.Dispatcher.Invoke((Action)(() =>
+            { System.Windows.MessageBox.Show(e.Message, $"{mytype}.{name}"); }));
         }
 
     }

@@ -12,24 +12,16 @@ using System.Windows.Data;
 
 namespace CryptoBook.Converters
 {
-    public class StringToListConverter : IValueConverter
+    public class StringToListConverter: IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
-            {
-                return TextList((string)value);
-            }
-            catch (Exception e) { ErrorWindow(e); return DependencyProperty.UnsetValue; }
+            return TextList((string)value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
-            {
-                return ListText((ObservableCollection<string>)value);
-            }
-            catch (Exception e) { ErrorWindow(e); return DependencyProperty.UnsetValue; }
+            return ListText((ObservableCollection<string>)value);
         }
 
 
@@ -40,29 +32,22 @@ namespace CryptoBook.Converters
         /// <returns>коллекция строк</returns>
         public ObservableCollection<string> TextList(string line)
         {
-            try
+            ObservableCollection<string> ls = [];
+            if(line != null)
             {
-                ObservableCollection<string> ls = new ObservableCollection<string>();
-                if (line != null)
+                char[] separator = new char[] { '\r', '\n' };
+                string[] l = line.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                foreach(string line1 in l)
                 {
-                    char[] separator = new char[] { '\r', '\n' };
-                    string[] l = line.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string line1 in l)
+                    if(!string.IsNullOrEmpty(line1))
                     {
-                        if (!string.IsNullOrEmpty(line1))
-                        {
-                            line1.Trim(new char[] { ' ', '\r', '\n' });
-                            if (line1.Length > 0)
-                                ls.Add(line1.Trim());
-                        }
+                        line1.Trim(new char[] { ' ', '\r', '\n' });
+                        if(line1.Length > 0)
+                            ls.Add(line1.Trim());
                     }
                 }
-                return ls;
             }
-            catch
-            {
-                return null;
-            }
+            return ls;
         }
 
         /// <summary>
@@ -72,25 +57,12 @@ namespace CryptoBook.Converters
         /// <returns>результирующая строка</returns>
         public string ListText(ObservableCollection<string> list)
         {
-            try
-            {
-                string str = null;
-                if (list != null && list.Count > 0)
-                    str = list.Aggregate((a, b) => $"{a}\r\n{b}");
-                return str;
-            }
-            catch
-            {
-                return null;
-            }
+            string str = "";
+            if(list != null && list.Count > 0)
+                str = list.Aggregate((a, b) => $"{a}\r\n{b}");
+            return str;
         }
 
 
-        private void ErrorWindow( Exception e, [CallerMemberName] string name = "" )
-        {
-            var mytype = GetType().ToString().Split( '.' ).LastOrDefault();
-            System.Windows.Application.Current.Dispatcher.Invoke( (Action)(() =>
-            { System.Windows.MessageBox.Show( e.Message, $"{mytype}.{name}" ); }) );
-        }
     }
 }
