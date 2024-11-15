@@ -10,6 +10,7 @@ using CryptoBook.Views;
 using CryptoBook.Converters;
 using CryptoBook.Infrastructure;
 using CryptoBook.ViewModels;
+using CryptoBook.Interfaces;
 
 namespace CryptoBook.Injections
 {
@@ -26,7 +27,7 @@ namespace CryptoBook.Injections
 
 
             //ViewModels
-            builder.RegisterType<MainWindowViewModel>().SingleInstance();
+            builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();

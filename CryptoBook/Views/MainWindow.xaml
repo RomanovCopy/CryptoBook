@@ -5,12 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         
-        xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+        xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         MinHeight="300" MinWidth="820" Title="CryptoBook" Topmost="False"
-        HorizontalContentAlignment="Stretch" Style="">
+        HorizontalContentAlignment="Stretch" >
+    <Window.DataContext>
+        <Binding Source="{locators:}"
+    </Window.DataContext>
     <Grid>
 
     </Grid>
