@@ -11,7 +11,6 @@ using System.Windows.Data;
 
 using Autofac;
 
-using CryptoBook.ViewModels;
 
 namespace CryptoBook.Converters
 {

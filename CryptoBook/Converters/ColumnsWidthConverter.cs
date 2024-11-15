@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-using CryptoBook.ViewModels;
 
 namespace CryptoBook.Converters
 {

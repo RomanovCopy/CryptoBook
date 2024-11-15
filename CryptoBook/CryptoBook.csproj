@@ -12,22 +12,48 @@
 
   <ItemGroup>
     <Compile Remove="Infrastrucrure\**" />
+    <Compile Remove="Styles\MainWindow\**" />
     <EmbeddedResource Remove="Infrastrucrure\**" />
+    <EmbeddedResource Remove="Styles\MainWindow\**" />
     <None Remove="Infrastrucrure\**" />
+    <None Remove="Styles\MainWindow\**" />
     <Page Remove="Infrastrucrure\**" />
+    <Page Remove="Styles\MainWindow\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
+    <Compile Remove="Helpers\BehaviorButton.cs" />
+    <Compile Remove="Helpers\BehaviorComboBox.cs" />
+    <Compile Remove="Helpers\BehaviorFixedDocument.cs" />
+    <Compile Remove="Helpers\BehaviorFlowDocument.cs" />
+    <Compile Remove="Helpers\BehaviorFlowDocumentReader.cs" />
+    <Compile Remove="Helpers\BehaviorImageZoom.cs" />
+    <Compile Remove="Helpers\BehaviorMediaElement.cs" />
+    <Compile Remove="Helpers\BehaviorPasswordBox.cs" />
+    <Compile Remove="Helpers\BehaviorRichTextBox.cs" />
+    <Compile Remove="Helpers\BehaviorSlider.cs" />
+    <Compile Remove="Helpers\BehaviorTabControl.cs" />
+    <Compile Remove="Helpers\BehaviorTextBox.cs" />
+    <Compile Remove="Helpers\BehaviorTreeView.cs" />
+    <Compile Remove="Helpers\DirectoryItem.cs" />
+    <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
+    <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
+    <Compile Remove="Interfaces\IDownloadItem.cs" />
+    <Compile Remove="Interfaces\IEncoding.cs" />
+    <Compile Remove="Interfaces\ILastFileName.cs" />
+    <Compile Remove="Interfaces\IPageViewModel.cs" />
+    <Compile Remove="Interfaces\IWindowViewModel.cs" />
+    <Compile Remove="Models\MediaPlayerModel.cs" />
+    <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Behaviors\" />
     <Folder Include="Injections\" />
     <Folder Include="Converters\" />
-    <Folder Include="Styles\MainWindow\" />
     <Folder Include="Infrastructure\" />
-    <Folder Include="ViewModels\" />
+    <Folder Include="Styles\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
   <ItemGroup>

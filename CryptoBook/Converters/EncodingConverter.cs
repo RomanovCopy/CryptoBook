@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using CryptoBook.Interfaces;
-using CryptoBook.ViewModels;
 
 namespace CryptoBook.Converters
 {

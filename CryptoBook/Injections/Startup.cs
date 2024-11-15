@@ -7,11 +7,9 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using System.Windows;
 using CryptoBook.Views;
-using CryptoBook.ViewModels;
 using CryptoBook.Converters;
-using CryptoBook.MyControls.HomeSideMenu;
 using CryptoBook.Infrastructure;
-using CryptoBook.MyControls;
+using CryptoBook.ViewModels;
 
 namespace CryptoBook.Injections
 {
@@ -29,7 +27,6 @@ namespace CryptoBook.Injections
 
             //ViewModels
             builder.RegisterType<MainWindowViewModel>().SingleInstance();
-
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
