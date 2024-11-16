@@ -2,6 +2,7 @@
 using Autofac.Core;
 
 using CryptoBook.Converters;
+using CryptoBook.Infrastructure;
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace CryptoBook.Locators
 
         public static FlowDocumentToXamlConverter flowDocumentToXamlConverter => App.Container.Resolve<FlowDocumentToXamlConverter>();
 
-        
 
+        public Languages languages => App.Container.Resolve<Languages>();
     }
 }

@@ -34,6 +34,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<ColorToColorConverter>().AsSelf();
             builder.RegisterType<ColumnsWidthConverter>().AsSelf();
 
+            builder.RegisterType<Languages>().AsSelf();
+
 
             return builder.Build();
         }

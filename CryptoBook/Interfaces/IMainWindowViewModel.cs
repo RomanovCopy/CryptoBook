@@ -13,9 +13,9 @@ namespace CryptoBook.Interfaces
 
         public ICommand FrameListRemovePage();
 
-        public ICommand Frmelist_GoForward();
+        public ICommand FramelistGoForward();
 
-        public ICommand Frmelist_GoBack();
+        public ICommand FramelistGoBack();
 
         public ICommand PageClosed();
 
