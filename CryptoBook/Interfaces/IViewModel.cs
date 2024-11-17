@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using CryptoBook.Infrastructure;
+
 namespace CryptoBook.Interfaces
 {
     public interface IViewModel

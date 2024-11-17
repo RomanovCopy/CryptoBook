@@ -26,6 +26,8 @@ namespace CryptoBook.ViewModels
 
         public ObservableCollection<Page> FrameList => mainWindowModel.FrameList;
 
+        public Page CurrentPage => mainWindowModel.CurrentPage;
+
 
         public MainWindowViewModel()
         {

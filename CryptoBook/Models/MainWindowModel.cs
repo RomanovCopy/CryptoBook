@@ -17,13 +17,20 @@ namespace CryptoBook.Models
 
         private readonly Languages languages;
 
-        internal double WindowWidth { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        internal double WindowHeight { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        internal double WindowTop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        internal double WindowLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        internal object WindowState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        internal double WindowWidth { get => windowWidth; set =>SetProperty(ref windowWidth, value); }
+        double windowWidth;
+        internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight,value); }
+        double windowHeight;
+        internal double WindowTop { get => windowTop; set => SetProperty(ref windowTop, value); }
+        double windowTop;
+        internal double WindowLeft { get => windowLeft; set =>SetProperty(ref windowLeft, value); }
+        double windowLeft;
+        internal object WindowState { get => windowState; set => SetProperty(ref windowState, value); }
+        object windowState;
 
 
+        internal Page CurrentPage { get => currentPage; set => SetProperty(ref currentPage, value); }
+        Page currentPage;
 
         internal ObservableCollection<Page> FrameList { get => frameList; private set => SetProperty(ref frameList, value); }
         ObservableCollection<Page> frameList;

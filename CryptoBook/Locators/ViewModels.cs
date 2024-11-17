@@ -16,7 +16,7 @@ namespace CryptoBook.Locators
     public class ViewModels
     {
 
-        public MainWindowViewModel MainWindowViewModel => App.Container.Resolve<IMainWindowViewModel>().As<MainWindowViewModel>();
+        public static MainWindowViewModel MainWindowViewModel => App.Container.Resolve<IMainWindowViewModel>().As<MainWindowViewModel>();
 
     }
 }

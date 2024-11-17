@@ -25,6 +25,8 @@ namespace CryptoBook.Locators
 
         public static FlowDocumentToXamlConverter flowDocumentToXamlConverter => App.Container.Resolve<FlowDocumentToXamlConverter>();
 
+        public static SizeLocationConverter sizeLocationConverter => App.Container.Resolve<SizeLocationConverter>();
+
 
         public Languages languages => App.Container.Resolve<Languages>();
     }

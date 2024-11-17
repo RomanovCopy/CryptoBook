@@ -4,16 +4,36 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         MinHeight="300" MinWidth="820" Title="CryptoBook" Topmost="False"
-        HorizontalContentAlignment="Stretch" >
-    <Window.DataContext>
-        <Binding Source="{locators:}"
-    </Window.DataContext>
+        HorizontalContentAlignment="Stretch"
+        DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
+
+    <Window.Width>
+        <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+                 ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="WindowHeight" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+                 ConverterParameter="height" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+                 ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left>
+        <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+                 ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.WindowState>
+        <Binding Path="WindowState" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+                 ConverterParameter="state" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.WindowState>
+
+
     <Grid>
 
     </Grid>
