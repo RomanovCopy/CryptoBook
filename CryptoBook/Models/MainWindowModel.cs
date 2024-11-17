@@ -24,6 +24,7 @@ namespace CryptoBook.Models
         internal object WindowState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
+
         internal ObservableCollection<Page> FrameList { get => frameList; private set => SetProperty(ref frameList, value); }
         ObservableCollection<Page> frameList;
 
@@ -32,6 +33,7 @@ namespace CryptoBook.Models
         {
             frameList = [];
             languages = App.Container.Resolve<Languages>();
+            languages.PropertyChanged += (s, e) => OnPropertyChanged("Headers", "ToolTips");
         }
 
 
