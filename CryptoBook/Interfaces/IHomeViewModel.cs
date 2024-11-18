@@ -5,14 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-using CryptoBook.Infrastructure;
-
 namespace CryptoBook.Interfaces
 {
-    public interface IViewModel
+    public interface IHomeViewModel:IPageViewModel
     {
-        public ICommand Loaded { get; }
-        public ICommand Closed { get; }
-        public ICommand Closing { get; }
+        public Action<object> BehaviorReady { get ; set; }
     }
 }

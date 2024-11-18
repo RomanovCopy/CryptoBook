@@ -9,15 +9,15 @@ namespace CryptoBook.Interfaces
 {
     public interface IMainWindowViewModel:IViewModel
     {
-        public ICommand FrameListAddPage();
+        public ICommand FrameListAddPage { get; }
 
-        public ICommand FrameListRemovePage();
+        public ICommand FrameListRemovePage { get; }
 
-        public ICommand FramelistGoForward();
+        public ICommand FramelistGoForward { get; }
 
-        public ICommand FramelistGoBack();
+        public ICommand FramelistGoBack { get; }
 
-        public ICommand PageClosed();
+        public ICommand PageClosed { get; }
 
     }
 }

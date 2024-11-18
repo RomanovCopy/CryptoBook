@@ -42,7 +42,6 @@
     <Compile Remove="Interfaces\IDownloadItem.cs" />
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
-    <Compile Remove="Interfaces\IPageViewModel.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />

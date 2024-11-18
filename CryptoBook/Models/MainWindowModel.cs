@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CryptoBook.Models
@@ -25,8 +27,8 @@ namespace CryptoBook.Models
         double windowTop;
         internal double WindowLeft { get => windowLeft; set =>SetProperty(ref windowLeft, value); }
         double windowLeft;
-        internal object WindowState { get => windowState; set => SetProperty(ref windowState, value); }
-        object windowState;
+        internal WindowState WindowState { get => windowState; set => SetProperty(ref windowState, value); }
+        WindowState windowState;
 
 
         internal Page CurrentPage { get => currentPage; set => SetProperty(ref currentPage, value); }
@@ -41,6 +43,25 @@ namespace CryptoBook.Models
             frameList = [];
             languages = App.Container.Resolve<Languages>();
             languages.PropertyChanged += (s, e) => OnPropertyChanged("Headers", "ToolTips");
+
+            //восстанавливаем размеры и положение окна
+            if(Properties.Settings.Default.FileOverviewFirstStart)
+            {
+                WindowHeight = 40;
+                WindowWidth = 40;
+                WindowLeft = 40;
+                WindowTop = 40;
+                Properties.Settings.Default.FileOverviewFirstStart = false;
+            } else
+            {
+                WindowHeight = Properties.Settings.Default.WindowHeight;
+                WindowWidth = Properties.Settings.Default.WindowWidth;
+                WindowLeft = Properties.Settings.Default.WindowLeft;
+                WindowTop = Properties.Settings.Default.WindowTop;
+            }
+            //восстанавливаем состояние окна
+            WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized : 
+                WindowState.Minimized;
         }
 
 
@@ -124,11 +145,31 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Closing(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Closing(object obj)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //размеры и положение окна
+                if(WindowState.ToString() == "Normal")
+                {
+                    Properties.Settings.Default.WindowWidth = WindowWidth;
+                    Properties.Settings.Default.WindowHeight = WindowHeight;
+                    Properties.Settings.Default.WindowLeft = WindowLeft;
+                    Properties.Settings.Default.WindowTop = WindowTop;
+                }
+                Properties.Settings.Default.LanguageKey = languages.Key;
+                Properties.Settings.Default.WindowState = WindowState.ToString();
+                int count = FrameList.Count;
+                while(count > 0)
+                {
+                    var page = FrameList[--count];
+                    if(page.DataContext is IPageViewModel viewmodel)
+                        viewmodel.PageClose.Execute(page);
+                }
+                Properties.Settings.Default.Save();
+            } catch(Exception e) { ErrorWindow(e); }
         }
 
     }

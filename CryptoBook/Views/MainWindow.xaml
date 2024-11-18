@@ -29,12 +29,16 @@
                  ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Left>
     <Window.WindowState>
-        <Binding Path="WindowState" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
-                 ConverterParameter="state" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+        <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
 
 
     <Grid>
 
     </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{ Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 </Window>

@@ -56,23 +56,6 @@ namespace CryptoBook.Converters
                             break;
                         }
                     }
-                } else if(value is string str && parameter.ToString() == "state")
-                {//задания режима отображения окна
-                    switch(str)
-                    {
-                        case "Maximized":
-                        {
-                            return WindowState.Maximized;//полноэкранный режим
-                        }
-                        case "Normal":
-                        {
-                            return WindowState.Normal;//оконный режим
-                        }
-                        case "Minimized":
-                        {
-                            return WindowState.Minimized;//окно свернуто в панели задач
-                        }
-                    }
                 }
                 return size;
             } catch(Exception e)
@@ -120,9 +103,6 @@ namespace CryptoBook.Converters
                             break;
                         }
                     }
-                } else if(value is WindowState str && parameter.ToString() == "state")
-                {
-                    return str.ToString();
                 }
                 return percent;
 
