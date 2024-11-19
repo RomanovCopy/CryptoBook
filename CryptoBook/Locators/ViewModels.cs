@@ -22,6 +22,9 @@ namespace CryptoBook.Locators
         public static HomeViewModel HomeViewModel => 
             App.Container.Resolve<IHomeViewModel>().As<HomeViewModel>();
 
+        public static SideMenuViewModel SideMenuViewModel =>
+            App.Container.Resolve<ISideMenuViewModel>().As<SideMenuViewModel>();
+
 
     }
 }

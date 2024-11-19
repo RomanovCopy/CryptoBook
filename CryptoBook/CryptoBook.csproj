@@ -24,7 +24,6 @@
   <ItemGroup>
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
     <Compile Remove="Helpers\BehaviorButton.cs" />
-    <Compile Remove="Helpers\BehaviorComboBox.cs" />
     <Compile Remove="Helpers\BehaviorFixedDocument.cs" />
     <Compile Remove="Helpers\BehaviorFlowDocument.cs" />
     <Compile Remove="Helpers\BehaviorFlowDocumentReader.cs" />
@@ -48,11 +47,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="Styles\ButtonStyles.xaml" />
+    <Page Remove="Styles\ColorStyles.xaml" />
+    <Page Remove="Styles\ImageStyles.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Injections\" />
     <Folder Include="Converters\" />
     <Folder Include="Infrastructure\" />
-    <Folder Include="Styles\" />
-    <Folder Include="Helpers\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
-        MinHeight="300" MinWidth="820" Title="CryptoBook" Topmost="False"
+        MinHeight="100" MinWidth="400" Title="CryptoBook" Topmost="False"
         HorizontalContentAlignment="Stretch"
         DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
 
@@ -31,10 +31,21 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-
-
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="forFrame" Height="*"/>
+            <RowDefinition x:Name="forStatusbar" Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Border Width="150">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-150"/>
+                </Border.RenderTransform>
+                <Grid>
+                    <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">

@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CryptoBook.MyControls
+namespace CryptoBook.Styles
 {
     /// <summary>
-    /// Логика взаимодействия для Home.xaml
+    /// Логика взаимодействия для WindowStyles.xaml
     /// </summary>
-    public partial class Home: Page
+    public partial class WindowStyles: Page
     {
-        public Home()
+        public WindowStyles()
         {
             InitializeComponent();
         }
