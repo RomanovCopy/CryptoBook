@@ -48,7 +48,6 @@
 
   <ItemGroup>
     <Page Remove="Styles\ButtonStyles.xaml" />
-    <Page Remove="Styles\ColorStyles.xaml" />
     <Page Remove="Styles\ImageStyles.xaml" />
   </ItemGroup>
 

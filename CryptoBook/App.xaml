@@ -2,11 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:locators="clr-namespace:CryptoBook.Locators"
-             xmlns:styles="clr-namespace:Cry"
              xmlns:local="clr-namespace:CryptoBook">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/WindowStyles.xaml/"/>
             </ResourceDictionary.MergedDictionaries>
             <locators:MyControls x:Key="mycontrols"/>
         </ResourceDictionary>

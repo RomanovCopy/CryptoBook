@@ -10,6 +10,7 @@
         mc:Ignorable="d"
         MinHeight="100" MinWidth="400" Title="CryptoBook" Topmost="False"
         HorizontalContentAlignment="Stretch"
+        Style="{StaticResource VS2012WindowStyle}"
         DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
 
     <Window.Width>
