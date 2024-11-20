@@ -12,13 +12,13 @@
 
   <ItemGroup>
     <Compile Remove="Infrastrucrure\**" />
-    <Compile Remove="Styles\MainWindow\**" />
+    <Compile Remove="Styles\**" />
     <EmbeddedResource Remove="Infrastrucrure\**" />
-    <EmbeddedResource Remove="Styles\MainWindow\**" />
+    <EmbeddedResource Remove="Styles\**" />
     <None Remove="Infrastrucrure\**" />
-    <None Remove="Styles\MainWindow\**" />
+    <None Remove="Styles\**" />
     <Page Remove="Infrastrucrure\**" />
-    <Page Remove="Styles\MainWindow\**" />
+    <Page Remove="Styles\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,11 +44,6 @@
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="Styles\ButtonStyles.xaml" />
-    <Page Remove="Styles\ImageStyles.xaml" />
   </ItemGroup>
 
   <ItemGroup>

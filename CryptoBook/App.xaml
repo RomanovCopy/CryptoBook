@@ -6,7 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/WindowStyles.xaml/"/>
+                <!--<ResourceDictionary Source="Styles/WindowStyles.xaml/"/>-->
             </ResourceDictionary.MergedDictionaries>
             <locators:MyControls x:Key="mycontrols"/>
         </ResourceDictionary>

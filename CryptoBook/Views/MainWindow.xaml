@@ -3,16 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d"
-        MinHeight="100" MinWidth="400" Title="CryptoBook" Topmost="False"
-        HorizontalContentAlignment="Stretch"
-        Style="{StaticResource VS2012WindowStyle}"
+        mc:Ignorable="d" WindowStyle="None"
+        MinHeight="100" MinWidth="400" Title="CryptoBook"
+        HorizontalContentAlignment="Stretch" AllowsTransparency="True"
+        Background="Transparent" 
         DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
-
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            />
+    </WindowChrome.WindowChrome>
     <Window.Width>
         <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
                  ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
@@ -32,22 +36,38 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="forFrame" Height="*"/>
-            <RowDefinition x:Name="forStatusbar" Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Border Width="150">
-                <Border.RenderTransform>
-                    <TranslateTransform X="-150"/>
-                </Border.RenderTransform>
-                <Grid>
-                    <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
-                </Grid>
-            </Border>
+    <Border CornerRadius="0,0,0,0" Background="LightGray"
+            BorderThickness="1"
+            BorderBrush="Red"
+            Opacity="1">
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="forFrame" Height="*"/>
+                <RowDefinition x:Name="forStatusbar" Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Border Width="150">
+                    <Border.RenderTransform>
+                        <TranslateTransform X="-150"/>
+                    </Border.RenderTransform>
+                    <Grid>
+                        <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
+                    </Grid>
+                </Border>
+                <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
+               NavigationUIVisibility="Visible"
+               Background="Transparent">
+                    <!--<i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Navigated">
+                            <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>-->
+                </Frame>
+
+            </Grid>
         </Grid>
-    </Grid>
+
+    </Border>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{ Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
