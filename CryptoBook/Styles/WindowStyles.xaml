@@ -44,7 +44,8 @@
                             <DockPanel   
                                 HorizontalAlignment="Stretch"
                                 Background="Transparent"
-                                VerticalAlignment="Stretch" >
+                                VerticalAlignment="Stretch" 
+                                >
                                 <Border
                                     x:Name="TitleBar"
                                     DockPanel.Dock="Top"
@@ -217,15 +218,11 @@
                                         </Button>
                                     </Grid>
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <i:EventTrigger EventName="Loaded">
                                             <i:InvokeCommandAction 
-                                                Command="{Binding TitleBarMouseLeftButtonDown,
-                                                UpdateSourceTrigger=PropertyChanged}"/>
-                                        </i:EventTrigger>
-                                        <i:EventTrigger EventName="MouseMove">
-                                            <i:InvokeCommandAction 
-                                                Command="{Binding TitleBarMouseMove, 
-                                                UpdateSourceTrigger=PropertyChanged}"/>
+                                                Command="{Binding Loaded,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                                                CommandParameter="{Binding ElementName=TitleBar}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Border>
@@ -237,10 +234,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-
-
-
-
 </ResourceDictionary>

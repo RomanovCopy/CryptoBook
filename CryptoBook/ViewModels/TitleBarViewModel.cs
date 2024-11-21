@@ -1,4 +1,6 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
@@ -18,33 +20,51 @@ namespace CryptoBook.ViewModels
 
         public TitleBarViewModel()
         {
+            titleBarModel = new();
+            titleBarModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
 
 
 
 
+        /// <summary>
+        /// окнончание загрузи TitleBar
+        /// </summary>
+        public ICommand Loaded => loaded ??= 
+            new RelayCommand(titleBarModel.Execute_Loaded, titleBarModel.CanExecute_Loaded);
+        RelayCommand loaded;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand TitleBarMouseLeftButtonDown => 
+            titleBarMouseLeftButtonDown ??= new RelayCommand(titleBarModel.Execute_TitleBarMouseLeftButtonDown, titleBarModel.CanExecute_TitleBarMouseLeftButtonDown);
+        RelayCommand titleBarMouseLeftButtonDown;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand TitleBarMouseMove => titleBarMouseMove ??= new RelayCommand(titleBarModel.Execute_TitleBarMouseMove, titleBarModel.CanExecute_TitleBarMouseMove);
+        RelayCommand titleBarMouseMove;
 
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand ButtonBack_Click => buttonBack_Click ??= new RelayCommand(titleBarModel.Execute_ButtonBack_Click, titleBarModel.CanExecute_ButtonBack_Click);
+        RelayCommand buttonBack_Click;
 
-        public ICommand TitleBarMouseLeftButtonDown => throw new NotImplementedException();
+        public ICommand ButtonForward_Click => buttonForward_Click ??= new RelayCommand(titleBarModel.Execute_ButtonForward_Click, titleBarModel.CanExecute_ButtonForward_Click);
+        RelayCommand buttonForward_Click;
 
-        public ICommand TitleBarMouseMove => throw new NotImplementedException();
+        public ICommand ToggleMenu_Click => toggleMenu_Click ??= new RelayCommand(titleBarModel.Execute_ToggleMenu_Click, titleBarModel.CanExecute_ToggleMenu_Click);
+        RelayCommand toggleMenu_Click;
 
-        public ICommand ButtonBack_Click => throw new NotImplementedException();
+        public ICommand MinButtonClick => minButtonClick ??= new RelayCommand(titleBarModel.Execute_MinButtonClick, titleBarModel.CanExecute_MinButtonClick);
+        RelayCommand minButtonClick;
 
-        public ICommand ButtonForward_Click => throw new NotImplementedException();
+        public ICommand MaxButtonClick => maxButtonClick ??= new RelayCommand(titleBarModel.Execute_MaxButtonClick, titleBarModel.CanExecute_MaxButtonClick);
+        RelayCommand maxButtonClick;
 
-        public ICommand ToggleMenu_Click => throw new NotImplementedException();
+        public ICommand CloseButtonClick => closeButtonClick ??= new RelayCommand(titleBarModel.Execute_CloseButtonClick, titleBarModel.CanExecute_CloseButtonClick);
+        RelayCommand closeButtonClick;
 
-        public ICommand MinButtonClick => throw new NotImplementedException();
+        public ICommand Closed => closed ??= new RelayCommand(titleBarModel.Execute_Closed, titleBarModel.CanExecute_Closed);
+        RelayCommand closed;
 
-        public ICommand MaxButtonClick => throw new NotImplementedException();
+        public ICommand Closing => closing ??= new RelayCommand(titleBarModel.Execute_Closing, titleBarModel.CanExecute_Closing);
+        RelayCommand closing;
 
-        public ICommand CloseButtonClick => throw new NotImplementedException();
     }
 }
