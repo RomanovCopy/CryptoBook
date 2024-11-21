@@ -12,13 +12,9 @@
 
   <ItemGroup>
     <Compile Remove="Infrastrucrure\**" />
-    <Compile Remove="Styles\**" />
     <EmbeddedResource Remove="Infrastrucrure\**" />
-    <EmbeddedResource Remove="Styles\**" />
     <None Remove="Infrastrucrure\**" />
-    <None Remove="Styles\**" />
     <Page Remove="Infrastrucrure\**" />
-    <Page Remove="Styles\**" />
   </ItemGroup>
 
   <ItemGroup>

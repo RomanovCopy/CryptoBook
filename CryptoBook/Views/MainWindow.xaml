@@ -8,9 +8,10 @@
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d" WindowStyle="None"
+        mc:Ignorable="d" 
+        Style="{StaticResource VS2012WindowStyle}"
         MinHeight="100" MinWidth="400" Title="CryptoBook"
-        HorizontalContentAlignment="Stretch" AllowsTransparency="True"
+        HorizontalContentAlignment="Stretch"
         Background="Transparent" 
         DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
     <WindowChrome.WindowChrome>
@@ -55,7 +56,7 @@
                     </Grid>
                 </Border>
                 <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
-               NavigationUIVisibility="Visible"
+               NavigationUIVisibility="Hidden"
                Background="Transparent">
                     <!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="Navigated">

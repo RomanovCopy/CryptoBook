@@ -25,6 +25,9 @@ namespace CryptoBook.Locators
         public static SideMenuViewModel SideMenuViewModel =>
             App.Container.Resolve<ISideMenuViewModel>().As<SideMenuViewModel>();
 
+        public static TitleBarViewModel TitleBarViewModel => 
+            App.Container.Resolve<ITitleBarViewModel>().As<TitleBarViewModel>();
+
 
     }
 }
