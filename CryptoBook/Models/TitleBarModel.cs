@@ -48,7 +48,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_ButtonBack_Click(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_ButtonForward_Click(object obj)

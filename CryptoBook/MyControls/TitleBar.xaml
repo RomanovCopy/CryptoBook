@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="CryptoBook.MyControls.TitleBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:locators="clr-namespace:CryptoBook.Locators"
+             xmlns:local="clr-namespace:CryptoBook.MyControls"
+             mc:Ignorable="d"
+             DataContext="{x:Static locators:ViewModels.TitleBarViewModel}">
+    <UserControl.Height>
+        <Binding Path="Height" UpdateSourceTrigger="PropertyChanged"/>
+    </UserControl.Height>
+    <Grid Background="{StaticResource TitleBarBackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="forBackBtn" Width="Auto"/>
+            <ColumnDefinition x:Name="forFwdBtn" Width="Auto"/>
+            <ColumnDefinition x:Name="forSideMenuBtn" Width="Auto"/>
+            <ColumnDefinition x:Name="forTitle" Width="Auto"/>
+            <ColumnDefinition x:Name="forOtherContent" Width="*"/>
+            <ColumnDefinition x:Name="forMinBtn" Width="Auto"/>
+            <ColumnDefinition x:Name="forMaxBtn" Width="Auto"/>
+            <ColumnDefinition x:Name="forCloseBtn" Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="backBtn" Grid.Column="0" VerticalAlignment="Center" Margin="1"
+         Style="{StaticResource MenuButtonStyle01}" 
+         Command="{Binding ButtonBack_Click, UpdateSourceTrigger=PropertyChanged}">
+            <TextBlock Text="&#xE72B;" FontFamily="Segoe MDL2 Assets" Foreground="White"
+                       FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
+        </Button>
+        <Button x:Name="fwdBtn" Grid.Column="1" VerticalAlignment="Center" Margin="1"
+         Style="{StaticResource VS2012WindowStyleNavigationButton}" 
+         Command="{Binding ButtonForward_Click, UpdateSourceTrigger=PropertyChanged}">
+            <Image Source="{StaticResource forwardimage}"/>
+        </Button>
+        <Button x:Name="sideMenuBtn" Grid.Column="2"
+                Style="{StaticResource MenuButtonStyle01}" Margin="4,0,0,0">
+            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE700;" FontWeight="Bold"
+           FontSize="16" TextAlignment="Center" Foreground="White" />
+        </Button>
+        <TextBlock x:Name="title" FontWeight="Bold" Text="CryptoBook" Grid.Column="3"/>
+        <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch" Grid.Column="4"/>
+        <Button x:Name="minBtn" Grid.Column="5">
+
+        </Button>
+        <Button x:Name="maxBtn" Grid.Column="6">
+
+        </Button>
+        <Button x:Name="closeBtn" Grid.Column="7">
+
+        </Button>
+
+
+
+
+    </Grid>
+</UserControl>

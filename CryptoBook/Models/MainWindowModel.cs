@@ -43,6 +43,7 @@ namespace CryptoBook.Models
             frameList = [];
             languages = App.Container.Resolve<Languages>();
             languages.PropertyChanged += (s, e) => OnPropertyChanged("Headers", "ToolTips");
+            currentPage = new Page();
 
             //восстанавливаем размеры и положение окна
             if(Properties.Settings.Default.FileOverviewFirstStart)

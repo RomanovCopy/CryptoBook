@@ -8,15 +8,17 @@
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d" 
-        Style="{StaticResource VS2012WindowStyle}"
+        mc:Ignorable="d" WindowStyle="None"
+        
         MinHeight="100" MinWidth="400" Title="CryptoBook"
         HorizontalContentAlignment="Stretch"
         Background="Transparent" 
         DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
+    <Window.Resources>
+        <locators:MyControls x:Key="mycontrols"/>
+    </Window.Resources>
     <WindowChrome.WindowChrome>
-        <WindowChrome
-            />
+        <WindowChrome CaptionHeight="15" />
     </WindowChrome.WindowChrome>
     <Window.Width>
         <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
@@ -37,11 +39,13 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <Border CornerRadius="0,0,0,0" Background="LightGray"
-            BorderThickness="1"
-            BorderBrush="Red"
-            Opacity="1">
-        <Grid >
+    <DockPanel VerticalAlignment="Top" Margin="0,15,0,0" Background="Transparent">
+        <Border x:Name="title" DockPanel.Dock="Top" Height="32" CornerRadius="0" Background="Transparent"
+                BorderBrush="Red" BorderThickness="1" >
+            <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=TitleBar}"/>
+        </Border>
+    </DockPanel>
+        <!--<Grid >
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="forFrame" Height="*"/>
                 <RowDefinition x:Name="forStatusbar" Height="Auto"/>
@@ -58,17 +62,15 @@
                 <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
                NavigationUIVisibility="Hidden"
                Background="Transparent">
-                    <!--<i:Interaction.Triggers>
+                    --><!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="Navigated">
                             <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
                         </i:EventTrigger>
-                    </i:Interaction.Triggers>-->
+                    </i:Interaction.Triggers>--><!--
                 </Frame>
 
             </Grid>
-        </Grid>
-
-    </Border>
+        </Grid>-->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{ Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>

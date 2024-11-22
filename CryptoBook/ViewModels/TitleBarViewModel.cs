@@ -15,8 +15,10 @@ namespace CryptoBook.ViewModels
 {
     public class TitleBarViewModel:ViewModelBase, ITitleBarViewModel
     {
+
         private readonly TitleBarModel titleBarModel;
 
+        public double Height { get => 32; }
 
         public TitleBarViewModel()
         {

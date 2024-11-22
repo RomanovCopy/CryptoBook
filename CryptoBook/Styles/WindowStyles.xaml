@@ -10,12 +10,13 @@
         <ResourceDictionary Source="ButtonStyles.xaml"/>
         <ResourceDictionary Source="ImageStyles.xaml"/>
     </ResourceDictionary.MergedDictionaries>
+    <locators:ViewModels x:Key="viwmodels"/>
 
 
 
     <Style x:Key="VS2012WindowStyle" TargetType="{x:Type Window}">
-        <Setter Property="AllowsTransparency" Value="true" />
-        <Setter Property="WindowStyle" Value="None" />
+        <!--<Setter Property="AllowsTransparency" Value="False" />
+        <Setter Property="WindowStyle" Value="None" />-->
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
         <Setter Property="Template">
@@ -51,7 +52,7 @@
                                     DockPanel.Dock="Top"
                                     Background="{StaticResource TitleBarBackgroundBrush}"
                                     BorderThickness="0"
-                                    DataContext="{ x:Static locators:ViewModels.TitleBarViewModel}"
+                                    DataContext="{Binding Source={StaticResource viwmodels}, Path=TitleBarViewModel}"
                                     Opacity="0.5"
                                     >
                                     <Grid Height="Auto">
@@ -94,7 +95,6 @@
                                             Width="18"
                                             Height="18"
                                             Command="{Binding ButtonForward_Click, UpdateSourceTrigger=PropertyChanged}"
-                                            CommandParameter="forward"
                                             Style="{StaticResource VS2012WindowStyleNavigationButton}">
                                             <Image Source="{StaticResource forwardimage}"/>
                                         </Button>
