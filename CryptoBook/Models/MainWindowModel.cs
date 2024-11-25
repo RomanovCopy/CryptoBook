@@ -68,6 +68,15 @@ namespace CryptoBook.Models
 
 
 
+        internal bool CanExecute_ToggleMenuClick(object obj)
+        {
+            return true;
+        }
+        internal void Execute_ToggleMenuClick(object obj)
+        {
+            
+        }
+
         internal bool CanExecute_FrameListAddPage(object obj)
         {
             throw new NotImplementedException();

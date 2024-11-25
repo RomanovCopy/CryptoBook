@@ -38,6 +38,9 @@ namespace CryptoBook.ViewModels
 
 
 
+        public ICommand ToggleMenuClick => toggleMenuClick ??= new RelayCommand(mainWindowModel.Execute_ToggleMenuClick, mainWindowModel.CanExecute_ToggleMenuClick);
+        RelayCommand toggleMenuClick;
+
         public ICommand FrameListAddPage=>frameListAddPage ??= new RelayCommand(mainWindowModel.Execute_FrameListAddPage, mainWindowModel.CanExecute_FrameListAddPage);
         RelayCommand frameListAddPage;
 
