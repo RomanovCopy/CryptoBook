@@ -1,4 +1,7 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
+using CryptoBook.Views;
 
 using System;
 using System.Collections.Generic;
@@ -8,8 +11,13 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Models
 {
-    public class TitleBarModel:ViewModelBase
+    public class TitleBarModel: ViewModelBase
     {
+        /// <summary>
+        /// окно перемещается
+        /// </summary>
+        private bool _isDragging;
+
         public TitleBarModel()
         {
 
@@ -24,13 +32,18 @@ namespace CryptoBook.Models
 
         }
 
-        internal bool CanExecute_TitleBarMouseLeftButtonDown(object obj)
+        internal bool CanExecute_MouseLeftButtonDown(object obj)
         {
             return true;
         }
-        internal void Execute_TitleBarMouseLeftButtonDown(object obj)
+        internal void Execute_MouseLeftButtonDown(object obj)
         {
-            throw new NotImplementedException();
+            if(!_isDragging)
+            {
+                _isDragging = true;
+                App.Container.Resolve<MainWindow>().DragMove();
+                _isDragging = false;
+            }
         }
 
         internal bool CanExecute_TitleBarMouseMove(object obj)
@@ -104,6 +117,15 @@ namespace CryptoBook.Models
             throw new NotImplementedException();
         }
 
+        internal bool CanExecute_GoToWindow(object obj)
+        {
+            return false;
+        }
+        internal void Execute_GoToWindow(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
         internal bool CanExecute_Closing(object obj)
         {
             return true;
@@ -112,5 +134,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
     }
 }

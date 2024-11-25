@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Autofac;
+
+using CryptoBook.Views;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +28,6 @@ namespace CryptoBook.MyControls
         {
             InitializeComponent();
         }
+
     }
 }

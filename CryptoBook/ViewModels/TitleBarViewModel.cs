@@ -18,7 +18,7 @@ namespace CryptoBook.ViewModels
 
         private readonly TitleBarModel titleBarModel;
 
-        public double Height { get => 32; }
+        public double Height { get => 24; }
 
         public TitleBarViewModel()
         {
@@ -30,16 +30,13 @@ namespace CryptoBook.ViewModels
 
 
 
-        /// <summary>
-        /// окнончание загрузи TitleBar
-        /// </summary>
         public ICommand Loaded => loaded ??= 
             new RelayCommand(titleBarModel.Execute_Loaded, titleBarModel.CanExecute_Loaded);
         RelayCommand loaded;
 
-        public ICommand TitleBarMouseLeftButtonDown => 
-            titleBarMouseLeftButtonDown ??= new RelayCommand(titleBarModel.Execute_TitleBarMouseLeftButtonDown, titleBarModel.CanExecute_TitleBarMouseLeftButtonDown);
-        RelayCommand titleBarMouseLeftButtonDown;
+        public ICommand MouseLeftButtonDown => 
+            mouseLeftButtonDown ??= new RelayCommand(titleBarModel.Execute_MouseLeftButtonDown, titleBarModel.CanExecute_MouseLeftButtonDown);
+        RelayCommand mouseLeftButtonDown;
 
         public ICommand TitleBarMouseMove => titleBarMouseMove ??= new RelayCommand(titleBarModel.Execute_TitleBarMouseMove, titleBarModel.CanExecute_TitleBarMouseMove);
         RelayCommand titleBarMouseMove;
@@ -55,6 +52,9 @@ namespace CryptoBook.ViewModels
 
         public ICommand MinButtonClick => minButtonClick ??= new RelayCommand(titleBarModel.Execute_MinButtonClick, titleBarModel.CanExecute_MinButtonClick);
         RelayCommand minButtonClick;
+
+        public ICommand GoToWindow => goToWindow ??= new RelayCommand(titleBarModel.Execute_GoToWindow, titleBarModel.CanExecute_GoToWindow);
+        RelayCommand goToWindow;
 
         public ICommand MaxButtonClick => maxButtonClick ??= new RelayCommand(titleBarModel.Execute_MaxButtonClick, titleBarModel.CanExecute_MaxButtonClick);
         RelayCommand maxButtonClick;

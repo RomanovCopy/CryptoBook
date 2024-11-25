@@ -18,7 +18,7 @@
         <locators:MyControls x:Key="mycontrols"/>
     </Window.Resources>
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="15" />
+        <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
     <Window.Width>
         <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
@@ -39,11 +39,10 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <DockPanel VerticalAlignment="Top" Margin="0,15,0,0" Background="Transparent">
-        <Border x:Name="title" DockPanel.Dock="Top" Height="32" CornerRadius="0" Background="Transparent"
-                BorderBrush="Red" BorderThickness="1" >
+    <DockPanel VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Stretch">
+        <Grid HorizontalAlignment="Stretch" DockPanel.Dock="Top">
             <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=TitleBar}"/>
-        </Border>
+        </Grid>
     </DockPanel>
         <!--<Grid >
             <Grid.RowDefinitions>

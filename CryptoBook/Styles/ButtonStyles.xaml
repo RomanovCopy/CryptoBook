@@ -35,8 +35,7 @@
         </Setter>
     </Style>
 
-    <!--Стиль кнопки откытия и закрытия бокового меню-->
-    <Style x:Key="MenuButtonStyle01" TargetType="{x:Type Button}">
+    <Style x:Key="TitleBarButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Focusable" Value="false" />
         <Setter Property="Template">
             <Setter.Value>
@@ -44,12 +43,12 @@
                     <Grid>
                         <Border
                  x:Name="PART_border"
-                 Background="Black"
                  Opacity="1"
-                 CornerRadius="3"/>
+                 CornerRadius="2" />
                         <ContentPresenter 
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"/>
+                    VerticalAlignment="Center"
+                    Margin="3,0,3,0" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
