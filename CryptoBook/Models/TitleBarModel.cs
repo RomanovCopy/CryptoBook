@@ -19,6 +19,19 @@ namespace CryptoBook.Models
         /// </summary>
         private bool _isDragging;
 
+        /// <summary>
+        /// высота TitleBar
+        /// </summary>
+        public double MyFontSize { get => height; set => SetProperty(ref height, value); }
+        double height;
+
+        /// <summary>
+        /// цвет шрифта и значков
+        /// </summary>
+        public System.Windows.Media.Brush MyFontColor { get => fontColor; set => SetProperty(ref fontColor, value);}
+        System.Windows.Media.Brush fontColor;
+
+
         public TitleBarModel()
         {
 
@@ -30,7 +43,8 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object obj)
         {
-
+            MyFontSize = 16;
+            MyFontColor = System.Windows.Media.Brushes.Yellow;
         }
 
         internal bool CanExecute_MouseLeftButtonDown(object obj)
@@ -53,7 +67,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_TitleBarMouseMove(object obj)
         {
-            throw new NotImplementedException();
+            
         }
 
         internal bool CanExecute_ButtonBack_Click(object obj)
@@ -86,13 +100,42 @@ namespace CryptoBook.Models
             
         }
 
+        internal bool CanExecute_ButtonDarkThemeClick(object obj)
+        {
+            return false;
+        }
+        internal void Execute_ButtonDarkThemeClick(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ButtonSettingsClick(object obj)
+        {
+            return true;
+        }
+        internal void Execute_ButtonSettingsClick(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool CanExecute_ButtonLightTheme_Click(object obj)
+        {
+            return true;
+        }
+        internal void Execute_ButtonLightTheme_Click(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
         internal bool CanExecute_MinButtonClick(object obj)
         {
             return true;
         }
         internal void Execute_MinButtonClick(object obj)
         {
-            throw new NotImplementedException();
+            MyFontColor = System.Windows.Media.Brushes.Green;
         }
 
         internal bool CanExecute_MaxButtonClick(object obj)
@@ -101,7 +144,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_MaxButtonClick(object obj)
         {
-            throw new NotImplementedException();
+            MyFontSize -= 1;
         }
 
         internal bool CanExecute_CloseButtonClick(object obj)
@@ -110,7 +153,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_CloseButtonClick(object obj)
         {
-            throw new NotImplementedException();
+            MyFontSize += 1;
         }
 
         internal bool CanExecute_Closed(object obj)

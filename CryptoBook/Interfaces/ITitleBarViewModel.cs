@@ -29,6 +29,20 @@ namespace CryptoBook.Interfaces
         /// открытие бокового меню
         /// </summary>
         public ICommand ToggleMenu_Click { get; }
+
+
+        /// <summary>
+        /// переключение на светлую тему
+        /// </summary>
+        public ICommand ButtonLightTheme_Click { get; }
+        /// <summary>
+        /// переключение на темную тему
+        /// </summary>
+        public ICommand ButtonDarkThemeClick { get; }
+        /// <summary>
+        /// вызов настроек
+        /// </summary>
+        public ICommand ButtonSettingsClick { get; }
         /// <summary>
         /// скрытие окна на панели задач
         /// </summary>

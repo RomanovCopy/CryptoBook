@@ -2,6 +2,7 @@
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.ViewModels;
 
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,8 @@ namespace CryptoBook.Models
 
         internal ObservableCollection<Page> FrameList { get => frameList; private set => SetProperty(ref frameList, value); }
         ObservableCollection<Page> frameList;
+
+        internal static Action Ready { get; set; }
 
 
         public MainWindowModel()
@@ -132,13 +135,12 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Loaded(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Loaded(object obj)
         {
-            throw new NotImplementedException();
-        }
 
+        }
 
 
         internal bool CanExecute_Closed(object obj)

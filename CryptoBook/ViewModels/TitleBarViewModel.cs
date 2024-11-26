@@ -18,7 +18,11 @@ namespace CryptoBook.ViewModels
 
         private readonly TitleBarModel titleBarModel;
 
-        public double Height { get => 24; }
+        public double MyFontSize => titleBarModel.MyFontSize;
+
+        public System.Windows.Media.Brush MyFontColor => titleBarModel.MyFontColor;
+
+        
 
         public TitleBarViewModel()
         {
@@ -49,6 +53,14 @@ namespace CryptoBook.ViewModels
 
         public ICommand ToggleMenu_Click => toggleMenu_Click ??= new RelayCommand(titleBarModel.Execute_ToggleMenu_Click, titleBarModel.CanExecute_ToggleMenu_Click);
         RelayCommand toggleMenu_Click;
+
+        public ICommand ButtonLightTheme_Click => buttonLightTheme_Click ??= new RelayCommand(titleBarModel.Execute_ButtonLightTheme_Click, titleBarModel.CanExecute_ButtonLightTheme_Click);
+        RelayCommand buttonLightTheme_Click;
+
+        public ICommand ButtonDarkThemeClick => buttonDarkThemeClick ??= new RelayCommand(titleBarModel.Execute_ButtonDarkThemeClick, titleBarModel.CanExecute_ButtonDarkThemeClick);
+        RelayCommand buttonDarkThemeClick;
+        public ICommand ButtonSettingsClick => buttonSettingsClick ??= new RelayCommand(titleBarModel.Execute_ButtonSettingsClick, titleBarModel.CanExecute_ButtonSettingsClick);
+        RelayCommand buttonSettingsClick;
 
         public ICommand MinButtonClick => minButtonClick ??= new RelayCommand(titleBarModel.Execute_MinButtonClick, titleBarModel.CanExecute_MinButtonClick);
         RelayCommand minButtonClick;

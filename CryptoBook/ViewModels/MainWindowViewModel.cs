@@ -29,6 +29,7 @@ namespace CryptoBook.ViewModels
 
         public Page CurrentPage => mainWindowModel.CurrentPage;
 
+        public static Action Ready { get=>MainWindowModel.Ready; set=>MainWindowModel.Ready=value; }
 
         public MainWindowViewModel()
         {

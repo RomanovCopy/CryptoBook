@@ -11,6 +11,8 @@ namespace CryptoBook.Interfaces
 {
     public interface IViewModel
     {
+
+        public static Action Ready { get; set; }
         public ICommand Loaded { get; }
         public ICommand Closed { get; }
         public ICommand Closing { get; }
