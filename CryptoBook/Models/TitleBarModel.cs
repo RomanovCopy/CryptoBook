@@ -58,9 +58,15 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_ButtonBack_Click(object obj)
         {
-            if(App.Container.IsRegistered<MainWindowViewModel>())
-                return App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.CanExecute(null);
-            return true;
+            bool result = false;
+            MainWindowViewModel.Ready += () =>
+            {
+                result = App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.CanExecute(null);
+            };
+            //if(App.Container.IsRegistered<MainWindowViewModel>())
+            //    return App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.CanExecute(null);
+            //return false;
+            return result;
         }
         internal void Execute_ButtonBack_Click(object obj)
         {

@@ -71,6 +71,9 @@
             </Grid>
         </Grid>-->
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{ Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{ Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
