@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
 using System;
@@ -57,7 +58,9 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_ButtonBack_Click(object obj)
         {
-            return true;
+            if(App.Container.IsRegistered<MainWindowViewModel>())
+                return App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.CanExecute(null);
+            return false;
         }
         internal void Execute_ButtonBack_Click(object obj)
         {
@@ -65,7 +68,9 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_ButtonForward_Click(object obj)
         {
-            return true;
+            if(App.Container.IsRegistered<MainWindowViewModel>())
+                return App.Container.Resolve<MainWindowViewModel>().FramelistGoForward.CanExecute(null);
+            return false;
         }
         internal void Execute_ButtonForward_Click(object obj)
         {
@@ -78,7 +83,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleMenu_Click(object obj)
         {
-            throw new NotImplementedException();
+            
         }
 
         internal bool CanExecute_MinButtonClick(object obj)

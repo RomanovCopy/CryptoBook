@@ -30,7 +30,7 @@
                 <TextBlock Text="&#xE72A;" FontFamily="Segoe MDL2 Assets" Foreground="White"
                        FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
             </Button>
-            <Button x:Name="sideMenuBtn" 
+            <Button x:Name="sideMenuBtn" Command="{Binding ToggleMenu_Click, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource TitleBarButtonStyle}" >
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE700;" FontWeight="Bold"
            FontSize="16" TextAlignment="Center" Foreground="White" VerticalAlignment="Center"/>
