@@ -53,14 +53,14 @@ namespace CryptoBook.Models
         }
         internal void Execute_TitleBarMouseMove(object obj)
         {
-            throw new NotImplementedException();
+            
         }
 
         internal bool CanExecute_ButtonBack_Click(object obj)
         {
             if(App.Container.IsRegistered<MainWindowViewModel>())
                 return App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.CanExecute(null);
-            return false;
+            return true;
         }
         internal void Execute_ButtonBack_Click(object obj)
         {
@@ -85,6 +85,35 @@ namespace CryptoBook.Models
         {
             
         }
+
+        internal bool CanExecute_ButtonDarkThemeClick(object obj)
+        {
+            return false;
+        }
+        internal void Execute_ButtonDarkThemeClick(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ButtonSettingsClick(object obj)
+        {
+            return true;
+        }
+        internal void Execute_ButtonSettingsClick(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool CanExecute_ButtonLightTheme_Click(object obj)
+        {
+            return true;
+        }
+        internal void Execute_ButtonLightTheme_Click(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
 
         internal bool CanExecute_MinButtonClick(object obj)
         {
