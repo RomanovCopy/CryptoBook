@@ -4,16 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:locators="clr-namespace:CryptoBook.Locators"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             DataContext="{x:Static locators:ViewModels.MyFrameViewModel}">
     <Grid>
-        <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
-                NavigationUIVisibility="Hidden" Background="Transparent">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Navigated">
-                    <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+        <Frame x:Name="frame" Content="{Binding Source={x:Static locators:ViewModels.MainWindowViewModel},
+            Path=CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
+            NavigationUIVisibility="Hidden" Background="Transparent">
         </Frame>
     </Grid>
 </UserControl>

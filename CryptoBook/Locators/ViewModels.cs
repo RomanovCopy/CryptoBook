@@ -28,5 +28,7 @@ namespace CryptoBook.Locators
         public static TitleBarViewModel TitleBarViewModel =>
             App.Container.Resolve<ITitleBarViewModel>().As<TitleBarViewModel>();
 
+        public static MyFrameViewModel MyFrameViewModel =>
+            App.Container.Resolve<IMyFrameViewModel>().As<MyFrameViewModel>();
     }
 }

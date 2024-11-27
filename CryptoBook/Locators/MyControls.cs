@@ -14,6 +14,7 @@ namespace CryptoBook.Locators
     {
         public SideMenu SideMenu => App.Container.Resolve<SideMenu>();
         public TitleBar TitleBar => App.Container.Resolve<TitleBar>();
+        public MyFrame MyFrame => App.Container.Resolve<MyFrame>();
 
     }
 }
