@@ -16,10 +16,12 @@
             <Setter Property="FontSize" Value="{Binding Path=MyFontSize, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Foreground" Value="{Binding Path=MyFontColor, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Margin" Value="3"/>
         </Style>
     </UserControl.Resources>
-    <Grid >
+    <Grid Background="{Binding MyBackColor, UpdateSourceTrigger=PropertyChanged}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -38,22 +40,28 @@
             </Button>
             
             <Button x:Name="sideMenuBtn" Style="{StaticResource TitleBarButtonStyle}"
-                    Command="{Binding ToggleMenu_Click, UpdateSourceTrigger=PropertyChanged}">
+                    Command="{Binding ToggleMenu_Click, UpdateSourceTrigger=PropertyChanged}" >
                     <TextBlock Style="{StaticResource icon}" Text="&#xE700;"/>
             </Button>
             
-            <TextBlock x:Name="title" FontWeight="Normal" Text="CryptoBook" Foreground="Yellow"
-                           FontSize="14" VerticalAlignment="Center" Margin="3,0,3,0"/>
+            <TextBlock x:Name="title" FontWeight="Normal" Text="CryptoBook" 
+                       Foreground="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}"
+                       FontSize="{Binding MyFontSize, UpdateSourceTrigger=PropertyChanged}" 
+                       VerticalAlignment="Center" Margin="3"/>
             
         </StackPanel>
         
         <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
             <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch" 
-                       Text="Romanov" Foreground="Blue" FontSize="14" FontWeight="Normal"
-                       FontStyle="Italic"
+                       Text="{Binding MyText, UpdateSourceTrigger=PropertyChanged}" 
+                       Foreground="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" 
+                       FontSize="{Binding MyFontSize, 
+                Converter={x:Static locators:Converters.fontSizeAdjustConverter}, ConverterParameter=-2}" 
+                       FontWeight="Normal" FontStyle="Italic"
                        VerticalAlignment="Center" TextAlignment="Center">
             </TextBlock>
+            
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseLeftButtonDown">
                     <i:InvokeCommandAction Command="{Binding MouseLeftButtonDown, UpdateSourceTrigger=PropertyChanged}"/>
@@ -62,53 +70,39 @@
         </Grid>
         <StackPanel Orientation="Horizontal" Grid.Column="2">
             
-            <Button x:Name="settings" Style="{StaticResource TitleBarButtonStyle}"
+            <Button x:Name="settings" Style="{StaticResource TitleBarButtonStyle}" 
                     Command="{Binding ButtonSettingsClick, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" 
-                           FontSize="15" TextAlignment="Center" Foreground="Blue" 
-                           VerticalAlignment="Center" FontWeight="Normal"/>
+                <TextBlock Style="{StaticResource icon}" Text="&#xE713;"/>
             </Button>
 
             <Button x:Name="darkTheme" Style="{StaticResource TitleBarButtonStyle}" 
                     Command="{Binding ButtonDarkThemeClick, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE708;" FontWeight="Normal"
-                           FontSize="15" TextAlignment="Center" Foreground="Blue" 
-                           VerticalAlignment="Center"/>
+                <TextBlock Style="{StaticResource icon}" Text="&#xE708;"/>
             </Button>
             
             <Button x:Name="lightTheme" Style="{StaticResource TitleBarButtonStyle}"
                     Command="{Binding ButtonLightTheme_Click, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE706;" FontWeight="Normal"
-                           FontSize="15" TextAlignment="Center" Foreground="Blue" 
-                           VerticalAlignment="Center"/>
+                <TextBlock Style="{StaticResource icon}" Text="&#xE706;"/>
             </Button>
 
             <Button x:Name="minBtn" Style="{StaticResource TitleBarButtonStyle}"
                     Command="{Binding MinButtonClick,UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE745;" 
-                           FontWeight="Bold" FontSize="14" TextAlignment="Center" 
-                           Foreground="Blue" VerticalAlignment="Center"/>
+                <TextBlock Style="{StaticResource icon}" Text="&#xE745;"/>
             </Button>
             
             <Button x:Name="maxBtn" Style="{StaticResource TitleBarButtonStyle}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE740;" 
-                           FontWeight="Bold" FontSize="14" TextAlignment="Center" 
-                           Foreground="Blue" VerticalAlignment="Center"/>
+                <TextBlock Style="{StaticResource icon}" Text="&#xE740;"/>
             </Button>
             
             <Button x:Name="toWindow" Style="{StaticResource TitleBarButtonStyle}"
                     Command="{Binding GoToWindow, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE73F;" 
-               FontWeight="Bold" FontSize="14" TextAlignment="Center" 
-               Foreground="Blue" VerticalAlignment="Center"/>
+                <TextBlock Style="{StaticResource icon}" Text="&#xE73F;"/>
 
             </Button>
             
             <Button x:Name="closeBtn" Style="{StaticResource TitleBarButtonStyle}"
                     Command="{Binding CloseButtonClick, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE894;" FontWeight="Bold"
-                           FontSize="14" TextAlignment="Center" Foreground="Blue" 
-                           VerticalAlignment="Center"/>
+                <TextBlock Style="{StaticResource icon}" Text="&#xE894;" FontWeight="Bold"/>
             </Button>
 
         </StackPanel>

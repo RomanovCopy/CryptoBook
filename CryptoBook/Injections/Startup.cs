@@ -36,6 +36,7 @@ namespace CryptoBook.Injections
             //Controls
             builder.RegisterType<SideMenu>().SingleInstance();
             builder.RegisterType<TitleBar>().SingleInstance();
+            builder.RegisterType<MyFrame>().SingleInstance();
 
 
             //ViewModels
@@ -43,12 +44,14 @@ namespace CryptoBook.Injections
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
             builder.RegisterType<SideMenuViewModel>().As<ISideMenuViewModel>().SingleInstance();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().SingleInstance();
+            builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
             builder.RegisterType<ColorToColorConverter>().AsSelf();
             builder.RegisterType<ColumnsWidthConverter>().AsSelf();
             builder.RegisterType<SizeLocationConverter>().AsSelf();
+            builder.RegisterType<FontSizeAdjustConverter>().AsSelf();
 
 
             //Helpers

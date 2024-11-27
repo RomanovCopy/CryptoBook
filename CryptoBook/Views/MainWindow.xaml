@@ -43,6 +43,25 @@
         <Grid HorizontalAlignment="Stretch" DockPanel.Dock="Top">
             <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=TitleBar}"/>
         </Grid>
+        <Grid >
+            <Border Width="150">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-150"/>
+                </Border.RenderTransform>
+                <Grid>
+                    <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
+                </Grid>
+            </Border>
+            <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
+                NavigationUIVisibility="Hidden" Background="Transparent">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Navigated">
+                        <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Frame>
+
+        </Grid>
     </DockPanel>
         <!--<Grid >
             <Grid.RowDefinitions>
@@ -61,11 +80,11 @@
                 <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
                NavigationUIVisibility="Hidden"
                Background="Transparent">
-                    --><!--<i:Interaction.Triggers>
+                    <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Navigated">
                             <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
                         </i:EventTrigger>
-                    </i:Interaction.Triggers>--><!--
+                    </i:Interaction.Triggers>
                 </Frame>
 
             </Grid>

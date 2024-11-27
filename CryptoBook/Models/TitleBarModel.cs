@@ -10,9 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Media = System.Windows.Media;
+
+
 namespace CryptoBook.Models
 {
-    public class TitleBarModel: ViewModelBase
+    internal class TitleBarModel: ViewModelBase
     {
         /// <summary>
         /// окно перемещается
@@ -22,17 +25,30 @@ namespace CryptoBook.Models
         /// <summary>
         /// высота TitleBar
         /// </summary>
-        public double MyFontSize { get => height; set => SetProperty(ref height, value); }
+        internal double MyFontSize { get => height; set => SetProperty(ref height, value); }
         double height;
 
         /// <summary>
         /// цвет шрифта и значков
         /// </summary>
-        public System.Windows.Media.Brush MyFontColor { get => fontColor; set => SetProperty(ref fontColor, value);}
-        System.Windows.Media.Brush fontColor;
+        internal Media.Brush MyFontColor { get => fontColor; set => SetProperty(ref fontColor, value);}
+        Media.Brush fontColor;
+
+        /// <summary>
+        /// цвет фона TitleBar
+        /// </summary>
+        internal Media.Brush MyBackColor { get => myBackColor; set => SetProperty(ref myBackColor, value); }
+        Media.Brush myBackColor;
+
+        /// <summary>
+        /// текст внутри TitleBar
+        /// </summary>
+        internal string MyText { get => myText; set => SetProperty(ref myText, value); }
+        string myText;
 
 
-        public TitleBarModel()
+
+        internal TitleBarModel()
         {
 
         }
@@ -44,7 +60,9 @@ namespace CryptoBook.Models
         internal void Execute_Loaded(object obj)
         {
             MyFontSize = 16;
-            MyFontColor = System.Windows.Media.Brushes.Yellow;
+            MyFontColor = Media.Brushes.Yellow;
+            MyBackColor = Media.Brushes.Gray;
+            MyText = "Romanov";
         }
 
         internal bool CanExecute_MouseLeftButtonDown(object obj)
@@ -78,6 +96,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ButtonBack_Click(object obj)
         {
+            App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.Execute(null);
         }
 
         internal bool CanExecute_ButtonForward_Click(object obj)
@@ -88,7 +107,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ButtonForward_Click(object obj)
         {
-            throw new NotImplementedException();
+            App.Container.Resolve<MainWindowViewModel>().FramelistGoForward.Execute(null);
         }
 
         internal bool CanExecute_ToggleMenu_Click(object obj)
@@ -135,7 +154,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_MinButtonClick(object obj)
         {
-            MyFontColor = System.Windows.Media.Brushes.Green;
         }
 
         internal bool CanExecute_MaxButtonClick(object obj)

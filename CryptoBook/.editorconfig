@@ -1,16 +1,4 @@
 ﻿[*.cs]
 
-# IDE1006: Стили именования
-dotnet_diagnostic.IDE1006.severity = none
-
-# CS8618: Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Рассмотрите возможность добавления модификатора "required" или объявления значения, допускающего значение NULL.
-dotnet_diagnostic.CS8618.severity = none
-
-# CS8600: Преобразование литерала, допускающего значение NULL или возможного значения NULL в тип, не допускающий значение NULL.
-dotnet_diagnostic.CS8600.severity = none
-
 # CS8604: Возможно, аргумент-ссылка, допускающий значение NULL.
 dotnet_diagnostic.CS8604.severity = none
-
-# CsWinRT1028: Class is not marked partial
-dotnet_diagnostic.CsWinRT1028.severity = none

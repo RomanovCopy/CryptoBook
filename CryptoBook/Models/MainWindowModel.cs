@@ -3,6 +3,7 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
+using CryptoBook.Views;
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 namespace CryptoBook.Models
 {
@@ -182,6 +184,42 @@ namespace CryptoBook.Models
                 }
                 Properties.Settings.Default.Save();
             } catch(Exception e) { ErrorWindow(e); }
+        }
+
+
+        private void AnimateMenu(string storyboardKey, Action completedAction)
+        {
+            DependencyObject menuPanel = null;
+            DependencyObject contentPanel = null;
+            System.Windows.Application.Current.MainWindow.Dispatcher.Invoke(() =>
+            {
+                menuPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("MenuPanel");
+                contentPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("ContentPanel");
+            });
+
+            App.Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
+            {
+                menuPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("MenuPanel");
+                contentPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("ContentPanel");
+            });
+
+
+            Storyboard storyboard = ((Storyboard)System.Windows.Application.Current.Resources[storyboardKey]).Clone();
+
+            Storyboard.SetTarget(storyboard.Children[0], menuPanel);
+            Storyboard.SetTargetProperty(storyboard.Children[0], new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
+
+            ThicknessAnimation contentAnimation = (ThicknessAnimation)storyboard.Children[1];
+            Storyboard.SetTarget(contentAnimation, contentPanel);
+            Storyboard.SetTargetProperty(contentAnimation, new PropertyPath("Margin"));
+
+            storyboard.Completed += (s, e) =>
+            {
+                completedAction();
+                storyboard.Completed -= (s, e) => { };
+            };
+
+            storyboard.Begin();
         }
 
     }

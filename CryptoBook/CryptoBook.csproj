@@ -83,7 +83,6 @@
 
   <ItemGroup>
     <Folder Include="Injections\" />
-    <Folder Include="Converters\" />
     <Folder Include="Infrastructure\" />
   </ItemGroup>
 

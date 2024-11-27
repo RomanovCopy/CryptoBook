@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using Media = System.Windows.Media;
+
 namespace CryptoBook.ViewModels
 {
     public class TitleBarViewModel:ViewModelBase, ITitleBarViewModel
@@ -19,10 +21,12 @@ namespace CryptoBook.ViewModels
         private readonly TitleBarModel titleBarModel;
 
         public double MyFontSize => titleBarModel.MyFontSize;
+        public Media.Brush MyFontColor => titleBarModel.MyFontColor;
+        public Media.Brush MyBackColor => titleBarModel.MyBackColor;
+        public string MyText => titleBarModel.MyText;
 
-        public System.Windows.Media.Brush MyFontColor => titleBarModel.MyFontColor;
 
-        
+
 
         public TitleBarViewModel()
         {
