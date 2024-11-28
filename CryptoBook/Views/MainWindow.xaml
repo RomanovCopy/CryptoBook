@@ -41,7 +41,8 @@
     </Window.WindowState>
     <Grid VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Stretch">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=TitleBar}"/>
+            <ContentControl Content="{x:Static locators:MyControls.TitleBar}"/>
+
         </Grid>
         <Grid >
             <Border Width="150">
@@ -49,13 +50,12 @@
                     <TranslateTransform X="-150"/>
                 </Border.RenderTransform>
                 <Grid>
-                    <ContentControl   Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
+                    <ContentControl Content="{x:Static locators:MyControls.SideMenu}"/>
                 </Grid>
             </Border>
             <Border>
                 <Grid>
-                    <ContentControl  Content="{Binding Source={StaticResource mycontrols},Path=MyFrame}"/>
-
+                    <ContentControl Content="{x:Static locators:MyControls.MyFrame}"/>
                 </Grid>
             </Border>
 

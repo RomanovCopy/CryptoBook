@@ -37,8 +37,8 @@ namespace CryptoBook.Models
         WindowState windowState;
 
 
-        internal Page CurrentPage { get => currentPage; set => SetProperty(ref currentPage, value); }
-        Page currentPage;
+        internal object CurrentPage { get => currentPage; set => SetProperty(ref currentPage, value); }
+        object currentPage;
 
         internal ObservableCollection<Page> FrameList { get => frameList; private set => SetProperty(ref frameList, value); }
         ObservableCollection<Page> frameList;
@@ -114,7 +114,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_FramelistGoForward(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_FramelistGoForward(object obj)
         {
@@ -123,20 +123,19 @@ namespace CryptoBook.Models
 
 
 
-        internal void Execute_FramelistGoBack(object obj)
-        {
-            throw new NotImplementedException();
-        }
         internal bool CanExecute_FramelistGoBack(object obj)
         {
-            throw new NotImplementedException();
+            return true;
+        }
+        internal void Execute_FramelistGoBack(object obj)
+        {
         }
 
 
 
         internal bool CanExecute_PageClosed(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_PageClosed(object obj)
         {
@@ -199,45 +198,45 @@ namespace CryptoBook.Models
 
         private void OpenMenu()
         {
-            AnimateMenu("SlideInMenu", () => isMenuOpen = true);
+            //AnimateMenu("SlideInMenu", () => isMenuOpen = true);
         }
 
         private void CloseMenu()
         {
-            AnimateMenu("SlideOutMenu", () => isMenuOpen = false);
+            //AnimateMenu("SlideOutMenu", () => isMenuOpen = false);
         }
 
 
-        private void AnimateMenu(string storyboardKey, Action completedAction)
-        {
-            DependencyObject? menuPanel = null;
-            DependencyObject? contentPanel = null;
+        //private void AnimateMenu(string storyboardKey, Action completedAction)
+        //{
+        //    DependencyObject? menuPanel = null;
+        //    DependencyObject? contentPanel = null;
 
-            App.Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
-            {
-                //menuPanel = (DependencyObject)App.Container.Resolve<SideMenu>();
-                menuPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("MenuPanel");
-                //contentPanel = (DependencyObject)App.Container.Resolve<MyFrame>();
-                contentPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("frame");
-            });
+        //    App.Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
+        //    {
+        //        //menuPanel = (DependencyObject)App.Container.Resolve<SideMenu>();
+        //        menuPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("MenuPanel");
+        //        //contentPanel = (DependencyObject)App.Container.Resolve<MyFrame>();
+        //        contentPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("frame");
+        //    });
 
-            Storyboard storyboard = ((Storyboard)System.Windows.Application.Current.Resources[storyboardKey]).Clone();
+        //    Storyboard storyboard = ((Storyboard)System.Windows.Application.Current.Resources[storyboardKey]).Clone();
 
-            Storyboard.SetTarget(storyboard.Children[0], menuPanel);
-            Storyboard.SetTargetProperty(storyboard.Children[0], new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
+        //    Storyboard.SetTarget(storyboard.Children[0], menuPanel);
+        //    Storyboard.SetTargetProperty(storyboard.Children[0], new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
 
-            ThicknessAnimation contentAnimation = (ThicknessAnimation)storyboard.Children[1];
-            Storyboard.SetTarget(contentAnimation, contentPanel);
-            Storyboard.SetTargetProperty(contentAnimation, new PropertyPath("Margin"));
+        //    ThicknessAnimation contentAnimation = (ThicknessAnimation)storyboard.Children[1];
+        //    Storyboard.SetTarget(contentAnimation, contentPanel);
+        //    Storyboard.SetTargetProperty(contentAnimation, new PropertyPath("Margin"));
 
-            storyboard.Completed += (s, e) =>
-            {
-                completedAction();
-                storyboard.Completed -= (s, e) => { };
-            };
+        //    storyboard.Completed += (s, e) =>
+        //    {
+        //        completedAction();
+        //        storyboard.Completed -= (s, e) => { };
+        //    };
 
-            storyboard.Begin();
-        }
+        //    storyboard.Begin();
+        //}
 
     }
 }

@@ -9,8 +9,6 @@
              mc:Ignorable="d"
              DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
     <Grid>
-        <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
-            NavigationUIVisibility="Hidden" Background="Transparent">
-        </Frame>
+        <Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
     </Grid>
 </UserControl>

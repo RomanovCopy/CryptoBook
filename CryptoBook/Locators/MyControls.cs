@@ -12,9 +12,9 @@ namespace CryptoBook.Locators
 {
     public class MyControls
     {
-        public SideMenu SideMenu => App.Container.Resolve<SideMenu>();
-        public TitleBar TitleBar => App.Container.Resolve<TitleBar>();
-        public MyFrame MyFrame => App.Container.Resolve<MyFrame>();
+        public static SideMenu SideMenu => App.Container.Resolve<SideMenu>();
+        public static TitleBar TitleBar => App.Container.Resolve<TitleBar>();
+        public static MyFrame MyFrame => App.Container.Resolve<MyFrame>();
 
     }
 }
