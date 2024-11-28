@@ -36,7 +36,7 @@ namespace CryptoBook.Injections
             //Controls
             builder.RegisterType<SideMenu>().SingleInstance();
             builder.RegisterType<TitleBar>().SingleInstance();
-            builder.RegisterType<MyFrame>().SingleInstance();
+            //builder.RegisterType<MyFrame>().SingleInstance();
 
 
             //ViewModels

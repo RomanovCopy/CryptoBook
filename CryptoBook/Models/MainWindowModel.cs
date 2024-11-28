@@ -2,6 +2,7 @@
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.MyControls;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
@@ -21,6 +22,8 @@ namespace CryptoBook.Models
     {
 
         private readonly Languages languages;
+
+        private bool isMenuOpen { get; set; }
 
         internal double WindowWidth { get => windowWidth; set =>SetProperty(ref windowWidth, value); }
         double windowWidth;
@@ -68,6 +71,7 @@ namespace CryptoBook.Models
             //восстанавливаем состояние окна
             WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized : 
                 WindowState.Minimized;
+            isMenuOpen = false;
         }
 
 
@@ -79,12 +83,18 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleMenuClick(object obj)
         {
-            
+            if(isMenuOpen)
+            {
+                CloseMenu();
+            } else
+            {
+                OpenMenu();
+            }
         }
 
         internal bool CanExecute_FrameListAddPage(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_FrameListAddPage(object obj)
         {
@@ -187,22 +197,29 @@ namespace CryptoBook.Models
         }
 
 
+        private void OpenMenu()
+        {
+            AnimateMenu("SlideInMenu", () => isMenuOpen = true);
+        }
+
+        private void CloseMenu()
+        {
+            AnimateMenu("SlideOutMenu", () => isMenuOpen = false);
+        }
+
+
         private void AnimateMenu(string storyboardKey, Action completedAction)
         {
-            DependencyObject menuPanel = null;
-            DependencyObject contentPanel = null;
-            System.Windows.Application.Current.MainWindow.Dispatcher.Invoke(() =>
-            {
-                menuPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("MenuPanel");
-                contentPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("ContentPanel");
-            });
+            DependencyObject? menuPanel = null;
+            DependencyObject? contentPanel = null;
 
             App.Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
             {
+                //menuPanel = (DependencyObject)App.Container.Resolve<SideMenu>();
                 menuPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("MenuPanel");
-                contentPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("ContentPanel");
+                //contentPanel = (DependencyObject)App.Container.Resolve<MyFrame>();
+                contentPanel = (DependencyObject)System.Windows.Application.Current.MainWindow.FindName("frame");
             });
-
 
             Storyboard storyboard = ((Storyboard)System.Windows.Application.Current.Resources[storyboardKey]).Clone();
 

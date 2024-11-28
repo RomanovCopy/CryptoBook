@@ -39,8 +39,8 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <DockPanel VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Stretch">
-        <Grid HorizontalAlignment="Stretch" DockPanel.Dock="Top">
+    <Grid VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Stretch">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=TitleBar}"/>
         </Grid>
         <Grid >
@@ -49,46 +49,18 @@
                     <TranslateTransform X="-150"/>
                 </Border.RenderTransform>
                 <Grid>
-                    <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
+                    <ContentControl   Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
                 </Grid>
             </Border>
-            <!--<Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
-                NavigationUIVisibility="Hidden" Background="Transparent">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Navigated">
-                        <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Frame>-->
+            <Border>
+                <Grid>
+                    <ContentControl  Content="{Binding Source={StaticResource mycontrols},Path=MyFrame}"/>
+
+                </Grid>
+            </Border>
 
         </Grid>
-    </DockPanel>
-        <!--<Grid >
-            <Grid.RowDefinitions>
-                <RowDefinition x:Name="forFrame" Height="*"/>
-                <RowDefinition x:Name="forStatusbar" Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Border Width="150">
-                    <Border.RenderTransform>
-                        <TranslateTransform X="-150"/>
-                    </Border.RenderTransform>
-                    <Grid>
-                        <ContentControl Content="{Binding Source={StaticResource mycontrols}, Path=SideMenu}"/>
-                    </Grid>
-                </Border>
-                <Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
-               NavigationUIVisibility="Hidden"
-               Background="Transparent">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Navigated">
-                            <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Frame>
-
-            </Grid>
-        </Grid>-->
+    </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{ Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>

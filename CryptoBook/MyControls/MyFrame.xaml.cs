@@ -13,12 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using controls = System.Windows.Controls;
+
 namespace CryptoBook.MyControls
 {
     /// <summary>
     /// Логика взаимодействия для MyFrame.xaml
     /// </summary>
-    public partial class MyFrame : UserControl
+    public partial class MyFrame : controls.UserControl
     {
         public MyFrame()
         {

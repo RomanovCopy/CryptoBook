@@ -116,7 +116,11 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleMenu_Click(object obj)
         {
-            
+            var container = (MainWindowViewModel)App.Container.Resolve<MainWindow>().DataContext;
+            if(container!=null && container.ToggleMenuClick.CanExecute(null))
+            {
+                container.ToggleMenuClick.Execute(null);
+            }
         }
 
         internal bool CanExecute_ButtonDarkThemeClick(object obj)
