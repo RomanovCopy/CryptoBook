@@ -14,7 +14,7 @@ namespace CryptoBook.Interfaces
 
         public static Action Ready { get; set; }
         public ICommand Loaded { get; }
-        public ICommand Closed { get; }
+        public ICommand Close { get; }
         public ICommand Closing { get; }
     }
 }

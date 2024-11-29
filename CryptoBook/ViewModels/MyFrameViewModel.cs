@@ -27,7 +27,7 @@ namespace CryptoBook.ViewModels
 
         public ICommand Loaded => throw new NotImplementedException();
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Close => throw new NotImplementedException();
 
         public ICommand Closing => throw new NotImplementedException();
     }

@@ -106,5 +106,41 @@ namespace CryptoBook.Properties {
                 this["WindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        public double TitleBarMyFontSize {
+            get {
+                return ((double)(this["TitleBarMyFontSize"]));
+            }
+            set {
+                this["TitleBarMyFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public sbyte Параметр {
+            get {
+                return ((sbyte)(this["Параметр"]));
+            }
+            set {
+                this["Параметр"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TitleBarMyFontColor {
+            get {
+                return ((string)(this["TitleBarMyFontColor"]));
+            }
+            set {
+                this["TitleBarMyFontColor"] = value;
+            }
+        }
     }
 }

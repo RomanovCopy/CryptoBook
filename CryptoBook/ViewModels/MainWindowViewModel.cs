@@ -57,10 +57,13 @@ namespace CryptoBook.ViewModels
         public ICommand PageClosed=>pageClosed ??= new RelayCommand(mainWindowModel.Execute_PageClosed, mainWindowModel.CanExecute_PageClosed);
         RelayCommand pageClosed;
 
+        public ICommand WindowClose => windowClose ??= new RelayCommand(mainWindowModel.Execute_WindowClose, mainWindowModel.CanExecute_WindowClose);
+        RelayCommand windowClose;
+
         public ICommand Loaded=>loaded ??= new RelayCommand(mainWindowModel.Execute_Loaded, mainWindowModel.CanExecute_Loaded);
         RelayCommand loaded;
 
-        public ICommand Closed => closed ??= new RelayCommand(mainWindowModel.Execute_Closed, mainWindowModel.CanExecute_Closed);
+        public ICommand Close => closed ??= new RelayCommand(mainWindowModel.Execute_Closed, mainWindowModel.CanExecute_Closed);
         RelayCommand closed;
 
         public ICommand Closing => closing ??= new RelayCommand(mainWindowModel.Execute_Closing, mainWindowModel.CanExecute_Closing);

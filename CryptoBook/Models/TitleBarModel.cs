@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 using Media = System.Windows.Media;
 
@@ -59,8 +60,8 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object obj)
         {
-            MyFontSize = 16;
-            MyFontColor = Media.Brushes.Yellow;
+            MyFontSize = Properties.Settings.Default.TitleBarMyFontSize;
+            MyFontColor = Properties.Settings.Default.Ti
             MyBackColor = Media.Brushes.Gray;
             MyText = "Romanov";
         }
@@ -166,25 +167,30 @@ namespace CryptoBook.Models
         }
         internal void Execute_MaxButtonClick(object obj)
         {
-            MyFontSize -= 1;
         }
 
         internal bool CanExecute_CloseButtonClick(object obj)
         {
+            if(App.Container.IsRegisteredWithName<MainWindowViewModel>("MainWindowViewModel"))
+                return App.Container.Resolve<MainWindowViewModel>().WindowClose.CanExecute(null);
             return true;
         }
         internal void Execute_CloseButtonClick(object obj)
         {
-            MyFontSize += 1;
+            System.Windows.Application.Current.MainWindow.Close();
         }
 
-        internal bool CanExecute_Closed(object obj)
+        internal bool CanExecute_Close(object obj)
         {
             return true;
         }
-        internal void Execute_Closed(object obj)
+
+        internal void Execute_Close(object obj)
         {
-            throw new NotImplementedException();
+            string serializedBrush = System.Windows.Markup.XamlWriter.Save(MyFontColor);
+            Properties.Settings.Default.TitleBarMyFontColor = serializedBrush;
+            Properties.Settings.Default.Save();
+
         }
 
         internal bool CanExecute_GoToWindow(object obj)

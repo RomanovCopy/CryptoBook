@@ -39,26 +39,23 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <Grid VerticalAlignment="Top" Background="Transparent" HorizontalAlignment="Stretch">
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <ContentControl Content="{x:Static locators:MyControls.TitleBar}"/>
-
-        </Grid>
-        <Grid >
+    <Grid VerticalAlignment="Stretch" Background="Transparent" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="forTitleBar" Height="Auto"/>
+            <RowDefinition x:Name="forMyFrame" Height="*"/>
+            <RowDefinition x:Name="forStatusBar" Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
+        <Grid VerticalAlignment="Stretch" Grid.Row="1" HorizontalAlignment="Stretch">
             <Border Width="150">
                 <Border.RenderTransform>
                     <TranslateTransform X="-150"/>
                 </Border.RenderTransform>
-                <Grid>
-                    <ContentControl Content="{x:Static locators:MyControls.SideMenu}"/>
-                </Grid>
+                <ContentControl Content="{x:Static locators:MyControls.SideMenu}"/>
             </Border>
-            <Border>
-                <Grid>
-                    <ContentControl Content="{x:Static locators:MyControls.MyFrame}"/>
-                </Grid>
+            <Border >
+                <ContentControl Content="{x:Static locators:MyControls.MyFrame}"/>
             </Border>
-
         </Grid>
     </Grid>
     <i:Interaction.Triggers>

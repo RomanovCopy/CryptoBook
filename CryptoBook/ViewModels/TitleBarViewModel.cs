@@ -78,8 +78,8 @@ namespace CryptoBook.ViewModels
         public ICommand CloseButtonClick => closeButtonClick ??= new RelayCommand(titleBarModel.Execute_CloseButtonClick, titleBarModel.CanExecute_CloseButtonClick);
         RelayCommand closeButtonClick;
 
-        public ICommand Closed => closed ??= new RelayCommand(titleBarModel.Execute_Closed, titleBarModel.CanExecute_Closed);
-        RelayCommand closed;
+        public ICommand Close => close ??= new RelayCommand(titleBarModel.Execute_Close, titleBarModel.CanExecute_Close);
+        RelayCommand close;
 
         public ICommand Closing => closing ??= new RelayCommand(titleBarModel.Execute_Closing, titleBarModel.CanExecute_Closing);
         RelayCommand closing;

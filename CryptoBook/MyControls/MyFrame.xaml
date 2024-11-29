@@ -8,7 +8,7 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d"
              DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
-    <Grid>
+    <Grid Background="Gray">
         <Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
     </Grid>
 </UserControl>
