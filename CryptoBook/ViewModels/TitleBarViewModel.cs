@@ -21,7 +21,10 @@ namespace CryptoBook.ViewModels
         private readonly TitleBarModel titleBarModel;
 
         public double MyFontSize => titleBarModel.MyFontSize;
-        public Media.Brush MyFontColor => titleBarModel.MyFontColor;
+
+        public string MyFontColor => titleBarModel.MyFontColor;
+
+        //public Media.Brush MyFontColor => titleBarModel.MyFontColor;
         public Media.Brush MyBackColor => titleBarModel.MyBackColor;
         public string MyText => titleBarModel.MyText;
 

@@ -27,6 +27,7 @@ namespace CryptoBook.Locators
 
         public static SizeLocationConverter sizeLocationConverter => App.Container.Resolve<SizeLocationConverter>();
         public static FontSizeAdjustConverter fontSizeAdjustConverter => App.Container.Resolve<FontSizeAdjustConverter>();
+        public static MediBrushSerializeConverter mediBrushSerializeConverter => App.Container.Resolve<MediBrushSerializeConverter>();
 
 
         public Languages languages => App.Container.Resolve<Languages>();

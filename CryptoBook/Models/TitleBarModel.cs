@@ -32,8 +32,10 @@ namespace CryptoBook.Models
         /// <summary>
         /// цвет шрифта и значков
         /// </summary>
-        internal Media.Brush MyFontColor { get => fontColor; set => SetProperty(ref fontColor, value);}
-        Media.Brush fontColor;
+        internal string MyFontColor { get => myFontColor; set => SetProperty(ref myFontColor, value); }
+        string myFontColor;
+        //internal Media.Brush MyFontColor { get => fontColor; set => SetProperty(ref fontColor, value);}
+        //Media.Brush fontColor;
 
         /// <summary>
         /// цвет фона TitleBar
@@ -61,7 +63,7 @@ namespace CryptoBook.Models
         internal void Execute_Loaded(object obj)
         {
             MyFontSize = Properties.Settings.Default.TitleBarMyFontSize;
-            MyFontColor = Properties.Settings.Default.Ti
+            MyFontColor = (string)App.Container.Resolve<Converters.MediBrushSerializeConverter>().ConvertBack(System.Windows.Media.Brushes.Black, typeof(string), null, null);
             MyBackColor = Media.Brushes.Gray;
             MyText = "Romanov";
         }

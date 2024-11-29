@@ -14,7 +14,8 @@
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontSize" Value="{Binding Path=MyFontSize, UpdateSourceTrigger=PropertyChanged}"/>
-            <Setter Property="Foreground" Value="{Binding Path=MyFontColor, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Foreground" Value="{Binding Path=MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
+                UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Background" Value="Transparent"/>
