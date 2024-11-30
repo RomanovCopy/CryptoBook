@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Converters;
 using CryptoBook.Infrastructure;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
@@ -23,6 +24,8 @@ namespace CryptoBook.Models
         /// </summary>
         private bool _isDragging;
 
+        private readonly MainWindowViewModel mainWindowViewModel;
+
         /// <summary>
         /// высота TitleBar
         /// </summary>
@@ -34,14 +37,12 @@ namespace CryptoBook.Models
         /// </summary>
         internal string MyFontColor { get => myFontColor; set => SetProperty(ref myFontColor, value); }
         string myFontColor;
-        //internal Media.Brush MyFontColor { get => fontColor; set => SetProperty(ref fontColor, value);}
-        //Media.Brush fontColor;
 
         /// <summary>
         /// цвет фона TitleBar
         /// </summary>
-        internal Media.Brush MyBackColor { get => myBackColor; set => SetProperty(ref myBackColor, value); }
-        Media.Brush myBackColor;
+        internal string MyBackColor { get => myBackColor; set => SetProperty(ref myBackColor, value); }
+        string myBackColor;
 
         /// <summary>
         /// текст внутри TitleBar
@@ -49,30 +50,37 @@ namespace CryptoBook.Models
         internal string MyText { get => myText; set => SetProperty(ref myText, value); }
         string myText;
 
-
-
         internal TitleBarModel()
         {
-
+            mainWindowViewModel = (MainWindowViewModel)System.Windows.Application.Current.MainWindow.DataContext;
         }
 
-        internal bool CanExecute_Loaded(object obj)
+        internal bool CanExecute_Loaded(object? obj)
         {
             return true;
         }
-        internal void Execute_Loaded(object obj)
+        internal void Execute_Loaded(object? obj)
         {
             MyFontSize = Properties.Settings.Default.TitleBarMyFontSize;
-            MyFontColor = (string)App.Container.Resolve<Converters.MediBrushSerializeConverter>().ConvertBack(System.Windows.Media.Brushes.Black, typeof(string), null, null);
-            MyBackColor = Media.Brushes.Gray;
+            MyFontColor = Properties.Settings.Default.TitleBarMyFontColor;
+            MyBackColor = Properties.Settings.Default.TitleBarMyBackColor;
             MyText = "Romanov";
         }
 
-        internal bool CanExecute_MouseLeftButtonDown(object obj)
+        internal bool CanExecute_TitleBarDoubleClick(object? obj)
+        {
+            return CanExecute_MaxButtonClick(null);
+        }
+        internal void Execute_TitleBarDoubleClick(object? obj)
+        {
+            Execute_MaxButtonClick(null);
+        }
+
+        internal bool CanExecute_MouseLeftButtonDown(object? obj)
         {
             return true;
         }
-        internal void Execute_MouseLeftButtonDown(object obj)
+        internal void Execute_MouseLeftButtonDown(object? obj)
         {
             if(!_isDragging)
             {
@@ -82,133 +90,122 @@ namespace CryptoBook.Models
             }
         }
 
-        internal bool CanExecute_TitleBarMouseMove(object obj)
+        internal bool CanExecute_TitleBarMouseMove(object? obj)
         {
             return true;
         }
-        internal void Execute_TitleBarMouseMove(object obj)
+        internal void Execute_TitleBarMouseMove(object? obj)
         {
-            
+
         }
 
-        internal bool CanExecute_ButtonBack_Click(object obj)
+        internal bool CanExecute_ButtonBack_Click(object? obj)
         {
-            if(App.Container.IsRegistered<MainWindowViewModel>())
-                return App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.CanExecute(null);
-            return false;
+
+            return mainWindowViewModel.FramelistGoBack.CanExecute(null);
         }
-        internal void Execute_ButtonBack_Click(object obj)
+        internal void Execute_ButtonBack_Click(object? obj)
         {
-            App.Container.Resolve<MainWindowViewModel>().FramelistGoBack.Execute(null);
+            mainWindowViewModel.FramelistGoBack.Execute(null);
         }
 
-        internal bool CanExecute_ButtonForward_Click(object obj)
+        internal bool CanExecute_ButtonForward_Click(object? obj)
         {
-            if(App.Container.IsRegistered<MainWindowViewModel>())
-                return App.Container.Resolve<MainWindowViewModel>().FramelistGoForward.CanExecute(null);
-            return false;
+            return mainWindowViewModel.FramelistGoForward.CanExecute(null);
         }
-        internal void Execute_ButtonForward_Click(object obj)
+        internal void Execute_ButtonForward_Click(object? obj)
         {
-            App.Container.Resolve<MainWindowViewModel>().FramelistGoForward.Execute(null);
+            mainWindowViewModel.FramelistGoForward.Execute(null);
         }
 
-        internal bool CanExecute_ToggleMenu_Click(object obj)
+        internal bool CanExecute_ToggleMenu_Click(object? obj)
         {
             return true;
         }
-        internal void Execute_ToggleMenu_Click(object obj)
+        internal void Execute_ToggleMenu_Click(object? obj)
         {
-            var container = (MainWindowViewModel)App.Container.Resolve<MainWindow>().DataContext;
-            if(container!=null && container.ToggleMenuClick.CanExecute(null))
-            {
-                container.ToggleMenuClick.Execute(null);
-            }
+            mainWindowViewModel.ToggleMenuClick.Execute(null);
         }
 
-        internal bool CanExecute_ButtonDarkThemeClick(object obj)
+        internal bool CanExecute_ButtonDarkThemeClick(object? obj)
         {
             return false;
         }
-        internal void Execute_ButtonDarkThemeClick(object obj)
+        internal void Execute_ButtonDarkThemeClick(object? obj)
         {
-            throw new NotImplementedException();
         }
 
 
-        internal bool CanExecute_ButtonSettingsClick(object obj)
+        internal bool CanExecute_ButtonSettingsClick(object? obj)
         {
             return true;
         }
-        internal void Execute_ButtonSettingsClick(object obj)
+        internal void Execute_ButtonSettingsClick(object? obj)
         {
-            throw new NotImplementedException();
         }
 
-        internal bool CanExecute_ButtonLightTheme_Click(object obj)
+        internal bool CanExecute_ButtonLightTheme_Click(object? obj)
         {
             return true;
         }
-        internal void Execute_ButtonLightTheme_Click(object obj)
+        internal void Execute_ButtonLightTheme_Click(object? obj)
         {
-            throw new NotImplementedException();
         }
 
 
-        internal bool CanExecute_MinButtonClick(object obj)
+        internal bool CanExecute_MinButtonClick(object? obj)
+        {
+            return mainWindowViewModel.WindowState != System.Windows.WindowState.Minimized;
+        }
+        internal void Execute_MinButtonClick(object? obj)
+        {
+            mainWindowViewModel.WindowState = System.Windows.WindowState.Minimized;
+        }
+
+        internal bool CanExecute_MaxButtonClick(object? obj)
+        {
+            return mainWindowViewModel.WindowState != System.Windows.WindowState.Maximized;
+        }
+        internal void Execute_MaxButtonClick(object? obj)
+        {
+            mainWindowViewModel.WindowState = System.Windows.WindowState.Maximized;
+        }
+
+        internal bool CanExecute_CloseButtonClick(object? obj)
+        {
+            return mainWindowViewModel.WindowClose.CanExecute(null);
+        }
+        internal void Execute_CloseButtonClick(object? obj)
+        {
+            Execute_Close(null);
+        }
+
+        internal bool CanExecute_Close(object? obj)
         {
             return true;
         }
-        internal void Execute_MinButtonClick(object obj)
+        internal void Execute_Close(object? obj)
         {
-        }
-
-        internal bool CanExecute_MaxButtonClick(object obj)
-        {
-            return true;
-        }
-        internal void Execute_MaxButtonClick(object obj)
-        {
-        }
-
-        internal bool CanExecute_CloseButtonClick(object obj)
-        {
-            if(App.Container.IsRegisteredWithName<MainWindowViewModel>("MainWindowViewModel"))
-                return App.Container.Resolve<MainWindowViewModel>().WindowClose.CanExecute(null);
-            return true;
-        }
-        internal void Execute_CloseButtonClick(object obj)
-        {
-            System.Windows.Application.Current.MainWindow.Close();
-        }
-
-        internal bool CanExecute_Close(object obj)
-        {
-            return true;
-        }
-
-        internal void Execute_Close(object obj)
-        {
-            string serializedBrush = System.Windows.Markup.XamlWriter.Save(MyFontColor);
-            Properties.Settings.Default.TitleBarMyFontColor = serializedBrush;
+            Properties.Settings.Default.TitleBarMyFontColor = MyFontColor;
+            Properties.Settings.Default.TitleBarMyBackColor = MyBackColor;
             Properties.Settings.Default.Save();
-
+            mainWindowViewModel.WindowClose.Execute(null);
         }
 
-        internal bool CanExecute_GoToWindow(object obj)
+        internal bool CanExecute_GoToWindow(object? obj)
+        {
+            return mainWindowViewModel.WindowState != System.Windows.WindowState.Normal;
+        }
+        internal void Execute_GoToWindow(object? obj)
+        {
+            mainWindowViewModel.WindowState = System.Windows.WindowState.Normal;
+        }
+
+        internal bool CanExecute_Closing(object? obj)
         {
             return false;
         }
-        internal void Execute_GoToWindow(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal bool CanExecute_Closing(object obj)
-        {
-            return true;
-        }
-        internal void Execute_Closing(object obj)
+        internal void Execute_Closing(object? obj)
         {
             throw new NotImplementedException();
         }

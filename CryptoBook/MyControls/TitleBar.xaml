@@ -15,14 +15,15 @@
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontSize" Value="{Binding Path=MyFontSize, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Foreground" Value="{Binding Path=MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
-                UpdateSourceTrigger=PropertyChanged}"/>
+                UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Margin" Value="3"/>
         </Style>
     </UserControl.Resources>
-    <Grid Background="{Binding MyBackColor, UpdateSourceTrigger=PropertyChanged}">
+    <Grid Background="{Binding MyBackColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
+        UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -46,23 +47,29 @@
             </Button>
             
             <TextBlock x:Name="title" FontWeight="Normal" Text="CryptoBook" 
-                       Foreground="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}"
+                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
+                        UpdateSourceTrigger=PropertyChanged}"
                        FontSize="{Binding MyFontSize, UpdateSourceTrigger=PropertyChanged}" 
                        VerticalAlignment="Center" Margin="3"/>
             
         </StackPanel>
         
-        <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
-            <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch" 
+            <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch"
                        Text="{Binding MyText, UpdateSourceTrigger=PropertyChanged}" 
-                       Foreground="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" 
+                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
+                UpdateSourceTrigger=PropertyChanged}" 
                        FontSize="{Binding MyFontSize, 
                 Converter={x:Static locators:Converters.fontSizeAdjustConverter}, ConverterParameter=-2}" 
                        FontWeight="Normal" FontStyle="Italic"
                        VerticalAlignment="Center" TextAlignment="Center">
+                
             </TextBlock>
-            
+            <Grid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick"
+                      Command="{Binding TitleBarDoubleClick, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid.InputBindings>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseLeftButtonDown">
                     <i:InvokeCommandAction Command="{Binding MouseLeftButtonDown, UpdateSourceTrigger=PropertyChanged}"/>
@@ -91,7 +98,8 @@
                 <TextBlock Style="{StaticResource icon}" Text="&#xE745;"/>
             </Button>
             
-            <Button x:Name="maxBtn" Style="{StaticResource TitleBarButtonStyle}">
+            <Button x:Name="maxBtn" Style="{StaticResource TitleBarButtonStyle}"
+                    Command="{Binding MaxButtonClick, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE740;"/>
             </Button>
             

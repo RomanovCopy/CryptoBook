@@ -22,7 +22,7 @@ namespace CryptoBook.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             object result = DependencyProperty.UnsetValue;
-            if(value is string str && targetType == typeof(System.Windows.Media.Brush))
+            if(value is string str && !string.IsNullOrWhiteSpace(str) && targetType == typeof(System.Windows.Media.Brush))
             {
                 var stringReader = new System.IO.StringReader(str);
                 var xmlReader = System.Xml.XmlReader.Create(stringReader);

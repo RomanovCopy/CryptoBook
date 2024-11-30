@@ -10,6 +10,10 @@ namespace CryptoBook.Interfaces
     public interface ITitleBarViewModel:IViewModel
     {
         /// <summary>
+        /// двойной клик по TitleBar
+        /// </summary>
+        public ICommand TitleBarDoubleClick { get; }
+        /// <summary>
         /// перемещение окна при зажатии MouseLeftButton над TitleBar
         /// </summary>
         public ICommand MouseLeftButtonDown { get; }

@@ -21,11 +21,8 @@ namespace CryptoBook.ViewModels
         private readonly TitleBarModel titleBarModel;
 
         public double MyFontSize => titleBarModel.MyFontSize;
-
-        public string MyFontColor => titleBarModel.MyFontColor;
-
-        //public Media.Brush MyFontColor => titleBarModel.MyFontColor;
-        public Media.Brush MyBackColor => titleBarModel.MyBackColor;
+        public string MyFontColor { get => titleBarModel.MyFontColor; set => titleBarModel.MyBackColor = value; }
+        public string MyBackColor { get => titleBarModel.MyBackColor; set => titleBarModel.MyBackColor = value; }
         public string MyText => titleBarModel.MyText;
 
 
@@ -48,6 +45,9 @@ namespace CryptoBook.ViewModels
         public ICommand MouseLeftButtonDown => 
             mouseLeftButtonDown ??= new RelayCommand(titleBarModel.Execute_MouseLeftButtonDown, titleBarModel.CanExecute_MouseLeftButtonDown);
         RelayCommand mouseLeftButtonDown;
+
+        public ICommand TitleBarDoubleClick => titleBarDoubleClick ??= new RelayCommand(titleBarModel.Execute_TitleBarDoubleClick, titleBarModel.CanExecute_TitleBarDoubleClick);
+        RelayCommand titleBarDoubleClick;
 
         public ICommand TitleBarMouseMove => titleBarMouseMove ??= new RelayCommand(titleBarModel.Execute_TitleBarMouseMove, titleBarModel.CanExecute_TitleBarMouseMove);
         RelayCommand titleBarMouseMove;

@@ -37,8 +37,8 @@ namespace CryptoBook.Models
         WindowState windowState;
 
 
-        internal object CurrentPage { get => currentPage; set => SetProperty(ref currentPage, value); }
-        object currentPage;
+        internal Page CurrentPage { get => currentPage; set => SetProperty(ref currentPage, value); }
+        Page currentPage;
 
         internal ObservableCollection<Page> FrameList { get => frameList; private set => SetProperty(ref frameList, value); }
         ObservableCollection<Page> frameList;
@@ -114,7 +114,10 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_FramelistGoForward(object obj)
         {
-            return true;
+            if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) < FrameList.Count - 1)
+                return true;
+            else
+                return false;
         }
         internal void Execute_FramelistGoForward(object obj)
         {
@@ -125,7 +128,10 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_FramelistGoBack(object obj)
         {
-            return true;
+            if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) > 0)
+                return true;
+            else
+                return false;
         }
         internal void Execute_FramelistGoBack(object obj)
         {
@@ -184,7 +190,6 @@ namespace CryptoBook.Models
         {
             try
             {
-                App.Container.Resolve<TitleBarViewModel>().Close.Execute(null);
                 //размеры и положение окна
                 if(WindowState.ToString() == "Normal")
                 {
