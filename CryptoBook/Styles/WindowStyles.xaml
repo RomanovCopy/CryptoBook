@@ -15,8 +15,6 @@
 
 
     <Style x:Key="VS2012WindowStyle" TargetType="{x:Type Window}">
-        <!--<Setter Property="AllowsTransparency" Value="False" />
-        <Setter Property="WindowStyle" Value="None" />-->
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
         <Setter Property="Template">

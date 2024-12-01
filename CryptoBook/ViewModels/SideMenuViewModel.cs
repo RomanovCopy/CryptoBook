@@ -1,5 +1,6 @@
 ﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Models;
 
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,13 @@ namespace CryptoBook.ViewModels
 {
     public class SideMenuViewModel:ViewModelBase, ISideMenuViewModel
     {
+
+        private readonly SideMenuModel sideMenuModel;
+
         public SideMenuViewModel()
         {
+            sideMenuModel = new();
+            sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
         public ICommand Loaded => throw new NotImplementedException();

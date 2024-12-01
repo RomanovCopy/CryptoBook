@@ -8,6 +8,19 @@
              mc:Ignorable="d" 
              DataContext="{x:Static locators:ViewModels.SideMenuViewModel}">
     <Grid>
-            
+        <Border Background="#F0F0F0" CornerRadius="10" Margin="10">
+            <TreeView ItemsSource="{Binding MenuItems}"
+                  Background="Transparent"
+                  BorderThickness="0">
+                <TreeView.ItemContainerStyle>
+                    <StaticResource ResourceKey="TreeViewItemStyle"/>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <ContentPresenter/>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </Border>
     </Grid>
 </UserControl>
