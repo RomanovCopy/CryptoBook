@@ -39,23 +39,26 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <Grid VerticalAlignment="Stretch" Background="Transparent" HorizontalAlignment="Stretch">
+    <Grid VerticalAlignment="Stretch" Background="Purple" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="forTitleBar" Height="Auto"/>
             <RowDefinition x:Name="forMyFrame" Height="*"/>
             <RowDefinition x:Name="forStatusBar" Height="Auto"/>
         </Grid.RowDefinitions>
         <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
-        <Grid VerticalAlignment="Stretch" Grid.Row="1" HorizontalAlignment="Stretch">
-            <Border Width="150">
-                <Border.RenderTransform>
-                    <TranslateTransform X="-150"/>
-                </Border.RenderTransform>
-                <ContentControl Content="{x:Static locators:MyControls.SideMenu}"/>
-            </Border>
-            <Border >
-                <ContentControl Content="{x:Static locators:MyControls.MyFrame}"/>
-            </Border>
+        <Grid VerticalAlignment="Stretch" Grid.Row="1" HorizontalAlignment="Stretch" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Content="{x:Static locators:MyControls.SideMenu}" Background="Fuchsia" Grid.Column="0">
+                        <ContentControl.RenderTransform>
+                            <TranslateTransform X="-150"/>
+                        </ContentControl.RenderTransform>
+                    </ContentControl>
+                <ContentControl Content="{x:Static locators:MyControls.MyFrame}" Grid.Column="1" Margin="0"/>
+            </Grid>
         </Grid>
     </Grid>
     <i:Interaction.Triggers>

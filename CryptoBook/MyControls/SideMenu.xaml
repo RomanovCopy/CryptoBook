@@ -7,10 +7,10 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d" 
              DataContext="{x:Static locators:ViewModels.SideMenuViewModel}">
-    <Grid>
-        <Border Background="#F0F0F0" CornerRadius="10" Margin="10">
+    <Grid Background="Green">
+        <Border Background="Blue" CornerRadius="10">
             <TreeView ItemsSource="{Binding MenuItems}"
-                  Background="Transparent"
+                  Background="Red"
                   BorderThickness="0">
                 <TreeView.ItemContainerStyle>
                     <StaticResource ResourceKey="TreeViewItemStyle"/>
