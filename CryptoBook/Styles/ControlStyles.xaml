@@ -8,25 +8,29 @@
                 <ControlTemplate TargetType="TreeViewItem">
                     <StackPanel>
                         <Border x:Name="Bd" 
-                                    Background="Transparent"
-                                    CornerRadius="5"
-                                    Margin="2">
+                                    Background="Green"
+                                    CornerRadius="2"
+                                    BorderThickness="1"
+                                    BorderBrush="Black"
+                                    Margin="5">
                             <Grid>
-                                <Button Command="{Binding Command}"
+                                <Button
                                             Background="Transparent"
                                             BorderThickness="0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Icon}" 
+                                        <TextBlock Text="{Binding Icon,UpdateSourceTrigger=PropertyChanged}" 
                                                      Margin="5,0,10,0"
                                                      FontSize="16"/>
-                                        <TextBlock Text="{Binding Name}" 
-                                                     VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" 
+                                                   Foreground="Black"
+                                                     VerticalAlignment="Center"
+                                                   FontSize="16"/>
                                     </StackPanel>
                                 </Button>
                             </Grid>
                         </Border>
-                        <ItemsPresenter x:Name="ItemsHost" 
-                                          Margin="20,0,0,0"/>
+                        <!--<ItemsPresenter x:Name="ItemsHost" 
+                                          Margin="20,0,0,0"/>-->
                     </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">

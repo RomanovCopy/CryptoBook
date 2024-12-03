@@ -17,7 +17,7 @@ namespace CryptoBook.ViewModels
 
         private readonly MenuItemModel menuItemModel;
 
-        public ObservableCollection<IMenuItemViewModel> Children { get => menuItemModel.Children; }
+        public ObservableCollection<MenuItemViewModel> Children { get => menuItemModel.Children; }
 
         public string Name { get => menuItemModel.Name; set => menuItemModel.Name = value; }
 

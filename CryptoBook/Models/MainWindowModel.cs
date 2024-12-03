@@ -220,6 +220,7 @@ namespace CryptoBook.Models
         {
             AnimateMenu("SlideOutMenu", () => isMenuOpen = false);
         }
+
         private void AnimateMenu(string storyboardKey, Action completedAction)
         {
             DependencyObject? menuPanel = null;

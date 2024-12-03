@@ -4,6 +4,7 @@ using CryptoBook.Models;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,9 @@ namespace CryptoBook.ViewModels
     {
 
         private readonly SideMenuModel sideMenuModel;
+
+        public ObservableCollection<MenuItemViewModel> MenuItems { get => sideMenuModel.MenuItems; }
+
 
         public SideMenuViewModel()
         {

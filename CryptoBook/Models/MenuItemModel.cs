@@ -14,8 +14,8 @@ namespace CryptoBook.Models
     internal class MenuItemModel: ViewModelBase
     {
 
-        internal ObservableCollection<IMenuItemViewModel> Children { get => children; private set => SetProperty(ref children, value); }
-        ObservableCollection<IMenuItemViewModel> children;
+        internal ObservableCollection<MenuItemViewModel> Children { get => children; private set => SetProperty(ref children, value); }
+        ObservableCollection<MenuItemViewModel> children;
 
         internal string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -29,7 +29,7 @@ namespace CryptoBook.Models
 
         public MenuItemModel()
         {
-            
+            Children = [];
         }
 
 
