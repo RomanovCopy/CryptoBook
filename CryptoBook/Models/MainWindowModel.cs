@@ -228,8 +228,10 @@ namespace CryptoBook.Models
 
             App.Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
             {
-                menuPanel = (DependencyObject)App.Container.Resolve<SideMenu>();
-                contentPanel = (DependencyObject)App.Container.Resolve<MyFrame>();
+                menuPanel = (DependencyObject)App.Current.MainWindow.FindName("MenuPanel");
+                contentPanel= (DependencyObject)App.Current.MainWindow.FindName("ContentPanel");
+                //menuPanel = (DependencyObject)App.Container.Resolve<SideMenu>();
+                //contentPanel = (DependencyObject)App.Container.Resolve<MyFrame>();
             });
 
             Storyboard storyboard = ((Storyboard)App.Current.Resources[storyboardKey]).Clone();

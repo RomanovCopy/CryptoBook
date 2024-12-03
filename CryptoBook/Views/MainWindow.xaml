@@ -46,13 +46,31 @@
             <RowDefinition x:Name="forStatusBar" Height="Auto"/>
         </Grid.RowDefinitions>
         <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
-        <Grid VerticalAlignment="Stretch" Grid.Row="1" HorizontalAlignment="Stretch" >
-                <ContentControl Content="{x:Static locators:MyControls.SideMenu}" Background="Fuchsia" >
-                    <ContentControl.RenderTransform>
-                        <TranslateTransform X="-150"/>
-                    </ContentControl.RenderTransform>
-                </ContentControl>
-                <ContentControl Content="{x:Static locators:MyControls.MyFrame}" Margin="0" Background="Blue"/>
+        <Grid Grid.Row="1" Background="Transparent">
+            <!-- Боковое меню -->
+            <Border x:Name="MenuPanel" Background="#333" Width="150" HorizontalAlignment="Left" >
+                <Border.RenderTransform>
+                    <!-- Начальное положение меню за пределами окна -->
+                    <TranslateTransform X="-150" />
+                </Border.RenderTransform>
+                <Grid >
+                    <ContentControl  Content="{x:Static locators:MyControls.SideMenu}"/>
+                </Grid>
+            </Border>
+
+            <Grid x:Name="ContentPanel" Background="LightGray" Margin="0,0,0,0" >
+                <ContentControl Content="{x:Static locators:MyControls.MyFrame}"/>
+                <!--<Frame x:Name="frame" Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" 
+               NavigationUIVisibility="Hidden" 
+               Background="Transparent">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Navigated">
+                            <i:InvokeCommandAction Command="{Binding Source={StaticResource navigateservice}, Path=FrameNavigate, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=frame}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Frame>-->
+            </Grid>
+
         </Grid>
     </Grid>
     <i:Interaction.Triggers>
