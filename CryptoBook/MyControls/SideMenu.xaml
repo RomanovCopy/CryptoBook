@@ -19,12 +19,12 @@
             <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
-                        <ContentPresenter/>
+                        <ContentPresenter Content="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
-                <TreeView.ItemContainerStyle>
+                <!--<TreeView.ItemContainerStyle>
                     <StaticResource ResourceKey="TreeViewItemStyle"/>
-                </TreeView.ItemContainerStyle>
+                </TreeView.ItemContainerStyle>-->
             </TreeView>
         </Border>
     </Grid>

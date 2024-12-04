@@ -17,12 +17,38 @@ namespace CryptoBook.Models
 
         public SideMenuModel()
         {
-            MenuItems = [];
-            var menuitem = new MenuItemViewModel();
-            menuitem.Name = "Home";
-            menuitem.Children.Add(new MenuItemViewModel() { Name = "Romanov" });
-            MenuItems.Add(menuitem);
+            MenuItems = InitializeMenu();
         }
+
+
+        private ObservableCollection<MenuItemViewModel> InitializeMenu()
+        {
+           var MenuItems = new ObservableCollection<MenuItemViewModel>
+        {
+            new MenuItemViewModel
+            {
+                Name = "Dashboard",
+                Icon = "📊",
+                Children =
+                {
+                    new MenuItemViewModel { Name = "Statistics", Icon = "📈" },
+                    new MenuItemViewModel { Name = "Reports", Icon = "📑" }
+                }
+            },
+            new MenuItemViewModel
+            {
+                Name = "Settings",
+                Icon = "⚙️",
+                Children =
+                {
+                    new MenuItemViewModel { Name = "Profile", Icon = "👤"},
+                    new MenuItemViewModel { Name = "Preferences", Icon = "🔧" }
+                }
+            }
+        };
+            return MenuItems;
+        }
+
     }
 
 
