@@ -36,11 +36,10 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SelectItem(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SelectItem(object obj)
         {
-            throw new NotImplementedException();
         }
 
     }

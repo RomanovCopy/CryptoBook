@@ -8,23 +8,16 @@
              mc:Ignorable="d" 
              DataContext="{x:Static locators:ViewModels.SideMenuViewModel}">
     <Grid>
-        <!--<ListBox ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}">
-            <ListBox.ItemTemplate>
-                 <DataTemplate>
-                    <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Foreground="Black"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>-->
         <Border >
             <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
-                        <ContentPresenter Content="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ContentPresenter />
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
-                <!--<TreeView.ItemContainerStyle>
+                <TreeView.ItemContainerStyle>
                     <StaticResource ResourceKey="TreeViewItemStyle"/>
-                </TreeView.ItemContainerStyle>-->
+                </TreeView.ItemContainerStyle>
             </TreeView>
         </Border>
     </Grid>
