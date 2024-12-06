@@ -40,6 +40,10 @@ namespace CryptoBook.Models
         }
         internal void Execute_SelectItem(object obj)
         {
+            if(obj is MenuItemViewModel item)
+            {
+                item.IsExpanded = item.IsExpanded ? false : true;
+            }
         }
 
     }
