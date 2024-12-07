@@ -48,13 +48,13 @@
         <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
         <Grid Grid.Row="1" Background="Transparent">
             <!-- Боковое меню -->                                   
-            <Border x:Name="MenuPanel" Background="Gray" Width="150" HorizontalAlignment="Left">
+            <Border x:Name="MenuPanel" Background="Gray" Width="200" HorizontalAlignment="Left">
                 <Border.RenderTransform>
                     <!-- Начальное положение меню за пределами окна -->
-                    <TranslateTransform X="-150" />
+                    <TranslateTransform X="-200" />
                 </Border.RenderTransform>
                 <Grid >
-                    <ContentControl  Content="{x:Static locators:MyControls.SideMenu}"/>
+                    <ContentControl  Content="{x:Static locators:MyControls.SideMenu}" HorizontalContentAlignment="Left"/>
                 </Grid>
             </Border>
 

@@ -18,7 +18,7 @@ namespace CryptoBook.ViewModels
         private readonly SideMenuModel sideMenuModel;
 
         public ObservableCollection<MenuItemViewModel> MenuItems { get => sideMenuModel.MenuItems; }
-
+        public double Width { get => sideMenuModel.Width; set => sideMenuModel.Width=value; }
 
         public SideMenuViewModel()
         {

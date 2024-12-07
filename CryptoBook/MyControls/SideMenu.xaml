@@ -8,12 +8,12 @@
              mc:Ignorable="d" 
              DataContext="{x:Static locators:ViewModels.SideMenuViewModel}">
 
-    <Border Background="Gray" CornerRadius="10" Margin="10">
-        <TreeView ItemsSource="{Binding MenuItems}"
+    <Border Background="Transparent">
+        <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
                   Background="Transparent"
                   BorderThickness="0">
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
                     <ContentPresenter/>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>

@@ -81,14 +81,14 @@
 
                                 <!-- Содержимое элемента -->
                                 <Button Grid.Column="1" 
-                                            Command="{Binding SelectItem}"
+                                            Command="{Binding SelectItem, UpdateSourceTrigger=PropertyChanged}"
                                             Background="Transparent"
-                                            BorderThickness="0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Icon}" 
+                                            BorderThickness="0" HorizontalContentAlignment="Left">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" 
                                                      Margin="5,0,10,0"
                                                      FontSize="16"/>
-                                        <TextBlock Text="{Binding Name}" 
+                                        <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" 
                                                      VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>
@@ -98,7 +98,7 @@
                         <!-- Контейнер для дочерних элементов -->
                         <ItemsPresenter x:Name="ItemsHost" 
                                           Margin="20,0,0,0"
-                                          Visibility="{Binding IsExpanded,
+                                          Visibility="{Binding IsExpanded, UpdateSourceTrigger=PropertyChanged,
                                                     RelativeSource={RelativeSource AncestorType=TreeViewItem},
                                                     Converter={x:Static locators:Converters.visibilityConverter}}"/>
                     </StackPanel>
