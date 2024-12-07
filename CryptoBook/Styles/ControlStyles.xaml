@@ -9,7 +9,7 @@
                 <ControlTemplate TargetType="TreeViewItem">
                     <StackPanel>
                         <Border x:Name="Bd" 
-                                    Background="Transparent"
+                                    Background="Gray"
                                     CornerRadius="5"
                                     Margin="2">
                             <Grid>

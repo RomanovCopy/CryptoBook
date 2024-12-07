@@ -7,22 +7,8 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d" 
              DataContext="{x:Static locators:ViewModels.SideMenuViewModel}">
-    <!--<Grid>
-        <Border >
-            <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
-                        <ContentPresenter />
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-                <TreeView.ItemContainerStyle>
-                    <StaticResource ResourceKey="TreeViewItemStyle"/>
-                </TreeView.ItemContainerStyle>
-            </TreeView>
-        </Border>
-    </Grid>-->
 
-    <Border Background="#F0F0F0" CornerRadius="10" Margin="10">
+    <Border Background="Gray" CornerRadius="10" Margin="10">
         <TreeView ItemsSource="{Binding MenuItems}"
                   Background="Transparent"
                   BorderThickness="0">
