@@ -26,28 +26,30 @@ namespace CryptoBook.Models
 
         private ObservableCollection<MenuItemViewModel> InitializeMenu()
         {
-           var MenuItems = new ObservableCollection<MenuItemViewModel>
+            var MenuItems = new ObservableCollection<MenuItemViewModel>
         {
             new MenuItemViewModel
             {
                 Name = "File",
                 Icon = "",
+                IsParrent=true,
                 Children =
                 {
-                    new MenuItemViewModel { Name = "New", Icon = "📄" },
-                    new MenuItemViewModel { Name = "Open", Icon = "📝" },
-                    new MenuItemViewModel { Name = "Save", Icon = "💾" },
-                    new MenuItemViewModel { Name = "Save As...", Icon = "💾" }
+                    new MenuItemViewModel { Name = "New", Icon = "📄", IsParrent=false },
+                    new MenuItemViewModel { Name = "Open", Icon = "📝", IsParrent=false },
+                    new MenuItemViewModel { Name = "Save", Icon = "💾", IsParrent=false },
+                    new MenuItemViewModel { Name = "Save As...", Icon = "💾", IsParrent=false }
                 }
             },
             new MenuItemViewModel
             {
                 Name = "Settings",
-                Icon = "⚙️",
+                Icon = "",
+                IsParrent=true,
                 Children =
                 {
-                    new MenuItemViewModel { Name = "Profile", Icon = "👤"},
-                    new MenuItemViewModel { Name = "Preferences", Icon = "🔧" }
+                    new MenuItemViewModel { Name = "Profile", Icon = "👤", IsParrent=false},
+                    new MenuItemViewModel { Name = "Preferences", Icon = "🔧", IsParrent=false }
                 }
             }
         };

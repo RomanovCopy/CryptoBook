@@ -23,6 +23,9 @@ namespace CryptoBook.Models
         internal string Icon { get => icon; set => SetProperty(ref icon, value); }
         string icon;
 
+        internal bool IsParrent { get => isParrent; set => SetProperty(ref isParrent, value); }
+        bool isParrent;
+
         internal bool IsExpanded { get => isExpanded; set => SetProperty(ref isExpanded, value); }
         bool isExpanded;
 

@@ -23,6 +23,8 @@ namespace CryptoBook.ViewModels
 
         public string Icon { get => menuItemModel.Icon; set => menuItemModel.Icon=value; }
 
+        public bool IsParrent { get => menuItemModel.IsParrent; set => menuItemModel.IsParrent=value; }
+
         public bool IsExpanded { get => menuItemModel.IsExpanded; set => menuItemModel.IsExpanded=value; }
 
 
