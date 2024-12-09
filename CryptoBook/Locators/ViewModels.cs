@@ -30,5 +30,8 @@ namespace CryptoBook.Locators
 
         public static MyFrameViewModel MyFrameViewModel =>
             App.Container.Resolve<IMyFrameViewModel>().As<MyFrameViewModel>();
+
+        public static MenuFileViewModel MenuFileViewModel =>
+            App.Container.Resolve<IMenuFileViewModel>().As<MenuFileViewModel>();
     }
 }

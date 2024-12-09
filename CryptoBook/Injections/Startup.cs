@@ -34,17 +34,18 @@ namespace CryptoBook.Injections
 
 
             //Controls
-            builder.RegisterType<SideMenu>().SingleInstance();
             builder.RegisterType<TitleBar>().SingleInstance();
             builder.RegisterType<MyFrame>().SingleInstance();
+            builder.RegisterType<SideMenu>().SingleInstance();
 
 
             //ViewModels
-            builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
-            builder.RegisterType<SideMenuViewModel>().As<ISideMenuViewModel>().SingleInstance();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().SingleInstance();
             builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().SingleInstance();
+            builder.RegisterType<MenuFileViewModel>().As<IMenuFileViewModel>().SingleInstance();
+            builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
+            builder.RegisterType<SideMenuViewModel>().As<ISideMenuViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();

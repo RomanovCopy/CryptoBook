@@ -166,7 +166,10 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object obj)
         {
-
+            if(Ready != null)
+            {
+                Ready.Invoke();
+            }
         }
 
 

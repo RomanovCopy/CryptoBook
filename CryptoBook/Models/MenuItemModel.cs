@@ -29,6 +29,9 @@ namespace CryptoBook.Models
         internal bool IsExpanded { get => isExpanded; set => SetProperty(ref isExpanded, value); }
         bool isExpanded;
 
+        internal bool IsEnable { get => isEnable; set => SetProperty(ref isEnable, value); }
+        bool isEnable;
+
 
         public MenuItemModel()
         {

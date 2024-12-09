@@ -27,6 +27,9 @@ namespace CryptoBook.ViewModels
 
         public bool IsExpanded { get => menuItemModel.IsExpanded; set => menuItemModel.IsExpanded=value; }
 
+        internal bool IsEnable { get => menuItemModel.IsEnable; set => menuItemModel.IsEnable=value; }
+
+
 
         public MenuItemViewModel()
         {
@@ -36,8 +39,10 @@ namespace CryptoBook.ViewModels
 
 
 
-        public ICommand SelectItem => selectItem ??= new RelayCommand(menuItemModel.Execute_SelectItem, menuItemModel.CanExecute_SelectItem);
+        public ICommand SelectItem { get; set; }
         RelayCommand selectItem;
+
+
 
 
         public ICommand Loaded => throw new NotImplementedException();

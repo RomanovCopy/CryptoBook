@@ -20,19 +20,26 @@ namespace CryptoBook.ViewModels
             menuFileModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-        public ICommand NewFile => throw new NotImplementedException();
+        public ICommand NewFile => newFile ??= new RelayCommand(menuFileModel.Execute_NewFile, menuFileModel.CanExecute_NewFile);
+        RelayCommand newFile;
 
-        public ICommand OpenFile => throw new NotImplementedException();
+        public ICommand OpenFile => openFile ??= new RelayCommand(menuFileModel.Execute_OpenFile, menuFileModel.CanExecute_OpenFile);
+        RelayCommand openFile;
 
-        public ICommand SaveFile => throw new NotImplementedException();
+        public ICommand SaveFile => saveFile ??= new RelayCommand(menuFileModel.Execute_SaveFile, menuFileModel.CanExecute_SaveFile);
+        RelayCommand saveFile;
 
-        public ICommand SaveAsFile => throw new NotImplementedException();
+        public ICommand SaveAsFile => saveAsFile ??= new RelayCommand(menuFileModel.Execute_SaveAsFile, menuFileModel.CanExecute_SaveAsFile);
+        RelayCommand saveAsFile;
 
-        public ICommand FileOverview => throw new NotImplementedException();
+        public ICommand FileOverview => fileOverview ??= new RelayCommand(menuFileModel.Execute_FileOverview, menuFileModel.CanExecute_FileOverview);
+        RelayCommand fileOverview;
 
-        public ICommand OpenDirectory => throw new NotImplementedException();
+        public ICommand OpenDirectory => openDirectory ??= new RelayCommand(menuFileModel.Execute_OpenDirectory, menuFileModel.CanExecute_OpenDirectory);
+        RelayCommand openDirectory;
 
-        public ICommand WorkingDirectorySynchronization => throw new NotImplementedException();
+        public ICommand WorkingDirectorySynchronization => workingDirectorySynchronization ??= new RelayCommand(menuFileModel.Execute_WorkingDirectorySynchronization, menuFileModel.CanExecute_WorkingDirectorySynchronization);
+        RelayCommand workingDirectorySynchronization;
 
         public ICommand Loaded => throw new NotImplementedException();
 
