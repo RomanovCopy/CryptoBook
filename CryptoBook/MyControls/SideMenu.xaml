@@ -7,6 +7,10 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d" 
              DataContext="{x:Static locators:ViewModels.SideMenuViewModel}">
+    <UserControl.Width>
+        <Binding Path="Width" Converter="{x:Static locators:Converters.internalSizeConverter}" 
+         ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </UserControl.Width>
 
     <Border Background="Transparent">
         <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"

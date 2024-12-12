@@ -32,5 +32,14 @@
     <Setting Name="TitleBarMyBackColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF808080&lt;/SolidColorBrush&gt;</Value>
     </Setting>
+    <Setting Name="SideMenuFontSizeHeader" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1.75</Value>
+    </Setting>
+    <Setting Name="SideMenuFontSize" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1.5</Value>
+    </Setting>
+    <Setting Name="SideMenuWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">25</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

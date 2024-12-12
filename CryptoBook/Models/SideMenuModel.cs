@@ -17,14 +17,32 @@ namespace CryptoBook.Models
         internal ObservableCollection<MenuItemViewModel> MenuItems { get => menuItems; private set => SetProperty(ref menuItems, value); }
         ObservableCollection<MenuItemViewModel> menuItems;
 
+        /// <summary>
+        /// ширина бокового меню в процентах от ширины окна
+        /// </summary>
         internal double Width { get => width; set => SetProperty(ref width, value); }
         private double width;
+        /// <summary>
+        /// высота шрифта заголовков в процентах от вертикального разрешения экрана
+        /// </summary>
+        internal double FontSizeHeader { get => fontSizeHeader; set => SetProperty(ref fontSizeHeader, value); }
+        double fontSizeHeader;
+        /// <summary>
+        /// высота шрифта в процентах от вертикального разрешения экрана
+        /// </summary>
+        internal double FontSize { get => fontSize; set => SetProperty(ref fontSize, value); }
+        double fontSize;
+
+
 
         private readonly MenuFileViewModel menuFileViewModel;
 
         public SideMenuModel()
         {
             menuFileViewModel = Locators.ViewModels.MenuFileViewModel;
+            Width = Properties.Settings.Default.SideMenuWidth;
+            FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
+            FontSize = Properties.Settings.Default.SideMenuFontSize;
             MenuItems = InitializeMenu();
         }
 
@@ -39,12 +57,43 @@ namespace CryptoBook.Models
                 Name = "File",
                 Icon = "",
                 IsParrent=true,
+                IsEnabled=true,
+                FontSize=this.FontSize,
                 Children =
                 {
-                    new MenuItemViewModel { Name = "New", Icon = "📄", IsParrent=false, SelectItem=menuFileViewModel.NewFile },
-                    new MenuItemViewModel { Name = "Open", Icon = "📝", IsParrent=false },
-                    new MenuItemViewModel { Name = "Save", Icon = "💾", IsParrent=false },
-                    new MenuItemViewModel { Name = "Save As...", Icon = "💾", IsParrent=false }
+                    new MenuItemViewModel
+                    {
+                        Name = "New",
+                        Icon = "📄",
+                        IsParrent=false,
+                        IsEnabled=true,
+                        FontSize=this.FontSize,
+                        SelectItem=menuFileViewModel.NewFile
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Open",
+                        Icon = "📝",
+                        IsParrent=false,
+                        IsEnabled=true,
+                        SelectItem=menuFileViewModel.OpenFile
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Save",
+                        Icon = "💾",
+                        IsParrent=false,
+                        IsEnabled=false,
+                        SelectItem=menuFileViewModel.SaveFile
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Save As...",
+                        Icon = "💾",
+                        IsParrent=false,
+                        IsEnabled=true,
+                        SelectItem=menuFileViewModel.SaveAsFile
+                    }
                 }
             },
             new MenuItemViewModel
@@ -54,8 +103,17 @@ namespace CryptoBook.Models
                 IsParrent=true,
                 Children =
                 {
-                    new MenuItemViewModel { Name = "Profile", Icon = "👤", IsParrent=false},
-                    new MenuItemViewModel { Name = "Preferences", Icon = "🔧", IsParrent=false }
+                    new MenuItemViewModel
+                    {
+                        Name = "Profile",
+                        Icon = "👤",
+                        IsParrent=false},
+                    new MenuItemViewModel
+                    {
+                        Name = "Preferences",
+                        Icon = "🔧",
+                        IsParrent=false
+                    }
                 }
             }
         };

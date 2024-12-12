@@ -55,6 +55,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FontSizeAdjustConverter>().AsSelf();
             builder.RegisterType<MediBrushSerializeConverter>().AsSelf();
             builder.RegisterType<VisibilityConverter>().AsSelf();
+            builder.RegisterType<InternalSizeConverter>().AsSelf();
 
 
             //Helpers

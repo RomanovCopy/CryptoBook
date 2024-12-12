@@ -86,19 +86,24 @@
                                 <!-- Содержимое элемента -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="1" >
                                     <TextBlock Text="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" 
-                                                     Margin="5,0,10,0">
+                                                     Margin="5,0,10,0" FontSize="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsParrent}" Value="True">
+                                                    <DataTrigger 
+                                                        Binding="{Binding IsParrent,UpdateSourceTrigger=PropertyChanged}" Value="True">
                                                         <Setter Property="FontSize" Value="17"/>
                                                         <Setter Property="FontWeight" Value="DemiBold"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsParrent}" Value="False">
+                                                    <DataTrigger 
+                                                        Binding="{Binding IsParrent,UpdateSourceTrigger=PropertyChanged}" Value="False">
                                                         <Setter Property="FontSize" Value="14"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
-
+                                                    <DataTrigger 
+                                                        Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -119,6 +124,11 @@
                                                         <Setter Property="FontSize" Value="14"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
+                                                    <DataTrigger 
+                                                        Binding="{Binding IsEnabled }" Value="False">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>

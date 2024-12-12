@@ -144,5 +144,41 @@ namespace CryptoBook.Properties {
                 this["TitleBarMyBackColor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.75")]
+        public double SideMenuFontSizeHeader {
+            get {
+                return ((double)(this["SideMenuFontSizeHeader"]));
+            }
+            set {
+                this["SideMenuFontSizeHeader"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.5")]
+        public double SideMenuFontSize {
+            get {
+                return ((double)(this["SideMenuFontSize"]));
+            }
+            set {
+                this["SideMenuFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public double SideMenuWidth {
+            get {
+                return ((double)(this["SideMenuWidth"]));
+            }
+            set {
+                this["SideMenuWidth"] = value;
+            }
+        }
     }
 }
