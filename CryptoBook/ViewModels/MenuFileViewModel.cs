@@ -37,14 +37,23 @@ namespace CryptoBook.ViewModels
 
         public ICommand OpenDirectory => openDirectory ??= new RelayCommand(menuFileModel.Execute_OpenDirectory, menuFileModel.CanExecute_OpenDirectory);
         RelayCommand openDirectory;
+        public ICommand CloseFile => closeFile ??= new RelayCommand(menuFileModel.Execute_CloseFile, menuFileModel.CanExecute_CloseFile);
+        RelayCommand closeFile;
+        public ICommand UpdateFile => updateFile ??= new RelayCommand(menuFileModel.Execute_UpdateFile, menuFileModel.CanExecute_UpdateFile);
+        RelayCommand updateFile;
 
         public ICommand WorkingDirectorySynchronization => workingDirectorySynchronization ??= new RelayCommand(menuFileModel.Execute_WorkingDirectorySynchronization, menuFileModel.CanExecute_WorkingDirectorySynchronization);
         RelayCommand workingDirectorySynchronization;
 
         public ICommand Loaded => throw new NotImplementedException();
 
+
+
+
         public ICommand Close => throw new NotImplementedException();
 
         public ICommand Closing => throw new NotImplementedException();
+
+
     }
 }

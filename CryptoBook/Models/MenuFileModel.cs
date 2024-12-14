@@ -19,7 +19,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_NewFile(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_NewFile(object obj)
         {
@@ -28,35 +28,35 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_OpenFile(object obj)
         {
-            return false;
+            return true;
         }
         internal void Execute_OpenFile(object obj)
         {
 
         }
 
-        internal void Execute_SaveFile(object obj)
-        {
-            throw new NotImplementedException();
-        }
         internal bool CanExecute_SaveFile(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
-
-        internal void Execute_SaveAsFile(object obj)
+        internal void Execute_SaveFile(object obj)
         {
             throw new NotImplementedException();
         }
 
         internal bool CanExecute_SaveAsFile(object obj)
         {
+            return true;
+        }
+        internal void Execute_SaveAsFile(object obj)
+        {
             throw new NotImplementedException();
         }
 
+
         internal bool CanExecute_FileOverview(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_FileOverview(object obj)
         {
@@ -65,7 +65,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_OpenDirectory(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         internal void Execute_OpenDirectory(object obj)
@@ -75,10 +75,28 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_WorkingDirectorySynchronization(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         internal void Execute_WorkingDirectorySynchronization(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool CanExecute_CloseFile(object obj)
+        {
+            return true;
+        }
+        internal void Execute_CloseFile(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool CanExecute_UpdateFile(object obj)
+        {
+            return true;
+        }
+        internal void Execute_UpdateFile(object obj)
         {
             throw new NotImplementedException();
         }

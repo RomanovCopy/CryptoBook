@@ -58,42 +58,81 @@ namespace CryptoBook.Models
                 Icon = "",
                 IsParrent=true,
                 IsEnabled=true,
-                FontSize=this.FontSize,
+                FontSize=this.FontSizeHeader,
                 Children =
                 {
                     new MenuItemViewModel
                     {
-                        Name = "New",
+                        Name = "New file",
                         Icon = "📄",
                         IsParrent=false,
-                        IsEnabled=true,
+                        IsEnabled=menuFileViewModel.NewFile.CanExecute(null),
                         FontSize=this.FontSize,
                         SelectItem=menuFileViewModel.NewFile
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Open",
+                        Name = "Open File",
                         Icon = "📝",
                         IsParrent=false,
-                        IsEnabled=true,
+                        IsEnabled=menuFileViewModel.OpenFile.CanExecute(null),
+                        FontSize=this.FontSize,
                         SelectItem=menuFileViewModel.OpenFile
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Save",
-                        Icon = "💾",
+                        Name = "Open directory",
+                        Icon = "📂",
                         IsParrent=false,
-                        IsEnabled=false,
+                        IsEnabled=menuFileViewModel.SaveFile.CanExecute(null),
+                        FontSize=this.FontSize,
                         SelectItem=menuFileViewModel.SaveFile
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Save As...",
+                        Name = "Save File",
                         Icon = "💾",
                         IsParrent=false,
-                        IsEnabled=true,
+                        IsEnabled=menuFileViewModel.SaveFile.CanExecute(null),
+                        FontSize=this.FontSize,
+                        SelectItem=menuFileViewModel.SaveFile,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Save File As...",
+                        Icon = "🗂️",
+                        IsParrent=false,
+                        IsEnabled=menuFileViewModel.SaveAsFile.CanExecute(null),
+                        FontSize=this.FontSize,
                         SelectItem=menuFileViewModel.SaveAsFile
-                    }
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Update File",
+                        Icon = "🔄",
+                        IsParrent=false,
+                        IsEnabled=menuFileViewModel.UpdateFile.CanExecute(null),
+                        FontSize=this.FontSize,
+                        SelectItem=menuFileViewModel.UpdateFile
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Synchronization",
+                        Icon = "♻️",
+                        IsParrent=false,
+                        IsEnabled=menuFileViewModel.WorkingDirectorySynchronization.CanExecute(null),
+                        FontSize=this.FontSize,
+                        SelectItem=menuFileViewModel.WorkingDirectorySynchronization,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Close file",
+                        Icon = "❌",
+                        IsParrent=false,
+                        IsEnabled=menuFileViewModel.CloseFile.CanExecute(null),
+                        FontSize=this.FontSize,
+                        SelectItem=menuFileViewModel.CloseFile,
+                    },
                 }
             },
             new MenuItemViewModel

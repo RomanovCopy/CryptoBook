@@ -147,7 +147,7 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.75")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.3")]
         public double SideMenuFontSizeHeader {
             get {
                 return ((double)(this["SideMenuFontSizeHeader"]));
@@ -159,7 +159,7 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.2")]
         public double SideMenuFontSize {
             get {
                 return ((double)(this["SideMenuFontSize"]));

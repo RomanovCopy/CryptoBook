@@ -85,43 +85,43 @@
 
                                 <!-- Содержимое элемента -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="1" >
-                                    <TextBlock Text="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" 
-                                                     Margin="5,0,10,0" FontSize="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
+                                    <ContentControl Content="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" 
+                                                     Margin="5,0,10,0" FontFamily="Segoe UI Symbol">
+                                        <ContentControl.Style>
+                                            <Style TargetType="ContentControl">
                                                 <Style.Triggers>
                                                     <DataTrigger 
                                                         Binding="{Binding IsParrent,UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                        <Setter Property="FontSize" Value="17"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="DemiBold"/>
                                                     </DataTrigger>
                                                     <DataTrigger 
                                                         Binding="{Binding IsParrent,UpdateSourceTrigger=PropertyChanged}" Value="False">
-                                                        <Setter Property="FontSize" Value="14"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
-                                                    <DataTrigger 
+                                                    <DataTrigger
                                                         Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Value="False">
                                                         <Setter Property="Visibility" Value="Collapsed"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" 
+                                        </ContentControl.Style>
+                                    </ContentControl>
+                                    <ContentControl Content="{Binding Name, UpdateSourceTrigger=PropertyChanged}" 
                                                      VerticalAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
+                                        <ContentControl.Style>
+                                            <Style TargetType="ContentControl">
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="Opacity" Value="0.3"/>
                                                     </Trigger>
                                                     <DataTrigger Binding="{Binding IsParrent}" Value="True">
-                                                        <Setter Property="FontSize" Value="17"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="DemiBold"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding IsParrent}" Value="False">
-                                                        <Setter Property="FontSize" Value="14"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                     <DataTrigger 
@@ -131,8 +131,8 @@
 
                                                 </Style.Triggers>
                                             </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                        </ContentControl.Style>
+                                    </ContentControl>
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseLeftButtonDown">
                                             <i:InvokeCommandAction Command="{Binding SelectItem, UpdateSourceTrigger=PropertyChanged}"/>

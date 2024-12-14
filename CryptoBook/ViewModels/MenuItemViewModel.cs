@@ -27,7 +27,7 @@ namespace CryptoBook.ViewModels
 
         public bool IsExpanded { get => menuItemModel.IsExpanded; set => menuItemModel.IsExpanded=value; }
 
-        public bool IsEnabled { get => menuItemModel.IsEnabled; set => menuItemModel.IsEnabled=value; }
+        public bool IsEnabled { get => menuItemModel.IsEnabled; set => menuItemModel.IsEnabled = value; }
         public double FontSize { get => menuItemModel.FontSize; set => menuItemModel.FontSize = value; }
 
 

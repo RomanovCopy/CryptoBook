@@ -17,6 +17,7 @@ namespace CryptoBook.Interfaces
         /// открыть файл
         /// </summary>
         public ICommand OpenFile { get; }
+
         /// <summary>
         /// сохранить файл
         /// </summary>
@@ -33,7 +34,14 @@ namespace CryptoBook.Interfaces
         /// открыть директорию
         /// </summary>
         public ICommand OpenDirectory { get; }
-
+        /// <summary>
+        /// обновить/перезагрузить файл
+        /// </summary>
+        public ICommand UpdateFile { get; }
+        /// <summary>
+        /// закрыть файл
+        /// </summary>
+        public ICommand CloseFile { get; }
         /// <summary>
         /// синхронизация рабочего каталога со сторонним
         /// </summary>
