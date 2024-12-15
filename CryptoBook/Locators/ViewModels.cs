@@ -33,5 +33,9 @@ namespace CryptoBook.Locators
 
         public static MenuFileViewModel MenuFileViewModel =>
             App.Container.Resolve<IMenuFileViewModel>().As<MenuFileViewModel>();
+
+        public static MenuSettingsViewModel MenuSettingsViewModel =>
+            App.Container.Resolve<IMenuSettingsViewModel>().As<MenuSettingsViewModel>();
+
     }
 }

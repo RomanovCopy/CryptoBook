@@ -36,10 +36,12 @@ namespace CryptoBook.Models
 
 
         private readonly MenuFileViewModel menuFileViewModel;
+        private readonly MenuSettingsViewModel menuSettingsViewModel;
 
         public SideMenuModel()
         {
             menuFileViewModel = Locators.ViewModels.MenuFileViewModel;
+            menuSettingsViewModel = Locators.ViewModels.MenuSettingsViewModel;
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
             FontSize = Properties.Settings.Default.SideMenuFontSize;
@@ -137,16 +139,22 @@ namespace CryptoBook.Models
             },
             new MenuItemViewModel
             {
-                Name = "Settings",
+                Name="Settings",
                 Icon = "",
                 IsParrent=true,
+                IsEnabled=true,
+                FontSize=this.FontSizeHeader,
                 Children =
                 {
                     new MenuItemViewModel
                     {
-                        Name = "Profile",
-                        Icon = "👤",
-                        IsParrent=false},
+                        Name = "Ink",
+                        Icon = "🎨",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuSettingsViewModel.SetFontColor.CanExecute(null),
+                        SelectItem=menuSettingsViewModel.SetFontColor,
+                    },
                     new MenuItemViewModel
                     {
                         Name = "Preferences",

@@ -147,7 +147,7 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.4")]
         public double SideMenuFontSizeHeader {
             get {
                 return ((double)(this["SideMenuFontSizeHeader"]));
