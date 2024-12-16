@@ -21,23 +21,33 @@ namespace CryptoBook.ViewModels
             menuSettingsModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-        public ICommand SetFontWeight => throw new NotImplementedException();
+        public ICommand SetFontWeight => setFontWeight ??= new RelayCommand(menuSettingsModel.Execute_SetFontWeight, menuSettingsModel.CanExecute_SetFontWeight);
+        RelayCommand setFontWeight;
 
-        public ICommand SetFontFamily => throw new NotImplementedException();
+        public ICommand SetFontFamily => setFontFamily ??= new RelayCommand(menuSettingsModel.Execute_SetFontFamily, menuSettingsModel.CanExecute_SetFontFamily);
+        RelayCommand setFontFamily;
 
-        public ICommand SetFontSize => throw new NotImplementedException();
+        public ICommand SetFontSize => setFontSize ??= new RelayCommand(menuSettingsModel.Execute_SetFontSize, menuSettingsModel.CanExecute_SetFontSize);
+        RelayCommand setFontSize;
 
-        public ICommand SetFontColor => throw new NotImplementedException();
+        public ICommand SetFontColor => setFontColor ??= new RelayCommand(menuSettingsModel.Execute_SetFontColor, menuSettingsModel.CanExecute_SetFontColor);
+        RelayCommand setFontColor;
 
-        public ICommand SetFontBackColor => throw new NotImplementedException();
 
-        public ICommand SetPaperColor => throw new NotImplementedException();
+        public ICommand SetFontBackColor => setFontBackColor ??= new RelayCommand(menuSettingsModel.Execute_SetFontBackColor, menuSettingsModel.CanExecute_SetFontBackColor);
+        RelayCommand setFontBackColor;
 
-        public ICommand SetEncoding => throw new NotImplementedException();
+        public ICommand SetPaperColor => setPaperColor ??= new RelayCommand(menuSettingsModel.Execute_SetPaperColor, menuSettingsModel.CanExecute_SetPaperColor);
+        RelayCommand setPaperColor;
 
-        public ICommand Localization => throw new NotImplementedException();
+        public ICommand SetEncoding => setEncoding ??= new RelayCommand(menuSettingsModel.Execute_SetEncoding, menuSettingsModel.CanExecute_SetEncoding);
+        RelayCommand setEncoding;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand Localization => localization ??= new RelayCommand(menuSettingsModel.Execute_Localization, menuSettingsModel.CanExecute_Localization);
+        RelayCommand localization;
+
+        public ICommand Loaded => loaded ??= new RelayCommand(menuSettingsModel.Execute_Loaded, menuSettingsModel.CanExecute_Loaded);
+        RelayCommand loaded;
 
         public ICommand Close => throw new NotImplementedException();
 
