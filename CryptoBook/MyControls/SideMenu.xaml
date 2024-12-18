@@ -15,7 +15,8 @@
     <Border Background="Transparent">
         <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
                   Background="Transparent"
-                  BorderThickness="0">
+                  BorderThickness="0"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
                     <ContentPresenter/>

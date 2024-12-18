@@ -136,7 +136,7 @@ namespace CryptoBook.Models
                         SelectItem=menuFileViewModel.CloseFile,
                     },
                 }
-            },
+            },//File
             new MenuItemViewModel
             {
                 Name="Settings",
@@ -149,7 +149,7 @@ namespace CryptoBook.Models
                     new MenuItemViewModel
                     {
                         Name = "Ink",
-                        Icon = "🎨",
+                        Icon = "🖋️",
                         IsParrent=false,
                         FontSize=this.FontSize,
                         IsEnabled=menuSettingsViewModel.SetFontColor.CanExecute(null),
@@ -157,12 +157,44 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Preferences",
-                        Icon = "🔧",
-                        IsParrent=false
-                    }
+                        Name = "Background",
+                        Icon = "🎨",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuSettingsViewModel.SetFontBackColor.CanExecute(null),
+                        SelectItem=menuSettingsViewModel.SetFontBackColor
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Paper",
+                        Icon = "📃",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuSettingsViewModel.SetPaperColor.CanExecute(null),
+                        SelectItem=menuSettingsViewModel.SetPaperColor
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Encoding",
+                        Icon = "🔤",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuSettingsViewModel.SetEncoding.CanExecute(null),
+                        SelectItem=menuSettingsViewModel.SetEncoding
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Localization",
+                        Icon = "🌐",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuSettingsViewModel.Localization.CanExecute(null),
+                        SelectItem=menuSettingsViewModel.Localization
+                    },
+
                 }
-            }
+
+            },//Settings
         };
             return MenuItems;
         }

@@ -46,7 +46,7 @@
                     <TextBlock Style="{StaticResource icon}" Text="&#xE700;"/>
             </Button>
             
-            <TextBlock x:Name="title" FontWeight="Normal" Text="CryptoBook" 
+            <TextBlock x:Name="title" FontWeight="Medium" Text="CryptoBook" 
                        Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
                         UpdateSourceTrigger=PropertyChanged}"
                        FontSize="{Binding MyFontSize, UpdateSourceTrigger=PropertyChanged}" 

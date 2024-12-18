@@ -44,7 +44,7 @@
                         <Border
                  x:Name="PART_border"
                  Opacity="1"
-                 CornerRadius="2" />
+                 CornerRadius="2"/>
                         <ContentPresenter 
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -52,7 +52,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Opacity" Value="0.5"/>
+                            <Setter Property="Opacity" Value="0.3"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="True">
                             <Setter Property="Visibility" Value="Visible" />

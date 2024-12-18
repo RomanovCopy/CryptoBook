@@ -17,83 +17,95 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontWeight(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SetFontWeight(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_SetFontFamily(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SetFontFamily(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_SetFontSize(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SetFontSize(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_SetFontColor(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SetFontColor(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_SetFontBackColor(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SetFontBackColor(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_SetEncoding(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SetEncoding(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_SetPaperColor(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_SetPaperColor(object obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_Localization(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Localization(object obj)
         {
-            throw new NotImplementedException();
         }
+
+
+
+
 
         internal bool CanExecute_Loaded(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Loaded(object obj)
         {
-            throw new NotImplementedException();
+        }
+
+        internal bool CanExecute_Closing(object obj)
+        {
+            return true;
+        }
+        internal void Execute_Closing(object obj)
+        {
+        }
+
+
+        internal bool CanExecute_Close(object obj)
+        {
+            return true;
+        }
+        internal void Execute_Close(object obj)
+        {
         }
 
     }
