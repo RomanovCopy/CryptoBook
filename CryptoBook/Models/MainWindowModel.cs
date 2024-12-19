@@ -98,17 +98,15 @@ namespace CryptoBook.Models
         }
         internal void Execute_FrameListAddPage(object obj)
         {
-            throw new NotImplementedException();
         }
 
 
         internal bool CanExecute_FrameListRemovePage(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_FrameListRemovePage(object obj)
         {
-            throw new NotImplementedException();
         }
 
 
@@ -121,7 +119,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_FramelistGoForward(object obj)
         {
-            throw new NotImplementedException();
         }
 
 
@@ -145,7 +142,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_PageClosed(object obj)
         {
-            throw new NotImplementedException();
         }
 
 

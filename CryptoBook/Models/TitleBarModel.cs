@@ -207,7 +207,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closing(object? obj)
         {
-            throw new NotImplementedException();
         }
 
     }

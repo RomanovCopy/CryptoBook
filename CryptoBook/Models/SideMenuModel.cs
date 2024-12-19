@@ -195,6 +195,28 @@ namespace CryptoBook.Models
                 }
 
             },//Settings
+            new MenuItemViewModel()
+            {
+                Name="Encryption",
+                Icon = "",
+                IsParrent=true,
+                IsEnabled=true,
+                FontSize=this.FontSizeHeader,
+                Children =
+                {
+                    new MenuItemViewModel
+                    {
+                        Name = "Set Encryption Key",
+                        Icon = "🔑",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuSettingsViewModel.SetFontColor.CanExecute(null),
+                        SelectItem=menuSettingsViewModel.SetFontColor,
+                    },
+
+                }
+            },
+
         };
             return MenuItems;
         }

@@ -32,7 +32,7 @@ namespace CryptoBook.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException(); // Обратное преобразование не требуется
+            return true; // Обратное преобразование не требуется
         }
     }
 }

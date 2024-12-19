@@ -29,10 +29,10 @@ namespace CryptoBook.ViewModels
             sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand Loaded { get; }
 
-        public ICommand Close => throw new NotImplementedException();
+        public ICommand Close { get; }
 
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand Closing { get; }
     }
 }

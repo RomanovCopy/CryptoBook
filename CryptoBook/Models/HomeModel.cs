@@ -21,32 +21,29 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_PageLoded(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_PageLoaded(object obj)
         {
-            throw new NotImplementedException();
         }
 
 
         internal bool CanExecute_PageClear(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_PageClear(object obj)
         {
-            throw new NotImplementedException();
         }
 
 
 
         internal bool CanExecute_PageClose(object obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_PageClose(object obj)
         {
-            throw new NotImplementedException();
         }
 
     }

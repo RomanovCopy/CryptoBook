@@ -45,14 +45,10 @@ namespace CryptoBook.ViewModels
         public ICommand WorkingDirectorySynchronization => workingDirectorySynchronization ??= new RelayCommand(menuFileModel.Execute_WorkingDirectorySynchronization, menuFileModel.CanExecute_WorkingDirectorySynchronization);
         RelayCommand workingDirectorySynchronization;
 
-        public ICommand Loaded => throw new NotImplementedException();
 
-
-
-
-        public ICommand Close => throw new NotImplementedException();
-
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand Loaded { get; }
+        public ICommand Close { get; }
+        public ICommand Closing { get; }
 
 
     }
