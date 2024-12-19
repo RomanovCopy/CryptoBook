@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
 
 using System;
@@ -37,11 +38,15 @@ namespace CryptoBook.Models
 
         private readonly MenuFileViewModel menuFileViewModel;
         private readonly MenuSettingsViewModel menuSettingsViewModel;
+        private readonly MenuEncryptionViewModel menuEncryptionViewModel;
+        private readonly MenuContentViewModel menuContentViewModel;
 
         public SideMenuModel()
         {
             menuFileViewModel = Locators.ViewModels.MenuFileViewModel;
             menuSettingsViewModel = Locators.ViewModels.MenuSettingsViewModel;
+            menuEncryptionViewModel = Locators.ViewModels.MenuEncryptionViewModel;
+            menuContentViewModel = Locators.ViewModels.MenuContentViewModel;
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
             FontSize = Properties.Settings.Default.SideMenuFontSize;
@@ -54,8 +59,7 @@ namespace CryptoBook.Models
             var MenuItems = new ObservableCollection<MenuItemViewModel>
 
         {
-            new MenuItemViewModel
-            {
+            new() {
                 Name = "File",
                 Icon = "",
                 IsParrent=true,
@@ -137,8 +141,7 @@ namespace CryptoBook.Models
                     },
                 }
             },//File
-            new MenuItemViewModel
-            {
+            new() {
                 Name="Settings",
                 Icon = "",
                 IsParrent=true,
@@ -195,7 +198,7 @@ namespace CryptoBook.Models
                 }
 
             },//Settings
-            new MenuItemViewModel()
+            new()
             {
                 Name="Encryption",
                 Icon = "",
@@ -206,17 +209,91 @@ namespace CryptoBook.Models
                 {
                     new MenuItemViewModel
                     {
-                        Name = "Set Encryption Key",
-                        Icon = "🔑",
+                        Name = "Encryption: On",
+                        Icon = "🔒",
                         IsParrent=false,
                         FontSize=this.FontSize,
-                        IsEnabled=menuSettingsViewModel.SetFontColor.CanExecute(null),
-                        SelectItem=menuSettingsViewModel.SetFontColor,
+                        IsEnabled=menuEncryptionViewModel.InstalKey.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.InstalKey,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Encryption: Off",
+                        Icon = "🔓",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Encryption",
+                        Icon = "🧩",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuEncryptionViewModel.EncryptionPanel.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.EncryptionPanel,
                     },
 
                 }
-            },
+            },//Encryption
+            new()
+            {
+                Name="Content",
+                Icon = "",
+                IsParrent=true,
+                IsEnabled=true,
+                FontSize=this.FontSizeHeader,
+                Children =
+                {
+                    new MenuItemViewModel
+                    {
+                        Name = "Add Image",
+                        Icon = "🖼️",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuContentViewModel.InsertImage.CanExecute(null),
+                        SelectItem=menuContentViewModel.InsertImage,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Add Text",
+                        Icon = "📝",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Document tree",
+                        Icon = "📑",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Read document",
+                        Icon = "📖",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                    },
+                    new MenuItemViewModel
+                    {
+                        Name = "Media player",
+                        Icon = "🎥",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                    },
 
+                }
+            },//Content
         };
             return MenuItems;
         }

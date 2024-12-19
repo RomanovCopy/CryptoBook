@@ -40,5 +40,8 @@ namespace CryptoBook.Locators
         public static MenuEncryptionViewModel MenuEncryptionViewModel =>
             App.Container.Resolve<IMenuEncryptionViewModel>().As<MenuEncryptionViewModel>();
 
+        public static MenuContentViewModel MenuContentViewModel =>
+            App.Container.Resolve<IMenuContentViewModel>().As<MenuContentViewModel>();
+
     }
 }

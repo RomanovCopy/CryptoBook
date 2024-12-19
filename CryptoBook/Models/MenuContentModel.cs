@@ -1,41 +1,56 @@
-﻿using CryptoBook.Infrastructure;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using CryptoBook.Infrastructure;
+
 namespace CryptoBook.Models
 {
-    internal class MenuEncryptionModel: ViewModelBase
+    internal class MenuContentModel: ViewModelBase
     {
-        public MenuEncryptionModel()
+        internal MenuContentModel()
         {
 
         }
-
-        internal bool CanExecute_DeleteKey(object obj)
+        internal bool CanExecute_Reading(object obj)
         {
             return true;
         }
-        internal void Execute_DeleteKey(object obj)
+        internal void Execute_Reading(object obj)
         {
         }
 
-        internal bool CanExecute_InstalKey(object obj)
+        internal bool CanExecute_InsertImage(object obj)
         {
             return true;
         }
-        internal void Execute_InstalKey(object obj)
+        internal void Execute_InsertImage(object obj)
         {
         }
 
-        internal bool CanExecute_EncryptionPanel(object obj)
+        internal bool CanExecute_InsertText(object obj)
         {
             return true;
         }
-        internal void Execute_EncryptionPanel(object obj)
+        internal void Execute_InsertText(object obj)
+        {
+        }
+
+        internal bool CanExecute_OpenDocumentTree(object obj)
+        {
+            return true;
+        }
+        internal void Execute_OpenDocumentTree(object obj)
+        {
+        }
+
+        internal bool CanExecute_MediaPlayer(object obj)
+        {
+            return true;
+        }
+        internal void Execute_MediaPlayer(object obj)
         {
         }
 
@@ -43,6 +58,7 @@ namespace CryptoBook.Models
         {
             return true;
         }
+
         internal void Execute_Loaded(object obj)
         {
         }
