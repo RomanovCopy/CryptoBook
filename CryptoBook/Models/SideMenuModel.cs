@@ -261,8 +261,8 @@ namespace CryptoBook.Models
                         Icon = "📝",
                         IsParrent=false,
                         FontSize=this.FontSize,
-                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
-                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                        IsEnabled=menuContentViewModel.InsertText.CanExecute(null),
+                        SelectItem=menuContentViewModel.InsertText,
                     },
                     new MenuItemViewModel
                     {
@@ -270,8 +270,8 @@ namespace CryptoBook.Models
                         Icon = "📑",
                         IsParrent=false,
                         FontSize=this.FontSize,
-                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
-                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                        IsEnabled=menuContentViewModel.OpenDocumentTree.CanExecute(null),
+                        SelectItem=menuContentViewModel.OpenDocumentTree,
                     },
                     new MenuItemViewModel
                     {
@@ -279,8 +279,8 @@ namespace CryptoBook.Models
                         Icon = "📖",
                         IsParrent=false,
                         FontSize=this.FontSize,
-                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
-                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                        IsEnabled=menuContentViewModel.Reading.CanExecute(null),
+                        SelectItem=menuContentViewModel.Reading,
                     },
                     new MenuItemViewModel
                     {
@@ -288,8 +288,8 @@ namespace CryptoBook.Models
                         Icon = "🎥",
                         IsParrent=false,
                         FontSize=this.FontSize,
-                        IsEnabled=menuEncryptionViewModel.DeleteKey.CanExecute(null),
-                        SelectItem=menuEncryptionViewModel.DeleteKey,
+                        IsEnabled=menuContentViewModel.MediaPlayer.CanExecute(null),
+                        SelectItem=menuContentViewModel.MediaPlayer,
                     },
 
                 }

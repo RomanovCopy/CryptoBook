@@ -10,6 +10,8 @@ namespace CryptoBook.Models
 {
     internal class MenuEncryptionModel: ViewModelBase
     {
+
+
         public MenuEncryptionModel()
         {
 
