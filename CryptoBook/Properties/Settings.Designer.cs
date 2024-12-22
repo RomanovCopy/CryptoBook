@@ -180,5 +180,53 @@ namespace CryptoBook.Properties {
                 this["SideMenuWidth"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ProgressWindowLeft {
+            get {
+                return ((double)(this["ProgressWindowLeft"]));
+            }
+            set {
+                this["ProgressWindowLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ProgressWindowTop {
+            get {
+                return ((double)(this["ProgressWindowTop"]));
+            }
+            set {
+                this["ProgressWindowTop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ProgressWindowHeight {
+            get {
+                return ((double)(this["ProgressWindowHeight"]));
+            }
+            set {
+                this["ProgressWindowHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ProgressWindowWidth {
+            get {
+                return ((double)(this["ProgressWindowWidth"]));
+            }
+            set {
+                this["ProgressWindowWidth"] = value;
+            }
+        }
     }
 }

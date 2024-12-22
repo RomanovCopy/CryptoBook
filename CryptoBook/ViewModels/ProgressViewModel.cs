@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
 namespace CryptoBook.ViewModels
 {
-    public class ProgressViewModel: ViewModelBase
+    public class ProgressViewModel: ViewModelBase, IProgressViewModel
     {
 
         private readonly ProgressModel progressModel;
+
+        public double WindowWidth { get => progressModel.WindowWidth; set => progressModel.WindowWidth = value; }
+        public double WindowHeight { get => progressModel.WindowHeight; set => progressModel.WindowHeight = value; }
+        public double WindowTop { get => progressModel.WindowTop; set => progressModel.WindowTop = value; }
+        public double WindowLeft { get => progressModel.WindowLeft; set => progressModel.WindowLeft = value; }
+
+
+        public CancellationToken CancellationToken => progressModel.CancellationToken;
+
 
         public string OperationName { get => progressModel.OperationName; set => progressModel.OperationName = value; }
 
@@ -31,9 +42,16 @@ namespace CryptoBook.ViewModels
             progressModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
+        public ICommand Canceled => canceled ??= new RelayCommand(progressModel.Execute_Canceled, progressModel.CanExecute_Canceled);
+        RelayCommand canceled;
 
+        public ICommand Loaded => loaded ??= new RelayCommand(progressModel.Execute_Loaded, progressModel.CanExecute_Loaded);
+        RelayCommand loaded;
 
+        public ICommand Closed => closed ??= new RelayCommand(progressModel.Execute_Closed, progressModel.CanExecute_Closed);
+        RelayCommand closed;
 
-
+        public ICommand Closing => closing ??= new RelayCommand(progressModel.Execute_Closing, progressModel.CanExecute_Closing);
+        RelayCommand closing;
     }
 }

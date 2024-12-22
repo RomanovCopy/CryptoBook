@@ -3,9 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
-        Title="ProgressWindow" Height="450" Width="800">
+        Title="ProgressWindow" MinHeight="20" MinWidth="100"
+        DataContext="{x:Static locators:ViewModels.ProgressViewModel }" >
+        
+        <Window.Width>
+            <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+        </Window.Width>
+        <Window.Height>
+            <Binding Path="WindowHeight" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="height" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+        </Window.Height>
+        <Window.Top>
+            <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+        </Window.Top>
+        <Window.Left>
+            <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+        </Window.Left>
+    
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -14,12 +35,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+
         <!-- Прогрессбар -->
         <ProgressBar Grid.Row="0" Height="30" Minimum="0" Maximum="100" Value="{Binding Progress}" />
 
         <!-- Текст прогресса -->
         <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   Text="{Binding ProgressText}" FontSize="14" Margin="10"/>
+                   Text="{Binding }" FontSize="14" Margin="10"/>
 
         <!-- Статус -->
         <TextBlock Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -29,4 +51,15 @@
         <Button Grid.Row="3" Content="Cancel" Width="80" Height="30" HorizontalAlignment="Center"
                 Command="{Binding CancelCommand}" IsEnabled="{Binding IsOperationRunning}"/>
     </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding Closed}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 </Window>

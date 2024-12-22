@@ -54,20 +54,20 @@ namespace CryptoBook.Models
             currentPage = new Page();
 
             //восстанавливаем размеры и положение окна
-            if(Properties.Settings.Default.FileOverviewFirstStart)
-            {
-                WindowHeight = 40;
-                WindowWidth = 40;
-                WindowLeft = 40;
-                WindowTop = 40;
-                Properties.Settings.Default.FileOverviewFirstStart = false;
-            } else
-            {
+            //if(Properties.Settings.Default.FileOverviewFirstStart)
+            //{
+            //    WindowHeight = 40;
+            //    WindowWidth = 40;
+            //    WindowLeft = 40;
+            //    WindowTop = 40;
+            //    Properties.Settings.Default.FileOverviewFirstStart = false;
+            //} else
+            //{
                 WindowHeight = Properties.Settings.Default.WindowHeight;
                 WindowWidth = Properties.Settings.Default.WindowWidth;
                 WindowLeft = Properties.Settings.Default.WindowLeft;
                 WindowTop = Properties.Settings.Default.WindowTop;
-            }
+            //}
             //восстанавливаем состояние окна
             WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized : 
                 WindowState.Minimized;
