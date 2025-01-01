@@ -25,18 +25,6 @@ namespace CryptoBook.Injections
             ContainerBuilder builder = new ();
 
 
-            //Windows
-            builder.RegisterType<MainWindow>().SingleInstance();
-
-
-            //Pages
-            builder.RegisterType<Home>().SingleInstance();
-
-            //Controls
-            builder.RegisterType<TitleBar>().SingleInstance();
-            builder.RegisterType<MyFrame>().SingleInstance();
-            builder.RegisterType<SideMenu>().SingleInstance();
-
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().SingleInstance();
@@ -63,7 +51,21 @@ namespace CryptoBook.Injections
             //Helpers
             builder.RegisterType<Languages>().SingleInstance();
 
-            //builder.RegisterType<BehaviorComboBox>().SingleInstance();
+
+            //Windows
+            builder.RegisterType<MainWindow>().SingleInstance();
+            builder.RegisterType<ProgressWindow>().InstancePerDependency();
+
+
+            //Pages
+            builder.RegisterType<Home>().SingleInstance();
+
+            //Controls
+            builder.RegisterType<TitleBar>().SingleInstance();
+            builder.RegisterType<MyFrame>().SingleInstance();
+            builder.RegisterType<SideMenu>().SingleInstance();
+
+
 
 
 

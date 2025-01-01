@@ -43,9 +43,10 @@ namespace CryptoBook.Models
         
         public ProgressModel()
         {
-            cancellationTokenSource = new();
-            cancellationToken = cancellationTokenSource.Token;
+            Initialization();
         }
+
+
 
 
         internal bool CanExecute_Loaded(object obj)
@@ -54,16 +55,20 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object obj)
         {
+
         }
 
 
         internal bool CanExecute_Canceled(object obj)
         {
-            return !CancellationToken.IsCancellationRequested;
+            IsOperationRunning=!CancellationToken.IsCancellationRequested;
+            return IsOperationRunning;
         }
         internal void Execute_Canceled(object obj)
         {
             cancellationTokenSource.Cancel();
+            if(CanExecute_Close(null))
+                Execute_Close(null);
         }
 
 
@@ -73,6 +78,10 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closing(object obj)
         {
+            Properties.Settings.Default.ProgressWindowHeight = WindowHeight;
+            Properties.Settings.Default.ProgressWindowWidth = WindowWidth;
+            Properties.Settings.Default.ProgressWindowLeft = WindowLeft;
+            Properties.Settings.Default.ProgressWindowTop = WindowTop;
         }
 
 
@@ -82,6 +91,58 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closed(object obj)
         {
+
+        }
+
+
+        internal bool CanExecute_Close(object? obj)
+        {
+            return true; ;
+        }
+        internal void Execute_Close(object? obj)
+        {
+            Locators.MyWindows.ProgressWindow.Close();
+        }
+
+
+
+        private async void Initialization()
+        {
+            cancellationTokenSource = new();
+            cancellationToken = cancellationTokenSource.Token;
+            WindowHeight = Properties.Settings.Default.ProgressWindowHeight;
+            WindowWidth = Properties.Settings.Default.WindowWidth;
+            WindowTop = Properties.Settings.Default.WindowTop;
+            WindowLeft = Properties.Settings.Default.WindowLeft;
+            await StartLongOperationAsync();
+        }
+
+
+
+        public async Task StartLongOperationAsync()
+        {
+            IsOperationRunning = true;
+            StatusMessage = "Начало работы...";
+
+            var progress = new Progress<int>(value =>
+            {
+                Progress = value;
+                StatusMessage = $"Прогресс: {value}%";
+            });
+
+            await Task.Run(() => LongRunningOperation(progress));
+
+            StatusMessage = "Операция завершена!";
+            IsOperationRunning = false;
+        }
+
+        private void LongRunningOperation(IProgress<int> progress)
+        {
+            for(int i = 0; i <= 100; i++)
+            {
+                Thread.Sleep(50); // Эмуляция длительной операции
+                progress.Report(i);
+            }
         }
 
     }

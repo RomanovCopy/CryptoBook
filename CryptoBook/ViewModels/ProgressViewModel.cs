@@ -53,5 +53,8 @@ namespace CryptoBook.ViewModels
 
         public ICommand Closing => closing ??= new RelayCommand(progressModel.Execute_Closing, progressModel.CanExecute_Closing);
         RelayCommand closing;
+
+        public ICommand Close => close ??= new RelayCommand(progressModel.Execute_Close, progressModel.CanExecute_Close);
+        RelayCommand close;
     }
 }

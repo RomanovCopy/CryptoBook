@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Autofac;
+
 using CryptoBook.Infrastructure;
+using CryptoBook.Views;
 
 namespace CryptoBook.Models
 {
@@ -31,6 +34,9 @@ namespace CryptoBook.Models
         }
         internal void Execute_OpenFile(object obj)
         {
+            var progressWin = new ProgressWindow();
+            progressWin.Show();
+            progressWin.Owner = App.Container.Resolve<MainWindow>();
 
         }
 
