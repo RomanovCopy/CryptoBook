@@ -43,9 +43,10 @@ namespace CryptoBook.Locators
         public static MenuContentViewModel MenuContentViewModel =>
             App.Container.Resolve<IMenuContentViewModel>().As<MenuContentViewModel>();
 
+        //public static ProgressViewModel ProgressViewModel =>
+        //    App.Container.Resolve<IProgressViewModel>().As<ProgressViewModel>();
+
         public static ProgressViewModel ProgressViewModel =>
-            App.Container.Resolve<IProgressViewModel>().As<ProgressViewModel>();
-
-
+            App.Container.BeginLifetimeScope().Resolve<IProgressViewModel>().As<ProgressViewModel>();
     }
 }

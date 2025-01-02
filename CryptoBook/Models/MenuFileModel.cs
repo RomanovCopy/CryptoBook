@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
+using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
 namespace CryptoBook.Models
@@ -34,10 +36,13 @@ namespace CryptoBook.Models
         }
         internal void Execute_OpenFile(object obj)
         {
-            var progressWin = new ProgressWindow();
-            progressWin.Show();
-            progressWin.Owner = App.Container.Resolve<MainWindow>();
+            //var progressWin = new ProgressWindow();
+            //progressWin.Show();
+            //progressWin.Owner = App.Container.Resolve<MainWindow>();
 
+            var scope = App.Container.BeginLifetimeScope();
+            var windowManager = scope.Resolve<IWindowManager>();
+            windowManager.ShowWindow<ProgressWindow, ProgressViewModel>();
         }
 
         internal bool CanExecute_SaveFile(object obj)
