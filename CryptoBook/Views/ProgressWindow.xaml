@@ -6,10 +6,8 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d"
-        Title="ProgressWindow" MinHeight="150" MinWidth="300"
-        DataContext="{x:Static locators:ViewModels.ProgressViewModel }"
-        Owner="{x:Static locators:MyWindows.MainWindow}">
+        mc:Ignorable="d" x:Name="window"
+        Title="ProgressWindow" MinHeight="150" MinWidth="300">
 
         
         <Window.Width>
@@ -51,7 +49,8 @@
 
         <!-- Кнопка отмены -->
         <Button Grid.Row="3" Content="Cancel" Width="80" Height="30" HorizontalAlignment="Center"
-                Command="{Binding Canceled, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsOperationRunning, UpdateSourceTrigger=PropertyChanged}"/>
+                Command="{Binding Canceled, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsOperationRunning, UpdateSourceTrigger=PropertyChanged}"
+                CommandParameter="{Binding ElementName=window}"/>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

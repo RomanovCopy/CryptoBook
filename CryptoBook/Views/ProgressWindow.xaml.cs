@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using CryptoBook.Interfaces;
+
 namespace CryptoBook.Views
 {
     /// <summary>
@@ -19,9 +21,11 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class ProgressWindow: Window
     {
-        public ProgressWindow()
+        public ProgressWindow( IProgressViewModel progressViewModel, MainWindow mainWindow )
         {
             InitializeComponent();
+            DataContext = progressViewModel;
+            Owner = mainWindow;
         }
     }
 }

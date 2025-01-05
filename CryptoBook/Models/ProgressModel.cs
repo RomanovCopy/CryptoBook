@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+
+using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
+using CryptoBook.Views;
 
 namespace CryptoBook.Models
 {
@@ -12,10 +17,10 @@ namespace CryptoBook.Models
     {
         private CancellationTokenSource cancellationTokenSource { get; set; }
 
-        internal CancellationToken CancellationToken { get=>cancellationToken; private set=>cancellationToken=value; }
+        internal CancellationToken CancellationToken { get => cancellationToken; private set => cancellationToken = value; }
         CancellationToken cancellationToken;
 
-        internal double WindowWidth { get=>windowWidth; set=>SetProperty(ref windowWidth, value); }
+        internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
         double windowWidth;
         internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight, value); }
         double windowHeight;
@@ -40,7 +45,7 @@ namespace CryptoBook.Models
 
 
 
-        
+
         public ProgressModel()
         {
             Initialization();
@@ -61,14 +66,16 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Canceled(object obj)
         {
-            IsOperationRunning=!CancellationToken.IsCancellationRequested;
+            IsOperationRunning = !CancellationToken.IsCancellationRequested;
             return IsOperationRunning;
         }
         internal void Execute_Canceled(object obj)
         {
-            cancellationTokenSource.Cancel();
-            if(CanExecute_Close(null))
-                Execute_Close(null);
+            if(obj != null)
+            {
+                cancellationTokenSource.Cancel();
+                Execute_Close(obj);
+            }
         }
 
 
@@ -97,11 +104,15 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Close(object? obj)
         {
-            return true; ;
+            return true;
         }
         internal void Execute_Close(object? obj)
         {
-            Locators.MyWindows.ProgressWindow.Close();
+            if(obj is Window window)
+            {
+                var winManager = App.Container.Resolve<IWindowManager>();
+                winManager.CloseWindow(window);
+            }
         }
 
 
@@ -134,6 +145,7 @@ namespace CryptoBook.Models
 
             StatusMessage = "Операция завершена!";
             IsOperationRunning = false;
+            
         }
 
         private void LongRunningOperation(IProgress<int> progress)

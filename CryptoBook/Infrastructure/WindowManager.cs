@@ -16,47 +16,53 @@ namespace CryptoBook.Infrastructure
     {
 
         private readonly ILifetimeScope _scope;
-        private readonly Dictionary<Type, Window> _openWindows = new();
+        private readonly HashSet<Window> _openWindows;
 
         public WindowManager(ILifetimeScope scope)
         {
             _scope = scope;
+            _openWindows = [];
         }
 
-        public void ShowWindow<TWindow, TViewModel>() where TWindow : Window where TViewModel : class
+        public T CreateWindow<T>() where T : Window
         {
-            if(_openWindows.ContainsKey(typeof(TViewModel)))
+            var window = _scope.Resolve<T>();
+            RegisterWindow(window);
+            return window;
+        }
+
+        public void ShowWindow<T>(T window) where T : Window
+        {
+            if(!_openWindows.Contains(window))
             {
-                _openWindows[typeof(TViewModel)].Activate();
-                return;
+                RegisterWindow(window);
             }
-
-            var window = CreateWindow<TWindow, TViewModel>();
             window.Show();
-            _openWindows[typeof(TViewModel)] = window;
         }
 
-        public void ShowDialog<TWindow, TViewModel>() where TWindow : Window where TViewModel : class
+        public void CloseWindow<T>(T window) where T : Window
         {
-            var window = CreateWindow<TWindow, TViewModel>();
-            window.ShowDialog();
-        }
-
-        public void CloseWindow<TViewModel>() where TViewModel : class
-        {
-            if(_openWindows.TryGetValue(typeof(TViewModel), out var window))
+            if(_openWindows.Contains(window))
             {
                 window.Close();
-                _openWindows.Remove(typeof(TViewModel));
+                UnregisterWindow(window);
             }
         }
 
-        private Window CreateWindow<TWindow, TViewModel>() where TWindow : Window where TViewModel : class
+        public bool IsWindowOpen<T>(T window) where T : Window
         {
-            var viewModel = _scope.Resolve<TViewModel>();
-            var window = _scope.Resolve<TWindow>(); // Зарегистрируйте свои окна в контейнере
-            //window.DataContext = viewModel;
-            return window;
+            return _openWindows.Contains(window);
+        }
+
+        private void RegisterWindow<T>(T window) where T : Window
+        {
+            _openWindows.Add(window);
+            window.Closed += (s, e) => UnregisterWindow(window);
+        }
+
+        private void UnregisterWindow<T>(T window) where T : Window
+        {
+            _openWindows.Remove(window);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Autofac;
 
@@ -40,9 +41,9 @@ namespace CryptoBook.Models
             //progressWin.Show();
             //progressWin.Owner = App.Container.Resolve<MainWindow>();
 
-            var scope = App.Container.BeginLifetimeScope();
-            var windowManager = scope.Resolve<IWindowManager>();
-            windowManager.ShowWindow<ProgressWindow, ProgressViewModel>();
+            //var scope = App.Container.BeginLifetimeScope();
+            var windowManager = App.Container.Resolve<IWindowManager>();
+            windowManager.ShowWindow(windowManager.CreateWindow<ProgressWindow>());
         }
 
         internal bool CanExecute_SaveFile(object obj)

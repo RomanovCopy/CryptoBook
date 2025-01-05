@@ -54,8 +54,8 @@ namespace CryptoBook.Injections
             //Windows
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
-            builder.RegisterType<ProgressWindow>().InstancePerDependency();
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
+            builder.RegisterType<ProgressWindow>().InstancePerDependency();
 
 
             //Pages
