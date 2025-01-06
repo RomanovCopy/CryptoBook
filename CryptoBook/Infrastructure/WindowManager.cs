@@ -12,9 +12,8 @@ using CryptoBook.Interfaces;
 
 namespace CryptoBook.Infrastructure
 {
-    class WindowManager: IWindowManager
+    public class WindowManager: IWindowManager
     {
-
         private readonly ILifetimeScope _scope;
         private readonly HashSet<Window> _openWindows;
 
@@ -26,43 +25,55 @@ namespace CryptoBook.Infrastructure
 
         public T CreateWindow<T>() where T : Window
         {
+            if(!_scope.IsRegistered<T>())
+                throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
+
             var window = _scope.Resolve<T>();
+            if(window.DataContext is IViewModel vm)
+            {
+                vm.RequestClose += (s, e) => window.Close();
+            }
             RegisterWindow(window);
             return window;
         }
 
-        public void ShowWindow<T>(T window) where T : Window
+        public void ShowWindow<T>(T viewmodel) where T : IViewModel
         {
-            if(!_openWindows.Contains(window))
-            {
-                RegisterWindow(window);
-            }
-            window.Show();
+            var window = FindWindow(viewmodel);
+            window?.Show();
         }
 
-        public void CloseWindow<T>(T window) where T : Window
+        public void CloseWindow<T>(T viewmodel) where T : IViewModel
         {
-            if(_openWindows.Contains(window))
+            var window = FindWindow(viewmodel);
+            if(window != null)
             {
                 window.Close();
                 UnregisterWindow(window);
             }
         }
 
-        public bool IsWindowOpen<T>(T window) where T : Window
+        public bool IsWindowOpen<T>(T viewmodel) where T : IViewModel
         {
-            return _openWindows.Contains(window);
+            return FindWindow(viewmodel) != null;
         }
 
-        private void RegisterWindow<T>(T window) where T : Window
+        private Window? FindWindow<T>(T viewmodel) where T : IViewModel
+        {
+            return _openWindows.FirstOrDefault(w => ReferenceEquals(w.DataContext, viewmodel));
+        }
+
+
+        private void RegisterWindow(Window window)
         {
             _openWindows.Add(window);
             window.Closed += (s, e) => UnregisterWindow(window);
         }
 
-        private void UnregisterWindow<T>(T window) where T : Window
+        private void UnregisterWindow(Window window)
         {
             _openWindows.Remove(window);
         }
     }
+
 }

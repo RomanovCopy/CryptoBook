@@ -49,8 +49,7 @@
 
         <!-- Кнопка отмены -->
         <Button Grid.Row="3" Content="Cancel" Width="80" Height="30" HorizontalAlignment="Center"
-                Command="{Binding Canceled, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsOperationRunning, UpdateSourceTrigger=PropertyChanged}"
-                CommandParameter="{Binding ElementName=window}"/>
+                Command="{Binding Canceled, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsOperationRunning, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

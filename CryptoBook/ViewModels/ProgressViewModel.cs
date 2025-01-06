@@ -11,10 +11,12 @@ using CryptoBook.Models;
 
 namespace CryptoBook.ViewModels
 {
-    public class ProgressViewModel: ViewModelBase, IProgressViewModel
+    public class ProgressViewModel: ViewModelBase, IProgressViewModel, ICloseable
     {
 
         private readonly ProgressModel progressModel;
+
+        public event EventHandler RequestClose;
 
         public double WindowWidth { get => progressModel.WindowWidth; set => progressModel.WindowWidth = value; }
         public double WindowHeight { get => progressModel.WindowHeight; set => progressModel.WindowHeight = value; }
@@ -56,5 +58,6 @@ namespace CryptoBook.ViewModels
 
         public ICommand Close => close ??= new RelayCommand(progressModel.Execute_Close, progressModel.CanExecute_Close);
         RelayCommand close;
+
     }
 }
