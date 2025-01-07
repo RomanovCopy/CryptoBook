@@ -35,6 +35,5 @@ namespace CryptoBook.ViewModels
 
         public ICommand Closing { get; }
 
-        public event EventHandler RequestClose;
     }
 }

@@ -39,6 +39,5 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => closing ??= new RelayCommand(menuEncryptionModel.Execute_Closing, menuEncryptionModel.CanExecute_Closing);
         RelayCommand closing;
 
-        public event EventHandler RequestClose;
     }
 }

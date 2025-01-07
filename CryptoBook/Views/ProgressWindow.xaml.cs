@@ -21,17 +21,10 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class ProgressWindow: Window
     {
-        public event EventHandler RequestClose;
 
-        public ProgressWindow( IProgressViewModel progressViewModel, MainWindow mainWindow )
+        public ProgressWindow()
         {
             InitializeComponent();
-            DataContext = progressViewModel;
-            Owner = mainWindow;
-            if(DataContext is ICloseable closeable)
-            {
-                closeable.RequestClose += (s, e) => Close();
-            }
         }
 
     }

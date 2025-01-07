@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMenuSettingsViewModel:IViewModel
+    public interface IMenuSettingsViewModel
     {
         public ICommand SetFontWeight { get; }
         public ICommand SetFontFamily { get; }

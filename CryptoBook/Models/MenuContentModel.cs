@@ -63,20 +63,5 @@ namespace CryptoBook.Models
         {
         }
 
-        internal bool CanExecute_Close(object obj)
-        {
-            return true;
-        }
-        internal void Execute_Close(object obj)
-        {
-        }
-
-        internal bool CanExecute_Closing(object obj)
-        {
-            return true;
-        }
-        internal void Execute_Closing(object obj)
-        {
-        }
     }
 }

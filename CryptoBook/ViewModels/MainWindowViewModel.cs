@@ -14,9 +14,10 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class MainWindowViewModel:ViewModelBase, IMainWindowViewModel
+    public class MainWindowViewModel:ViewModelBase, IMainWindowViewModel, ICloseable
     {
         private readonly MainWindowModel mainWindowModel;
+        public event EventHandler RequestClose;
 
         public double WindowWidth { get => mainWindowModel.WindowWidth; set => mainWindowModel.WindowWidth=value; }
         public double WindowHeight { get => mainWindowModel.WindowHeight; set => mainWindowModel.WindowHeight=value; }
@@ -69,6 +70,5 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => closing ??= new RelayCommand(mainWindowModel.Execute_Closing, mainWindowModel.CanExecute_Closing);
         RelayCommand closing;
 
-        public event EventHandler RequestClose;
     }
 }

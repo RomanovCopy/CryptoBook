@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMenuFileViewModel: IViewModel
+    public interface IMenuFileViewModel
     {
         /// <summary>
         /// новый файл

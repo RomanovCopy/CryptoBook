@@ -14,10 +14,6 @@ namespace CryptoBook.Interfaces
         /// </summary>
         public ICommand PageLoaded { get; }
         /// <summary>
-        /// команда обработки закрытия страницы
-        /// </summary>
-        public ICommand PageClose { get; }
-        /// <summary>
         /// комманда обработки очистки страницы
         /// </summary>
         public ICommand PageClear { get; }

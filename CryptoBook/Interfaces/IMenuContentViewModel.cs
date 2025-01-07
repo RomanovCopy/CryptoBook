@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMenuContentViewModel:IViewModel
+    public interface IMenuContentViewModel
     {
         public ICommand Reading { get; }
         public ICommand InsertImage { get; }

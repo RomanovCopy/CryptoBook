@@ -23,17 +23,13 @@ namespace CryptoBook.Infrastructure
             _openWindows = [];
         }
 
-        public T CreateWindow<T>() where T : Window
+        public Twindow CreateWindow<Tviewmodel, Twindow>() where Tviewmodel:IViewModel, ICloseable where Twindow : Window
         {
-            if(!_scope.IsRegistered<T>())
-                throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
-
-            var window = _scope.Resolve<T>();
-            if(window.DataContext is IViewModel vm)
-            {
-                vm.RequestClose += (s, e) => window.Close();
-            }
-            RegisterWindow(window);
+            if(!_scope.IsRegistered<Twindow>())
+                throw new InvalidOperationException($"Window of type {typeof(Twindow).Name} is not registered in the container.");
+            var vm = _scope.Resolve<Tviewmodel>();
+            var window = _scope.Resolve<Twindow>();
+            RegisterWindow<Twindow, Tviewmodel>(window, vm);
             return window;
         }
 
@@ -43,7 +39,7 @@ namespace CryptoBook.Infrastructure
             window?.Show();
         }
 
-        public void CloseWindow<T>(T viewmodel) where T : IViewModel
+        public void CloseWindow<T>(T viewmodel) where T : IViewModel, ICloseable
         {
             var window = FindWindow(viewmodel);
             if(window != null)
@@ -64,15 +60,29 @@ namespace CryptoBook.Infrastructure
         }
 
 
-        private void RegisterWindow(Window window)
+        private void RegisterWindow<Twindow, Tviewmodel>(Window window, IViewModel viewModel)
         {
+            if(viewModel is ICloseable vm)
+            {
+                vm.RequestClose += (s, e) => WinClose(window);
+            }
+            window.DataContext = viewModel;
             _openWindows.Add(window);
             window.Closed += (s, e) => UnregisterWindow(window);
         }
 
         private void UnregisterWindow(Window window)
         {
+            if(window.DataContext is ICloseable vm)
+            {
+                vm.RequestClose -=(s,e)=> WinClose(window);
+            }
             _openWindows.Remove(window);
+        }
+
+        private void WinClose(Window window)
+        {
+            window.Close();
         }
     }
 

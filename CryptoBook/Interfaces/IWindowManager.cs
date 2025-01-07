@@ -11,7 +11,7 @@ namespace CryptoBook.Interfaces
     {
         T CreateWindow<T>() where T : Window;
         void ShowWindow<T>(T viewmodel) where T : IViewModel;
-        void CloseWindow<T>(T viewmodel) where T : IViewModel;
+        void CloseWindow<T>(T viewmodel) where T : IViewModel, ICloseable;
         bool IsWindowOpen<T>(T viewmodel) where T :IViewModel;
     }
 }

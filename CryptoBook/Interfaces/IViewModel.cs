@@ -9,7 +9,7 @@ using CryptoBook.Infrastructure;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IViewModel:ICloseable
+    public interface IViewModel
     {
 
         public static Action Ready { get; set; }

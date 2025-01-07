@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMenuItemViewModel:IViewModel
+    public interface IMenuItemViewModel
     {
         /// <summary>
         /// выбор элемента

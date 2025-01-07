@@ -27,9 +27,6 @@ namespace CryptoBook.ViewModels
         public ICommand PageLoaded => pageLoaded ??= new RelayCommand(homeModel.Execute_PageLoaded, homeModel.CanExecute_PageLoded);
         RelayCommand pageLoaded;
 
-        public ICommand PageClose => pageCloae ??= new RelayCommand(homeModel.Execute_PageClose, homeModel.CanExecute_PageClose);
-        RelayCommand pageCloae;
-
         public ICommand PageClear => pageClear ??= new RelayCommand(homeModel.Execute_PageClear, homeModel.CanExecute_PageClear);
         RelayCommand pageClear;
 

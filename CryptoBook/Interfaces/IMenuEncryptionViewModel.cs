@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMenuEncryptionViewModel:IViewModel
+    public interface IMenuEncryptionViewModel
     {
         /// <summary>
         /// удаление ключа шифрования
