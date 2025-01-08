@@ -43,7 +43,8 @@ namespace CryptoBook.Models
 
             //var scope = App.Container.BeginLifetimeScope();
             var windowManager = App.Container.Resolve<IWindowManager>();
-            windowManager.ShowWindow(windowManager.CreateWindow<ProgressWindow>());
+            var window = windowManager.CreateWindow<ProgressViewModel, ProgressWindow>();
+            windowManager.ShowWindow((ProgressViewModel)window.DataContext);
         }
 
         internal bool CanExecute_SaveFile(object obj)

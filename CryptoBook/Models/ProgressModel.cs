@@ -20,6 +20,7 @@ namespace CryptoBook.Models
         internal CancellationToken CancellationToken { get => cancellationToken; private set => cancellationToken = value; }
         CancellationToken cancellationToken;
 
+
         internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
         double windowWidth;
         internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight, value); }
@@ -110,8 +111,7 @@ namespace CryptoBook.Models
         {
             if(obj is Window window)
             {
-                var winManager = App.Container.Resolve<IWindowManager>();
-                winManager.CloseWindow(window);
+                window.Close();
             }
         }
 

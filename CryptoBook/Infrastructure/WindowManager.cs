@@ -23,13 +23,11 @@ namespace CryptoBook.Infrastructure
             _openWindows = [];
         }
 
-        public Twindow CreateWindow<Tviewmodel, Twindow>() where Tviewmodel:IViewModel, ICloseable where Twindow : Window
+        public T CreateWindow<T>() where T : Window
         {
-            if(!_scope.IsRegistered<Twindow>())
-                throw new InvalidOperationException($"Window of type {typeof(Twindow).Name} is not registered in the container.");
-            var vm = _scope.Resolve<Tviewmodel>();
-            var window = _scope.Resolve<Twindow>();
-            RegisterWindow<Twindow, Tviewmodel>(window, vm);
+            if(!_scope.IsRegistered<T>())
+                throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
+            var window = _scope.Resolve<T>();
             return window;
         }
 
@@ -62,6 +60,8 @@ namespace CryptoBook.Infrastructure
 
         private void RegisterWindow<Twindow, Tviewmodel>(Window window, IViewModel viewModel)
         {
+
+            var handler = (EventHandler)((s, e) => window.Close());
             if(viewModel is ICloseable vm)
             {
                 vm.RequestClose += (s, e) => WinClose(window);
@@ -75,7 +75,7 @@ namespace CryptoBook.Infrastructure
         {
             if(window.DataContext is ICloseable vm)
             {
-                vm.RequestClose -=(s,e)=> WinClose(window);
+                vm.RequestClose -= (s, e) => WinClose(window);
             }
             _openWindows.Remove(window);
         }

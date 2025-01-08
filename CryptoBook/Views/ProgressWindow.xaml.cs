@@ -22,9 +22,10 @@ namespace CryptoBook.Views
     public partial class ProgressWindow: Window
     {
 
-        public ProgressWindow()
+        public ProgressWindow(IProgressViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
 
     }

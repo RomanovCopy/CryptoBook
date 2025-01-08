@@ -9,8 +9,9 @@ namespace CryptoBook.Interfaces
 {
     public interface IWindowManager
     {
-        T CreateWindow<T>() where T : Window;
-        void ShowWindow<T>(T viewmodel) where T : IViewModel;
+        
+        public T CreateWindow<T>() where T : Window;
+        void ShowWindow<T>() where T : Window;
         void CloseWindow<T>(T viewmodel) where T : IViewModel, ICloseable;
         bool IsWindowOpen<T>(T viewmodel) where T :IViewModel;
     }

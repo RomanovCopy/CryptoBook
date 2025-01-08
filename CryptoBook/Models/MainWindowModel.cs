@@ -203,8 +203,8 @@ namespace CryptoBook.Models
                 while(count > 0)
                 {
                     var page = FrameList[--count];
-                    if(page.DataContext is IPageViewModel viewmodel)
-                        viewmodel.PageClose.Execute(page);
+                    //if(page.DataContext is IPageViewModel viewmodel)
+                    //    viewmodel.PageClose.Execute(page);
                 }
                 Properties.Settings.Default.Save();
             } catch(Exception e) { ErrorWindow(e); }

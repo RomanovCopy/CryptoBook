@@ -11,12 +11,13 @@ using CryptoBook.Models;
 
 namespace CryptoBook.ViewModels
 {
-    public class ProgressViewModel: ViewModelBase, IProgressViewModel, ICloseable
+    public class ProgressViewModel: ViewModelBase, IProgressViewModel, ICloseable, IShowable
     {
 
         private readonly ProgressModel progressModel;
 
         public event EventHandler RequestClose;
+        public event EventHandler RequestShow;
 
         public double WindowWidth { get => progressModel.WindowWidth; set => progressModel.WindowWidth = value; }
         public double WindowHeight { get => progressModel.WindowHeight; set => progressModel.WindowHeight = value; }
