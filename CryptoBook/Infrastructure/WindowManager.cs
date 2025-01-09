@@ -28,61 +28,66 @@ namespace CryptoBook.Infrastructure
             if(!_scope.IsRegistered<T>())
                 throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
             var window = _scope.Resolve<T>();
+            RegisterWindow<T>(window);
             return window;
         }
 
-        public void ShowWindow<T>(T viewmodel) where T : IViewModel
+        public void ShowWindow<T>(Guid windowId) where T : Window
         {
-            var window = FindWindow(viewmodel);
+            var window = FindWindow<T>(windowId);
             window?.Show();
         }
 
-        public void CloseWindow<T>(T viewmodel) where T : IViewModel, ICloseable
+        public void CloseWindow<T>(Guid windowId) where T : Window
         {
-            var window = FindWindow(viewmodel);
-            if(window != null)
+            if(IsWindowOpen<T>(windowId))
             {
-                window.Close();
-                UnregisterWindow(window);
+                var window = FindWindow<T>(windowId);
+                if(window != null)
+                {
+                    window.Close();
+                    UnregisterWindow<T>(window);
+                }
             }
         }
 
-        public bool IsWindowOpen<T>(T viewmodel) where T : IViewModel
+        public bool IsWindowOpen<T>(Guid windowId) where T : Window
         {
-            return FindWindow(viewmodel) != null;
+            return FindWindow<T>(windowId) != null;
         }
 
-        private Window? FindWindow<T>(T viewmodel) where T : IViewModel
+        private T? FindWindow<T>(Guid windowId) where T : Window
         {
-            return _openWindows.FirstOrDefault(w => ReferenceEquals(w.DataContext, viewmodel));
+            return _openWindows
+                .OfType<T>()
+                .FirstOrDefault(w => w.DataContext is { } dc && dc is IWindowWithId id && id.WindowId == windowId);
         }
 
 
-        private void RegisterWindow<Twindow, Tviewmodel>(Window window, IViewModel viewModel)
+
+        private void RegisterWindow<T>(T window) where T : Window
         {
 
-            var handler = (EventHandler)((s, e) => window.Close());
-            if(viewModel is ICloseable vm)
+            if(window.DataContext is ICloseable vm)
             {
-                vm.RequestClose += (s, e) => WinClose(window);
+                vm.RequestClose += (s, e) => WinClose<T>(window);
             }
-            window.DataContext = viewModel;
             _openWindows.Add(window);
-            window.Closed += (s, e) => UnregisterWindow(window);
+            window.Closed += (s, e) => UnregisterWindow<T>(window);
         }
 
-        private void UnregisterWindow(Window window)
+        private void UnregisterWindow<T>(T window) where T : Window
         {
             if(window.DataContext is ICloseable vm)
             {
-                vm.RequestClose -= (s, e) => WinClose(window);
+                vm.RequestClose -= (s, e) => WinClose<T>(window);
             }
             _openWindows.Remove(window);
         }
 
-        private void WinClose(Window window)
+        private void WinClose<T>(T? window) where T : Window
         {
-            window.Close();
+            window?.Close();
         }
     }
 

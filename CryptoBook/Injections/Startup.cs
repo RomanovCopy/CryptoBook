@@ -30,7 +30,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().SingleInstance();
             builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().SingleInstance();
             builder.RegisterType<MenuFileViewModel>().As<IMenuFileViewModel>().SingleInstance();
-            builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
             builder.RegisterType<SideMenuViewModel>().As<ISideMenuViewModel>().SingleInstance();
             builder.RegisterType<MenuSettingsViewModel>().As<IMenuSettingsViewModel>().SingleInstance();
             builder.RegisterType<MenuEncryptionViewModel>().As<IMenuEncryptionViewModel>().SingleInstance();
@@ -52,11 +51,13 @@ namespace CryptoBook.Injections
 
 
             //Windows
-            builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
+            builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
+
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
             builder.RegisterType<ProgressWindow>().InstancePerDependency();
 
+            builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();

@@ -17,6 +17,8 @@ namespace CryptoBook.Models
     {
         private CancellationTokenSource cancellationTokenSource { get; set; }
 
+        internal readonly Guid WindowId; 
+
         internal CancellationToken CancellationToken { get => cancellationToken; private set => cancellationToken = value; }
         CancellationToken cancellationToken;
 
@@ -50,6 +52,7 @@ namespace CryptoBook.Models
         public ProgressModel()
         {
             Initialization();
+            WindowId = new Guid();
         }
 
 
