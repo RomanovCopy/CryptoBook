@@ -16,11 +16,12 @@ namespace CryptoBook.Models
 {
     internal class MenuFileModel:ViewModelBase
     {
+        private readonly IWindowManager windowManager;
 
 
-
-        internal MenuFileModel()
+        internal MenuFileModel(ILifetimeScope scope)
         {
+            windowManager = scope.Resolve<IWindowManager>();
         }
 
         internal bool CanExecute_NewFile(object obj)
@@ -37,12 +38,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_OpenFile(object obj)
         {
-            //var progressWin = new ProgressWindow();
-            //progressWin.Show();
-            //progressWin.Owner = App.Container.Resolve<MainWindow>();
-
-            //var scope = App.Container.BeginLifetimeScope();
-            var windowManager = App.Container.Resolve<IWindowManager>();
             var window = windowManager.CreateWindow<ProgressWindow>();
             if(window.DataContext is IWindowWithId vm)
             {

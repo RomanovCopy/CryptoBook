@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using Autofac;
+
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;

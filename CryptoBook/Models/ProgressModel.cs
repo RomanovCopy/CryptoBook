@@ -17,7 +17,8 @@ namespace CryptoBook.Models
     {
         private CancellationTokenSource cancellationTokenSource { get; set; }
 
-        internal readonly Guid WindowId; 
+        internal readonly Guid WindowId;
+        private readonly ILifetimeScope scope;
 
         internal CancellationToken CancellationToken { get => cancellationToken; private set => cancellationToken = value; }
         CancellationToken cancellationToken;
@@ -52,7 +53,8 @@ namespace CryptoBook.Models
         public ProgressModel()
         {
             Initialization();
-            WindowId = new Guid();
+            WindowId = Guid.NewGuid();
+            scope = App.Container.BeginLifetimeScope();
         }
 
 
@@ -75,11 +77,8 @@ namespace CryptoBook.Models
         }
         internal void Execute_Canceled(object obj)
         {
-            if(obj != null)
-            {
                 cancellationTokenSource.Cancel();
-                Execute_Close(obj);
-            }
+                Execute_Close(null);
         }
 
 
@@ -112,10 +111,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Close(object? obj)
         {
-            if(obj is Window window)
-            {
-                window.Close();
-            }
+            scope.Resolve<IWindowManager>().CloseWindow<ProgressWindow>(WindowId);
         }
 
 

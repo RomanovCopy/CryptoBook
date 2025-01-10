@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using Autofac;
+
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
@@ -14,9 +16,10 @@ namespace CryptoBook.ViewModels
     public class MenuFileViewModel:ViewModelBase, IMenuFileViewModel
     {
         private readonly MenuFileModel menuFileModel;
-        public MenuFileViewModel()
+
+        public MenuFileViewModel(ILifetimeScope scope)
         {
-            menuFileModel = new MenuFileModel();
+            menuFileModel = new MenuFileModel(scope);
             menuFileModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
