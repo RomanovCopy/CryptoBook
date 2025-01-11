@@ -7,7 +7,7 @@
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" x:Name="window"
-        Title="ProgressWindow" MinHeight="150" MinWidth="300">
+        Title="{Binding OperationName,UpdateSourceTrigger=PropertyChanged}" MinHeight="150" MinWidth="300">
 
         
         <Window.Width>
@@ -26,6 +26,7 @@
             <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
              ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
         </Window.Left>
+    
     
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -49,17 +50,17 @@
 
         <!-- Кнопка отмены -->
         <Button Grid.Row="3" Content="Cancel" Width="80" Height="30" HorizontalAlignment="Center"
-                Command="{Binding Canceled, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsOperationRunning, UpdateSourceTrigger=PropertyChanged}"/>
+                Command="{Binding Canceled, UpdateSourceTrigger=PropertyChanged}" />
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding Loaded}"/>
+            <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
-            <i:InvokeCommandAction Command="{Binding Closing}"/>
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="Closed">
-            <i:InvokeCommandAction Command="{Binding Closed}"/>
+            <i:InvokeCommandAction Command="{Binding Closed, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 </Window>

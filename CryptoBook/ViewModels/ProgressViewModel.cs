@@ -13,15 +13,15 @@ using CryptoBook.Models;
 
 namespace CryptoBook.ViewModels
 {
-    public class ProgressViewModel: ViewModelBase, IProgressViewModel, ICloseable, IShowable, IWindowWithId
+    public class ProgressViewModel: ViewModelBase, IProgressViewModel, ICloseable, IWindowWithId
     {
 
         private readonly ProgressModel progressModel;
 
         public Guid WindowId => progressModel.WindowId;
 
+
         public event EventHandler RequestClose;
-        public event EventHandler RequestShow;
 
         public double WindowWidth { get => progressModel.WindowWidth; set => progressModel.WindowWidth = value; }
         public double WindowHeight { get => progressModel.WindowHeight; set => progressModel.WindowHeight = value; }
@@ -29,25 +29,22 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => progressModel.WindowLeft; set => progressModel.WindowLeft = value; }
 
 
-        public CancellationToken CancellationToken => progressModel.CancellationToken;
-
-
         public string OperationName { get => progressModel.OperationName; set => progressModel.OperationName = value; }
-
         public double Progress { get => progressModel.Progress; set => progressModel.Progress = value; }
-
         public string StatusMessage { get => progressModel.StatusMessage; set => progressModel.StatusMessage = value; }
-
-        public bool IsOperationRunning { get => progressModel.IsOperationRunning; set =>progressModel.IsOperationRunning= value; }
-
+        public bool IsOperationRunning { get => progressModel.IsOperationRunning; set => progressModel.IsOperationRunning = value; }
 
 
 
-        public ProgressViewModel()
+
+        public ProgressViewModel(ILifetimeScope scope)
         {
-            progressModel = new ProgressModel();
+            progressModel = new ProgressModel(scope);
             progressModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
+
+        public ICommand StartLongOperation => startLongOperation ?? new RelayCommand(progressModel.Execute_StartLongOperation, progressModel.CanExecute_StartLongOperation);
+        RelayCommand startLongOperation;
 
         public ICommand Canceled => canceled ??= new RelayCommand(progressModel.Execute_Canceled, progressModel.CanExecute_Canceled);
         RelayCommand canceled;

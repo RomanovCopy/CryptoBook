@@ -15,13 +15,13 @@ namespace CryptoBook.Models
 {
     internal class ProgressModel: ViewModelBase
     {
-        private CancellationTokenSource cancellationTokenSource { get; set; }
-
-        internal readonly Guid WindowId;
+        private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly CancellationToken cancellationToken;
         private readonly ILifetimeScope scope;
+        internal readonly Guid WindowId;
 
-        internal CancellationToken CancellationToken { get => cancellationToken; private set => cancellationToken = value; }
-        CancellationToken cancellationToken;
+
+
 
 
         internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
@@ -50,15 +50,38 @@ namespace CryptoBook.Models
 
 
 
-        public ProgressModel()
+        public ProgressModel(ILifetimeScope scope)
         {
             Initialization();
             WindowId = Guid.NewGuid();
-            scope = App.Container.BeginLifetimeScope();
+            this.scope = scope;
+            cancellationTokenSource = new();
+            cancellationToken = cancellationTokenSource.Token;
+        }
+
+        private void Initialization()
+        {
+            WindowHeight = Properties.Settings.Default.ProgressWindowHeight;
+            WindowWidth = Properties.Settings.Default.ProgressWindowWidth;
+            WindowTop = Properties.Settings.Default.ProgressWindowTop;
+            WindowLeft = Properties.Settings.Default.ProgressWindowLeft;
         }
 
 
+        internal bool CanExecute_StartLongOperation(object obj)
+        {
+            return obj is IProgressOperation<double>;
+        }
+        internal async void Execute_StartLongOperation(object obj)
+        {
+            if(obj is IProgressOperation<double> operation)
+            {
+                var progress = new Progress<double>(value => Progress = value);
+                await operation.ExecuteAsync(progress, cancellationToken);
+                scope.Resolve<IWindowManager>().CloseWindow<ProgressWindow>(WindowId);
+            }
 
+        }
 
         internal bool CanExecute_Loaded(object obj)
         {
@@ -66,19 +89,18 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object obj)
         {
-
         }
 
 
         internal bool CanExecute_Canceled(object obj)
         {
-            IsOperationRunning = !CancellationToken.IsCancellationRequested;
+            IsOperationRunning = !cancellationToken.IsCancellationRequested;
             return IsOperationRunning;
         }
         internal void Execute_Canceled(object obj)
         {
-                cancellationTokenSource.Cancel();
-                Execute_Close(null);
+            cancellationTokenSource.Cancel();
+            Execute_Close(null);
         }
 
 
@@ -92,6 +114,7 @@ namespace CryptoBook.Models
             Properties.Settings.Default.ProgressWindowWidth = WindowWidth;
             Properties.Settings.Default.ProgressWindowLeft = WindowLeft;
             Properties.Settings.Default.ProgressWindowTop = WindowTop;
+            Properties.Settings.Default.Save();
         }
 
 
@@ -116,45 +139,6 @@ namespace CryptoBook.Models
 
 
 
-        private async void Initialization()
-        {
-            cancellationTokenSource = new();
-            cancellationToken = cancellationTokenSource.Token;
-            WindowHeight = Properties.Settings.Default.ProgressWindowHeight;
-            WindowWidth = Properties.Settings.Default.WindowWidth;
-            WindowTop = Properties.Settings.Default.WindowTop;
-            WindowLeft = Properties.Settings.Default.WindowLeft;
-            await StartLongOperationAsync();
-        }
-
-
-
-        public async Task StartLongOperationAsync()
-        {
-            IsOperationRunning = true;
-            StatusMessage = "Начало работы...";
-
-            var progress = new Progress<int>(value =>
-            {
-                Progress = value;
-                StatusMessage = $"Прогресс: {value}%";
-            });
-
-            await Task.Run(() => LongRunningOperation(progress));
-
-            StatusMessage = "Операция завершена!";
-            IsOperationRunning = false;
-            
-        }
-
-        private void LongRunningOperation(IProgress<int> progress)
-        {
-            for(int i = 0; i <= 100; i++)
-            {
-                Thread.Sleep(50); // Эмуляция длительной операции
-                progress.Report(i);
-            }
-        }
 
     }
 }

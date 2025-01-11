@@ -17,6 +17,7 @@ namespace CryptoBook.ViewModels
     {
         private readonly MenuFileModel menuFileModel;
 
+
         public MenuFileViewModel(ILifetimeScope scope)
         {
             menuFileModel = new MenuFileModel(scope);

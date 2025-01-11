@@ -82,6 +82,7 @@ namespace CryptoBook.Infrastructure
             {
                 vm.RequestClose -= (s, e) => WinClose<T>(window);
             }
+            window.Closed -= (s, e) => UnregisterWindow<T>(window);
             _openWindows.Remove(window);
         }
 

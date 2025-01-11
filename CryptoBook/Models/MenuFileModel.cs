@@ -14,9 +14,10 @@ using CryptoBook.Views;
 
 namespace CryptoBook.Models
 {
-    internal class MenuFileModel:ViewModelBase
+    internal class MenuFileModel: ViewModelBase
     {
         private readonly IWindowManager windowManager;
+
 
 
         internal MenuFileModel(ILifetimeScope scope)
@@ -39,11 +40,13 @@ namespace CryptoBook.Models
         internal void Execute_OpenFile(object obj)
         {
             var window = windowManager.CreateWindow<ProgressWindow>();
-            if(window.DataContext is IWindowWithId vm)
+            var vm = (ProgressViewModel)window.DataContext;
+            vm.OperationName = "Open File";
+            if(vm is IWindowWithId)
             {
                 windowManager.ShowWindow<ProgressWindow>(vm.WindowId);
+                vm.StartLongOperation.Execute(new TestLongOperarion());
             }
-            
         }
 
         internal bool CanExecute_SaveFile(object obj)
@@ -103,6 +106,22 @@ namespace CryptoBook.Models
         }
         internal void Execute_UpdateFile(object obj)
         {
+        }
+
+        private Task LongRunningOperation(IProgress<double> progress)
+        {
+            double i = 0;
+            var task = new Task(() =>
+            {
+                for(; i <= 100; i++)
+                {
+                    Thread.Sleep(50); // Эмуляция длительной операции
+                    progress.Report(i);
+                }
+
+            });
+            task.Start();
+            return task;
         }
     }
 }
