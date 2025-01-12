@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using CryptoBook.Infrastructure;
 
@@ -73,10 +75,18 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Localization(object obj)
         {
-            return true;
+            if(obj is string localize)
+            {
+                if(Thread.CurrentThread.CurrentUICulture.ToString() != localize)
+                    return true;
+            }
+            return false;
         }
         internal void Execute_Localization(object obj)
         {
+            Properties.Settings.Default.CultureInfo = obj.ToString();
+            Properties.Settings.Default.Save();
+            App.Current.MainWindow.Close();
         }
 
 

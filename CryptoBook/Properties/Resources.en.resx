@@ -166,13 +166,13 @@
     <value>Media player</value>
   </data>
   <data name="newFile" xml:space="preserve">
-    <value>NewFile</value>
+    <value>New File</value>
   </data>
   <data name="openDirectory" xml:space="preserve">
-    <value>OpenDirectory</value>
+    <value>Open directory</value>
   </data>
   <data name="openFile" xml:space="preserve">
-    <value>OpenFile</value>
+    <value>Open File</value>
   </data>
   <data name="paper" xml:space="preserve">
     <value>Paper</value>
@@ -181,10 +181,10 @@
     <value>Read document</value>
   </data>
   <data name="saveFile" xml:space="preserve">
-    <value>SaveFile</value>
+    <value>Save File</value>
   </data>
   <data name="saveFileAs..." xml:space="preserve">
-    <value>SaveFileAs...</value>
+    <value>Save File As...</value>
   </data>
   <data name="settings" xml:space="preserve">
     <value>Settings</value>
@@ -193,6 +193,6 @@
     <value>Synchronization</value>
   </data>
   <data name="updateFile" xml:space="preserve">
-    <value>UpdateFile</value>
+    <value>Update File</value>
   </data>
 </root>

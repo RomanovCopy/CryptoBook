@@ -59,5 +59,239 @@ namespace CryptoBook.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Add Image.
+        /// </summary>
+        internal static string addImage {
+            get {
+                return ResourceManager.GetString("addImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Add Text.
+        /// </summary>
+        internal static string addText {
+            get {
+                return ResourceManager.GetString("addText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Background.
+        /// </summary>
+        internal static string background {
+            get {
+                return ResourceManager.GetString("background", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Close file.
+        /// </summary>
+        internal static string closeFile {
+            get {
+                return ResourceManager.GetString("closeFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Content.
+        /// </summary>
+        internal static string content {
+            get {
+                return ResourceManager.GetString("content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Decrypt.
+        /// </summary>
+        internal static string decrypt {
+            get {
+                return ResourceManager.GetString("decrypt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Document tree.
+        /// </summary>
+        internal static string documentTree {
+            get {
+                return ResourceManager.GetString("documentTree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Encoding.
+        /// </summary>
+        internal static string encoding {
+            get {
+                return ResourceManager.GetString("encoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Encrypt.
+        /// </summary>
+        internal static string encrypt {
+            get {
+                return ResourceManager.GetString("encrypt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Encryption.
+        /// </summary>
+        internal static string encryption {
+            get {
+                return ResourceManager.GetString("encryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Encryption: Off.
+        /// </summary>
+        internal static string encryption__Off {
+            get {
+                return ResourceManager.GetString("encryption: Off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Encryption: On.
+        /// </summary>
+        internal static string encryption__On {
+            get {
+                return ResourceManager.GetString("encryption: On", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на File.
+        /// </summary>
+        internal static string file {
+            get {
+                return ResourceManager.GetString("file", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ink.
+        /// </summary>
+        internal static string ink {
+            get {
+                return ResourceManager.GetString("ink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Localization.
+        /// </summary>
+        internal static string localization {
+            get {
+                return ResourceManager.GetString("localization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Media player.
+        /// </summary>
+        internal static string mediaPlayer {
+            get {
+                return ResourceManager.GetString("mediaPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на NewFile.
+        /// </summary>
+        internal static string newFile {
+            get {
+                return ResourceManager.GetString("newFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на OpenDirectory.
+        /// </summary>
+        internal static string openDirectory {
+            get {
+                return ResourceManager.GetString("openDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на OpenFile.
+        /// </summary>
+        internal static string openFile {
+            get {
+                return ResourceManager.GetString("openFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Paper.
+        /// </summary>
+        internal static string paper {
+            get {
+                return ResourceManager.GetString("paper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Read document.
+        /// </summary>
+        internal static string readDocument {
+            get {
+                return ResourceManager.GetString("readDocument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на SaveFile.
+        /// </summary>
+        internal static string saveFile {
+            get {
+                return ResourceManager.GetString("saveFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на SaveFileAs....
+        /// </summary>
+        internal static string saveFileAs___ {
+            get {
+                return ResourceManager.GetString("saveFileAs...", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Settings.
+        /// </summary>
+        internal static string settings {
+            get {
+                return ResourceManager.GetString("settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Synchronization.
+        /// </summary>
+        internal static string synchronization {
+            get {
+                return ResourceManager.GetString("synchronization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на UpdateFile.
+        /// </summary>
+        internal static string updateFile {
+            get {
+                return ResourceManager.GetString("updateFile", resourceCulture);
+            }
+        }
     }
 }

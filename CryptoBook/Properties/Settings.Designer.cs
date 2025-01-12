@@ -26,12 +26,12 @@ namespace CryptoBook.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
-        public string LanguageKey {
+        public string CultureInfo {
             get {
-                return ((string)(this["LanguageKey"]));
+                return ((string)(this["CultureInfo"]));
             }
             set {
-                this["LanguageKey"] = value;
+                this["CultureInfo"] = value;
             }
         }
         
@@ -171,7 +171,7 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        [global::System.Configuration.DefaultSettingValueAttribute("40")]
         public double SideMenuWidth {
             get {
                 return ((double)(this["SideMenuWidth"]));

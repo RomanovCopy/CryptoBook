@@ -12,18 +12,18 @@
          ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </UserControl.Width>
 
-    <Border Background="Transparent">
+    <Grid Background="Transparent" HorizontalAlignment="Stretch" >
         <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
                   Background="Transparent"
                   BorderThickness="0">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
-                    <ContentPresenter/>
+                    <ContentPresenter />
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
             <TreeView.ItemContainerStyle>
                 <StaticResource ResourceKey="TreeViewItemStyle"/>
             </TreeView.ItemContainerStyle>
         </TreeView>
-    </Border>
+    </Grid>
 </UserControl>

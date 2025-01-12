@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CryptoBook.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="LanguageKey" Type="System.String" Scope="User">
+    <Setting Name="CultureInfo" Type="System.String" Scope="User">
       <Value Profile="(Default)">en-US</Value>
     </Setting>
     <Setting Name="FileOverviewFirstStart" Type="System.Boolean" Scope="User">
@@ -39,7 +39,7 @@
       <Value Profile="(Default)">1.2</Value>
     </Setting>
     <Setting Name="SideMenuWidth" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">25</Value>
+      <Value Profile="(Default)">40</Value>
     </Setting>
     <Setting Name="ProgressWindowLeft" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>

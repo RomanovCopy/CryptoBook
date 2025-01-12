@@ -1,4 +1,6 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
@@ -14,27 +16,28 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class MainWindowViewModel:ViewModelBase, IMainWindowViewModel, ICloseable
+    public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, ICloseable
     {
         private readonly MainWindowModel mainWindowModel;
+
         public event EventHandler RequestClose;
 
-        public double WindowWidth { get => mainWindowModel.WindowWidth; set => mainWindowModel.WindowWidth=value; }
-        public double WindowHeight { get => mainWindowModel.WindowHeight; set => mainWindowModel.WindowHeight=value; }
-        public double WindowTop { get => mainWindowModel.WindowTop; set => mainWindowModel.WindowTop=value; }
-        public double WindowLeft { get => mainWindowModel.WindowLeft; set => mainWindowModel.WindowLeft=value; }
-        public WindowState WindowState { get => mainWindowModel.WindowState; set => mainWindowModel.WindowState=value; }
+        public double WindowWidth { get => mainWindowModel.WindowWidth; set => mainWindowModel.WindowWidth = value; }
+        public double WindowHeight { get => mainWindowModel.WindowHeight; set => mainWindowModel.WindowHeight = value; }
+        public double WindowTop { get => mainWindowModel.WindowTop; set => mainWindowModel.WindowTop = value; }
+        public double WindowLeft { get => mainWindowModel.WindowLeft; set => mainWindowModel.WindowLeft = value; }
+        public WindowState WindowState { get => mainWindowModel.WindowState; set => mainWindowModel.WindowState = value; }
 
 
         public ObservableCollection<Page> FrameList => mainWindowModel.FrameList;
 
         public Page CurrentPage => mainWindowModel.CurrentPage;
 
-        public static Action Ready { get=>MainWindowModel.Ready; set=>MainWindowModel.Ready=value; }
+        public static Action Ready { get => MainWindowModel.Ready; set => MainWindowModel.Ready = value; }
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(ILifetimeScope scope)
         {
-            mainWindowModel = new();
+            mainWindowModel = new(scope);
             mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -43,25 +46,25 @@ namespace CryptoBook.ViewModels
         public ICommand ToggleMenuClick => toggleMenuClick ??= new RelayCommand(mainWindowModel.Execute_ToggleMenuClick, mainWindowModel.CanExecute_ToggleMenuClick);
         RelayCommand toggleMenuClick;
 
-        public ICommand FrameListAddPage=>frameListAddPage ??= new RelayCommand(mainWindowModel.Execute_FrameListAddPage, mainWindowModel.CanExecute_FrameListAddPage);
+        public ICommand FrameListAddPage => frameListAddPage ??= new RelayCommand(mainWindowModel.Execute_FrameListAddPage, mainWindowModel.CanExecute_FrameListAddPage);
         RelayCommand frameListAddPage;
 
-        public ICommand FrameListRemovePage=>frameListRemovePage??=new RelayCommand(mainWindowModel.Execute_FrameListRemovePage, mainWindowModel.CanExecute_FrameListRemovePage);
+        public ICommand FrameListRemovePage => frameListRemovePage ??= new RelayCommand(mainWindowModel.Execute_FrameListRemovePage, mainWindowModel.CanExecute_FrameListRemovePage);
         RelayCommand frameListRemovePage;
 
-        public ICommand FramelistGoForward=>framelist_GoForward ??= new RelayCommand(mainWindowModel.Execute_FramelistGoForward, mainWindowModel.CanExecute_FramelistGoForward);
+        public ICommand FramelistGoForward => framelist_GoForward ??= new RelayCommand(mainWindowModel.Execute_FramelistGoForward, mainWindowModel.CanExecute_FramelistGoForward);
         RelayCommand framelist_GoForward;
 
-        public ICommand FramelistGoBack=>framelist_GoBack ??= new RelayCommand(mainWindowModel.Execute_FramelistGoBack, mainWindowModel.CanExecute_FramelistGoBack);
+        public ICommand FramelistGoBack => framelist_GoBack ??= new RelayCommand(mainWindowModel.Execute_FramelistGoBack, mainWindowModel.CanExecute_FramelistGoBack);
         RelayCommand framelist_GoBack;
 
-        public ICommand PageClosed=>pageClosed ??= new RelayCommand(mainWindowModel.Execute_PageClosed, mainWindowModel.CanExecute_PageClosed);
+        public ICommand PageClosed => pageClosed ??= new RelayCommand(mainWindowModel.Execute_PageClosed, mainWindowModel.CanExecute_PageClosed);
         RelayCommand pageClosed;
 
         public ICommand WindowClose => windowClose ??= new RelayCommand(mainWindowModel.Execute_WindowClose, mainWindowModel.CanExecute_WindowClose);
         RelayCommand windowClose;
 
-        public ICommand Loaded=>loaded ??= new RelayCommand(mainWindowModel.Execute_Loaded, mainWindowModel.CanExecute_Loaded);
+        public ICommand Loaded => loaded ??= new RelayCommand(mainWindowModel.Execute_Loaded, mainWindowModel.CanExecute_Loaded);
         RelayCommand loaded;
 
         public ICommand Close => closed ??= new RelayCommand(mainWindowModel.Execute_Closed, mainWindowModel.CanExecute_Closed);

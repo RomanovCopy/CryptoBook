@@ -27,8 +27,11 @@ namespace CryptoBook.ViewModels
         public ICommand InstalKey => instalKey ??= new RelayCommand(menuEncryptionModel.Execute_InstalKey, menuEncryptionModel.CanExecute_InstalKey);
         RelayCommand instalKey;
 
-        public ICommand EncryptionPanel => encryptionPanel ??= new RelayCommand(menuEncryptionModel.Execute_EncryptionPanel, menuEncryptionModel.CanExecute_EncryptionPanel);
-        RelayCommand encryptionPanel;
+        public ICommand Encrypt => encrypt ??= new RelayCommand(menuEncryptionModel.Execute_Encrypt, menuEncryptionModel.CanExecute_Encrypt);
+        RelayCommand encrypt;
+
+        public ICommand Decrypt => decrypt ??= new RelayCommand(menuEncryptionModel.Execute_Decrypt, menuEncryptionModel.CanExecute_Decrypt);
+        RelayCommand decrypt;
 
         public ICommand Loaded => loaded ??= new RelayCommand(menuEncryptionModel.Execute_Loaded, menuEncryptionModel.CanExecute_Loaded);
         RelayCommand loaded;

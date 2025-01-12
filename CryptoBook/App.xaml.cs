@@ -5,6 +5,8 @@ using CryptoBook.Views;
 
 using System.Configuration;
 using System.Data;
+using System.Globalization;
+using System.Threading;
 using System.Windows;
 
 namespace CryptoBook

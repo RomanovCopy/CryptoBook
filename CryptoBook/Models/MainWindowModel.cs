@@ -18,20 +18,20 @@ using System.Windows.Media.Animation;
 
 namespace CryptoBook.Models
 {
-    public class MainWindowModel:ViewModelBase
+    public class MainWindowModel: ViewModelBase
     {
 
-        private readonly Languages languages;
+        private readonly ILifetimeScope scope;
 
         private bool isMenuOpen { get; set; }
 
-        internal double WindowWidth { get => windowWidth; set =>SetProperty(ref windowWidth, value); }
+        internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
         double windowWidth;
-        internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight,value); }
+        internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight, value); }
         double windowHeight;
         internal double WindowTop { get => windowTop; set => SetProperty(ref windowTop, value); }
         double windowTop;
-        internal double WindowLeft { get => windowLeft; set =>SetProperty(ref windowLeft, value); }
+        internal double WindowLeft { get => windowLeft; set => SetProperty(ref windowLeft, value); }
         double windowLeft;
         internal WindowState WindowState { get => windowState; set => SetProperty(ref windowState, value); }
         WindowState windowState;
@@ -46,30 +46,19 @@ namespace CryptoBook.Models
         internal static Action Ready { get; set; }
 
 
-        public MainWindowModel()
+        public MainWindowModel(ILifetimeScope scope)
         {
+            this.scope = scope;
             frameList = [];
-            languages = App.Container.Resolve<Languages>();
-            languages.PropertyChanged += (s, e) => OnPropertyChanged("Headers", "ToolTips");
             currentPage = new Page();
 
-            //восстанавливаем размеры и положение окна
-            //if(Properties.Settings.Default.FileOverviewFirstStart)
-            //{
-            //    WindowHeight = 40;
-            //    WindowWidth = 40;
-            //    WindowLeft = 40;
-            //    WindowTop = 40;
-            //    Properties.Settings.Default.FileOverviewFirstStart = false;
-            //} else
-            //{
-                WindowHeight = Properties.Settings.Default.WindowHeight;
-                WindowWidth = Properties.Settings.Default.WindowWidth;
-                WindowLeft = Properties.Settings.Default.WindowLeft;
-                WindowTop = Properties.Settings.Default.WindowTop;
-            //}
+            WindowHeight = Properties.Settings.Default.WindowHeight;
+            WindowWidth = Properties.Settings.Default.WindowWidth;
+            WindowLeft = Properties.Settings.Default.WindowLeft;
+            WindowTop = Properties.Settings.Default.WindowTop;
+
             //восстанавливаем состояние окна
-            WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized : 
+            WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized :
                 WindowState.Minimized;
             isMenuOpen = false;
         }
@@ -176,7 +165,7 @@ namespace CryptoBook.Models
 
         internal void Execute_Closed(object obj)
         {
-            
+
         }
 
 
@@ -197,7 +186,6 @@ namespace CryptoBook.Models
                     Properties.Settings.Default.WindowLeft = WindowLeft;
                     Properties.Settings.Default.WindowTop = WindowTop;
                 }
-                Properties.Settings.Default.LanguageKey = languages.Key;
                 Properties.Settings.Default.WindowState = WindowState.ToString();
                 int count = FrameList.Count;
                 while(count > 0)
@@ -228,7 +216,7 @@ namespace CryptoBook.Models
             App.Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
             {
                 menuPanel = (DependencyObject)App.Current.MainWindow.FindName("MenuPanel");
-                contentPanel= (DependencyObject)App.Current.MainWindow.FindName("ContentPanel");
+                contentPanel = (DependencyObject)App.Current.MainWindow.FindName("ContentPanel");
             });
 
             Storyboard storyboard = ((Storyboard)App.Current.Resources[storyboardKey]).Clone();

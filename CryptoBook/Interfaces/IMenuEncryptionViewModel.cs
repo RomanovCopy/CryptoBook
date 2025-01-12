@@ -18,8 +18,13 @@ namespace CryptoBook.Interfaces
         /// </summary>
         public ICommand InstalKey { get; }
         /// <summary>
-        /// шифрование/дешифрование файлов и каталогов
+        /// шифрованиефайлов и каталогов
         /// </summary>
-        public ICommand EncryptionPanel { get; }
+        public ICommand Encrypt { get; }
+        /// <summary>
+        /// дешифрование файлов и каталогов
+        /// </summary>
+        public ICommand Decrypt { get; }
+
     }
 }

@@ -47,7 +47,6 @@ namespace CryptoBook.Injections
 
 
             //Helpers
-            builder.RegisterType<Languages>().SingleInstance();
 
 
             //Windows

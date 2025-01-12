@@ -3,6 +3,7 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
+using CryptoBook.Properties;
 
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace CryptoBook.Models
 
         {
             new() {
-                Name = "File",
+                Name =Resources.file,
                 Icon = "",
                 IsParrent=true,
                 IsEnabled=true,
@@ -69,7 +70,7 @@ namespace CryptoBook.Models
                 {
                     new MenuItemViewModel
                     {
-                        Name = "New file",
+                        Name = Resources.newFile,
                         Icon = "📄",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.NewFile.CanExecute(null),
@@ -78,7 +79,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Open File",
+                        Name = Resources.openFile,
                         Icon = "📝",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.OpenFile.CanExecute(null),
@@ -87,7 +88,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Open directory",
+                        Name = Resources.openDirectory,
                         Icon = "📂",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.SaveFile.CanExecute(null),
@@ -96,7 +97,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Save File",
+                        Name = Resources.saveFile,
                         Icon = "💾",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.SaveFile.CanExecute(null),
@@ -105,7 +106,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Save File As...",
+                        Name = Resources.saveFileAs___,
                         Icon = "🗂️",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.SaveAsFile.CanExecute(null),
@@ -114,7 +115,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Update File",
+                        Name = Resources.updateFile,
                         Icon = "🔄",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.UpdateFile.CanExecute(null),
@@ -123,7 +124,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Synchronization",
+                        Name = Resources.synchronization,
                         Icon = "♻️",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.WorkingDirectorySynchronization.CanExecute(null),
@@ -132,7 +133,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Close file",
+                        Name = Resources.closeFile,
                         Icon = "❌",
                         IsParrent=false,
                         IsEnabled=menuFileViewModel.CloseFile.CanExecute(null),
@@ -142,7 +143,7 @@ namespace CryptoBook.Models
                 }
             },//File
             new() {
-                Name="Settings",
+                Name=Resources.settings,
                 Icon = "",
                 IsParrent=true,
                 IsEnabled=true,
@@ -151,7 +152,7 @@ namespace CryptoBook.Models
                 {
                     new MenuItemViewModel
                     {
-                        Name = "Ink",
+                        Name = Resources.ink,
                         Icon = "🖋️",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -160,7 +161,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Background",
+                        Name = Resources.background,
                         Icon = "🎨",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -169,7 +170,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Paper",
+                        Name = Resources.paper,
                         Icon = "📃",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -178,7 +179,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Encoding",
+                        Name = Resources.encoding,
                         Icon = "🔤",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -187,12 +188,32 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Localization",
+                        Name = Resources.localization,
                         Icon = "🌐",
-                        IsParrent=false,
+                        IsParrent=true,
                         FontSize=this.FontSize,
-                        IsEnabled=menuSettingsViewModel.Localization.CanExecute(null),
-                        SelectItem=menuSettingsViewModel.Localization
+                        IsEnabled=true,
+                        Children =
+                        {
+                            new MenuItemViewModel
+                            {
+                                Name = "English",
+                                Icon = "",
+                                IsParrent=false,
+                                FontSize=this.FontSize,
+                                IsEnabled=menuSettingsViewModel.Localization.CanExecute("en-EN"),
+                                SelectItem=new RelayCommand(menuSettingsViewModel.Localization.Execute, null , "en-EN"),
+                            },
+                            new MenuItemViewModel
+                            {
+                                Name = "Русский",
+                                Icon = "",
+                                IsParrent=false,
+                                FontSize=this.FontSize,
+                                IsEnabled=menuSettingsViewModel.Localization.CanExecute("ru-RU"),
+                                SelectItem=new RelayCommand(menuSettingsViewModel.Localization.Execute, null , "ru-RU")
+                            }
+                        }
                     },
 
                 }
@@ -200,7 +221,7 @@ namespace CryptoBook.Models
             },//Settings
             new()
             {
-                Name="Encryption",
+                Name=Resources.encryption,
                 Icon = "",
                 IsParrent=true,
                 IsEnabled=true,
@@ -209,7 +230,7 @@ namespace CryptoBook.Models
                 {
                     new MenuItemViewModel
                     {
-                        Name = "Encryption: On",
+                        Name = Resources.encryption__On,
                         Icon = "🔒",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -218,7 +239,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Encryption: Off",
+                        Name = Resources.encryption__Off,
                         Icon = "🔓",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -227,19 +248,27 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Encryption",
+                        Name = Resources.encrypt,
                         Icon = "🧩",
                         IsParrent=false,
                         FontSize=this.FontSize,
-                        IsEnabled=menuEncryptionViewModel.EncryptionPanel.CanExecute(null),
-                        SelectItem=menuEncryptionViewModel.EncryptionPanel,
+                        IsEnabled=menuEncryptionViewModel.Encrypt.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.Encrypt,
                     },
-
+                    new MenuItemViewModel
+                    {
+                        Name = Resources.decrypt,
+                        Icon = "🧩",
+                        IsParrent=false,
+                        FontSize=this.FontSize,
+                        IsEnabled=menuEncryptionViewModel.Decrypt.CanExecute(null),
+                        SelectItem=menuEncryptionViewModel.Decrypt,
+                    },
                 }
             },//Encryption
             new()
             {
-                Name="Content",
+                Name=Resources.content,
                 Icon = "",
                 IsParrent=true,
                 IsEnabled=true,
@@ -248,7 +277,7 @@ namespace CryptoBook.Models
                 {
                     new MenuItemViewModel
                     {
-                        Name = "Add Image",
+                        Name = Resources.addImage,
                         Icon = "🖼️",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -257,7 +286,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Add Text",
+                        Name = Resources.addText,
                         Icon = "📝",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -266,7 +295,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Document tree",
+                        Name = Resources.documentTree,
                         Icon = "📑",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -275,7 +304,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Read document",
+                        Name = Resources.readDocument,
                         Icon = "📖",
                         IsParrent=false,
                         FontSize=this.FontSize,
@@ -284,7 +313,7 @@ namespace CryptoBook.Models
                     },
                     new MenuItemViewModel
                     {
-                        Name = "Media player",
+                        Name = Resources.mediaPlayer,
                         Icon = "🎥",
                         IsParrent=false,
                         FontSize=this.FontSize,

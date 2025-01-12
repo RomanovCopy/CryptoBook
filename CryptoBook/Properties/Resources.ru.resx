@@ -118,81 +118,81 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="addImage" xml:space="preserve">
-    <value>Add Image</value>
+    <value>Добавить изображение</value>
   </data>
   <data name="addText" xml:space="preserve">
-    <value>Add Text</value>
+    <value>Добавить текст</value>
   </data>
   <data name="background" xml:space="preserve">
-    <value>Background</value>
+    <value>Фон</value>
   </data>
   <data name="closeFile" xml:space="preserve">
-    <value>Close file</value>
+    <value>Закрыть файл</value>
   </data>
   <data name="content" xml:space="preserve">
-    <value>Content</value>
+    <value>Контент</value>
   </data>
   <data name="decrypt" xml:space="preserve">
-    <value>Decrypt</value>
+    <value>Расшифровать</value>
   </data>
   <data name="documentTree" xml:space="preserve">
-    <value>Document tree</value>
+    <value>Дерево документа</value>
   </data>
   <data name="encoding" xml:space="preserve">
-    <value>Encoding</value>
+    <value>Кодировка</value>
   </data>
   <data name="encrypt" xml:space="preserve">
-    <value>Encrypt</value>
+    <value>Зашифровать</value>
   </data>
   <data name="encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Шифрование</value>
   </data>
   <data name="encryption: Off" xml:space="preserve">
-    <value>Encryption: Off</value>
+    <value>Шифрование: Выкл.</value>
   </data>
   <data name="encryption: On" xml:space="preserve">
-    <value>Encryption: On</value>
+    <value>Шифрование: Вкл.</value>
   </data>
   <data name="file" xml:space="preserve">
-    <value>File</value>
+    <value>Файл</value>
   </data>
   <data name="ink" xml:space="preserve">
-    <value>Ink</value>
+    <value>Чернила</value>
   </data>
   <data name="localization" xml:space="preserve">
-    <value>Localization</value>
+    <value>Локализация</value>
   </data>
   <data name="mediaPlayer" xml:space="preserve">
-    <value>Media player</value>
+    <value>Медиаплеер</value>
   </data>
   <data name="newFile" xml:space="preserve">
-    <value>NewFile</value>
+    <value>Новый файл</value>
   </data>
   <data name="openDirectory" xml:space="preserve">
-    <value>OpenDirectory</value>
+    <value>Открыть директорию</value>
   </data>
   <data name="openFile" xml:space="preserve">
-    <value>OpenFile</value>
+    <value>Открыть файл</value>
   </data>
   <data name="paper" xml:space="preserve">
-    <value>Paper</value>
+    <value>Бумага</value>
   </data>
   <data name="readDocument" xml:space="preserve">
-    <value>Read document</value>
+    <value>Прочитать документ</value>
   </data>
   <data name="saveFile" xml:space="preserve">
-    <value>SaveFile</value>
+    <value>Сохранить файл</value>
   </data>
   <data name="saveFileAs..." xml:space="preserve">
-    <value>SaveFileAs...</value>
+    <value>Сохранить файл как ...</value>
   </data>
   <data name="settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Настройки</value>
   </data>
   <data name="synchronization" xml:space="preserve">
-    <value>Synchronization</value>
+    <value>Синхронизация</value>
   </data>
   <data name="updateFile" xml:space="preserve">
-    <value>UpdateFile</value>
+    <value>Обновить файл</value>
   </data>
 </root>

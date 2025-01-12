@@ -27,6 +27,5 @@ namespace CryptoBook.Locators
         public static InternalSizeConverter internalSizeConverter => App.Container.Resolve<InternalSizeConverter>();
 
 
-        public Languages languages => App.Container.Resolve<Languages>();
     }
 }
