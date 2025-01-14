@@ -73,5 +73,6 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => closing ??= new RelayCommand(mainWindowModel.Execute_Closing, mainWindowModel.CanExecute_Closing);
         RelayCommand closing;
 
+        public ICommand Closed => throw new NotImplementedException();
     }
 }

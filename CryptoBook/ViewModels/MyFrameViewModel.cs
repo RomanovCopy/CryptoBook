@@ -31,5 +31,6 @@ namespace CryptoBook.ViewModels
 
         public ICommand Closing { get; }
 
+        public ICommand Closed => throw new NotImplementedException();
     }
 }
