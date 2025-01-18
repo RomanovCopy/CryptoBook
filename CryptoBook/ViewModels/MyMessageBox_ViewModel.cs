@@ -17,7 +17,9 @@ namespace CryptoBook.ViewModels
     {
         private readonly MyMessageBox_Model myMessageBox_Model;
 
+        public string Header => myMessageBox_Model.Header;
 
+        public string Message => myMessageBox_Model.Message;
 
 
 
@@ -26,6 +28,13 @@ namespace CryptoBook.ViewModels
             myMessageBox_Model = new MyMessageBox_Model(scope);
             myMessageBox_Model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
+
+
+        public ICommand SetHeader => setHeader ??= new RelayCommand(myMessageBox_Model.Execute_SetHeader, myMessageBox_Model.CanExecute_SetHeader);
+        RelayCommand setHeader;
+
+        public ICommand SetMessage => setMessage ??= new RelayCommand(myMessageBox_Model.Execute_SetMessage, myMessageBox_Model.CanExecute_SetMessage);
+        RelayCommand setMessage;
 
 
 

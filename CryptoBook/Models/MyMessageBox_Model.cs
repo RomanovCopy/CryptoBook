@@ -16,10 +16,37 @@ namespace CryptoBook.Models
         private readonly ILifetimeScope scope;
         private readonly IWindowManager windowManager;
 
+        internal string Header { get => header; set => SetProperty(ref header, value); }
+        private string header;
+
+        internal string Message { get => message; set => SetProperty(ref message, value); }
+        private string message;
+
         public MyMessageBox_Model(ILifetimeScope scope)
         {
             this.scope = scope;
             windowManager = scope.Resolve<IWindowManager>();
+        }
+
+
+
+        internal bool CanExecute_SetMessage(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_SetMessage(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_SetHeader(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_SetHeader(object? obj)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -53,5 +80,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
     }
 }
