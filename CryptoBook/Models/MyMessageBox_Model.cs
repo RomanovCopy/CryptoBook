@@ -20,6 +20,20 @@ namespace CryptoBook.Models
         private string header;
 
         internal string Message { get => message; set => SetProperty(ref message, value); }
+
+        internal Brush FontColor;
+        Brush fontColor;
+
+
+        internal double WindowWidth { get=>windowWidth; set=>SetProperty(ref windowWidth, value); }
+        double windowWidth;
+        public double WindowHeight { get=>windowHeight; set=>SetProperty(ref windowHeight, value); }
+        double windowHeight;
+        public double WindowTop { get=> windowTop; set=>SetProperty(ref windowTop, value); }
+        double windowTop;
+        public double WindowLeft { get=> windowLeft; set=>SetProperty(ref windowLeft, value); }
+        double windowLeft;
+
         private string message;
 
         public MyMessageBox_Model(ILifetimeScope scope)
@@ -32,53 +46,66 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetMessage(object? obj)
         {
-            throw new NotImplementedException();
+            return obj is string;
         }
         internal void Execute_SetMessage(object? obj)
         {
-            throw new NotImplementedException();
+            if(obj is string str)
+            {
+                Message = str;
+            }
         }
 
 
         internal bool CanExecute_SetHeader(object? obj)
         {
-            throw new NotImplementedException();
+            return obj is string;
         }
         internal void Execute_SetHeader(object? obj)
         {
-            throw new NotImplementedException();
+            if(obj is string str)
+            {
+                Header = str;
+            }
         }
 
 
 
         internal bool CanExecute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            WindowHeight = Properties.Settings.Default.MyMessageHeight;
+            WindowWidth = Properties.Settings.Default.MyMessageWidth;
+            WindowLeft = Properties.Settings.Default.MyMessageLeft;
+            WindowTop = Properties.Settings.Default.MyMessageTop;
         }
 
 
         internal bool CanExecute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         internal void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+
         }
 
 
         internal bool CanExecute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            Properties.Settings.Default.MyMessageHeight= WindowHeight;
+            Properties.Settings.Default.MyMessageWidth= WindowWidth;
+            Properties.Settings.Default.MyMessageLeft= WindowLeft;
+            Properties.Settings.Default.MyMessageTop= WindowTop;
+            Properties.Settings.Default.Save();
         }
 
     }

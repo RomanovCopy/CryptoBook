@@ -17,6 +17,12 @@ namespace CryptoBook.ViewModels
     {
         private readonly MyMessageBox_Model myMessageBox_Model;
 
+        public double WindowWidth { get => myMessageBox_Model.WindowWidth; set => myMessageBox_Model.WindowWidth = value; }
+        public double WindowHeight { get => myMessageBox_Model.WindowHeight; set => myMessageBox_Model.WindowHeight = value; }
+        public double WindowTop { get => myMessageBox_Model.WindowTop; set => myMessageBox_Model.WindowTop = value; }
+        public double WindowLeft { get => myMessageBox_Model.WindowLeft; set => myMessageBox_Model.WindowLeft = value; }
+
+
         public string Header => myMessageBox_Model.Header;
 
         public string Message => myMessageBox_Model.Message;
