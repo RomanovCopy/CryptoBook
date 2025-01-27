@@ -3,9 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" 
-        Title="MyMessageBox" Height="450" Width="800" Closing="">
+        Title="{Binding Header, UpdateSourceTrigger=PropertyChanged}" MinHeight="200" MinWidth="400">
+
+    <Window.Width>
+        <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="WindowHeight" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="height" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left>
+        <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+             ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+
     <Grid>
         
     </Grid>
