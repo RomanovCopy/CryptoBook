@@ -21,14 +21,12 @@ namespace CryptoBook.Models
 
         internal string Message { get => message; set => SetProperty(ref message, value); }
 
-        internal Brush FontColor;
-        Brush fontColor;
+        internal Brush BackColor { get => backColor; set => SetProperty(ref backColor, value); }
+        Brush backColor;
+        internal Brush TextColor { get => textColor, set => SetProperty(ref textColor, value); }
+        Brush textColor;
 
 
-        internal double WindowWidth { get=>windowWidth; set=>SetProperty(ref windowWidth, value); }
-        double windowWidth;
-        public double WindowHeight { get=>windowHeight; set=>SetProperty(ref windowHeight, value); }
-        double windowHeight;
         public double WindowTop { get=> windowTop; set=>SetProperty(ref windowTop, value); }
         double windowTop;
         public double WindowLeft { get=> windowLeft; set=>SetProperty(ref windowLeft, value); }
@@ -40,6 +38,7 @@ namespace CryptoBook.Models
         {
             this.scope = scope;
             windowManager = scope.Resolve<IWindowManager>();
+            
         }
 
 
@@ -77,8 +76,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object? obj)
         {
-            WindowHeight = Properties.Settings.Default.MyMessageHeight;
-            WindowWidth = Properties.Settings.Default.MyMessageWidth;
             WindowLeft = Properties.Settings.Default.MyMessageLeft;
             WindowTop = Properties.Settings.Default.MyMessageTop;
         }
@@ -101,8 +98,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closing(object? obj)
         {
-            Properties.Settings.Default.MyMessageHeight= WindowHeight;
-            Properties.Settings.Default.MyMessageWidth= WindowWidth;
             Properties.Settings.Default.MyMessageLeft= WindowLeft;
             Properties.Settings.Default.MyMessageTop= WindowTop;
             Properties.Settings.Default.Save();

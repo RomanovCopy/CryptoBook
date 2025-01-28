@@ -232,30 +232,6 @@ namespace CryptoBook.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double MyMessageHeight {
-            get {
-                return ((double)(this["MyMessageHeight"]));
-            }
-            set {
-                this["MyMessageHeight"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double MyMessageWidth {
-            get {
-                return ((double)(this["MyMessageWidth"]));
-            }
-            set {
-                this["MyMessageWidth"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public double MyMessageLeft {
             get {
                 return ((double)(this["MyMessageLeft"]));
