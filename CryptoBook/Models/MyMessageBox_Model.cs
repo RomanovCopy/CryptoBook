@@ -15,15 +15,17 @@ namespace CryptoBook.Models
     {
         private readonly ILifetimeScope scope;
         private readonly IWindowManager windowManager;
+        internal readonly Guid WindowId;
 
         internal string Header { get => header; set => SetProperty(ref header, value); }
         private string header;
 
         internal string Message { get => message; set => SetProperty(ref message, value); }
+        private string message;
 
         internal Brush BackColor { get => backColor; set => SetProperty(ref backColor, value); }
         Brush backColor;
-        internal Brush TextColor { get => textColor, set => SetProperty(ref textColor, value); }
+        internal Brush TextColor { get => textColor; set => SetProperty(ref textColor, value); }
         Brush textColor;
 
 
@@ -32,10 +34,10 @@ namespace CryptoBook.Models
         public double WindowLeft { get=> windowLeft; set=>SetProperty(ref windowLeft, value); }
         double windowLeft;
 
-        private string message;
 
         public MyMessageBox_Model(ILifetimeScope scope)
         {
+            WindowId = Guid.NewGuid();
             this.scope = scope;
             windowManager = scope.Resolve<IWindowManager>();
             

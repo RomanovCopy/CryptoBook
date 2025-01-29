@@ -13,6 +13,20 @@
         MaxHeight="400"
         Width="Auto"
         Height="Auto">
+    <Window.Resources>
+        <Style x:Key="mybuttonL" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Background" Value="{Binding ButtonLeftBC, 
+                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Foreground" Value="{Binding ButtonLeftFC, 
+                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+        </Style>
+        <Style x:Key="mybuttonR" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Background" Value="{Binding ButtonRightBC, 
+                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Foreground" Value="{Binding ButtonRightFC, 
+                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+        </Style>
+    </Window.Resources>
 
     <Window.Top>
         <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
@@ -46,11 +60,11 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="buttonleft" Grid.Column="1"
                     Content="{Binding ButtonLeft_Content, UpdateSourceTrigger=PropertyChanged}" 
-                    Style="{StaticResource TitleBarButtonStyle}"
+                    Style="{StaticResource mybuttonL}" IsEnabled="True"
                     Command="{Binding ButtonLeftClick, UpdateSourceTrigger=PropertyChanged}"/>
             <Button x:Name="buttonright" Grid.Column="3"
                     Content="{Binding ButtonRight_Content, UpdateSourceTrigger=PropertyChanged}" 
-                    Style="{StaticResource TitleBarButtonStyle}"
+                    Style="{StaticResource mybuttonR}" IsEnabled="True"
                     Command="{Binding ButtonRightClick, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
     </Grid>

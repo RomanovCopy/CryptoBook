@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +21,10 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class MyMessageBox: Window
     {
-        public MyMessageBox()
+        public MyMessageBox(IMyMessageBox_ViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }

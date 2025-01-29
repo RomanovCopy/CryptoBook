@@ -56,6 +56,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
             builder.RegisterType<ProgressWindow>().InstancePerDependency();
 
+            builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
+            builder.RegisterType<MyMessageBox>().InstancePerDependency();
+
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
 
             //Pages

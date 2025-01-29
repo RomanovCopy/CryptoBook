@@ -13,7 +13,7 @@ using CryptoBook.Models;
 
 namespace CryptoBook.ViewModels
 {
-    public class MyMessageBox_ViewModel: ViewModelBase, IMyMessageBox_ViewModel
+    public class MyMessageBox_ViewModel: ViewModelBase, IMyMessageBox_ViewModel,IWindowWithId
     {
         private readonly MyMessageBox_Model myMessageBox_Model;
 
@@ -21,13 +21,14 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => myMessageBox_Model.WindowLeft; set => myMessageBox_Model.WindowLeft = value; }
         public Brush BackColor { get => myMessageBox_Model.BackColor; set => myMessageBox_Model.BackColor = value; }
 
-        public Brush TextColor { get => myMessageBox_Model.TextColor, set => myMessageBox_Model.TextColor = value; }
+        public Brush TextColor { get => myMessageBox_Model.TextColor; set => myMessageBox_Model.TextColor = value; }
 
 
         public string Header => myMessageBox_Model.Header;
 
         public string Message => myMessageBox_Model.Message;
 
+        public Guid WindowId => myMessageBox_Model.WindowId;
 
 
         public MyMessageBox_ViewModel(ILifetimeScope scope)
@@ -57,5 +58,6 @@ namespace CryptoBook.ViewModels
         RelayCommand closing;
 
         public ICommand Close => throw new NotImplementedException();
+
     }
 }
