@@ -49,15 +49,25 @@ namespace CryptoBook.Models
             //    windowManager.ShowWindow<ProgressWindow>(vm.WindowId);
             //    vm.StartLongOperation.Execute(new TestLongOperarion());
             //}
+
             var window = windowManager.CreateWindow<MyMessageBox>();
-            var vm = (MyMessageBox_ViewModel)window.DataContext;
-            vm.SetHeader.Execute("Romanov");
-            vm.SetMessage.Execute("SergeyMihailovich");
-            vm.TextColor = Brushes.Green;
-            if(vm is IWindowWithId)
+            if(window.DataContext is MyMessageBox_ViewModel vm && vm is IWindowWithId)
             {
+                vm.Header = "Romanov";
+                vm.Message = "SergeyMihailovich";
+                vm.TextColor = Color.Green;
+                vm.BackColor = Color.Gray;
+                vm.ButtonLeft_Content = "Cancel";
+                vm.ButtonLeftBC = Color.Green;
+                vm.BullonLeftFC = Color.Black;
+                vm.ButtonRight_Content = "Ok";
+                vm.ButtonRightBC = Color.Green;
+                vm.ButtonRightFC = Color.Black;
                 windowManager.ShowWindow<MyMessageBox>(vm.WindowId);
+
             }
+
+
         }
 
         internal bool CanExecute_SaveFile(object obj)

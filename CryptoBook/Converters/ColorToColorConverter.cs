@@ -40,6 +40,7 @@ namespace CryptoBook.Converters
             try
             {
                 object result = null;
+                var a = value.GetType();
                 if(targetType == typeof(Brush) && value is System.Drawing.Color val)
                 {
                     result = new SolidColorBrush(System.Windows.Media.Color.FromArgb(val.A, val.R, val.G, val.B));

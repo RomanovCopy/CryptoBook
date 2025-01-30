@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 using Autofac;
+
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
@@ -23,17 +25,26 @@ namespace CryptoBook.Models
         internal string Message { get => message; set => SetProperty(ref message, value); }
         private string message;
 
-        internal Brush BackColor { get => backColor; set => SetProperty(ref backColor, value); }
-        Brush backColor;
-        internal Brush TextColor { get => textColor; set => SetProperty(ref textColor, value); }
-        Brush textColor;
+        public string ButtonLeft_Content { get=>buttonLeft_Content; set=>SetProperty(ref buttonLeft_Content, value); }
+        private string buttonLeft_Content;
+        public string ButtonRight_Content { get=>buttonRight_Content; set=>SetProperty(ref buttonRight_Content, value); }
+        private string buttonRight_Content;
+
+        internal Color BackColor { get => backColor; set => SetProperty(ref backColor, value); }
+        private Color backColor;
+        internal Color TextColor { get => textColor; set => SetProperty(ref textColor, value); }
+        private Color textColor;
 
 
         public double WindowTop { get=> windowTop; set=>SetProperty(ref windowTop, value); }
-        double windowTop;
+        private double windowTop;
         public double WindowLeft { get=> windowLeft; set=>SetProperty(ref windowLeft, value); }
-        double windowLeft;
-
+        private double windowLeft;
+        public Color ButtonLeftBC { get=>buttonLeftBC; set=>SetProperty(ref buttonLeftBC, value); }
+        private Color buttonLeftBC;
+        public Color BullonLeftFC { get; internal set; }
+        public Color ButtonRightBC { get; internal set; }
+        public Color ButtonRightFC { get; internal set; }
 
         public MyMessageBox_Model(ILifetimeScope scope)
         {
@@ -43,31 +54,21 @@ namespace CryptoBook.Models
             
         }
 
-
-
-        internal bool CanExecute_SetMessage(object? obj)
+        internal bool CanExecute_ButtonLeftClick(object? obj)
         {
-            return obj is string;
+            return true;
         }
-        internal void Execute_SetMessage(object? obj)
+        internal void Execute_ButtonLeftClick(object? obj)
         {
-            if(obj is string str)
-            {
-                Message = str;
-            }
+            
         }
 
-
-        internal bool CanExecute_SetHeader(object? obj)
+        internal bool CanExecute_ButtonRightClick(object? obj)
         {
-            return obj is string;
+            return true;
         }
-        internal void Execute_SetHeader(object? obj)
+        internal void Execute_ButtonRightClick(object? obj)
         {
-            if(obj is string str)
-            {
-                Header = str;
-            }
         }
 
 

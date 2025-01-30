@@ -23,8 +23,8 @@ namespace CryptoBook.Views
     {
         public MyMessageBox(IMyMessageBox_ViewModel viewModel)
         {
-            InitializeComponent();
             DataContext = viewModel;
+            InitializeComponent();
         }
     }
 }

@@ -6,13 +6,9 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d" 
+        mc:Ignorable="d" SizeToContent="Height"
         Title="{Binding Header, UpdateSourceTrigger=PropertyChanged}" 
-        MinHeight="200" MinWidth="400"
-        MaxWidth="600"
-        MaxHeight="400"
-        Width="Auto"
-        Height="Auto">
+        MinHeight="100" Width="300">
     <Window.Resources>
         <Style x:Key="mybuttonL" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
             <Setter Property="Background" Value="{Binding ButtonLeftBC, 
@@ -46,7 +42,7 @@
             <RowDefinition x:Name="blank_line03" Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock x:Name="message"
-                    Grid.Row="1"
+                    Grid.Row="1" TextAlignment="Center"
                     Style="{StaticResource TextBlockWrap}" 
                     Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"/>
 
@@ -58,14 +54,16 @@
                 <ColumnDefinition  x:Name="for_buttonsright" Width="Auto"/>
                 <ColumnDefinition x:Name="blank_column03" Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="buttonleft" Grid.Column="1"
+            <Button x:Name="buttonleft" Grid.Column="1" HorizontalContentAlignment="Center"
                     Content="{Binding ButtonLeft_Content, UpdateSourceTrigger=PropertyChanged}" 
-                    Style="{StaticResource mybuttonL}" IsEnabled="True"
-                    Command="{Binding ButtonLeftClick, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button x:Name="buttonright" Grid.Column="3"
+                    Style="{StaticResource mybuttonL}"
+                    Command="{Binding ButtonLeftClick, UpdateSourceTrigger=PropertyChanged}"
+                    Width="100" Height="50"/>
+            <Button x:Name="buttonright" Grid.Column="3" HorizontalContentAlignment="Center"
                     Content="{Binding ButtonRight_Content, UpdateSourceTrigger=PropertyChanged}" 
-                    Style="{StaticResource mybuttonR}" IsEnabled="True"
-                    Command="{Binding ButtonRightClick, UpdateSourceTrigger=PropertyChanged}"/>
+                    Style="{StaticResource mybuttonR}"
+                    Command="{Binding ButtonRightClick, UpdateSourceTrigger=PropertyChanged}"
+                    Width="100" Height="50"/>
         </Grid>
     </Grid>
     <i:Interaction.Triggers>

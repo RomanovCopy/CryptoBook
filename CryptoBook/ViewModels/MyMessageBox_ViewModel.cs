@@ -16,19 +16,23 @@ namespace CryptoBook.ViewModels
     public class MyMessageBox_ViewModel: ViewModelBase, IMyMessageBox_ViewModel,IWindowWithId
     {
         private readonly MyMessageBox_Model myMessageBox_Model;
+        public Guid WindowId { get => myMessageBox_Model.WindowId; }
 
         public double WindowTop { get => myMessageBox_Model.WindowTop; set => myMessageBox_Model.WindowTop = value; }
         public double WindowLeft { get => myMessageBox_Model.WindowLeft; set => myMessageBox_Model.WindowLeft = value; }
-        public Brush BackColor { get => myMessageBox_Model.BackColor; set => myMessageBox_Model.BackColor = value; }
+        public string Header { get => myMessageBox_Model.Header; set => myMessageBox_Model.Header = value; }
+        public string Message { get => myMessageBox_Model.Message; set => myMessageBox_Model.Message = value; }
+        public string ButtonLeft_Content{ get => myMessageBox_Model.ButtonLeft_Content;
+            set => myMessageBox_Model.ButtonLeft_Content = value; }
+        public string ButtonRight_Content { get => myMessageBox_Model.ButtonRight_Content; 
+            set => myMessageBox_Model.ButtonRight_Content = value; }
+        public Color BackColor { get => myMessageBox_Model.BackColor; set => myMessageBox_Model.BackColor = value; }
+        public Color TextColor { get => myMessageBox_Model.TextColor; set => myMessageBox_Model.TextColor = value; }
+        public Color ButtonLeftBC { get => myMessageBox_Model.ButtonLeftBC; set => myMessageBox_Model.ButtonLeftBC=value; }
+        public Color BullonLeftFC { get => myMessageBox_Model.BullonLeftFC; set => myMessageBox_Model.BullonLeftFC=value; }
+        public Color ButtonRightBC { get => myMessageBox_Model.ButtonRightBC; set => myMessageBox_Model.ButtonRightBC=value; }
+        public Color ButtonRightFC { get => myMessageBox_Model.ButtonRightFC; set => myMessageBox_Model.ButtonRightFC=value; }
 
-        public Brush TextColor { get => myMessageBox_Model.TextColor; set => myMessageBox_Model.TextColor = value; }
-
-
-        public string Header => myMessageBox_Model.Header;
-
-        public string Message => myMessageBox_Model.Message;
-
-        public Guid WindowId => myMessageBox_Model.WindowId;
 
 
         public MyMessageBox_ViewModel(ILifetimeScope scope)
@@ -38,13 +42,10 @@ namespace CryptoBook.ViewModels
         }
 
 
-        public ICommand SetHeader => setHeader ??= new RelayCommand(myMessageBox_Model.Execute_SetHeader, myMessageBox_Model.CanExecute_SetHeader);
-        RelayCommand setHeader;
-
-        public ICommand SetMessage => setMessage ??= new RelayCommand(myMessageBox_Model.Execute_SetMessage, myMessageBox_Model.CanExecute_SetMessage);
-        RelayCommand setMessage;
-
-
+        public ICommand ButtonLeftClick => buttonLeftClick ??= new RelayCommand(myMessageBox_Model.Execute_ButtonLeftClick, myMessageBox_Model.CanExecute_ButtonLeftClick);
+        RelayCommand buttonLeftClick;
+        public ICommand ButtonRightClick => buttonRightClick ??= new RelayCommand(myMessageBox_Model.Execute_ButtonRightClick, myMessageBox_Model.CanExecute_ButtonRightClick);
+        RelayCommand buttonRightClick;
 
 
 
