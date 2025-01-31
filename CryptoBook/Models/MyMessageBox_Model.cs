@@ -36,15 +36,20 @@ namespace CryptoBook.Models
         private Color textColor;
 
 
-        public double WindowTop { get=> windowTop; set=>SetProperty(ref windowTop, value); }
+        internal double WindowTop { get=> windowTop; set=>SetProperty(ref windowTop, value); }
         private double windowTop;
-        public double WindowLeft { get=> windowLeft; set=>SetProperty(ref windowLeft, value); }
+        internal double WindowLeft { get=> windowLeft; set=>SetProperty(ref windowLeft, value); }
         private double windowLeft;
-        public Color ButtonLeftBC { get=>buttonLeftBC; set=>SetProperty(ref buttonLeftBC, value); }
+        internal Color ButtonLeftBC { get=>buttonLeftBC; set=>SetProperty(ref buttonLeftBC, value); }
         private Color buttonLeftBC;
-        public Color BullonLeftFC { get; internal set; }
-        public Color ButtonRightBC { get; internal set; }
-        public Color ButtonRightFC { get; internal set; }
+        internal Color ButtonLeftFC { get=>buttonLeftFC; set=>SetProperty(ref buttonLeftFC, value); }
+        private Color buttonLeftFC;
+        internal Color ButtonRightBC { get => buttonRightBC; set => SetProperty(ref buttonRightBC, value); }
+        private Color buttonRightBC;
+        internal Color ButtonRightFC { get=> buttonRightFC; set=>SetProperty(ref buttonRightFC, value); }
+        private Color buttonRightFC;
+
+
 
         public MyMessageBox_Model(ILifetimeScope scope)
         {
@@ -104,6 +109,19 @@ namespace CryptoBook.Models
             Properties.Settings.Default.MyMessageLeft= WindowLeft;
             Properties.Settings.Default.MyMessageTop= WindowTop;
             Properties.Settings.Default.Save();
+        }
+
+        internal void Initialize( 
+             Color bc = default, Color fc=default, Color btnl_bc=default, Color btnl_fc=default, Color btnr_bc=default, Color btnr_fc=default, string btnl_content="Cancel", string btnr_content="Ok")
+        {
+            BackColor = bc == default ? Color.LightGray : bc;
+            TextColor = fc == default ? Color.Black : fc;
+            ButtonLeftBC = btnl_bc == default ? Color.Red : btnl_bc;
+            ButtonLeftFC = btnl_fc == default ? Color.Black : btnl_fc;
+            ButtonRightBC = btnr_bc == default ? Color.Green : btnr_bc;
+            ButtonRightFC = btnr_fc == default ? Color.Black : btnr_fc;
+            ButtonLeft_Content = btnl_content;
+            ButtonRight_Content = btnr_content;
         }
 
     }

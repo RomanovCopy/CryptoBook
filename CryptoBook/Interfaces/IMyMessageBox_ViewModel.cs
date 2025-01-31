@@ -24,7 +24,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// цвет тескста левой кнопки
         /// </summary>
-        public Color BullonLeftFC { get; set; }
+        public Color ButtonLeftFC { get; set; }
         /// <summary>
         /// фоновый цвет правой кнопки
         /// </summary>
