@@ -44,11 +44,16 @@
                         <Border
                  x:Name="PART_border"
                  Opacity="1"
-                 CornerRadius="2"/>
-                        <ContentPresenter 
+                 CornerRadius="3"
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}"
+                 Padding="{TemplateBinding Padding}"/>
+                 <ContentPresenter 
+                    Content="{TemplateBinding Content}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Margin="3,0,3,0" />
+                    Margin="1" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">

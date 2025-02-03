@@ -10,6 +10,7 @@ using Autofac;
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Views;
 
 namespace CryptoBook.Models
 {
@@ -56,7 +57,7 @@ namespace CryptoBook.Models
             WindowId = Guid.NewGuid();
             this.scope = scope;
             windowManager = scope.Resolve<IWindowManager>();
-            
+
         }
 
         internal bool CanExecute_ButtonLeftClick(object? obj)
@@ -65,7 +66,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ButtonLeftClick(object? obj)
         {
-            
+            windowManager.CloseWindow<MyMessageBox>(WindowId);
         }
 
         internal bool CanExecute_ButtonRightClick(object? obj)
@@ -74,6 +75,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ButtonRightClick(object? obj)
         {
+            windowManager.CloseWindow<MyMessageBox>(WindowId);
         }
 
 

@@ -121,24 +121,10 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<SolidColorBrush xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation" +
-            "\">#FF000000</SolidColorBrush>")]
-        public string TitleBarMyFontColor {
+        [global::System.Configuration.DefaultSettingValueAttribute("Green")]
+        public global::System.Drawing.Color TitleBarMyBackColor {
             get {
-                return ((string)(this["TitleBarMyFontColor"]));
-            }
-            set {
-                this["TitleBarMyFontColor"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<SolidColorBrush xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation" +
-            "\">#FF808080</SolidColorBrush>")]
-        public string TitleBarMyBackColor {
-            get {
-                return ((string)(this["TitleBarMyBackColor"]));
+                return ((global::System.Drawing.Color)(this["TitleBarMyBackColor"]));
             }
             set {
                 this["TitleBarMyBackColor"] = value;

@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
+using System.Drawing;
+using CryptoBook.Helpers;
 
-using Media = System.Windows.Media;
 
 
 namespace CryptoBook.Models
@@ -35,14 +35,24 @@ namespace CryptoBook.Models
         /// <summary>
         /// цвет шрифта и значков
         /// </summary>
-        internal string MyFontColor { get => myFontColor; set => SetProperty(ref myFontColor, value); }
-        string myFontColor;
+        internal Color MyFontColor { get => myFontColor; private set => SetProperty(ref myFontColor, value); }
+        Color myFontColor;
 
         /// <summary>
         /// цвет фона TitleBar
         /// </summary>
-        internal string MyBackColor { get => myBackColor; set => SetProperty(ref myBackColor, value); }
-        string myBackColor;
+        internal Color MyBackColor 
+        { 
+            get => myBackColor;
+            set {
+                if(value!=Color.Empty && myBackColor != value)
+                {
+                    SetProperty(ref myBackColor, value);
+                    MyFontColor = ColorContrastHelper.GetMostContrastingColor(value);
+                }
+            } 
+        }
+        Color myBackColor;
 
         /// <summary>
         /// текст внутри TitleBar
@@ -62,7 +72,6 @@ namespace CryptoBook.Models
         internal void Execute_Loaded(object? obj)
         {
             MyFontSize = Properties.Settings.Default.TitleBarMyFontSize;
-            MyFontColor = Properties.Settings.Default.TitleBarMyFontColor;
             MyBackColor = Properties.Settings.Default.TitleBarMyBackColor;
             MyText = "Romanov";
         }
@@ -186,8 +195,8 @@ namespace CryptoBook.Models
         }
         internal void Execute_Close(object? obj)
         {
-            Properties.Settings.Default.TitleBarMyFontColor = MyFontColor;
             Properties.Settings.Default.TitleBarMyBackColor = MyBackColor;
+            Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
             Properties.Settings.Default.Save();
             mainWindowViewModel.WindowClose.Execute(null);
         }

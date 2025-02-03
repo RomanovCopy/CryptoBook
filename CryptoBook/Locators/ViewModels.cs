@@ -46,6 +46,9 @@ namespace CryptoBook.Locators
         //public static ProgressViewModel ProgressViewModel =>
         //    App.Container.Resolve<IProgressViewModel>().As<ProgressViewModel>();
 
+        public static MyMessageBox_ViewModel MyMessageBoxViewModel => App.Container.Resolve<IMyMessageBox_ViewModel>().As<MyMessageBox_ViewModel>();
+
+
         public static ProgressViewModel ProgressViewModel =>
             App.Container.BeginLifetimeScope().Resolve<IProgressViewModel>().As<ProgressViewModel>();
     }

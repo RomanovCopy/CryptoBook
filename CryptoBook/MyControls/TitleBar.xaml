@@ -14,16 +14,17 @@
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontSize" Value="{Binding Path=MyFontSize, UpdateSourceTrigger=PropertyChanged}"/>
-            <Setter Property="Foreground" Value="{Binding Path=MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
-                UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <Setter Property="Foreground" Value="{Binding Path=MyFontColor, 
+                Converter={x:Static locators:Converters.colorToColorConverter}, 
+                UpdateSourceTrigger=PropertyChanged }"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Margin" Value="3"/>
         </Style>
     </UserControl.Resources>
-    <Grid Background="{Binding MyBackColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
-        UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+    <Grid Background="{Binding MyBackColor, Converter={x:Static locators:Converters.colorToColorConverter}, 
+        UpdateSourceTrigger=PropertyChanged}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -47,7 +48,7 @@
             </Button>
             
             <TextBlock x:Name="title" FontWeight="Medium" Text="CryptoBook" 
-                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
+                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.colorToColorConverter}, 
                         UpdateSourceTrigger=PropertyChanged}"
                        FontSize="{Binding MyFontSize, UpdateSourceTrigger=PropertyChanged}" 
                        VerticalAlignment="Center" Margin="3"/>
@@ -58,7 +59,7 @@
 
             <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch"
                        Text="{Binding MyText, UpdateSourceTrigger=PropertyChanged}" 
-                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.mediBrushSerializeConverter}, 
+                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.colorToColorConverter}, 
                 UpdateSourceTrigger=PropertyChanged}" 
                        FontSize="{Binding MyFontSize, 
                 Converter={x:Static locators:Converters.fontSizeAdjustConverter}, ConverterParameter=-2}" 

@@ -15,14 +15,14 @@ using Media = System.Windows.Media;
 
 namespace CryptoBook.ViewModels
 {
-    public class TitleBarViewModel:ViewModelBase, ITitleBarViewModel
+    public class TitleBarViewModel: ViewModelBase, ITitleBarViewModel
     {
 
         private readonly TitleBarModel titleBarModel;
 
         public double MyFontSize => titleBarModel.MyFontSize;
-        public string MyFontColor { get => titleBarModel.MyFontColor; set => titleBarModel.MyBackColor = value; }
-        public string MyBackColor { get => titleBarModel.MyBackColor; set => titleBarModel.MyBackColor = value; }
+        public Color MyFontColor { get => titleBarModel.MyFontColor; }
+        public Color MyBackColor { get => titleBarModel.MyBackColor; set => titleBarModel.MyBackColor = value; }
         public string MyText => titleBarModel.MyText;
 
 
@@ -38,11 +38,11 @@ namespace CryptoBook.ViewModels
 
 
 
-        public ICommand Loaded => loaded ??= 
+        public ICommand Loaded => loaded ??=
             new RelayCommand(titleBarModel.Execute_Loaded, titleBarModel.CanExecute_Loaded);
         RelayCommand loaded;
 
-        public ICommand MouseLeftButtonDown => 
+        public ICommand MouseLeftButtonDown =>
             mouseLeftButtonDown ??= new RelayCommand(titleBarModel.Execute_MouseLeftButtonDown, titleBarModel.CanExecute_MouseLeftButtonDown);
         RelayCommand mouseLeftButtonDown;
 

@@ -26,11 +26,8 @@
     <Setting Name="TitleBarMyFontSize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">16</Value>
     </Setting>
-    <Setting Name="TitleBarMyFontColor" Type="System.String" Scope="User">
-      <Value Profile="(Default)">&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF000000&lt;/SolidColorBrush&gt;</Value>
-    </Setting>
-    <Setting Name="TitleBarMyBackColor" Type="System.String" Scope="User">
-      <Value Profile="(Default)">&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF808080&lt;/SolidColorBrush&gt;</Value>
+    <Setting Name="TitleBarMyBackColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Green</Value>
     </Setting>
     <Setting Name="SideMenuFontSizeHeader" Type="System.Double" Scope="User">
       <Value Profile="(Default)">1.4</Value>

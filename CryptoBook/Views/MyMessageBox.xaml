@@ -6,27 +6,28 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d" SizeToContent="Height"
-        Title="{Binding Header, UpdateSourceTrigger=PropertyChanged}" 
+        mc:Ignorable="d" SizeToContent="Height" 
         MinHeight="100" Width="300">
     <Window.Resources>
         <Style x:Key="mybuttonL" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Content" Value="{Binding ButtonLeft_Content, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Background" Value="{Binding ButtonLeftBC, 
                 Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Foreground" Value="{Binding ButtonLeftFC, 
                 Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="1"/>
+
         </Style>
         <Style x:Key="mybuttonR" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
             <Setter Property="Background" Value="{Binding ButtonRightBC, 
                 Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Foreground" Value="{Binding ButtonRightFC, 
                 Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="1"/>
         </Style>
     </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="20"/>
+    </WindowChrome.WindowChrome>
 
     <Window.Top>
         <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
@@ -36,8 +37,11 @@
         <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
              ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Left>
+    <Window.Background>
+        <Binding Path="BackColor" Converter="{x:Static locators:Converters.colorToColorConverter}" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Background>
 
-    <Grid Background="{Binding BackColor, Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}">
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition x:Name="blank_line01" Height="*"/>
             <RowDefinition x:Name="for_message" Height="Auto"/>
@@ -59,8 +63,7 @@
                 <ColumnDefinition x:Name="blank_column03" Width="*"/>
             </Grid.ColumnDefinitions>
             <Button x:Name="buttonleft" Grid.Column="1" HorizontalContentAlignment="Center"
-                    Content="{Binding ButtonLeft_Content, UpdateSourceTrigger=PropertyChanged}" 
-                    Style="{StaticResource mybuttonL}" 
+                    Style="{StaticResource mybuttonL}"
                     Command="{Binding ButtonLeftClick, UpdateSourceTrigger=PropertyChanged}"/>
             <Button x:Name="buttonright" Grid.Column="3" HorizontalContentAlignment="Center"
                     Content="{Binding ButtonRight_Content, UpdateSourceTrigger=PropertyChanged}" 

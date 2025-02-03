@@ -55,7 +55,7 @@ namespace CryptoBook.Models
             {
                 vm.Header = "Romanov";
                 vm.Message = "SergeyMihailovich";
-                vm.TextColor = Color.Black;
+                vm.TextColor = Color.Green;
                 vm.BackColor = Color.LightGray;
                 vm.ButtonLeft_Content = "Cancel";
                 vm.ButtonLeftBC = Color.Red;
