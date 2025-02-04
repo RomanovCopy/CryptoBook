@@ -32,7 +32,7 @@ namespace CryptoBook.Helpers
             return (Math.Max(lum1, lum2) + 0.05) / (Math.Min(lum1, lum2) + 0.05);
         }
 
-        // Выбирает наиболее контрастный цвет из списка
+        //// Выбирает наиболее контрастный цвет из списка
         public static Color GetMostContrastingColor(Color bgColor)
         {
             // Набор возможных цветов шрифта
@@ -45,5 +45,7 @@ namespace CryptoBook.Helpers
             // Выбираем цвет с наибольшим контрастом
             return candidates.OrderByDescending(c => GetContrastRatio(bgColor, c)).First();
         }
+
+
     }
 }

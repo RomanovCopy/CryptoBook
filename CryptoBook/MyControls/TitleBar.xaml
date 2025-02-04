@@ -14,13 +14,26 @@
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontSize" Value="{Binding Path=MyFontSize, UpdateSourceTrigger=PropertyChanged}"/>
-            <Setter Property="Foreground" Value="{Binding Path=MyFontColor, 
+            <Setter Property="Foreground" Value="{Binding Path=MyBackColor, 
                 Converter={x:Static locators:Converters.colorToColorConverter}, 
                 UpdateSourceTrigger=PropertyChanged }"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Margin" Value="3"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" Value="Black">
+                    <Setter Property="Foreground" Value="White"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" Value="White">
+                    <Setter Property="Foreground" Value="Black"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="buttons" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Background" Value="{Binding Path=MyFontColor, 
+            Converter={x:Static locators:Converters.colorToColorConverter}, 
+            UpdateSourceTrigger=PropertyChanged }"/>
         </Style>
     </UserControl.Resources>
     <Grid Background="{Binding MyBackColor, Converter={x:Static locators:Converters.colorToColorConverter}, 
@@ -31,18 +44,18 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="Auto" Grid.Column="0">
-            
-            <Button x:Name="backBtn" Style="{StaticResource TitleBarButtonStyle}" 
+
+            <Button x:Name="backBtn" Style="{StaticResource buttons}" 
                 Command="{Binding ButtonBack_Click, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Text="&#xE72B;" Style="{StaticResource icon}"/>
             </Button>
-            
-            <Button x:Name="fwdBtn" Style="{StaticResource TitleBarButtonStyle}" 
+
+            <Button x:Name="fwdBtn" Style="{StaticResource buttons}" 
                 Command="{Binding ButtonForward_Click, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Text="&#xE72A;" Style="{StaticResource icon}"/>
             </Button>
-            
-            <Button x:Name="sideMenuBtn" Style="{StaticResource TitleBarButtonStyle}"
+
+            <Button x:Name="sideMenuBtn" Style="{StaticResource buttons}"
                     Command="{Binding ToggleMenu_Click, UpdateSourceTrigger=PropertyChanged}" >
                     <TextBlock Style="{StaticResource icon}" Text="&#xE700;"/>
             </Button>
@@ -79,38 +92,38 @@
         </Grid>
         <StackPanel Orientation="Horizontal" Grid.Column="2">
             
-            <Button x:Name="settings" Style="{StaticResource TitleBarButtonStyle}" 
+            <Button x:Name="settings" Style="{StaticResource buttons}" 
                     Command="{Binding ButtonSettingsClick, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE713;"/>
             </Button>
 
-            <Button x:Name="darkTheme" Style="{StaticResource TitleBarButtonStyle}" 
+            <Button x:Name="darkTheme" Style="{StaticResource buttons}" 
                     Command="{Binding ButtonDarkThemeClick, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE708;"/>
             </Button>
-            
-            <Button x:Name="lightTheme" Style="{StaticResource TitleBarButtonStyle}"
+
+            <Button x:Name="lightTheme" Style="{StaticResource buttons}"
                     Command="{Binding ButtonLightTheme_Click, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE706;"/>
             </Button>
 
-            <Button x:Name="minBtn" Style="{StaticResource TitleBarButtonStyle}"
+            <Button x:Name="minBtn" Style="{StaticResource buttons}"
                     Command="{Binding MinButtonClick,UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE745;"/>
             </Button>
-            
-            <Button x:Name="maxBtn" Style="{StaticResource TitleBarButtonStyle}"
+
+            <Button x:Name="maxBtn" Style="{StaticResource buttons}"
                     Command="{Binding MaxButtonClick, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE740;"/>
             </Button>
-            
-            <Button x:Name="toWindow" Style="{StaticResource TitleBarButtonStyle}"
+
+            <Button x:Name="toWindow" Style="{StaticResource buttons}"
                     Command="{Binding GoToWindow, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE73F;"/>
 
             </Button>
-            
-            <Button x:Name="closeBtn" Style="{StaticResource TitleBarButtonStyle}"
+
+            <Button x:Name="closeBtn" Style="{StaticResource buttons}"
                     Command="{Binding CloseButtonClick, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE894;" FontWeight="Bold"/>
             </Button>
@@ -121,6 +134,9 @@
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 

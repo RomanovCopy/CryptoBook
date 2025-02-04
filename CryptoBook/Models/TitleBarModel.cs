@@ -54,6 +54,9 @@ namespace CryptoBook.Models
         }
         Color myBackColor;
 
+
+
+
         /// <summary>
         /// текст внутри TitleBar
         /// </summary>
@@ -164,7 +167,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_MinButtonClick(object? obj)
         {
-            return mainWindowViewModel.WindowState != System.Windows.WindowState.Minimized;
+            return true;
         }
         internal void Execute_MinButtonClick(object? obj)
         {
@@ -216,6 +219,11 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closing(object? obj)
         {
+            Properties.Settings.Default.TitleBarMyBackColor = MyBackColor;
+            Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
+            Properties.Settings.Default.Save();
+            mainWindowViewModel.WindowClose.Execute(null);
+
         }
 
     }
