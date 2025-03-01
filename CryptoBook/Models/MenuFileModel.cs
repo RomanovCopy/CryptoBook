@@ -41,32 +41,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_OpenFile(object obj)
         {
-            //var window = windowManager.CreateWindow<ProgressWindow>();
-            //var vm = (ProgressViewModel)window.DataContext;
-            //vm.OperationName = "Open File";
-            //if(vm is IWindowWithId)
-            //{
-            //    windowManager.ShowWindow<ProgressWindow>(vm.WindowId);
-            //    vm.StartLongOperation.Execute(new TestLongOperarion());
-            //}
-
-            var window = windowManager.CreateWindow<MyMessageBox>();
-            if(window.DataContext is MyMessageBox_ViewModel vm && vm is IWindowWithId)
-            {
-                vm.Header = "Romanov";
-                vm.Message = "SergeyMihailovich";
-                vm.TextColor = Color.Green;
-                vm.BackColor = Color.LightGray;
-                vm.ButtonLeft_Content = "Cancel";
-                vm.ButtonLeftBC = Color.Red;
-                vm.ButtonLeftFC = Color.Black;
-                vm.ButtonRight_Content = "Ok";
-                vm.ButtonRightBC = Color.Green;
-                vm.ButtonRightFC = Color.Black;
-                windowManager.ShowWindow<MyMessageBox>(vm.WindowId);
-
-            }
-
 
         }
 
