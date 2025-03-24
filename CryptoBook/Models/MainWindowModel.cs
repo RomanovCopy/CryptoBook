@@ -3,6 +3,7 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.MyControls;
+using CryptoBook.MyPages;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
@@ -50,7 +51,13 @@ namespace CryptoBook.Models
         {
             this.scope = scope;
             frameList = [];
-            currentPage = new Page();
+
+            var page = scope.Resolve<Home>();
+
+            if(CanExecute_FrameListAddPage(page))
+            {
+                Execute_FrameListAddPage(page);
+            }
 
             WindowHeight = Properties.Settings.Default.WindowHeight;
             WindowWidth = Properties.Settings.Default.WindowWidth;
@@ -83,10 +90,15 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_FrameListAddPage(object obj)
         {
-            return true;
+            return obj != null;
         }
         internal void Execute_FrameListAddPage(object obj)
         {
+            if(obj is Page page)
+            {
+                FrameList.Add(page);
+                CurrentPage = page;
+            }
         }
 
 

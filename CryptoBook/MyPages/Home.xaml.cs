@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,11 @@ namespace CryptoBook.MyPages
     /// </summary>
     public partial class Home: Page
     {
-        public Home()
+        public Home(IHomeViewModel viewModel)
         {
+            DataContext = viewModel;
             InitializeComponent();
+            
         }
     }
 }

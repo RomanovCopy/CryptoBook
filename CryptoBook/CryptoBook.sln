@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoBook", "CryptoBook.csproj", "{0162FA73-BA54-4625-BF2A-6ADF5786EAC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "..\Test\Test.csproj", "{73001510-9EFD-4742-AA41-6DD2EBBB7915}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0162FA73-BA54-4625-BF2A-6ADF5786EAC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0162FA73-BA54-4625-BF2A-6ADF5786EAC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0162FA73-BA54-4625-BF2A-6ADF5786EAC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73001510-9EFD-4742-AA41-6DD2EBBB7915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73001510-9EFD-4742-AA41-6DD2EBBB7915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73001510-9EFD-4742-AA41-6DD2EBBB7915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73001510-9EFD-4742-AA41-6DD2EBBB7915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
