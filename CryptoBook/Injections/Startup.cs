@@ -19,10 +19,13 @@ namespace CryptoBook.Injections
 {
     public class Startup
     {
-        public static IContainer ConfigureServices()
+        public IContainer ConfigureServices(System.Windows.Application app)
         {
 
             ContainerBuilder builder = new ();
+
+            //App
+            builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
 
 
             //ViewModels
@@ -59,7 +62,10 @@ namespace CryptoBook.Injections
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox>().InstancePerDependency();
 
+            //Services
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
+            builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
+
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();

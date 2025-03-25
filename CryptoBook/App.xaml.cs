@@ -23,11 +23,12 @@ namespace CryptoBook
         {
             base.OnStartup(e);
 
-            var container = (IContainer)Injections.Startup.ConfigureServices();
+            var startup = new Startup();
 
-            if(container != null)
+            Container = startup.ConfigureServices(this);
+
+            if(Container != null)
             {
-                Container = container;
                 // Разрешение и запуск главного окна
                 var mainWindow = Container?.Resolve<MainWindow>();
                 mainWindow?.Show();
