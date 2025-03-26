@@ -29,8 +29,6 @@
                             Width="Auto"
                             Height="Auto"
                             Background="Transparent"
-                            BorderBrush="{StaticResource VS2012WindowBorderBrush}"
-                            BorderThickness="0"
                             Padding="0">
                             <Border.Effect>
                                 <DropShadowEffect
@@ -226,6 +224,11 @@
                                 </Border>
                                 <ContentPresenter />
                             </DockPanel>
+                            <Border.Triggers>
+                                <DataTrigger Binding="CurrentTheme">
+                                    
+                                </DataTrigger>
+                            </Border.Triggers>
                         </Border>
                     </Grid>
                 </ControlTemplate>

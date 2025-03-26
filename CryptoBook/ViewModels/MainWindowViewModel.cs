@@ -19,6 +19,7 @@ namespace CryptoBook.ViewModels
     public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, ICloseable
     {
         private readonly MainWindowModel mainWindowModel;
+        private readonly ThemeManager themeManager;
 
         public event EventHandler RequestClose;
 
@@ -35,9 +36,10 @@ namespace CryptoBook.ViewModels
 
         public static Action Ready { get => MainWindowModel.Ready; set => MainWindowModel.Ready = value; }
 
-        public MainWindowViewModel(ILifetimeScope scope)
+        public MainWindowViewModel(ILifetimeScope scope, IThemeManager tm)
         {
             mainWindowModel = new(scope);
+            themeManager = (ThemeManager)tm;
             mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 

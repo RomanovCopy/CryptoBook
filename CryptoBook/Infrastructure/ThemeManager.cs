@@ -10,7 +10,7 @@ using Application = System.Windows.Application;
 
 namespace CryptoBook.Infrastructure
 {
-    class ThemeManager: IThemeManager
+    public class ThemeManager: IThemeManager
     {
         private readonly Application _app;
 

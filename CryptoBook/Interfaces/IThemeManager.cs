@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    interface IThemeManager
+    public interface IThemeManager
     {
-        void ApplyTheme(string themeName);
+        public void ApplyTheme(string themeName);
     }
 }
