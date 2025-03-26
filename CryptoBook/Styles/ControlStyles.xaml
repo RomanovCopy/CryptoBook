@@ -10,7 +10,7 @@
                 <ControlTemplate TargetType="TreeViewItem">
                     <StackPanel>
                         <Border x:Name="Bd" 
-                                    Background="Gray"
+                                    Background="{DynamicResource CurrentWindowBackground}"
                                     CornerRadius="5"
                                     Margin="2">
                             <Grid >
@@ -35,7 +35,7 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ToggleButton">
-                                                        <Border Background="Transparent">
+                                                        <Border Background="{DynamicResource CurrentWindowBackground}">
                                                             <Path x:Name="ExpandPath" 
                                                                       Fill="Black"
                                                                       Data="M 0 8 L 5 3 L 5 13 Z">

@@ -9,8 +9,14 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Styles/WindowStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ControlStyles.xaml"/>
-                <ResourceDictionary x:Name="ThemeDictionary" Source="/Themes/LightTheme.xaml"/>
+                <ResourceDictionary Source="/Themes/LightTheme.xaml"/>
+                <ResourceDictionary Source="/Themes/DarkTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="CurrentWindowBackground" Color="LightGray" />
+            <SolidColorBrush x:Key="CurrentWindowForeground" Color="LightGray" />
+            <SolidColorBrush x:Key="CurrentTitleBarBackground" Color="LightGray" />
+            <SolidColorBrush x:Key="CurrentTitleBarForeground" Color="LightGray" />
+            <SolidColorBrush x:Key="CurrentBorderColor" Color="LightGray" />
             <infra:ResourceWrapper x:Key="Res"/>
         </ResourceDictionary>
     </Application.Resources>

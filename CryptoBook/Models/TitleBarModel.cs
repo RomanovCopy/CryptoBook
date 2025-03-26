@@ -44,13 +44,7 @@ namespace CryptoBook.Models
         internal Color MyBackColor 
         { 
             get => myBackColor;
-            set {
-                if(value!=Color.Empty && myBackColor != value)
-                {
-                    SetProperty(ref myBackColor, value);
-                    MyFontColor = ColorContrastHelper.GetMostContrastingColor(value);
-                }
-            } 
+            set => SetProperty(ref myBackColor, value);
         }
         Color myBackColor;
 

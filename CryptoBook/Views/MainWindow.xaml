@@ -39,7 +39,7 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
         <Grid.RowDefinitions>
             <RowDefinition x:Name="forTitleBar" Height="Auto"/>
             <RowDefinition x:Name="forMyFrame" Height="*"/>
@@ -48,7 +48,7 @@
         <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
         <Grid Grid.Row="1" Background="Transparent">
             <!-- Боковое меню -->                                   
-            <Border x:Name="MenuPanel" Background="Gray" Width="250" HorizontalAlignment="Left">
+            <Border x:Name="MenuPanel" Background="Transparent" Width="250" HorizontalAlignment="Left">
                 <Border.RenderTransform>
                     <!-- Начальное положение меню за пределами окна -->
                     <TranslateTransform X="-250" />

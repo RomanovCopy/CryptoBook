@@ -28,11 +28,11 @@
                             x:Name="PART_Border"
                             Width="Auto"
                             Height="Auto"
-                            Background="Transparent"
+                            Background="{DynamicResource CurrentWindowBackground}"
                             Padding="0">
                             <Border.Effect>
                                 <DropShadowEffect
-                                    Color="black"
+                                    Color="Black"
                                     Opacity="0.5"
                                     BlurRadius="7"
                                     ShadowDepth="2"
@@ -40,13 +40,13 @@
                             </Border.Effect>
                             <DockPanel   
                                 HorizontalAlignment="Stretch"
-                                Background="Transparent"
+                                Background="{DynamicResource CurrentWindowBackground}"
                                 VerticalAlignment="Stretch" 
                                 >
                                 <Border
                                     x:Name="TitleBar"
                                     DockPanel.Dock="Top"
-                                    Background="{StaticResource TitleBarBackgroundBrush}"
+                                    Background="{DynamicResource CurrentTitleBarBackground}"
                                     BorderThickness="0"
                                     DataContext="{Binding Source={StaticResource viwmodels}, Path=TitleBarViewModel}"
                                     Opacity="0.5"
@@ -123,8 +123,7 @@
                                             FontWeight="Bold"
                                             Opacity="1"
                                             Foreground="White"
-                                            Text="{Binding Path=Title, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                            />
+                                            Text="{Binding Path=Title, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
                                         <TextBlock
                                             x:Name="currentpath"
                                             Text="{Binding LastFileName, UpdateSourceTrigger=PropertyChanged}"
