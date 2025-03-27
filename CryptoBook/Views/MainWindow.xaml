@@ -9,10 +9,10 @@
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" WindowStyle="None"
-        
         MinHeight="100" MinWidth="400" Title="CryptoBook"
         HorizontalContentAlignment="Stretch"
-        Background="Transparent" 
+        BorderBrush="{DynamicResource CurrentBorderColor}"
+        BorderThickness="1,0,1,1"
         DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
     <Window.Resources>
         <locators:MyControls x:Key="mycontrols"/>
@@ -39,16 +39,16 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="forTitleBar" Height="Auto"/>
             <RowDefinition x:Name="forMyFrame" Height="*"/>
             <RowDefinition x:Name="forStatusBar" Height="Auto"/>
         </Grid.RowDefinitions>
         <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
-        <Grid Grid.Row="1" Background="Transparent">
-            <!-- Боковое меню -->                                   
-            <Border x:Name="MenuPanel" Background="Transparent" Width="250" HorizontalAlignment="Left">
+        <Grid Grid.Row="1" >
+            <!-- Боковое меню -->
+            <Border x:Name="MenuPanel" Background="{DynamicResource CurrentWindowBackground}" Width="250" HorizontalAlignment="Left">
                 <Border.RenderTransform>
                     <!-- Начальное положение меню за пределами окна -->
                     <TranslateTransform X="-250" />

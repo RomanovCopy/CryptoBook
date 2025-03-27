@@ -6,6 +6,8 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:locators="clr-namespace:CryptoBook.Locators"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
+             BorderBrush="{DynamicResource CurrentBorderColor}"
+             BorderThickness="0,0,0,1"
              mc:Ignorable="d"
              MinHeight="16" 
              DataContext="{x:Static locators:ViewModels.TitleBarViewModel}">
@@ -14,30 +16,27 @@
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontSize" Value="{Binding Path=MyFontSize, UpdateSourceTrigger=PropertyChanged}"/>
-            <Setter Property="Foreground" Value="{Binding Path=MyBackColor, 
-                Converter={x:Static locators:Converters.colorToColorConverter}, 
-                UpdateSourceTrigger=PropertyChanged }"/>
+            <Setter Property="Foreground" Value="{DynamicResource CurrentTitleBarForeground}"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
             <Setter Property="Margin" Value="3"/>
-            <Style.Triggers>
+            <!--<Style.Triggers>
                 <DataTrigger Binding="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" Value="Black">
                     <Setter Property="Foreground" Value="White"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" Value="White">
                     <Setter Property="Foreground" Value="Black"/>
                 </DataTrigger>
-            </Style.Triggers>
+            </Style.Triggers>-->
         </Style>
         <Style x:Key="buttons" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
-            <Setter Property="Background" Value="{Binding Path=MyFontColor, 
-            Converter={x:Static locators:Converters.colorToColorConverter}, 
-            UpdateSourceTrigger=PropertyChanged }"/>
+            <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CurrentTitleBarForeground}"/>
+            <Setter Property="Margin" Value="1"/>
         </Style>
     </UserControl.Resources>
-    <Grid Background="{Binding MyBackColor, Converter={x:Static locators:Converters.colorToColorConverter}, 
-        UpdateSourceTrigger=PropertyChanged}">
+    <Grid Background="{DynamicResource CurrentTitleBarBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
