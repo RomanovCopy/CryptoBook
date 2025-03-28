@@ -23,9 +23,8 @@ namespace CryptoBook.Models
     {
 
         private readonly ILifetimeScope scope;
+        private bool isSideMenu { get; set; }
 
-        internal bool IsMenuOpen { get => isMenuOpen; private set => SetProperty(ref isMenuOpen, value); }
-        private bool isMenuOpen;
         internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
         double windowWidth;
         internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight, value); }
@@ -67,26 +66,38 @@ namespace CryptoBook.Models
             //восстанавливаем состояние окна
             WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized :
                 WindowState.Minimized;
-            isMenuOpen = false;
         }
 
 
 
-
-        internal bool CanExecute_ToggleMenuClick(object obj)
+        /// <summary>
+        /// открытие бокового меню
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        internal bool CanExecute_SideMenuOpen(object obj)
         {
-            return true;
+            return isSideMenu;
         }
-        internal void Execute_ToggleMenuClick(object obj)
+        internal void Execute_SideMenuOpen(object obj)
         {
-            if(IsMenuOpen)
-            {
                 CloseMenu();
-            } else
-            {
-                OpenMenu();
-            }
         }
+
+        /// <summary>
+        /// закрытие бокового меню
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        internal bool CanExecute_SideMenuClose(object obj)
+        {
+            return !isSideMenu;
+        }
+        internal void Execute_SideMenuClose(object obj)
+        {
+                OpenMenu();
+        }
+
 
         internal bool CanExecute_FrameListAddPage(object obj)
         {
@@ -247,6 +258,33 @@ namespace CryptoBook.Models
             };
 
             storyboard.Begin();
+        }
+
+        internal bool CanExecute_windowToMinimize(object? obj)
+        {
+            return WindowState != WindowState.Minimized;
+        }
+        internal void Execute_windowToMinimize(object? obj)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        internal bool CanExecute_WindowToMaximize(object? obj)
+        {
+            return WindowState != WindowState.Maximized;
+        }
+        internal void Execute_WindowToMaximize(object? obj)
+        {
+            WindowState = WindowState.Maximized;
+        }
+
+        internal bool CanExecute_WindowToNormal(object? obj)
+        {
+            return WindowState != WindowState.Normal;
+        }
+        internal void Execute_WindowToNormal(object? obj)
+        {
+            WindowState = WindowState.Normal;
         }
 
     }

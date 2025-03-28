@@ -30,8 +30,6 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => mainWindowModel.WindowLeft; set => mainWindowModel.WindowLeft = value; }
         public WindowState WindowState { get => mainWindowModel.WindowState; set => mainWindowModel.WindowState = value; }
 
-        public bool IsMenuOpen => mainWindowModel.IsMenuOpen;
-
         public ObservableCollection<Page> FrameList => mainWindowModel.FrameList;
 
         public Page CurrentPage => mainWindowModel.CurrentPage;
@@ -47,8 +45,9 @@ namespace CryptoBook.ViewModels
 
 
 
-        public ICommand ToggleMenuClick => toggleMenuClick ??= new RelayCommand(mainWindowModel.Execute_ToggleMenuClick, mainWindowModel.CanExecute_ToggleMenuClick);
-        RelayCommand toggleMenuClick;
+        public ICommand SideMenuOpen => throw new NotImplementedException();
+
+        public ICommand SideMenuClose => throw new NotImplementedException();
 
         public ICommand FrameListAddPage => frameListAddPage ??= new RelayCommand(mainWindowModel.Execute_FrameListAddPage, mainWindowModel.CanExecute_FrameListAddPage);
         RelayCommand frameListAddPage;
@@ -65,6 +64,14 @@ namespace CryptoBook.ViewModels
         public ICommand PageClosed => pageClosed ??= new RelayCommand(mainWindowModel.Execute_PageClosed, mainWindowModel.CanExecute_PageClosed);
         RelayCommand pageClosed;
 
+        public ICommand WindowToMinimize => windowToMinimize??=new RelayCommand(mainWindowModel.Execute_windowToMinimize, mainWindowModel.CanExecute_windowToMinimize);
+        RelayCommand windowToMinimize;
+        public ICommand WindowToMaximize => windowToMaximize ??= new RelayCommand(mainWindowModel.Execute_WindowToMaximize, mainWindowModel.CanExecute_WindowToMaximize);
+        RelayCommand windowToMaximize;
+        public ICommand WindowToNormal=>windowToNormal??=new RelayCommand(mainWindowModel.Execute_WindowToNormal, mainWindowModel.CanExecute_WindowToNormal);
+        RelayCommand windowToNormal
+            ;
+
         public ICommand WindowClose => windowClose ??= new RelayCommand(mainWindowModel.Execute_WindowClose, mainWindowModel.CanExecute_WindowClose);
         RelayCommand windowClose;
 
@@ -78,5 +85,6 @@ namespace CryptoBook.ViewModels
         RelayCommand closing;
 
         public ICommand Closed => throw new NotImplementedException();
+
     }
 }

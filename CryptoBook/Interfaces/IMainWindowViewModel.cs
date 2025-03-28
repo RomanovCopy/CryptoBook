@@ -10,9 +10,26 @@ namespace CryptoBook.Interfaces
     public interface IMainWindowViewModel:IViewModel
     {
         /// <summary>
-        /// Открытие/Закрытие бокового меню
+        /// скрыть окно в трее
         /// </summary>
-        public ICommand ToggleMenuClick { get; }
+        public ICommand WindowToMinimize { get; }
+        /// <summary>
+        /// окно в полный экран
+        /// </summary>
+        public ICommand WindowToMaximize { get; }
+        /// <summary>
+        /// оконный режим
+        /// </summary>
+        public ICommand WindowToNormal { get; }
+        /// <summary>
+        /// открытие бокового меню
+        /// </summary>
+        public ICommand SideMenuOpen { get; }
+        /// <summary>
+        /// закрытие бокового меню
+        /// </summary>
+        public ICommand SideMenuClose { get; }
+
         /// <summary>
         /// добавление страницы
         /// </summary>
