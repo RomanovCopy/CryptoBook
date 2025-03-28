@@ -23,12 +23,14 @@ namespace CryptoBook.ViewModels
 
         public event EventHandler RequestClose;
 
+
         public double WindowWidth { get => mainWindowModel.WindowWidth; set => mainWindowModel.WindowWidth = value; }
         public double WindowHeight { get => mainWindowModel.WindowHeight; set => mainWindowModel.WindowHeight = value; }
         public double WindowTop { get => mainWindowModel.WindowTop; set => mainWindowModel.WindowTop = value; }
         public double WindowLeft { get => mainWindowModel.WindowLeft; set => mainWindowModel.WindowLeft = value; }
         public WindowState WindowState { get => mainWindowModel.WindowState; set => mainWindowModel.WindowState = value; }
 
+        public bool IsMenuOpen => mainWindowModel.IsMenuOpen;
 
         public ObservableCollection<Page> FrameList => mainWindowModel.FrameList;
 

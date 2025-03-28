@@ -60,8 +60,7 @@
             </Button>
             
             <TextBlock x:Name="title" FontWeight="Medium" Text="CryptoBook" 
-                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.colorToColorConverter}, 
-                        UpdateSourceTrigger=PropertyChanged}"
+                       Foreground="{DynamicResource CurrentTitleBarForeground}"
                        FontSize="{Binding MyFontSize, UpdateSourceTrigger=PropertyChanged}" 
                        VerticalAlignment="Center" Margin="3"/>
             

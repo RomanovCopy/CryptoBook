@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using CryptoBook.Helpers;
+using CryptoBook.Interfaces;
 
 
 
@@ -32,21 +33,6 @@ namespace CryptoBook.Models
         internal double MyFontSize { get => height; set => SetProperty(ref height, value); }
         double height;
 
-        /// <summary>
-        /// цвет шрифта и значков
-        /// </summary>
-        internal Color MyFontColor { get => myFontColor; private set => SetProperty(ref myFontColor, value); }
-        Color myFontColor;
-
-        /// <summary>
-        /// цвет фона TitleBar
-        /// </summary>
-        internal Color MyBackColor 
-        { 
-            get => myBackColor;
-            set => SetProperty(ref myBackColor, value);
-        }
-        Color myBackColor;
 
 
 
@@ -57,9 +43,9 @@ namespace CryptoBook.Models
         internal string MyText { get => myText; set => SetProperty(ref myText, value); }
         string myText;
 
-        internal TitleBarModel()
+        internal TitleBarModel(IMainWindowViewModel mainWindowViewModel)
         {
-            mainWindowViewModel = (MainWindowViewModel)System.Windows.Application.Current.MainWindow.DataContext;
+            this.mainWindowViewModel = (MainWindowViewModel)mainWindowViewModel;
         }
 
         internal bool CanExecute_Loaded(object? obj)
@@ -69,8 +55,7 @@ namespace CryptoBook.Models
         internal void Execute_Loaded(object? obj)
         {
             MyFontSize = Properties.Settings.Default.TitleBarMyFontSize;
-            MyBackColor = Properties.Settings.Default.TitleBarMyBackColor;
-            MyText = "Romanov";
+            MyText = "Encrypto";
         }
 
         internal bool CanExecute_TitleBarDoubleClick(object? obj)
@@ -88,6 +73,10 @@ namespace CryptoBook.Models
         }
         internal void Execute_MouseLeftButtonDown(object? obj)
         {
+            if(mainWindowViewModel.IsMenuOpen && CanExecute_ToggleMenu_Click(null))
+            {
+                Execute_ToggleMenu_Click(null);
+            }
             if(!_isDragging)
             {
                 _isDragging = true;
@@ -192,7 +181,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_Close(object? obj)
         {
-            Properties.Settings.Default.TitleBarMyBackColor = MyBackColor;
             Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
             Properties.Settings.Default.Save();
             mainWindowViewModel.WindowClose.Execute(null);
@@ -213,7 +201,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closing(object? obj)
         {
-            Properties.Settings.Default.TitleBarMyBackColor = MyBackColor;
             Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
             Properties.Settings.Default.Save();
             mainWindowViewModel.WindowClose.Execute(null);

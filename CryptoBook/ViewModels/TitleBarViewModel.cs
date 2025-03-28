@@ -21,16 +21,14 @@ namespace CryptoBook.ViewModels
         private readonly TitleBarModel titleBarModel;
 
         public double MyFontSize => titleBarModel.MyFontSize;
-        public Color MyFontColor { get => titleBarModel.MyFontColor; }
-        public Color MyBackColor { get => titleBarModel.MyBackColor; set => titleBarModel.MyBackColor = value; }
         public string MyText => titleBarModel.MyText;
 
 
 
 
-        public TitleBarViewModel()
+        public TitleBarViewModel( IMainWindowViewModel mainWindowViewModel)
         {
-            titleBarModel = new();
+            titleBarModel = new(mainWindowViewModel);
             titleBarModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 

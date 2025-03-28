@@ -24,8 +24,8 @@ namespace CryptoBook.Models
 
         private readonly ILifetimeScope scope;
 
-        private bool isMenuOpen { get; set; }
-
+        internal bool IsMenuOpen { get => isMenuOpen; private set => SetProperty(ref isMenuOpen, value); }
+        private bool isMenuOpen;
         internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
         double windowWidth;
         internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight, value); }
@@ -79,7 +79,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleMenuClick(object obj)
         {
-            if(isMenuOpen)
+            if(IsMenuOpen)
             {
                 CloseMenu();
             } else
@@ -213,11 +213,11 @@ namespace CryptoBook.Models
 
         private void OpenMenu()
         {
-            AnimateMenu("SlideInMenu", () => isMenuOpen = true);
+            AnimateMenu("SlideInMenu", () => IsMenuOpen = true);
         }
         private void CloseMenu()
         {
-            AnimateMenu("SlideOutMenu", () => isMenuOpen = false);
+            AnimateMenu("SlideOutMenu", () => IsMenuOpen = false);
         }
 
         private void AnimateMenu(string storyboardKey, Action completedAction)
