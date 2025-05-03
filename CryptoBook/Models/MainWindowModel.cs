@@ -75,13 +75,13 @@ namespace CryptoBook.Models
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        internal bool CanExecute_SideMenuOpen(object obj)
+        internal bool CanExecute_SideMenuOpen(object? obj)
         {
-            return isSideMenu;
+            return !isSideMenu;
         }
-        internal void Execute_SideMenuOpen(object obj)
+        internal void Execute_SideMenuOpen(object? obj)
         {
-                CloseMenu();
+            OpenMenu();
         }
 
         /// <summary>
@@ -89,21 +89,21 @@ namespace CryptoBook.Models
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        internal bool CanExecute_SideMenuClose(object obj)
+        internal bool CanExecute_SideMenuClose(object? obj)
         {
-            return !isSideMenu;
+            return isSideMenu;
         }
-        internal void Execute_SideMenuClose(object obj)
+        internal void Execute_SideMenuClose(object? obj)
         {
-                OpenMenu();
+            CloseMenu();
         }
 
 
-        internal bool CanExecute_FrameListAddPage(object obj)
+        internal bool CanExecute_FrameListAddPage(object? obj)
         {
             return obj != null;
         }
-        internal void Execute_FrameListAddPage(object obj)
+        internal void Execute_FrameListAddPage(object? obj)
         {
             if(obj is Page page)
             {
@@ -113,66 +113,66 @@ namespace CryptoBook.Models
         }
 
 
-        internal bool CanExecute_FrameListRemovePage(object obj)
+        internal bool CanExecute_FrameListRemovePage(object? obj)
         {
             return true;
         }
-        internal void Execute_FrameListRemovePage(object obj)
+        internal void Execute_FrameListRemovePage(object? obj)
         {
         }
 
 
-        internal bool CanExecute_FramelistGoForward(object obj)
+        internal bool CanExecute_FramelistGoForward(object? obj)
         {
             if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) < FrameList.Count - 1)
                 return true;
             else
                 return false;
         }
-        internal void Execute_FramelistGoForward(object obj)
+        internal void Execute_FramelistGoForward(object? obj)
         {
         }
 
 
 
-        internal bool CanExecute_FramelistGoBack(object obj)
+        internal bool CanExecute_FramelistGoBack(object? obj)
         {
             if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) > 0)
                 return true;
             else
                 return false;
         }
-        internal void Execute_FramelistGoBack(object obj)
+        internal void Execute_FramelistGoBack(object? obj)
         {
         }
 
 
 
-        internal bool CanExecute_PageClosed(object obj)
-        {
-            return true;
-        }
-        internal void Execute_PageClosed(object obj)
-        {
-        }
-
-
-        internal bool CanExecute_WindowClose(object obj)
+        internal bool CanExecute_PageClosed(object? obj)
         {
             return true;
         }
-        internal void Execute_WindowClose(object obj)
+        internal void Execute_PageClosed(object? obj)
+        {
+        }
+
+
+        internal bool CanExecute_WindowClose(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_WindowClose(object? obj)
         {
             App.Container.Resolve<MainWindow>().Close();
         }
 
 
 
-        internal bool CanExecute_Loaded(object obj)
+        internal bool CanExecute_Loaded(object? obj)
         {
             return true;
         }
-        internal void Execute_Loaded(object obj)
+        internal void Execute_Loaded(object? obj)
         {
             if(Ready != null)
             {
@@ -181,23 +181,23 @@ namespace CryptoBook.Models
         }
 
 
-        internal bool CanExecute_Closed(object obj)
+        internal bool CanExecute_Closed(object? obj)
         {
             return true;
         }
 
-        internal void Execute_Closed(object obj)
+        internal void Execute_Closed(object? obj)
         {
 
         }
 
 
 
-        internal bool CanExecute_Closing(object obj)
+        internal bool CanExecute_Closing(object? obj)
         {
             return true;
         }
-        internal void Execute_Closing(object obj)
+        internal void Execute_Closing(object? obj)
         {
             try
             {
@@ -224,11 +224,11 @@ namespace CryptoBook.Models
 
         private void OpenMenu()
         {
-            AnimateMenu("SlideInMenu", () => IsMenuOpen = true);
+            AnimateMenu("SlideInMenu", () => isSideMenu = true);
         }
         private void CloseMenu()
         {
-            AnimateMenu("SlideOutMenu", () => IsMenuOpen = false);
+            AnimateMenu("SlideOutMenu", () => isSideMenu = false);
         }
 
         private void AnimateMenu(string storyboardKey, Action completedAction)

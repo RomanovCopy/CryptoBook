@@ -43,11 +43,11 @@ namespace CryptoBook.Models
 
 
 
-        internal bool CanExecute_SelectItem(object obj)
+        internal bool CanExecute_SelectItem(object? obj)
         {
             return true;
         }
-        internal void Execute_SelectItem(object obj)
+        internal void Execute_SelectItem(object? obj)
         {
         }
 

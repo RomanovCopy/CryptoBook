@@ -68,11 +68,11 @@ namespace CryptoBook.Models
         }
 
 
-        internal bool CanExecute_StartLongOperation(object obj)
+        internal bool CanExecute_StartLongOperation(object? obj)
         {
             return obj is IProgressOperation<double>;
         }
-        internal async void Execute_StartLongOperation(object obj)
+        internal async void Execute_StartLongOperation(object? obj)
         {
             if(obj is IProgressOperation<double> operation)
             {
@@ -83,32 +83,32 @@ namespace CryptoBook.Models
 
         }
 
-        internal bool CanExecute_Loaded(object obj)
+        internal bool CanExecute_Loaded(object? obj)
         {
             return true;
         }
-        internal void Execute_Loaded(object obj)
+        internal void Execute_Loaded(object? obj)
         {
         }
 
 
-        internal bool CanExecute_Canceled(object obj)
+        internal bool CanExecute_Canceled(object? obj)
         {
             IsOperationRunning = !cancellationToken.IsCancellationRequested;
             return IsOperationRunning;
         }
-        internal void Execute_Canceled(object obj)
+        internal void Execute_Canceled(object? obj)
         {
             cancellationTokenSource.Cancel();
             Execute_Close(null);
         }
 
 
-        internal bool CanExecute_Closing(object obj)
+        internal bool CanExecute_Closing(object? obj)
         {
             return true;
         }
-        internal void Execute_Closing(object obj)
+        internal void Execute_Closing(object? obj)
         {
             Properties.Settings.Default.ProgressWindowHeight = WindowHeight;
             Properties.Settings.Default.ProgressWindowWidth = WindowWidth;
@@ -118,11 +118,11 @@ namespace CryptoBook.Models
         }
 
 
-        internal bool CanExecute_Closed(object obj)
+        internal bool CanExecute_Closed(object? obj)
         {
             return true;
         }
-        internal void Execute_Closed(object obj)
+        internal void Execute_Closed(object? obj)
         {
 
         }

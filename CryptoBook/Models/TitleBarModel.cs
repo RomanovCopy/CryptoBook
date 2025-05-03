@@ -66,16 +66,17 @@ namespace CryptoBook.Models
         {
             Execute_MaxButtonClick(null);
         }
-
+        
         internal bool CanExecute_MouseLeftButtonDown(object? obj)
         {
             return true;
         }
         internal void Execute_MouseLeftButtonDown(object? obj)
         {
-            if(mainWindowViewModel.IsMenuOpen && CanExecute_ToggleMenu_Click(null))
+            if(mainWindowViewModel.SideMenuClose.CanExecute(null))
             {
-                Execute_ToggleMenu_Click(null);
+                mainWindowViewModel.SideMenuClose.Execute(null);
+                return;
             }
             if(!_isDragging)
             {
@@ -119,7 +120,14 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleMenu_Click(object? obj)
         {
-            mainWindowViewModel.ToggleMenuClick.Execute(null);
+            if(mainWindowViewModel.SideMenuOpen.CanExecute(null))
+            {
+                mainWindowViewModel.SideMenuOpen.Execute(null);
+
+            } else if(mainWindowViewModel.SideMenuClose.CanExecute(null))
+            {
+                mainWindowViewModel.SideMenuClose.Execute(null);
+            }
         }
 
         internal bool CanExecute_ButtonDarkThemeClick(object? obj)

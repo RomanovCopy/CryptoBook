@@ -45,9 +45,11 @@ namespace CryptoBook.ViewModels
 
 
 
-        public ICommand SideMenuOpen => throw new NotImplementedException();
+        public ICommand SideMenuOpen => sideMenuOpen ??= new RelayCommand(mainWindowModel.Execute_SideMenuOpen, mainWindowModel.CanExecute_SideMenuOpen);
+        RelayCommand sideMenuOpen;
 
-        public ICommand SideMenuClose => throw new NotImplementedException();
+        public ICommand SideMenuClose => sideMenuClose ??= new RelayCommand(mainWindowModel.Execute_SideMenuClose, mainWindowModel.CanExecute_SideMenuClose);
+        RelayCommand sideMenuClose;
 
         public ICommand FrameListAddPage => frameListAddPage ??= new RelayCommand(mainWindowModel.Execute_FrameListAddPage, mainWindowModel.CanExecute_FrameListAddPage);
         RelayCommand frameListAddPage;
@@ -69,8 +71,7 @@ namespace CryptoBook.ViewModels
         public ICommand WindowToMaximize => windowToMaximize ??= new RelayCommand(mainWindowModel.Execute_WindowToMaximize, mainWindowModel.CanExecute_WindowToMaximize);
         RelayCommand windowToMaximize;
         public ICommand WindowToNormal=>windowToNormal??=new RelayCommand(mainWindowModel.Execute_WindowToNormal, mainWindowModel.CanExecute_WindowToNormal);
-        RelayCommand windowToNormal
-            ;
+        RelayCommand windowToNormal;
 
         public ICommand WindowClose => windowClose ??= new RelayCommand(mainWindowModel.Execute_WindowClose, mainWindowModel.CanExecute_WindowClose);
         RelayCommand windowClose;
