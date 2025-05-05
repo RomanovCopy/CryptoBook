@@ -51,6 +51,9 @@ namespace CryptoBook.ViewModels
         public ICommand SideMenuClose => sideMenuClose ??= new RelayCommand(mainWindowModel.Execute_SideMenuClose, mainWindowModel.CanExecute_SideMenuClose);
         RelayCommand sideMenuClose;
 
+        public ICommand WindowPreviewMouseDown => windowPreviewMouseDown ??= new RelayCommand(mainWindowModel.Execute_WindowPreviewMouseDown, mainWindowModel.CanExecute_WindowPreviewMouseDown);
+        RelayCommand windowPreviewMouseDown;
+
         public ICommand FrameListAddPage => frameListAddPage ??= new RelayCommand(mainWindowModel.Execute_FrameListAddPage, mainWindowModel.CanExecute_FrameListAddPage);
         RelayCommand frameListAddPage;
 

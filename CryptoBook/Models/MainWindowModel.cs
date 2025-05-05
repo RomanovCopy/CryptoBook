@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace CryptoBook.Models
@@ -96,6 +97,49 @@ namespace CryptoBook.Models
         internal void Execute_SideMenuClose(object? obj)
         {
             CloseMenu();
+        }
+
+        internal bool CanExecute_WindowPreviewMouseDown(object? obj)
+        {
+            return obj != null;
+        }
+        internal void Execute_WindowPreviewMouseDown(object? obj)
+        {
+            if(obj is MouseButtonEventArgs e)
+            {
+                try
+                {
+                    var mainWindow = scope.Resolve<MainWindow>();
+                    var sidebar = mainWindow?.MenuPanel;
+
+                    if(sidebar == null)
+                    {
+                        // Логирование ошибки, если sidebar не найден
+                        System.Diagnostics.Debug.WriteLine("MenuPanel is not found.");
+                        return;
+                    }
+
+                    // Проверяем, был ли клик вне боковой панели
+                    var point = e.GetPosition(sidebar);
+                    if(point.X < 0 || point.X > sidebar.ActualWidth || point.Y < 0 || point.Y > sidebar.ActualHeight)
+                    {
+                        if(isSideMenu)
+                        {
+                            CloseMenu();
+                        }
+                    }
+
+                    // Не устанавливаем e.Handled = true, чтобы событие дошло до страницы
+                } catch(Exception ex)
+                {
+                    // Логирование исключений
+                    System.Diagnostics.Debug.WriteLine($"Error in Execute_WindowPreviewMouseDown: {ex.Message}");
+                }
+            } else
+            {
+                // Логирование неверного типа параметра
+                System.Diagnostics.Debug.WriteLine($"Invalid parameter type in Execute_WindowPreviewMouseDown: {obj?.GetType().Name}");
+            }
         }
 
 

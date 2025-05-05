@@ -65,6 +65,11 @@
         </Grid>
     </Grid>
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="PreviewMouseDown">
+            <i:InvokeCommandAction 
+                Command="{Binding WindowPreviewMouseDown, UpdateSourceTrigger=PropertyChanged}" PassEventArgsToCommand="True">
+            </i:InvokeCommandAction>
+        </i:EventTrigger>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{ Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>

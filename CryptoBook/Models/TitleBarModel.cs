@@ -73,11 +73,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_MouseLeftButtonDown(object? obj)
         {
-            if(mainWindowViewModel.SideMenuClose.CanExecute(null))
-            {
-                mainWindowViewModel.SideMenuClose.Execute(null);
-                return;
-            }
             if(!_isDragging)
             {
                 _isDragging = true;
