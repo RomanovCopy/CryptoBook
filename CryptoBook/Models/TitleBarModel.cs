@@ -25,6 +25,7 @@ namespace CryptoBook.Models
         /// </summary>
         private bool _isDragging;
 
+        private readonly ILifetimeScope scope;
         private readonly MainWindowViewModel mainWindowViewModel;
 
         /// <summary>
@@ -43,9 +44,10 @@ namespace CryptoBook.Models
         internal string MyText { get => myText; set => SetProperty(ref myText, value); }
         string myText;
 
-        internal TitleBarModel(IMainWindowViewModel mainWindowViewModel)
+        internal TitleBarModel(ILifetimeScope _scope)
         {
-            this.mainWindowViewModel = (MainWindowViewModel)mainWindowViewModel;
+            scope = _scope;
+            mainWindowViewModel = (MainWindowViewModel)scope.Resolve<IMainWindowViewModel>();
         }
 
         internal bool CanExecute_Loaded(object? obj)

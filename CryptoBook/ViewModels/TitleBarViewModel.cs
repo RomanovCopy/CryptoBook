@@ -26,9 +26,9 @@ namespace CryptoBook.ViewModels
 
 
 
-        public TitleBarViewModel( IMainWindowViewModel mainWindowViewModel)
+        public TitleBarViewModel( ILifetimeScope _scope)
         {
-            titleBarModel = new(mainWindowViewModel);
+            titleBarModel = new TitleBarModel(_scope);
             titleBarModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 

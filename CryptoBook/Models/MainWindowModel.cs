@@ -99,6 +99,7 @@ namespace CryptoBook.Models
             CloseMenu();
         }
 
+
         internal bool CanExecute_WindowPreviewMouseDown(object? obj)
         {
             return obj != null;
