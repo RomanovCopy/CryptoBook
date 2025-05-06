@@ -21,19 +21,12 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
             <Setter Property="Margin" Value="3"/>
-            <!--<Style.Triggers>
-                <DataTrigger Binding="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" Value="Black">
-                    <Setter Property="Foreground" Value="White"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding MyFontColor, UpdateSourceTrigger=PropertyChanged}" Value="White">
-                    <Setter Property="Foreground" Value="Black"/>
-                </DataTrigger>
-            </Style.Triggers>-->
         </Style>
         <Style x:Key="buttons" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
             <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource CurrentTitleBarForeground}"/>
-            <Setter Property="Margin" Value="1"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
         </Style>
     </UserControl.Resources>
     <Grid Background="{DynamicResource CurrentTitleBarBackground}">

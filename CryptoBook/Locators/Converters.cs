@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Windows.Media.Capture.Core;
+
 namespace CryptoBook.Locators
 {
     public class Converters
