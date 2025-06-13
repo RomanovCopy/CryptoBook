@@ -78,7 +78,7 @@ namespace CryptoBook.Models
             if(!_isDragging)
             {
                 _isDragging = true;
-                App.Container.Resolve<MainWindow>().DragMove();
+                ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<MainWindow>().DragMove();
                 _isDragging = false;
             }
         }

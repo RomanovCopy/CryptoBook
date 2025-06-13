@@ -10,6 +10,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Autofac;
+
+using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
 
 namespace CryptoBook.Views
@@ -19,13 +22,17 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow ( )
+        public MainWindow ( ILifetimeScope scope )
         {
+            DataContext = scope.Resolve<IMainWindowViewModel>();
+
             Thread.CurrentThread.CurrentCulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
 
 
             InitializeComponent( );
+
+            Closed += (s, e) => scope.Dispose();
         }
     }
 }

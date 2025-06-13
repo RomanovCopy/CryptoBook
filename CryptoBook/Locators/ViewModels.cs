@@ -17,39 +17,39 @@ namespace CryptoBook.Locators
     {
 
         public static MainWindowViewModel MainWindowViewModel =>
-            App.Container.Resolve<IMainWindowViewModel>().As<MainWindowViewModel>();
+            ((IContainerProvider)App.Current).Container.Resolve<IMainWindowViewModel>().As<MainWindowViewModel>();
 
         public static HomeViewModel HomeViewModel => 
-            App.Container.Resolve<IHomeViewModel>().As<HomeViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IHomeViewModel>().As<HomeViewModel>();
 
         public static SideMenuViewModel SideMenuViewModel =>
-            App.Container.Resolve<ISideMenuViewModel>().As<SideMenuViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<ISideMenuViewModel>().As<SideMenuViewModel>();
 
         public static TitleBarViewModel TitleBarViewModel =>
-            App.Container.Resolve<ITitleBarViewModel>().As<TitleBarViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<ITitleBarViewModel>().As<TitleBarViewModel>();
 
         public static MyFrameViewModel MyFrameViewModel =>
-            App.Container.Resolve<IMyFrameViewModel>().As<MyFrameViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IMyFrameViewModel>().As<MyFrameViewModel>();
 
         public static MenuFileViewModel MenuFileViewModel =>
-            App.Container.Resolve<IMenuFileViewModel>().As<MenuFileViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IMenuFileViewModel>().As<MenuFileViewModel>();
 
         public static MenuSettingsViewModel MenuSettingsViewModel =>
-            App.Container.Resolve<IMenuSettingsViewModel>().As<MenuSettingsViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IMenuSettingsViewModel>().As<MenuSettingsViewModel>();
 
         public static MenuEncryptionViewModel MenuEncryptionViewModel =>
-            App.Container.Resolve<IMenuEncryptionViewModel>().As<MenuEncryptionViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IMenuEncryptionViewModel>().As<MenuEncryptionViewModel>();
 
         public static MenuContentViewModel MenuContentViewModel =>
-            App.Container.Resolve<IMenuContentViewModel>().As<MenuContentViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IMenuContentViewModel>().As<MenuContentViewModel>();
 
         //public static ProgressViewModel ProgressViewModel =>
-        //    App.Container.Resolve<IProgressViewModel>().As<ProgressViewModel>();
+        //    ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IProgressViewModel>().As<ProgressViewModel>();
 
-        public static MyMessageBox_ViewModel MyMessageBoxViewModel => App.Container.Resolve<IMyMessageBox_ViewModel>().As<MyMessageBox_ViewModel>();
+        public static MyMessageBox_ViewModel MyMessageBoxViewModel => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<IMyMessageBox_ViewModel>().As<MyMessageBox_ViewModel>();
 
 
         public static ProgressViewModel ProgressViewModel =>
-            App.Container.BeginLifetimeScope().Resolve<IProgressViewModel>().As<ProgressViewModel>();
+            ((IContainerProvider)System.Windows.Application.Current).Container.BeginLifetimeScope().Resolve<IProgressViewModel>().As<ProgressViewModel>();
     }
 }

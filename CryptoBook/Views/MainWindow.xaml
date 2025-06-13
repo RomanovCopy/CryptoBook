@@ -6,14 +6,15 @@
         xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:locators="clr-namespace:CryptoBook.Locators"
+        xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" WindowStyle="None"
         MinHeight="100" MinWidth="400" Title="CryptoBook"
         HorizontalContentAlignment="Stretch"
         BorderBrush="{DynamicResource CurrentBorderColor}"
-        BorderThickness="1,0,1,1"
-        DataContext="{x:Static locators:ViewModels.MainWindowViewModel}">
+        BorderThickness="1,0,1,1">
     <Window.Resources>
         <locators:MyControls x:Key="mycontrols"/>
     </Window.Resources>

@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using Autofac;
 
 using CryptoBook.Views;
+using CryptoBook.Interfaces;
 
 namespace CryptoBook.Locators
 {
     class MyWindows
     {
-        public static MainWindow MainWindow => App.Container.Resolve<MainWindow>();
-        public static ProgressWindow ProgressWindow => App.Container.Resolve<ProgressWindow>();
+        public static MainWindow MainWindow => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<MainWindow>();
+        public static ProgressWindow ProgressWindow => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<ProgressWindow>();
 
 
     }

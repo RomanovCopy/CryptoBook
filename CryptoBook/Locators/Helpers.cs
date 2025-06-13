@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Helpers;
+using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace CryptoBook.Locators
 {
     public class Helpers
     {
-        public static BehaviorComboBox BehaviorComboBox => App.Container.Resolve<BehaviorComboBox>();
+        public static BehaviorComboBox BehaviorComboBox => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<BehaviorComboBox>();
 
     }
 }

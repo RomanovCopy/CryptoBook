@@ -208,7 +208,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_WindowClose(object? obj)
         {
-            App.Container.Resolve<MainWindow>().Close();
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<MainWindow>().Close();
         }
 
 
@@ -281,7 +281,7 @@ namespace CryptoBook.Models
             DependencyObject? menuPanel = null;
             DependencyObject? contentPanel = null;
 
-            App.Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
+            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
             {
                 menuPanel = (DependencyObject)App.Current.MainWindow.FindName("MenuPanel");
                 contentPanel = (DependencyObject)App.Current.MainWindow.FindName("ContentPanel");

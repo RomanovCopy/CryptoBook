@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Injections;
+using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
 using System.Configuration;
@@ -14,25 +15,34 @@ namespace CryptoBook
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App: System.Windows.Application
+    public partial class App: System.Windows.Application, IContainerProvider
     {
 
-        public static IContainer Container { get; private set; }
+        public IContainer Container { get; private set; }
+        public App()
+        {
+            var startup = new Startup();
+            Container = startup.ConfigureServices(this);
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            var startup = new Startup();
-
-            Container = startup.ConfigureServices(this);
-
-            if(Container != null)
+            try
             {
-                // Разрешение и запуск главного окна
-                var mainWindow = Container?.Resolve<MainWindow>();
-                mainWindow?.Show();
-            } 
+                if(Container != null)
+                {
+                    // Разрешение и запуск главного окна
+                    var mainWindow = Container.Resolve<MainWindow>();
+                    mainWindow?.Show();
+                }
+
+            } catch(Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Failed to start application: {ex.Message}");
+                Shutdown();
+            }
+
 
         }
     }
