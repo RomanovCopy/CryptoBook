@@ -16,10 +16,12 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, ICloseable
+    public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, IWindowWithId, ICloseable
     {
         private readonly MainWindowModel mainWindowModel;
         private readonly ThemeManager themeManager;
+
+        public Guid WindowId => mainWindowModel.WindowId;
 
         public event EventHandler RequestClose;
 

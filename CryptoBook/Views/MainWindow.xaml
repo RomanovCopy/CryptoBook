@@ -22,19 +22,19 @@
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
     <Window.Width>
-        <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowWidth" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
                  ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Width>
     <Window.Height>
-        <Binding Path="WindowHeight" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowHeight" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
                  ConverterParameter="height" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Height>
     <Window.Top>
-        <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowTop" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
                  ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Top>
     <Window.Left>
-        <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowLeft" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
                  ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Left>
     <Window.WindowState>

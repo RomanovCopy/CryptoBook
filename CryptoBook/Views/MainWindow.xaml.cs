@@ -22,7 +22,7 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow ( ILifetimeScope scope )
+        public MainWindow (ILifetimeScope scope)
         {
             DataContext = scope.Resolve<IMainWindowViewModel>();
 

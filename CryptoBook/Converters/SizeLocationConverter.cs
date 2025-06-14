@@ -17,7 +17,6 @@ namespace CryptoBook.Converters
     public class SizeLocationConverter: IValueConverter
     {
 
-
         /// <summary>
         /// преобразует пришедшее от привязки значение в тот тип, который понимается приемником привязки
         /// </summary>

@@ -14,6 +14,7 @@ using CryptoBook.Interfaces;
 using CryptoBook.MyPages;
 using CryptoBook.MyControls;
 using CryptoBook.Helpers;
+using System.Windows.Data;
 
 namespace CryptoBook.Injections
 {

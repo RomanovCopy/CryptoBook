@@ -45,11 +45,12 @@ namespace CryptoBook.Models
         ObservableCollection<Page> frameList;
 
         internal static Action Ready { get; set; }
-
+        public Guid WindowId { get; private set; }
 
         public MainWindowModel(ILifetimeScope scope)
         {
             this.scope = scope;
+            WindowId = Guid.NewGuid();
             frameList = [];
 
             var page = scope.Resolve<Home>();
@@ -208,7 +209,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_WindowClose(object? obj)
         {
-            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<MainWindow>().Close();
+            scope.Resolve<IWindowManager>().CloseWindow<MainWindow>(WindowId);
         }
 
 

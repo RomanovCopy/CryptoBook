@@ -2,6 +2,7 @@
 
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
+using CryptoBook.Models;
 using CryptoBook.Views;
 
 using System.Configuration;
@@ -33,8 +34,11 @@ namespace CryptoBook
                 if(Container != null)
                 {
                     // Разрешение и запуск главного окна
-                    var mainWindow = Container.Resolve<MainWindow>();
-                    mainWindow?.Show();
+                    //var mainWindow = Container.Resolve<MainWindow>();
+                    //mainWindow?.Show();
+                    var winmanager = Container.Resolve<IWindowManager>();
+                    var win = winmanager.CreateWindow<MainWindow>();
+                    winmanager.ShowWindow<MainWindow>(((IWindowWithId)win.DataContext).WindowId);
                 }
 
             } catch(Exception ex)
