@@ -38,11 +38,6 @@ namespace CryptoBook.Models
         WindowState windowState;
 
 
-        internal Page CurrentPage { get => currentPage; set => SetProperty(ref currentPage, value); }
-        Page currentPage;
-
-        internal ObservableCollection<Page> FrameList { get => frameList; private set => SetProperty(ref frameList, value); }
-        ObservableCollection<Page> frameList;
 
         internal static Action Ready { get; set; }
         public Guid WindowId { get; private set; }
@@ -51,14 +46,6 @@ namespace CryptoBook.Models
         {
             this.scope = scope;
             WindowId = Guid.NewGuid();
-            frameList = [];
-
-            var page = scope.Resolve<Home>();
-
-            if(CanExecute_FrameListAddPage(page))
-            {
-                Execute_FrameListAddPage(page);
-            }
 
             WindowHeight = Properties.Settings.Default.WindowHeight;
             WindowWidth = Properties.Settings.Default.WindowWidth;
@@ -145,63 +132,6 @@ namespace CryptoBook.Models
         }
 
 
-        internal bool CanExecute_FrameListAddPage(object? obj)
-        {
-            return obj != null;
-        }
-        internal void Execute_FrameListAddPage(object? obj)
-        {
-            if(obj is Page page)
-            {
-                FrameList.Add(page);
-                CurrentPage = page;
-            }
-        }
-
-
-        internal bool CanExecute_FrameListRemovePage(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_FrameListRemovePage(object? obj)
-        {
-        }
-
-
-        internal bool CanExecute_FramelistGoForward(object? obj)
-        {
-            if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) < FrameList.Count - 1)
-                return true;
-            else
-                return false;
-        }
-        internal void Execute_FramelistGoForward(object? obj)
-        {
-        }
-
-
-
-        internal bool CanExecute_FramelistGoBack(object? obj)
-        {
-            if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) > 0)
-                return true;
-            else
-                return false;
-        }
-        internal void Execute_FramelistGoBack(object? obj)
-        {
-        }
-
-
-
-        internal bool CanExecute_PageClosed(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_PageClosed(object? obj)
-        {
-        }
-
 
         internal bool CanExecute_WindowClose(object? obj)
         {
@@ -256,13 +186,6 @@ namespace CryptoBook.Models
                     Properties.Settings.Default.WindowTop = WindowTop;
                 }
                 Properties.Settings.Default.WindowState = WindowState.ToString();
-                int count = FrameList.Count;
-                while(count > 0)
-                {
-                    var page = FrameList[--count];
-                    //if(page.DataContext is IPageViewModel viewmodel)
-                    //    viewmodel.PageClose.Execute(page);
-                }
                 Properties.Settings.Default.Save();
             } catch(Exception e) { ErrorWindow(e); }
         }

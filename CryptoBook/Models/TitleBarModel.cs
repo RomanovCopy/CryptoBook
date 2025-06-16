@@ -26,6 +26,7 @@ namespace CryptoBook.Models
         private bool _isDragging;
 
         private readonly ILifetimeScope scope;
+        private readonly MyFrameViewModel myFrameViewModel;
         private readonly MainWindowViewModel mainWindowViewModel;
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace CryptoBook.Models
         internal TitleBarModel(ILifetimeScope _scope)
         {
             scope = _scope;
+            myFrameViewModel = (MyFrameViewModel)scope.Resolve<IMyFrameViewModel>();
             mainWindowViewModel = (MainWindowViewModel)scope.Resolve<IMainWindowViewModel>();
         }
 
@@ -95,20 +97,20 @@ namespace CryptoBook.Models
         internal bool CanExecute_ButtonBack_Click(object? obj)
         {
 
-            return mainWindowViewModel.FramelistGoBack.CanExecute(null);
+            return myFrameViewModel.FramelistGoBack.CanExecute(null);
         }
         internal void Execute_ButtonBack_Click(object? obj)
         {
-            mainWindowViewModel.FramelistGoBack.Execute(null);
+            myFrameViewModel.FramelistGoBack.Execute(null);
         }
 
         internal bool CanExecute_ButtonForward_Click(object? obj)
         {
-            return mainWindowViewModel.FramelistGoForward.CanExecute(null);
+            return myFrameViewModel.FramelistGoForward.CanExecute(null);
         }
         internal void Execute_ButtonForward_Click(object? obj)
         {
-            mainWindowViewModel.FramelistGoForward.Execute(null);
+            myFrameViewModel.FramelistGoForward.Execute(null);
         }
 
         internal bool CanExecute_ToggleMenu_Click(object? obj)

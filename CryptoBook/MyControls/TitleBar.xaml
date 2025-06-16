@@ -4,13 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:locators="clr-namespace:CryptoBook.Locators"
+             xmlns:markup="clr-namespace:CryptoBook.Markup"
+             xmlns:convert="clr-namespace:CryptoBook.Converters"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              BorderBrush="{DynamicResource CurrentBorderColor}"
              BorderThickness="0,0,0,1"
              mc:Ignorable="d"
-             MinHeight="16" 
-             DataContext="{x:Static locators:ViewModels.TitleBarViewModel}">
+             MinHeight="16">
     <UserControl.Resources>
         <Style x:Key="icon" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
@@ -63,10 +63,10 @@
 
             <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch"
                        Text="{Binding MyText, UpdateSourceTrigger=PropertyChanged}" 
-                       Foreground="{Binding MyFontColor, Converter={x:Static locators:Converters.colorToColorConverter}, 
+                       Foreground="{Binding MyFontColor, Converter={markup:ResolveConverter ConverterType={x:Type convert:ColorToColorConverter}}, 
                 UpdateSourceTrigger=PropertyChanged}" 
                        FontSize="{Binding MyFontSize, 
-                Converter={x:Static locators:Converters.fontSizeAdjustConverter}, ConverterParameter=-2}" 
+                Converter={markup:ResolveConverter ConverterType={x:Type convert:FontSizeAdjustConverter}}, ConverterParameter=-2}" 
                        FontWeight="Normal" FontStyle="Italic"
                        VerticalAlignment="Center" TextAlignment="Center">
                 

@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Autofac;
+
+using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,8 +24,9 @@ namespace CryptoBook.MyControls
     /// </summary>
     public partial class SideMenu: System.Windows.Controls.UserControl
     {
-        public SideMenu()
+        public SideMenu(ILifetimeScope scope)
         {
+            DataContext = scope.Resolve<ISideMenuViewModel>();
             InitializeComponent();
         }
 

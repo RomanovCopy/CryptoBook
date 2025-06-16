@@ -33,26 +33,6 @@ namespace CryptoBook.Interfaces
         /// оконный режим
         /// </summary>
         public ICommand WindowToNormal { get; }
-        /// <summary>
-        /// добавление страницы
-        /// </summary>
-        public ICommand FrameListAddPage { get; }
-        /// <summary>
-        /// удаление страницы
-        /// </summary>
-        public ICommand FrameListRemovePage { get; }
-        /// <summary>
-        /// переход к следующей странице
-        /// </summary>
-        public ICommand FramelistGoForward { get; }
-        /// <summary>
-        /// переход к предыдущей странице
-        /// </summary>
-        public ICommand FramelistGoBack { get; }
-        /// <summary>
-        /// закрытие страницы
-        /// </summary>
-        public ICommand PageClosed { get; }
 
     }
 }

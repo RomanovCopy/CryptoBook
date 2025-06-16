@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Autofac;
+
+using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +26,7 @@ namespace CryptoBook.MyControls
     /// </summary>
     public partial class MyFrame : Controls.UserControl
     {
-        public MyFrame()
+        public MyFrame(ILifetimeScope scope)
         {
             InitializeComponent();
         }

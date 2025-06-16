@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:locators="clr-namespace:CryptoBook.Locators"
+             xmlns:convert="clr-namespace:CryptoBook.Converters"
+             xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              BorderBrush="{DynamicResource CurrentBorderColor}"
              BorderThickness="1,0,1,0"
-             mc:Ignorable="d" 
-             DataContext="{x:Static locators:ViewModels.SideMenuViewModel}">
+             mc:Ignorable="d">
     <UserControl.Width>
-        <Binding Path="Width" Converter="{x:Static locators:Converters.internalSizeConverter}" 
+        <Binding Path="Width" Converter="{markup:ResolveConverter ConverterType={x:Type convert:InternalSizeConverter}}" 
          ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </UserControl.Width>
 

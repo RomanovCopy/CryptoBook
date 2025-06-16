@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
 using System;
@@ -24,8 +25,10 @@ namespace CryptoBook.MyControls
     /// </summary>
     public partial class TitleBar : System.Windows.Controls.UserControl
     {
-        public TitleBar()
+        public TitleBar(ILifetimeScope scope)
         {
+            DataContext = scope.Resolve<ITitleBarViewModel>();
+
             InitializeComponent();
         }
 

@@ -38,7 +38,6 @@
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
-    <Compile Remove="Markup\ResolveViewModelExtension.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
   </ItemGroup>

@@ -32,9 +32,6 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => mainWindowModel.WindowLeft; set => mainWindowModel.WindowLeft = value; }
         public WindowState WindowState { get => mainWindowModel.WindowState; set => mainWindowModel.WindowState = value; }
 
-        public ObservableCollection<Page> FrameList => mainWindowModel.FrameList;
-
-        public Page CurrentPage => mainWindowModel.CurrentPage;
 
         public static Action Ready { get => MainWindowModel.Ready; set => MainWindowModel.Ready = value; }
 
@@ -45,8 +42,6 @@ namespace CryptoBook.ViewModels
             mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-
-
         public ICommand SideMenuOpen => sideMenuOpen ??= new RelayCommand(mainWindowModel.Execute_SideMenuOpen, mainWindowModel.CanExecute_SideMenuOpen);
         RelayCommand sideMenuOpen;
 
@@ -56,20 +51,6 @@ namespace CryptoBook.ViewModels
         public ICommand WindowPreviewMouseDown => windowPreviewMouseDown ??= new RelayCommand(mainWindowModel.Execute_WindowPreviewMouseDown, mainWindowModel.CanExecute_WindowPreviewMouseDown);
         RelayCommand windowPreviewMouseDown;
 
-        public ICommand FrameListAddPage => frameListAddPage ??= new RelayCommand(mainWindowModel.Execute_FrameListAddPage, mainWindowModel.CanExecute_FrameListAddPage);
-        RelayCommand frameListAddPage;
-
-        public ICommand FrameListRemovePage => frameListRemovePage ??= new RelayCommand(mainWindowModel.Execute_FrameListRemovePage, mainWindowModel.CanExecute_FrameListRemovePage);
-        RelayCommand frameListRemovePage;
-
-        public ICommand FramelistGoForward => framelist_GoForward ??= new RelayCommand(mainWindowModel.Execute_FramelistGoForward, mainWindowModel.CanExecute_FramelistGoForward);
-        RelayCommand framelist_GoForward;
-
-        public ICommand FramelistGoBack => framelist_GoBack ??= new RelayCommand(mainWindowModel.Execute_FramelistGoBack, mainWindowModel.CanExecute_FramelistGoBack);
-        RelayCommand framelist_GoBack;
-
-        public ICommand PageClosed => pageClosed ??= new RelayCommand(mainWindowModel.Execute_PageClosed, mainWindowModel.CanExecute_PageClosed);
-        RelayCommand pageClosed;
 
         public ICommand WindowToMinimize => windowToMinimize??=new RelayCommand(mainWindowModel.Execute_windowToMinimize, mainWindowModel.CanExecute_windowToMinimize);
         RelayCommand windowToMinimize;

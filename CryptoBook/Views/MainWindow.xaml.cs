@@ -22,9 +22,8 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow (ILifetimeScope scope)
+        public MainWindow ()
         {
-            DataContext = scope.Resolve<IMainWindowViewModel>();
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
@@ -32,7 +31,6 @@ namespace CryptoBook.Views
 
             InitializeComponent( );
 
-            Closed += (s, e) => scope.Dispose();
         }
     }
 }
