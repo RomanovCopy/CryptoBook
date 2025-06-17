@@ -7,13 +7,12 @@
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
-             mc:Ignorable="d"
-             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+             mc:Ignorable="d">
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyFrameViewModel}"/>
     </UserControl.DataContext>
     <Grid Background="Gray">
-        <Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden"/>
+        <Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

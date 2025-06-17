@@ -10,6 +10,7 @@ using CryptoBook.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,7 @@ namespace CryptoBook.Models
 {
     public class MainWindowModel: ViewModelBase
     {
-
-        private readonly ILifetimeScope scope;
+        private readonly IWindowManager windowManager;
         private bool isSideMenu { get; set; }
 
         internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
@@ -42,9 +42,9 @@ namespace CryptoBook.Models
         internal static Action Ready { get; set; }
         public Guid WindowId { get; private set; }
 
-        public MainWindowModel(ILifetimeScope scope)
+        public MainWindowModel(IWindowManager windowManager)
         {
-            this.scope = scope;
+            this.windowManager = windowManager;
             WindowId = Guid.NewGuid();
 
             WindowHeight = Properties.Settings.Default.WindowHeight;
@@ -94,140 +94,44 @@ namespace CryptoBook.Models
         }
         internal void Execute_WindowPreviewMouseDown(object? obj)
         {
-            if(obj is MouseButtonEventArgs e)
-            {
-                try
-                {
-                    var mainWindow = scope.Resolve<MainWindow>();
-                    var sidebar = mainWindow?.MenuPanel;
+            //if(obj is MouseButtonEventArgs e)
+            //{
+            //    try
+            //    {
+            //        var mainWindow = windowManager.FindWindow<MainWindow>(WindowId);
+            //        var sidebar = mainWindow?.MenuPanel;
 
-                    if(sidebar == null)
-                    {
-                        // Логирование ошибки, если sidebar не найден
-                        System.Diagnostics.Debug.WriteLine("MenuPanel is not found.");
-                        return;
-                    }
+            //        if(sidebar == null)
+            //        {
+            //            // Логирование ошибки, если sidebar не найден
+            //            System.Diagnostics.Debug.WriteLine("MenuPanel is not found.");
+            //            return;
+            //        }
 
-                    // Проверяем, был ли клик вне боковой панели
-                    var point = e.GetPosition(sidebar);
-                    if(point.X < 0 || point.X > sidebar.ActualWidth || point.Y < 0 || point.Y > sidebar.ActualHeight)
-                    {
-                        if(isSideMenu)
-                        {
-                            CloseMenu();
-                        }
-                    }
+            //        // Проверяем, был ли клик вне боковой панели
+            //        var point = e.GetPosition(sidebar);
+            //        if(point.X < 0 || point.X > sidebar.ActualWidth || point.Y < 0 || point.Y > sidebar.ActualHeight)
+            //        {
+            //            if(isSideMenu)
+            //            {
+            //                CloseMenu();
+            //            }
+            //        }
 
-                    // Не устанавливаем e.Handled = true, чтобы событие дошло до страницы
-                } catch(Exception ex)
-                {
-                    // Логирование исключений
-                    System.Diagnostics.Debug.WriteLine($"Error in Execute_WindowPreviewMouseDown: {ex.Message}");
-                }
-            } else
-            {
-                // Логирование неверного типа параметра
-                System.Diagnostics.Debug.WriteLine($"Invalid parameter type in Execute_WindowPreviewMouseDown: {obj?.GetType().Name}");
-            }
+            //        // Не устанавливаем e.Handled = true, чтобы событие дошло до страницы
+            //    } catch(Exception ex)
+            //    {
+            //        // Логирование исключений
+            //        System.Diagnostics.Debug.WriteLine($"Error in Execute_WindowPreviewMouseDown: {ex.Message}");
+            //    }
+            //} else
+            //{
+            //    // Логирование неверного типа параметра
+            //    System.Diagnostics.Debug.WriteLine($"Invalid parameter type in Execute_WindowPreviewMouseDown: {obj?.GetType().Name}");
+            //}
         }
 
 
-
-        internal bool CanExecute_WindowClose(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_WindowClose(object? obj)
-        {
-            scope.Resolve<IWindowManager>().CloseWindow<MainWindow>(WindowId);
-        }
-
-
-
-        internal bool CanExecute_Loaded(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_Loaded(object? obj)
-        {
-            if(Ready != null)
-            {
-                Ready.Invoke();
-            }
-        }
-
-
-        internal bool CanExecute_Closed(object? obj)
-        {
-            return true;
-        }
-
-        internal void Execute_Closed(object? obj)
-        {
-
-        }
-
-
-
-        internal bool CanExecute_Closing(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_Closing(object? obj)
-        {
-            try
-            {
-                //размеры и положение окна
-                if(WindowState.ToString() == "Normal")
-                {
-                    Properties.Settings.Default.WindowWidth = WindowWidth;
-                    Properties.Settings.Default.WindowHeight = WindowHeight;
-                    Properties.Settings.Default.WindowLeft = WindowLeft;
-                    Properties.Settings.Default.WindowTop = WindowTop;
-                }
-                Properties.Settings.Default.WindowState = WindowState.ToString();
-                Properties.Settings.Default.Save();
-            } catch(Exception e) { ErrorWindow(e); }
-        }
-
-
-        private void OpenMenu()
-        {
-            AnimateMenu("SlideInMenu", () => isSideMenu = true);
-        }
-        private void CloseMenu()
-        {
-            AnimateMenu("SlideOutMenu", () => isSideMenu = false);
-        }
-
-        private void AnimateMenu(string storyboardKey, Action completedAction)
-        {
-            DependencyObject? menuPanel = null;
-            DependencyObject? contentPanel = null;
-
-            ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<MainWindow>().Dispatcher.Invoke(() =>
-            {
-                menuPanel = (DependencyObject)App.Current.MainWindow.FindName("MenuPanel");
-                contentPanel = (DependencyObject)App.Current.MainWindow.FindName("ContentPanel");
-            });
-
-            Storyboard storyboard = ((Storyboard)App.Current.Resources[storyboardKey]).Clone();
-
-            Storyboard.SetTarget(storyboard.Children[0], menuPanel);
-            Storyboard.SetTargetProperty(storyboard.Children[0], new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
-
-            ThicknessAnimation contentAnimation = (ThicknessAnimation)storyboard.Children[1];
-            Storyboard.SetTarget(contentAnimation, contentPanel);
-            Storyboard.SetTargetProperty(contentAnimation, new PropertyPath("Margin"));
-
-            storyboard.Completed += (s, e) =>
-            {
-                completedAction();
-                storyboard.Completed -= (s, e) => { };
-            };
-
-            storyboard.Begin();
-        }
 
         internal bool CanExecute_windowToMinimize(object? obj)
         {
@@ -255,6 +159,107 @@ namespace CryptoBook.Models
         {
             WindowState = WindowState.Normal;
         }
+
+
+        internal bool CanExecute_Loaded(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_Loaded(object? obj)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
+
+            if(Ready != null)
+            {
+                Ready.Invoke();
+            }
+        }
+
+
+        internal bool CanExecute_Close(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_Close(object? obj)
+        {
+            windowManager.CloseWindow<MainWindow>(WindowId);
+        }
+
+
+
+        internal bool CanExecute_Closing(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_Closing(object? obj)
+        {
+            try
+            {
+                //размеры и положение окна
+                if(WindowState.ToString() == "Normal")
+                {
+                    Properties.Settings.Default.WindowWidth = WindowWidth;
+                    Properties.Settings.Default.WindowHeight = WindowHeight;
+                    Properties.Settings.Default.WindowLeft = WindowLeft;
+                    Properties.Settings.Default.WindowTop = WindowTop;
+                }
+                Properties.Settings.Default.WindowState = WindowState.ToString();
+                Properties.Settings.Default.Save();
+            } catch(Exception e) { ErrorWindow(e); }
+
+        }
+        internal bool CanExecute_Closed(object? obj)
+        {
+            return true;
+        }
+
+        internal void Execute_Closed(object? obj)
+        {
+            ((IDisposable)windowManager)?.Dispose();
+        }
+
+
+
+
+        private void OpenMenu()
+        {
+            AnimateMenu("SlideInMenu", () => isSideMenu = true);
+        }
+        private void CloseMenu()
+        {
+            AnimateMenu("SlideOutMenu", () => isSideMenu = false);
+        }
+        private void AnimateMenu(string storyboardKey, Action completedAction)
+        {
+            DependencyObject? menuPanel = null;
+            DependencyObject? contentPanel = null;
+
+            var mainWindow = windowManager.FindWindow<MainWindow>(WindowId);
+            mainWindow?.Dispatcher.Invoke(() =>
+            {
+                menuPanel = (DependencyObject)App.Current.MainWindow.FindName("MenuPanel");
+                contentPanel = (DependencyObject)App.Current.MainWindow.FindName("ContentPanel");
+            });
+
+            Storyboard storyboard = ((Storyboard)App.Current.Resources[storyboardKey]).Clone();
+
+            Storyboard.SetTarget(storyboard.Children[0], menuPanel);
+            Storyboard.SetTargetProperty(storyboard.Children[0], new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
+
+            ThicknessAnimation contentAnimation = (ThicknessAnimation)storyboard.Children[1];
+            Storyboard.SetTarget(contentAnimation, contentPanel);
+            Storyboard.SetTargetProperty(contentAnimation, new PropertyPath("Margin"));
+
+            storyboard.Completed += (s, e) =>
+            {
+                completedAction();
+                storyboard.Completed -= (s, e) => { };
+            };
+
+            storyboard.Begin();
+        }
+
 
     }
 }

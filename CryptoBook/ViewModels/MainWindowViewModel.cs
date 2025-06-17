@@ -19,12 +19,15 @@ namespace CryptoBook.ViewModels
     public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, IWindowWithId, ICloseable
     {
         private readonly MainWindowModel mainWindowModel;
-        private readonly ThemeManager themeManager;
+        private readonly IThemeManager themeManager;
+        private readonly IWindowManager windowManager;
 
         public Guid WindowId => mainWindowModel.WindowId;
 
         public event EventHandler RequestClose;
 
+        public bool IsMenuOpen { get => isMenuOpen; set => SetProperty(ref isMenuOpen, value); }
+        bool isMenuOpen;
 
         public double WindowWidth { get => mainWindowModel.WindowWidth; set => mainWindowModel.WindowWidth = value; }
         public double WindowHeight { get => mainWindowModel.WindowHeight; set => mainWindowModel.WindowHeight = value; }
@@ -35,10 +38,14 @@ namespace CryptoBook.ViewModels
 
         public static Action Ready { get => MainWindowModel.Ready; set => MainWindowModel.Ready = value; }
 
-        public MainWindowViewModel(ILifetimeScope scope, IThemeManager tm)
+        public MainWindowViewModel(ILifetimeScope scope)
         {
-            mainWindowModel = new(scope);
-            themeManager = (ThemeManager)tm;
+            IsMenuOpen = false;
+            themeManager = scope.Resolve<IThemeManager>();
+            windowManager = scope.Resolve<IWindowManager>();
+            mainWindowModel = new(windowManager);
+            this.themeManager = themeManager;
+            this.windowManager = windowManager;
             mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -59,19 +66,29 @@ namespace CryptoBook.ViewModels
         public ICommand WindowToNormal=>windowToNormal??=new RelayCommand(mainWindowModel.Execute_WindowToNormal, mainWindowModel.CanExecute_WindowToNormal);
         RelayCommand windowToNormal;
 
-        public ICommand WindowClose => windowClose ??= new RelayCommand(mainWindowModel.Execute_WindowClose, mainWindowModel.CanExecute_WindowClose);
-        RelayCommand windowClose;
 
         public ICommand Loaded => loaded ??= new RelayCommand(mainWindowModel.Execute_Loaded, mainWindowModel.CanExecute_Loaded);
         RelayCommand loaded;
 
-        public ICommand Close => closed ??= new RelayCommand(mainWindowModel.Execute_Closed, mainWindowModel.CanExecute_Closed);
-        RelayCommand closed;
+        public ICommand Close => close ??= new RelayCommand(mainWindowModel.Execute_Close, mainWindowModel.CanExecute_Close);
+        RelayCommand close;
 
         public ICommand Closing => closing ??= new RelayCommand(mainWindowModel.Execute_Closing, mainWindowModel.CanExecute_Closing);
         RelayCommand closing;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closed => closed ??= new RelayCommand(mainWindowModel.Execute_Closed, mainWindowModel.CanExecute_Closed);
+        private RelayCommand closed;
+
+
+        public ICommand ToggleMenuCommand => toggleMenuCommand ??= new RelayCommand(Execute_ToggleMenuCommand);
+        private RelayCommand toggleMenuCommand;
+
+        private void Execute_ToggleMenuCommand(object? obj)
+        {
+            IsMenuOpen = !IsMenuOpen;
+        }
+
+
 
     }
 }

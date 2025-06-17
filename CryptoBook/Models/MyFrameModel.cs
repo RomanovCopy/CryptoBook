@@ -2,6 +2,7 @@
 
 using CryptoBook.Infrastructure;
 using CryptoBook.MyPages;
+using CryptoBook.Views;
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,8 @@ namespace CryptoBook.Models
 
 
         public ObservableCollection<Page> FrameList { get; internal set; }
-        public Page CurrentPage { get; internal set; }
+        public Page CurrentPage { get => currentPage; private set => SetProperty(ref currentPage, value); }
+        private Page currentPage;
 
 
 
@@ -62,7 +64,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_FramelistGoForward(object? obj)
         {
-            throw new NotImplementedException();
+            CurrentPage = FrameList[FrameList.IndexOf(CurrentPage) + 1];
         }
 
         internal bool CanExecute_FramelistGoBack(object? obj)
@@ -74,16 +76,38 @@ namespace CryptoBook.Models
         }
         internal void Execute_FramelistGoBack(object? obj)
         {
-            throw new NotImplementedException();
+            CurrentPage = FrameList[FrameList.IndexOf(CurrentPage) - 1];
         }
 
         internal bool CanExecute_FrameListRemovePage(object? obj)
         {
-            throw new NotImplementedException();
+            return FrameList.Count > 1;
         }
         internal void Execute_FrameListRemovePage(object? obj)
         {
-            throw new NotImplementedException();
+            if(obj is Page page)
+            {
+                if(FrameList.Count > 1)
+                {
+                    int i = FrameList.IndexOf(page);//индекс удаляемой страницы
+                    if(CurrentPage.Equals(page))
+                    {//текущая страница подлежит удалению
+                        if(i == 0)
+                        {//первый в коллекции
+                            i = FrameList.Count > 1 ? i + 1 : i;//индекс новой текущей страницы
+                        } else
+                        {//последний или в середине коллекции
+                            i = FrameList.Count > 1 ? i - 1 : i;//индекс новой текущей страницы
+                        }
+                        CurrentPage = FrameList[i];
+                    }
+                    FrameList.Remove(page);
+                } else
+                {
+                    FrameList.Remove(page);
+                }
+            }
+            scope.Resolve<MainWindow>().Focus();
         }
 
         internal bool CanExecute_Loaded(object? obj)
@@ -97,29 +121,26 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Closing(object? obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Close(object? obj)
         {
-            throw new NotImplementedException();
         }
 
         internal bool CanExecute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
         }
     }
 }

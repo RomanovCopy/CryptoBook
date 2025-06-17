@@ -25,8 +25,8 @@ namespace CryptoBook.Views
         public MainWindow ()
         {
 
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
 
 
             InitializeComponent( );

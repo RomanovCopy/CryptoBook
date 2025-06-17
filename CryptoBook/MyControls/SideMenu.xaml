@@ -1,31 +1,86 @@
 ﻿<UserControl x:Class="CryptoBook.MyControls.SideMenu"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:convert="clr-namespace:CryptoBook.Converters"
-             xmlns:markup="clr-namespace:CryptoBook.Markup"
-             xmlns:local="clr-namespace:CryptoBook.MyControls"
-             BorderBrush="{DynamicResource CurrentBorderColor}"
-             BorderThickness="1,0,1,0"
-             mc:Ignorable="d">
-    <UserControl.Width>
-        <Binding Path="Width" Converter="{markup:ResolveConverter ConverterType={x:Type convert:InternalSizeConverter}}" 
-         ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
-    </UserControl.Width>
-
-    <Grid Background="Transparent" HorizontalAlignment="Stretch" >
-        <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
-                  Background="Transparent"
-                  BorderThickness="0">
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
-                    <ContentPresenter />
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-            <TreeView.ItemContainerStyle>
-                <StaticResource ResourceKey="TreeViewItemStyle"/>
-            </TreeView.ItemContainerStyle>
-        </TreeView>
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:marcup="clr-namespace:CryptoBook.Markup"
+         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+         xmlns:local="clr-namespace:CryptoBook.MyControls"
+         mc:Ignorable="d">
+    <UserControl.DataContext>
+        <marcup:ResolveViewModel ViewModelType="{x:Type interfaces:IMainWindowViewModel}"/>
+    </UserControl.DataContext>
+    <Grid>
+        <Border x:Name="sidemenu"
+            Background="{DynamicResource CurrentWindowBackground}"
+            HorizontalAlignment="Left">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Opacity" Value="0"/>
+                    <Setter Property="Width" Value="0"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMenuOpen, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Width"
+                                                     From="0" To="250" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseInOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0.3" To="1" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseInOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Width"
+                                                     From="250" To="0" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseInOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="1" To="0.3" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseInOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <!-- Контент меню -->
+            <StackPanel>
+                <Grid Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.DataContext>
+                        <marcup:ResolveViewModel ViewModelType="{x:Type interfaces:ISideMenuViewModel}"/>
+                    </Grid.DataContext>
+                    <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}" 
+              Background="Transparent"  Width="250"
+              BorderThickness="0" VerticalAlignment="Stretch">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
+                                <ContentPresenter />
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerStyle>
+                            <StaticResource ResourceKey="TreeViewItemStyle"/>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
+                </Grid>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

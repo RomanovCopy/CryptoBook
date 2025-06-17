@@ -14,9 +14,9 @@ namespace CryptoBook.Locators
     public class MyControls
     {
 
-        public static SideMenu SideMenu => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<SideMenu>();
         public static TitleBar TitleBar => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<TitleBar>();
         public static MyFrame MyFrame => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<MyFrame>();
+        public static SideMenu SideMenu => ((IContainerProvider)System.Windows.Application.Current).Container.Resolve<SideMenu>();
 
     }
 }

@@ -119,14 +119,15 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleMenu_Click(object? obj)
         {
-            if(mainWindowViewModel.SideMenuOpen.CanExecute(null))
-            {
-                mainWindowViewModel.SideMenuOpen.Execute(null);
+            //if(mainWindowViewModel.SideMenuOpen.CanExecute(null))
+            //{
+            //    mainWindowViewModel.SideMenuOpen.Execute(null);
 
-            } else if(mainWindowViewModel.SideMenuClose.CanExecute(null))
-            {
-                mainWindowViewModel.SideMenuClose.Execute(null);
-            }
+            //} else if(mainWindowViewModel.SideMenuClose.CanExecute(null))
+            //{
+            //    mainWindowViewModel.SideMenuClose.Execute(null);
+            //}
+            mainWindowViewModel.ToggleMenuCommand.Execute(null);
         }
 
         internal bool CanExecute_ButtonDarkThemeClick(object? obj)
@@ -175,7 +176,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_CloseButtonClick(object? obj)
         {
-            return mainWindowViewModel.WindowClose.CanExecute(null);
+            return mainWindowViewModel.Close.CanExecute(null);
         }
         internal void Execute_CloseButtonClick(object? obj)
         {
@@ -190,7 +191,7 @@ namespace CryptoBook.Models
         {
             Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
             Properties.Settings.Default.Save();
-            mainWindowViewModel.WindowClose.Execute(null);
+            mainWindowViewModel.Close.Execute(null);
         }
 
         internal bool CanExecute_GoToWindow(object? obj)
@@ -210,7 +211,7 @@ namespace CryptoBook.Models
         {
             Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
             Properties.Settings.Default.Save();
-            mainWindowViewModel.WindowClose.Execute(null);
+            mainWindowViewModel.Close.Execute(null);
 
         }
 

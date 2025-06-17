@@ -79,7 +79,7 @@ namespace CryptoBook.Injections
 
 
 
-            var container=builder.Build();
+            var container =builder.Build();
 
             return container;
         }

@@ -15,6 +15,7 @@
         mc:Ignorable="d" WindowStyle="None"
         MinHeight="100" MinWidth="400" Title="CryptoBook"
         HorizontalContentAlignment="Stretch"
+        Background="{DynamicResource CurrentWindowBackground}"
         BorderBrush="{DynamicResource CurrentBorderColor}"
         BorderThickness="1,0,1,1">
     <Window.DataContext>
@@ -50,21 +51,12 @@
         </Grid.RowDefinitions>
         <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
         <Grid Grid.Row="1" >
-            <!-- Боковое меню -->
-            <Border x:Name="MenuPanel" Background="{DynamicResource CurrentWindowBackground}" Width="250" HorizontalAlignment="Left">
-                <Border.RenderTransform>
-                    <!-- Начальное положение меню за пределами окна -->
-                    <TranslateTransform X="-250" />
-                </Border.RenderTransform>
-                <Grid >
-                    <ContentControl Content="{x:Static locators:MyControls.SideMenu}"  HorizontalContentAlignment="Left"/>
-                </Grid>
-            </Border>
-
-            <Grid x:Name="ContentPanel" Background="LightGray" Margin="0,0,0,0" >
-                <ContentControl Content="{x:Static locators:MyControls.MyFrame}"/>
-            </Grid>
-
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ContentControl Content="{x:Static locators:MyControls.SideMenu}" Grid.Column="0"/>
+            <ContentControl Content="{x:Static locators:MyControls.MyFrame}" Grid.Column="1"/>
         </Grid>
     </Grid>
     <i:Interaction.Triggers>
@@ -78,6 +70,9 @@
         </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{ Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{ Binding Closed, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 </Window>

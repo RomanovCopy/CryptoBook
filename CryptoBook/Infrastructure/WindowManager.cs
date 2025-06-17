@@ -12,7 +12,7 @@ using CryptoBook.Interfaces;
 
 namespace CryptoBook.Infrastructure
 {
-    public class WindowManager: IWindowManager
+    public class WindowManager: IWindowManager, IDisposable
     {
         private readonly ILifetimeScope _scope;
         private readonly HashSet<Window> _openWindows;
@@ -56,7 +56,7 @@ namespace CryptoBook.Infrastructure
             return FindWindow<T>(windowId) != null;
         }
 
-        private T? FindWindow<T>(Guid windowId) where T : Window
+        public T? FindWindow<T>(Guid windowId) where T : Window
         {
             return _openWindows
                 .OfType<T>()
@@ -89,6 +89,11 @@ namespace CryptoBook.Infrastructure
         private void WinClose<T>(T? window) where T : Window
         {
             window?.Close();
+        }
+
+        public void Dispose()
+        {
+            _scope?.Dispose();
         }
     }
 
