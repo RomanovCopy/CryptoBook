@@ -19,6 +19,7 @@ namespace CryptoBook.ViewModels
     public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, IWindowWithId, ICloseable
     {
         private readonly MainWindowModel mainWindowModel;
+        private readonly ILifetimeScope scope;
         private readonly IThemeManager themeManager;
         private readonly IWindowManager windowManager;
 
@@ -41,6 +42,7 @@ namespace CryptoBook.ViewModels
         public MainWindowViewModel(ILifetimeScope scope)
         {
             IsMenuOpen = false;
+            this.scope = scope ?? throw new ArgumentNullException(nameof(scope));
             themeManager = scope.Resolve<IThemeManager>();
             windowManager = scope.Resolve<IWindowManager>();
             mainWindowModel = new(windowManager);
@@ -53,8 +55,27 @@ namespace CryptoBook.ViewModels
         public ICommand SideMenuClose => sideMenuClose ??= new RelayCommand(mainWindowModel.Execute_SideMenuClose, mainWindowModel.CanExecute_SideMenuClose);
         RelayCommand sideMenuClose;
 
-        public ICommand WindowPreviewMouseDown => windowPreviewMouseDown ??= new RelayCommand(mainWindowModel.Execute_WindowPreviewMouseDown, mainWindowModel.CanExecute_WindowPreviewMouseDown);
+        public ICommand WindowPreviewMouseDown => windowPreviewMouseDown ??= new RelayCommand(Execute_WindowPreviewMouseDown,CanExecute_WindowPreviewMouseDown);
         RelayCommand windowPreviewMouseDown;
+
+        private bool CanExecute_WindowPreviewMouseDown(object? obj)
+        {
+            return IsMenuOpen;
+        }
+
+        private void Execute_WindowPreviewMouseDown(object? obj)
+        {
+           if(obj is MouseButtonEventArgs e)
+           {
+                var point =e.GetPosition(e.Source as IInputElement);
+                var width = ((SideMenuViewModel)scope.Resolve<ISideMenuViewModel>()).Width;
+                if(point.X>250)
+                {
+                    IsMenuOpen = false;
+                }
+            }
+        }
+
 
 
         public ICommand WindowToMinimize => windowToMinimize??=new RelayCommand(mainWindowModel.Execute_windowToMinimize, mainWindowModel.CanExecute_windowToMinimize);
