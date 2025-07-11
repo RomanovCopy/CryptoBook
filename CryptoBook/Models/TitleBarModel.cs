@@ -119,14 +119,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleMenu_Click(object? obj)
         {
-            //if(mainWindowViewModel.SideMenuOpen.CanExecute(null))
-            //{
-            //    mainWindowViewModel.SideMenuOpen.Execute(null);
-
-            //} else if(mainWindowViewModel.SideMenuClose.CanExecute(null))
-            //{
-            //    mainWindowViewModel.SideMenuClose.Execute(null);
-            //}
             mainWindowViewModel.ToggleMenuCommand.Execute(null);
         }
 

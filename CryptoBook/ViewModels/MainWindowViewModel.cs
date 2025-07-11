@@ -44,8 +44,6 @@ namespace CryptoBook.ViewModels
             themeManager = scope.Resolve<IThemeManager>();
             windowManager = scope.Resolve<IWindowManager>();
             mainWindowModel = new(windowManager);
-            this.themeManager = themeManager;
-            this.windowManager = windowManager;
             mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
