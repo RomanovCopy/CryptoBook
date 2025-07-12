@@ -9,6 +9,9 @@ using Autofac;
 
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
+using CryptoBook.MyControls;
+using CryptoBook.ViewModels;
+using CryptoBook.Views;
 
 namespace CryptoBook.Infrastructure
 {
@@ -28,8 +31,26 @@ namespace CryptoBook.Infrastructure
             if(!_scope.IsRegistered<T>())
                 throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
             var window = _scope.Resolve<T>();
+            if(typeof(T) == typeof(MainWindow))
+            {
+                window.PreviewMouseLeftButtonDown += MainWindow_PreviewMouseLeftButtonDown;
+                window.Closed += (s,e) => window.PreviewMouseLeftButtonDown -= MainWindow_PreviewMouseLeftButtonDown;
+            }
             RegisterWindow<T>(window);
             return window;
+        }
+
+        private void MainWindow_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var sideMenu = _scope.Resolve < SideMenu > ();
+            var point = e.GetPosition(sideMenu);
+            var window = _scope.Resolve<MainWindow>();
+            var viewmodel = (MainWindowViewModel)window.DataContext;
+            if(viewmodel.IsMenuOpen && point.X > sideMenu.ActualWidth)
+            {
+                viewmodel.IsMenuOpen = false;
+            }
+            e.Handled = false;
         }
 
         public void ShowWindow<T>(Guid windowId) where T : Window
