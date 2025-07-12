@@ -59,78 +59,6 @@ namespace CryptoBook.Models
 
 
 
-        /// <summary>
-        /// открытие бокового меню
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        internal bool CanExecute_SideMenuOpen(object? obj)
-        {
-            return !isSideMenu;
-        }
-        internal void Execute_SideMenuOpen(object? obj)
-        {
-            OpenMenu();
-        }
-
-        /// <summary>
-        /// закрытие бокового меню
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        internal bool CanExecute_SideMenuClose(object? obj)
-        {
-            return isSideMenu;
-        }
-        internal void Execute_SideMenuClose(object? obj)
-        {
-            CloseMenu();
-        }
-
-
-        internal bool CanExecute_WindowPreviewMouseDown(object? obj)
-        {
-            return obj != null;
-        }
-        internal void Execute_WindowPreviewMouseDown(object? obj)
-        {
-            //if(obj is MouseButtonEventArgs e)
-            //{
-            //    try
-            //    {
-            //        var mainWindow = windowManager.FindWindow<MainWindow>(WindowId);
-            //        var sidebar = mainWindow?.MenuPanel;
-
-            //        if(sidebar == null)
-            //        {
-            //            // Логирование ошибки, если sidebar не найден
-            //            System.Diagnostics.Debug.WriteLine("MenuPanel is not found.");
-            //            return;
-            //        }
-
-            //        // Проверяем, был ли клик вне боковой панели
-            //        var point = e.GetPosition(sidebar);
-            //        if(point.X < 0 || point.X > sidebar.ActualWidth || point.Y < 0 || point.Y > sidebar.ActualHeight)
-            //        {
-            //            if(isSideMenu)
-            //            {
-            //                CloseMenu();
-            //            }
-            //        }
-
-            //        // Не устанавливаем e.Handled = true, чтобы событие дошло до страницы
-            //    } catch(Exception ex)
-            //    {
-            //        // Логирование исключений
-            //        System.Diagnostics.Debug.WriteLine($"Error in Execute_WindowPreviewMouseDown: {ex.Message}");
-            //    }
-            //} else
-            //{
-            //    // Логирование неверного типа параметра
-            //    System.Diagnostics.Debug.WriteLine($"Invalid parameter type in Execute_WindowPreviewMouseDown: {obj?.GetType().Name}");
-            //}
-        }
-
 
 
         internal bool CanExecute_windowToMinimize(object? obj)
@@ -218,48 +146,6 @@ namespace CryptoBook.Models
         {
             ((IDisposable)windowManager)?.Dispose();
         }
-
-
-
-
-        private void OpenMenu()
-        {
-            AnimateMenu("SlideInMenu", () => isSideMenu = true);
-        }
-        private void CloseMenu()
-        {
-            AnimateMenu("SlideOutMenu", () => isSideMenu = false);
-        }
-        private void AnimateMenu(string storyboardKey, Action completedAction)
-        {
-            DependencyObject? menuPanel = null;
-            DependencyObject? contentPanel = null;
-
-            var mainWindow = windowManager.FindWindow<MainWindow>(WindowId);
-            mainWindow?.Dispatcher.Invoke(() =>
-            {
-                menuPanel = (DependencyObject)App.Current.MainWindow.FindName("MenuPanel");
-                contentPanel = (DependencyObject)App.Current.MainWindow.FindName("ContentPanel");
-            });
-
-            Storyboard storyboard = ((Storyboard)App.Current.Resources[storyboardKey]).Clone();
-
-            Storyboard.SetTarget(storyboard.Children[0], menuPanel);
-            Storyboard.SetTargetProperty(storyboard.Children[0], new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
-
-            ThicknessAnimation contentAnimation = (ThicknessAnimation)storyboard.Children[1];
-            Storyboard.SetTarget(contentAnimation, contentPanel);
-            Storyboard.SetTargetProperty(contentAnimation, new PropertyPath("Margin"));
-
-            storyboard.Completed += (s, e) =>
-            {
-                completedAction();
-                storyboard.Completed -= (s, e) => { };
-            };
-
-            storyboard.Begin();
-        }
-
 
     }
 }

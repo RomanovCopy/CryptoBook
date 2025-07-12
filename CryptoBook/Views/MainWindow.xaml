@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
         xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
@@ -55,16 +56,11 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ContentControl Content="{x:Static locators:MyControls.SideMenu}" Grid.Column="0"/>
+            <ContentControl x:Name="sidemenu" Content="{x:Static locators:MyControls.SideMenu}" Grid.Column="0"/>
             <ContentControl Content="{x:Static locators:MyControls.MyFrame}" Grid.Column="1"/>
         </Grid>
     </Grid>
     <i:Interaction.Triggers>
-        <i:EventTrigger EventName="PreviewMouseDown">
-            <i:InvokeCommandAction 
-                Command="{Binding WindowPreviewMouseDown, UpdateSourceTrigger=PropertyChanged}" PassEventArgsToCommand="True">
-            </i:InvokeCommandAction>
-        </i:EventTrigger>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{ Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
@@ -75,4 +71,9 @@
             <i:InvokeCommandAction Command="{ Binding Closed, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <i:Interaction.Behaviors>
+        <behaviors:WindowBehavior 
+            SidePanel="{Binding ElementName=sidemenu,UpdateSourceTrigger=PropertyChanged}"
+            CloseSidePanelCommand="{Binding SideMenuClose, UpdateSourceTrigger=PropertyChanged}"/>
+    </i:Interaction.Behaviors>
 </Window>

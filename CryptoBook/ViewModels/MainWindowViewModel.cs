@@ -49,40 +49,25 @@ namespace CryptoBook.ViewModels
             mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-        public ICommand SideMenuOpen => sideMenuOpen ??= new RelayCommand(mainWindowModel.Execute_SideMenuOpen, mainWindowModel.CanExecute_SideMenuOpen);
-        RelayCommand sideMenuOpen;
 
-        public ICommand SideMenuClose => sideMenuClose ??= new RelayCommand(mainWindowModel.Execute_SideMenuClose, mainWindowModel.CanExecute_SideMenuClose);
-        RelayCommand sideMenuClose;
-
-        public ICommand WindowPreviewMouseDown => windowPreviewMouseDown ??= new RelayCommand(Execute_WindowPreviewMouseDown,CanExecute_WindowPreviewMouseDown);
-        RelayCommand windowPreviewMouseDown;
-
-        private bool CanExecute_WindowPreviewMouseDown(object? obj)
+        public ICommand SideMenuClose => sideMenuClose ??= new RelayCommand(Execute_SideMenuClose, CanExecute_SideMenuClose);
+        private bool CanExecute_SideMenuClose(object? obj)
         {
             return IsMenuOpen;
         }
-
-        private void Execute_WindowPreviewMouseDown(object? obj)
+        private void Execute_SideMenuClose(object? obj)
         {
-           if(obj is MouseButtonEventArgs e)
-           {
-                var point =e.GetPosition(e.Source as IInputElement);
-                var width = ((SideMenuViewModel)scope.Resolve<ISideMenuViewModel>()).Width;
-                if(point.X>250)
-                {
-                    IsMenuOpen = false;
-                }
-            }
+            IsMenuOpen = false;
         }
+        RelayCommand sideMenuClose;
 
 
 
-        public ICommand WindowToMinimize => windowToMinimize??=new RelayCommand(mainWindowModel.Execute_windowToMinimize, mainWindowModel.CanExecute_windowToMinimize);
+        public ICommand WindowToMinimize => windowToMinimize ??= new RelayCommand(mainWindowModel.Execute_windowToMinimize, mainWindowModel.CanExecute_windowToMinimize);
         RelayCommand windowToMinimize;
         public ICommand WindowToMaximize => windowToMaximize ??= new RelayCommand(mainWindowModel.Execute_WindowToMaximize, mainWindowModel.CanExecute_WindowToMaximize);
         RelayCommand windowToMaximize;
-        public ICommand WindowToNormal=>windowToNormal??=new RelayCommand(mainWindowModel.Execute_WindowToNormal, mainWindowModel.CanExecute_WindowToNormal);
+        public ICommand WindowToNormal => windowToNormal ??= new RelayCommand(mainWindowModel.Execute_WindowToNormal, mainWindowModel.CanExecute_WindowToNormal);
         RelayCommand windowToNormal;
 
 

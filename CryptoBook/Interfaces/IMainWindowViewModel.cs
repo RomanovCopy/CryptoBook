@@ -10,18 +10,6 @@ namespace CryptoBook.Interfaces
     public interface IMainWindowViewModel:IViewModel
     {
         /// <summary>
-        /// открытие боковой панели
-        /// </summary>
-        public ICommand SideMenuOpen { get; }
-        /// <summary>
-        /// закрытие боковой панели
-        /// </summary>
-        public ICommand SideMenuClose { get; }
-        /// <summary>
-        /// обработка клика по окну
-        /// </summary>
-        public ICommand WindowPreviewMouseDown { get; }
-        /// <summary>
         /// скрыть окно в трее
         /// </summary>
         public ICommand WindowToMinimize { get; }
@@ -33,6 +21,14 @@ namespace CryptoBook.Interfaces
         /// оконный режим
         /// </summary>
         public ICommand WindowToNormal { get; }
+        /// <summary>
+        /// открытие/закрытие боковой панели от кнопки
+        /// </summary>
+        public ICommand ToggleMenuCommand { get; }
+        /// <summary>
+        /// закрытие бокового меню при клике вне его площади
+        /// </summary>
+        public ICommand SideMenuClose { get; }
 
     }
 }
