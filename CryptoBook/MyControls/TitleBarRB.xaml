@@ -49,7 +49,6 @@
             <Button Style="{StaticResource TitleBarButtonStyle}"
                     Command="{Binding UnderlineCommand}"
                     Content="U"
-                    TextDecorations="Underline"
                     ToolTip="Underline"/>
             <ComboBox Width="120"
                       Margin="2"

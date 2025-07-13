@@ -56,8 +56,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ContentControl x:Name="sidemenu" Content="{x:Static locators:MyControls.SideMenu}" Grid.Column="0"/>
-            <ContentControl Content="{x:Static locators:MyControls.MyFrame}" Grid.Column="1"/>
+            <ContentControl x:Name="sidemenu" Content="{markup:ResolveUserControl UserControlType={x:Type control:SideMenu}}" Grid.Column="0"/>
+            <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:MyFrame}}" Grid.Column="1"/>
         </Grid>
     </Grid>
     <i:Interaction.Triggers>

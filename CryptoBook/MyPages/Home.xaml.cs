@@ -22,9 +22,8 @@ namespace CryptoBook.MyPages
     /// </summary>
     public partial class Home: Page
     {
-        public Home(IHomeViewModel viewModel)
+        public Home()
         {
-            DataContext = viewModel;
             InitializeComponent();
             
         }

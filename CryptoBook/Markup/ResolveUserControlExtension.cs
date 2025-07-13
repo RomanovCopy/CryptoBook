@@ -1,51 +1,46 @@
-﻿using CryptoBook.Interfaces;
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Markup;
+using Autofac;
+
+using CryptoBook.Interfaces;
 
 namespace CryptoBook.Markup
 {
-    public class ResolveUserControlExtension:MarkupExtension
+    /// <summary>
+    /// MarkupExtension для разрешения UserControl через DI-контейнер Autofac с кэшированием.
+    /// </summary>
+    public class ResolveUserControlExtension : MarkupExtension
     {
+        /// <summary>
+        /// Тип UserControl, который требуется разрешить через DI.
+        /// </summary>
+        public Type UserControlType { get; set; }
 
-        private readonly Type _type;
-        // Статический кэш для хранения экземпляров UserControl
-        private static readonly ConcurrentDictionary<Type, object> _cache = new ConcurrentDictionary<Type, object>();
+        private static readonly ConcurrentDictionary<Type, object> _cache = new();
+
+        public ResolveUserControlExtension() { }
 
         public ResolveUserControlExtension(Type type)
         {
-            _type = type ?? throw new ArgumentNullException(nameof(type));
+            UserControlType = type ?? throw new ArgumentNullException(nameof(type));
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            // Проверяем, есть ли экземпляр в кэше
-            if(_cache.TryGetValue(_type, out var cachedInstance))
+            if (UserControlType == null)
+                throw new InvalidOperationException("UserControlType must be set.");
+
+            return _cache.GetOrAdd(UserControlType, type =>
             {
-                return cachedInstance;
-            }
-
-            // Получение контейнера Autofac
-            var container = GetContainer();
-
-            // Разрешение зависимости через Autofac
-            var instance = container.Resolve(_type);
-
-            // Сохраняем экземпляр в кэше
-            _cache.TryAdd(_type, instance);
-
-            return instance;
+                var container = GetContainer();
+                return container.Resolve(type);
+            });
         }
 
         private static IContainer GetContainer()
         {
-            if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
+            if (System.Windows.Application.Current is not IContainerProvider containerProvider ||
                 containerProvider.Container is not IContainer container)
             {
                 throw new InvalidOperationException("Autofac container not found in Application.Current. " +
