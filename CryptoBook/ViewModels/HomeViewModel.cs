@@ -1,4 +1,6 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
@@ -14,15 +16,19 @@ namespace CryptoBook.ViewModels
     public class HomeViewModel: ViewModelBase, IHomeViewModel
     {
         private readonly HomeModel homeModel;
+        private readonly ILifetimeScope scope;
 
         public Action<object> BehaviorReady { get => behaviorReady; set => behaviorReady = value; }
         Action<object> behaviorReady;
 
-        public HomeViewModel()
+        public HomeViewModel(ILifetimeScope scope)
         {
-            homeModel = new();
+            this.scope = scope;
+            homeModel = new(scope);
             homeModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
+
+
 
         public ICommand PageLoaded => pageLoaded ??= new RelayCommand(homeModel.Execute_PageLoaded, homeModel.CanExecute_PageLoded);
         RelayCommand pageLoaded;

@@ -1,4 +1,6 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
 
 using System;
 using System.Collections.Generic;
@@ -11,10 +13,11 @@ namespace CryptoBook.Models
     public class HomeModel: ViewModelBase
     {
 
+        private readonly ILifetimeScope scope;
 
-
-        public HomeModel()
+        public HomeModel(ILifetimeScope scope)
         {
+            this.scope = scope;
 
         }
 
