@@ -5,23 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:locators="clr-namespace:CryptoBook.Locators"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" SizeToContent="Height" 
-        MinHeight="100" Width="300">
+        MinHeight="100" Width="300"
+        d:DataContext="{x:Type interfaces:IMyMessageBox_ViewModel}">
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyMessageBox_ViewModel}"/>
+    </Window.DataContext>
     <Window.Resources>
         <Style x:Key="mybuttonL" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
             <Setter Property="Content" Value="{Binding ButtonLeft_Content, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Background" Value="{Binding ButtonLeftBC, 
-                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Foreground" Value="{Binding ButtonLeftFC, 
-                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
 
         </Style>
         <Style x:Key="mybuttonR" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
             <Setter Property="Background" Value="{Binding ButtonRightBC, 
-                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Foreground" Value="{Binding ButtonRightFC, 
-                Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
         </Style>
     </Window.Resources>
 
@@ -30,15 +37,15 @@
     </WindowChrome.WindowChrome>
 
     <Window.Top>
-        <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding  Path="WindowTop" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
              ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Top>
     <Window.Left>
-        <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowLeft" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
              ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Left>
     <Window.Background>
-        <Binding Path="BackColor" Converter="{x:Static locators:Converters.colorToColorConverter}" UpdateSourceTrigger="PropertyChanged"/>
+        <Binding Path="BackColor" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Background>
 
     <Grid >

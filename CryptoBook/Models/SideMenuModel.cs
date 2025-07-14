@@ -16,6 +16,8 @@ namespace CryptoBook.Models
 {
     public class SideMenuModel: ViewModelBase
     {
+
+        private readonly ILifetimeScope scope;
         internal ObservableCollection<MenuItemViewModel> MenuItems { get => menuItems; private set => SetProperty(ref menuItems, value); }
         ObservableCollection<MenuItemViewModel> menuItems;
 
@@ -37,14 +39,15 @@ namespace CryptoBook.Models
 
 
 
-        private readonly MenuFileViewModel menuFileViewModel;
-        private readonly MenuSettingsViewModel menuSettingsViewModel;
-        private readonly MenuEncryptionViewModel menuEncryptionViewModel;
-        private readonly MenuContentViewModel menuContentViewModel;
+        private readonly IMenuFileViewModel menuFileViewModel;
+        private readonly IMenuSettingsViewModel menuSettingsViewModel;
+        private readonly IMenuEncryptionViewModel menuEncryptionViewModel;
+        private readonly IMenuContentViewModel menuContentViewModel;
 
-        public SideMenuModel()
+        public SideMenuModel(ILifetimeScope _scope)
         {
-            menuFileViewModel = Locators.ViewModels.MenuFileViewModel;
+            scope = _scope;
+            menuFileViewModel = _scope.Resolve<IMenuFileViewModel>();
             menuSettingsViewModel = Locators.ViewModels.MenuSettingsViewModel;
             menuEncryptionViewModel = Locators.ViewModels.MenuEncryptionViewModel;
             menuContentViewModel = Locators.ViewModels.MenuContentViewModel;

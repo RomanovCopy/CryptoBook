@@ -26,9 +26,9 @@ namespace CryptoBook.ViewModels
 
 
 
-        public TitleBarViewModel( ILifetimeScope _scope)
+        public TitleBarViewModel(ILifetimeScope scope)
         {
-            titleBarModel = new TitleBarModel(_scope);
+            titleBarModel = new TitleBarModel(scope);
             titleBarModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -85,5 +85,6 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => closing ??= new RelayCommand(titleBarModel.Execute_Closing, titleBarModel.CanExecute_Closing);
         RelayCommand closing;
 
+        public ICommand Closed => throw new NotImplementedException();
     }
 }

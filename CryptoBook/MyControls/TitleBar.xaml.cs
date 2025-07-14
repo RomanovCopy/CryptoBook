@@ -25,10 +25,8 @@ namespace CryptoBook.MyControls
     /// </summary>
     public partial class TitleBar : System.Windows.Controls.UserControl
     {
-        public TitleBar(ILifetimeScope scope)
+        public TitleBar()
         {
-            DataContext = scope.Resolve<ITitleBarViewModel>();
-
             InitializeComponent();
         }
 

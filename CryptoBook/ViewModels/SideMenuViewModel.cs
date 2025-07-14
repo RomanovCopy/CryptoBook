@@ -1,4 +1,6 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
@@ -24,7 +26,7 @@ namespace CryptoBook.ViewModels
         public double FontSizeHeader { get => sideMenuModel.FontSizeHeader; set => sideMenuModel.FontSizeHeader = value; }
         public double FontSize { get => sideMenuModel.FontSize; set => sideMenuModel.FontSize = value; }
 
-        public SideMenuViewModel()
+        public SideMenuViewModel(ILifetimeScope scope)
         {
             sideMenuModel = new();
             sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);

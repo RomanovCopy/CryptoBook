@@ -21,9 +21,8 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class MyMessageBox: Window
     {
-        public MyMessageBox(IMyMessageBox_ViewModel viewModel)
+        public MyMessageBox()
         {
-            DataContext = viewModel;
             InitializeComponent();
         }
     }

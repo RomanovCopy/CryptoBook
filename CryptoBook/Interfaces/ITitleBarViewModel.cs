@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface ITitleBarViewModel
+    public interface ITitleBarViewModel:IViewModel
     {
         /// <summary>
         /// двойной клик по TitleBar

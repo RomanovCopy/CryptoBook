@@ -4,13 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:convert="clr-namespace:CryptoBook.Converters"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              BorderBrush="{DynamicResource CurrentBorderColor}"
              BorderThickness="0,0,0,1"
              mc:Ignorable="d"
-             MinHeight="16">
+             MinHeight="16"
+             d:DataContext="{x:Type interfaces:ITitleBarViewModel}">
+    <UserControl.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:ITitleBarViewModel}"/>
+    </UserControl.DataContext>
     <UserControl.Resources>
         <Style x:Key="icon" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
