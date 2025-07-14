@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IPageViewModel
+    public interface IPageViewModel:IViewModel
     {
         /// <summary>
         /// команда обработки события окончания загрузки страницы

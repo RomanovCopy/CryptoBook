@@ -18,7 +18,8 @@
         HorizontalContentAlignment="Stretch"
         Background="{DynamicResource CurrentWindowBackground}"
         BorderBrush="{DynamicResource CurrentBorderColor}"
-        BorderThickness="1,0,1,1">
+        BorderThickness="1,0,1,1"
+        d:DataContext="{x:Type viewmodels:MainWindowViewModel}">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMainWindowViewModel}"/>
     </Window.DataContext>
@@ -37,7 +38,7 @@
         <Binding Path="WindowTop" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
                  ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Top>
-    <Window.Left>
+    <Window.Left >
         <Binding Path="WindowLeft" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
                  ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Left>
@@ -50,7 +51,7 @@
             <RowDefinition x:Name="forMyFrame" Height="*"/>
             <RowDefinition x:Name="forStatusBar" Height="Auto"/>
         </Grid.RowDefinitions>
-        <ContentControl Content="{x:Static locators:MyControls.TitleBar}" Grid.Row="0"/>
+        <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:TitleBar}}" Grid.Row="0"/>
         <Grid Grid.Row="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

@@ -11,17 +11,23 @@ namespace CryptoBook.Markup
     /// </summary>
     public class ResolveViewModelExtension : MarkupExtension
     {
-        private static readonly ConcurrentDictionary<Type, IViewModel> viewModelCache = new();
+
+
+        private static readonly ConcurrentDictionary<Type, object> viewModelCache = new();
+
 
         /// <summary>
         /// Тип ViewModel, который должен быть разрешен.
         /// </summary>
         public Type ViewModelType { get; set; }
 
+
+
         /// <summary>
         /// Сбросить кэш ViewModel (например, для тестирования).
         /// </summary>
         public static void ClearCache() => viewModelCache.Clear();
+
 
         public override object? ProvideValue(IServiceProvider serviceProvider)
         {
