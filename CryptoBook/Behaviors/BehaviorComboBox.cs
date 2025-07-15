@@ -4,7 +4,7 @@ using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CryptoBook.Helpers
+namespace CryptoBook.Behaviors
 {
     public class BehaviorComboBox: Behavior<System.Windows.Controls.ComboBox>
     {

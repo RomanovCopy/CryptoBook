@@ -19,19 +19,6 @@
 
   <ItemGroup>
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
-    <Compile Remove="Helpers\BehaviorButton.cs" />
-    <Compile Remove="Helpers\BehaviorFixedDocument.cs" />
-    <Compile Remove="Helpers\BehaviorFlowDocument.cs" />
-    <Compile Remove="Helpers\BehaviorFlowDocumentReader.cs" />
-    <Compile Remove="Helpers\BehaviorImageZoom.cs" />
-    <Compile Remove="Helpers\BehaviorMediaElement.cs" />
-    <Compile Remove="Helpers\BehaviorPasswordBox.cs" />
-    <Compile Remove="Helpers\BehaviorRichTextBox.cs" />
-    <Compile Remove="Helpers\BehaviorSlider.cs" />
-    <Compile Remove="Helpers\BehaviorTabControl.cs" />
-    <Compile Remove="Helpers\BehaviorTextBox.cs" />
-    <Compile Remove="Helpers\BehaviorTreeView.cs" />
-    <Compile Remove="Helpers\DirectoryItem.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
     <Compile Remove="Interfaces\IDownloadItem.cs" />
