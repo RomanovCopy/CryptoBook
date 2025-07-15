@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Windows.Markup;
-using Autofac;
+﻿using Autofac;
 
 using CryptoBook.Interfaces;
+
+using System.Collections.Concurrent;
+using System.Windows.Markup;
 
 namespace CryptoBook.Markup
 {
     /// <summary>
     /// MarkupExtension для разрешения UserControl через DI-контейнер Autofac с кэшированием.
     /// </summary>
-    public class ResolveUserControlExtension : MarkupExtension
+    public class ResolveUserControlExtension: MarkupExtension
     {
         /// <summary>
         /// Тип UserControl, который требуется разрешить через DI.
@@ -28,7 +28,7 @@ namespace CryptoBook.Markup
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (UserControlType == null)
+            if(UserControlType == null)
                 throw new InvalidOperationException("UserControlType must be set.");
 
             return _cache.GetOrAdd(UserControlType, type =>
@@ -40,7 +40,7 @@ namespace CryptoBook.Markup
 
         private static IContainer GetContainer()
         {
-            if (System.Windows.Application.Current is not IContainerProvider containerProvider ||
+            if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
                 containerProvider.Container is not IContainer container)
             {
                 throw new InvalidOperationException("Autofac container not found in Application.Current. " +

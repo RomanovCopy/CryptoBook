@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-using Autofac;
+﻿using Autofac;
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
+
+using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
@@ -23,10 +18,16 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => myMessageBox_Model.WindowLeft; set => myMessageBox_Model.WindowLeft = value; }
         public string Header { get => myMessageBox_Model.Header; set => myMessageBox_Model.Header = value; }
         public string Message { get => myMessageBox_Model.Message; set => myMessageBox_Model.Message = value; }
-        public string ButtonLeft_Content { get => myMessageBox_Model.ButtonLeft_Content; 
-            set => myMessageBox_Model.ButtonLeft_Content = value; }
-        public string ButtonRight_Content { get => myMessageBox_Model.ButtonRight_Content;
-            set => myMessageBox_Model.ButtonRight_Content = value; }
+        public string ButtonLeft_Content
+        {
+            get => myMessageBox_Model.ButtonLeft_Content;
+            set => myMessageBox_Model.ButtonLeft_Content = value;
+        }
+        public string ButtonRight_Content
+        {
+            get => myMessageBox_Model.ButtonRight_Content;
+            set => myMessageBox_Model.ButtonRight_Content = value;
+        }
         public Color BackColor { get => myMessageBox_Model.BackColor; set => myMessageBox_Model.BackColor = value; }
         public Color TextColor { get => myMessageBox_Model.TextColor; set => myMessageBox_Model.TextColor = value; }
         public Color ButtonLeftBC { get => myMessageBox_Model.ButtonLeftBC; set => myMessageBox_Model.ButtonLeftBC = value; }

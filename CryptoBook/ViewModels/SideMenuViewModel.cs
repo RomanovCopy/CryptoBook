@@ -4,23 +4,18 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class SideMenuViewModel:ViewModelBase, ISideMenuViewModel
+    public class SideMenuViewModel: ViewModelBase, ISideMenuViewModel
     {
 
         private readonly SideMenuModel sideMenuModel;
 
         public ObservableCollection<MenuItemViewModel> MenuItems { get => sideMenuModel.MenuItems; }
-        public double Width { get => sideMenuModel.Width; set => sideMenuModel.Width=value; }
+        public double Width { get => sideMenuModel.Width; set => sideMenuModel.Width = value; }
         public bool IsMenuOpen { get; set; }
 
         public double FontSizeHeader { get => sideMenuModel.FontSizeHeader; set => sideMenuModel.FontSizeHeader = value; }
@@ -28,7 +23,7 @@ namespace CryptoBook.ViewModels
 
         public SideMenuViewModel(ILifetimeScope scope)
         {
-            sideMenuModel = new();
+            sideMenuModel = new(scope);
             sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 

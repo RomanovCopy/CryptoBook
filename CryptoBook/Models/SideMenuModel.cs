@@ -2,15 +2,10 @@
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.ViewModels;
 using CryptoBook.Properties;
+using CryptoBook.ViewModels;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CryptoBook.Models
 {
@@ -48,9 +43,9 @@ namespace CryptoBook.Models
         {
             scope = _scope;
             menuFileViewModel = _scope.Resolve<IMenuFileViewModel>();
-            menuSettingsViewModel = Locators.ViewModels.MenuSettingsViewModel;
-            menuEncryptionViewModel = Locators.ViewModels.MenuEncryptionViewModel;
-            menuContentViewModel = Locators.ViewModels.MenuContentViewModel;
+            menuSettingsViewModel = _scope.Resolve<IMenuSettingsViewModel>();
+            menuEncryptionViewModel = _scope.Resolve<IMenuEncryptionViewModel>();
+            menuContentViewModel = _scope.Resolve<IMenuContentViewModel>();
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
             FontSize = Properties.Settings.Default.SideMenuFontSize;

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IPageViewModel:IViewModel
+    public interface IPageViewModel: IViewModel
     {
         /// <summary>
         /// команда обработки события окончания загрузки страницы

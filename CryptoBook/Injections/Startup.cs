@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using System.Windows;
-using CryptoBook.Views;
+﻿using Autofac;
+
 using CryptoBook.Converters;
 using CryptoBook.Infrastructure;
-using CryptoBook.ViewModels;
 using CryptoBook.Interfaces;
-using CryptoBook.MyPages;
 using CryptoBook.MyControls;
-using CryptoBook.Helpers;
-using System.Windows.Data;
+using CryptoBook.MyPages;
+using CryptoBook.ViewModels;
+using CryptoBook.Views;
 
 namespace CryptoBook.Injections
 {
@@ -23,7 +15,7 @@ namespace CryptoBook.Injections
         public IContainer ConfigureServices(System.Windows.Application app)
         {
 
-            ContainerBuilder builder = new ();
+            ContainerBuilder builder = new();
 
             //App
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
@@ -81,7 +73,7 @@ namespace CryptoBook.Injections
 
 
 
-            var container =builder.Build();
+            var container = builder.Build();
 
             return container;
         }

@@ -1,23 +1,9 @@
-﻿using Autofac;
-
-using CryptoBook.Infrastructure;
+﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.MyControls;
-using CryptoBook.MyPages;
-using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace CryptoBook.Models
 {

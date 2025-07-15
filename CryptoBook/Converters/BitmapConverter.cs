@@ -1,36 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 
 using Controls = System.Windows.Controls;
 using Drawing = System.Drawing;
 
 namespace CryptoBook.Converters
 {
-    public class BitmapConverter : IValueConverter
+    public class BitmapConverter: IValueConverter
     {
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
                 object? rezult = null;
-                if (value is Drawing.Bitmap bitmap)
+                if(value is Drawing.Bitmap bitmap)
                 {
                     rezult = GetImageFromBitmap(bitmap);
                 }
                 return rezult;
-            }
-            catch (Exception ex) { ErrorWindow(ex); return null; }
+            } catch(Exception ex) { ErrorWindow(ex); return null; }
         }
 
         public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -38,13 +29,12 @@ namespace CryptoBook.Converters
             try
             {
                 object? rezult = null;
-                if (value is Controls.Image image)
+                if(value is Controls.Image image)
                 {
 
                 }
                 return rezult;
-            }
-            catch (Exception ex) { ErrorWindow(ex); return null; }
+            } catch(Exception ex) { ErrorWindow(ex); return null; }
         }
 
         private Controls.Image? GetImageFromBitmap(Drawing.Bitmap bitmap)
@@ -53,7 +43,7 @@ namespace CryptoBook.Converters
             {
                 Controls.Image image = new();
                 BitmapImage? bitmapImage = null;
-                using (MemoryStream ms = new())
+                using(MemoryStream ms = new())
                 {
                     bitmap.Save(ms, Drawing.Imaging.ImageFormat.Jpeg);
                     ms.Seek(0, SeekOrigin.Begin);
@@ -67,15 +57,14 @@ namespace CryptoBook.Converters
                     image.Source = bitmapImage;
                 }
                 return image;
-            }
-            catch (Exception e) { ErrorWindow(e); return null; }
+            } catch(Exception e) { ErrorWindow(e); return null; }
         }
 
-        private void ErrorWindow( Exception e, [CallerMemberName] string name = "" )
+        private void ErrorWindow(Exception e, [CallerMemberName] string name = "")
         {
-            var mytype = GetType().ToString().Split( '.' ).LastOrDefault();
-            System.Windows.Application.Current.Dispatcher.Invoke( (Action)(() =>
-            { System.Windows.MessageBox.Show( e.Message, $"{mytype}.{name}" ); }) );
+            var mytype = GetType().ToString().Split('.').LastOrDefault();
+            System.Windows.Application.Current.Dispatcher.Invoke((Action)(() =>
+            { System.Windows.MessageBox.Show(e.Message, $"{mytype}.{name}"); }));
         }
 
     }

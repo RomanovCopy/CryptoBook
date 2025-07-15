@@ -6,7 +6,6 @@
         xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
-        xmlns:locators="clr-namespace:CryptoBook.Locators"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
         xmlns:converters="clr-namespace:CryptoBook.Converters"

@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-using Autofac;
+﻿using Autofac;
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
+using System.Windows.Input;
+
 namespace CryptoBook.ViewModels
 {
-    public class MenuFileViewModel:ViewModelBase, IMenuFileViewModel
+    public class MenuFileViewModel: ViewModelBase, IMenuFileViewModel
     {
         private readonly MenuFileModel menuFileModel;
 

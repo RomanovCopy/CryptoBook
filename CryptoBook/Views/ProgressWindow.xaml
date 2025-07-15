@@ -4,26 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:locators="clr-namespace:CryptoBook.Locators"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" x:Name="window"
         Title="{Binding OperationName,UpdateSourceTrigger=PropertyChanged}" MinHeight="150" MinWidth="300">
 
         
         <Window.Width>
-            <Binding Path="WindowWidth" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+            <Binding Path="WindowWidth" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
              ConverterParameter="width" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
         </Window.Width>
         <Window.Height>
-            <Binding Path="WindowHeight" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowHeight" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
              ConverterParameter="height" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
         </Window.Height>
         <Window.Top>
-            <Binding Path="WindowTop" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowTop" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
              ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
         </Window.Top>
         <Window.Left>
-            <Binding Path="WindowLeft" Converter="{x:Static locators:Converters.sizeLocationConverter}" 
+        <Binding Path="WindowLeft" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
              ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
         </Window.Left>
     

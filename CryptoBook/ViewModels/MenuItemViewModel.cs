@@ -2,12 +2,7 @@
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -21,11 +16,11 @@ namespace CryptoBook.ViewModels
 
         public string Name { get => menuItemModel.Name; set => menuItemModel.Name = value; }
 
-        public string Icon { get => menuItemModel.Icon; set => menuItemModel.Icon=value; }
+        public string Icon { get => menuItemModel.Icon; set => menuItemModel.Icon = value; }
 
-        public bool IsParrent { get => menuItemModel.IsParrent; set => menuItemModel.IsParrent=value; }
+        public bool IsParrent { get => menuItemModel.IsParrent; set => menuItemModel.IsParrent = value; }
 
-        public bool IsExpanded { get => menuItemModel.IsExpanded; set => menuItemModel.IsExpanded=value; }
+        public bool IsExpanded { get => menuItemModel.IsExpanded; set => menuItemModel.IsExpanded = value; }
 
         public bool IsEnabled { get => menuItemModel.IsEnabled; set => menuItemModel.IsEnabled = value; }
         public double FontSize { get => menuItemModel.FontSize; set => menuItemModel.FontSize = value; }

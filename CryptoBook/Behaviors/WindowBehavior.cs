@@ -1,16 +1,6 @@
-﻿using CryptoBook.Infrastructure;
-using CryptoBook.MyControls;
-using CryptoBook.Views;
+﻿using Microsoft.Xaml.Behaviors;
 
-using Microsoft.Xaml.Behaviors;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms.Design.Behavior;
 using System.Windows.Input;
 
 namespace CryptoBook.Behaviors
@@ -61,7 +51,7 @@ namespace CryptoBook.Behaviors
             if(SidePanel != null && CloseSidePanelCommand?.CanExecute(e) == true)
             {
                 var point = e.GetPosition(SidePanel);
-                if( point.X > SidePanel.ActualWidth )
+                if(point.X > SidePanel.ActualWidth)
                 {
                     CloseSidePanelCommand.Execute(e);
                 }

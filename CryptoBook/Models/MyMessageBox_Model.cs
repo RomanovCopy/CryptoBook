@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-
-using Autofac;
+﻿using Autofac;
 
 
 using CryptoBook.Infrastructure;
@@ -14,7 +7,7 @@ using CryptoBook.Views;
 
 namespace CryptoBook.Models
 {
-    internal class MyMessageBox_Model:ViewModelBase
+    internal class MyMessageBox_Model: ViewModelBase
     {
         private readonly ILifetimeScope scope;
         private readonly IWindowManager windowManager;
@@ -26,9 +19,9 @@ namespace CryptoBook.Models
         internal string Message { get => message; set => SetProperty(ref message, value); }
         private string message;
 
-        public string ButtonLeft_Content { get=>buttonLeft_Content; set=>SetProperty(ref buttonLeft_Content, value); }
+        public string ButtonLeft_Content { get => buttonLeft_Content; set => SetProperty(ref buttonLeft_Content, value); }
         private string buttonLeft_Content;
-        public string ButtonRight_Content { get=>buttonRight_Content; set=>SetProperty(ref buttonRight_Content, value); }
+        public string ButtonRight_Content { get => buttonRight_Content; set => SetProperty(ref buttonRight_Content, value); }
         private string buttonRight_Content;
 
         internal Color BackColor { get => backColor; set => SetProperty(ref backColor, value); }
@@ -37,17 +30,17 @@ namespace CryptoBook.Models
         private Color textColor;
 
 
-        internal double WindowTop { get=> windowTop; set=>SetProperty(ref windowTop, value); }
+        internal double WindowTop { get => windowTop; set => SetProperty(ref windowTop, value); }
         private double windowTop;
-        internal double WindowLeft { get=> windowLeft; set=>SetProperty(ref windowLeft, value); }
+        internal double WindowLeft { get => windowLeft; set => SetProperty(ref windowLeft, value); }
         private double windowLeft;
-        internal Color ButtonLeftBC { get=>buttonLeftBC; set=>SetProperty(ref buttonLeftBC, value); }
+        internal Color ButtonLeftBC { get => buttonLeftBC; set => SetProperty(ref buttonLeftBC, value); }
         private Color buttonLeftBC;
-        internal Color ButtonLeftFC { get=>buttonLeftFC; set=>SetProperty(ref buttonLeftFC, value); }
+        internal Color ButtonLeftFC { get => buttonLeftFC; set => SetProperty(ref buttonLeftFC, value); }
         private Color buttonLeftFC;
         internal Color ButtonRightBC { get => buttonRightBC; set => SetProperty(ref buttonRightBC, value); }
         private Color buttonRightBC;
-        internal Color ButtonRightFC { get=> buttonRightFC; set=>SetProperty(ref buttonRightFC, value); }
+        internal Color ButtonRightFC { get => buttonRightFC; set => SetProperty(ref buttonRightFC, value); }
         private Color buttonRightFC;
 
 
@@ -108,13 +101,13 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closing(object? obj)
         {
-            Properties.Settings.Default.MyMessageLeft= WindowLeft;
-            Properties.Settings.Default.MyMessageTop= WindowTop;
+            Properties.Settings.Default.MyMessageLeft = WindowLeft;
+            Properties.Settings.Default.MyMessageTop = WindowTop;
             Properties.Settings.Default.Save();
         }
 
-        internal void Initialize( 
-             Color bc = default, Color fc=default, Color btnl_bc=default, Color btnl_fc=default, Color btnr_bc=default, Color btnr_fc=default, string btnl_content="Cancel", string btnr_content="Ok")
+        internal void Initialize(
+             Color bc = default, Color fc = default, Color btnl_bc = default, Color btnl_fc = default, Color btnr_bc = default, Color btnr_fc = default, string btnl_content = "Cancel", string btnr_content = "Ok")
         {
             BackColor = bc == default ? Color.LightGray : bc;
             TextColor = fc == default ? Color.Black : fc;

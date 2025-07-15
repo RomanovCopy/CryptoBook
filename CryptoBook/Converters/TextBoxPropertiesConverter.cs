@@ -1,63 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
+using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using Media = System.Windows.Media;
+
 using Drawing = System.Drawing;
-using System.Reflection;
+using Media = System.Windows.Media;
 
 namespace CryptoBook.Converters
 {
-    class TextBoxPropertiesConverter : IValueConverter
+    class TextBoxPropertiesConverter: IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
                 object result = DependencyProperty.UnsetValue;
-                if (targetType == null || value == null)
+                if(targetType == null || value == null)
                     return result;
-                if (targetType == typeof(Media.Brush))
+                if(targetType == typeof(Media.Brush))
                 {
-                    if (value.GetType() == typeof(Media.Color))
+                    if(value.GetType() == typeof(Media.Color))
                         result = new Media.SolidColorBrush((Media.Color)value);
-                    else if (value.GetType() == typeof(Drawing.Color))
+                    else if(value.GetType() == typeof(Drawing.Color))
                     {
                         var a = (Drawing.Color)value;
                         Media.Color color = Media.Color.FromArgb(a.A, a.R, a.G, a.B);
                         result = new Media.SolidColorBrush(color);
                     }
-                }
-                else if (targetType == typeof(Media.FontFamily))
+                } else if(targetType == typeof(Media.FontFamily))
                 {
-                    if (value.GetType() == typeof(string))
+                    if(value.GetType() == typeof(string))
                         result = new Media.FontFamily(value.ToString());
-                }
-                else if (targetType == typeof(FontWeight))
+                } else if(targetType == typeof(FontWeight))
                 {
-                    if (value!=null && value.GetType() == typeof(string))
+                    if(value != null && value.GetType() == typeof(string))
                     {
                         PropertyInfo propertyInfo = typeof(FontWeights).GetProperty(value.ToString());
                         result = propertyInfo != null ? propertyInfo.GetValue(null) : DependencyProperty.UnsetValue;
                     }
-                }
-                else if (targetType == typeof(System.Windows.FontStyle))
+                } else if(targetType == typeof(System.Windows.FontStyle))
                 {
-                    if (value is string str)
+                    if(value is string str)
                     {
                         var propertyInfo = typeof(FontStyles).GetProperty(str);
                         result = propertyInfo != null ? propertyInfo.GetValue(null) : DependencyProperty.UnsetValue;
                     }
                 }
                 return result;
-            }
-            catch (Exception e)
+            } catch(Exception e)
             {
                 ErrorWindow(e);
                 return DependencyProperty.UnsetValue;
@@ -70,9 +61,9 @@ namespace CryptoBook.Converters
             {
 
                 object result = DependencyProperty.UnsetValue;
-                if (targetType == null || value == null)
+                if(targetType == null || value == null)
                     return result;
-                if (parameter != null)
+                if(parameter != null)
                 {
                     //if (targetType == typeof(byte[]) && value is string str && parameter is ScriptEditor_MenuSettings encoding)
                     //{//преобразование текста в массив байт в соответствии с заданной кодировкой
@@ -81,19 +72,18 @@ namespace CryptoBook.Converters
                     //}
                 }
                 return result;
-            }
-            catch (Exception e)
+            } catch(Exception e)
             {
                 ErrorWindow(e);
                 return DependencyProperty.UnsetValue;
             }
         }
 
-        private void ErrorWindow( Exception e, [CallerMemberName] string name = "" )
+        private void ErrorWindow(Exception e, [CallerMemberName] string name = "")
         {
-            var mytype = GetType().ToString().Split( '.' ).LastOrDefault();
-            System.Windows.Application.Current.Dispatcher.Invoke( (Action)(() =>
-            { System.Windows.MessageBox.Show( e.Message, $"{mytype}.{name}" ); }) );
+            var mytype = GetType().ToString().Split('.').LastOrDefault();
+            System.Windows.Application.Current.Dispatcher.Invoke((Action)(() =>
+            { System.Windows.MessageBox.Show(e.Message, $"{mytype}.{name}"); }));
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using Autofac;
+
 using CryptoBook.Interfaces;
-using System;
+
 using System.Collections.Concurrent;
 using System.Windows.Markup;
 
@@ -9,7 +10,7 @@ namespace CryptoBook.Markup
     /// <summary>
     /// MarkupExtension для разрешения ViewModel из контейнера Autofac с кэшированием.
     /// </summary>
-    public class ResolveViewModelExtension : MarkupExtension
+    public class ResolveViewModelExtension: MarkupExtension
     {
 
 
@@ -31,10 +32,10 @@ namespace CryptoBook.Markup
 
         public override object? ProvideValue(IServiceProvider serviceProvider)
         {
-            if (ViewModelType == null)
+            if(ViewModelType == null)
                 throw new InvalidOperationException("ViewModelType must be specified.");
 
-            if (!typeof(IViewModel).IsAssignableFrom(ViewModelType))
+            if(!typeof(IViewModel).IsAssignableFrom(ViewModelType))
                 throw new InvalidOperationException($"Type {ViewModelType.FullName} must implement IViewModel.");
 
             // Используем GetOrAdd для потокобезопасного кэширования
@@ -44,7 +45,7 @@ namespace CryptoBook.Markup
                 object viewModel = container.Resolve(type)
                     ?? throw new InvalidOperationException($"Type {type.FullName} could not be resolved from Autofac container.");
 
-                if (viewModel is not IViewModel resolvedViewModel)
+                if(viewModel is not IViewModel resolvedViewModel)
                     throw new InvalidOperationException($"Resolved type {type.FullName} does not implement IViewModel.");
 
                 System.Diagnostics.Debug.WriteLine($"Added ViewModel for {type.FullName} to cache.");
@@ -54,7 +55,7 @@ namespace CryptoBook.Markup
 
         private static IContainer GetContainer()
         {
-            if (System.Windows.Application.Current is not IContainerProvider containerProvider ||
+            if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
                 containerProvider.Container is not IContainer container)
             {
                 throw new InvalidOperationException("Autofac container not found in Application.Current. " +

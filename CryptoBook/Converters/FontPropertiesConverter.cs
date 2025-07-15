@@ -1,31 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
 namespace CryptoBook.Converters
 {
-    public class FontPropertiesConverter : IValueConverter
+    public class FontPropertiesConverter: IValueConverter
     {
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
                 object? result = DependencyProperty.UnsetValue;
-                if (value is PropertyInfo propertyInfo)
+                if(value is PropertyInfo propertyInfo)
                 {
                     result = propertyInfo.GetValue(null);
                 }
                 return result;
-            }
-            catch (Exception e)
+            } catch(Exception e)
             {
                 ErrorWindow(e);
                 return DependencyProperty.UnsetValue;
@@ -39,19 +32,18 @@ namespace CryptoBook.Converters
                 object? result = null;
                 result = DependencyProperty.UnsetValue;
                 return result;
-            }
-            catch (Exception e)
+            } catch(Exception e)
             {
                 ErrorWindow(e);
                 return DependencyProperty.UnsetValue;
             }
         }
 
-        private void ErrorWindow( Exception e, [CallerMemberName] string name = "" )
+        private void ErrorWindow(Exception e, [CallerMemberName] string name = "")
         {
-            var mytype = GetType().ToString().Split( '.' ).LastOrDefault();
-            System.Windows.Application.Current.Dispatcher.Invoke( (Action)(() =>
-            { System.Windows.MessageBox.Show( e.Message, $"{mytype}.{name}" ); }) );
+            var mytype = GetType().ToString().Split('.').LastOrDefault();
+            System.Windows.Application.Current.Dispatcher.Invoke((Action)(() =>
+            { System.Windows.MessageBox.Show(e.Message, $"{mytype}.{name}"); }));
         }
 
     }

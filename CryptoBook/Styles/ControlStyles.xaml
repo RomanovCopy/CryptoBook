@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:locators="clr-namespace:CryptoBook.Locators">
+                    xmlns:markup="clr-namespace:CryptoBook.Markup"
+                    xmlns:converters="clr-namespace:CryptoBook.Converters">
 
     <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -29,7 +30,7 @@
                                                 ClickMode="Press"
                                                 Visibility="{Binding HasItems, 
                                                            RelativeSource={RelativeSource AncestorType=TreeViewItem}, 
-                                                           Converter={x:Static locators:Converters.visibilityConverter}}">
+                                                           Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">
                                     <ToggleButton.Style>
                                         <Style TargetType="ToggleButton">
                                             <Setter Property="Template">
@@ -92,12 +93,12 @@
                                                 <Style.Triggers>
                                                     <DataTrigger 
                                                         Binding="{Binding IsParrent,UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={markup:ResolveConverter ConverterType=converters:SizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="DemiBold"/>
                                                     </DataTrigger>
                                                     <DataTrigger 
                                                         Binding="{Binding IsParrent,UpdateSourceTrigger=PropertyChanged}" Value="False">
-                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={markup:ResolveConverter ConverterType=converters:SizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                     <DataTrigger
@@ -117,11 +118,11 @@
                                                         <Setter Property="Opacity" Value="0.3"/>
                                                     </Trigger>
                                                     <DataTrigger Binding="{Binding IsParrent}" Value="True">
-                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={markup:ResolveConverter ConverterType=converters:SizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="DemiBold"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding IsParrent}" Value="False">
-                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={x:Static locators:Converters.sizeLocationConverter}, ConverterParameter=height}"/>
+                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={markup:ResolveConverter ConverterType=converters:SizeLocationConverter}, ConverterParameter=height}"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                     <DataTrigger 
@@ -147,7 +148,7 @@
                                           Margin="20,0,0,0"
                                           Visibility="{Binding IsExpanded, UpdateSourceTrigger=PropertyChanged,
                                                     RelativeSource={RelativeSource AncestorType=TreeViewItem},
-                                                    Converter={x:Static locators:Converters.visibilityConverter}}"/>
+                                                    Converter={markup:ResolveConverter ConverterType=converters:VisibilityConverter}}"/>
                     </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="True">
@@ -184,6 +185,6 @@
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Margin" Value="20,0,20,0"/>
         <Setter Property="Foreground" Value="{Binding {DynamicResource CurrentWindowForeground}, 
-            Converter={x:Static locators:Converters.colorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+            Converter={markup:ResolveConverter ConverterType=converters:ColorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
     </Style>
 </ResourceDictionary>

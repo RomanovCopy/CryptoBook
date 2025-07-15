@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using Autofac;
-using Brush = System.Windows.Media.Brush;
 using System.Windows.Media;
+
+using Brush = System.Windows.Media.Brush;
 
 namespace CryptoBook.Converters
 {

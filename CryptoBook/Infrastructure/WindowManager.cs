@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using Autofac;
 
-using Autofac;
-
-using CryptoBook.Injections;
 using CryptoBook.Interfaces;
-using CryptoBook.MyControls;
-using CryptoBook.ViewModels;
-using CryptoBook.Views;
+
+using System.Windows;
 
 namespace CryptoBook.Infrastructure
 {

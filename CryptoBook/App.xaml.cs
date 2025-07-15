@@ -2,13 +2,8 @@
 
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
-using CryptoBook.Models;
 using CryptoBook.Views;
 
-using System.Configuration;
-using System.Data;
-using System.Globalization;
-using System.Threading;
 using System.Windows;
 
 namespace CryptoBook
@@ -34,8 +29,6 @@ namespace CryptoBook
                 if(Container != null)
                 {
                     // Разрешение и запуск главного окна
-                    //var mainWindow = Container.Resolve<MainWindow>();
-                    //mainWindow?.Show();
                     var winmanager = Container.Resolve<IWindowManager>();
                     var win = winmanager.CreateWindow<MainWindow>();
                     winmanager.ShowWindow<MainWindow>(((IWindowWithId)win.DataContext).WindowId);
@@ -43,7 +36,6 @@ namespace CryptoBook
 
             } catch(Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show($"Failed to start application: {ex.Message}");
                 Shutdown();
             }
 

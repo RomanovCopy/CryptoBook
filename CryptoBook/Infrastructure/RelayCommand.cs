@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Runtime.Serialization.Formatters.Binary;// бинарная сериализация
+﻿using System.Windows.Input;
 
 
 namespace CryptoBook.Infrastructure

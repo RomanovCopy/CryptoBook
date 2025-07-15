@@ -4,12 +4,7 @@ using CryptoBook.Infrastructure;
 using CryptoBook.MyPages;
 using CryptoBook.Views;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace CryptoBook.Models

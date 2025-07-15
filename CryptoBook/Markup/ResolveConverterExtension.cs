@@ -2,12 +2,7 @@
 
 using CryptoBook.Interfaces;
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Markup;
 
@@ -26,7 +21,7 @@ namespace CryptoBook.Markup
             {
                 throw new InvalidOperationException("ConverterType must be specified and implement IValueConverter.");
             }
-            
+
             var key = ConverterType;//ключ для поиска экземпляра в кэш (converterCashe)
 
             //экземпляр найден в кэш

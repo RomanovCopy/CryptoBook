@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-
-using Autofac;
+﻿using Autofac;
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.ViewModels;
-using CryptoBook.Views;
 
 namespace CryptoBook.Models
 {

@@ -1,18 +1,9 @@
 ﻿using Autofac;
 
-using CryptoBook.Converters;
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using CryptoBook.Helpers;
-using CryptoBook.Interfaces;
 
 
 
@@ -70,7 +61,7 @@ namespace CryptoBook.Models
         {
             Execute_MaxButtonClick(null);
         }
-        
+
         internal bool CanExecute_MouseLeftButtonDown(object? obj)
         {
             return true;

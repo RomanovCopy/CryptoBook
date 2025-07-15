@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-using CryptoBook.Infrastructure;
+﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
+using System.Windows.Input;
+
 namespace CryptoBook.ViewModels
 {
-    public class MenuSettingsViewModel:ViewModelBase, IMenuSettingsViewModel
+    public class MenuSettingsViewModel: ViewModelBase, IMenuSettingsViewModel
     {
         private readonly MenuSettingsModel menuSettingsModel;
 

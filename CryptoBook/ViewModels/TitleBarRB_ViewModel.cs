@@ -4,17 +4,12 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class TitleBarRB_ViewModel:ViewModelBase, ITitleBarRB_ViewModel
+    public class TitleBarRB_ViewModel: ViewModelBase, ITitleBarRB_ViewModel
     {
         private readonly ILifetimeScope scope;
         private readonly TitleBarRB_Model titleBarRB_Model;

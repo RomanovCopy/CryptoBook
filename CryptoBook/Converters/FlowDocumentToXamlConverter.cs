@@ -5,17 +5,17 @@ using System.Windows.Markup;
 namespace CryptoBook.Converters
 {
     [ValueConversion(typeof(string), typeof(FlowDocument))]
-    public class FlowDocumentToXamlConverter : IValueConverter
+    public class FlowDocumentToXamlConverter: IValueConverter
     {
         #region IValueConverter Members
 
         /// <summary>
         /// Преобразует разметку XAML в WPF FlowDocument.
         /// </summary>
-        public object Convert( object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture )
+        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var flowDocument = new FlowDocument();
-            if (value != null)
+            if(value != null)
             {
                 var xamlText = (string)value;
                 flowDocument = (FlowDocument)XamlReader.Parse(xamlText);
@@ -26,10 +26,10 @@ namespace CryptoBook.Converters
         /// <summary>
         /// Преобразует из WPF FlowDocument в строку разметки XAML.
         /// </summary>
-        public object ConvertBack( object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture )
+        public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             //Выйти, если FlowDocument имеет значение null
-            if (value == null)
+            if(value == null)
                 return string.Empty;
 
             // Получить потоковый документ из переданного значения
