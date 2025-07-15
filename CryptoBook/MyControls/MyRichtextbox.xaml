@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="CryptoBook.MyControls.MyRichtextbox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:markup="clr-namespace:CryptoBook.Markup"
+             xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+             xmlns:local="clr-namespace:CryptoBook.MyControls" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             d:DataContext="{x:Type interfaces:IRichtextboxViewModel}">
+    <UserControl.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IRichtextboxViewModel}"/>
+    </UserControl.DataContext>
+    <Grid>
+        <RichTextBox x:Name="TextBox" 
+                     TextOptions.TextFormattingMode="Display" 
+                     TextOptions.TextRenderingMode="Auto" 
+                     AcceptsTab="True"
+                     AcceptsReturn="True"  
+                     VerticalScrollBarVisibility="Auto" 
+                     HorizontalScrollBarVisibility="Auto"
+                         ContextMenu="{StaticResource mycontextmenu}"
+                         IsDocumentEnabled="True">
+            <i:Interaction.Behaviors>
+                <helpers:BehaviorRichTextBox x:Name="richbehavior"/>
+            </i:Interaction.Behaviors>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction 
+                        Command="{Binding RichTextBoxLoaded, UpdateSourceTrigger=PropertyChanged}"
+                        CommandParameter="{Binding ElementName=richbehavior}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </RichTextBox>
+    </Grid>
+</UserControl>
