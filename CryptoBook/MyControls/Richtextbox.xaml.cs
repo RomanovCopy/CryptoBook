@@ -18,7 +18,7 @@ namespace CryptoBook.MyControls
     /// <summary>
     /// Логика взаимодействия для MyRichtextbox.xaml
     /// </summary>
-    public partial class Richtextbox: UserControl
+    public partial class Richtextbox: System.Windows.Controls.UserControl
     {
         public Richtextbox()
         {

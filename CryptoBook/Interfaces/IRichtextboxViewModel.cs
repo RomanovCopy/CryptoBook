@@ -86,4 +86,3 @@ namespace CryptoBook.Interfaces
 
     }
 }
-}

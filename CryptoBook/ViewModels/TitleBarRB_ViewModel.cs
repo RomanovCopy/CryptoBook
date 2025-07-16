@@ -24,22 +24,31 @@ namespace CryptoBook.ViewModels
 
         public ObservableCollection<double> FontSizes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public ICommand BoldCommand => throw new NotImplementedException();
+        public ICommand BoldCommand => boldCommand ??= new RelayCommand(titleBarRB_Model.Execute_BoldCommand, titleBarRB_Model.CanExecute_BoldCommand);
+        RelayCommand boldCommand;
 
-        public ICommand ItalicCommand => throw new NotImplementedException();
+        public ICommand ItalicCommand => italicCommand ??= new RelayCommand(titleBarRB_Model.Execute_ItalicCommand, titleBarRB_Model.CanExecute_ItalicCommand);
+        RelayCommand italicCommand;
 
-        public ICommand UnderlineCommand => throw new NotImplementedException();
+        public ICommand UnderlineCommand => underlineCommand ??= new RelayCommand(titleBarRB_Model.Execute_UnderlineCommand, titleBarRB_Model.CanExecute_UnderlineCommand);
+        RelayCommand underlineCommand;
 
-        public ICommand ClearFormattingCommand => throw new NotImplementedException();
+        public ICommand ClearFormattingCommand => clearFormattingCommand ??= new RelayCommand(titleBarRB_Model.Execute_ClearFormattingCommand, titleBarRB_Model.CanExecute_ClearFormattingCommand);
+        RelayCommand clearFormattingCommand;
 
-        public ICommand InsertImageCommand => throw new NotImplementedException();
+        public ICommand InsertImageCommand => insertImageCommand ??= new RelayCommand(titleBarRB_Model.Execute_InsertImageCommand, titleBarRB_Model.CanExecute_InsertImageCommand);
+        RelayCommand insertImageCommand;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand Loaded => loaded ??= new RelayCommand(titleBarRB_Model.Execute_Loaded, titleBarRB_Model.CanExecute_Loaded);
+        RelayCommand loaded;
 
-        public ICommand Close => throw new NotImplementedException();
+        public ICommand Close => close ??= new RelayCommand(titleBarRB_Model.Execute_Close, titleBarRB_Model.CanExecute_Close);
+        RelayCommand close;
 
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand Closing => closing ??= new RelayCommand(titleBarRB_Model.Execute_Closing, titleBarRB_Model.CanExecute_Closing);
+        RelayCommand closing;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closed => closed ??= new RelayCommand(titleBarRB_Model.Execute_Closed, titleBarRB_Model.CanExecute_Closed);
+        RelayCommand closed;
     }
 }

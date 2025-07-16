@@ -28,6 +28,7 @@ namespace CryptoBook.Models
         internal RichtextboxModel(ILifetimeScope _scope)
         {
             scope = _scope;
+            Document = new FlowDocument();
         }
 
 
@@ -143,11 +144,11 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+
         }
 
 

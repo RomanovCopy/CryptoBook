@@ -5,16 +5,25 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
       xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+      xmlns:controls="clr-namespace:CryptoBook.MyControls"
       xmlns:markup="clr-namespace:CryptoBook.Markup"
       xmlns:local="clr-namespace:CryptoBook.MyPages"
       mc:Ignorable="d" 
+      d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IHomeViewModel}}"
       Title="Home"
-      Background="BlueViolet">
+      Background="Gray">
     <Page.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IHomeViewModel}"/>
     </Page.DataContext>
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="fortitlebarrb" Height="Auto"/>
+            <RowDefinition x:Name="forrichtextbox" Height="*"/>
+            <RowDefinition x:Name="forstatusbar" Height="Auto"/>
+        </Grid.RowDefinitions>
+            <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:TitleBarRB}}"              HorizontalAlignment="Stretch" Grid.Row="0"/>
+            <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:Richtextbox}}"
+                            Grid.Row="1" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
     </Grid>
 </Page>
