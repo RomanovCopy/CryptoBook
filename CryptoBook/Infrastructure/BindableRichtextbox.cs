@@ -39,39 +39,50 @@ namespace CryptoBook.Infrastructure
 
         bool IRichTextBoxService.CanRedo => base.CanRedo;
 
-        TextPointer IRichTextBoxService.CaretPosition { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        bool IRichTextBoxService.IsReadOnly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        bool IRichTextBoxService.SpellCheckEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        TextPointer IRichTextBoxService.CaretPosition 
+        { 
+            get => base.CaretPosition; 
+            set => base.CaretPosition = value; 
+        }
+
+        bool IRichTextBoxService.IsReadOnly 
+        { 
+            get => base.IsReadOnly; 
+            set => base.IsReadOnly=value; 
+        }
+
+        bool IRichTextBoxService.SpellCheckEnabled 
+        { 
+            get => base.SpellCheck.IsEnabled; 
+            set => base.SpellCheck.IsEnabled=value; 
+        }
 
         void IRichTextBoxService.ApplyBold()
         {
-            throw new NotImplementedException();
+            Selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
         }
 
         void IRichTextBoxService.ApplyItalic()
         {
-            throw new NotImplementedException();
+            Selection.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
         }
 
         void IRichTextBoxService.ApplyUnderline()
         {
-            throw new NotImplementedException();
+            Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
         }
 
         void IRichTextBoxService.ApplyFontSize(double fontSize)
         {
-            throw new NotImplementedException();
+            Selection.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
         }
 
         void IRichTextBoxService.ApplyFontFamily(string fontFamily)
         {
-            throw new NotImplementedException();
+            Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily(fontFamily));
         }
 
-        void IRichTextBoxService.ApplyForegroundColor(Color color)
-        {
-            throw new NotImplementedException();
-        }
+        void IRichTextBoxService.ApplyForegroundColor(Color color) => Selection.ApplyPropertyValue(TextElement.ForegroundProperty, new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)));
 
         void IRichTextBoxService.ApplyBackgroundColor(Color color)
         {
