@@ -28,7 +28,7 @@ namespace CryptoBook.Models
         internal RichtextboxModel(ILifetimeScope _scope)
         {
             scope = _scope;
-            Document = new FlowDocument();
+            //Document = new FlowDocument();
         }
 
 

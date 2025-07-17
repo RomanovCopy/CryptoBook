@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 
 namespace CryptoBook.Models
 {
@@ -8,26 +9,32 @@ namespace CryptoBook.Models
     {
 
         private readonly ILifetimeScope scope;
+        private readonly IRichTextBoxService richTextBoxService;
+        
 
         public TitleBarRB_Model(ILifetimeScope _scope)
         {
             scope = _scope;
+            richTextBoxService = scope.Resolve<IRichTextBoxService>();
         }
 
 
         internal bool CanExecute_BoldCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return richTextBoxService != null;
         }
         internal void Execute_BoldCommand(object? obj)
         {
-            throw new NotImplementedException();
+            if(richTextBoxService.SelectedText.Text.Length>0)
+            {
+
+            }
         }
 
 
         internal bool CanExecute_ItalicCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return richTextBoxService != null;
         }
         internal void Execute_ItalicCommand(object? obj)
         {
@@ -37,7 +44,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_UnderlineCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return richTextBoxService != null;
         }
         internal void Execute_UnderlineCommand(object? obj)
         {
@@ -47,7 +54,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_ClearFormattingCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return richTextBoxService != null;
         }
         internal void Execute_ClearFormattingCommand(object? obj)
         {
@@ -57,7 +64,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_InsertImageCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return richTextBoxService != null;
         }
         internal void Execute_InsertImageCommand(object? obj)
         {
@@ -67,7 +74,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            return richTextBoxService != null;
         }
         internal void Execute_Loaded(object? obj)
         {
@@ -77,7 +84,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Close(object? obj)
         {
@@ -87,7 +94,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Closing(object? obj)
         {
@@ -97,7 +104,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Closed(object? obj)
         {
