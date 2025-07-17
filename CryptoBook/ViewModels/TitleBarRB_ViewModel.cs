@@ -22,7 +22,7 @@ namespace CryptoBook.ViewModels
         }
 
 
-        public ObservableCollection<double> FontSizes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ObservableCollection<double> FontSizes { get => titleBarRB_Model.FontSizes; set => titleBarRB_Model.FontSizes = value; }
 
         public ICommand BoldCommand => boldCommand ??= new RelayCommand(titleBarRB_Model.Execute_BoldCommand, titleBarRB_Model.CanExecute_BoldCommand);
         RelayCommand boldCommand;

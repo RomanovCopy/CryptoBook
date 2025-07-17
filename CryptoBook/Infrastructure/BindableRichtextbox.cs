@@ -22,16 +22,30 @@ namespace CryptoBook.Infrastructure
                 typeof(BindableRichtextbox),
                 new PropertyMetadata(null, OnDocumentContentChanged));
 
+        public BindableRichtextbox()
+        {
+        }
+
+        private static void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
         public FlowDocument DocumentContent
         {
             get => (FlowDocument)GetValue(DocumentContentProperty);
             set => SetValue(DocumentContentProperty, value);
         }
 
+
+
+
+
         private static void OnDocumentContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var richTextBox = (BindableRichtextbox)d;
             richTextBox.Document = e.NewValue as FlowDocument ?? new FlowDocument();
+            richTextBox.TextChanged += OnTextChanged;
         }
 
 
@@ -41,22 +55,22 @@ namespace CryptoBook.Infrastructure
 
         bool IRichTextBoxService.CanRedo => base.CanRedo;
 
-        TextPointer IRichTextBoxService.CaretPosition 
-        { 
-            get => base.CaretPosition; 
-            set => base.CaretPosition = value; 
+        TextPointer IRichTextBoxService.CaretPosition
+        {
+            get => base.CaretPosition;
+            set => base.CaretPosition = value;
         }
 
-        bool IRichTextBoxService.IsReadOnly 
-        { 
-            get => base.IsReadOnly; 
-            set => base.IsReadOnly=value; 
+        bool IRichTextBoxService.IsReadOnly
+        {
+            get => base.IsReadOnly;
+            set => base.IsReadOnly = value;
         }
 
-        bool IRichTextBoxService.SpellCheckEnabled 
-        { 
-            get => base.SpellCheck.IsEnabled; 
-            set => base.SpellCheck.IsEnabled=value; 
+        bool IRichTextBoxService.SpellCheckEnabled
+        {
+            get => base.SpellCheck.IsEnabled;
+            set => base.SpellCheck.IsEnabled = value;
         }
 
         void IRichTextBoxService.ApplyBold()

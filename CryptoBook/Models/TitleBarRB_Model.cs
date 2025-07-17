@@ -3,6 +3,8 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
+using System.Collections.ObjectModel;
+
 namespace CryptoBook.Models
 {
     internal class TitleBarRB_Model: ViewModelBase
@@ -10,12 +12,15 @@ namespace CryptoBook.Models
 
         private readonly ILifetimeScope scope;
         private readonly IRichTextBoxService richTextBoxService;
-        
+
+        public ObservableCollection<double> FontSizes { get=>fontSizes; internal set=>SetProperty(ref fontSizes,value); }
+        private ObservableCollection<double> fontSizes;
 
         public TitleBarRB_Model(ILifetimeScope _scope)
         {
             scope = _scope;
             richTextBoxService = scope.Resolve<IRichTextBoxService>();
+            FontSizes = new ObservableCollection<double>();
         }
 
 

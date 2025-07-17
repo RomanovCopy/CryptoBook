@@ -16,6 +16,7 @@
     <Border  Margin="20,5,20,0" BorderBrush="Black" BorderThickness="1,1,1,0" Grid.Row="1" >
         <infra:BindableRichtextbox 
             DocumentContent="{Binding Document, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            TextChanged="BindableRichtextbox_TextChanged"
             TextOptions.TextFormattingMode="Display"
             TextOptions.TextRenderingMode="Auto"
             AcceptsTab="True"

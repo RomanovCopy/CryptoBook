@@ -31,6 +31,7 @@ namespace CryptoBook.ViewModels
         {
             richtextboxModel = new(scope);
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            //Document = new FlowDocument();
         }
 
 
