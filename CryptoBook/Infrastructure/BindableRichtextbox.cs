@@ -24,6 +24,7 @@ namespace CryptoBook.Infrastructure
 
         public BindableRichtextbox()
         {
+            DocumentContent = this.Document;
         }
 
         private static void OnTextChanged(object sender, TextChangedEventArgs e)
@@ -37,17 +38,12 @@ namespace CryptoBook.Infrastructure
             set => SetValue(DocumentContentProperty, value);
         }
 
-
-
-
-
         private static void OnDocumentContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var richTextBox = (BindableRichtextbox)d;
             richTextBox.Document = e.NewValue as FlowDocument ?? new FlowDocument();
             richTextBox.TextChanged += OnTextChanged;
         }
-
 
         TextSelection IRichTextBoxService.SelectedText => Selection;
 

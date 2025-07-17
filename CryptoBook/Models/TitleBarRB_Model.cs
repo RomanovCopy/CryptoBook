@@ -32,7 +32,7 @@ namespace CryptoBook.Models
         {
             if(richTextBoxService.SelectedText.Text.Length>0)
             {
-
+                richTextBoxService.ApplyBold();
             }
         }
 
