@@ -60,7 +60,7 @@ namespace CryptoBook.Injections
             //Services
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
-
+            builder.RegisterType<BindableRichtextbox>().As<IRichTextBoxService>().SingleInstance();
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();

@@ -4,14 +4,14 @@ Subject: =?utf-8?Q?=D0=9F=D1=80=D0=B5=D0=BE=D0=B1=D1=80=D0=B0=D0=B7=D0=BE=D0=B2=
  =?utf-8?Q?=B0=D0=BD=D0=B8=D0=B5=20=D1=86=D0=B2=D0=B5=D1=82=D0=BE=D0=B2=20?=
  =?utf-8?Q?=D0=BC=D0=B5=D0=B6=D0=B4=D1=83=20Windows=20Forms=20=D0=B8=20WPF?=
  =?utf-8?Q?=20-=20Grok?=
-Date: Thu, 17 Jul 2025 10:49:21 +0300
+Date: Thu, 17 Jul 2025 12:18:00 +0300
 MIME-Version: 1.0
 Content-Type: multipart/related;
 	type="text/html";
-	boundary="----MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----"
+	boundary="----MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----"
 
 
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/html
 Content-ID: <frame-4D6478ACF6D2DCFBC6E37C3F8301D325@mhtml.blink>
 Content-Transfer-Encoding: quoted-printable
@@ -20,13 +20,13 @@ Content-Location: https://grok.com/chat/a06233ff-d50e-4fdf-bd7b-b3ff0bb8ff1a
 <!DOCTYPE html><html lang=3D"en" translate=3D"no" class=3D"dark" style=3D"c=
 olor-scheme: dark;"><head><meta http-equiv=3D"Content-Type" content=3D"text=
 /html; charset=3DUTF-8"><link rel=3D"stylesheet" type=3D"text/css" href=3D"=
-cid:css-8dea7cd4-0f03-437c-860e-2a7cda362cb4@mhtml.blink" /><link rel=3D"st=
-ylesheet" type=3D"text/css" href=3D"cid:css-38190f73-e7b1-46c2-91fe-18ece08=
-07c34@mhtml.blink" /><link rel=3D"stylesheet" type=3D"text/css" href=3D"cid=
-:css-6492361e-cfd7-46d3-9183-6a8ce118908b@mhtml.blink" /><link rel=3D"style=
-sheet" type=3D"text/css" href=3D"cid:css-e1438966-945a-41b6-a6cc-8b37407d2e=
-27@mhtml.blink" /><link rel=3D"stylesheet" type=3D"text/css" href=3D"cid:cs=
-s-6943def7-e92b-4192-b134-b32038fdc013@mhtml.blink" /><meta name=3D"viewpor=
+cid:css-bb07f885-619d-4564-8260-06bb7de67292@mhtml.blink" /><link rel=3D"st=
+ylesheet" type=3D"text/css" href=3D"cid:css-57f028c5-9e37-4ac5-a2ad-33be0c5=
+ae2ed@mhtml.blink" /><link rel=3D"stylesheet" type=3D"text/css" href=3D"cid=
+:css-30d49f63-e9f8-409d-936e-481a7675464d@mhtml.blink" /><link rel=3D"style=
+sheet" type=3D"text/css" href=3D"cid:css-9a7b6056-07de-475c-b70c-60190ce5e0=
+15@mhtml.blink" /><link rel=3D"stylesheet" type=3D"text/css" href=3D"cid:cs=
+s-4d006d00-b486-415c-9bd8-0ef2a09d5dcc@mhtml.blink" /><meta name=3D"viewpor=
 t" content=3D"width=3Ddevice-width, initial-scale=3D1, interactive-widget=
 =3Dresizes-content"><link rel=3D"preload" href=3D"https://grok.com/_next/st=
 atic/media/e1447589d6f59c4b.p.woff2" as=3D"font" crossorigin=3D"" nonce=3D"=
@@ -1395,39 +1395,27 @@ div><section class=3D"inline-media-container flex flex-col gap-1"></section=
 div class=3D"order-first sticky hidden @md/mainview:block top-11 h-0 opacit=
 y-0 group-focus-within:opacity-100 group-hover:opacity-100 -ml-[36px] @lg/m=
 ainview:-ml-[40px] -left-[26px]"><div class=3D"min-h-7 py-4 flex flex-col g=
-ap-0.5"><button class=3D"inline-flex items-center justify-center gap-2 whit=
-espace-nowrap text-sm font-medium leading-[normal] cursor-pointer focus-vis=
-ible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cur=
-sor-not-allowed transition-colors duration-100 [&amp;_svg]:shrink-0 select-=
-none text-fg-secondary hover:text-fg-primary hover:bg-button-ghost-hover di=
-sabled:hover:text-fg-secondary disabled:hover:bg-transparent [&amp;_svg]:ho=
-ver:text-fg-primary h-8 w-8 rounded-full opacity-0 group-focus-within:opaci=
-ty-100 group-hover:opacity-100 [.last-response_&amp;]:opacity-100 disabled:=
-opacity-0 group-focus-within:disabled:opacity-60 group-hover:disabled:opaci=
-ty-60 [.last-response_&amp;]:disabled:opacity-60" type=3D"button" aria-labe=
-l=3D"=D0=9A=D0=BE=D0=BF=D0=B8=D1=80=D0=BE=D0=B2=D0=B0=D1=82=D1=8C" data-sta=
-te=3D"closed"><span style=3D"opacity: 1; transform: none;"><svg width=3D"16=
-" height=3D"16" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.=
-org/2000/svg" class=3D"stroke-[2] size-4"><rect x=3D"3" y=3D"8" width=3D"13=
-" height=3D"13" rx=3D"4" stroke=3D"currentColor"></rect><path fill-rule=3D"=
-evenodd" clip-rule=3D"evenodd" d=3D"M13 2.00004L12.8842 2.00002C12.0666 1.9=
-9982 11.5094 1.99968 11.0246 2.09611C9.92585 2.31466 8.95982 2.88816 8.2500=
-8 3.69274C7.90896 4.07944 7.62676 4.51983 7.41722 5.00004H9.76392C10.189 4.=
-52493 10.7628 4.18736 11.4147 4.05768C11.6802 4.00488 12.0228 4.00004 13 4.=
-00004H14.6C15.7366 4.00004 16.5289 4.00081 17.1458 4.05121C17.7509 4.10066 =
-18.0986 4.19283 18.362 4.32702C18.9265 4.61464 19.3854 5.07358 19.673 5.638=
-07C19.8072 5.90142 19.8994 6.24911 19.9488 6.85428C19.9992 7.47112 20 8.263=
-43 20 9.40004V11C20 11.9773 19.9952 12.3199 19.9424 12.5853C19.8127 13.2373=
- 19.4748 13.8114 19 14.2361V16.5829C20.4795 15.9374 21.5804 14.602 21.9039 =
-12.9755C22.0004 12.4907 22.0002 11.9334 22 11.1158L22 11V9.40004V9.35725C22=
- 8.27346 22 7.3993 21.9422 6.69141C21.8826 5.96256 21.7568 5.32238 21.455 4=
-.73008C20.9757 3.78927 20.2108 3.02437 19.27 2.545C18.6777 2.24322 18.0375 =
-2.1174 17.3086 2.05785C16.6007 2.00002 15.7266 2.00003 14.6428 2.00004L14.6=
- 2.00004H13Z" fill=3D"currentColor"></path></svg></span></button></div></di=
-v><div class=3D"action-buttons h-8 mt-0.5 flex flex-row flex-wrap w-full ju=
-stify-between last-response print:hidden"><div class=3D"flex items-center g=
-ap-[2px] w-max rounded-lg text-xs px-2 start-0 md:start-3 -ml-4" style=3D"b=
-ottom: 127.969px;"><button class=3D"inline-flex items-center justify-center=
+ap-0.5"></div></div><div class=3D"action-buttons h-8 mt-0.5 flex flex-row f=
+lex-wrap w-full justify-between last-response print:hidden"><div class=3D"f=
+lex items-center gap-[2px] w-max rounded-lg text-xs px-2 start-0 md:start-3=
+ -ml-4" style=3D"bottom: 127.969px;"><button class=3D"inline-flex items-cen=
+ter justify-center gap-2 whitespace-nowrap text-sm font-medium leading-[nor=
+mal] cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-v=
+isible:ring-ring disabled:cursor-not-allowed transition-colors duration-100=
+ [&amp;_svg]:shrink-0 select-none text-fg-secondary hover:text-fg-primary h=
+over:bg-button-ghost-hover disabled:hover:text-fg-secondary disabled:hover:=
+bg-transparent [&amp;_svg]:hover:text-fg-primary h-8 w-8 rounded-full opaci=
+ty-0 group-focus-within:opacity-100 group-hover:opacity-100 [.last-response=
+_&amp;]:opacity-100 disabled:opacity-0 group-focus-within:disabled:opacity-=
+60 group-hover:disabled:opacity-60 [.last-response_&amp;]:disabled:opacity-=
+60" type=3D"button" aria-label=3D"Regenerate" data-state=3D"closed"><span s=
+tyle=3D"opacity: 1; transform: none;"><svg width=3D"16" height=3D"16" viewB=
+ox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=
+=3D"stroke-[2] size-4"><path d=3D"M4 20V15H4.31241M4.31241 15H9M4.31241 15C=
+5.51251 18.073 8.50203 20.25 12 20.25C15.8582 20.25 19.0978 17.6016 20 14.0=
+236M20 4V9H19.6876M19.6876 9H15M19.6876 9C18.4875 5.92698 15.498 3.75 12 3.=
+75C8.14184 3.75 4.90224 6.3984 4 9.9764" stroke=3D"currentColor"></path></s=
+vg></span></button><button class=3D"inline-flex items-center justify-center=
  gap-2 whitespace-nowrap text-sm font-medium leading-[normal] cursor-pointe=
 r focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring d=
 isabled:cursor-not-allowed transition-colors duration-100 [&amp;_svg]:shrin=
@@ -1437,310 +1425,279 @@ mp;_svg]:hover:text-fg-primary h-8 w-8 rounded-full opacity-0 group-focus-w=
 ithin:opacity-100 group-hover:opacity-100 [.last-response_&amp;]:opacity-10=
 0 disabled:opacity-0 group-focus-within:disabled:opacity-60 group-hover:dis=
 abled:opacity-60 [.last-response_&amp;]:disabled:opacity-60" type=3D"button=
-" aria-label=3D"Regenerate" data-state=3D"closed"><span style=3D"opacity: 1=
-; transform: none;"><svg width=3D"16" height=3D"16" viewBox=3D"0 0 24 24" f=
-ill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] size-=
-4"><path d=3D"M4 20V15H4.31241M4.31241 15H9M4.31241 15C5.51251 18.073 8.502=
-03 20.25 12 20.25C15.8582 20.25 19.0978 17.6016 20 14.0236M20 4V9H19.6876M1=
-9.6876 9H15M19.6876 9C18.4875 5.92698 15.498 3.75 12 3.75C8.14184 3.75 4.90=
-224 6.3984 4 9.9764" stroke=3D"currentColor"></path></svg></span></button><=
-button class=3D"inline-flex items-center justify-center gap-2 whitespace-no=
-wrap text-sm font-medium leading-[normal] cursor-pointer focus-visible:outl=
-ine-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-a=
-llowed transition-colors duration-100 [&amp;_svg]:shrink-0 select-none text=
--fg-secondary hover:text-fg-primary hover:bg-button-ghost-hover disabled:ho=
-ver:text-fg-secondary disabled:hover:bg-transparent [&amp;_svg]:hover:text-=
-fg-primary h-8 w-8 rounded-full opacity-0 group-focus-within:opacity-100 gr=
-oup-hover:opacity-100 [.last-response_&amp;]:opacity-100 disabled:opacity-0=
- group-focus-within:disabled:opacity-60 group-hover:disabled:opacity-60 [.l=
-ast-response_&amp;]:disabled:opacity-60" type=3D"button" aria-label=3D"=D0=
-=9A=D0=BE=D0=BF=D0=B8=D1=80=D0=BE=D0=B2=D0=B0=D1=82=D1=8C" data-state=3D"cl=
-osed"><span style=3D"opacity: 1; transform: none;"><svg width=3D"16" height=
-=3D"16" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000=
-/svg" class=3D"stroke-[2] size-4"><rect x=3D"3" y=3D"8" width=3D"13" height=
-=3D"13" rx=3D"4" stroke=3D"currentColor"></rect><path fill-rule=3D"evenodd"=
- clip-rule=3D"evenodd" d=3D"M13 2.00004L12.8842 2.00002C12.0666 1.99982 11.=
-5094 1.99968 11.0246 2.09611C9.92585 2.31466 8.95982 2.88816 8.25008 3.6927=
-4C7.90896 4.07944 7.62676 4.51983 7.41722 5.00004H9.76392C10.189 4.52493 10=
-.7628 4.18736 11.4147 4.05768C11.6802 4.00488 12.0228 4.00004 13 4.00004H14=
-.6C15.7366 4.00004 16.5289 4.00081 17.1458 4.05121C17.7509 4.10066 18.0986 =
-4.19283 18.362 4.32702C18.9265 4.61464 19.3854 5.07358 19.673 5.63807C19.80=
-72 5.90142 19.8994 6.24911 19.9488 6.85428C19.9992 7.47112 20 8.26343 20 9.=
-40004V11C20 11.9773 19.9952 12.3199 19.9424 12.5853C19.8127 13.2373 19.4748=
- 13.8114 19 14.2361V16.5829C20.4795 15.9374 21.5804 14.602 21.9039 12.9755C=
-22.0004 12.4907 22.0002 11.9334 22 11.1158L22 11V9.40004V9.35725C22 8.27346=
- 22 7.3993 21.9422 6.69141C21.8826 5.96256 21.7568 5.32238 21.455 4.73008C2=
-0.9757 3.78927 20.2108 3.02437 19.27 2.545C18.6777 2.24322 18.0375 2.1174 1=
-7.3086 2.05785C16.6007 2.00002 15.7266 2.00003 14.6428 2.00004L14.6 2.00004=
-H13Z" fill=3D"currentColor"></path></svg></span></button><button class=3D"i=
-nline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font=
--medium leading-[normal] cursor-pointer focus-visible:outline-none focus-vi=
-sible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed transition=
--colors duration-100 [&amp;_svg]:shrink-0 select-none text-fg-secondary hov=
-er:text-fg-primary hover:bg-button-ghost-hover disabled:hover:text-fg-secon=
-dary disabled:hover:bg-transparent [&amp;_svg]:hover:text-fg-primary h-8 w-=
-8 rounded-full opacity-0 group-focus-within:opacity-100 group-hover:opacity=
--100 [.last-response_&amp;]:opacity-100 disabled:opacity-0 group-focus-with=
-in:disabled:opacity-60 group-hover:disabled:opacity-60 [.last-response_&amp=
-;]:disabled:opacity-60" type=3D"button" aria-label=3D"=D0=9F=D0=BE=D0=B4=D0=
-=B5=D0=BB=D0=B8=D1=82=D1=8C=D1=81=D1=8F =D1=80=D0=B0=D0=B7=D0=B3=D0=BE=D0=
-=B2=D0=BE=D1=80=D0=BE=D0=BC" data-state=3D"closed"><span style=3D"opacity: =
-1; transform: none;"><svg width=3D"16" height=3D"16" viewBox=3D"0 0 24 24" =
-fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] size=
--4"><path d=3D"M6.99609 9L11.9961 4L16.9961 9M6.99609 9M12 16V4" stroke=3D"=
-currentColor"></path><path d=3D"M4 15V16C4 18.2091 5.79086 20 8 20H16C18.20=
-91 20 20 18.2091 20 16V15" stroke=3D"currentColor"></path></svg></span></bu=
-tton><button class=3D"inline-flex items-center justify-center gap-2 whitesp=
-ace-nowrap text-sm font-medium leading-[normal] cursor-pointer focus-visibl=
-e:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor=
--not-allowed transition-colors duration-100 [&amp;_svg]:shrink-0 select-non=
-e text-fg-secondary hover:text-fg-primary hover:bg-button-ghost-hover disab=
-led:hover:text-fg-secondary disabled:hover:bg-transparent [&amp;_svg]:hover=
-:text-fg-primary h-8 w-8 rounded-full opacity-0 group-focus-within:opacity-=
-100 group-hover:opacity-100 [.last-response_&amp;]:opacity-100 disabled:opa=
-city-0 group-focus-within:disabled:opacity-60 group-hover:disabled:opacity-=
-60 [.last-response_&amp;]:disabled:opacity-60" type=3D"button" aria-label=
-=3D"=D0=9D=D1=80=D0=B0=D0=B2=D0=B8=D1=82=D1=81=D1=8F" id=3D"radix-=C2=ABr26=
-q=C2=BB" aria-haspopup=3D"menu" aria-expanded=3D"false" data-state=3D"close=
-d"><span style=3D"opacity: 1; transform: none;"><svg width=3D"16" height=3D=
-"16" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000/sv=
-g" class=3D"stroke-[2] size-4"><path d=3D"M7 20H3V9H5.5C6.32843 9 7 9.67157=
- 7 10.5V20ZM7 20H16.2062C17.8403 20 19.257 18.8692 19.6192 17.2757L20.8059 =
-12.0541C21.1614 10.4896 19.9724 9 18.3681 9H14.5L15.1142 5.31454C15.3162 4.=
-10294 14.3818 3 13.1535 3C12.4402 3 11.7816 3.38222 11.4277 4.00155L8.43188=
- 9.24421C8.16482 9.71157 7.6678 10 7.12952 10H6.91465" stroke=3D"currentCol=
-or"></path></svg></span></button><button class=3D"inline-flex items-center =
-justify-center gap-2 whitespace-nowrap text-sm font-medium leading-[normal]=
- cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visib=
-le:ring-ring disabled:cursor-not-allowed transition-colors duration-100 [&a=
-mp;_svg]:shrink-0 select-none text-fg-secondary hover:text-fg-primary hover=
-:bg-button-ghost-hover disabled:hover:text-fg-secondary disabled:hover:bg-t=
-ransparent [&amp;_svg]:hover:text-fg-primary h-8 w-8 rounded-full opacity-0=
- group-focus-within:opacity-100 group-hover:opacity-100 [.last-response_&am=
-p;]:opacity-100 disabled:opacity-0 group-focus-within:disabled:opacity-60 g=
-roup-hover:disabled:opacity-60 [.last-response_&amp;]:disabled:opacity-60" =
-type=3D"button" aria-label=3D"=D0=9D=D0=B5 =D0=BD=D1=80=D0=B0=D0=B2=D0=B8=
-=D1=82=D1=81=D1=8F" id=3D"radix-=C2=ABr270=C2=BB" aria-haspopup=3D"menu" ar=
-ia-expanded=3D"false" data-state=3D"closed"><span style=3D"opacity: 1; tran=
-sform: none;"><svg width=3D"16" height=3D"16" viewBox=3D"0 0 24 24" fill=3D=
-"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] size-4"><pa=
-th d=3D"M7 4H3V15H5.5C6.32843 15 7 14.3284 7 13.5V4ZM7 4H16.2062C17.8403 4 =
-19.257 5.13082 19.6192 6.72433L20.8059 11.9459C21.1614 13.5104 19.9724 15 1=
-8.3681 15H14.5L15.1142 18.6855C15.3162 19.8971 14.3818 21 13.1535 21C12.440=
-2 21 11.7816 20.6178 11.4277 19.9984L8.43188 14.7558C8.16482 14.2884 7.6678=
- 14 7.12952 14H6.91465" stroke=3D"currentColor"></path></svg></span></butto=
-n><button class=3D"inline-flex items-center justify-center gap-2 whitespace=
--nowrap text-sm font-medium leading-[normal] cursor-pointer focus-visible:o=
-utline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-no=
-t-allowed transition-colors duration-100 [&amp;_svg]:shrink-0 select-none t=
-ext-fg-secondary hover:text-fg-primary hover:bg-button-ghost-hover disabled=
-:hover:text-fg-secondary disabled:hover:bg-transparent [&amp;_svg]:hover:te=
-xt-fg-primary h-8 w-8 rounded-full opacity-0 group-focus-within:opacity-100=
- group-hover:opacity-100 [.last-response_&amp;]:opacity-100 disabled:opacit=
-y-0 group-focus-within:disabled:opacity-60 group-hover:disabled:opacity-60 =
-[.last-response_&amp;]:disabled:opacity-60" type=3D"button" aria-label=3D"=
-=D0=91=D0=BE=D0=BB=D1=8C=D1=88=D0=B5 =D0=B4=D0=B5=D0=B9=D1=81=D1=82=D0=B2=
-=D0=B8=D0=B9" id=3D"radix-=C2=ABr276=C2=BB" aria-haspopup=3D"menu" aria-exp=
-anded=3D"false" data-state=3D"closed"><span style=3D"opacity: 1; transform:=
- none;"><svg xmlns=3D"http://www.w3.org/2000/svg" width=3D"24" height=3D"24=
-" viewBox=3D"0 0 24 24" fill=3D"none" stroke=3D"currentColor" stroke-width=
-=3D"2" stroke-linecap=3D"round" stroke-linejoin=3D"round" class=3D"lucide l=
-ucide-ellipsis size-4"><circle cx=3D"12" cy=3D"12" r=3D"1"></circle><circle=
- cx=3D"19" cy=3D"12" r=3D"1"></circle><circle cx=3D"5" cy=3D"12" r=3D"1"></=
-circle></svg></span></button><div class=3D"px-1.5 text-secondary hover:bg-b=
-utton-ghost-hover rounded-md cursor-default opacity-0 group-focus-within:op=
-acity-100 group-hover:opacity-100 [.last-response_&amp;]:opacity-100 disabl=
-ed:opacity-0 group-focus-within:disabled:opacity-60 group-hover:disabled:op=
-acity-60 [.last-response_&amp;]:disabled:opacity-60" data-state=3D"closed">=
-2,1s</div></div></div><div style=3D"height: 1px; position: absolute; bottom=
-: 0px; z-index: 1000;"></div></div></div><div style=3D"padding-bottom: 143.=
-969px; width: 100%;"></div></div></div></div><div class=3D"absolute bottom-=
-0 mx-auto inset-x-0 max-w-breakout z-40 print:hidden"><div class=3D"absolut=
-e flex justify-center w-full h-0 px-gutter @md:px-0 mx-auto -top-3" style=
-=3D"opacity: 1; transform: none;"><div class=3D"h-0 flex items-end justify-=
-end w-full max-w-breakout z-40"><button class=3D"inline-flex items-center j=
-ustify-center gap-2 whitespace-nowrap text-sm font-medium leading-[normal] =
-cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visibl=
-e:ring-ring disabled:opacity-60 disabled:cursor-not-allowed transition-colo=
-rs duration-100 [&amp;_svg]:shrink-0 select-none bg-surface-l2 text-fg-seco=
-ndary hover:bg-surface-l4-hover dark:hover:bg-surface-l3 border border-bord=
-er-l1 disabled:hover:bg-surface-l2 dark:disabled:hover:bg-surface-l2 h-8 w-=
-8 rounded-full shadow-sm" type=3D"button" aria-label=3D"=D0=9F=D1=80=D0=BE=
-=D0=BA=D1=80=D1=83=D1=82=D0=B8=D1=82=D1=8C =D0=B2=D0=BD=D0=B8=D0=B7"><svg w=
-idth=3D"20" height=3D"20" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http=
-://www.w3.org/2000/svg" class=3D"stroke-[2] -mb-0.5"><path d=3D"M6 9L12 15L=
-18 9" stroke=3D"currentColor" stroke-linecap=3D"square"></path></svg></butt=
-on></div></div><div class=3D"relative z-40 flex flex-col items-center w-ful=
-l"><div class=3D"relative w-full px-gutter @md:px-0 pb-2 sm:pb-4"><form cla=
-ss=3D"w-full text-base flex flex-col gap-2 items-center justify-center rela=
-tive z-10"><div class=3D"flex flex-row gap-2 justify-center w-full relative=
-"><input class=3D"hidden" multiple=3D"" type=3D"file" name=3D"files"><div c=
-lass=3D"query-bar group z-10 bg-surface-l2 ring-border-l1 hover:ring-border=
--l2 focus-within:ring-border-l2 hover:focus-within:ring-border-l2 relative =
-w-full overflow-hidden @container/input shadow shadow-black/5 max-w-breakou=
-t ring-1 ring-inset focus-within:ring-1 pb-12 px-2 @[480px]/input:px-3 roun=
-ded-3xl" style=3D"transition-property: background-color, box-shadow, border=
--color; transition-duration: 100ms; transition-timing-function: ease-in-out=
-;"><div class=3D"w-full flex-row gap-2 mt-3 px-1 whitespace-nowrap hidden f=
-lex-wrap will-change-[mask-image] @sm:[mask-image:none] [mask-image:linear-=
-gradient(to_right,transparent_0,black_0px,black_calc(100%_-_40px),transpare=
-nt_100%)]" style=3D"opacity: 1; transform: none;"></div><div class=3D"relat=
-ive z-10"><span class=3D"absolute px-2 @[480px]/input:px-3 py-5 text-fg-sec=
-ondary pointer-events-none select-none">=D0=9A=D0=B0=D0=BA Grok =D0=BC=D0=
-=BE=D0=B6=D0=B5=D1=82 =D0=BF=D0=BE=D0=BC=D0=BE=D1=87=D1=8C?</span><textarea=
- dir=3D"auto" aria-label=3D"=D0=A1=D0=BF=D1=80=D0=B0=D1=88=D0=B8=D0=B2=D0=
-=B0=D0=B9 Grok =D1=87=D1=82=D0=BE =D1=83=D0=B3=D0=BE=D0=B4=D0=BD=D0=BE" cla=
-ss=3D"w-full px-2 @[480px]/input:px-3 pt-5 mb-5 bg-transparent focus:outlin=
-e-none text-fg-primary align-bottom" style=3D"resize: none; height: 44px !i=
-mportant;"></textarea></div><div class=3D"flex gap-1.5 absolute inset-x-0 b=
-ottom-0 border-2 border-transparent p-2 @[480px]/input:p-2 max-w-full"><but=
-ton class=3D"inline-flex items-center justify-center gap-2 whitespace-nowra=
-p text-sm font-medium leading-[normal] cursor-pointer focus-visible:outline=
--none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60 disa=
-bled:cursor-not-allowed transition-colors duration-100 [&amp;_svg]:shrink-0=
- select-none border border-border-l2 text-fg-primary hover:bg-button-ghost-=
-hover [&amp;_svg]:hover:text-fg-primary disabled:hover:bg-transparent h-10 =
-w-10 rounded-full group/attach-button" type=3D"button" aria-label=3D"=D0=9F=
-=D1=80=D0=B8=D0=BA=D1=80=D0=B5=D0=BF=D0=B8=D1=82=D1=8C" tabindex=3D"0" id=
-=3D"radix-=C2=ABr230=C2=BB" aria-haspopup=3D"menu" aria-expanded=3D"false" =
-data-state=3D"closed"><svg width=3D"18" height=3D"18" viewBox=3D"0 0 24 24"=
- fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] tex=
-t-fg-secondary group-hover/attach-button:text-fg-primary transition-colors =
-duration-100"><path d=3D"M10 9V15C10 16.1046 10.8954 17 12 17V17C13.1046 17=
- 14 16.1046 14 15V7C14 4.79086 12.2091 3 10 3V3C7.79086 3 6 4.79086 6 7V15C=
-6 18.3137 8.68629 21 12 21V21C15.3137 21 18 18.3137 18 15V8" stroke=3D"curr=
-entColor"></path></svg></button><div class=3D" flex grow gap-1.5 max-w-full=
-" style=3D"transform: none; opacity: 1;"><div class=3D"grow flex gap-1.5 ma=
-x-w-full"><div class=3D"flex ring-1 rounded-full items-center max-h-[40px] =
-box-border transition-colors duration-100 relative overflow-hidden ring-ins=
-et ring-border-l2"><button class=3D"inline-flex items-center justify-center=
- gap-2 whitespace-nowrap font-medium cursor-pointer focus-visible:outline-n=
-one focus-visible:ring-1 disabled:opacity-60 disabled:cursor-not-allowed [&=
-amp;_svg]:shrink-0 select-none h-10 px-3.5 py-2 text-sm rounded-full group/=
-ds-toggle transition-colors duration-100 focus-visible:ring-transparent box=
--border relative overflow-hidden rounded-r-none pr-3 bg-transparent hover:b=
-g-button-ghost-hover focus-visible:bg-button-ghost-hover" type=3D"button" a=
-ria-label=3D"DeepSearch" tabindex=3D"0" aria-pressed=3D"false" data-state=
-=3D"closed"><svg width=3D"18" height=3D"18" viewBox=3D"0 0 24 24" fill=3D"n=
-one" xmlns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] text-fg-secon=
-dary group-hover/ds-toggle:text-fg-primary"><path d=3D"M19.2987 8.84667C15.=
-3929 1.86808 5.44409 5.76837 7.08971 11.9099C8.01826 15.3753 12.8142 14.864=
-1 13.2764 12.8592C13.6241 11.3504 10.2964 12.3528 10.644 10.844C11.1063 8.8=
-39 15.9022 8.32774 16.8307 11.793C18.5527 18.2196 7.86594 22.4049 4.71987 1=
-5.2225" stroke-width=3D"5" stroke-linecap=3D"round" class=3D"stroke-black/1=
-0 dark:stroke-white/20 transition-[opacity,transform] duration-200 origin-c=
-enter opacity-0 scale-0"></path><path d=3D"M2 13.8236C4.5 22.6927 18 21.328=
-4 18 14.0536C18 9.94886 11.9426 9.0936 10.7153 11.1725C9.79198 12.737 14.20=
-8 12.6146 13.2847 14.1791C12.0574 16.2581 6 15.4029 6 11.2982C6 3.68585 20.=
-5 2.2251 22 11.0945" stroke=3D"currentColor" class=3D"transition-transform =
-duration-200 eas-out origin-center rotate-0"></path></svg><span>DeepSearch<=
-/span></button><div class=3D"h-4 w-[1px] bg-toggle-border focus:outline-non=
-e" tabindex=3D"-1"></div><button class=3D"inline-flex items-center justify-=
-center gap-2 whitespace-nowrap font-medium cursor-pointer focus-visible:out=
-line-none focus-visible:ring-1 disabled:opacity-60 disabled:cursor-not-allo=
-wed [&amp;_svg]:shrink-0 select-none h-10 px-3.5 py-2 text-sm rounded-full =
-transition-colors duration-100 relative overflow-hidden focus-visible:ring-=
-transparent rounded-l-none pl-2 pr-3 bg-transparent hover:bg-button-ghost-h=
-over focus-visible:bg-button-ghost-hover" type=3D"button" aria-label=3D"=D0=
-=A1=D0=BC=D0=B5=D0=BD=D0=B8=D1=82=D1=8C =D1=80=D0=B5=D0=B6=D0=B8=D0=BC" id=
-=3D"radix-=C2=ABr23e=C2=BB" aria-haspopup=3D"menu" aria-expanded=3D"false" =
-data-state=3D"closed"><svg width=3D"12" height=3D"12" viewBox=3D"0 0 24 24"=
- fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] tex=
-t-fg-secondary"><path d=3D"M6 9L12 15L18 9" stroke=3D"currentColor" stroke-=
-linecap=3D"square"></path></svg></button></div><button class=3D"inline-flex=
- items-center justify-center gap-2 whitespace-nowrap font-medium cursor-poi=
-nter focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-rin=
-g disabled:opacity-60 disabled:cursor-not-allowed [&amp;_svg]:shrink-0 sele=
-ct-none border-border-l2 text-fg-primary hover:bg-button-ghost-hover [&amp;=
-_svg]:hover:text-fg-primary disabled:hover:bg-transparent h-10 px-3.5 py-2 =
-text-sm rounded-full group/think-toggle transition-colors duration-100 rela=
-tive overflow-hidden border" type=3D"button" aria-label=3D"Think" tabindex=
-=3D"0" aria-pressed=3D"false" data-state=3D"closed"><svg width=3D"18" heigh=
-t=3D"18" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/200=
-0/svg" class=3D"stroke-[2] group-hover/think-toggle:text-fg-primary text-fg=
--secondary"><path d=3D"M19 9C19 12.866 15.866 17 12 17C8.13398 17 4.99997 1=
-2.866 4.99997 9C4.99997 5.13401 8.13398 3 12 3C15.866 3 19 5.13401 19 9Z" c=
-lass=3D"fill-yellow-100 dark:fill-yellow-300 origin-center transition-[tran=
-sform,opacity] duration-100 scale-0 opacity-0"></path><path d=3D"M15 16.137=
-8L14.487 15.2794L14 15.5705V16.1378H15ZM8.99997 16.1378H9.99997V15.5705L9.5=
-1293 15.2794L8.99997 16.1378ZM18 9C18 11.4496 16.5421 14.0513 14.487 15.279=
-4L15.5129 16.9963C18.1877 15.3979 20 12.1352 20 9H18ZM12 4C13.7598 4 15.272=
-8 4.48657 16.3238 5.33011C17.3509 6.15455 18 7.36618 18 9H20C20 6.76783 19.=
-082 4.97946 17.5757 3.77039C16.0931 2.58044 14.1061 2 12 2V4ZM5.99997 9C5.9=
-9997 7.36618 6.64903 6.15455 7.67617 5.33011C8.72714 4.48657 10.2401 4 12 4=
-V2C9.89382 2 7.90681 2.58044 6.42427 3.77039C4.91791 4.97946 3.99997 6.7678=
-3 3.99997 9H5.99997ZM9.51293 15.2794C7.4578 14.0513 5.99997 11.4496 5.99997=
- 9H3.99997C3.99997 12.1352 5.81225 15.3979 8.48701 16.9963L9.51293 15.2794Z=
-M9.99997 19.5001V16.1378H7.99997V19.5001H9.99997ZM10.5 20.0001C10.2238 20.0=
-001 9.99997 19.7763 9.99997 19.5001H7.99997C7.99997 20.8808 9.11926 22.0001=
- 10.5 22.0001V20.0001ZM13.5 20.0001H10.5V22.0001H13.5V20.0001ZM14 19.5001C1=
-4 19.7763 13.7761 20.0001 13.5 20.0001V22.0001C14.8807 22.0001 16 20.8808 1=
-6 19.5001H14ZM14 16.1378V19.5001H16V16.1378H14Z" fill=3D"currentColor"></pa=
-th><path d=3D"M9 16.0001H15" stroke=3D"currentColor"></path><path d=3D"M12 =
-16V12" stroke=3D"currentColor" stroke-linecap=3D"square"></path><g><path d=
-=3D"M20 7L19 8" stroke=3D"currentColor" stroke-linecap=3D"round" class=3D"t=
-ransition-[transform,opacity] duration-100 ease-in-out translate-x-0 transl=
-ate-y-0 opacity-0"></path><path d=3D"M20 9L19 8" stroke=3D"currentColor" st=
-roke-linecap=3D"round" class=3D"transition-[transform,opacity] duration-100=
- ease-in-out translate-x-0 translate-y-0 opacity-0"></path><path d=3D"M4 7L=
-5 8" stroke=3D"currentColor" stroke-linecap=3D"round" class=3D"transition-[=
-transform,opacity] duration-100 ease-in-out translate-x-0 translate-y-0 opa=
-city-0"></path><path d=3D"M4 9L5 8" stroke=3D"currentColor" stroke-linecap=
-=3D"round" class=3D"transition-[transform,opacity] duration-100 ease-in-out=
- translate-x-0 translate-y-0 opacity-0"></path></g></svg><span>Think</span>=
-</button></div><div class=3D"flex items-center"><button class=3D"inline-fle=
-x items-center justify-center gap-2 whitespace-nowrap font-medium cursor-po=
-inter focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ri=
-ng disabled:opacity-60 disabled:cursor-not-allowed transition-colors durati=
-on-100 [&amp;_svg]:shrink-0 select-none text-fg-primary hover:bg-button-gho=
-st-hover disabled:hover:bg-transparent h-10 px-3.5 py-2 text-sm rounded-ful=
-l border border-border-l2 sm:border-0" type=3D"button" id=3D"radix-=C2=ABr2=
-3k=C2=BB" aria-haspopup=3D"menu" aria-expanded=3D"false" data-state=3D"clos=
-ed"><span class=3D"inline-block text-primary text-xs @[400px]/input:text-sm=
-">Grok 3</span><svg width=3D"16" height=3D"16" viewBox=3D"0 0 24 24" fill=
-=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] size-3 t=
-ext-secondary"><svg width=3D"24" height=3D"24" viewBox=3D"0 0 24 24" fill=
-=3D"none" xmlns=3D"http://www.w3.org/2000/svg"><path d=3D"M6.15929 14.0953C=
-6.88963 12.7513 7.96772 12.5612 9.11371 13.5744" stroke=3D"currentColor" st=
-roke-width=3D"1.75"></path><path d=3D"M11.0836 13.2271C11.8139 11.8831 12.8=
-92 11.693 14.038 12.7062" stroke=3D"currentColor" stroke-width=3D"1.75"></p=
-ath><path d=3D"M8.65012 16.7026C9.14708 17.222 9.95176 17.4885 10.7934 17.3=
-401C11.635 17.1917 12.3 16.666 12.5894 16.008" stroke=3D"currentColor" stro=
-ke-width=3D"1.75"></path><path d=3D"M16.0373 6.76888L2.25 9.19995L3.46554 1=
-6.0936C4.13686 19.9009 7.76747 22.443 11.5747 21.7717C15.382 21.1004 17.924=
-2 17.4698 17.2528 13.6625L16.0373 6.76888Z" stroke=3D"currentColor" stroke-=
-width=3D"2"></path><path d=3D"M20.6008 11.3247L21.8163 4.43107L8.02898 2L7.=
-5 5" stroke=3D"currentColor" stroke-width=3D"2"></path></svg></svg><svg wid=
+" aria-label=3D"=D0=9A=D0=BE=D0=BF=D0=B8=D1=80=D0=BE=D0=B2=D0=B0=D1=82=D1=
+=8C" data-state=3D"closed"><span style=3D"opacity: 1; transform: none;"><sv=
+g width=3D"16" height=3D"16" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"h=
+ttp://www.w3.org/2000/svg" class=3D"stroke-[2] size-4"><rect x=3D"3" y=3D"8=
+" width=3D"13" height=3D"13" rx=3D"4" stroke=3D"currentColor"></rect><path =
+fill-rule=3D"evenodd" clip-rule=3D"evenodd" d=3D"M13 2.00004L12.8842 2.0000=
+2C12.0666 1.99982 11.5094 1.99968 11.0246 2.09611C9.92585 2.31466 8.95982 2=
+.88816 8.25008 3.69274C7.90896 4.07944 7.62676 4.51983 7.41722 5.00004H9.76=
+392C10.189 4.52493 10.7628 4.18736 11.4147 4.05768C11.6802 4.00488 12.0228 =
+4.00004 13 4.00004H14.6C15.7366 4.00004 16.5289 4.00081 17.1458 4.05121C17.=
+7509 4.10066 18.0986 4.19283 18.362 4.32702C18.9265 4.61464 19.3854 5.07358=
+ 19.673 5.63807C19.8072 5.90142 19.8994 6.24911 19.9488 6.85428C19.9992 7.4=
+7112 20 8.26343 20 9.40004V11C20 11.9773 19.9952 12.3199 19.9424 12.5853C19=
+.8127 13.2373 19.4748 13.8114 19 14.2361V16.5829C20.4795 15.9374 21.5804 14=
+.602 21.9039 12.9755C22.0004 12.4907 22.0002 11.9334 22 11.1158L22 11V9.400=
+04V9.35725C22 8.27346 22 7.3993 21.9422 6.69141C21.8826 5.96256 21.7568 5.3=
+2238 21.455 4.73008C20.9757 3.78927 20.2108 3.02437 19.27 2.545C18.6777 2.2=
+4322 18.0375 2.1174 17.3086 2.05785C16.6007 2.00002 15.7266 2.00003 14.6428=
+ 2.00004L14.6 2.00004H13Z" fill=3D"currentColor"></path></svg></span></butt=
+on><button class=3D"inline-flex items-center justify-center gap-2 whitespac=
+e-nowrap text-sm font-medium leading-[normal] cursor-pointer focus-visible:=
+outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-n=
+ot-allowed transition-colors duration-100 [&amp;_svg]:shrink-0 select-none =
+text-fg-secondary hover:text-fg-primary hover:bg-button-ghost-hover disable=
+d:hover:text-fg-secondary disabled:hover:bg-transparent [&amp;_svg]:hover:t=
+ext-fg-primary h-8 w-8 rounded-full opacity-0 group-focus-within:opacity-10=
+0 group-hover:opacity-100 [.last-response_&amp;]:opacity-100 disabled:opaci=
+ty-0 group-focus-within:disabled:opacity-60 group-hover:disabled:opacity-60=
+ [.last-response_&amp;]:disabled:opacity-60" type=3D"button" aria-label=3D"=
+=D0=9F=D0=BE=D0=B4=D0=B5=D0=BB=D0=B8=D1=82=D1=8C=D1=81=D1=8F =D1=80=D0=B0=
+=D0=B7=D0=B3=D0=BE=D0=B2=D0=BE=D1=80=D0=BE=D0=BC" data-state=3D"closed"><sp=
+an style=3D"opacity: 1; transform: none;"><svg width=3D"16" height=3D"16" v=
+iewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" cla=
+ss=3D"stroke-[2] size-4"><path d=3D"M6.99609 9L11.9961 4L16.9961 9M6.99609 =
+9M12 16V4" stroke=3D"currentColor"></path><path d=3D"M4 15V16C4 18.2091 5.7=
+9086 20 8 20H16C18.2091 20 20 18.2091 20 16V15" stroke=3D"currentColor"></p=
+ath></svg></span></button><button class=3D"inline-flex items-center justify=
+-center gap-2 whitespace-nowrap text-sm font-medium leading-[normal] cursor=
+-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring=
+-ring disabled:cursor-not-allowed transition-colors duration-100 [&amp;_svg=
+]:shrink-0 select-none text-fg-secondary hover:text-fg-primary hover:bg-but=
+ton-ghost-hover disabled:hover:text-fg-secondary disabled:hover:bg-transpar=
+ent [&amp;_svg]:hover:text-fg-primary h-8 w-8 rounded-full opacity-0 group-=
+focus-within:opacity-100 group-hover:opacity-100 [.last-response_&amp;]:opa=
+city-100 disabled:opacity-0 group-focus-within:disabled:opacity-60 group-ho=
+ver:disabled:opacity-60 [.last-response_&amp;]:disabled:opacity-60" type=3D=
+"button" aria-label=3D"=D0=9D=D1=80=D0=B0=D0=B2=D0=B8=D1=82=D1=81=D1=8F" id=
+=3D"radix-=C2=ABr26q=C2=BB" aria-haspopup=3D"menu" aria-expanded=3D"false" =
+data-state=3D"closed"><span style=3D"opacity: 1; transform: none;"><svg wid=
 th=3D"16" height=3D"16" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http:/=
-/www.w3.org/2000/svg" class=3D"stroke-[2] size-3 text-secondary transition-=
-transform false"><path d=3D"M6 9L12 15L18 9" stroke=3D"currentColor" stroke=
--linecap=3D"square"></path></svg></button></div></div><div class=3D"ml-auto=
- flex flex-row items-end gap-1"><button class=3D"group flex flex-col justif=
-y-center rounded-full focus:outline-none focus-visible:outline-none focus-v=
-isible:ring-1 focus-visible:ring-ring" type=3D"submit" aria-label=3D"=D0=9E=
-=D1=82=D0=BF=D1=80=D0=B0=D0=B2=D0=B8=D1=82=D1=8C" disabled=3D"" style=3D"op=
-acity: 1;"><div class=3D"h-10 relative aspect-square flex flex-col items-ce=
-nter justify-center rounded-full ring-inset before:absolute before:inset-0 =
-before:rounded-full before:bg-button-filled before:ring-0 before:transition=
--[clip-path,background-color] duration-100 bg-warm-gray-100 dark:bg-gray-60=
-0 text-fg-secondary before:[clip-path:circle(0%_at_50%_50%)] ring-0"><svg w=
-idth=3D"20" height=3D"20" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http=
-://www.w3.org/2000/svg" class=3D"stroke-[2] relative"><path d=3D"M5 11L12 4=
-M12 4L19 11M12 4V21" stroke=3D"currentColor"></path></svg></div></button></=
-div></div></div></div></form></div></div><div class=3D"absolute bottom-0 w-=
-full h-10 bg-background chat-input-backdrop"></div></div></div></main></div=
-></div></div><span style=3D"position: absolute; border: 0px; width: 1px; he=
-ight: 1px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0p=
-x, 0px, 0px); white-space: nowrap; overflow-wrap: normal;"><h2 id=3D"radix-=
-=C2=ABr5j=C2=BB" class=3D"text-lg font-semibold leading-none tracking-tight=
-">=D0=A3=D0=BB=D1=83=D1=87=D1=88=D0=B8=D1=82=D1=8C =D0=B4=D0=BE SuperGrok</=
-h2></span></div><section aria-label=3D"Notifications alt+T" tabindex=3D"-1"=
- aria-live=3D"polite" aria-relevant=3D"additions text" aria-atomic=3D"false=
-"></section><div data-vivaldi-translated=3D""></div><div id=3D"portal" styl=
-e=3D"position:fixed;left:0;top:0;z-index:9999" data-vivaldi-translated=3D""=
-></div><div id=3D"tooltip-portal" data-vivaldi-translated=3D""></div><ifram=
-e height=3D"1" width=3D"1" style=3D"position: absolute; top: 0px; left: 0px=
-; border: none; visibility: hidden;"></iframe>
+/www.w3.org/2000/svg" class=3D"stroke-[2] size-4"><path d=3D"M7 20H3V9H5.5C=
+6.32843 9 7 9.67157 7 10.5V20ZM7 20H16.2062C17.8403 20 19.257 18.8692 19.61=
+92 17.2757L20.8059 12.0541C21.1614 10.4896 19.9724 9 18.3681 9H14.5L15.1142=
+ 5.31454C15.3162 4.10294 14.3818 3 13.1535 3C12.4402 3 11.7816 3.38222 11.4=
+277 4.00155L8.43188 9.24421C8.16482 9.71157 7.6678 10 7.12952 10H6.91465" s=
+troke=3D"currentColor"></path></svg></span></button><button class=3D"inline=
+-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medi=
+um leading-[normal] cursor-pointer focus-visible:outline-none focus-visible=
+:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed transition-colo=
+rs duration-100 [&amp;_svg]:shrink-0 select-none text-fg-secondary hover:te=
+xt-fg-primary hover:bg-button-ghost-hover disabled:hover:text-fg-secondary =
+disabled:hover:bg-transparent [&amp;_svg]:hover:text-fg-primary h-8 w-8 rou=
+nded-full opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 =
+[.last-response_&amp;]:opacity-100 disabled:opacity-0 group-focus-within:di=
+sabled:opacity-60 group-hover:disabled:opacity-60 [.last-response_&amp;]:di=
+sabled:opacity-60" type=3D"button" aria-label=3D"=D0=9D=D0=B5 =D0=BD=D1=80=
+=D0=B0=D0=B2=D0=B8=D1=82=D1=81=D1=8F" id=3D"radix-=C2=ABr270=C2=BB" aria-ha=
+spopup=3D"menu" aria-expanded=3D"false" data-state=3D"closed"><span style=
+=3D"opacity: 1; transform: none;"><svg width=3D"16" height=3D"16" viewBox=
+=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"=
+stroke-[2] size-4"><path d=3D"M7 4H3V15H5.5C6.32843 15 7 14.3284 7 13.5V4ZM=
+7 4H16.2062C17.8403 4 19.257 5.13082 19.6192 6.72433L20.8059 11.9459C21.161=
+4 13.5104 19.9724 15 18.3681 15H14.5L15.1142 18.6855C15.3162 19.8971 14.381=
+8 21 13.1535 21C12.4402 21 11.7816 20.6178 11.4277 19.9984L8.43188 14.7558C=
+8.16482 14.2884 7.6678 14 7.12952 14H6.91465" stroke=3D"currentColor"></pat=
+h></svg></span></button><button class=3D"inline-flex items-center justify-c=
+enter gap-2 whitespace-nowrap text-sm font-medium leading-[normal] cursor-p=
+ointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-r=
+ing disabled:cursor-not-allowed transition-colors duration-100 [&amp;_svg]:=
+shrink-0 select-none text-fg-secondary hover:text-fg-primary hover:bg-butto=
+n-ghost-hover disabled:hover:text-fg-secondary disabled:hover:bg-transparen=
+t [&amp;_svg]:hover:text-fg-primary h-8 w-8 rounded-full opacity-0 group-fo=
+cus-within:opacity-100 group-hover:opacity-100 [.last-response_&amp;]:opaci=
+ty-100 disabled:opacity-0 group-focus-within:disabled:opacity-60 group-hove=
+r:disabled:opacity-60 [.last-response_&amp;]:disabled:opacity-60" type=3D"b=
+utton" aria-label=3D"=D0=91=D0=BE=D0=BB=D1=8C=D1=88=D0=B5 =D0=B4=D0=B5=D0=
+=B9=D1=81=D1=82=D0=B2=D0=B8=D0=B9" id=3D"radix-=C2=ABr276=C2=BB" aria-haspo=
+pup=3D"menu" aria-expanded=3D"false" data-state=3D"closed"><span style=3D"o=
+pacity: 1; transform: none;"><svg xmlns=3D"http://www.w3.org/2000/svg" widt=
+h=3D"24" height=3D"24" viewBox=3D"0 0 24 24" fill=3D"none" stroke=3D"curren=
+tColor" stroke-width=3D"2" stroke-linecap=3D"round" stroke-linejoin=3D"roun=
+d" class=3D"lucide lucide-ellipsis size-4"><circle cx=3D"12" cy=3D"12" r=3D=
+"1"></circle><circle cx=3D"19" cy=3D"12" r=3D"1"></circle><circle cx=3D"5" =
+cy=3D"12" r=3D"1"></circle></svg></span></button><div class=3D"px-1.5 text-=
+secondary hover:bg-button-ghost-hover rounded-md cursor-default opacity-0 g=
+roup-focus-within:opacity-100 group-hover:opacity-100 [.last-response_&amp;=
+]:opacity-100 disabled:opacity-0 group-focus-within:disabled:opacity-60 gro=
+up-hover:disabled:opacity-60 [.last-response_&amp;]:disabled:opacity-60" da=
+ta-state=3D"closed">2,1s</div></div></div><div style=3D"height: 1px; positi=
+on: absolute; bottom: 0px; z-index: 1000;"></div></div></div><div style=3D"=
+padding-bottom: 143.969px; width: 100%;"></div></div></div></div><div class=
+=3D"absolute bottom-0 mx-auto inset-x-0 max-w-breakout z-40 print:hidden"><=
+div class=3D"relative z-40 flex flex-col items-center w-full"><div class=3D=
+"relative w-full px-gutter @md:px-0 pb-2 sm:pb-4"><form class=3D"w-full tex=
+t-base flex flex-col gap-2 items-center justify-center relative z-10"><div =
+class=3D"flex flex-row gap-2 justify-center w-full relative"><input class=
+=3D"hidden" multiple=3D"" type=3D"file" name=3D"files"><div class=3D"query-=
+bar group z-10 bg-surface-l2 ring-border-l1 hover:ring-border-l2 focus-with=
+in:ring-border-l2 hover:focus-within:ring-border-l2 relative w-full overflo=
+w-hidden @container/input shadow shadow-black/5 max-w-breakout ring-1 ring-=
+inset focus-within:ring-1 pb-12 px-2 @[480px]/input:px-3 rounded-3xl" style=
+=3D"transition-property: background-color, box-shadow, border-color; transi=
+tion-duration: 100ms; transition-timing-function: ease-in-out;"><div class=
+=3D"w-full flex-row gap-2 mt-3 px-1 whitespace-nowrap hidden flex-wrap will=
+-change-[mask-image] @sm:[mask-image:none] [mask-image:linear-gradient(to_r=
+ight,transparent_0,black_0px,black_calc(100%_-_40px),transparent_100%)]" st=
+yle=3D"opacity: 1; transform: none;"></div><div class=3D"relative z-10"><sp=
+an class=3D"absolute px-2 @[480px]/input:px-3 py-5 text-fg-secondary pointe=
+r-events-none select-none">=D0=9A=D0=B0=D0=BA Grok =D0=BC=D0=BE=D0=B6=D0=B5=
+=D1=82 =D0=BF=D0=BE=D0=BC=D0=BE=D1=87=D1=8C?</span><textarea dir=3D"auto" a=
+ria-label=3D"=D0=A1=D0=BF=D1=80=D0=B0=D1=88=D0=B8=D0=B2=D0=B0=D0=B9 Grok =
+=D1=87=D1=82=D0=BE =D1=83=D0=B3=D0=BE=D0=B4=D0=BD=D0=BE" class=3D"w-full px=
+-2 @[480px]/input:px-3 pt-5 mb-5 bg-transparent focus:outline-none text-fg-=
+primary align-bottom" style=3D"resize: none; height: 44px !important;"></te=
+xtarea></div><div class=3D"flex gap-1.5 absolute inset-x-0 bottom-0 border-=
+2 border-transparent p-2 @[480px]/input:p-2 max-w-full"><button class=3D"in=
+line-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-=
+medium leading-[normal] cursor-pointer focus-visible:outline-none focus-vis=
+ible:ring-1 focus-visible:ring-ring disabled:opacity-60 disabled:cursor-not=
+-allowed transition-colors duration-100 [&amp;_svg]:shrink-0 select-none bo=
+rder border-border-l2 text-fg-primary hover:bg-button-ghost-hover [&amp;_sv=
+g]:hover:text-fg-primary disabled:hover:bg-transparent h-10 w-10 rounded-fu=
+ll group/attach-button" type=3D"button" aria-label=3D"=D0=9F=D1=80=D0=B8=D0=
+=BA=D1=80=D0=B5=D0=BF=D0=B8=D1=82=D1=8C" tabindex=3D"0" id=3D"radix-=C2=ABr=
+230=C2=BB" aria-haspopup=3D"menu" aria-expanded=3D"false" data-state=3D"clo=
+sed"><svg width=3D"18" height=3D"18" viewBox=3D"0 0 24 24" fill=3D"none" xm=
+lns=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] text-fg-secondary gr=
+oup-hover/attach-button:text-fg-primary transition-colors duration-100"><pa=
+th d=3D"M10 9V15C10 16.1046 10.8954 17 12 17V17C13.1046 17 14 16.1046 14 15=
+V7C14 4.79086 12.2091 3 10 3V3C7.79086 3 6 4.79086 6 7V15C6 18.3137 8.68629=
+ 21 12 21V21C15.3137 21 18 18.3137 18 15V8" stroke=3D"currentColor"></path>=
+</svg></button><div class=3D" flex grow gap-1.5 max-w-full" style=3D"transf=
+orm: none; opacity: 1;"><div class=3D"grow flex gap-1.5 max-w-full"><div cl=
+ass=3D"flex ring-1 rounded-full items-center max-h-[40px] box-border transi=
+tion-colors duration-100 relative overflow-hidden ring-inset ring-border-l2=
+"><button class=3D"inline-flex items-center justify-center gap-2 whitespace=
+-nowrap font-medium cursor-pointer focus-visible:outline-none focus-visible=
+:ring-1 disabled:opacity-60 disabled:cursor-not-allowed [&amp;_svg]:shrink-=
+0 select-none h-10 px-3.5 py-2 text-sm rounded-full group/ds-toggle transit=
+ion-colors duration-100 focus-visible:ring-transparent box-border relative =
+overflow-hidden rounded-r-none pr-3 bg-transparent hover:bg-button-ghost-ho=
+ver focus-visible:bg-button-ghost-hover" type=3D"button" aria-label=3D"Deep=
+Search" tabindex=3D"0" aria-pressed=3D"false" data-state=3D"closed"><svg wi=
+dth=3D"18" height=3D"18" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http:=
+//www.w3.org/2000/svg" class=3D"stroke-[2] text-fg-secondary group-hover/ds=
+-toggle:text-fg-primary"><path d=3D"M19.2987 8.84667C15.3929 1.86808 5.4440=
+9 5.76837 7.08971 11.9099C8.01826 15.3753 12.8142 14.8641 13.2764 12.8592C1=
+3.6241 11.3504 10.2964 12.3528 10.644 10.844C11.1063 8.839 15.9022 8.32774 =
+16.8307 11.793C18.5527 18.2196 7.86594 22.4049 4.71987 15.2225" stroke-widt=
+h=3D"5" stroke-linecap=3D"round" class=3D"stroke-black/10 dark:stroke-white=
+/20 transition-[opacity,transform] duration-200 origin-center opacity-0 sca=
+le-0"></path><path d=3D"M2 13.8236C4.5 22.6927 18 21.3284 18 14.0536C18 9.9=
+4886 11.9426 9.0936 10.7153 11.1725C9.79198 12.737 14.208 12.6146 13.2847 1=
+4.1791C12.0574 16.2581 6 15.4029 6 11.2982C6 3.68585 20.5 2.2251 22 11.0945=
+" stroke=3D"currentColor" class=3D"transition-transform duration-200 eas-ou=
+t origin-center rotate-0"></path></svg><span>DeepSearch</span></button><div=
+ class=3D"h-4 w-[1px] bg-toggle-border focus:outline-none" tabindex=3D"-1">=
+</div><button class=3D"inline-flex items-center justify-center gap-2 whites=
+pace-nowrap font-medium cursor-pointer focus-visible:outline-none focus-vis=
+ible:ring-1 disabled:opacity-60 disabled:cursor-not-allowed [&amp;_svg]:shr=
+ink-0 select-none h-10 px-3.5 py-2 text-sm rounded-full transition-colors d=
+uration-100 relative overflow-hidden focus-visible:ring-transparent rounded=
+-l-none pl-2 pr-3 bg-transparent hover:bg-button-ghost-hover focus-visible:=
+bg-button-ghost-hover" type=3D"button" aria-label=3D"=D0=A1=D0=BC=D0=B5=D0=
+=BD=D0=B8=D1=82=D1=8C =D1=80=D0=B5=D0=B6=D0=B8=D0=BC" id=3D"radix-=C2=ABr23=
+e=C2=BB" aria-haspopup=3D"menu" aria-expanded=3D"false" data-state=3D"close=
+d"><svg width=3D"12" height=3D"12" viewBox=3D"0 0 24 24" fill=3D"none" xmln=
+s=3D"http://www.w3.org/2000/svg" class=3D"stroke-[2] text-fg-secondary"><pa=
+th d=3D"M6 9L12 15L18 9" stroke=3D"currentColor" stroke-linecap=3D"square">=
+</path></svg></button></div><button class=3D"inline-flex items-center justi=
+fy-center gap-2 whitespace-nowrap font-medium cursor-pointer focus-visible:=
+outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-=
+60 disabled:cursor-not-allowed [&amp;_svg]:shrink-0 select-none border-bord=
+er-l2 text-fg-primary hover:bg-button-ghost-hover [&amp;_svg]:hover:text-fg=
+-primary disabled:hover:bg-transparent h-10 px-3.5 py-2 text-sm rounded-ful=
+l group/think-toggle transition-colors duration-100 relative overflow-hidde=
+n border" type=3D"button" aria-label=3D"Think" tabindex=3D"0" aria-pressed=
+=3D"false" data-state=3D"closed"><svg width=3D"18" height=3D"18" viewBox=3D=
+"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" class=3D"str=
+oke-[2] group-hover/think-toggle:text-fg-primary text-fg-secondary"><path d=
+=3D"M19 9C19 12.866 15.866 17 12 17C8.13398 17 4.99997 12.866 4.99997 9C4.9=
+9997 5.13401 8.13398 3 12 3C15.866 3 19 5.13401 19 9Z" class=3D"fill-yellow=
+-100 dark:fill-yellow-300 origin-center transition-[transform,opacity] dura=
+tion-100 scale-0 opacity-0"></path><path d=3D"M15 16.1378L14.487 15.2794L14=
+ 15.5705V16.1378H15ZM8.99997 16.1378H9.99997V15.5705L9.51293 15.2794L8.9999=
+7 16.1378ZM18 9C18 11.4496 16.5421 14.0513 14.487 15.2794L15.5129 16.9963C1=
+8.1877 15.3979 20 12.1352 20 9H18ZM12 4C13.7598 4 15.2728 4.48657 16.3238 5=
+.33011C17.3509 6.15455 18 7.36618 18 9H20C20 6.76783 19.082 4.97946 17.5757=
+ 3.77039C16.0931 2.58044 14.1061 2 12 2V4ZM5.99997 9C5.99997 7.36618 6.6490=
+3 6.15455 7.67617 5.33011C8.72714 4.48657 10.2401 4 12 4V2C9.89382 2 7.9068=
+1 2.58044 6.42427 3.77039C4.91791 4.97946 3.99997 6.76783 3.99997 9H5.99997=
+ZM9.51293 15.2794C7.4578 14.0513 5.99997 11.4496 5.99997 9H3.99997C3.99997 =
+12.1352 5.81225 15.3979 8.48701 16.9963L9.51293 15.2794ZM9.99997 19.5001V16=
+.1378H7.99997V19.5001H9.99997ZM10.5 20.0001C10.2238 20.0001 9.99997 19.7763=
+ 9.99997 19.5001H7.99997C7.99997 20.8808 9.11926 22.0001 10.5 22.0001V20.00=
+01ZM13.5 20.0001H10.5V22.0001H13.5V20.0001ZM14 19.5001C14 19.7763 13.7761 2=
+0.0001 13.5 20.0001V22.0001C14.8807 22.0001 16 20.8808 16 19.5001H14ZM14 16=
+.1378V19.5001H16V16.1378H14Z" fill=3D"currentColor"></path><path d=3D"M9 16=
+.0001H15" stroke=3D"currentColor"></path><path d=3D"M12 16V12" stroke=3D"cu=
+rrentColor" stroke-linecap=3D"square"></path><g><path d=3D"M20 7L19 8" stro=
+ke=3D"currentColor" stroke-linecap=3D"round" class=3D"transition-[transform=
+,opacity] duration-100 ease-in-out translate-x-0 translate-y-0 opacity-0"><=
+/path><path d=3D"M20 9L19 8" stroke=3D"currentColor" stroke-linecap=3D"roun=
+d" class=3D"transition-[transform,opacity] duration-100 ease-in-out transla=
+te-x-0 translate-y-0 opacity-0"></path><path d=3D"M4 7L5 8" stroke=3D"curre=
+ntColor" stroke-linecap=3D"round" class=3D"transition-[transform,opacity] d=
+uration-100 ease-in-out translate-x-0 translate-y-0 opacity-0"></path><path=
+ d=3D"M4 9L5 8" stroke=3D"currentColor" stroke-linecap=3D"round" class=3D"t=
+ransition-[transform,opacity] duration-100 ease-in-out translate-x-0 transl=
+ate-y-0 opacity-0"></path></g></svg><span>Think</span></button></div><div c=
+lass=3D"flex items-center"><button class=3D"inline-flex items-center justif=
+y-center gap-2 whitespace-nowrap font-medium cursor-pointer focus-visible:o=
+utline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-6=
+0 disabled:cursor-not-allowed transition-colors duration-100 [&amp;_svg]:sh=
+rink-0 select-none text-fg-primary hover:bg-button-ghost-hover disabled:hov=
+er:bg-transparent h-10 px-3.5 py-2 text-sm rounded-full border border-borde=
+r-l2 sm:border-0" type=3D"button" id=3D"radix-=C2=ABr23k=C2=BB" aria-haspop=
+up=3D"menu" aria-expanded=3D"false" data-state=3D"closed"><span class=3D"in=
+line-block text-primary text-xs @[400px]/input:text-sm">Grok 3</span><svg w=
+idth=3D"16" height=3D"16" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http=
+://www.w3.org/2000/svg" class=3D"stroke-[2] size-3 text-secondary"><svg wid=
+th=3D"24" height=3D"24" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http:/=
+/www.w3.org/2000/svg"><path d=3D"M6.15929 14.0953C6.88963 12.7513 7.96772 1=
+2.5612 9.11371 13.5744" stroke=3D"currentColor" stroke-width=3D"1.75"></pat=
+h><path d=3D"M11.0836 13.2271C11.8139 11.8831 12.892 11.693 14.038 12.7062"=
+ stroke=3D"currentColor" stroke-width=3D"1.75"></path><path d=3D"M8.65012 1=
+6.7026C9.14708 17.222 9.95176 17.4885 10.7934 17.3401C11.635 17.1917 12.3 1=
+6.666 12.5894 16.008" stroke=3D"currentColor" stroke-width=3D"1.75"></path>=
+<path d=3D"M16.0373 6.76888L2.25 9.19995L3.46554 16.0936C4.13686 19.9009 7.=
+76747 22.443 11.5747 21.7717C15.382 21.1004 17.9242 17.4698 17.2528 13.6625=
+L16.0373 6.76888Z" stroke=3D"currentColor" stroke-width=3D"2"></path><path =
+d=3D"M20.6008 11.3247L21.8163 4.43107L8.02898 2L7.5 5" stroke=3D"currentCol=
+or" stroke-width=3D"2"></path></svg></svg><svg width=3D"16" height=3D"16" v=
+iewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" cla=
+ss=3D"stroke-[2] size-3 text-secondary transition-transform false"><path d=
+=3D"M6 9L12 15L18 9" stroke=3D"currentColor" stroke-linecap=3D"square"></pa=
+th></svg></button></div></div><div class=3D"ml-auto flex flex-row items-end=
+ gap-1"><button class=3D"group flex flex-col justify-center rounded-full fo=
+cus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visi=
+ble:ring-ring" type=3D"submit" aria-label=3D"=D0=9E=D1=82=D0=BF=D1=80=D0=B0=
+=D0=B2=D0=B8=D1=82=D1=8C" disabled=3D"" style=3D"opacity: 1;"><div class=3D=
+"h-10 relative aspect-square flex flex-col items-center justify-center roun=
+ded-full ring-inset before:absolute before:inset-0 before:rounded-full befo=
+re:bg-button-filled before:ring-0 before:transition-[clip-path,background-c=
+olor] duration-100 bg-warm-gray-100 dark:bg-gray-600 text-fg-secondary befo=
+re:[clip-path:circle(0%_at_50%_50%)] ring-0"><svg width=3D"20" height=3D"20=
+" viewBox=3D"0 0 24 24" fill=3D"none" xmlns=3D"http://www.w3.org/2000/svg" =
+class=3D"stroke-[2] relative"><path d=3D"M5 11L12 4M12 4L19 11M12 4V21" str=
+oke=3D"currentColor"></path></svg></div></button></div></div></div></div></=
+form></div></div><div class=3D"absolute bottom-0 w-full h-10 bg-background =
+chat-input-backdrop"></div></div></div></main></div></div></div><span style=
+=3D"position: absolute; border: 0px; width: 1px; height: 1px; padding: 0px;=
+ margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-spac=
+e: nowrap; overflow-wrap: normal;"><h2 id=3D"radix-=C2=ABr5j=C2=BB" class=
+=3D"text-lg font-semibold leading-none tracking-tight">=D0=A3=D0=BB=D1=83=
+=D1=87=D1=88=D0=B8=D1=82=D1=8C =D0=B4=D0=BE SuperGrok</h2></span></div><sec=
+tion aria-label=3D"Notifications alt+T" tabindex=3D"-1" aria-live=3D"polite=
+" aria-relevant=3D"additions text" aria-atomic=3D"false"></section><div dat=
+a-vivaldi-translated=3D""></div><div id=3D"portal" style=3D"position:fixed;=
+left:0;top:0;z-index:9999" data-vivaldi-translated=3D""></div><div id=3D"to=
+oltip-portal" data-vivaldi-translated=3D""></div><iframe height=3D"1" width=
+=3D"1" style=3D"position: absolute; top: 0px; left: 0px; border: none; visi=
+bility: hidden;"></iframe>
 <next-route-announcer style=3D"position: absolute;"><template shadowmode=3D=
 "open"><div aria-live=3D"assertive" id=3D"__next-route-announcer__" role=3D=
 "alert" style=3D"position: absolute; border: 0px; height: 1px; margin: -1px=
@@ -1762,7 +1719,7 @@ k: normal; word-spacing: 0px; scrollbar-gutter: auto;"></textarea></body><s=
 pan style=3D"--colorFg: #d3d9e3; --colorFgFadedMore: #bec3cd; --colorBg: #2=
 e2f37; --colorBgDark: #282931; --colorBgLighter: #42434b; --colorBorder: #1=
 b1c24;"><template shadowmode=3D"closed"></template></span></html>
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: image/webp
 Content-Transfer-Encoding: base64
 Content-Location: https://assets.grok.com/users/3463f9cf-0f3e-4674-8d74-7bbffb29ae9b/pbzpfp9FjSuut4th-profile-picture.webp
@@ -3408,7 +3365,7 @@ MtLMsDFsATUsCAO40MgHm8lIUxrkDwTG4YKBDwWkAIcACgYcAvwhE9FEqgmAEQiAJfgQyiEUNShB
 wriQBAfCSQL+hAHJBWAIh1BoCBpIBByK0BKJAAIShkYS/AnrAGgcgMBsGWZEFhbEZJgAH2qQUCOG
 hUFLDuCySaKExQowjGFJohYkFiAUGpJADQPjSnAAAA==
 
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
 Content-Location: https://grok.com/_next/static/css/d5c0afe820e08ba1.css
@@ -3577,7 +3534,7 @@ ont-inter); font-style: normal; }
 
 .__variable_6dcc77 { --font-vazirmatn: "Vazirmatn","Vazirmatn Fallback",var=
 (--font-inter); }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
 Content-Location: https://grok.com/_next/static/css/5cb590abb3f80466.css
@@ -4583,7 +4540,7 @@ px; }
 .katex-display.fleqn > .katex { padding-left: 2em; text-align: left; }
 
 body { counter-reset: katexEqnNo 0 mmlEqnNo 0; }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
 Content-Location: https://grok.com/_next/static/css/0af0a5dbea0a687a.css
@@ -11411,10 +11368,10 @@ data-state\=3Dcollapsed\]_\&\]\:cursor-w-resize { cursor: w-resize; }
 
 [data-side=3D"right"] .\[\[data-side\=3Dright\]_\&\]\:cursor-e-resize { cur=
 sor: e-resize; }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
-Content-Location: cid:css-6943def7-e92b-4192-b134-b32038fdc013@mhtml.blink
+Content-Location: cid:css-4d006d00-b486-415c-9bd8-0ef2a09d5dcc@mhtml.blink
 
 @charset "utf-8";
 
@@ -11432,10 +11389,10 @@ x 4px 16px; }
 .picker-dialog-content { height: 100%; font-size: 0px; padding: 0px; }
 
 .picker-dialog-buttons, .picker-dialog-title { display: none; }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
-Content-Location: cid:css-e1438966-945a-41b6-a6cc-8b37407d2e27@mhtml.blink
+Content-Location: cid:css-9a7b6056-07de-475c-b70c-60190ce5e015@mhtml.blink
 
 @charset "utf-8";
 
@@ -11448,10 +11405,10 @@ Content-Location: cid:css-e1438966-945a-41b6-a6cc-8b37407d2e27@mhtml.blink
 form-origin: 0% 0%; }
 
 .transform-component-module_content__FBWxo img { pointer-events: none; }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
-Content-Location: cid:css-6492361e-cfd7-46d3-9183-6a8ce118908b@mhtml.blink
+Content-Location: cid:css-30d49f63-e9f8-409d-936e-481a7675464d@mhtml.blink
 
 @charset "utf-8";
 
@@ -11793,10 +11750,10 @@ ate(-50%, -50%); transform-origin: center center; transition: opacity 0.2s,=
 
 .sonner-loader[data-visible=3D"false"] { opacity: 0; transform: scale(0.8) =
 translate(-50%, -50%); }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
-Content-Location: cid:css-38190f73-e7b1-46c2-91fe-18ece0807c34@mhtml.blink
+Content-Location: cid:css-57f028c5-9e37-4ac5-a2ad-33be0c5ae2ed@mhtml.blink
 
 @charset "utf-8";
 
@@ -11883,10 +11840,10 @@ true"]):not([data-state=3D"closed"]) { opacity: 0; }
 
 @media (pointer: fine) {
 }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/css
 Content-Transfer-Encoding: quoted-printable
-Content-Location: cid:css-8dea7cd4-0f03-437c-860e-2a7cda362cb4@mhtml.blink
+Content-Location: cid:css-bb07f885-619d-4564-8260-06bb7de67292@mhtml.blink
 
 @charset "utf-8";
 
@@ -11894,11 +11851,11 @@ Content-Location: cid:css-8dea7cd4-0f03-437c-860e-2a7cda362cb4@mhtml.blink
 pointer-events: none; }
 
 .r-2qswrc.loaded { visibility: visible; top: 50vh; width: 50px; }
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I----
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y----
 Content-Type: text/html
 Content-ID: <frame-4327C6590903E887C6CBDBDE269EC374@mhtml.blink>
 Content-Transfer-Encoding: quoted-printable
 
 <html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; charset=
 =3DUTF-8"></head><body></body></html>
-------MultipartBoundary--XlthCjtk6UVxNTDrG2ij0qHeFIBMU4uT2BG0OYm27I------
+------MultipartBoundary--c76jDLglYD7yJzGAIiu40K6paE7njQfqNX80Uz5M0Y------
