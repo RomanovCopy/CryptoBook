@@ -26,7 +26,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_BoldCommand(object? obj)
         {
-            return richTextBoxService != null;
+            return richTextBoxService?.SelectedText.Text.Length > 0;
         }
         internal void Execute_BoldCommand(object? obj)
         {

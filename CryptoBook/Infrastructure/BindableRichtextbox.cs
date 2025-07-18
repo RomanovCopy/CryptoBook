@@ -9,12 +9,15 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
 namespace CryptoBook.Infrastructure
 {
     public class BindableRichtextbox: System.Windows.Controls.RichTextBox, IRichTextBoxService
     {
+        private readonly IRichTextBoxService service;
+
         public static readonly DependencyProperty DocumentContentProperty =
             DependencyProperty.Register(
                 nameof(DocumentContent),
@@ -25,6 +28,32 @@ namespace CryptoBook.Infrastructure
         public BindableRichtextbox()
         {
             DocumentContent = this.Document;
+            service = (IRichTextBoxService)this;
+            service.ApplyContextMenu(CreateContextMenu());
+            service.ApplyDocumentEnabled(true);
+            service.ApplyTextFormattingMode(TextFormattingMode.Ideal);
+            service.ApplyAcceptsTab(true);
+            service.ApplyAcceptsReturn(true);
+        }
+
+        private ContextMenu CreateContextMenu()
+        {
+            var contextMenu = new ContextMenu();
+
+            // Добавление пунктов меню
+            var copyItem = new MenuItem { Header = "Копировать" };
+            copyItem.Click += (s, e) => this.Copy();
+            contextMenu.Items.Add(copyItem);
+
+            var pasteItem = new MenuItem { Header = "Вставить" };
+            pasteItem.Click += (s, e) => this.Paste();
+            contextMenu.Items.Add(pasteItem);
+
+            var cutItem = new MenuItem { Header = "Вырезать" };
+            cutItem.Click += (s, e) => this.Cut();
+            contextMenu.Items.Add(cutItem);
+
+            return contextMenu;
         }
 
         private static void OnTextChanged(object sender, TextChangedEventArgs e)
@@ -91,12 +120,12 @@ namespace CryptoBook.Infrastructure
 
         void IRichTextBoxService.ApplyFontFamily(string fontFamily)
         {
-            Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily(fontFamily));
+            Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, new System.Windows.Media.FontFamily(fontFamily));
         }
 
-        void IRichTextBoxService.ApplyForegroundColor(Color color) => Selection.ApplyPropertyValue(TextElement.ForegroundProperty, new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)));
+        void IRichTextBoxService.ApplyForegroundColor(System.Drawing.Color color) => Selection.ApplyPropertyValue(TextElement.ForegroundProperty, new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)));
 
-        void IRichTextBoxService.ApplyBackgroundColor(Color color)
+        void IRichTextBoxService.ApplyBackgroundColor(System.Drawing.Color color)
         {
             Selection.ApplyPropertyValue(TextElement.BackgroundProperty, new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)));
         }
@@ -106,6 +135,46 @@ namespace CryptoBook.Infrastructure
             var paragraph = Selection.Start.Paragraph;
             if(paragraph != null)
                 paragraph.TextAlignment = alignment;
+        }
+
+        void IRichTextBoxService.ApplyTextFormattingMode(TextFormattingMode mode)
+        {
+            TextOptions.SetTextFormattingMode(this, mode);
+        }
+
+        void IRichTextBoxService.ApplyTextRenderingMode(TextRenderingMode mode)
+        {
+            TextOptions.SetTextRenderingMode(this, mode);
+        }
+
+        void IRichTextBoxService.ApplyAcceptsTab(bool accept)
+        {
+            this.AcceptsTab = accept;
+        }
+
+        void IRichTextBoxService.ApplyAcceptsReturn(bool accept)
+        {
+            this.AcceptsReturn = accept;
+        }
+
+        void IRichTextBoxService.ApplyVerticalScrollBarVisibility(ScrollBarVisibility visibility)
+        {
+            this.VerticalScrollBarVisibility = visibility;
+        }
+
+        void IRichTextBoxService.ApplyHorizontalScrollBarVisibility(ScrollBarVisibility visibility)
+        {
+            this.HorizontalScrollBarVisibility = visibility;
+        }
+
+        void IRichTextBoxService.ApplyContextMenu(ContextMenu menu)
+        {
+            this.ContextMenu = menu;
+        }
+
+        void IRichTextBoxService.ApplyDocumentEnabled(bool enabled)
+        {
+            this.IsDocumentEnabled = enabled;
         }
 
         void IRichTextBoxService.ClearFormatting()
@@ -364,5 +433,8 @@ namespace CryptoBook.Infrastructure
         {
             Selection.Text = text;
         }
+
+
+
     }
 }

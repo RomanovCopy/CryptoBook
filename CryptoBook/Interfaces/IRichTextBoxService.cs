@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
+
 namespace CryptoBook.Interfaces
 {
     public interface IRichTextBoxService
@@ -80,6 +81,46 @@ namespace CryptoBook.Interfaces
         /// </summary>
         /// <param name="alignment">выравнивание текста</param>
         void ApplyTextAlignment(TextAlignment alignment);
+        /// <summary>
+        /// Установка форматирования текста
+        /// </summary>
+        /// <param name="format"></param>
+        void ApplyTextFormattingMode(System.Windows.Media.TextFormattingMode mode);
+        /// <summary>
+        /// Установка режима рендеринга текста
+        /// </summary>
+        /// <param name="mode"></param>
+        void ApplyTextRenderingMode(System.Windows.Media.TextRenderingMode mode);
+        /// <summary>
+        /// Разрешение табуляции
+        /// </summary>
+        /// <param name="accept"></param>
+        void ApplyAcceptsTab(bool accept);
+        /// <summary>
+        /// Разрешение возврата каретки (Enter)
+        /// </summary>
+        /// <param name="accept"></param>
+        void ApplyAcceptsReturn(bool  accept);
+        /// <summary>
+        /// Установка видимости вертикальной полосы прокрутки
+        /// </summary>
+        /// <param name="visibility"></param>
+        void ApplyVerticalScrollBarVisibility(System.Windows.Controls.ScrollBarVisibility visibility);
+        /// <summary>
+        /// Установка видимости горизонтальной полосы прокрутки
+        /// </summary>
+        /// <param name="visibility"></param>
+        void ApplyHorizontalScrollBarVisibility(System.Windows.Controls.ScrollBarVisibility visibility);
+        /// <summary>
+        /// Установка контекстного меню
+        /// </summary>
+        /// <param name="menu"></param>
+        void ApplyContextMenu(System.Windows.Controls.ContextMenu menu);
+        /// <summary>
+        /// Включение поддержки документов
+        /// </summary>
+        /// <param name="enabled"></param>
+        void ApplyDocumentEnabled(bool enabled);
         /// <summary>
         /// Сбрасывает форматирование выделенного текста
         /// </summary>
