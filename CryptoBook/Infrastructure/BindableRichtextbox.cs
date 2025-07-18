@@ -18,12 +18,20 @@ namespace CryptoBook.Infrastructure
     {
         private readonly IRichTextBoxService service;
 
+        private FontWeight currentFontWeight { get; set; }
+
         public static readonly DependencyProperty DocumentContentProperty =
             DependencyProperty.Register(
                 nameof(DocumentContent),
                 typeof(FlowDocument),
                 typeof(BindableRichtextbox),
                 new PropertyMetadata(null, OnDocumentContentChanged));
+
+        public FlowDocument DocumentContent
+        {
+            get => (FlowDocument)GetValue(DocumentContentProperty);
+            set => SetValue(DocumentContentProperty, value);
+        }
 
         public BindableRichtextbox()
         {
@@ -56,22 +64,31 @@ namespace CryptoBook.Infrastructure
             return contextMenu;
         }
 
+        private static void OnDocumentContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var rtb = (BindableRichtextbox)d;
+            rtb.Document = e.NewValue as FlowDocument ?? new FlowDocument();
+            rtb.TextChanged += OnTextChanged;
+            rtb.KeyDown += OnKeyDown;
+        }
+
         private static void OnTextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
 
-        public FlowDocument DocumentContent
+        private static void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            get => (FlowDocument)GetValue(DocumentContentProperty);
-            set => SetValue(DocumentContentProperty, value);
-        }
 
-        private static void OnDocumentContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var richTextBox = (BindableRichtextbox)d;
-            richTextBox.Document = e.NewValue as FlowDocument ?? new FlowDocument();
-            richTextBox.TextChanged += OnTextChanged;
+            if(!char.IsControl((char)e.Key))
+            {
+                if(sender is BindableRichtextbox rtb && sender is IRichTextBoxService irtb)
+                {
+                    var range = new TextRange(rtb.CaretPosition, rtb.CaretPosition);
+                    range.Text = e.Key.ToString();
+                    range.ApplyPropertyValue(TextElement.FontWeightProperty, rtb.currentFontWeight);
+                }
+            }
         }
 
         TextSelection IRichTextBoxService.SelectedText => Selection;
@@ -100,7 +117,11 @@ namespace CryptoBook.Infrastructure
 
         void IRichTextBoxService.ApplyBold()
         {
-            Selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+            if(Selection.Text.Length > 0)
+                Selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+            else 
+                currentFontWeight = FontWeights.Bold;
+
         }
 
         void IRichTextBoxService.ApplyItalic()
