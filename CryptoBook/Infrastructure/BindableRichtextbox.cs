@@ -12,6 +12,8 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
+
+using FontFamily = System.Windows.Media.FontFamily;
 namespace CryptoBook.Infrastructure
 {
     public class BindableRichtextbox: System.Windows.Controls.RichTextBox, IRichTextBoxService
@@ -19,6 +21,8 @@ namespace CryptoBook.Infrastructure
         private readonly IRichTextBoxService service;
 
         private FontWeight currentFontWeight { get; set; }
+        private FontFamily currentFontFamily { get; set; }
+        private double currentFontSize { get; set; }
 
         public static readonly DependencyProperty DocumentContentProperty =
             DependencyProperty.Register(
@@ -42,6 +46,9 @@ namespace CryptoBook.Infrastructure
             service.ApplyTextFormattingMode(TextFormattingMode.Ideal);
             service.ApplyAcceptsTab(true);
             service.ApplyAcceptsReturn(true);
+            currentFontSize = 16;
+            currentFontFamily = this.FontFamily;
+            currentFontWeight = this.FontWeight;
         }
 
         private ContextMenu CreateContextMenu()
@@ -69,7 +76,139 @@ namespace CryptoBook.Infrastructure
             var rtb = (BindableRichtextbox)d;
             rtb.Document = e.NewValue as FlowDocument ?? new FlowDocument();
             rtb.TextChanged += OnTextChanged;
-            rtb.KeyDown += OnKeyDown;
+            rtb.PreviewKeyDown += OnPreviewKeyDown;
+            rtb.PreviewTextInput += OnPreviewTextInput;
+            rtb.MouseDown += OnMouseDown;
+        }
+
+        private static void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Получаем RichTextBox
+            var richTextBox = sender as BindableRichtextbox;
+            if(richTextBox == null)
+                return;
+
+            // Устанавливаем курсор в позицию клика мыши
+            if(e.ChangedButton == MouseButton.Left)
+            {
+                // Получаем позицию клика мыши
+                System.Windows.Point mousePosition = e.GetPosition(richTextBox);
+                TextPointer newPosition = richTextBox.GetPositionFromPoint(mousePosition, true);
+
+                if(newPosition != null)
+                {
+                    // Устанавливаем курсор в новую позицию
+                    richTextBox.CaretPosition = newPosition;
+
+                    // Устанавливаем направление текста слева направо
+                    richTextBox.FlowDirection = System.Windows.FlowDirection.LeftToRight;
+
+                    // Убедимся, что весь текст в документе имеет направление слева направо
+                    TextRange documentRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
+                    documentRange.ApplyPropertyValue(FrameworkElement.FlowDirectionProperty, System.Windows.FlowDirection.LeftToRight);
+                }
+            }
+        }
+
+        private static void OnPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // Получаем RichTextBox
+            var richTextBox = sender as BindableRichtextbox;
+            if(richTextBox == null)
+                return;
+
+            // Обрабатываем клавишу Backspace
+            if(e.Key == Key.Back)
+            {
+                // Получаем текущую позицию курсора
+                TextPointer caretPosition = richTextBox.CaretPosition;
+
+                // Проверяем, есть ли текст перед курсором
+                TextPointer previousPosition = caretPosition.GetPositionAtOffset(-1);
+                if(previousPosition != null)
+                {
+                    // Создаем TextRange для удаления одного символа перед курсором
+                    TextRange range = new TextRange(previousPosition, caretPosition);
+
+                    // Удаляем символ
+                    range.Text = string.Empty;
+
+                    // Сдвигаем курсор назад
+                    richTextBox.CaretPosition = previousPosition;
+
+                    // Устанавливаем направление текста слева направо
+                    richTextBox.FlowDirection = System.Windows.FlowDirection.LeftToRight;
+
+                    // Отмечаем событие как обработанное
+                    e.Handled = true;
+                }
+            }
+            // Разрешаем перемещение курсора клавишами (стрелки, Home, End)
+            else if(e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Up || e.Key == Key.Down ||
+                     e.Key == Key.Home || e.Key == Key.End)
+            {
+                // Разрешаем стандартное поведение для клавиш перемещения
+                e.Handled = false;
+
+                // Устанавливаем направление текста слева направо после перемещения
+                richTextBox.FlowDirection = System.Windows.FlowDirection.LeftToRight;
+            }
+            // Блокируем комбинации, которые могут менять направление текста (например, Ctrl+Shift)
+            else if((e.Key == Key.LeftShift || e.Key == Key.RightShift) &&
+                     (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private static void OnPreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Получаем RichTextBox
+            var richTextBox = sender as BindableRichtextbox;
+            if(richTextBox == null)
+                return;
+
+            // Получаем введенный символ
+            string input = e.Text;
+
+            // Проверяем, является ли символ буквой, цифрой или знаком препинания, и не является управляющим
+            if(!string.IsNullOrEmpty(input) &&
+                (char.IsLetterOrDigit(input[0]) || char.IsPunctuation(input[0])) &&
+                !char.IsControl(input[0]))
+            {
+                // Получаем текущую позицию курсора
+                TextPointer caretPosition = richTextBox.CaretPosition;
+
+                // Создаем TextRange для вставки текста
+                TextRange range = new TextRange(caretPosition, caretPosition);
+
+                // Вставляем введенный символ
+                range.Text = input;
+
+                // Применяем свойства форматирования из RichTextBox
+                range.ApplyPropertyValue(TextElement.FontSizeProperty, richTextBox.currentFontSize);
+                range.ApplyPropertyValue(TextElement.FontFamilyProperty, richTextBox.currentFontFamily);
+                range.ApplyPropertyValue(TextElement.FontWeightProperty, richTextBox.currentFontWeight);
+
+                // Устанавливаем направление текста слева направо для вставленного текста
+                range.ApplyPropertyValue(FrameworkElement.FlowDirectionProperty, System.Windows.FlowDirection.LeftToRight);
+
+                // Проверяем, есть ли текст перед курсором
+                TextPointer previousPosition = caretPosition.GetPositionAtOffset(1);
+                if(previousPosition == null)
+                {
+                // Сдвигаем курсор после вставленного символа
+                richTextBox.CaretPosition = caretPosition.GetPositionAtOffset(input.Length);
+
+                }
+
+                // Отмечаем событие как обработанное
+                e.Handled = true;
+            } else
+            {
+                // Если символ не подходит, предотвращаем его ввод
+                e.Handled = true;
+            }
         }
 
         private static void OnTextChanged(object sender, TextChangedEventArgs e)
@@ -82,12 +221,6 @@ namespace CryptoBook.Infrastructure
 
             if(!char.IsControl((char)e.Key))
             {
-                if(sender is BindableRichtextbox rtb && sender is IRichTextBoxService irtb)
-                {
-                    var range = new TextRange(rtb.CaretPosition, rtb.CaretPosition);
-                    range.Text = e.Key.ToString();
-                    range.ApplyPropertyValue(TextElement.FontWeightProperty, rtb.currentFontWeight);
-                }
             }
         }
 
@@ -119,9 +252,8 @@ namespace CryptoBook.Infrastructure
         {
             if(Selection.Text.Length > 0)
                 Selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-            else 
+            else
                 currentFontWeight = FontWeights.Bold;
-
         }
 
         void IRichTextBoxService.ApplyItalic()
