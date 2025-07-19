@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
+using media = System.Windows.Media;
+
 
 namespace CryptoBook.Interfaces
 {
     public interface IRichTextBoxService
     {
         // Свойства для работы с содержимым и выделением
+
+
 
         /// <summary>
         /// Получение/установка содержимого документа
@@ -41,6 +45,10 @@ namespace CryptoBook.Interfaces
         /// Включение/выключение проверки орфографии
         /// </summary>
         bool SpellCheckEnabled { get; set; }
+
+        media.FontFamily FontFamily { get; set; }
+        FontWeight FontWeight { get; set; }
+        double FontSize { get; set; }
 
         // Методы форматирования текста
 
