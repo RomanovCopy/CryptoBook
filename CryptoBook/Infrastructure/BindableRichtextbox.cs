@@ -19,7 +19,7 @@ namespace CryptoBook.Infrastructure
     public class BindableRichtextbox: System.Windows.Controls.RichTextBox, IRichTextBoxService
     {
         private readonly IRichTextBoxService service;
-        private bool textChanged {  get; set; }
+        private bool textChanged { get; set; }
 
 
         public static readonly DependencyProperty DocumentContentProperty =
@@ -67,43 +67,42 @@ namespace CryptoBook.Infrastructure
         }
 
 
-        FontWeight IRichTextBoxService.FontWeight
-        {
-            get => (FontWeight)GetValue(MyFontWeightProperty);
-            set
-            {
-                if(Selection.IsEmpty)
-                    SetValue(MyFontWeightProperty, value);
-                else
-                    Selection.ApplyPropertyValue(TextElement.FontWeightProperty, value);
-            }
-        }
-        public static readonly DependencyProperty MyFontWeightProperty;
+        //FontWeight IRichTextBoxService.FontWeight
+        //{
+        //    get => (FontWeight)GetValue(MyFontWeightProperty);
+        //    set
+        //    {
+        //        if(Selection.IsEmpty)
+        //            SetValue(MyFontWeightProperty, value);
+        //        else
+        //            Selection.ApplyPropertyValue(TextElement.FontWeightProperty, value);
+        //    }
+        //}
+        //public static readonly DependencyProperty MyFontWeightProperty;
 
-        private static void OnFontWeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            // Получаем RichTextBox
-            var richTextBox = d as BindableRichtextbox;
-            if(richTextBox == null)
-                return;
-            // Получаем введенный символ
-            //string input = e.Text;
-            if(richTextBox is IRichTextBoxService service)
-            {
-                //var position = richTextBox.CaretPosition;
-                //var nextposition = position.GetPositionAtOffset(1, LogicalDirection.Forward);
-                //var range = new TextRange(richTextBox.CaretPosition, richTextBox.CaretPosition);
-                //richTextBox.CaretPosition = nextposition;
-                //range.Text = input;
-               richTextBox.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, e.NewValue);
-                richTextBox.Focus();
-            }
+        //private static void OnFontWeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    // Получаем RichTextBox
+        //    var richTextBox = d as BindableRichtextbox;
+        //    if(richTextBox == null)
+        //        return;
+        //    // Получаем введенный символ
+        //    //string input = e.Text;
+        //    if(richTextBox is IRichTextBoxService service)
+        //    {
+        //        var range = new TextRange(service.SelectedText.Start, service.SelectedText.End);
+        //        service.Focus();
+        //        richTextBox.SetFontProperties(range);
+        //        service.FontWeight = FontWeights.Normal;
+        //        range = new TextRange(service.SelectedText.End, service.SelectedText.End);
+        //        richTextBox.SetFontProperties(range);
+        //    }
 
-        }
+        //}
 
         static BindableRichtextbox()
         {
-            MyFontWeightProperty = DependencyProperty.Register("FontWeight", typeof(FontWeight), typeof(BindableRichtextbox), new PropertyMetadata(new PropertyChangedCallback(OnFontWeightChanged)));
+            //MyFontWeightProperty = DependencyProperty.Register("FontWeight", typeof(FontWeight), typeof(BindableRichtextbox), new PropertyMetadata(new PropertyChangedCallback(OnFontWeightChanged)));
 
         }
 
@@ -116,7 +115,7 @@ namespace CryptoBook.Infrastructure
             service = (IRichTextBoxService)this;
             service.ApplyContextMenu(CreateContextMenu());
             service.ApplyDocumentEnabled(true);
-            service.ApplyTextFormattingMode(TextFormattingMode.Ideal);
+            service.ApplyTextFormattingMode(TextFormattingMode.Display);
             service.ApplyAcceptsTab(true);
             service.ApplyAcceptsReturn(true);
             FontSize = 16;
@@ -163,7 +162,7 @@ namespace CryptoBook.Infrastructure
                 {
                     // Устанавливаем курсор в новую позицию
                     richTextBox.CaretPosition = newPosition;
-                    new TextRange(newPosition,newPosition).ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
+                    new TextRange(newPosition, newPosition).ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
                     // Устанавливаем направление текста слева направо
                     richTextBox.FlowDirection = System.Windows.FlowDirection.LeftToRight;
 
@@ -268,20 +267,27 @@ namespace CryptoBook.Infrastructure
 
         void IRichTextBoxService.ApplyBold()
         {
-            //service.SelectedText.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-            service.Focus();
-            if(service.FontWeight == FontWeights.Bold)
-            {
-                //Selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-                service.FontWeight = FontWeights.Normal;
+            this.Selection.Text = this.Selection.Text + " ";
+            this.Selection.ApplyPropertyValue(Inline.FontWeightProperty, FontWeights.Bold);
+            MoveCaretOutsideFormatting();
+        }
 
-            } else
+        private void MoveCaretOutsideFormatting()
+        {
+            var end = this.Selection.End;
+
+            // Если конец находится внутри Run с жирным стилем
+            var parentRun = end.Parent as Run;
+            if(parentRun != null && parentRun.FontWeight == FontWeights.Bold)
             {
-                //Selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-                service.FontWeight = FontWeights.Bold;
+                var newRun = new Run();
+                var paragraph = parentRun.Parent as Paragraph;
+                if(paragraph != null)
+                {
+                    paragraph.Inlines.InsertAfter(parentRun, newRun);
+                    this.CaretPosition = newRun.ContentStart;
+                }
             }
-            //var textrange = new TextRange(Selection.End, Selection.End.GetPositionAtOffset(2, LogicalDirection.Forward));
-            //textrange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
         }
 
         void IRichTextBoxService.ApplyItalic()
@@ -615,5 +621,27 @@ namespace CryptoBook.Infrastructure
             Selection.Text = text;
         }
 
+
+
+        /// <summary>
+        /// установка свойств текущего символа
+        /// </summary>
+        /// <param name="textRange"></param>
+        internal void SetFontProperties(TextRange textRange)
+        {
+            try
+            {
+                textRange.ApplyPropertyValue(TextElement.FontFamilyProperty, FontFamily);
+                textRange.ApplyPropertyValue(TextElement.FontSizeProperty, (FontSize * (96 / 72)));
+                textRange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeight);
+                textRange.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyle);
+                //textRange.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecoration);
+                //textRange.ApplyPropertyValue(TextElement.ForegroundProperty, MyForeground);
+                //textRange.ApplyPropertyValue(TextElement.BackgroundProperty, MyFontBackground);
+                //textRange.ApplyPropertyValue(Block.MarginProperty, LineSpacing);
+
+            } catch { }
+
+        }
     }
 }
