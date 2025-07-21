@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
-using media = System.Windows.Media;
+using Media = System.Windows.Media;
+using Draving = System.Drawing;
+using Controls = System.Windows.Controls;
 
 
 namespace CryptoBook.Interfaces
@@ -20,11 +22,11 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Получение/установка содержимого документа
         /// </summary>
-        FlowDocument DocumentContent { get; set; }
+        FlowDocument Document { get; set; }
         /// <summary>
         /// Получение текущего выделенного текста
         /// </summary>
-        TextSelection SelectedText { get; }
+        TextSelection Selection { get; }
         /// <summary>
         /// Проверяет, можно ли отменить действие
         /// </summary>
@@ -45,9 +47,17 @@ namespace CryptoBook.Interfaces
         /// Включение/выключение проверки орфографии
         /// </summary>
         bool SpellCheckEnabled { get; set; }
-
-        media.FontFamily FontFamily { get; set; }
+        /// <summary>
+        /// текущая FontFamily для вводимого текста
+        /// </summary>
+        Media.FontFamily FontFamily { get; set; }
+        /// <summary>
+        /// текущая FontWeight для вводимого текста
+        /// </summary>
         FontWeight FontWeight { get; set; }
+        /// <summary>
+        /// текущая FontSize для вводимого текста
+        /// </summary>
         double FontSize { get; set; }
 
         // Методы форматирования текста
@@ -78,12 +88,12 @@ namespace CryptoBook.Interfaces
         /// Устанавливает цвет текста для выделенного текста
         /// </summary>
         /// <param name="color">цвет текста</param>
-        void ApplyForegroundColor(Color color);
+        void ApplyForegroundColor(Media.Color color);
         /// <summary>
         /// Устанавливает цвет фона для выделенного текста
         /// </summary>
         /// <param name="color">цвет фона</param>
-        void ApplyBackgroundColor(Color color);
+        void ApplyBackgroundColor(Media.Color color);
         /// <summary>
         /// Устанавливает выравнивание текста (Left, Center, Right, Justify)
         /// </summary>
@@ -93,12 +103,12 @@ namespace CryptoBook.Interfaces
         /// Установка форматирования текста
         /// </summary>
         /// <param name="format"></param>
-        void ApplyTextFormattingMode(System.Windows.Media.TextFormattingMode mode);
+        void ApplyTextFormattingMode(Media.TextFormattingMode mode);
         /// <summary>
         /// Установка режима рендеринга текста
         /// </summary>
         /// <param name="mode"></param>
-        void ApplyTextRenderingMode(System.Windows.Media.TextRenderingMode mode);
+        void ApplyTextRenderingMode(Media.TextRenderingMode mode);
         /// <summary>
         /// Разрешение табуляции
         /// </summary>
@@ -113,17 +123,17 @@ namespace CryptoBook.Interfaces
         /// Установка видимости вертикальной полосы прокрутки
         /// </summary>
         /// <param name="visibility"></param>
-        void ApplyVerticalScrollBarVisibility(System.Windows.Controls.ScrollBarVisibility visibility);
+        void ApplyVerticalScrollBarVisibility(Controls.ScrollBarVisibility visibility);
         /// <summary>
         /// Установка видимости горизонтальной полосы прокрутки
         /// </summary>
         /// <param name="visibility"></param>
-        void ApplyHorizontalScrollBarVisibility(System.Windows.Controls.ScrollBarVisibility visibility);
+        void ApplyHorizontalScrollBarVisibility(Controls.ScrollBarVisibility visibility);
         /// <summary>
         /// Установка контекстного меню
         /// </summary>
         /// <param name="menu"></param>
-        void ApplyContextMenu(System.Windows.Controls.ContextMenu menu);
+        void ApplyContextMenu(Controls.ContextMenu menu);
         /// <summary>
         /// Включение поддержки документов
         /// </summary>
@@ -166,7 +176,7 @@ namespace CryptoBook.Interfaces
         /// </summary>
         /// <param name="uri">гиперссылка с указанным URI</param>
         /// <param name="displayText">необязательный текст</param>
-        void InsertHyperlink(string uri, string displayText = null);
+        void InsertHyperlink(string uri, string displayText);
         /// <summary>
         /// Вставляет изображение по указанному пути с опциональными размерами
         /// </summary>
