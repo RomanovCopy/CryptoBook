@@ -163,7 +163,7 @@ namespace CryptoBook.Infrastructure
         {
         }
 
-        void IRichTextBoxService.InsertImage(string imagePath, double width = 0, double height = 0)
+        void IRichTextBoxService.InsertImage(string imagePath, double width, double height)
         {
             var image = new Controls.Image
             {

@@ -142,6 +142,37 @@ namespace CryptoBook.Models
         }
 
 
+        internal bool CanExecute_ChangeFontFamilyCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ChangeFontFamilyCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ChangeForegroundColor(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ChangeForegroundColor(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ChangeBackgroundColor(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ChangeBackgroundColor(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
         internal bool CanExecute_Loaded(object? obj)
         {
             return true;
@@ -180,5 +211,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
     }
 }

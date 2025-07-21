@@ -83,6 +83,18 @@ namespace CryptoBook.Interfaces
         /// Команда для изменения размера шрифта.
         /// </summary>
         ICommand ChangeFontSizeCommand { get; }
+        /// <summary>
+        /// Команда для изменения FontFamily.
+        /// </summary>
+        ICommand ChangeFontFamilyCommand { get; }
+        /// <summary>
+        /// Команда для изменения цвета шрифта
+        /// </summary>
+        ICommand ChangeForegroundColor { get; }
+        /// <summary>
+        /// Команда для изменения цвета фона(бумаги).
+        /// </summary>
+        ICommand ChangeBackgroundColor { get; }
 
     }
 }

@@ -31,7 +31,6 @@ namespace CryptoBook.ViewModels
         {
             richtextboxModel = new(scope);
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
-            //Document = new FlowDocument();
         }
 
 
@@ -84,5 +83,15 @@ namespace CryptoBook.ViewModels
 
         public ICommand Closed => closed ??= new RelayCommand(richtextboxModel.Execute_Closed, richtextboxModel.CanExecute_Closed);
         RelayCommand closed;
+
+        public ICommand ChangeFontFamilyCommand => new RelayCommand(richtextboxModel.Execute_ChangeFontFamilyCommand, richtextboxModel.CanExecute_ChangeFontFamilyCommand);
+        RelayCommand changeFontFamilyCommand;
+
+        public ICommand ChangeForegroundColor =>changeForegroundColor??= new RelayCommand(richtextboxModel.Execute_ChangeForegroundColor, richtextboxModel.CanExecute_ChangeForegroundColor);
+        RelayCommand changeForegroundColor;
+
+        public ICommand ChangeBackgroundColor => changeBackgroundColor ??= new RelayCommand(richtextboxModel.Execute_ChangeBackgroundColor, richtextboxModel.CanExecute_ChangeBackgroundColor);
+        RelayCommand changeBackgroundColor;
+
     }
 }

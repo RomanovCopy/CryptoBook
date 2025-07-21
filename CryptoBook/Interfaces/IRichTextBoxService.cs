@@ -183,7 +183,7 @@ namespace CryptoBook.Interfaces
         /// <param name="imagePath">путь к изображению</param>
         /// <param name="width">ширина изображения</param>
         /// <param name="height">высота изображения</param>
-        void InsertImage(string imagePath, double width = 0, double height = 0);
+        void InsertImage(string imagePath, double width, double height);
         /// <summary>
         /// Вставляет новый параграф в текущей позиции курсора
         /// </summary>
