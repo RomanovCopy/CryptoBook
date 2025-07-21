@@ -95,6 +95,30 @@ namespace CryptoBook.Interfaces
         /// Команда для изменения цвета фона(бумаги).
         /// </summary>
         ICommand ChangeBackgroundColor { get; }
+        /// <summary>
+        /// Устанавливает выравнивание текста (Left, Center, Right, Justify)
+        /// </summary>
+        ICommand ApplyTextAlignment {  get; }
+        /// <summary>
+        /// Установка форматирования текста
+        /// </summary>
+        ICommand ApplyTextFormattingMode {  get; }
+        /// <summary>
+        /// Установка режима рендеринга текста
+        /// </summary>
+        ICommand ApplyTextRenderingMode {  get; }
+        /// <summary>
+        /// Разрешение табуляции
+        /// </summary>
+        ICommand ApplyAcceptsTab {  get; }
+        /// <summary>
+        /// Разрешение возврата каретки (Enter)
+        /// </summary>
+        ICommand ApplyAcceptsReturn {  get; }
+        /// <summary>
+        /// Установка видимости вертикальной полосы прокрутки
+        /// </summary>
+        ICommand ApplyVerticalScrollBarVisibility {  get; }
 
     }
 }

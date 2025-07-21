@@ -172,6 +172,68 @@ namespace CryptoBook.Models
         }
 
 
+        internal bool CanExecute_ApplyTextAlignment(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ApplyTextAlignment(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ApplyTextFormattingMode(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ApplyTextFormattingMode(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ApplyTextRenderingMode(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ApplyTextRenderingMode(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ApplyAcceptsTab(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ApplyAcceptsTab(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ApplyAcceptsReturn(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ApplyAcceptsReturn(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_ApplyVerticalScrollBarVisibility(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ApplyVerticalScrollBarVisibility(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
 
         internal bool CanExecute_Loaded(object? obj)
         {
@@ -181,8 +243,6 @@ namespace CryptoBook.Models
         {
 
         }
-
-
         internal bool CanExecute_Close(object? obj)
         {
             throw new NotImplementedException();
@@ -191,8 +251,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
-
         internal bool CanExecute_Closing(object? obj)
         {
             throw new NotImplementedException();
@@ -201,8 +259,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
-
         internal bool CanExecute_Closed(object? obj)
         {
             throw new NotImplementedException();

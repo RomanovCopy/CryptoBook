@@ -116,8 +116,64 @@ namespace CryptoBook.Models
         }
         internal void Execute_ApplyBackgroundColor(object? obj)
         {
-            throw new NotImplementedException();
+            richtextbox.ChangeBackgroundColor.Execute(obj);
         }
+
+
+        internal bool CanExecute_ApplyTextAlignment(object? obj)
+        {
+            return richtextbox.ApplyTextAlignment.CanExecute(obj);
+        }
+        internal void Execute_ApplyTextAlignment(object? obj)
+        {
+            richtextbox.ApplyTextAlignment.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ApplyTextFormattingMode(object? obj)
+        {
+            return richtextbox.ApplyTextFormattingMode.CanExecute(obj);
+        }
+        internal void Execute_ApplyTextFormattingMode(object? obj)
+        {
+            richtextbox.ApplyTextFormattingMode.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ApplyTextRenderingMode(object? obj)
+        {
+            return richtextbox.ApplyTextRenderingMode.CanExecute (obj);
+        }
+        internal void Execute_ApplyTextRenderingMode(object? obj)
+        {
+            richtextbox.ApplyTextRenderingMode.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ApplyAcceptsReturn(object? obj)
+        {
+            return richtextbox.ApplyAcceptsReturn.CanExecute(obj);
+        }
+        internal void Execute_ApplyAcceptsReturn(object? obj)
+        {
+            richtextbox.ApplyAcceptsReturn.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ApplyVerticalScrollBarVisibility(object? obj)
+        {
+            return richtextbox.ApplyVerticalScrollBarVisibility.CanExecute(obj);
+        }
+        internal void Execute_ApplyVerticalScrollBarVisibility(object? obj)
+        {
+            richtextbox.ApplyVerticalScrollBarVisibility.Execute(obj);
+        }
+
+
+
+
+
+
 
 
         internal bool CanExecute_Loaded(object? obj)
@@ -153,6 +209,16 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closed(object? obj)
         {
+        }
+
+        internal bool CanExecute_ApplyAcceptsTab(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void Execute_ApplyAcceptsTab(object? obj)
+        {
+            throw new NotImplementedException();
         }
 
     }

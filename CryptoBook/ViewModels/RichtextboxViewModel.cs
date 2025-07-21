@@ -68,6 +68,33 @@ namespace CryptoBook.ViewModels
         public ICommand ChangeFontSizeCommand => changeFontSizeCommand??=new RelayCommand(richtextboxModel.Execute_ChangeFontSizeCommand, richtextboxModel.CanExecute_ChangeFontSizeCommand);
         RelayCommand changeFontSizeCommand;
 
+        public ICommand ApplyTextAlignment => applyTextAlignment ??= new RelayCommand(richtextboxModel.Execute_ApplyTextAlignment, richtextboxModel.CanExecute_ApplyTextAlignment);
+        RelayCommand applyTextAlignment;
+
+        public ICommand ApplyTextFormattingMode => applyTextFormattingMode ??= new RelayCommand(richtextboxModel.Execute_ApplyTextFormattingMode, richtextboxModel.CanExecute_ApplyTextFormattingMode);
+        RelayCommand applyTextFormattingMode;
+
+        public ICommand ApplyTextRenderingMode => applyTextRenderingMode ??= new RelayCommand(richtextboxModel.Execute_ApplyTextRenderingMode, richtextboxModel.CanExecute_ApplyTextRenderingMode);
+        ICommand applyTextRenderingMode;
+
+
+        public ICommand ApplyAcceptsTab => applyAcceptsTab ??= new RelayCommand(richtextboxModel.Execute_ApplyAcceptsTab, richtextboxModel.CanExecute_ApplyAcceptsTab);
+        RelayCommand applyAcceptsTab;
+
+
+        public ICommand ApplyAcceptsReturn => new RelayCommand(richtextboxModel.Execute_ApplyAcceptsReturn, richtextboxModel.CanExecute_ApplyAcceptsReturn);
+        RelayCommand applyAcceptsReturn;
+
+        public ICommand ApplyVerticalScrollBarVisibility => applyVerticalScrollBarVisibility ??= new RelayCommand(richtextboxModel.Execute_ApplyVerticalScrollBarVisibility, richtextboxModel.CanExecute_ApplyVerticalScrollBarVisibility);
+        RelayCommand applyVerticalScrollBarVisibility;
+
+
+
+
+
+
+
+
 
         public ICommand Loaded => loaded ??= new RelayCommand(richtextboxModel.Execute_Loaded, richtextboxModel.CanExecute_Loaded);
         RelayCommand loaded;

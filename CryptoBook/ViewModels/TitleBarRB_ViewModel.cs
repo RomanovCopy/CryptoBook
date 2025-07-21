@@ -63,35 +63,23 @@ namespace CryptoBook.ViewModels
         public ICommand ApplyBackgroundColor => applyBackgroundColor ??= new RelayCommand(titleBarRB_Model.Execute_ApplyBackgroundColor, titleBarRB_Model.CanExecute_ApplyBackgroundColor);
         RelayCommand applyBackgroundColor;
 
-        public void ApplyTextAlignment(TextAlignment alignment)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyTextAlignment => applyTextAlignment ??= new RelayCommand(titleBarRB_Model.Execute_ApplyTextAlignment, titleBarRB_Model.CanExecute_ApplyTextAlignment);
+        RelayCommand applyTextAlignment;
 
-        public void ApplyTextFormattingMode(TextFormattingMode mode)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyTextFormattingMode => applyTextFormattingMode ??= new RelayCommand(titleBarRB_Model.Execute_ApplyTextFormattingMode, titleBarRB_Model.CanExecute_ApplyTextFormattingMode);
+        RelayCommand applyTextFormattingMode;
 
-        public void ApplyTextRenderingMode(TextRenderingMode mode)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyTextRenderingMode => applyTextRenderingMode ??= new RelayCommand(titleBarRB_Model.Execute_ApplyTextRenderingMode, titleBarRB_Model.CanExecute_ApplyTextRenderingMode);
+        RelayCommand applyTextRenderingMode;
 
-        public void ApplyAcceptsTab(bool accept)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyAcceptsTab => applyAcceptsTab ??= new RelayCommand(titleBarRB_Model.Execute_ApplyAcceptsTab, titleBarRB_Model.CanExecute_ApplyAcceptsTab);
+        RelayCommand applyAcceptsTab;
 
-        public void ApplyAcceptsReturn(bool accept)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyAcceptsReturn => applyAcceptsReturn ??= new RelayCommand(titleBarRB_Model.Execute_ApplyAcceptsReturn, titleBarRB_Model.CanExecute_ApplyAcceptsReturn);
+        RelayCommand applyAcceptsReturn;
 
-        public void ApplyVerticalScrollBarVisibility(ScrollBarVisibility visibility)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyVerticalScrollBarVisibility => applyVerticalScrollBarVisibility ??= new RelayCommand(titleBarRB_Model.Execute_ApplyVerticalScrollBarVisibility, titleBarRB_Model.CanExecute_ApplyVerticalScrollBarVisibility);
+        RelayCommand applyVerticalScrollBarVisibility;
 
         public void ApplyHorizontalScrollBarVisibility(ScrollBarVisibility visibility)
         {
@@ -274,7 +262,6 @@ namespace CryptoBook.ViewModels
 
         public ICommand Closed => closed ??= new RelayCommand(titleBarRB_Model.Execute_Closed, titleBarRB_Model.CanExecute_Closed);
         RelayCommand closed;
-
 
     }
 }

@@ -3,16 +3,23 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface ITitleBarRB_ViewModel: IViewModel
+     interface ITitleBarRB_ViewModel: IViewModel
     {
-        public ICommand BoldCommand { get; }
-        public ICommand ItalicCommand { get; }
-        public ICommand UnderlineCommand { get; }
-        public ICommand ClearFormattingCommand { get; }
-        public ICommand InsertImageCommand { get; }
-        public ICommand ApplyFontFamily { get; }
-        public ICommand ApplyFontSize { get; }
-        public ICommand ApplyForegroundColor { get; }
-        public ICommand ApplyBackgroundColor { get; }
+        ICommand BoldCommand { get; }
+        ICommand ItalicCommand { get; }
+        ICommand UnderlineCommand { get; }
+        ICommand ClearFormattingCommand { get; }
+        ICommand InsertImageCommand { get; }
+        ICommand ApplyFontFamily { get; }
+        ICommand ApplyFontSize { get; }
+        ICommand ApplyForegroundColor { get; }
+        ICommand ApplyBackgroundColor { get; }
+        ICommand ApplyTextAlignment {  get; }
+        ICommand ApplyTextFormattingMode { get; }
+        ICommand ApplyTextRenderingMode {  get; }
+        ICommand ApplyAcceptsTab {  get; }
+        ICommand ApplyAcceptsReturn { get; }
+        ICommand ApplyVerticalScrollBarVisibility {  get; }
+
     }
 }
