@@ -34,6 +34,16 @@ namespace CryptoBook.Interfaces
         ICommand ScrollToEnd { get; }
         ICommand ScrollToStart { get; }
         ICommand SetDocumentMargin { get; }
-
+        ICommand Undo { get; }
+        ICommand Redo { get; }
+        ICommand FindText { get; }
+        ICommand ReplaceText { get; }
+        ICommand ApplyBulletedList { get; }
+        ICommand ApplyNumberedList { get; }
+        ICommand RemoveListFormatting { get; }
+        ICommand IncreaseIndent { get; }
+        ICommand DecreaseIndent { get; }
+        ICommand Focus { get; }
+        ICommand InsertTextAtCaret { get; }
     }
 }

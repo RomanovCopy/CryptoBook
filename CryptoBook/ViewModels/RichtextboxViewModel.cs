@@ -89,12 +89,106 @@ namespace CryptoBook.ViewModels
         RelayCommand applyVerticalScrollBarVisibility;
 
 
-        public ICommand ApplyHorizontalScrollBarVisibility => new RelayCommand(richtextboxModel.Execute_ApplyHorizontalScrollBarVisibility, richtextboxModel.CanExecute_ApplyHorizontalScrollBarVisibility);
+        public ICommand ApplyHorizontalScrollBarVisibility => applyHorizontalScrollBarVisibility ??= new RelayCommand(richtextboxModel.Execute_ApplyHorizontalScrollBarVisibility, richtextboxModel.CanExecute_ApplyHorizontalScrollBarVisibility);
+        RelayCommand applyHorizontalScrollBarVisibility;
+
+        public ICommand ApplyContextMenu => applyContextMenu ??= new RelayCommand(richtextboxModel.Execute_ApplyContextMenu, richtextboxModel.CanExecute_ApplyContextMenu);
+        RelayCommand applyContextMenu;
+
+        public ICommand ApplyDocumentEnabled => applyDocumentEnabled ??= new RelayCommand(richtextboxModel.Execute_ApplyDocumentEnabled, richtextboxModel.CanExecute_ApplyDocumentEnabled);
+        RelayCommand applyDocumentEnabled;
+
+        public ICommand ClearFormatting => clearFormatting ??= new RelayCommand(richtextboxModel.Execute_ClearFormatting, richtextboxModel.CanExecute_ClearFormatting);
+        RelayCommand clearFormatting;
+
+        public ICommand SelectAll => selectAll ??= new RelayCommand(richtextboxModel.Execute_SelectAll, richtextboxModel.CanExecute_SelectAll);
+        RelayCommand selectAll;
+
+        public ICommand ClearSelection => clearSelection ??= new RelayCommand(richtextboxModel.Execute_ClearSelection, richtextboxModel.CanExecute_ClearSelection);
+        RelayCommand clearSelection;
+
+        public ICommand GetSelectedTextAsString => getSelectedTextAsString ??= new RelayCommand(richtextboxModel.Execute_GetSelectedTextAsString, richtextboxModel.CanExecute_GetSelectedTextAsString);
+        RelayCommand getSelectedTextAsString;
+
+        public ICommand ReplaceSelectedText => replaceSelectedText ??= new RelayCommand(richtextboxModel.Execute_ReplaceSelectedText, richtextboxModel.CanExecute_ReplaceSelectedText);
+        RelayCommand replaceSelectedText;
+
+        public ICommand InsertHyperlink => insertHyperlink ??= new RelayCommand(richtextboxModel.Execute_InsertHyperlink, richtextboxModel.CanExecute_InsertHyperlink);
+        RelayCommand insertHyperlink;
+
+        public ICommand InsertParagraph => insertParagraph ??= new RelayCommand(richtextboxModel.Execute_InsertParagraph, richtextboxModel.CanExecute_InsertParagraph);
+        RelayCommand insertParagraph;
+
+        public ICommand InsertLineBreak => insertLineBreak ??= new RelayCommand(richtextboxModel.Execute_InsertLineBreak, richtextboxModel.CanExecute_InsertLineBreak);
+        RelayCommand insertLineBreak;
+
+        public ICommand InsertTable => insertTable ??= new RelayCommand(richtextboxModel.Execute_InsertTable, richtextboxModel.CanExecute_InsertTable);
+        RelayCommand insertTable;
+
+        public ICommand GetRtf => getRtf ??= new RelayCommand(richtextboxModel.Execute_GetRtf, richtextboxModel.CanExecute_GetRtf);
+        RelayCommand getRtf;
 
 
+        public ICommand LoadRtf => loadRtf ??= new RelayCommand(richtextboxModel.Execute_LoadRtf, richtextboxModel.CanExecute_LoadRtf);
+        RelayCommand loadRtf;
 
 
+        public ICommand GetPlainText => getPlainText ??= new RelayCommand(richtextboxModel.Execute_GetPlainText, richtextboxModel.CanExecute_GetPlainText);
+        RelayCommand getPlainText;
 
+        public ICommand LoadPlainText => loadPlainText ??= new RelayCommand(richtextboxModel.Execute_LoadPlainText, richtextboxModel.CanExecute_LoadPlainText);
+        RelayCommand loadPlainText;
+
+        public ICommand ClearDocument => clearDocument ??= new RelayCommand(richtextboxModel.Execute_ClearDocument, richtextboxModel.CanExecute_ClearDocument);
+        RelayCommand clearDocument;
+
+        public ICommand ScrollToCaret => scrollToCaret ??= new RelayCommand(richtextboxModel.Execute_ScrollToCaret, richtextboxModel.CanExecute_ScrollToCaret);
+        RelayCommand scrollToCaret;
+
+        public ICommand ScrollToEnd => scrollToEnd ??= new RelayCommand(richtextboxModel.Execute_ScrollToEnd, richtextboxModel.CanExecute_ScrollToEnd);
+        RelayCommand scrollToEnd;
+
+        public ICommand ScrollToStart => scrollToStart ??= new RelayCommand(richtextboxModel.Execute_ScrollToStart, richtextboxModel.CanExecute_ScrollToStart);
+        RelayCommand scrollToStart;
+
+        public ICommand SetDocumentMargin => setDocumentMargin ??= new RelayCommand(richtextboxModel.Execute_SetDocumentMargin, richtextboxModel.CanExecute_SetDocumentMargin);
+        RelayCommand setDocumentMargin;
+
+        public ICommand Undo => undo ??= new RelayCommand(richtextboxModel.Execute_Undo, richtextboxModel.CanExecute_Undo);
+        RelayCommand undo;
+
+        public ICommand Redo => redo ??= new RelayCommand(richtextboxModel.Execute_Redo, richtextboxModel.CanExecute_Redo);
+        RelayCommand redo;
+
+        public ICommand FindText => findText ??= new RelayCommand(richtextboxModel.Execute_FindText, richtextboxModel.CanExecute_FindText);
+        RelayCommand findText;
+
+        public ICommand ReplaceText => replaceText ??= new RelayCommand(richtextboxModel.Execute_ReplaceText, richtextboxModel.CanExecute_ReplaceText);
+        RelayCommand replaceText;
+
+        public ICommand ReplaceAllText => replaceAllText ??= new RelayCommand(richtextboxModel.Execute_ReplaceAllText, richtextboxModel.CanExecute_ReplaceAllText);
+        RelayCommand replaceAllText;
+
+        public ICommand ApplyBulletedList => applyBulletedList ??= new RelayCommand(richtextboxModel.Execute_ApplyBulletedList, richtextboxModel.CanExecute_ApplyBulletedList);
+        RelayCommand applyBulletedList;
+
+        public ICommand ApplyNumberedList => applyNumberedList ??= new RelayCommand(richtextboxModel.Execute_ApplyNumberedList, richtextboxModel.CanExecute_ApplyNumberedList);
+        RelayCommand applyNumberedList;
+
+        public ICommand RemoveListFormatting => removeListFormatting ??= new RelayCommand(richtextboxModel.Execute_RemoveListFormatting, richtextboxModel.CanExecute_RemoveListFormatting);
+        RelayCommand removeListFormatting;
+
+        public ICommand IncreaseIndent => increaseIndent ??= new RelayCommand(richtextboxModel.Execute_IncreaseIndent, richtextboxModel.CanExecute_IncreaseIndent);
+        RelayCommand increaseIndent;
+
+        public ICommand DecreaseIndent => decreaseIndent ??= new RelayCommand(richtextboxModel.Execute_DecreaseIndent, richtextboxModel.CanExecute_DecreaseIndent);
+        RelayCommand decreaseIndent;
+
+        public ICommand Focus => focus ??= new RelayCommand(richtextboxModel.Execute_Focus, richtextboxModel.CanExecute_Focus);
+        RelayCommand focus;
+
+        public ICommand InsertTextAtCaret => insertTextAtCaret ??= new RelayCommand(richtextboxModel.Execute_InsertTextAtCaret, richtextboxModel.CanExecute_InsertTextAtCaret);
+        RelayCommand insertTextAtCaret;
 
 
         public ICommand Loaded => loaded ??= new RelayCommand(richtextboxModel.Execute_Loaded, richtextboxModel.CanExecute_Loaded);

@@ -17,6 +17,8 @@ using FontFamily = System.Windows.Media.FontFamily;
 using Media = System.Windows.Media;
 using Draving = System.Drawing;
 using Controls = System.Windows.Controls;
+using Clipboard = System.Windows.Clipboard;
+using DataFormats = System.Windows.DataFormats;
 
 
 namespace CryptoBook.Infrastructure
@@ -299,6 +301,32 @@ namespace CryptoBook.Infrastructure
             return navigator ?? start;
         }
 
+        // Методы работы с буфером обмена
+        void IRichTextBoxService.Copy()
+        {
+            if (!Selection.IsEmpty)
+            {
+                // Копируем выделенный текст (и форматирование) в буфер обмена
+                ApplicationCommands.Copy.Execute(null, this);
+            }
+        }
 
+        void IRichTextBoxService.Cut()
+        {
+            if (!Selection.IsEmpty && !IsReadOnly)
+            {
+                // Вырезаем выделенный текст (и форматирование) в буфер обмена
+                ApplicationCommands.Cut.Execute(null, this);
+            }
+        }
+
+        void IRichTextBoxService.Paste()
+        {
+            if (!IsReadOnly)
+            {
+                // Вставляем текст из буфера обмена в текущую позицию курсора
+                ApplicationCommands.Paste.Execute(null, this);
+            }
+        }
     }
 }

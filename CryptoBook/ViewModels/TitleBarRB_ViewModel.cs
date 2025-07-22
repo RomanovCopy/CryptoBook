@@ -128,65 +128,43 @@ namespace CryptoBook.ViewModels
         public ICommand SetDocumentMargin => setDocumentMargin ??= new RelayCommand(titleBarRB_Model.Execute_SetDocumentMargin, titleBarRB_Model.CanExecute_SetDocumentMargin);
         RelayCommand setDocumentMargin;
 
-        public void Undo()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand Undo => undo ??= new RelayCommand(titleBarRB_Model.Execute_Undo, titleBarRB_Model.CanExecute_Undo);
+        RelayCommand undo;
 
-        public void Redo()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand Redo => redo ??= new RelayCommand(titleBarRB_Model.Execute_Redo, titleBarRB_Model.CanExecute_Redo);
+        RelayCommand redo;
 
-        public bool FindText(string searchText, bool matchCase = false, bool wholeWord = false)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand FindText => findText ??= new RelayCommand(titleBarRB_Model.Execute_FindText, titleBarRB_Model.CanExecute_FindText);
+        RelayCommand findText;
 
-        public void ReplaceText(string searchText, string replaceText, bool matchCase = false, bool wholeWord = false)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ReplaceText => replaceText ??= new RelayCommand(titleBarRB_Model.Execute_ReplaceText, titleBarRB_Model.CanExecute_ReplaceText);
+        RelayCommand replaceText;
 
-        public void ReplaceAllText(string searchText, string replaceText, bool matchCase = false, bool wholeWord = false)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ReplaceAllText => replaceAllText ??= new RelayCommand(titleBarRB_Model.Execute_ReplaceAllText, titleBarRB_Model.CanExecute_ReplaceAllText);
+        RelayCommand replaceAllText;
 
-        public void ApplyBulletedList()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyBulletedList => applyBulletedList ??= new RelayCommand(titleBarRB_Model.Execute_ApplyBulletedList, titleBarRB_Model.CanExecute_ApplyBulletedList);
+        RelayCommand applyBulletedList;
 
-        public void ApplyNumberedList()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyNumberedList => applyNumberedList ??= new RelayCommand(titleBarRB_Model.Execute_ApplyNumberedList, titleBarRB_Model.CanExecute_ApplyNumberedList);
+        RelayCommand applyNumberedList;
 
-        public void RemoveListFormatting()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand RemoveListFormatting => removeListFormatting ??= new RelayCommand(titleBarRB_Model.Execute_RemoveListFormatting, titleBarRB_Model.CanExecute_RemoveListFormatting);
+        RelayCommand removeListFormatting;
 
-        public void IncreaseIndent()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand IncreaseIndent => increaseIndent ??= new RelayCommand(titleBarRB_Model.Execute_IncreaseIndent, titleBarRB_Model.CanExecute_IncreaseIndent);
+        RelayCommand increaseIndent;
 
-        public void DecreaseIndent()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand DecreaseIndent => decreaseIndent ??= new RelayCommand(titleBarRB_Model.Execute_DecreaseIndent, titleBarRB_Model.CanExecute_DecreaseIndent); 
+        RelayCommand decreaseIndent;
 
-        public void Focus()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand Focus => focus ??= new RelayCommand(titleBarRB_Model.Execute_Focus, titleBarRB_Model.CanExecute_Focus);
+        RelayCommand focus;
 
-        public void InsertTextAtCaret(string text)
-        {
-            throw new NotImplementedException();
-        }
+
+        public ICommand InsertTextAtCaret => insertTextAtCaret ??= new RelayCommand(titleBarRB_Model.Execute_InsertTextAtCaret, titleBarRB_Model.CanExecute_InsertTextAtCaret); 
+        RelayCommand insertTextAtCaret;
+
 
         public ICommand Loaded => loaded ??= new RelayCommand(titleBarRB_Model.Execute_Loaded, titleBarRB_Model.CanExecute_Loaded);
         RelayCommand loaded;

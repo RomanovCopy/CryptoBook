@@ -340,5 +340,22 @@ namespace CryptoBook.Interfaces
         /// <param name="text">вставляемый текст</param>
         void InsertTextAtCaret(string text);
 
+
+        // Методы работы с буфером обмена
+
+        /// <summary>
+        /// Копирует выделенный текст в буфер обмена
+        /// </summary>
+        void Copy();
+
+        /// <summary>
+        /// Вырезает выделенный текст в буфер обмена
+        /// </summary>
+        void Cut();
+
+        /// <summary>
+        /// Вставляет текст из буфера обмена в текущую позицию курсора
+        /// </summary>
+        void Paste();
     }
 }

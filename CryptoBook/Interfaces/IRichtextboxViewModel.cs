@@ -203,9 +203,53 @@ namespace CryptoBook.Interfaces
         /// Устанавливает отступы для документа
         /// </summary>
         ICommand SetDocumentMargin { get; }
-
-
-
-
+        /// <summary>
+        /// Отменяет последнее действие
+        /// </summary>
+        ICommand Undo { get; }
+        /// <summary>
+        /// Повторяет отмененное действие
+        /// </summary>
+        ICommand Redo { get; }
+        /// <summary>
+        /// Ищет текст в документе
+        /// </summary>
+        ICommand FindText { get; }
+        /// <summary>
+        /// Заменяет первое вхождение текста
+        /// </summary>
+        ICommand ReplaceText { get; }
+        /// <summary>
+        /// Заменяет все вхождения текста
+        /// </summary>
+        ICommand ReplaceAllText { get; }
+        /// <summary>
+        /// Применяет маркированный список к выделенному тексту
+        /// </summary>
+        ICommand ApplyBulletedList { get; }
+        /// <summary>
+        /// Применяет нумерованный список к выделенному тексту
+        /// </summary>
+        ICommand ApplyNumberedList { get; }
+        /// <summary>
+        /// Удаляет форматирование списка
+        /// </summary>
+        ICommand RemoveListFormatting { get; }
+        /// <summary>
+        /// Увеличивает отступ для текущего параграфа
+        /// </summary>
+        ICommand IncreaseIndent { get; }
+        /// <summary>
+        /// Уменьшает отступ для текущего параграфа
+        /// </summary>
+        ICommand DecreaseIndent { get; }
+        /// <summary>
+        /// Устанавливает фокус на элементе управления
+        /// </summary>
+        ICommand Focus { get; }
+        /// <summary>
+        /// Вставляет текст в текущей позиции курсора
+        /// </summary>
+        ICommand InsertTextAtCaret { get; }
     }
 }

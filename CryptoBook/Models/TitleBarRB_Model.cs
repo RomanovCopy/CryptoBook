@@ -311,21 +311,133 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetDocumentMargin(object? obj)
         {
-            throw new NotImplementedException();
+            return richtextbox.SetDocumentMargin.CanExecute(obj);
         }
         internal void Execute_SetDocumentMargin(object? obj)
         {
-            throw new NotImplementedException();
+            richtextbox.SetDocumentMargin.Execute(obj);
+        }
+
+
+        internal bool CanExecute_Undo(object? obj)
+        {
+            return richtextbox.Undo.CanExecute(obj);
+        }
+        internal void Execute_Undo(object? obj)
+        {
+            richtextbox.Undo.Execute(obj);
+        }
+
+
+        internal bool CanExecute_Redo(object? obj)
+        {
+            return richtextbox.Redo.CanExecute(obj);
+        }
+        internal void Execute_Redo(object? obj)
+        {
+            richtextbox.Redo.Execute(obj);
+        }
+
+
+        internal bool CanExecute_FindText(object? obj)
+        {
+            return richtextbox.FindText.CanExecute(obj);
+        }
+        internal void Execute_FindText(object? obj)
+        {
+            richtextbox.FindText.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ReplaceText(object? obj)
+        {
+            return richtextbox.ReplaceText.CanExecute(obj);
+        }
+        internal void Execute_ReplaceText(object? obj)
+        {
+            richtextbox.ReplaceText.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ReplaceAllText(object? obj)
+        {
+            return richtextbox.ReplaceAllText.CanExecute(obj);
+        }
+        internal void Execute_ReplaceAllText(object? obj)
+        {
+            richtextbox.ReplaceAllText.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ApplyBulletedList(object? obj)
+        {
+            return richtextbox.ApplyBulletedList.CanExecute(obj);
+        }
+        internal void Execute_ApplyBulletedList(object? obj)
+        {
+            richtextbox.ApplyBulletedList.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ApplyNumberedList(object? obj)
+        {
+            return richtextbox.ApplyNumberedList.CanExecute(obj);
+        }
+        internal void Execute_ApplyNumberedList(object? obj)
+        {
+            richtextbox.ApplyNumberedList.Execute(obj);
+        }
+
+
+        internal bool CanExecute_RemoveListFormatting(object? obj)
+        {
+            return richtextbox.RemoveListFormatting.CanExecute(obj);    
+        }
+        internal void Execute_RemoveListFormatting(object? obj)
+        {
+            richtextbox.RemoveListFormatting.Execute(obj);
         }
 
 
 
+        internal bool CanExecute_IncreaseIndent(object? obj)
+        {
+            return richtextbox.IncreaseIndent.CanExecute(obj);
+        }
+        internal void Execute_IncreaseIndent(object? obj)
+        {
+            richtextbox.IncreaseIndent.Execute(obj);
+        }
 
 
+        internal bool CanExecute_DecreaseIndent(object? obj)
+        {
+            return richtextbox.DecreaseIndent.CanExecute(obj);
+        }
+        internal void Execute_DecreaseIndent(object? obj)
+        {
+            richtextbox.DecreaseIndent.Execute(obj);
+        }
 
 
+        internal bool CanExecute_Focus(object? obj)
+        {
+            return richtextbox.Focus.CanExecute(obj);
+        }
+        internal void Execute_Focus(object? obj)
+        {
+            richtextbox.Focus.Execute(obj);
+        }
 
 
+        internal bool CanExecute_InsertTextAtCaret(object? obj)
+        {
+            return richtextbox.InsertTextAtCaret.CanExecute(obj);
+        }
+        internal void Execute_InsertTextAtCaret(object? obj)
+        {
+            richtextbox.InsertTextAtCaret.Execute(obj);
+        }
 
 
 
