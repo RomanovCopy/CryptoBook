@@ -81,115 +81,52 @@ namespace CryptoBook.ViewModels
         public ICommand ApplyVerticalScrollBarVisibility => applyVerticalScrollBarVisibility ??= new RelayCommand(titleBarRB_Model.Execute_ApplyVerticalScrollBarVisibility, titleBarRB_Model.CanExecute_ApplyVerticalScrollBarVisibility);
         RelayCommand applyVerticalScrollBarVisibility;
 
-        public void ApplyHorizontalScrollBarVisibility(ScrollBarVisibility visibility)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ApplyHorizontalScrollBarVisibility => new RelayCommand(titleBarRB_Model.Execute_ApplyHorizontalScrollBarVisibility, titleBarRB_Model.CanExecute_ApplyHorizontalScrollBarVisibility);
 
-        public void ApplyContextMenu(ContextMenu menu)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void ApplyDocumentEnabled(bool enabled)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ClearFormatting => clearFormatting ??= new RelayCommand(titleBarRB_Model.Execute_ClearFormatting, titleBarRB_Model.CanExecute_ClearFormatting);
+        RelayCommand clearFormatting;
 
-        public void ClearFormatting()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand SelectAll => selectAll ??= new RelayCommand(titleBarRB_Model.Execute_SelectAll, titleBarRB_Model.CanExecute_SelectAll);
+        RelayCommand selectAll;
 
-        public void SelectAll()
-        {
-            throw new NotImplementedException();
-        }
 
-        public void ClearSelection()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ClearSelection => clearSelection ??= new RelayCommand(titleBarRB_Model.Execute_ClearSelection, titleBarRB_Model.CanExecute_ClearSelection);
+        RelayCommand clearSelection;
 
-        public string GetSelectedTextAsString()
-        {
-            throw new NotImplementedException();
-        }
 
-        public void ReplaceSelectedText(string text)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ReplaceSelectedText => replaceSelectedText ??= new RelayCommand(titleBarRB_Model.Execute_ReplaceSelectedText, titleBarRB_Model.CanExecute_ReplaceSelectedText);
+        RelayCommand replaceSelectedText;
 
-        public void InsertHyperlink(string uri, string displayText)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand InsertHyperlink => insertHyperlink ??= new RelayCommand(titleBarRB_Model.Execute_InsertHyperlink, titleBarRB_Model.CanExecute_InsertHyperlink);
+        RelayCommand insertHyperlink;
 
-        public void InsertImage(string imagePath, double width, double height)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void InsertParagraph()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand InsertParagraph => insertParagraph ??= new RelayCommand(titleBarRB_Model.Execute_InsertParagraph, titleBarRB_Model.CanExecute_InsertParagraph);
+        RelayCommand insertParagraph;
 
-        public void InsertLineBreak()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand InsertLineBreak => insertLineBreak ??= new RelayCommand(titleBarRB_Model.Execute_InsertLineBreak, titleBarRB_Model.CanExecute_InsertLineBreak);
+        RelayCommand insertLineBreak;
 
-        public void InsertTable(int rows, int columns)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand InsertTable => insertTable ??= new RelayCommand(titleBarRB_Model.Execute_InsertTable, titleBarRB_Model.CanExecute_InsertTable);
+        RelayCommand insertTable;
 
-        public string GetRtf()
-        {
-            throw new NotImplementedException();
-        }
 
-        public void LoadRtf(string rtf)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ClearDocument => clearDocument ??= new RelayCommand(titleBarRB_Model.Execute_ClearDocument, titleBarRB_Model.CanExecute_ClearDocument);
+        RelayCommand clearDocument;
 
-        public string GetPlainText()
-        {
-            throw new NotImplementedException();
-        }
 
-        public void LoadPlainText(string text)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ScrollToCaret => scrollToCaret ??= new RelayCommand(titleBarRB_Model.Execute_ScrollToCaret, titleBarRB_Model.CanExecute_ScrollToCaret);
+        RelayCommand scrollToCaret;
 
-        public void ClearDocument()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ScrollToEnd => scrollToEnd ??= new RelayCommand(titleBarRB_Model.Execute_ScrollToEnd, titleBarRB_Model.CanExecute_ScrollToEnd);
+        RelayCommand scrollToEnd;
 
-        public void ScrollToCaret()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand ScrollToStart => scrollToStart ??= new RelayCommand(titleBarRB_Model.Execute_ScrollToStart, titleBarRB_Model.CanExecute_ScrollToStart);
+        RelayCommand scrollToStart;
 
-        public void ScrollToEnd()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ScrollToStart()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetDocumentMargin(Thickness margin)
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand SetDocumentMargin => setDocumentMargin ??= new RelayCommand(titleBarRB_Model.Execute_SetDocumentMargin, titleBarRB_Model.CanExecute_SetDocumentMargin);
+        RelayCommand setDocumentMargin;
 
         public void Undo()
         {

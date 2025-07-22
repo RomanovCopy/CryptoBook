@@ -159,6 +159,15 @@ namespace CryptoBook.Models
             richtextbox.ApplyAcceptsReturn.Execute(obj);
         }
 
+        internal bool CanExecute_ApplyAcceptsTab(object? obj)
+        {
+            return richtextbox.ApplyAcceptsTab.CanExecute(obj);
+        }
+        internal void Execute_ApplyAcceptsTab(object? obj)
+        {
+            richtextbox.ApplyAcceptsTab.Execute(obj);
+        }
+
 
         internal bool CanExecute_ApplyVerticalScrollBarVisibility(object? obj)
         {
@@ -168,6 +177,151 @@ namespace CryptoBook.Models
         {
             richtextbox.ApplyVerticalScrollBarVisibility.Execute(obj);
         }
+
+
+        internal bool CanExecute_ApplyHorizontalScrollBarVisibility(object? obj)
+        {
+            return richtextbox.ApplyHorizontalScrollBarVisibility.CanExecute(obj);
+        }
+        internal void Execute_ApplyHorizontalScrollBarVisibility(object? obj)
+        {
+            richtextbox.ApplyHorizontalScrollBarVisibility.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ClearFormatting(object? obj)
+        {
+            return richtextbox.ClearFormatting.CanExecute(obj);
+        }
+        internal void Execute_ClearFormatting(object? obj)
+        {
+            richtextbox.ClearFormatting.Execute(obj);
+        }
+
+
+        internal bool CanExecute_SelectAll(object? obj)
+        {
+            return richtextbox.SelectAll.CanExecute(obj);
+        }
+        internal void Execute_SelectAll(object? obj)
+        {
+            richtextbox.SelectAll.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ClearSelection(object? obj)
+        {
+            return richtextbox.ClearSelection.CanExecute(obj);
+        }
+        internal void Execute_ClearSelection(object? obj)
+        {
+            richtextbox.ClearSelection.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ReplaceSelectedText(object? obj)
+        {
+            return richtextbox.ReplaceSelectedText.CanExecute(obj);
+        }
+        internal void Execute_ReplaceSelectedText(object? obj)
+        {
+            richtextbox.ReplaceSelectedText.Execute(obj);
+        }
+
+
+        internal bool CanExecute_InsertHyperlink(object? obj)
+        {
+            return richtextbox.InsertHyperlink.CanExecute(obj);
+        }
+        internal void Execute_InsertHyperlink(object? obj)
+        {
+            richtextbox.InsertHyperlink.Execute(obj);
+        }
+
+
+        internal bool CanExecute_InsertParagraph(object? obj)
+        {
+            return richtextbox.InsertParagraph.CanExecute(obj);
+        }
+        internal void Execute_InsertParagraph(object? obj)
+        {
+            richtextbox.InsertParagraph.Execute(obj);
+        }
+
+
+        internal bool CanExecute_InsertLineBreak(object? obj)
+        {
+            return richtextbox.InsertLineBreak.CanExecute(obj);
+        }
+        internal void Execute_InsertLineBreak(object? obj)
+        {
+            richtextbox.InsertLineBreak.Execute(obj);
+        }
+
+
+        internal bool CanExecute_InsertTable(object? obj)
+        {
+            return richtextbox.InsertTable.CanExecute(obj);
+        }
+        internal void Execute_InsertTable(object? obj)
+        {
+            richtextbox.InsertTable.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ClearDocument(object? obj)
+        {
+            return richtextbox.ClearDocument.CanExecute(obj);
+        }
+        internal void Execute_ClearDocument(object? obj)
+        {
+            richtextbox.ClearDocument.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ScrollToCaret(object? obj)
+        {
+            return richtextbox.ScrollToCaret.CanExecute(obj);
+        }
+        internal void Execute_ScrollToCaret(object? obj)
+        {
+            richtextbox.ScrollToCaret.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ScrollToEnd(object? obj)
+        {
+            return richtextbox.ScrollToEnd.CanExecute(obj);
+        }
+        internal void Execute_ScrollToEnd(object? obj)
+        {
+            richtextbox.ScrollToEnd.Execute(obj);
+        }
+
+
+        internal bool CanExecute_ScrollToStart(object? obj)
+        {
+            return richtextbox.ScrollToStart.CanExecute(obj);
+        }
+        internal void Execute_ScrollToStart(object? obj)
+        {
+            richtextbox.ScrollToStart.Execute(obj);
+        }
+
+
+        internal bool CanExecute_SetDocumentMargin(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_SetDocumentMargin(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+
 
 
 
@@ -209,16 +363,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closed(object? obj)
         {
-        }
-
-        internal bool CanExecute_ApplyAcceptsTab(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void Execute_ApplyAcceptsTab(object? obj)
-        {
-            throw new NotImplementedException();
         }
 
     }

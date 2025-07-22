@@ -89,6 +89,7 @@ namespace CryptoBook.ViewModels
         RelayCommand applyVerticalScrollBarVisibility;
 
 
+        public ICommand ApplyHorizontalScrollBarVisibility => new RelayCommand(richtextboxModel.Execute_ApplyHorizontalScrollBarVisibility, richtextboxModel.CanExecute_ApplyHorizontalScrollBarVisibility);
 
 
 

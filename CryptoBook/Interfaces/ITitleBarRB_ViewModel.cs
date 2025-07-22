@@ -20,6 +20,20 @@ namespace CryptoBook.Interfaces
         ICommand ApplyAcceptsTab {  get; }
         ICommand ApplyAcceptsReturn { get; }
         ICommand ApplyVerticalScrollBarVisibility {  get; }
+        ICommand ApplyHorizontalScrollBarVisibility { get; }
+        ICommand ClearFormatting { get; }
+        ICommand SelectAll { get; }
+        ICommand ClearSelection { get; }
+        ICommand ReplaceSelectedText { get; }
+        ICommand InsertHyperlink { get; }
+        ICommand InsertParagraph { get; }
+        ICommand InsertLineBreak { get; }
+        ICommand InsertTable { get; }
+        ICommand ClearDocument { get; }
+        ICommand ScrollToCaret { get; }
+        ICommand ScrollToEnd { get; }
+        ICommand ScrollToStart { get; }
+        ICommand SetDocumentMargin { get; }
 
     }
 }

@@ -232,6 +232,21 @@ namespace CryptoBook.Models
         }
 
 
+        internal bool CanExecute_ApplyHorizontalScrollBarVisibility(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        internal void Execute_ApplyHorizontalScrollBarVisibility(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+
+
+
 
 
 

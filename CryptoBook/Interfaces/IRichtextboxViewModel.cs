@@ -11,7 +11,7 @@ namespace CryptoBook.Interfaces
     /// <summary>
     /// ViewModel для управления RichTextBox с поддержкой форматирования текста и команд.
     /// </summary>
-    public interface IRichtextboxViewModel:IViewModel
+    public interface IRichtextboxViewModel: IViewModel
     {
         /// <summary>
         /// Документ RichTextBox.
@@ -98,27 +98,114 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Устанавливает выравнивание текста (Left, Center, Right, Justify)
         /// </summary>
-        ICommand ApplyTextAlignment {  get; }
+        ICommand ApplyTextAlignment { get; }
         /// <summary>
         /// Установка форматирования текста
         /// </summary>
-        ICommand ApplyTextFormattingMode {  get; }
+        ICommand ApplyTextFormattingMode { get; }
         /// <summary>
         /// Установка режима рендеринга текста
         /// </summary>
-        ICommand ApplyTextRenderingMode {  get; }
+        ICommand ApplyTextRenderingMode { get; }
         /// <summary>
         /// Разрешение табуляции
         /// </summary>
-        ICommand ApplyAcceptsTab {  get; }
+        ICommand ApplyAcceptsTab { get; }
         /// <summary>
         /// Разрешение возврата каретки (Enter)
         /// </summary>
-        ICommand ApplyAcceptsReturn {  get; }
+        ICommand ApplyAcceptsReturn { get; }
         /// <summary>
         /// Установка видимости вертикальной полосы прокрутки
         /// </summary>
-        ICommand ApplyVerticalScrollBarVisibility {  get; }
+        ICommand ApplyVerticalScrollBarVisibility { get; }
+        /// <summary>
+        /// Установка видимости горизонтальной полосы прокрутки
+        /// </summary>
+        ICommand ApplyHorizontalScrollBarVisibility { get; }
+        /// <summary>
+        /// Установка контекстного меню
+        /// </summary>
+        ICommand ApplyContextMenu { get; }
+        /// <summary>
+        /// Включение поддержки документов
+        /// </summary>
+        ICommand ApplyDocumentEnabled { get; }
+        /// <summary>
+        /// Сбрасывает форматирование выделенного текста
+        /// </summary>
+        ICommand ClearFormatting { get; }
+        /// <summary>
+        /// Выделяет весь текст в документе
+        /// </summary>
+        ICommand SelectAll { get; }
+        /// <summary>
+        /// Снимает выделение текста
+        /// </summary>
+        ICommand ClearSelection { get; }
+        /// <summary>
+        /// Возвращает выделенный текст в виде строки
+        /// </summary>
+        ICommand GetSelectedTextAsString { get; }
+        /// <summary>
+        /// Заменяет выделенный текст на указанный
+        /// </summary>
+        ICommand ReplaceSelectedText { get; }
+        /// <summary>
+        /// Вставляет гиперссылку с указанным URI и необязательным отображаемым текстом
+        /// </summary>
+        ICommand InsertHyperlink { get; }
+        /// <summary>
+        /// Вставляет новый параграф в текущей позиции курсора
+        /// </summary>
+        ICommand InsertParagraph { get; }
+        /// <summary>
+        /// Вставляет разрыв строки
+        /// </summary>
+        ICommand InsertLineBreak { get; }
+        /// <summary>
+        /// Вставляет таблицу с указанным количеством строк и столбцов
+        /// </summary>
+        ICommand InsertTable { get; }
+        /// <summary>
+        /// Возвращает содержимое документа в формате RTF
+        /// </summary>
+        ICommand GetRtf { get; }
+        /// <summary>
+        /// Загружает содержимое документа из строки RTF
+        /// </summary>
+        ICommand LoadRtf { get; }
+        /// <summary>
+        /// Возвращает содержимое документа в виде обычного текста
+        /// </summary>
+        ICommand GetPlainText { get; }
+        /// <summary>
+        /// Загружает обычный текст в документ
+        /// </summary>
+        ICommand LoadPlainText { get; }
+        /// <summary>
+        /// Очищает содержимое документа
+        /// </summary>
+        ICommand ClearDocument { get; }
+        /// <summary>
+        /// Прокручивает документ к позиции курсора
+        /// </summary>
+        ICommand ScrollToCaret { get; }
+        /// <summary>
+        /// Прокручивает документ в конец
+        /// </summary>
+        ICommand ScrollToEnd { get; }
+        /// <summary>
+        /// Прокручивает документ в начало
+        /// </summary>
+        ICommand ScrollToStart { get; }
+        /// <summary>
+        /// Устанавливает отступы для документа
+        /// </summary>
+        ICommand SetDocumentMargin { get; }
+
+
+
 
     }
 }
