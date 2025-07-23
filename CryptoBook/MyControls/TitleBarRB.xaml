@@ -7,7 +7,7 @@
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
              xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
              mc:Ignorable="d" 
-             d:DataContext="{x:Type interfaces:ITitleBarRB_ViewModel}">
+             d:DataContext="{x:Type interfaces:ITitleBarRB_ViewModel}" >
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:ITitleBarRB_ViewModel}"/>
     </UserControl.DataContext>
@@ -40,7 +40,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Background="#F5F5F5">
+    <Grid Background="{StaticResource CurrentWindowBackground}">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
             <Button Style="{StaticResource TitleBarButtonStyle}"
                     Command="{Binding BoldCommand,UpdateSourceTrigger=PropertyChanged}"

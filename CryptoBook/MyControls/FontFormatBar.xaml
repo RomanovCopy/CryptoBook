@@ -1,0 +1,104 @@
+﻿<UserControl x:Class="CryptoBook.MyControls.FontFormatBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:markup="clr-namespace:CryptoBook.Markup"
+             xmlns:local="clr-namespace:CryptoBook.MyControls"
+             xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IFontFormatBar_ViewModel}}">
+    <UserControl.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFontFormatBar_ViewModel}"/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style TargetType="Popup">
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="PopupAnimation" Value="Slide"/>
+            <Setter Property="StaysOpen" Value="False"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Кнопка для вызова панели -->
+        <ToggleButton x:Name="TogglePanelButton"
+                      Content="≡"
+                      Height="20"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"
+                      FontWeight="Bold"/>
+        <!-- Popup-панель -->
+        <Popup PlacementTarget="{Binding ElementName=TogglePanelButton}"
+               Placement="Bottom"
+               IsOpen="{Binding IsChecked, ElementName=TogglePanelButton}"
+               StaysOpen="False">
+            <Border Background="#EEEEEE"
+                    BorderBrush="Gray" BorderThickness="1"
+                    Padding="10"
+                    CornerRadius="4"
+                    HorizontalAlignment="Stretch"
+                    RenderTransformOrigin="0.5,0">
+
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
+
+                    <!-- Bold -->
+                    <Button ToolTip="Bold"
+                Content="&#xE8DD;"
+                Command="{Binding BoldCommand}"/>
+
+                    <!-- Italic -->
+                    <Button ToolTip="Italic"
+                Content="&#xE8DB;"
+                Command="{Binding ItalicCommand}"/>
+
+                    <!-- Underline -->
+                    <Button ToolTip="Underline"
+                Content="&#xE8DC;"
+                Command="{Binding UnderlineCommand}"/>
+
+                    <!-- FontFamily -->
+                    <ComboBox Width="140"
+                  Margin="4,0"
+                  ItemsSource="{Binding FontFamilies}"
+                  SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}"/>
+
+                    <!-- FontSize -->
+                    <ComboBox Width="60"
+                  Margin="4,0"
+                  ItemsSource="{Binding FontSizes}"
+                  SelectedItem="{Binding SelectedFontSize, Mode=TwoWay}"/>
+
+                    <!-- Align Left -->
+                    <Button ToolTip="Align Left"
+                Content="&#xE8E4;"
+                Command="{Binding AlignLeftCommand}"/>
+
+                    <!-- Align Center -->
+                    <Button ToolTip="Align Center"
+                Content="&#xE8E3;"
+                Command="{Binding AlignCenterCommand}"/>
+
+                    <!-- Align Right -->
+                    <Button ToolTip="Align Right"
+                Content="&#xE8E2;"
+                Command="{Binding AlignRightCommand}"/>
+
+                    <!-- Insert Image -->
+                    <Button ToolTip="Insert Image"
+                Content="&#xE722;"
+                Command="{Binding InsertImageCommand}"/>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+    </Grid>
+</UserControl>

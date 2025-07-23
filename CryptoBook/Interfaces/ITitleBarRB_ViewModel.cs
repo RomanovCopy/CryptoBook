@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-     interface ITitleBarRB_ViewModel: IViewModel
+     public interface ITitleBarRB_ViewModel: IViewModel
     {
         ICommand BoldCommand { get; }
         ICommand ItalicCommand { get; }

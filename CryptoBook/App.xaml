@@ -13,9 +13,10 @@
             </ResourceDictionary.MergedDictionaries>
             <SolidColorBrush x:Key="CurrentWindowBackground" Color="Gray" />
             <SolidColorBrush x:Key="CurrentWindowForeground" Color="Black" />
-            <SolidColorBrush x:Key="CurrentTitleBarBackground" Color="DimGray" />
+            <SolidColorBrush x:Key="CurrentTitleBarBackground" Color="Gray" />
             <SolidColorBrush x:Key="CurrentTitleBarForeground" Color="Black" />
             <SolidColorBrush x:Key="CurrentBorderColor" Color="Black" />
+            <Thickness x:Key="CurrentMargin">10,2,10,2</Thickness>
             <infra:ResourceWrapper x:Key="Res"/>
         </ResourceDictionary>
     </Application.Resources>

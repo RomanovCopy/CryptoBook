@@ -13,7 +13,7 @@
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IRichtextboxViewModel}"/>
     </UserControl.DataContext>
-    <Border  Margin="20,5,20,0" BorderBrush="Black" BorderThickness="1,1,1,0" Grid.Row="1" >
+    <Border  BorderBrush="Black" BorderThickness="1,1,1,0" Grid.Row="1" >
         <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}"/>
     </Border>
     <i:Interaction.Triggers>
