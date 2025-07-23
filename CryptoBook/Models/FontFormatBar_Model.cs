@@ -1,24 +1,45 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 
 namespace CryptoBook.Models
 {
     internal class FontFormatBar_Model: ViewModelBase
     {
         private readonly ILifetimeScope scope;
+        private readonly IRichtextboxViewModel richtextbox;
         internal FontFormatBar_Model(ILifetimeScope scope)
         {
             this.scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            richtextbox= scope.Resolve<IRichtextboxViewModel>() ?? throw new ArgumentNullException(nameof(IRichtextboxViewModel));
         }
-        internal bool CanExecute_Bold(object? obj) { return true; }
-        internal void Execute_Bold(object? obj) { }
+        internal bool CanExecute_Bold(object? obj) 
+        {
+            return richtextbox.BoldCommand.CanExecute(obj);
+        }
+        internal void Execute_Bold(object? obj) 
+        {
+            richtextbox.BoldCommand.Execute(obj);
+        }
 
-        internal bool CanExecute_Italic(object? obj) { return true; }
-        internal void Execute_Italic(object? obj) { }
+        internal bool CanExecute_Italic(object? obj) 
+        { 
+            return richtextbox.ItalicCommand.CanExecute(obj); 
+        }
+        internal void Execute_Italic(object? obj) 
+        {
+            richtextbox.ItalicCommand.Execute(obj);
+        }
 
-        internal bool CanExecute_Underline(object? obj) { return true; }
-        internal void Execute_Underline(object? obj) { }
+        internal bool CanExecute_Underline(object? obj) 
+        {
+            return richtextbox.UnderlineCommand.CanExecute(obj); 
+        }
+        internal void Execute_Underline(object? obj) 
+        {
+            richtextbox.UnderlineCommand.Execute(obj);
+        }
 
         internal bool CanExecute_ClearFormatting(object? obj) { return true; }
         internal void Execute_ClearFormatting(object? obj) { }

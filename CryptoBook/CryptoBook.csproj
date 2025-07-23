@@ -24,9 +24,13 @@
     <Compile Remove="Interfaces\IDownloadItem.cs" />
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
+    <Compile Remove="Interfaces\ITitleBarRB_ViewModel.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
+    <Compile Remove="Models\TitleBarRB_Model.cs" />
+    <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
+    <Compile Remove="ViewModels\TitleBarRB_ViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +70,10 @@
     <None Remove="Resources\Images\033UpFileOverview.png" />
     <None Remove="Resources\Images\034CatalogV001.png" />
     <None Remove="Resources\Images\035FileV001.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="MyControls\TitleBarRB.xaml" />
   </ItemGroup>
 
   <ItemGroup>

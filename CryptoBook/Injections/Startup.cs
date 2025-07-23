@@ -30,7 +30,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<MenuSettingsViewModel>().As<IMenuSettingsViewModel>().SingleInstance();
             builder.RegisterType<MenuEncryptionViewModel>().As<IMenuEncryptionViewModel>().SingleInstance();
             builder.RegisterType<MenuContentViewModel>().As<IMenuContentViewModel>().SingleInstance();
-            builder.RegisterType<TitleBarRB_ViewModel>().As<ITitleBarRB_ViewModel>().SingleInstance();
             builder.RegisterType<RichtextboxViewModel>().As<IRichtextboxViewModel>().SingleInstance();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().SingleInstance();
 
@@ -70,7 +69,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<TitleBar>().SingleInstance();
             builder.RegisterType<MyFrame>().SingleInstance();
             builder.RegisterType<SideMenu>().SingleInstance();
-            builder.RegisterType<TitleBarRB>().SingleInstance();
             builder.RegisterType<Richtextbox>().SingleInstance();
             builder.RegisterType<FontFormatBar>().SingleInstance();
 

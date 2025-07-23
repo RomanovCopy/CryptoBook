@@ -118,7 +118,7 @@ namespace CryptoBook.Interfaces
         /// Разрешение возврата каретки (Enter)
         /// </summary>
         /// <param name="accept"></param>
-        void ApplyAcceptsReturn(bool  accept);
+        void ApplyAcceptsReturn(bool accept);
         /// <summary>
         /// Установка видимости вертикальной полосы прокрутки
         /// </summary>
@@ -357,5 +357,10 @@ namespace CryptoBook.Interfaces
         /// Вставляет текст из буфера обмена в текущую позицию курсора
         /// </summary>
         void Paste();
+
+        /// <summary>
+        /// восстановление выделения при потере фокуса
+        /// </summary>
+        void RestoreSelection();
     }
 }

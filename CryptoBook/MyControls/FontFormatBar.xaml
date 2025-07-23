@@ -8,7 +8,7 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IFontFormatBar_ViewModel}}">
+             d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IFontFormatBar_ViewModel}}">
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFontFormatBar_ViewModel}"/>
     </UserControl.DataContext>
@@ -53,17 +53,17 @@
                     <!-- Bold -->
                     <Button ToolTip="Bold"
                 Content="&#xE8DD;"
-                Command="{Binding BoldCommand}"/>
+                Command="{Binding BoldCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- Italic -->
                     <Button ToolTip="Italic"
                 Content="&#xE8DB;"
-                Command="{Binding ItalicCommand}"/>
+                Command="{Binding ItalicCommand,UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- Underline -->
                     <Button ToolTip="Underline"
                 Content="&#xE8DC;"
-                Command="{Binding UnderlineCommand}"/>
+                Command="{Binding UnderlineCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- FontFamily -->
                     <ComboBox Width="140"

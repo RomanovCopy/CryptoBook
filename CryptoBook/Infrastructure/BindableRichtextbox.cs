@@ -25,9 +25,12 @@ namespace CryptoBook.Infrastructure
 {
     public class BindableRichtextbox: Controls.RichTextBox, IRichTextBoxService
     {
+
+        private TextRange last_Selection{get;set;}
+
         private readonly IRichTextBoxService service;
-        // ÐŸÑƒÐ±Ð»Ð¸Ñ‡Ð½Ñ‹Ðµ ÑÐ²Ð¾Ð¹ÑÑ‚Ð²Ð°, Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ðµ Ð½Ð°Ð¿Ñ€ÑÐ¼ÑƒÑŽ
-        // DependencyProperties for MVVM binding to current formatting
+
+
         public static readonly DependencyProperty CurrentForegroundProperty =
             DependencyProperty.Register("CurrentForeground", typeof(Media.Brush), typeof(BindableRichtextbox), new PropertyMetadata(Media.Brushes.Black));
 
@@ -76,6 +79,13 @@ namespace CryptoBook.Infrastructure
         public BindableRichtextbox()
         {
             this.PreviewTextInput += OnPreviewTextInputApplyCurrentFormatting;
+            service = this as IRichTextBoxService;
+            this.LostFocus += OnLostFocusSaveSelection; 
+        }
+
+        private void OnLostFocusSaveSelection(object sender, RoutedEventArgs e)
+        {
+            last_Selection = new TextRange(Selection?.Start, Selection?.End);
         }
 
         private void OnPreviewTextInputApplyCurrentFormatting(object sender, TextCompositionEventArgs e)
@@ -136,8 +146,11 @@ namespace CryptoBook.Infrastructure
             set => base.FontSize = value;
         }
 
-        // Ð¯Ð²Ð½Ð°Ñ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ Ð¼ÐµÑ‚Ð¾Ð´Ð¾Ð² Ð¸Ð½Ñ‚ÐµÑ€Ñ„ÐµÐ¹ÑÐ°
-        void IRichTextBoxService.ApplyBold() => TogglePropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+        void IRichTextBoxService.ApplyBold() 
+        {
+            service.RestoreSelection();
+            TogglePropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+        }
         void IRichTextBoxService.ApplyItalic() => TogglePropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
         void IRichTextBoxService.ApplyUnderline() => Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
         void IRichTextBoxService.ApplyFontSize(double fontSize) => Selection.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
@@ -327,6 +340,36 @@ namespace CryptoBook.Infrastructure
                 // Âñòàâëÿåì òåêñò èç áóôåðà îáìåíà â òåêóùóþ ïîçèöèþ êóðñîðà
                 ApplicationCommands.Paste.Execute(null, this);
             }
+        }
+
+        FlowDocument IRichTextBoxService.Document { get => base.Document; set => base.Document=value; }
+
+        TextSelection IRichTextBoxService.Selection => base.Selection;
+
+        bool IRichTextBoxService.CanUndo => base.CanUndo;
+
+        bool IRichTextBoxService.CanRedo => base.CanRedo;
+
+        TextPointer IRichTextBoxService.CaretPosition { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool IRichTextBoxService.IsReadOnly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool IRichTextBoxService.SpellCheckEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        FontFamily IRichTextBoxService.FontFamily { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        FontWeight IRichTextBoxService.FontWeight { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        double IRichTextBoxService.FontSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        void IRichTextBoxService.RestoreSelection()
+        {
+            if(last_Selection != null)
+            {
+                CaretPosition = last_Selection.End;                
+                Selection.Select(last_Selection.Start, last_Selection.End);
+
+            } else
+            {
+                CaretPosition = Selection.End;
+                Selection.Select(Selection.End, Selection.End);
+            }
+            Focus();
         }
     }
 }

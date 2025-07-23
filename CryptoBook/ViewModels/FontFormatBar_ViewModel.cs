@@ -34,7 +34,7 @@ namespace CryptoBook.ViewModels
         RelayCommand textAlligmentCommand;
         public ICommand ForegroundCommand => foregroundCommand ??= new RelayCommand(model.Execute_ChangeForeground, model.CanExecute_ChangeForeground);
         RelayCommand foregroundCommand;
-        public ICommand BackgroundCommand => foregroundCommand ??= new RelayCommand(model.Execute_ChangeBackground, model.CanExecute_ChangeBackground);
+        public ICommand BackgroundCommand => backgroundCommand ??= new RelayCommand(model.Execute_ChangeBackground, model.CanExecute_ChangeBackground);
         RelayCommand backgroundCommand;
 
         public ICommand Loaded => loadedCommand ??= new RelayCommand(model.OnLoaded, model.CanExecute_Loaded);
