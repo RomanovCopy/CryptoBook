@@ -16,7 +16,7 @@ namespace CryptoBook.Models
         }
         internal bool CanExecute_Bold(object? obj) 
         {
-            return richtextbox.BoldCommand.CanExecute(obj);
+            return true;
         }
         internal void Execute_Bold(object? obj) 
         {
@@ -24,8 +24,8 @@ namespace CryptoBook.Models
         }
 
         internal bool CanExecute_Italic(object? obj) 
-        { 
-            return richtextbox.ItalicCommand.CanExecute(obj); 
+        {
+            return true; 
         }
         internal void Execute_Italic(object? obj) 
         {
@@ -34,7 +34,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Underline(object? obj) 
         {
-            return richtextbox.UnderlineCommand.CanExecute(obj); 
+            return true;
         }
         internal void Execute_Underline(object? obj) 
         {

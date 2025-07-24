@@ -28,9 +28,9 @@ namespace CryptoBook.Services
             }
         }
 
-        void IFlowDocumentService.ToggleBold(TextRange range)
+        void IFlowDocumentService.ToggleBold(TextSelection range)
         {
-            TogglePropertyValue(range, TextElement.FontWeightProperty, FontWeights.Bold);
+            ToggleOrClearFormatting(range, TextElement.FontWeightProperty, FontWeights.Bold);
         }
 
         void IFlowDocumentService.ToggleItalic(TextRange range)
@@ -40,7 +40,7 @@ namespace CryptoBook.Services
 
         void IFlowDocumentService.ToggleUnderline(TextRange range)
         {
-            throw new NotImplementedException();
+            //ToggleOrClearFormatting(range, Inline.TextDecorationsProperty, TextDecorations.Underline);
         }
 
         void IFlowDocumentService.ClearFormatting(TextRange range)
@@ -179,15 +179,30 @@ namespace CryptoBook.Services
         }
 
 
-
-        private void TogglePropertyValue(TextRange range, DependencyProperty property, object expectedValue)
+        private void ToggleOrClearFormatting(TextSelection selection, DependencyProperty property, object targetValue)
         {
-            var current = range.GetPropertyValue(property);
-            var newValue = current != DependencyProperty.UnsetValue && current.Equals(expectedValue)
-                ? DependencyProperty.UnsetValue
-                : expectedValue;
-            range.ApplyPropertyValue(property, newValue);
+
+            object current = selection.GetPropertyValue(property);
+
+            bool shouldRemove = current != DependencyProperty.UnsetValue && current.Equals(targetValue);
+
+            if(property == Inline.TextDecorationsProperty)
+            {
+                // Особый случай для подчеркивания
+                selection.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
+            } else if(property == TextElement.FontWeightProperty)
+            {
+                selection.ApplyPropertyValue(property, shouldRemove ? FontWeights.Normal : targetValue);
+            } else if(property == TextElement.FontStyleProperty)
+            {
+                selection.ApplyPropertyValue(property, shouldRemove ? FontStyles.Normal : targetValue);
+            } else
+            {
+                // Общий случай
+                selection.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
+            }
         }
+
 
     }
 }

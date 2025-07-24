@@ -18,7 +18,7 @@ namespace CryptoBook.Interfaces
         FlowDocument Document { get; set; }
 
         // Форматирование
-        void ToggleBold(TextRange range);
+        void ToggleBold(TextSelection range);
         void ToggleItalic(TextRange range);
         void ToggleUnderline(TextRange range);
         void ClearFormatting(TextRange range);
