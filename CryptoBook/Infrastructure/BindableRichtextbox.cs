@@ -98,7 +98,6 @@ namespace CryptoBook.Infrastructure
             Selection.ApplyPropertyValue(TextElement.FontSizeProperty, CurrentFontSize);
         }
 
-        // РџСѓР±Р»РёС‡РЅС‹Рµ СЃРІРѕР№СЃС‚РІР°, РґРѕСЃС‚СѓРїРЅС‹Рµ РЅР°РїСЂСЏРјСѓСЋ
         public new FlowDocument Document
         {
             get => base.Document;
@@ -151,8 +150,16 @@ namespace CryptoBook.Infrastructure
             service.RestoreSelection();
             TogglePropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
         }
-        void IRichTextBoxService.ApplyItalic() => TogglePropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
-        void IRichTextBoxService.ApplyUnderline() => Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
+        void IRichTextBoxService.ApplyItalic() 
+        {
+            service.RestoreSelection();
+            TogglePropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
+        }
+        void IRichTextBoxService.ApplyUnderline() 
+        {
+            service.RestoreSelection();
+            ToggleUnderlineInSelection_Safe();
+        }
         void IRichTextBoxService.ApplyFontSize(double fontSize) => Selection.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
         void IRichTextBoxService.ApplyFontFamily(string fontFamily) => Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily(fontFamily));
         void IRichTextBoxService.ApplyForegroundColor(Media.Color color) => Selection.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(color));
@@ -294,6 +301,157 @@ namespace CryptoBook.Infrastructure
                 : expectedValue;
             Selection.ApplyPropertyValue(property, newValue);
         }
+
+
+        private void ApplyUnderlineAndReset()
+        {
+            // Применяем подчёркивание к выделенному тексту
+            Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
+
+            // Снимаем подчёркивание в текущем положении курсора (после выделения)
+            var caretPos = CaretPosition;
+            if(caretPos != null)
+            {
+                var range = new TextRange(caretPos, caretPos);
+                range.ApplyPropertyValue(Inline.TextDecorationsProperty, null);
+            }
+        }
+
+        private void ToggleUnderlineInSelection_Safe()
+        {
+            var start = Selection.Start;
+            var end = Selection.End;
+
+            if(start == null || end == null || start.CompareTo(end) == 0)
+                return;
+
+            TextRange selectionRange = new TextRange(start, end);
+            var affectedRuns = new List<Run>();
+
+            // Найдём все Inline-элементы в выделении
+            TextPointer pointer = start;
+
+            while(pointer != null && pointer.CompareTo(end) < 0)
+            {
+                var context = pointer.GetPointerContext(LogicalDirection.Forward);
+                if(context == TextPointerContext.Text)
+                {
+                    var nextPointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+                    if(nextPointer == null || nextPointer.CompareTo(end) > 0)
+                        nextPointer = end;
+
+                    var run = FindEnclosingRun(pointer);
+                    if(run != null && !affectedRuns.Contains(run))
+                        affectedRuns.Add(run);
+                }
+                pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+            }
+
+            if(affectedRuns.Count == 0)
+                return;
+
+            // Проверим: все ли уже подчёркнуты?
+            bool shouldRemove = affectedRuns.All(r =>
+                r.TextDecorations != null &&
+                r.TextDecorations.Contains(TextDecorations.Underline[0]));
+
+            // Обработка каждого Run: при необходимости — разбить его
+            foreach(var run in affectedRuns)
+            {
+                SplitRunIfNeeded(run, start, end, shouldRemove ? null : TextDecorations.Underline);
+            }
+
+            // Сброс на каретке
+            ClearUnderlineAtCaret();
+        }
+
+        private Run? FindEnclosingRun(TextPointer pointer)
+        {
+            var parent = pointer.Parent;
+            while(parent != null && parent is not Run)
+            {
+                parent = LogicalTreeHelper.GetParent(parent);
+            }
+            return parent as Run;
+        }
+
+        /// <summary>
+        /// Разбивает Run, если выделена его часть, и применяет к части нужное TextDecorations
+        /// </summary>
+        private void SplitRunIfNeeded(Run run, TextPointer selectionStart, TextPointer selectionEnd, TextDecorationCollection? decorations)
+        {
+            var runStart = run.ContentStart;
+            var runEnd = run.ContentEnd;
+
+            if(selectionStart.CompareTo(runEnd) >= 0 || selectionEnd.CompareTo(runStart) <= 0)
+                return; // нет пересечения
+
+            var paragraph = GetContainingParagraph(runStart);
+            if(paragraph == null)
+                return;
+
+            string fullText = run.Text;
+            int runOffsetStart = runStart.GetOffsetToPosition(selectionStart);
+            int runOffsetEnd = runStart.GetOffsetToPosition(selectionEnd);
+
+            if(runOffsetStart < 0)
+                runOffsetStart = 0;
+            if(runOffsetEnd > fullText.Length)
+                runOffsetEnd = fullText.Length;
+
+            string before = fullText.Substring(0, runOffsetStart);
+            string middle = fullText.Substring(runOffsetStart, runOffsetEnd - runOffsetStart);
+            string after = fullText.Substring(runOffsetEnd);
+
+            var newInlines = new List<Inline>();
+            if(!string.IsNullOrEmpty(before))
+                newInlines.Add(new Run(before) { TextDecorations = run.TextDecorations, FontWeight = run.FontWeight });
+            if(!string.IsNullOrEmpty(middle))
+                newInlines.Add(new Run(middle) { TextDecorations = decorations, FontWeight = run.FontWeight });
+            if(!string.IsNullOrEmpty(after))
+                newInlines.Add(new Run(after) { TextDecorations = run.TextDecorations, FontWeight = run.FontWeight });
+
+            paragraph.Inlines.InsertBefore(run, newInlines[0]);
+            for(int i = 1; i < newInlines.Count; i++)
+                paragraph.Inlines.InsertAfter(newInlines[i - 1], newInlines[i]);
+
+            paragraph.Inlines.Remove(run);
+        }
+
+        /// <summary>
+        /// Сбрасывает подчёркивание в позиции каретки (чтобы не наследовалось).
+        /// </summary>
+        private void ClearUnderlineAtCaret()
+        {
+            var caret = CaretPosition;
+            if(caret != null)
+            {
+                var run = new Run();
+                run.TextDecorations = null;
+
+                var paragraph = GetContainingParagraph(caret);
+                if(paragraph != null)
+                {
+                    paragraph.Inlines.Add(run);
+                    CaretPosition = run.ContentStart;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Возвращает Paragraph, содержащий указанный TextPointer.
+        /// </summary>
+        private Paragraph? GetContainingParagraph(TextPointer pointer)
+        {
+            DependencyObject current = pointer.Parent;
+            while(current != null && current is not Paragraph)
+            {
+                current = LogicalTreeHelper.GetParent(current);
+            }
+            return current as Paragraph;
+        }
+
+
 
         private TextPointer GetTextPositionAtOffset(TextPointer start, int offset)
         {
