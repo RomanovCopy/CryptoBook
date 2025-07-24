@@ -100,14 +100,6 @@ namespace CryptoBook.Interfaces
         /// </summary>
         ICommand ApplyTextAlignment { get; }
         /// <summary>
-        /// Установка форматирования текста
-        /// </summary>
-        ICommand ApplyTextFormattingMode { get; }
-        /// <summary>
-        /// Установка режима рендеринга текста
-        /// </summary>
-        ICommand ApplyTextRenderingMode { get; }
-        /// <summary>
         /// Разрешение табуляции
         /// </summary>
         ICommand ApplyAcceptsTab { get; }
@@ -127,10 +119,6 @@ namespace CryptoBook.Interfaces
         /// Установка контекстного меню
         /// </summary>
         ICommand ApplyContextMenu { get; }
-        /// <summary>
-        /// Включение поддержки документов
-        /// </summary>
-        ICommand ApplyDocumentEnabled { get; }
         /// <summary>
         /// Сбрасывает форматирование выделенного текста
         /// </summary>
@@ -175,10 +163,6 @@ namespace CryptoBook.Interfaces
         /// Загружает содержимое документа из строки RTF
         /// </summary>
         ICommand LoadRtf { get; }
-        /// <summary>
-        /// Возвращает содержимое документа в виде обычного текста
-        /// </summary>
-        ICommand GetPlainText { get; }
         /// <summary>
         /// Загружает обычный текст в документ
         /// </summary>

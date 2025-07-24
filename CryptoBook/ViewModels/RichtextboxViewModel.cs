@@ -71,12 +71,6 @@ namespace CryptoBook.ViewModels
         public ICommand ApplyTextAlignment => applyTextAlignment ??= new RelayCommand(richtextboxModel.Execute_ApplyTextAlignment, richtextboxModel.CanExecute_ApplyTextAlignment);
         RelayCommand applyTextAlignment;
 
-        public ICommand ApplyTextFormattingMode => applyTextFormattingMode ??= new RelayCommand(richtextboxModel.Execute_ApplyTextFormattingMode, richtextboxModel.CanExecute_ApplyTextFormattingMode);
-        RelayCommand applyTextFormattingMode;
-
-        public ICommand ApplyTextRenderingMode => applyTextRenderingMode ??= new RelayCommand(richtextboxModel.Execute_ApplyTextRenderingMode, richtextboxModel.CanExecute_ApplyTextRenderingMode);
-        ICommand applyTextRenderingMode;
-
 
         public ICommand ApplyAcceptsTab => applyAcceptsTab ??= new RelayCommand(richtextboxModel.Execute_ApplyAcceptsTab, richtextboxModel.CanExecute_ApplyAcceptsTab);
         RelayCommand applyAcceptsTab;
@@ -94,9 +88,6 @@ namespace CryptoBook.ViewModels
 
         public ICommand ApplyContextMenu => applyContextMenu ??= new RelayCommand(richtextboxModel.Execute_ApplyContextMenu, richtextboxModel.CanExecute_ApplyContextMenu);
         RelayCommand applyContextMenu;
-
-        public ICommand ApplyDocumentEnabled => applyDocumentEnabled ??= new RelayCommand(richtextboxModel.Execute_ApplyDocumentEnabled, richtextboxModel.CanExecute_ApplyDocumentEnabled);
-        RelayCommand applyDocumentEnabled;
 
         public ICommand ClearFormatting => clearFormatting ??= new RelayCommand(richtextboxModel.Execute_ClearFormatting, richtextboxModel.CanExecute_ClearFormatting);
         RelayCommand clearFormatting;
@@ -132,9 +123,6 @@ namespace CryptoBook.ViewModels
         public ICommand LoadRtf => loadRtf ??= new RelayCommand(richtextboxModel.Execute_LoadRtf, richtextboxModel.CanExecute_LoadRtf);
         RelayCommand loadRtf;
 
-
-        public ICommand GetPlainText => getPlainText ??= new RelayCommand(richtextboxModel.Execute_GetPlainText, richtextboxModel.CanExecute_GetPlainText);
-        RelayCommand getPlainText;
 
         public ICommand LoadPlainText => loadPlainText ??= new RelayCommand(richtextboxModel.Execute_LoadPlainText, richtextboxModel.CanExecute_LoadPlainText);
         RelayCommand loadPlainText;

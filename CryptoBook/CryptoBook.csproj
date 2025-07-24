@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
+    <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
     <Compile Remove="Interfaces\IDownloadItem.cs" />

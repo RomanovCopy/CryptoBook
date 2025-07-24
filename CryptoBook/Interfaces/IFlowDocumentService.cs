@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Documents;
+
+using Media = System.Windows.Media;
+using Draving = System.Drawing;
+using Controls = System.Windows.Controls;
+
+
+namespace CryptoBook.Interfaces
+{
+    public interface IFlowDocumentService
+    {
+        FlowDocument Document { get; set; }
+
+        // Форматирование
+        void ToggleBold(TextRange range);
+        void ToggleItalic(TextRange range);
+        void ToggleUnderline(TextRange range);
+        void ClearFormatting(TextRange range);
+        void ApplyFontSize(TextRange range, double fontSize);
+        void ApplyFontFamily(TextRange range, string fontFamily);
+        void ApplyForegroundColor(TextRange range, Color color);
+        void ApplyBackgroundColor(TextRange range, Color color);
+        void ApplyTextAlignment(TextRange range, TextAlignment alignment);
+
+        // Списки и отступы
+        void ApplyBulletedList(TextRange range);
+        void ApplyNumberedList(TextRange range);
+        void RemoveListFormatting(TextRange range);
+        void IncreaseIndent(TextRange range);
+        void DecreaseIndent(TextRange range);
+
+        // Вставка элементов
+        void InsertImageAt(TextPointer position, string imagePath, double width, double height);
+        void InsertHyperlinkAt(TextPointer position, string uri, string displayText);
+        void InsertParagraphAt(TextPointer position);
+        void InsertLineBreakAt(TextPointer position);
+        void InsertTableAt(TextPointer position, int rows, int columns);
+
+        // Работа с текстом
+        string GetPlainText();
+        void LoadPlainText(string text);
+        string GetRtf();
+        void LoadRtf(string rtf);
+
+        // Поиск и замена
+        bool FindText(string text, bool matchCase = false, bool wholeWord = false);
+        void ReplaceText(string searchText, string replaceText, bool matchCase = false, bool wholeWord = false);
+        void ReplaceAllText(string searchText, string replaceText, bool matchCase = false, bool wholeWord = false);
+
+        // Документ
+        void ClearDocument();
+        void SetDocumentMargin(Thickness margin);
+
+        // Работа с XAML (опционально)
+        string ExportToXaml();
+        void LoadFromXaml(string xaml);
+    }
+}

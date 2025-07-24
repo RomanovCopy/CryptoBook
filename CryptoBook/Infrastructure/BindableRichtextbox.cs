@@ -529,5 +529,7 @@ namespace CryptoBook.Infrastructure
             }
             Focus();
         }
+
+        Controls.RichTextBox IRichTextBoxService.Service => throw new NotImplementedException();
     }
 }

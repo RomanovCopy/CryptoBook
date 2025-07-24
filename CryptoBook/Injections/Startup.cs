@@ -5,6 +5,7 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.MyControls;
 using CryptoBook.MyPages;
+using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
@@ -60,7 +61,8 @@ namespace CryptoBook.Injections
             //Services
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
-            builder.RegisterType<BindableRichtextbox>().As<IRichTextBoxService>().SingleInstance();
+            builder.RegisterType<FlowDocumentService>().As<IFlowDocumentService>().SingleInstance();
+            builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();
