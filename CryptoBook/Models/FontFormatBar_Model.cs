@@ -8,37 +8,41 @@ namespace CryptoBook.Models
     internal class FontFormatBar_Model: ViewModelBase
     {
         private readonly ILifetimeScope scope;
-        private readonly IRichtextboxViewModel richtextbox;
+        private readonly IRichTextBoxService richTextBoxService;
+        private readonly IFlowDocumentService flowDocumentService;
         internal FontFormatBar_Model(ILifetimeScope scope)
         {
             this.scope = scope ?? throw new ArgumentNullException(nameof(scope));
-            richtextbox= scope.Resolve<IRichtextboxViewModel>() ?? throw new ArgumentNullException(nameof(IRichtextboxViewModel));
+            richTextBoxService= scope.Resolve<IRichTextBoxService>() ?? throw new ArgumentNullException(nameof(IRichTextBoxService));
         }
         internal bool CanExecute_Bold(object? obj) 
         {
-            return true;
+            return richTextBoxService.Selection != null && 
+                   !richTextBoxService.Selection.IsEmpty;
         }
         internal void Execute_Bold(object? obj) 
         {
-            richtextbox.BoldCommand.Execute(obj);
+            flowDocumentService.ToggleBold(richTextBoxService.Selection);
         }
 
         internal bool CanExecute_Italic(object? obj) 
         {
-            return true; 
+            return richTextBoxService.Selection != null &&
+                   !richTextBoxService.Selection.IsEmpty;
         }
         internal void Execute_Italic(object? obj) 
         {
-            richtextbox.ItalicCommand.Execute(obj);
+            flowDocumentService.ToggleItalic(richTextBoxService.Selection);
         }
 
         internal bool CanExecute_Underline(object? obj) 
         {
-            return true;
+            return richTextBoxService.Selection != null &&
+                   !richTextBoxService.Selection.IsEmpty;
         }
         internal void Execute_Underline(object? obj) 
         {
-            richtextbox.UnderlineCommand.Execute(obj);
+            flowDocumentService.ToggleUnderline(richTextBoxService.Selection);
         }
 
         internal bool CanExecute_ClearFormatting(object? obj) { return true; }

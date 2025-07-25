@@ -28,72 +28,72 @@ namespace CryptoBook.Services
             }
         }
 
-        void IFlowDocumentService.ToggleBold(TextSelection range)
+        void IFlowDocumentService.ToggleBold(TextSelection selection)
         {
-            ToggleOrClearFormatting(range, TextElement.FontWeightProperty, FontWeights.Bold);
+            ToggleOrClearFormatting(selection, TextElement.FontWeightProperty, FontWeights.Bold);
         }
 
-        void IFlowDocumentService.ToggleItalic(TextRange range)
+        void IFlowDocumentService.ToggleItalic(TextSelection selection)
         {
-            throw new NotImplementedException();
+            ToggleOrClearFormatting(selection, TextElement.FontStyleProperty, FontStyles.Italic);
         }
 
-        void IFlowDocumentService.ToggleUnderline(TextRange range)
+        void IFlowDocumentService.ToggleUnderline(TextSelection selection)
         {
-            //ToggleOrClearFormatting(range, Inline.TextDecorationsProperty, TextDecorations.Underline);
+            ToggleOrClearFormatting(selection, Inline.TextDecorationsProperty, TextDecorations.Underline);
         }
 
-        void IFlowDocumentService.ClearFormatting(TextRange range)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IFlowDocumentService.ApplyFontSize(TextRange range, double fontSize)
+        void IFlowDocumentService.ClearFormatting(TextSelection selection)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.ApplyFontFamily(TextRange range, string fontFamily)
+        void IFlowDocumentService.ApplyFontSize(TextSelection selection, double fontSize)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.ApplyForegroundColor(TextRange range, Color color)
+        void IFlowDocumentService.ApplyFontFamily(TextSelection selection, string fontFamily)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.ApplyBackgroundColor(TextRange range, Color color)
+        void IFlowDocumentService.ApplyForegroundColor(TextSelection selection, Color color)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.ApplyTextAlignment(TextRange range, TextAlignment alignment)
+        void IFlowDocumentService.ApplyBackgroundColor(TextSelection selection, Color color)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.ApplyBulletedList(TextRange range)
+        void IFlowDocumentService.ApplyTextAlignment(TextSelection selection, TextAlignment alignment)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.ApplyNumberedList(TextRange range)
+        void IFlowDocumentService.ApplyBulletedList(TextSelection selection)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.RemoveListFormatting(TextRange range)
+        void IFlowDocumentService.ApplyNumberedList(TextSelection selection)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.IncreaseIndent(TextRange range)
+        void IFlowDocumentService.RemoveListFormatting(TextSelection selection)
         {
             throw new NotImplementedException();
         }
 
-        void IFlowDocumentService.DecreaseIndent(TextRange range)
+        void IFlowDocumentService.IncreaseIndent(TextSelection selection)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IFlowDocumentService.DecreaseIndent(TextSelection selection)
         {
             throw new NotImplementedException();
         }
@@ -179,27 +179,27 @@ namespace CryptoBook.Services
         }
 
 
-        private void ToggleOrClearFormatting(TextSelection selection, DependencyProperty property, object targetValue)
+        private void ToggleOrClearFormatting(TextRange range, DependencyProperty property, object targetValue)
         {
 
-            object current = selection.GetPropertyValue(property);
+            object current = range.GetPropertyValue(property);
 
             bool shouldRemove = current != DependencyProperty.UnsetValue && current.Equals(targetValue);
 
             if(property == Inline.TextDecorationsProperty)
             {
                 // Особый случай для подчеркивания
-                selection.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
+                range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
             } else if(property == TextElement.FontWeightProperty)
             {
-                selection.ApplyPropertyValue(property, shouldRemove ? FontWeights.Normal : targetValue);
+                range.ApplyPropertyValue(property, shouldRemove ? FontWeights.Normal : targetValue);
             } else if(property == TextElement.FontStyleProperty)
             {
-                selection.ApplyPropertyValue(property, shouldRemove ? FontStyles.Normal : targetValue);
+                range.ApplyPropertyValue(property, shouldRemove ? FontStyles.Normal : targetValue);
             } else
             {
                 // Общий случай
-                selection.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
+                range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
             }
         }
 

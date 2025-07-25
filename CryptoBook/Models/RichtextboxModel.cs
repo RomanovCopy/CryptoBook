@@ -20,8 +20,11 @@ namespace CryptoBook.Models
         private readonly ILifetimeScope scope;
         private readonly IRichTextBoxService richTextBoxService;
         private readonly IFlowDocumentService flowDocumentService;
-        internal FlowDocument Document { get=>document; set=>SetProperty(ref document, value); }
-        FlowDocument document;
+        internal FlowDocument Document 
+        { 
+            get=>flowDocumentService.Document; 
+            set=>flowDocumentService.Document = value; 
+        }
         internal bool IsBold { get=>isBold; set=>SetProperty(ref isBold,value); }
         bool isBold;
         internal bool IsItalic { get=> isItalic; set=>SetProperty(ref isItalic, value); }

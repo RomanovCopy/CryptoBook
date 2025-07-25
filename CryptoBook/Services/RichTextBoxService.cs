@@ -90,5 +90,17 @@ namespace CryptoBook.Services
         void IRichTextBoxService.ApplyContextMenu(ContextMenu menu)=>this.ContextMenu = menu;
         void IRichTextBoxService.ApplyAcceptsTab(bool accept)=>this.AcceptsTab = accept;
         void IRichTextBoxService.ApplyAcceptsReturn(bool accept)=>this.AcceptsReturn = accept;
+
+
+        private object GetTextPropertiesInCaretPosition(DependencyProperty property)
+        {
+            TextPointer caret = this.CaretPosition.GetInsertionPosition(LogicalDirection.Backward);
+            if(caret == null)
+                return DependencyProperty.UnsetValue;
+
+            TextRange range = new TextRange(caret, caret);
+            return range.GetPropertyValue(property);
+        }
+
     }
 }

@@ -18,22 +18,22 @@ namespace CryptoBook.Interfaces
         FlowDocument Document { get; set; }
 
         // Форматирование
-        void ToggleBold(TextSelection range);
-        void ToggleItalic(TextRange range);
-        void ToggleUnderline(TextRange range);
-        void ClearFormatting(TextRange range);
-        void ApplyFontSize(TextRange range, double fontSize);
-        void ApplyFontFamily(TextRange range, string fontFamily);
-        void ApplyForegroundColor(TextRange range, Color color);
-        void ApplyBackgroundColor(TextRange range, Color color);
-        void ApplyTextAlignment(TextRange range, TextAlignment alignment);
+        void ToggleBold(TextSelection selection);
+        void ToggleItalic(TextSelection selection);
+        void ToggleUnderline(TextSelection selection);
+        void ClearFormatting(TextSelection selection);
+        void ApplyFontSize(TextSelection selection, double fontSize);
+        void ApplyFontFamily(TextSelection selection, string fontFamily);
+        void ApplyForegroundColor(TextSelection selection, Color color);
+        void ApplyBackgroundColor(TextSelection selection, Color color);
+        void ApplyTextAlignment(TextSelection selection, TextAlignment alignment);
 
         // Списки и отступы
-        void ApplyBulletedList(TextRange range);
-        void ApplyNumberedList(TextRange range);
-        void RemoveListFormatting(TextRange range);
-        void IncreaseIndent(TextRange range);
-        void DecreaseIndent(TextRange range);
+        void ApplyBulletedList(TextSelection selection);
+        void ApplyNumberedList(TextSelection selection);
+        void RemoveListFormatting(TextSelection selection);
+        void IncreaseIndent(TextSelection selection);
+        void DecreaseIndent(TextSelection selection);
 
         // Вставка элементов
         void InsertImageAt(TextPointer position, string imagePath, double width, double height);
