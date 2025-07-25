@@ -18,10 +18,11 @@ namespace CryptoBook.ViewModels
     {
         private readonly RichtextboxModel richtextboxModel;
         public FlowDocument Document { get => richtextboxModel.Document; set => richtextboxModel.Document=value; }
-        public bool IsBold { get => richtextboxModel.IsBold; set => richtextboxModel.IsBold=value; }
-        public bool IsItalic { get => richtextboxModel.IsItalic; set => richtextboxModel.IsItalic=value; }
-        public bool IsUnderlined { get => richtextboxModel.IsUnderlined; set => richtextboxModel.IsUnderlined=value; }
-        public double FontSize { get => richtextboxModel.FontSize; set => richtextboxModel.FontSize=value; }
+        public bool IsBold => richtextboxModel.IsBold;
+        public bool IsItalic => richtextboxModel.IsItalic; 
+        public bool IsUnderlined => richtextboxModel.IsUnderlined; 
+        public double FontSize => richtextboxModel.FontSize; 
+        public string FontFamily => richtextboxModel.FontFamily;
 
         /// <summary>
         /// Конструктор ViewModel.

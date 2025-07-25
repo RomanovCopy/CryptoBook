@@ -21,19 +21,23 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Признак жирного начертания текста.
         /// </summary>
-        bool IsBold { get; set; }
+        bool IsBold { get; }
         /// <summary>
         /// Признак курсивного начертания текста.
         /// </summary>
-        bool IsItalic { get; set; }
+        bool IsItalic { get;}
         /// <summary>
         /// Признак подчёркнутого текста.
         /// </summary>
-        bool IsUnderlined { get; set; }
+        bool IsUnderlined { get; }
         /// <summary>
         /// Размер шрифта.
         /// </summary>
-        double FontSize { get; set; }
+        double FontSize { get;}
+        /// <summary>
+        /// семейство шрифтов.
+        /// </summary>
+        string FontFamily { get; }
 
 
         /// <summary>

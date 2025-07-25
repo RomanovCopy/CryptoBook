@@ -25,14 +25,11 @@ namespace CryptoBook.Models
             get=>flowDocumentService.Document; 
             set=>flowDocumentService.Document = value; 
         }
-        internal bool IsBold { get=>isBold; set=>SetProperty(ref isBold,value); }
-        bool isBold;
-        internal bool IsItalic { get=> isItalic; set=>SetProperty(ref isItalic, value); }
-        bool isItalic;
-        internal bool IsUnderlined { get=> isUnderlined; set=>SetProperty(ref isUnderlined, value); }
-        bool isUnderlined;
-        internal double FontSize { get=> fontSize; set=>SetProperty(ref fontSize, value); }
-        double fontSize;
+        internal bool IsBold =>richTextBoxService.IsBold;
+        internal bool IsItalic => richTextBoxService.IsItalic;
+        internal bool IsUnderlined => richTextBoxService.IsUnderline;
+        internal double FontSize =>richTextBoxService.FontSize;
+        internal string FontFamily => richTextBoxService.FontFamily;
 
 
         internal RichtextboxModel(ILifetimeScope _scope)

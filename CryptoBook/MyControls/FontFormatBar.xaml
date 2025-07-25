@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
@@ -24,6 +25,13 @@
             <Setter Property="Height" Value="24"/>
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <!-- Стиль для ComboBox -->
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
     </UserControl.Resources>
 
@@ -52,50 +60,60 @@
 
                     <!-- Bold -->
                     <Button ToolTip="Bold"
-                Content="&#xE8DD;"
-                Command="{Binding BoldCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                    Content="&#xE8DD;"
+                    Command="{Binding BoldCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- Italic -->
                     <Button ToolTip="Italic"
-                Content="&#xE8DB;"
-                Command="{Binding ItalicCommand,UpdateSourceTrigger=PropertyChanged}"/>
+                    Content="&#xE8DB;"
+                    Command="{Binding ItalicCommand,UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- Underline -->
                     <Button ToolTip="Underline"
-                Content="&#xE8DC;"
-                Command="{Binding UnderlineCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                    Content="&#xE8DC;"
+                    Command="{Binding UnderlineCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- FontFamily -->
-                    <ComboBox Width="140"
-                  Margin="4,0"
-                  ItemsSource="{Binding FontFamilies}"
-                  SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}"/>
+                    <ComboBox Style="{StaticResource ComboBoxStyle}"
+                    ToolTip="Font Family"
+                    ItemsSource="{Binding FontFamilies}"
+                    SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}"/>
 
                     <!-- FontSize -->
-                    <ComboBox Width="60"
-                  Margin="4,0"
-                  ItemsSource="{Binding FontSizes}"
-                  SelectedItem="{Binding SelectedFontSize, Mode=TwoWay}"/>
+                    <ComboBox Style="{StaticResource ComboBoxStyle}"
+                    ToolTip="Font Size"
+                    ItemsSource="{Binding FontSizes}"
+                    SelectedIndex="0"
+                    SelectedItem="{Binding FontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding FontSizeCommand, 
+                                    UpdateSourceTrigger=PropertyChanged}" 
+                                    CommandParameter="{Binding SelectedItem, 
+                                    RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
 
                     <!-- Align Left -->
                     <Button ToolTip="Align Left"
-                Content="&#xE8E4;"
-                Command="{Binding AlignLeftCommand}"/>
+                    Content="&#xE8E4;"
+                    Command="{Binding AlignLeftCommand}"/>
 
                     <!-- Align Center -->
                     <Button ToolTip="Align Center"
-                Content="&#xE8E3;"
-                Command="{Binding AlignCenterCommand}"/>
+                    Content="&#xE8E3;"
+                    Command="{Binding AlignCenterCommand}"/>
 
                     <!-- Align Right -->
                     <Button ToolTip="Align Right"
-                Content="&#xE8E2;"
-                Command="{Binding AlignRightCommand}"/>
+                    Content="&#xE8E2;"
+                    Command="{Binding AlignRightCommand}"/>
 
                     <!-- Insert Image -->
                     <Button ToolTip="Insert Image"
-                Content="&#xE722;"
-                Command="{Binding InsertImageCommand}"/>
+                    Content="&#xE722;"
+                    Command="{Binding InsertImageCommand}"/>
                 </StackPanel>
             </Border>
         </Popup>

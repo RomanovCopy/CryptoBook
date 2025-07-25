@@ -3,6 +3,8 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
+using System.Collections.ObjectModel;
+
 namespace CryptoBook.Models
 {
     internal class FontFormatBar_Model: ViewModelBase
@@ -10,10 +12,26 @@ namespace CryptoBook.Models
         private readonly ILifetimeScope scope;
         private readonly IRichTextBoxService richTextBoxService;
         private readonly IFlowDocumentService flowDocumentService;
+
+        public bool IsBold => richTextBoxService.IsBold;
+        public bool IsItalic => richTextBoxService.IsItalic;
+        public bool IsUnderline => richTextBoxService.IsUnderline;
+        public double FontSize => richTextBoxService.FontSize;
+        public string FontFamily => richTextBoxService.FontFamily;
+        public string FontColor => richTextBoxService.FontColor;
+        public string FontStile => richTextBoxService.FontStile;
+
+        public ObservableCollection<double> FontSizes => richTextBoxService.FontSizes;
+        public ObservableCollection<string> FontFamilies => richTextBoxService.FontFamilies;
+        public ObservableCollection<Color> FontColors => richTextBoxService.FontColors;
+        public ObservableCollection<Brush> BackgrondColor => richTextBoxService.BackgrondColor;
+
+
         internal FontFormatBar_Model(ILifetimeScope scope)
         {
             this.scope = scope ?? throw new ArgumentNullException(nameof(scope));
             richTextBoxService= scope.Resolve<IRichTextBoxService>() ?? throw new ArgumentNullException(nameof(IRichTextBoxService));
+            flowDocumentService = scope.Resolve<IFlowDocumentService>() ?? throw new ArgumentNullException(nameof(IFlowDocumentService));
         }
         internal bool CanExecute_Bold(object? obj) 
         {
@@ -48,8 +66,17 @@ namespace CryptoBook.Models
         internal bool CanExecute_ClearFormatting(object? obj) { return true; }
         internal void Execute_ClearFormatting(object? obj) { }
 
-        internal bool CanExecute_ChangeFontSize(object? obj) { return true; }
-        internal void Execute_ChangeFontSize(object? obj) { }
+        internal bool CanExecute_ChangeFontSize(object? obj) 
+        { 
+            return true; 
+        }
+        internal void Execute_ChangeFontSize(object? obj) 
+        {
+            if(obj is double fontSize)
+            {
+                flowDocumentService.ApplyFontSize(richTextBoxService.Selection, fontSize);
+            }
+        }
 
         internal bool CanExecute_ChangeFontFamily(object? obj) { return true; }
         internal void Execute_ChangeFontFamily(object? obj) { }

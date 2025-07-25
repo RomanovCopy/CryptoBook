@@ -4,6 +4,7 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -11,9 +12,34 @@ namespace CryptoBook.ViewModels
     public class FontFormatBar_ViewModel: ViewModelBase, IFontFormatBar_ViewModel
     {
         private readonly FontFormatBar_Model model;
+        private readonly ILifetimeScope scope;
+
+        public bool IsBold => model.IsBold;
+
+        public bool IsItalic => model.IsItalic;
+
+        public bool IsUnderline => model.IsUnderline;
+
+        public double FontSize => model.FontSize;
+
+        public string FontFamily => model.FontFamily;
+
+        public string FontColor => model.FontColor;
+
+        public string FontStile => model.FontStile;
+
+        public ObservableCollection<double> FontSizes => model.FontSizes;
+
+        public ObservableCollection<string> FontFamilies => model.FontFamilies;
+
+        public ObservableCollection<Color> FontColors => model.FontColors;
+
+        public ObservableCollection<Brush> BackgrondColor => model.BackgrondColor;
+
 
         public FontFormatBar_ViewModel(ILifetimeScope scope)
         {
+            this.scope = scope;
             model = new FontFormatBar_Model(scope ?? throw new ArgumentNullException(nameof(scope)));
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
@@ -45,5 +71,6 @@ namespace CryptoBook.ViewModels
         RelayCommand closingCommand;
         public ICommand Closed => closedCommand ??= new RelayCommand(model.OnClosed, model.CanExecute_Closed);
         RelayCommand closedCommand;
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,35 @@ namespace CryptoBook.Interfaces
 {
     public interface IFontFormatBar_ViewModel: IViewModel
     {
+
+        // Свойства
+        bool IsBold { get; }
+        bool IsItalic { get; }
+        bool IsUnderline { get; }
+        double FontSize { get; }
+        string FontFamily { get; }
+        string FontColor { get; }
+        string FontStile { get; }
+
+        /// <summary>
+        /// Коллекция доступных размеров шрифта
+        /// </summary>
+        ObservableCollection<double> FontSizes { get; }
+        /// <summary>
+        /// Коллекция доступных семейств шрифтов
+        /// </summary>
+        ObservableCollection<string> FontFamilies { get; }
+        /// <summary>
+        /// Коллекция доступных цветов шрифта
+        /// </summary>
+        ObservableCollection<Color> FontColors { get; }
+        /// <summary>
+        /// Коллекция доступных цветов фона
+        /// </summary>
+        ObservableCollection<Brush> BackgrondColor { get; }
+
+
+
         /// <summary>
         /// Команда для применения жирного начертания.
         /// </summary>

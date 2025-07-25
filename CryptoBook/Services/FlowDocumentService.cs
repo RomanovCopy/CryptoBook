@@ -50,7 +50,7 @@ namespace CryptoBook.Services
 
         void IFlowDocumentService.ApplyFontSize(TextSelection selection, double fontSize)
         {
-            throw new NotImplementedException();
+            ToggleOrClearFormatting(selection, TextElement.FontSizeProperty, fontSize);
         }
 
         void IFlowDocumentService.ApplyFontFamily(TextSelection selection, string fontFamily)
