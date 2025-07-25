@@ -24,6 +24,7 @@ namespace CryptoBook.Services
     {
         private readonly ILifetimeScope scope;
         private readonly IFlowDocumentService flowDocumentService;
+        private readonly IRichTextBoxService service;
 
         private TextRange last_Selection;
 
@@ -94,6 +95,7 @@ namespace CryptoBook.Services
         {
             this.scope = scope;
             flowDocumentService = scope.Resolve<IFlowDocumentService>();
+            //service = this;
             this.LostFocus += RichTextBoxService_LostFocus;
         }
 
@@ -151,6 +153,7 @@ namespace CryptoBook.Services
         {
             last_Selection = new TextRange(Selection?.Start, Selection?.End);
         }
+
 
     }
 }

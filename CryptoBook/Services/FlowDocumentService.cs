@@ -1,4 +1,6 @@
-﻿using CryptoBook.Interfaces;
+﻿using Autofac;
+
+using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,14 @@ namespace CryptoBook.Services
 {
     public class FlowDocumentService:FlowDocument, IFlowDocumentService
     {
+        private readonly ILifetimeScope scope;
+
+
+        private bool isBold {  get; set; }=false;
+        private bool isItalic { get; set; }=false ;
+        private bool isUnderline { get; set; } = false;
+
+
         FlowDocument IFlowDocumentService.Document
         {
             get => this;
@@ -28,9 +38,20 @@ namespace CryptoBook.Services
             }
         }
 
+
+
+        public FlowDocumentService(ILifetimeScope scope)
+        {
+            this.scope = scope;
+        }
+
+
+
         void IFlowDocumentService.ToggleBold(TextSelection selection)
         {
-            ToggleOrClearFormatting(selection, TextElement.FontWeightProperty, FontWeights.Bold);
+            //ToggleOrClearFormatting(selection, TextElement.FontWeightProperty, FontWeights.Bold);
+            isBold = true;
+            ApplyTypingFormat(selection);
         }
 
         void IFlowDocumentService.ToggleItalic(TextSelection selection)
@@ -181,7 +202,6 @@ namespace CryptoBook.Services
 
         private void ToggleOrClearFormatting(TextRange range, DependencyProperty property, object targetValue)
         {
-
             object current = range.GetPropertyValue(property);
 
             bool shouldRemove = current != DependencyProperty.UnsetValue && current.Equals(targetValue);
@@ -190,6 +210,7 @@ namespace CryptoBook.Services
             {
                 // Особый случай для подчеркивания
                 range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
+
             } else if(property == TextElement.FontWeightProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? FontWeights.Normal : targetValue);
@@ -202,6 +223,54 @@ namespace CryptoBook.Services
                 range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
             }
         }
+
+        public void ApplyTypingFormat(TextSelection selection)
+        {
+            IRichTextBoxService richTextBoxService=scope.Resolve<IRichTextBoxService>();
+            IFlowDocumentService service=scope.Resolve<IFlowDocumentService>();
+
+            var caret = richTextBoxService.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
+
+            // Создаём Run с нужными стилями
+            var run = new Run();
+
+            if(isBold)
+                run.FontWeight = FontWeights.Bold;
+            if(isItalic)
+                run.FontStyle = FontStyles.Italic;
+            if(isUnderline)
+                run.TextDecorations = TextDecorations.Underline;
+            //if(fontFamily != null)
+            //    run.FontFamily = fontFamily;
+            //if(fontSize.HasValue)
+            //    run.FontSize = fontSize.Value;
+
+            // Вставляем Run в позицию каретки
+            caret.InsertTextInRun(""); // важный момент: преобразует caret в редактируемое место
+            Inline parentInline = caret.Parent as Inline;
+
+            if(parentInline != null)
+            {
+                Paragraph para = GetCurrentParagraph(caret);
+                if(para != null)
+                {
+                    para.Inlines.InsertAfter(parentInline, run);
+                    caret = run.ContentStart;
+                    richTextBoxService.Focus(); // обязательно, иначе не будет фокуса на вставленное место
+                }
+            }
+        }
+
+        private Paragraph? GetCurrentParagraph(TextPointer pointer)
+        {
+            DependencyObject current = pointer.Parent;
+            while(current != null && !(current is Paragraph))
+            {
+                current = LogicalTreeHelper.GetParent(current);
+            }
+            return current as Paragraph;
+        }
+
 
 
     }

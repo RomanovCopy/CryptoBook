@@ -35,8 +35,7 @@ namespace CryptoBook.Models
         }
         internal bool CanExecute_Bold(object? obj) 
         {
-            return richTextBoxService.Selection != null && 
-                   !richTextBoxService.Selection.IsEmpty;
+            return true;
         }
         internal void Execute_Bold(object? obj) 
         {
