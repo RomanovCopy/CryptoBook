@@ -65,34 +65,39 @@ namespace CryptoBook.Services
 
         void IFlowDocumentService.ApplyFontSize(TextSelection selection, double fontSize)
         {
+            if(selection == null)
+                return;
+
             var service = scope.Resolve<IRichTextBoxService>();
-            var para = GetCurrentParagraph(selection.Start);
-            if(selection != null)
+
+            if(selection.IsEmpty)
             {
-                if(selection.IsEmpty)
+                var caret = service.CaretPosition;
+
+                // Предпочитаем символ перед курсором, если он есть, иначе — за ним
+                var start = caret.GetPositionAtOffset(-1, LogicalDirection.Backward)
+                            ?? caret.GetPositionAtOffset(0, LogicalDirection.Forward);
+
+                var end = caret.GetPositionAtOffset(0, LogicalDirection.Forward)
+                          ?? caret;
+
+                // Применим, только если есть что форматировать
+                if(start != null && end != null && !start.Equals(end))
                 {
-                    var run = new Run();
-                    para.Inlines.InsertAfter(parentInline, run);
-                    var caret = run.ContentStart;
-                    service.Focus();
-                    run.FontSize= fontSize;
-                } 
-                else
-                {
-                    ToggleOrClearFormatting(selection, Inline.TextDecorationsProperty, TextDecorations.Underline);
+                    var range = new TextRange(start, end);
+                    range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
                 }
+
+                service.CaretPosition = caret;
+                service.Focus();
+            } else
+            {
+                var range = new TextRange(selection.Start, selection.End);
+                range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
             }
         }
 
-        private Paragraph GetCurrentParagraph(TextPointer pointer)
-        {
-            DependencyObject current = pointer.Parent;
-            while(current != null && !(current is Paragraph))
-            {
-                current = LogicalTreeHelper.GetParent(current);
-            }
-            return current as Paragraph;
-        }
+
 
         void IFlowDocumentService.ApplyFontFamily(TextSelection selection, string fontFamily)
         {
