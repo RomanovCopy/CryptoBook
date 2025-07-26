@@ -95,7 +95,6 @@ namespace CryptoBook.Services
         {
             this.scope = scope;
             flowDocumentService = scope.Resolve<IFlowDocumentService>();
-            //service = this;
             this.LostFocus += RichTextBoxService_LostFocus;
         }
 

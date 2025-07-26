@@ -12,14 +12,9 @@ using System.Windows.Documents;
 
 namespace CryptoBook.Services
 {
-    public class FlowDocumentService:FlowDocument, IFlowDocumentService
+    public class FlowDocumentService: FlowDocument, IFlowDocumentService
     {
         private readonly ILifetimeScope scope;
-
-
-        private bool isBold {  get; set; }=false;
-        private bool isItalic { get; set; }=false ;
-        private bool isUnderline { get; set; } = false;
 
 
         FlowDocument IFlowDocumentService.Document
@@ -28,9 +23,9 @@ namespace CryptoBook.Services
             set
             {
                 this.Blocks.Clear();
-                if (value != null)
+                if(value != null)
                 {
-                    foreach (var block in value.Blocks)
+                    foreach(var block in value.Blocks)
                     {
                         this.Blocks.Add(block);
                     }
@@ -43,15 +38,14 @@ namespace CryptoBook.Services
         public FlowDocumentService(ILifetimeScope scope)
         {
             this.scope = scope;
+             
         }
 
 
 
         void IFlowDocumentService.ToggleBold(TextSelection selection)
         {
-            //ToggleOrClearFormatting(selection, TextElement.FontWeightProperty, FontWeights.Bold);
-            isBold = true;
-            ApplyTypingFormat(selection);
+            ToggleOrClearFormatting(selection, TextElement.FontWeightProperty, FontWeights.Bold);
         }
 
         void IFlowDocumentService.ToggleItalic(TextSelection selection)
@@ -71,7 +65,33 @@ namespace CryptoBook.Services
 
         void IFlowDocumentService.ApplyFontSize(TextSelection selection, double fontSize)
         {
-            ToggleOrClearFormatting(selection, TextElement.FontSizeProperty, fontSize);
+            var service = scope.Resolve<IRichTextBoxService>();
+            var para = GetCurrentParagraph(selection.Start);
+            if(selection != null)
+            {
+                if(selection.IsEmpty)
+                {
+                    var run = new Run();
+                    para.Inlines.InsertAfter(parentInline, run);
+                    var caret = run.ContentStart;
+                    service.Focus();
+                    run.FontSize= fontSize;
+                } 
+                else
+                {
+                    ToggleOrClearFormatting(selection, Inline.TextDecorationsProperty, TextDecorations.Underline);
+                }
+            }
+        }
+
+        private Paragraph GetCurrentParagraph(TextPointer pointer)
+        {
+            DependencyObject current = pointer.Parent;
+            while(current != null && !(current is Paragraph))
+            {
+                current = LogicalTreeHelper.GetParent(current);
+            }
+            return current as Paragraph;
         }
 
         void IFlowDocumentService.ApplyFontFamily(TextSelection selection, string fontFamily)
@@ -223,54 +243,6 @@ namespace CryptoBook.Services
                 range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
             }
         }
-
-        public void ApplyTypingFormat(TextSelection selection)
-        {
-            IRichTextBoxService richTextBoxService=scope.Resolve<IRichTextBoxService>();
-            IFlowDocumentService service=scope.Resolve<IFlowDocumentService>();
-
-            var caret = richTextBoxService.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
-
-            // Создаём Run с нужными стилями
-            var run = new Run();
-
-            if(isBold)
-                run.FontWeight = FontWeights.Bold;
-            if(isItalic)
-                run.FontStyle = FontStyles.Italic;
-            if(isUnderline)
-                run.TextDecorations = TextDecorations.Underline;
-            //if(fontFamily != null)
-            //    run.FontFamily = fontFamily;
-            //if(fontSize.HasValue)
-            //    run.FontSize = fontSize.Value;
-
-            // Вставляем Run в позицию каретки
-            caret.InsertTextInRun(""); // важный момент: преобразует caret в редактируемое место
-            Inline parentInline = caret.Parent as Inline;
-
-            if(parentInline != null)
-            {
-                Paragraph para = GetCurrentParagraph(caret);
-                if(para != null)
-                {
-                    para.Inlines.InsertAfter(parentInline, run);
-                    caret = run.ContentStart;
-                    richTextBoxService.Focus(); // обязательно, иначе не будет фокуса на вставленное место
-                }
-            }
-        }
-
-        private Paragraph? GetCurrentParagraph(TextPointer pointer)
-        {
-            DependencyObject current = pointer.Parent;
-            while(current != null && !(current is Paragraph))
-            {
-                current = LogicalTreeHelper.GetParent(current);
-            }
-            return current as Paragraph;
-        }
-
 
 
     }

@@ -35,7 +35,7 @@ namespace CryptoBook.Models
         }
         internal bool CanExecute_Bold(object? obj) 
         {
-            return true;
+            return !richTextBoxService.Selection.IsEmpty;
         }
         internal void Execute_Bold(object? obj) 
         {
@@ -44,8 +44,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Italic(object? obj) 
         {
-            return richTextBoxService.Selection != null &&
-                   !richTextBoxService.Selection.IsEmpty;
+            return !richTextBoxService.Selection.IsEmpty;
         }
         internal void Execute_Italic(object? obj) 
         {
@@ -54,8 +53,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Underline(object? obj) 
         {
-            return richTextBoxService.Selection != null &&
-                   !richTextBoxService.Selection.IsEmpty;
+            return !richTextBoxService.Selection.IsEmpty;
         }
         internal void Execute_Underline(object? obj) 
         {
