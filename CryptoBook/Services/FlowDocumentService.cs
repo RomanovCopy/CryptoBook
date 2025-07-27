@@ -5,6 +5,7 @@ using CryptoBook.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,7 +39,7 @@ namespace CryptoBook.Services
         public FlowDocumentService(ILifetimeScope scope)
         {
             this.scope = scope;
-             
+
         }
 
 
@@ -67,28 +68,36 @@ namespace CryptoBook.Services
         {
             if(selection == null)
                 return;
+            
 
             var service = scope.Resolve<IRichTextBoxService>();
 
             if(selection.IsEmpty)
             {
-                var caret = service.CaretPosition;
+                TextPointer caret = service.CaretPosition;
+                TextPointer start = null;
+                TextPointer end = null;
+
 
                 // Предпочитаем символ перед курсором, если он есть, иначе — за ним
-                var start = caret.GetPositionAtOffset(-1, LogicalDirection.Backward)
-                            ?? caret.GetPositionAtOffset(0, LogicalDirection.Forward);
 
-                var end = caret.GetPositionAtOffset(0, LogicalDirection.Forward)
-                          ?? caret;
+                if(service.CaretPosition.CompareTo(this.ContentStart)==0 )
+                {
+                    start = caret;
+                    end = caret.GetPositionAtOffset(1, LogicalDirection.Forward);
 
+                } else
+                {
+                    start = caret.GetPositionAtOffset(-1, LogicalDirection.Backward);
+                    end = caret.GetPositionAtOffset(0, LogicalDirection.Forward);
+                }
                 // Применим, только если есть что форматировать
                 if(start != null && end != null && !start.Equals(end))
                 {
                     var range = new TextRange(start, end);
                     range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
+                    service.CaretPosition = start;
                 }
-
-                service.CaretPosition = caret;
                 service.Focus();
             } else
             {
@@ -96,6 +105,7 @@ namespace CryptoBook.Services
                 range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
             }
         }
+
 
 
 

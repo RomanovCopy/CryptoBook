@@ -17,6 +17,8 @@ namespace CryptoBook.Interfaces
 {
     public interface IRichTextBoxService
     {
+        FlowDocument Document { get; set; }
+
         // Свойства
         bool IsBold { get; }
         bool IsItalic { get; }

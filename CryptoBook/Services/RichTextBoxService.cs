@@ -28,6 +28,7 @@ namespace CryptoBook.Services
 
         private TextRange last_Selection;
 
+        FlowDocument IRichTextBoxService.Document { get=>this.Document; set=>this.Document=value; }    
 
         bool IRichTextBoxService.IsBold => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontWeightProperty) is FontWeight weight && weight == FontWeights.Bold;
 
@@ -95,6 +96,7 @@ namespace CryptoBook.Services
         {
             this.scope = scope;
             flowDocumentService = scope.Resolve<IFlowDocumentService>();
+            ((IRichTextBoxService)this).Document = flowDocumentService.Document;
             this.LostFocus += RichTextBoxService_LostFocus;
         }
 
