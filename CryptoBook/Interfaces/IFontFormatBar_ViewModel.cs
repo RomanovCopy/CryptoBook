@@ -15,7 +15,7 @@ namespace CryptoBook.Interfaces
         bool IsBold { get; }
         bool IsItalic { get; }
         bool IsUnderline { get; }
-        double FontSize { get; }
+        double FontSize { get; set; }
         string FontFamily { get; }
         string FontColor { get; }
         string FontStile { get; }

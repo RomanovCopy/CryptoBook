@@ -84,10 +84,10 @@
                     ToolTip="Font Size"
                     ItemsSource="{Binding FontSizes}"
                     SelectedIndex="0"
-                    SelectedItem="{Binding FontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    SelectedItem="{Binding FontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding FontSizeCommand, 
+                                <i:InvokeCommandAction Command="{Binding FontSizeCommand,
                                     UpdateSourceTrigger=PropertyChanged}" 
                                     CommandParameter="{Binding SelectedItem, 
                                     RelativeSource={RelativeSource AncestorType=ComboBox}}" />

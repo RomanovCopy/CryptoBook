@@ -92,6 +92,7 @@ namespace CryptoBook.Services
         {
             this.scope = scope;
             this.LostFocus += RichTextBoxService_LostFocus;
+            this.SelectionChanged += RichTextBoxService_SelectionChanged;
         }
 
 
@@ -132,6 +133,46 @@ namespace CryptoBook.Services
         void IRichTextBoxService.ApplyContextMenu(ContextMenu menu)=>this.ContextMenu = menu;
         void IRichTextBoxService.ApplyAcceptsTab(bool accept)=>this.AcceptsTab = accept;
         void IRichTextBoxService.ApplyAcceptsReturn(bool accept)=>this.AcceptsReturn = accept;
+
+
+        private void RichTextBoxService_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var font = scope.Resolve<IFontFormatBar_ViewModel>();
+            var fontsize=GetMaxFontSizeInSelection();
+            font.FontSize= fontsize;
+
+        }
+
+        public double GetMaxFontSizeInSelection()
+        {
+            if(Selection.IsEmpty)
+                return (double)(Selection.GetPropertyValue(TextElement.FontSizeProperty) ?? 12.0);
+
+            TextPointer start = Selection.Start;
+            TextPointer end = Selection.End;
+
+            var sizes = new List<double>();
+            var position = start;
+
+            while(position != null && position.CompareTo(end) < 0)
+            {
+                if(position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text ||
+                    position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.ElementStart)
+                {
+                    var element = position.Parent as TextElement;
+                    if(element != null)
+                    {
+                        var sizeObj = element.GetValue(TextElement.FontSizeProperty);
+                        if(sizeObj is double size)
+                            sizes.Add(size);
+                    }
+                }
+                position = position.GetNextContextPosition(LogicalDirection.Forward);
+            }
+
+            return sizes.Count > 0 ? sizes.Max() : 12.0;
+        }
+
 
 
         private object GetTextPropertiesInCaretPosition(DependencyProperty property)

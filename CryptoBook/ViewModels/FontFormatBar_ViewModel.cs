@@ -20,7 +20,7 @@ namespace CryptoBook.ViewModels
 
         public bool IsUnderline => model.IsUnderline;
 
-        public double FontSize => model.FontSize;
+        public double FontSize { get => model.FontSize; set => model.FontSize = value; }
 
         public string FontFamily => model.FontFamily;
 

@@ -16,7 +16,12 @@ namespace CryptoBook.Models
         public bool IsBold => richTextBoxService.IsBold;
         public bool IsItalic => richTextBoxService.IsItalic;
         public bool IsUnderline => richTextBoxService.IsUnderline;
-        public double FontSize => richTextBoxService.FontSize;
+        public double FontSize 
+        {
+            get => fontSize;
+            set=>SetProperty(ref fontSize, value);
+        }
+        double fontSize;
         public string FontFamily => richTextBoxService.FontFamily;
         public string FontColor => richTextBoxService.FontColor;
         public string FontStile => richTextBoxService.FontStile;
@@ -71,7 +76,7 @@ namespace CryptoBook.Models
         {
             if(obj is double fontSize)
             {
-                flowDocumentService.ApplyFontSize(richTextBoxService.Selection, fontSize);
+                flowDocumentService.ApplyFontSize(richTextBoxService.Selection, FontSize);
             }
         }
 
