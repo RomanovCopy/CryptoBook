@@ -15,7 +15,6 @@ namespace CryptoBook.Interfaces
 {
     public interface IFlowDocumentService
     {
-        FlowDocument Document { get; set; }
 
         // Форматирование
         void ToggleBold(TextSelection selection);

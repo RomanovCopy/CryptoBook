@@ -22,8 +22,10 @@ namespace CryptoBook.Injections
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
 
 
+
+
             //ViewModels
-            builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
+            builder.RegisterType<HomeViewModel>().As<IHomeViewModel>();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().SingleInstance();
             builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().SingleInstance();
             builder.RegisterType<MenuFileViewModel>().As<IMenuFileViewModel>().SingleInstance();
@@ -61,8 +63,9 @@ namespace CryptoBook.Injections
             //Services
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
-            builder.RegisterType<FlowDocumentService>().As<IFlowDocumentService>().SingleInstance();
             builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
+            builder.RegisterType<FlowDocumentService>().As<IFlowDocumentService>().SingleInstance();
+
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();
@@ -74,8 +77,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<Richtextbox>().SingleInstance();
             builder.RegisterType<FontFormatBar>().SingleInstance();
 
-
-
+            //Contexts
+            builder.RegisterType<RichTextDocumentContext>().As<IRichTextDocumentContext>().SingleInstance();
 
             var container = builder.Build();
 

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,7 +23,7 @@ namespace CryptoBook.MyControls
     /// </summary>
     public partial class Richtextbox: System.Windows.Controls.UserControl
     {
-        public Richtextbox()
+        public Richtextbox( IRichTextDocumentContext context)
         {
             InitializeComponent();
         }

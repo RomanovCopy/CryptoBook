@@ -17,7 +17,7 @@ namespace CryptoBook.ViewModels
     public class RichtextboxViewModel: ViewModelBase, IRichtextboxViewModel
     {
         private readonly RichtextboxModel richtextboxModel;
-        public FlowDocument Document { get => richtextboxModel.Document; set => richtextboxModel.Document=value; }
+        public FlowDocument Document { get => richtextboxModel.Document;}
         public bool IsBold => richtextboxModel.IsBold;
         public bool IsItalic => richtextboxModel.IsItalic; 
         public bool IsUnderlined => richtextboxModel.IsUnderlined; 

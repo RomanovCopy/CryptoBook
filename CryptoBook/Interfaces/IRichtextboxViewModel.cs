@@ -16,7 +16,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Документ RichTextBox.
         /// </summary>
-        FlowDocument Document { get; set; }
+        FlowDocument Document { get;}
 
         /// <summary>
         /// Признак жирного начертания текста.

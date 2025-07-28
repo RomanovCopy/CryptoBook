@@ -23,13 +23,10 @@ namespace CryptoBook.Services
     public class RichTextBoxService: Controls.RichTextBox, IRichTextBoxService
     {
         private readonly ILifetimeScope scope;
-        private readonly IFlowDocumentService flowDocumentService;
-        private readonly IRichTextBoxService service;
 
         private TextRange last_Selection;
 
-        FlowDocument IRichTextBoxService.Document { get=>this.Document; set=>this.Document=value; }    
-
+        FlowDocument IRichTextBoxService.Document => this.Document;
         bool IRichTextBoxService.IsBold => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontWeightProperty) is FontWeight weight && weight == FontWeights.Bold;
 
         bool IRichTextBoxService.IsItalic => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontStyleProperty) is FontStyle style && style == FontStyles.Italic;
@@ -91,12 +88,9 @@ namespace CryptoBook.Services
         public ObservableCollection<Brush> BackgrondColor { get; } // Коллекция доступных цветов фона
 
 
-
         public RichTextBoxService(ILifetimeScope scope)
         {
             this.scope = scope;
-            flowDocumentService = scope.Resolve<IFlowDocumentService>();
-            ((IRichTextBoxService)this).Document = flowDocumentService.Document;
             this.LostFocus += RichTextBoxService_LostFocus;
         }
 

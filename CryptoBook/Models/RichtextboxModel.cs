@@ -18,65 +18,62 @@ namespace CryptoBook.Models
     internal class RichtextboxModel: ViewModelBase
     {
         private readonly ILifetimeScope scope;
-        private readonly IRichTextBoxService richTextBoxService;
-        private readonly IFlowDocumentService flowDocumentService;
-        internal FlowDocument Document 
-        { 
-            get=>flowDocumentService.Document; 
-            set=>flowDocumentService.Document = value; 
-        }
-        internal bool IsBold =>richTextBoxService.IsBold;
-        internal bool IsItalic => richTextBoxService.IsItalic;
-        internal bool IsUnderlined => richTextBoxService.IsUnderline;
-        internal double FontSize =>richTextBoxService.FontSize;
-        internal string FontFamily => richTextBoxService.FontFamily;
+        private readonly IRichTextDocumentContext context;
+        private readonly IRichTextBoxService richService;
+        private readonly IFlowDocumentService flowService;
+        internal FlowDocument Document => context.Document ?? throw new ArgumentNullException(nameof(context.Document));
+        internal bool IsBold =>richService.IsBold;
+        internal bool IsItalic => richService.IsItalic;
+        internal bool IsUnderlined => richService.IsUnderline;
+        internal double FontSize =>richService.FontSize;
+        internal string FontFamily => richService.FontFamily;
 
 
         internal RichtextboxModel(ILifetimeScope _scope)
         {
             scope = _scope;
-            richTextBoxService = scope.Resolve<IRichTextBoxService>();
-            flowDocumentService = scope.Resolve<IFlowDocumentService>();
+            richService = scope.Resolve<IRichTextBoxService>();
+            flowService = scope.Resolve<IFlowDocumentService>();
         }
 
 
         internal bool CanExecute_BoldCommand(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_BoldCommand(object? obj)
         {
-            flowDocumentService.ToggleBold(richTextBoxService.Selection);
+            flowService.ToggleBold(richService.Selection);
         }
 
 
         internal bool CanExecute_ItalicCommand(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_ItalicCommand(object? obj)
         {
-            flowDocumentService.ToggleItalic(richTextBoxService.Selection);
+            flowService.ToggleItalic(richService.Selection);
         }
 
 
         internal bool CanExecute_UnderlineCommand(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_UnderlineCommand(object? obj)
         {
-            flowDocumentService.ToggleUnderline(richTextBoxService.Selection);
+            flowService.ToggleUnderline(richService.Selection);
         }
 
 
         internal bool CanExecute_ClearFormattingCommand(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_ClearFormattingCommand(object? obj)
         {
-            flowDocumentService.ClearFormatting(richTextBoxService.Selection);
+            flowService.ClearFormatting(richService.Selection);
         }
 
 
@@ -87,7 +84,7 @@ namespace CryptoBook.Models
         internal void Execute_InsertTextCommand(object? obj)
         {
             if (obj is string text)
-                richTextBoxService.InsertTextAtCaret(text);
+                richService.InsertTextAtCaret(text);
         }
 
 
@@ -97,7 +94,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ClearTextCommand(object? obj)
         {
-            flowDocumentService.ClearDocument();
+            flowService.ClearDocument();
         }
 
 
@@ -108,28 +105,28 @@ namespace CryptoBook.Models
         internal void Execute_InsertImageCommand(object? obj)
         {
             if (obj is Tuple<string, double, double> tuple)
-                flowDocumentService.InsertImageAt(richTextBoxService.CaretPosition, tuple.Item1, tuple.Item2, tuple.Item3);
+                flowService.InsertImageAt(richService.CaretPosition, tuple.Item1, tuple.Item2, tuple.Item3);
         }
 
 
         internal bool CanExecute_CopyCommand(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_CopyCommand(object? obj)
         {
-            if (richTextBoxService.Selection != null)
-                richTextBoxService.Copy();
+            if (richService.Selection != null)
+                richService.Copy();
         }
 
         internal bool CanExecute_CutCommand(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_CutCommand(object? obj)
         {
-            if (richTextBoxService.Selection != null)
-                richTextBoxService.Cut();
+            if (richService.Selection != null)
+                richService.Cut();
         }
 
 
@@ -139,8 +136,8 @@ namespace CryptoBook.Models
         }
         internal void Execute_PasteCommand(object? obj)
         {
-            if (richTextBoxService.Selection != null)
-                richTextBoxService.Paste();
+            if (richService.Selection != null)
+                richService.Paste();
         }
 
 
@@ -151,7 +148,7 @@ namespace CryptoBook.Models
         internal void Execute_ChangeFontSizeCommand(object? obj)
         {
             if (obj is double size)
-                flowDocumentService.ApplyFontSize(richTextBoxService.Selection, size);
+                flowService.ApplyFontSize(richService.Selection, size);
         }
 
 
@@ -162,7 +159,7 @@ namespace CryptoBook.Models
         internal void Execute_ChangeFontFamilyCommand(object? obj)
         {
             if (obj is string family)
-                flowDocumentService.ApplyFontFamily(richTextBoxService.Selection, family);
+                flowService.ApplyFontFamily(richService.Selection, family);
         }
 
 
@@ -173,7 +170,7 @@ namespace CryptoBook.Models
         internal void Execute_ChangeForegroundColor(object? obj)
         {
             if (obj is Color color)
-                flowDocumentService.ApplyForegroundColor(richTextBoxService.Selection, color);
+                flowService.ApplyForegroundColor(richService.Selection, color);
         }
 
 
@@ -184,7 +181,7 @@ namespace CryptoBook.Models
         internal void Execute_ChangeBackgroundColor(object? obj)
         {
             if (obj is Color color)
-                flowDocumentService.ApplyBackgroundColor(richTextBoxService.Selection, color);
+                flowService.ApplyBackgroundColor(richService.Selection, color);
         }
 
 
@@ -195,7 +192,7 @@ namespace CryptoBook.Models
         internal void Execute_ApplyTextAlignment(object? obj)
         {
             if (obj is TextAlignment alignment)
-                flowDocumentService.ApplyTextAlignment(richTextBoxService.Selection, alignment);
+                flowService.ApplyTextAlignment(richService.Selection, alignment);
         }
 
 
@@ -207,7 +204,7 @@ namespace CryptoBook.Models
         internal void Execute_ApplyAcceptsTab(object? obj)
         {
             if (obj is bool accept)
-                richTextBoxService.ApplyAcceptsTab(accept);
+                richService.ApplyAcceptsTab(accept);
         }
 
 
@@ -218,7 +215,7 @@ namespace CryptoBook.Models
         internal void Execute_ApplyAcceptsReturn(object? obj)
         {
             if (obj is bool accept)
-                richTextBoxService.ApplyAcceptsReturn(accept);
+                richService.ApplyAcceptsReturn(accept);
         }
 
 
@@ -229,7 +226,7 @@ namespace CryptoBook.Models
         internal void Execute_ApplyVerticalScrollBarVisibility(object? obj)
         {
             if (obj is System.Windows.Controls.ScrollBarVisibility visibility)
-                richTextBoxService.ApplyVerticalScrollBarVisibility(visibility);
+                richService.ApplyVerticalScrollBarVisibility(visibility);
         }
 
 
@@ -240,7 +237,7 @@ namespace CryptoBook.Models
         internal void Execute_ApplyHorizontalScrollBarVisibility(object? obj)
         {
             if (obj is System.Windows.Controls.ScrollBarVisibility visibility)
-                richTextBoxService.ApplyHorizontalScrollBarVisibility(visibility);
+                richService.ApplyHorizontalScrollBarVisibility(visibility);
         }
 
 
@@ -251,18 +248,18 @@ namespace CryptoBook.Models
         internal void Execute_ApplyContextMenu(object? obj)
         {
             if (obj is System.Windows.Controls.ContextMenu menu)
-                richTextBoxService.ApplyContextMenu(menu);
+                richService.ApplyContextMenu(menu);
         }
 
 
 
         internal bool CanExecute_ClearFormatting(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_ClearFormatting(object? obj)
         {
-            flowDocumentService.ClearFormatting(richTextBoxService.Selection);
+            flowService.ClearFormatting(richService.Selection);
         }
 
 
@@ -272,7 +269,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_SelectAll(object? obj)
         {
-            richTextBoxService.SelectAll();
+            richService.SelectAll();
         }
 
 
@@ -282,29 +279,29 @@ namespace CryptoBook.Models
         }
         internal void Execute_ClearSelection(object? obj)
         {
-            richTextBoxService.ClearSelection();
+            richService.ClearSelection();
         }
 
 
         internal bool CanExecute_GetSelectedTextAsString(object? obj)
         {
-            return richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_GetSelectedTextAsString(object? obj)
         {
-            var text = flowDocumentService.GetPlainText();
+            var text = flowService.GetPlainText();
             // Можно вернуть или обработать text по необходимости
         }
 
 
         internal bool CanExecute_ReplaceSelectedText(object? obj)
         {
-            return obj is string text && !string.IsNullOrEmpty(text) && richTextBoxService.Selection != null && !richTextBoxService.Selection.IsEmpty;
+            return obj is string text && !string.IsNullOrEmpty(text) && richService.Selection != null && !richService.Selection.IsEmpty;
         }
         internal void Execute_ReplaceSelectedText(object? obj)
         {
             if (obj is string text)
-                flowDocumentService.ReplaceText(richTextBoxService.Selection.Text, text, false, false);
+                flowService.ReplaceText(richService.Selection.Text, text, false, false);
         }
 
 
@@ -315,7 +312,7 @@ namespace CryptoBook.Models
         internal void Execute_InsertHyperlink(object? obj)
         {
             if (obj is Tuple<string, string> tuple)
-                flowDocumentService.InsertHyperlinkAt(richTextBoxService.CaretPosition, tuple.Item1, tuple.Item2);
+                flowService.InsertHyperlinkAt(richService.CaretPosition, tuple.Item1, tuple.Item2);
         }
 
 
@@ -325,7 +322,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_InsertParagraph(object? obj)
         {
-            flowDocumentService.InsertParagraphAt(richTextBoxService.CaretPosition);
+            flowService.InsertParagraphAt(richService.CaretPosition);
         }
 
 
@@ -336,7 +333,7 @@ namespace CryptoBook.Models
         internal void Execute_InsertTable(object? obj)
         {
             if (obj is Tuple<int, int> tuple)
-                flowDocumentService.InsertTableAt(richTextBoxService.CaretPosition, tuple.Item1, tuple.Item2);
+                flowService.InsertTableAt(richService.CaretPosition, tuple.Item1, tuple.Item2);
         }
 
 
@@ -346,7 +343,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_GetRtf(object? obj)
         {
-            var rtf = flowDocumentService.GetRtf();
+            var rtf = flowService.GetRtf();
             // Можно вернуть или обработать rtf по необходимости
         }
 
@@ -358,7 +355,7 @@ namespace CryptoBook.Models
         internal void Execute_LoadRtf(object? obj)
         {
             if (obj is string rtf)
-                flowDocumentService.LoadRtf(rtf);
+                flowService.LoadRtf(rtf);
         }
 
 
@@ -370,7 +367,7 @@ namespace CryptoBook.Models
         internal void Execute_LoadPlainText(object? obj)
         {
             if (obj is string text)
-                flowDocumentService.LoadPlainText(text);
+                flowService.LoadPlainText(text);
         }
 
 
@@ -380,7 +377,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ClearDocument(object? obj)
         {
-            flowDocumentService.ClearDocument();
+            flowService.ClearDocument();
         }
 
 
@@ -390,7 +387,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ScrollToCaret(object? obj)
         {
-            richTextBoxService.ScrollToCaret();
+            richService.ScrollToCaret();
         }
 
 
@@ -400,7 +397,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ScrollToEnd(object? obj)
         {
-            richTextBoxService.ScrollToEnd();
+            richService.ScrollToEnd();
         }
 
 
@@ -410,7 +407,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ScrollToStart(object? obj)
         {
-            richTextBoxService.ScrollToStart();
+            richService.ScrollToStart();
         }
 
 
@@ -421,27 +418,27 @@ namespace CryptoBook.Models
         internal void Execute_SetDocumentMargin(object? obj)
         {
             if (obj is System.Windows.Thickness margin)
-                flowDocumentService.SetDocumentMargin(margin);
+                flowService.SetDocumentMargin(margin);
         }
 
 
         internal bool CanExecute_Undo(object? obj)
         {
-            return richTextBoxService.CanUndo;
+            return richService.CanUndo;
         }
         internal void Execute_Undo(object? obj)
         {
-            richTextBoxService.Undo();
+            richService.Undo();
         }
 
 
         internal bool CanExecute_Redo(object? obj)
         {
-            return richTextBoxService.CanRedo;
+            return richService.CanRedo;
         }
         internal void Execute_Redo(object? obj)
         {
-            richTextBoxService.Redo();
+            richService.Redo();
         }
 
 
@@ -452,7 +449,7 @@ namespace CryptoBook.Models
         internal void Execute_FindText(object? obj)
         {
             if (obj is Tuple<string, bool, bool> tuple)
-                flowDocumentService.FindText(tuple.Item1, tuple.Item2, tuple.Item3);
+                flowService.FindText(tuple.Item1, tuple.Item2, tuple.Item3);
         }
 
 
@@ -463,7 +460,7 @@ namespace CryptoBook.Models
         internal void Execute_ReplaceText(object? obj)
         {
             if (obj is Tuple<string, string, bool, bool> tuple)
-                flowDocumentService.ReplaceText(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                flowService.ReplaceText(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
         }
 
 
@@ -474,7 +471,7 @@ namespace CryptoBook.Models
         internal void Execute_ReplaceAllText(object? obj)
         {
             if (obj is Tuple<string, string, bool, bool> tuple)
-                flowDocumentService.ReplaceAllText(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
+                flowService.ReplaceAllText(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
         }
 
 
@@ -484,7 +481,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ApplyBulletedList(object? obj)
         {
-            flowDocumentService.ApplyBulletedList(richTextBoxService.Selection);
+            flowService.ApplyBulletedList(richService.Selection);
         }
 
 
@@ -494,7 +491,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ApplyNumberedList(object? obj)
         {
-            flowDocumentService.ApplyNumberedList(richTextBoxService.Selection);
+            flowService.ApplyNumberedList(richService.Selection);
         }
 
 
@@ -504,7 +501,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_RemoveListFormatting(object? obj)
         {
-            flowDocumentService.RemoveListFormatting(richTextBoxService.Selection);
+            flowService.RemoveListFormatting(richService.Selection);
         }
 
 
@@ -514,7 +511,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_IncreaseIndent(object? obj)
         {
-            flowDocumentService.IncreaseIndent(richTextBoxService.Selection);
+            flowService.IncreaseIndent(richService.Selection);
         }
 
 
@@ -524,7 +521,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_DecreaseIndent(object? obj)
         {
-            flowDocumentService.DecreaseIndent(richTextBoxService.Selection);
+            flowService.DecreaseIndent(richService.Selection);
         }
 
 
@@ -534,7 +531,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Focus(object? obj)
         {
-            richTextBoxService.Focus();
+            richService.Focus();
         }
 
 
@@ -545,7 +542,7 @@ namespace CryptoBook.Models
         internal void Execute_InsertTextAtCaret(object? obj)
         {
             if (obj is string text)
-                richTextBoxService.InsertTextAtCaret(text);
+                richService.InsertTextAtCaret(text);
         }
         internal bool CanExecute_InsertLineBreak(object? obj)
         {
@@ -563,7 +560,6 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object? obj)
         {
-
         }
         internal bool CanExecute_Close(object? obj)
         {

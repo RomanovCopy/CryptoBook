@@ -17,30 +17,15 @@ namespace CryptoBook.Services
     {
         private readonly ILifetimeScope scope;
 
-
-        FlowDocument IFlowDocumentService.Document
-        {
-            get => this;
-            set
-            {
-                this.Blocks.Clear();
-                if(value != null)
-                {
-                    foreach(var block in value.Blocks)
-                    {
-                        this.Blocks.Add(block);
-                    }
-                }
-            }
-        }
-
+        public FlowDocument Document { get; }
 
 
         public FlowDocumentService(ILifetimeScope scope)
         {
             this.scope = scope;
-
+            Document = scope.Resolve<IRichTextBoxService>().Document ?? throw new ArgumentNullException(nameof(IRichTextBoxService.Document));
         }
+
 
 
 
@@ -81,7 +66,7 @@ namespace CryptoBook.Services
 
                 // Предпочитаем символ перед курсором, если он есть, иначе — за ним
 
-                if(service.CaretPosition.CompareTo(this.ContentStart)==0 )
+                if(caret.CompareTo(Document.ContentStart)==0 )
                 {
                     start = caret;
                     end = caret.GetPositionAtOffset(1, LogicalDirection.Forward);
