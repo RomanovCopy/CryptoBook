@@ -23,7 +23,7 @@ namespace CryptoBook.Interfaces
         bool IsBold { get; }
         bool IsItalic { get; }
         bool IsUnderline { get; }
-        double FontSize { get; }
+        double FontSize { get; set; }
         string FontFamily { get; }
         string FontColor { get; } 
         string FontStile { get; }
@@ -83,5 +83,7 @@ namespace CryptoBook.Interfaces
         void ApplyContextMenu(ContextMenu menu);
         void ApplyAcceptsTab(bool accept);
         void ApplyAcceptsReturn(bool accept);
+
+        double GetFontSizeInSelection();
     }
 }

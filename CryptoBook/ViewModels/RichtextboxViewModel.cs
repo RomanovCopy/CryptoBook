@@ -96,6 +96,7 @@ namespace CryptoBook.ViewModels
         public ICommand SelectAll => selectAll ??= new RelayCommand(richtextboxModel.Execute_SelectAll, richtextboxModel.CanExecute_SelectAll);
         RelayCommand selectAll;
 
+
         public ICommand ClearSelection => clearSelection ??= new RelayCommand(richtextboxModel.Execute_ClearSelection, richtextboxModel.CanExecute_ClearSelection);
         RelayCommand clearSelection;
 

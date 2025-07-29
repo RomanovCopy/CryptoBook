@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Documents;
 
 using System.Drawing;
+using System.Windows.Input;
 
 namespace CryptoBook.Models
 {
@@ -585,6 +586,8 @@ namespace CryptoBook.Models
         {
             // Здесь можно реализовать логику после закрытия, если требуется
         }
+
+
 
 
     }

@@ -27,13 +27,16 @@ namespace CryptoBook.Services
         private TextRange last_Selection;
 
         FlowDocument IRichTextBoxService.Document => this.Document;
+
+        private bool userSelectionText { get; set; }
+        private bool userSelectionTextFinished { get; set; }
         bool IRichTextBoxService.IsBold => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontWeightProperty) is FontWeight weight && weight == FontWeights.Bold;
 
         bool IRichTextBoxService.IsItalic => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontStyleProperty) is FontStyle style && style == FontStyles.Italic;
 
         bool IRichTextBoxService.IsUnderline => GetTextPropertiesInCaretPosition(Inline.TextDecorationsProperty) is TextDecorationCollection decorations && decorations.Contains(TextDecorations.Underline.FirstOrDefault());
 
-        double IRichTextBoxService.FontSize => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontSizeProperty) is double size ? size : 12.0; // Default font size if not set
+        double IRichTextBoxService.FontSize { get => this.FontSize; set => this.FontSize = value; }
 
         string IRichTextBoxService.FontFamily => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontFamilyProperty) is Media.FontFamily family ? family.Source : "Segoe UI"; // Default font family if not set
 
@@ -93,8 +96,20 @@ namespace CryptoBook.Services
             this.scope = scope;
             this.LostFocus += RichTextBoxService_LostFocus;
             this.SelectionChanged += RichTextBoxService_SelectionChanged;
+            this.PreviewMouseLeftButtonUp += RichTextBoxService_PreviewMouseLeftButtonUp;
         }
 
+        private void RichTextBoxService_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if(userSelectionText && this.IsMouseCaptureWithin )
+            {
+                userSelectionText = false;
+                userSelectionTextFinished = true;
+                //var font = scope.Resolve<IFontFormatBar_ViewModel>();
+                //var fontsize = GetFontSizeInSelection();
+                //font.FontSize = fontsize;
+            }
+        }
 
         void IRichTextBoxService.Focus() => this.Focus();
         void IRichTextBoxService.ScrollToCaret() => this.ScrollToVerticalOffset(this.VerticalOffset);
@@ -136,14 +151,11 @@ namespace CryptoBook.Services
 
         private void RichTextBoxService_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if(Selection.IsEmpty)
-                return;
-            var font = scope.Resolve<IFontFormatBar_ViewModel>();
-            var fontsize = GetMaxFontSizeInSelection();
-            font.FontSize = fontsize;
+            if(!Selection.IsEmpty)
+                userSelectionText = true;
         }
 
-        public double GetMaxFontSizeInSelection()
+        public double GetFontSizeInSelection()
         {
             if(Selection.IsEmpty)
                 return (double)(Selection.GetPropertyValue(TextElement.FontSizeProperty) ?? 12.0);

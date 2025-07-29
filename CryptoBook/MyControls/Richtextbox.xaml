@@ -9,7 +9,7 @@
              xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
              xmlns:local="clr-namespace:CryptoBook.MyControls" 
              mc:Ignorable="d" 
-             d:DataContext="{x:Type interfaces:IRichtextboxViewModel}">
+             d:DataContext="{x:Type interfaces:IRichtextboxViewModel}"> 
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IRichtextboxViewModel}"/>
     </UserControl.DataContext>

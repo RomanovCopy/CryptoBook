@@ -4,79 +4,87 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
 using System.Collections.ObjectModel;
+using System.Windows.Documents;
 
 namespace CryptoBook.Models
 {
     internal class FontFormatBar_Model: ViewModelBase
     {
         private readonly ILifetimeScope scope;
-        private readonly IRichTextBoxService richTextBoxService;
-        private readonly IFlowDocumentService flowDocumentService;
+        private readonly IRichTextBoxService richService;
+        private readonly IFlowDocumentService flowService;
 
-        public bool IsBold => richTextBoxService.IsBold;
-        public bool IsItalic => richTextBoxService.IsItalic;
-        public bool IsUnderline => richTextBoxService.IsUnderline;
-        public double FontSize 
+        public bool IsBold => richService.IsBold;
+        public bool IsItalic => richService.IsItalic;
+        public bool IsUnderline => richService.IsUnderline;
+        public double FontSize
         {
-            get => richTextBoxService.FontSize;
-            set=>SetProperty(ref richTextBoxService.FontSize, value);
+            get => fontSize;
+            set =>SetProperty(ref fontSize, value);
         }
         double fontSize;
-        public string FontFamily => richTextBoxService.FontFamily;
-        public string FontColor => richTextBoxService.FontColor;
-        public string FontStile => richTextBoxService.FontStile;
+        public string FontFamily => richService.FontFamily;
+        public string FontColor => richService.FontColor;
+        public string FontStile => richService.FontStile;
 
-        public ObservableCollection<double> FontSizes => richTextBoxService.FontSizes;
-        public ObservableCollection<string> FontFamilies => richTextBoxService.FontFamilies;
-        public ObservableCollection<Color> FontColors => richTextBoxService.FontColors;
-        public ObservableCollection<Brush> BackgrondColor => richTextBoxService.BackgrondColor;
+        public ObservableCollection<double> FontSizes => richService.FontSizes;
+        public ObservableCollection<string> FontFamilies => richService.FontFamilies;
+        public ObservableCollection<Color> FontColors => richService.FontColors;
+        public ObservableCollection<Brush> BackgrondColor => richService.BackgrondColor;
 
 
         internal FontFormatBar_Model(ILifetimeScope scope)
         {
             this.scope = scope ?? throw new ArgumentNullException(nameof(scope));
-            richTextBoxService= scope.Resolve<IRichTextBoxService>() ?? throw new ArgumentNullException(nameof(IRichTextBoxService));
-            flowDocumentService = scope.Resolve<IFlowDocumentService>() ?? throw new ArgumentNullException(nameof(IFlowDocumentService));
+            richService = scope.Resolve<IRichTextBoxService>() ?? throw new ArgumentNullException(nameof(IRichTextBoxService));
+            flowService = scope.Resolve<IFlowDocumentService>() ?? throw new ArgumentNullException(nameof(IFlowDocumentService));
+            FontSize = 12.0;
         }
-        internal bool CanExecute_Bold(object? obj) 
+        internal bool CanExecute_Bold(object? obj)
         {
-            return !richTextBoxService.Selection.IsEmpty;
+            return !richService.Selection.IsEmpty;
         }
-        internal void Execute_Bold(object? obj) 
+        internal void Execute_Bold(object? obj)
         {
-            flowDocumentService.ToggleBold(richTextBoxService.Selection);
-        }
-
-        internal bool CanExecute_Italic(object? obj) 
-        {
-            return !richTextBoxService.Selection.IsEmpty;
-        }
-        internal void Execute_Italic(object? obj) 
-        {
-            flowDocumentService.ToggleItalic(richTextBoxService.Selection);
+            flowService.ToggleBold(richService.Selection);
         }
 
-        internal bool CanExecute_Underline(object? obj) 
+        internal bool CanExecute_Italic(object? obj)
         {
-            return !richTextBoxService.Selection.IsEmpty;
+            return !richService.Selection.IsEmpty;
         }
-        internal void Execute_Underline(object? obj) 
+        internal void Execute_Italic(object? obj)
         {
-            flowDocumentService.ToggleUnderline(richTextBoxService.Selection);
+            flowService.ToggleItalic(richService.Selection);
+        }
+
+        internal bool CanExecute_Underline(object? obj)
+        {
+            return !richService.Selection.IsEmpty;
+        }
+        internal void Execute_Underline(object? obj)
+        {
+            flowService.ToggleUnderline(richService.Selection);
         }
 
         internal bool CanExecute_ClearFormatting(object? obj) { return true; }
         internal void Execute_ClearFormatting(object? obj) { }
 
-        internal bool CanExecute_ChangeFontSize(object? obj) 
-        { 
-            return true; 
+        internal bool CanExecute_ChangeFontSize(object? obj)
+        {
+            if(obj is double size)
+            {
+                return FontSizes.Any((x)=>x==size);
+            }
+            return false;
+            ;
         }
-        internal void Execute_ChangeFontSize(object? obj) 
+        internal void Execute_ChangeFontSize(object? obj)
         {
             if(obj is double fontSize)
             {
-                flowDocumentService.ApplyFontSize(richTextBoxService.Selection, FontSize);
+                var selection = richService.Selection;
+                flowService.ApplyFontSize(richService.Selection, fontSize);
             }
         }
 
