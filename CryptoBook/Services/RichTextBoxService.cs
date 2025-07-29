@@ -14,7 +14,7 @@ using System.Windows.Documents;
 using Media = System.Windows.Media;
 using Draving = System.Drawing;
 
-using Controls=System.Windows.Controls;
+using Controls = System.Windows.Controls;
 using FontStyle = System.Windows.FontStyle;
 using System.Collections.ObjectModel;
 
@@ -35,7 +35,7 @@ namespace CryptoBook.Services
 
         double IRichTextBoxService.FontSize => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontSizeProperty) is double size ? size : 12.0; // Default font size if not set
 
-        string IRichTextBoxService.FontFamily => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontFamilyProperty) is  Media.FontFamily family ? family.Source : "Segoe UI"; // Default font family if not set
+        string IRichTextBoxService.FontFamily => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontFamilyProperty) is Media.FontFamily family ? family.Source : "Segoe UI"; // Default font family if not set
 
         string IRichTextBoxService.FontColor
         {
@@ -56,20 +56,20 @@ namespace CryptoBook.Services
         }
 
 
-        Controls.RichTextBox IRichTextBoxService.Service=> this;
+        Controls.RichTextBox IRichTextBoxService.Service => this;
         TextSelection IRichTextBoxService.Selection => this.Selection;
-        TextPointer IRichTextBoxService.CaretPosition 
-        { 
+        TextPointer IRichTextBoxService.CaretPosition
+        {
             get => this.CaretPosition;
             set => this.CaretPosition = value;
         }
-        bool IRichTextBoxService.IsReadOnly 
-        { 
+        bool IRichTextBoxService.IsReadOnly
+        {
             get => this.IsReadOnly;
             set => this.IsReadOnly = value;
         }
-        bool IRichTextBoxService.SpellCheckEnabled 
-        { 
+        bool IRichTextBoxService.SpellCheckEnabled
+        {
             get => this.SpellCheck.IsEnabled;
             set => this.SpellCheck.IsEnabled = value;
         }
@@ -81,7 +81,7 @@ namespace CryptoBook.Services
         {
             8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
             44, 48, 52, 56, 60, 64, 68, 72
-        }; 
+        };
 
         public ObservableCollection<string> FontFamilies { get; } // Коллекция доступных семейств шрифтов
         public ObservableCollection<Color> FontColors { get; } // Коллекция доступных цветов шрифта
@@ -96,15 +96,15 @@ namespace CryptoBook.Services
         }
 
 
-        void IRichTextBoxService.Focus()=> this.Focus();   
+        void IRichTextBoxService.Focus() => this.Focus();
         void IRichTextBoxService.ScrollToCaret() => this.ScrollToVerticalOffset(this.VerticalOffset);
-        void IRichTextBoxService.ScrollToStart()=>this.ScrollToHome();
-        void IRichTextBoxService.ScrollToEnd()=> this.ScrollToEnd();
-        void IRichTextBoxService.Copy()=>this.Copy();
-        void IRichTextBoxService.Cut()=>this.Cut();
-        void IRichTextBoxService.Paste()=>this.Paste();
-        void IRichTextBoxService.SelectAll()=>this.SelectAll();
-        void IRichTextBoxService.ClearSelection()=>this.Selection.Select(this.CaretPosition, this.CaretPosition);
+        void IRichTextBoxService.ScrollToStart() => this.ScrollToHome();
+        void IRichTextBoxService.ScrollToEnd() => this.ScrollToEnd();
+        void IRichTextBoxService.Copy() => this.Copy();
+        void IRichTextBoxService.Cut() => this.Cut();
+        void IRichTextBoxService.Paste() => this.Paste();
+        void IRichTextBoxService.SelectAll() => this.SelectAll();
+        void IRichTextBoxService.ClearSelection() => this.Selection.Select(this.CaretPosition, this.CaretPosition);
         void IRichTextBoxService.RestoreSelection()
         {
             if(last_Selection != null)
@@ -119,9 +119,9 @@ namespace CryptoBook.Services
             }
             this.Focus();
         }
-        void IRichTextBoxService.InsertTextAtCaret(string text)=> this.CaretPosition.InsertTextInRun(text);
-        void IRichTextBoxService.Undo()=>this.Undo();
-        void IRichTextBoxService.Redo()=>this.Redo();
+        void IRichTextBoxService.InsertTextAtCaret(string text) => this.CaretPosition.InsertTextInRun(text);
+        void IRichTextBoxService.Undo() => this.Undo();
+        void IRichTextBoxService.Redo() => this.Redo();
         void IRichTextBoxService.ApplyVerticalScrollBarVisibility(ScrollBarVisibility visibility)
         {
             this.VerticalScrollBarVisibility = visibility;
@@ -130,17 +130,17 @@ namespace CryptoBook.Services
         {
             this.HorizontalScrollBarVisibility = visibility;
         }
-        void IRichTextBoxService.ApplyContextMenu(ContextMenu menu)=>this.ContextMenu = menu;
-        void IRichTextBoxService.ApplyAcceptsTab(bool accept)=>this.AcceptsTab = accept;
-        void IRichTextBoxService.ApplyAcceptsReturn(bool accept)=>this.AcceptsReturn = accept;
-
+        void IRichTextBoxService.ApplyContextMenu(ContextMenu menu) => this.ContextMenu = menu;
+        void IRichTextBoxService.ApplyAcceptsTab(bool accept) => this.AcceptsTab = accept;
+        void IRichTextBoxService.ApplyAcceptsReturn(bool accept) => this.AcceptsReturn = accept;
 
         private void RichTextBoxService_SelectionChanged(object sender, RoutedEventArgs e)
         {
+            if(Selection.IsEmpty)
+                return;
             var font = scope.Resolve<IFontFormatBar_ViewModel>();
-            var fontsize=GetMaxFontSizeInSelection();
-            font.FontSize= fontsize;
-
+            var fontsize = GetMaxFontSizeInSelection();
+            font.FontSize = fontsize;
         }
 
         public double GetMaxFontSizeInSelection()
@@ -169,8 +169,9 @@ namespace CryptoBook.Services
                 }
                 position = position.GetNextContextPosition(LogicalDirection.Forward);
             }
-
-            return sizes.Count > 0 ? sizes.Max() : 12.0;
+            if(sizes.Count == 0)
+                return 12.0;
+            return sizes.Count > 1 ? 0 : sizes[0];
         }
 
 

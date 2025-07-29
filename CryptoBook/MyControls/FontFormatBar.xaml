@@ -26,12 +26,21 @@
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontSize" Value="12"/>
         </Style>
-        <!-- Стиль для ComboBox -->
-        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="3"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Style x:Key="comboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="IsEditable" Value="True"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>
+        
+        <Style x:Key="fontSizeComboBox" TargetType="ComboBox" BasedOn="{StaticResource comboBoxStyle}">
+            <Setter Property="ToolTip" Value="Font Size"/>
+            <Setter Property="ItemsSource" Value="{Binding FontSizes}"/>
+            <Setter Property="SelectedItem" Value="{Binding FontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding FontSize}" Value="0">
+                    <Setter Property="Text" Value="Mixed" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
@@ -74,17 +83,13 @@
                     Command="{Binding UnderlineCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- FontFamily -->
-                    <ComboBox Style="{StaticResource ComboBoxStyle}"
+                    <ComboBox 
                     ToolTip="Font Family"
                     ItemsSource="{Binding FontFamilies}"
                     SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}"/>
 
                     <!-- FontSize -->
-                    <ComboBox Style="{StaticResource ComboBoxStyle}"
-                    ToolTip="Font Size"
-                    ItemsSource="{Binding FontSizes}"
-                    SelectedIndex="0"
-                    SelectedItem="{Binding FontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox Style="{StaticResource fontSizeComboBox}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding FontSizeCommand,
@@ -94,7 +99,6 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
-
                     <!-- Align Left -->
                     <Button ToolTip="Align Left"
                     Content="&#xE8E4;"

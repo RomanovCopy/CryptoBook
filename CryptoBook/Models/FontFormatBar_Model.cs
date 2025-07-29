@@ -18,8 +18,8 @@ namespace CryptoBook.Models
         public bool IsUnderline => richTextBoxService.IsUnderline;
         public double FontSize 
         {
-            get => fontSize;
-            set=>SetProperty(ref fontSize, value);
+            get => richTextBoxService.FontSize;
+            set=>SetProperty(ref richTextBoxService.FontSize, value);
         }
         double fontSize;
         public string FontFamily => richTextBoxService.FontFamily;
