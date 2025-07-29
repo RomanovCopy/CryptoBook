@@ -77,7 +77,6 @@ namespace CryptoBook.Models
                 return FontSizes.Any((x)=>x==size);
             }
             return false;
-            ;
         }
         internal void Execute_ChangeFontSize(object? obj)
         {

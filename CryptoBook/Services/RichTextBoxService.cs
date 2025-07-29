@@ -99,17 +99,6 @@ namespace CryptoBook.Services
             this.PreviewMouseLeftButtonUp += RichTextBoxService_PreviewMouseLeftButtonUp;
         }
 
-        private void RichTextBoxService_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if(userSelectionText && this.IsMouseCaptureWithin )
-            {
-                userSelectionText = false;
-                userSelectionTextFinished = true;
-                //var font = scope.Resolve<IFontFormatBar_ViewModel>();
-                //var fontsize = GetFontSizeInSelection();
-                //font.FontSize = fontsize;
-            }
-        }
 
         void IRichTextBoxService.Focus() => this.Focus();
         void IRichTextBoxService.ScrollToCaret() => this.ScrollToVerticalOffset(this.VerticalOffset);
@@ -153,6 +142,18 @@ namespace CryptoBook.Services
         {
             if(!Selection.IsEmpty)
                 userSelectionText = true;
+        }
+
+        private void RichTextBoxService_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if(userSelectionText && this.IsMouseCaptureWithin)
+            {
+                userSelectionText = false;
+                userSelectionTextFinished = true;
+                //var font = scope.Resolve<IFontFormatBar_ViewModel>();
+                //var fontsize = GetFontSizeInSelection();
+                //font.FontSize = fontsize;
+            }
         }
 
         public double GetFontSizeInSelection()

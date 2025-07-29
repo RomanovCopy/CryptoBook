@@ -11,6 +11,7 @@ using Draving = System.Drawing;
 using Controls = System.Windows.Controls;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 
 namespace CryptoBook.Interfaces
@@ -83,6 +84,7 @@ namespace CryptoBook.Interfaces
         void ApplyContextMenu(ContextMenu menu);
         void ApplyAcceptsTab(bool accept);
         void ApplyAcceptsReturn(bool accept);
+
 
         double GetFontSizeInSelection();
     }

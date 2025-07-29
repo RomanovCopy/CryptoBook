@@ -35,7 +35,7 @@
         <Style x:Key="fontSizeComboBox" TargetType="ComboBox" BasedOn="{StaticResource comboBoxStyle}">
             <Setter Property="ToolTip" Value="Font Size"/>
             <Setter Property="ItemsSource" Value="{Binding FontSizes}"/>
-            <Setter Property="SelectedItem" Value="{Binding FontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
+            <Setter Property="SelectedItem" Value="{Binding FontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/> 
             <Style.Triggers>
                 <DataTrigger Binding="{Binding FontSize}" Value="0">
                     <Setter Property="Text" Value="Mixed" />

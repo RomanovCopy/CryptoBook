@@ -24,5 +24,6 @@ namespace CryptoBook.MyControls
         {
             InitializeComponent();
         }
+
     }
 }

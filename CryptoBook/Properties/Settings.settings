@@ -59,5 +59,8 @@
     <Setting Name="CurrentTheme" Type="System.String" Scope="User">
       <Value Profile="(Default)">SystemTheme</Value>
     </Setting>
+    <Setting Name="FontSizeDefault" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">16</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
