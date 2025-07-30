@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Drawing;
 
 namespace CryptoBook.Interfaces
 {
@@ -38,6 +39,14 @@ namespace CryptoBook.Interfaces
         /// семейство шрифтов.
         /// </summary>
         string FontFamily { get; }
+        /// <summary>
+        /// текущий цвет шрифта.
+        /// </summary>
+        Color FontColor { get; }
+        /// <summary>
+        /// текущий фоновый цвет для шрифта
+        /// </summary>
+        Color FontBackground { get; }
 
 
         /// <summary>

@@ -11,22 +11,15 @@ namespace CryptoBook.Models
     internal class FontFormatBar_Model: ViewModelBase
     {
         private readonly ILifetimeScope scope;
-        private readonly IRichTextBoxService richService;
-        private readonly IFlowDocumentService flowService;
         private readonly IRichtextboxViewModel richViewModel;
 
-        public bool IsBold => richService.IsBold;
-        public bool IsItalic => richService.IsItalic;
-        public bool IsUnderline => richService.IsUnderline;
-        public double FontSize
-        {
-            get => fontSize;
-            set =>SetProperty(ref fontSize, value);
-        }
-        double fontSize;
-        public string FontFamily => richService.FontFamily;
-        public string FontColor => richService.FontColor;
-        public string FontStile => richService.FontStile;
+        public bool IsBold => richViewModel.IsBold;
+        public bool IsItalic => richViewModel.IsItalic;
+        public bool IsUnderline => richViewModel.IsUnderline;
+        public double FontSize=> richViewModel.FontSize;
+        public string FontFamily => richViewModel.FontFamily;
+        public string FontColor => richViewModel.FontColor;
+        public string FontStile => richViewModel.FontStile;
 
         public ObservableCollection<double> FontSizes => richService.FontSizes;
         public ObservableCollection<string> FontFamilies => richService.FontFamilies;

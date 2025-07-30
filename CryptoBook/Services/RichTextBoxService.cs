@@ -186,9 +186,6 @@ namespace CryptoBook.Services
                 return 12.0;
             return sizes.Count > 1 ? 0 : sizes[0];
         }
-
-
-
         private object GetTextPropertiesInCaretPosition(DependencyProperty property)
         {
             TextPointer caret = this.CaretPosition.GetInsertionPosition(LogicalDirection.Backward);
@@ -198,7 +195,6 @@ namespace CryptoBook.Services
             TextRange range = new TextRange(caret, caret);
             return range.GetPropertyValue(property);
         }
-
         private void RichTextBoxService_LostFocus(object sender, RoutedEventArgs e)
         {
             last_Selection = new TextRange(Selection?.Start, Selection?.End);
