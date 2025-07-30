@@ -13,6 +13,7 @@ namespace CryptoBook.Models
         private readonly ILifetimeScope scope;
         private readonly IRichTextBoxService richService;
         private readonly IFlowDocumentService flowService;
+        private readonly IRichtextboxViewModel richViewModel;
 
         public bool IsBold => richService.IsBold;
         public bool IsItalic => richService.IsItalic;

@@ -29,7 +29,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Признак подчёркнутого текста.
         /// </summary>
-        bool IsUnderlined { get; }
+        bool IsUnderline { get; }
         /// <summary>
         /// Размер шрифта.
         /// </summary>

@@ -20,7 +20,7 @@ namespace CryptoBook.ViewModels
         public FlowDocument Document { get => richtextboxModel.Document;}
         public bool IsBold => richtextboxModel.IsBold;
         public bool IsItalic => richtextboxModel.IsItalic; 
-        public bool IsUnderlined => richtextboxModel.IsUnderlined; 
+        public bool IsUnderline => richtextboxModel.IsUnderlined; 
         public double FontSize => richtextboxModel.FontSize; 
         public string FontFamily => richtextboxModel.FontFamily;
 
