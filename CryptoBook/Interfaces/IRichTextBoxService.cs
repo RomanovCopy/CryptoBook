@@ -18,35 +18,6 @@ namespace CryptoBook.Interfaces
 {
     public interface IRichTextBoxService
     {
-        FlowDocument Document { get; } // Документ RichTextBox
-
-        // Свойства
-        bool IsBold { get; }
-        bool IsItalic { get; }
-        bool IsUnderline { get; }
-        double FontSize { get; set; }
-        string FontFamily { get; }
-        string FontColor { get; } 
-        string FontStile { get; }
-
-        /// <summary>
-        /// Коллекция доступных размеров шрифта
-        /// </summary>
-        ObservableCollection<double>FontSizes { get; }
-        /// <summary>
-        /// Коллекция доступных семейств шрифтов
-        /// </summary>
-        ObservableCollection<string> FontFamilies { get; }
-        /// <summary>
-        /// Коллекция доступных цветов шрифта
-        /// </summary>
-        ObservableCollection<Color> FontColors { get; }
-        /// <summary>
-        /// Коллекция доступных цветов фона
-        /// </summary>
-        ObservableCollection<Brush> BackgrondColor { get; }
-
-
         Controls.RichTextBox Service { get; } // если нужно получить доступ к контролу
         TextSelection Selection { get; }
         TextPointer CaretPosition { get; set; }
