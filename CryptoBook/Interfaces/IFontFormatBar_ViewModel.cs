@@ -4,77 +4,55 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+
+using Drawing = System.Drawing;
 
 namespace CryptoBook.Interfaces
 {
     public interface IFontFormatBar_ViewModel: IViewModel
     {
 
-        // Свойства
-        bool IsBold { get; }
-        bool IsItalic { get; }
-        bool IsUnderline { get; }
-        double FontSize { get; set; }
-        string FontFamily { get; }
-        string FontColor { get; }
-        string FontStile { get; }
-
         /// <summary>
         /// Коллекция доступных размеров шрифта
         /// </summary>
-        ObservableCollection<double> FontSizes { get; }
+        ObservableCollection<double> FontSizes { get; set; }
+        /// <summary>
+        /// Коллекция доступных стилей шрифта
+        /// </summary>
+        ObservableCollection<System.Drawing.FontStyle> FontStyles { get; set; }
         /// <summary>
         /// Коллекция доступных семейств шрифтов
         /// </summary>
-        ObservableCollection<string> FontFamilies { get; }
+        ObservableCollection<System.Drawing.FontFamily> FontFamilies { get; set; }
         /// <summary>
         /// Коллекция доступных цветов шрифта
         /// </summary>
-        ObservableCollection<Color> FontColors { get; }
+        ObservableCollection<System.Drawing.Color> FontColors { get; set; }
         /// <summary>
-        /// Коллекция доступных цветов фона
+        /// Коллекция доступных видов форматирования текста
         /// </summary>
-        ObservableCollection<Brush> BackgrondColor { get; }
+        ObservableCollection<ITextDecorationItem> TextDecorations { get; set; }
+        /// <summary>
+        /// Коллекция доступных FontWeight шрифта
+        /// </summary>
+        ObservableCollection<FontWeight> FontWeights { get; set; }
+        /// <summary>
+        /// Коллекция доступных FontStretch шрифта
+        /// </summary>
+        ObservableCollection<FontStretch> FontStretches { get; set; }
 
 
 
-        /// <summary>
-        /// Команда для применения жирного начертания.
-        /// </summary>
-        ICommand BoldCommand { get; }
-        /// <summary>
-        /// Команда для применения курсивного начертания.
-        /// </summary>
-        ICommand ItalicCommand { get; }
-        /// <summary>
-        /// Команда для применения подчёркивания.
-        /// </summary>
-        ICommand UnderlineCommand { get; }
-        /// <summary>
-        /// Команда для очистки форматирования.
-        /// </summary>
+        ICommand SetFontStyleCommand { get; }
+        ICommand SetFontWeightCommand { get; }
+        ICommand SetFontStretchCommand { get; }
+        ICommand SetFontFamilyCommand { get; }
+        ICommand SetTextDecorationCommand { get; }
+        ICommand SetFontColorCommand { get; }
+        ICommand SetFontBackgroundCommand { get; }
+        ICommand SetFontSizeCommand { get; }
         ICommand ClearFormattingCommand { get; }
-
-        /// <summary>
-        /// Команда для изменения размера шрифта.
-        /// </summary>
-        ICommand FontSizeCommand { get; }
-        /// <summary>
-        /// Команда для изменения семейства шрифта.
-        /// </summary>
-        ICommand FontFamilyCommand { get; }
-        /// <summary>
-        /// Команда для изменения выравнивания текста.
-        /// </summary>
-        ICommand TextAlligmentCommand { get; }
-        /// <summary>
-        /// Команда для изменения цвета текста (цвет переднего плана).
-        /// </summary>
-        ICommand ForegroundCommand { get; }
-        /// <summary>
-        /// Команда для изменения цвета фона текста.
-        /// </summary>
-        ICommand BackgroundCommand { get; }
     }
 }

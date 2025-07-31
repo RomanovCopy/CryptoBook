@@ -15,23 +15,6 @@ namespace CryptoBook.Interfaces
     public interface IRichtextboxViewModel: IViewModel
     {
         /// <summary>
-        /// Документ RichTextBox.
-        /// </summary>
-        FlowDocument Document { get;}
-
-        /// <summary>
-        /// Признак жирного начертания текста.
-        /// </summary>
-        bool IsBold { get; }
-        /// <summary>
-        /// Признак курсивного начертания текста.
-        /// </summary>
-        bool IsItalic { get;}
-        /// <summary>
-        /// Признак подчёркнутого текста.
-        /// </summary>
-        bool IsUnderline { get; }
-        /// <summary>
         /// Размер шрифта.
         /// </summary>
         double FontSize { get;}
