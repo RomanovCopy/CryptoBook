@@ -19,6 +19,8 @@ namespace CryptoBook.Interfaces
     public interface IRichTextBoxService
     {
         Controls.RichTextBox Service { get; } // если нужно получить доступ к контролу
+
+        FlowDocument Document { get; }
         TextSelection Selection { get; }
         TextPointer CaretPosition { get; set; }
         bool IsReadOnly { get; set; }
@@ -48,6 +50,8 @@ namespace CryptoBook.Interfaces
         // История изменений
         void Undo();
         void Redo();
+
+
 
         // UI-настройки
         void ApplyVerticalScrollBarVisibility(ScrollBarVisibility visibility);

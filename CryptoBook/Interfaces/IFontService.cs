@@ -11,7 +11,42 @@ namespace CryptoBook.Interfaces
 {
     public interface IFontService
     {
+        /// <summary>
+        /// Interface для работы с RichTextBox
+        /// </summary>
         IRichTextBoxService Service { get; set; }
+        /// <summary>
+        /// высота шрифта по умолчанию
+        /// </summary>
+        double DefaultFontSize { get; set; }
+        /// <summary>
+        /// FontStyle шрифта по умолчанию
+        /// </summary>
+        System.Drawing.FontStyle DefaultFontStyle { get; set; }
+        /// <summary>
+        /// FontFamily шрифта по умолчанию
+        /// </summary>
+        System.Drawing.FontFamily DefaultFontFamily { get; set; }
+        /// <summary>
+        /// FontColor шрифта по умолчанию
+        /// </summary>
+        System.Drawing.Color DefaultFontColor { get; set; }
+        /// <summary>
+        /// FontBackground шрифта по умолчанию
+        /// </summary>
+        System.Drawing.Color DefaultFontBackground { get; set; }
+        /// <summary>
+        /// TextDecoration шрифта по умолчанию
+        /// </summary>
+        TextDecoration DefaultTextDecoration { get; set; }
+        /// <summary>
+        /// FontWeight шрифта по умолчанию
+        /// </summary>
+        FontWeight DefaultFontWeight { get; set; }
+        /// <summary>
+        /// FontStretch шрифта по умолчанию
+        /// </summary>
+        FontStretch DefaultFontStretch { get; set; }
 
         /// <summary>
         /// Коллекция доступных размеров шрифта

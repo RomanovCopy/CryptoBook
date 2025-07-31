@@ -30,35 +30,6 @@ namespace CryptoBook.Services
 
         private bool userSelectionText { get; set; }
         private bool userSelectionTextFinished { get; set; }
-        bool IRichTextBoxService.IsBold => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontWeightProperty) is FontWeight weight && weight == FontWeights.Bold;
-
-        bool IRichTextBoxService.IsItalic => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontStyleProperty) is FontStyle style && style == FontStyles.Italic;
-
-        bool IRichTextBoxService.IsUnderline => GetTextPropertiesInCaretPosition(Inline.TextDecorationsProperty) is TextDecorationCollection decorations && decorations.Contains(TextDecorations.Underline.FirstOrDefault());
-
-        double IRichTextBoxService.FontSize { get => this.FontSize; set => this.FontSize = value; }
-
-        string IRichTextBoxService.FontFamily => GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontFamilyProperty) is Media.FontFamily family ? family.Source : "Segoe UI"; // Default font family if not set
-
-        string IRichTextBoxService.FontColor
-        {
-            get
-            {
-                var color = GetTextPropertiesInCaretPosition(Controls.RichTextBox.ForegroundProperty) as Media.Brush;
-                return color is Media.SolidColorBrush solidColor ? solidColor.Color.ToString() : Draving.Color.Black.ToString();
-            }
-        }
-
-        string IRichTextBoxService.FontStile
-        {
-            get
-            {
-                var style = GetTextPropertiesInCaretPosition(Controls.RichTextBox.FontStyleProperty) as FontStyle?;
-                return style.HasValue ? style.Value.ToString() : FontStyles.Normal.ToString();
-            }
-        }
-
-
         Controls.RichTextBox IRichTextBoxService.Service => this;
         TextSelection IRichTextBoxService.Selection => this.Selection;
         TextPointer IRichTextBoxService.CaretPosition
@@ -78,17 +49,6 @@ namespace CryptoBook.Services
         }
         bool IRichTextBoxService.CanUndo => this.CanUndo;
         bool IRichTextBoxService.CanRedo => this.CanRedo;
-
-
-        public ObservableCollection<double> FontSizes => new ObservableCollection<double>
-        {
-            8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
-            44, 48, 52, 56, 60, 64, 68, 72
-        };
-
-        public ObservableCollection<string> FontFamilies { get; } // Коллекция доступных семейств шрифтов
-        public ObservableCollection<Color> FontColors { get; } // Коллекция доступных цветов шрифта
-        public ObservableCollection<Brush> BackgrondColor { get; } // Коллекция доступных цветов фона
 
 
         public RichTextBoxService(ILifetimeScope scope)
