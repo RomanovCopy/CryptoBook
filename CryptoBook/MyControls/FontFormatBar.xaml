@@ -65,7 +65,7 @@
                               ToolTip="Font Family">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction 
+                                 <i:InvokeCommandAction 
                                     Command="{Binding SetFontFamilyCommand, UpdateSourceTrigger=PropertyChanged}"
                                     CommandParameter=
                                     "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
