@@ -63,7 +63,8 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
                     
                     <ComboBox x:Name="family" Style="{StaticResource comboBoxStyle}"
-                              ItemsSource="{Binding FontFamilies}"
+                              ItemsSource="{Binding FontFamilyes}"
+                              SelectedItem="{Binding FontFamily, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               ToolTip="Font Family">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>

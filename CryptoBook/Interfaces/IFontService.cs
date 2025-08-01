@@ -39,7 +39,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// TextDecoration шрифта по умолчанию
         /// </summary>
-        TextDecoration DefaultTextDecoration { get; set; }
+        ITextDecorationItem DefaultTextDecoration { get; set; }
         /// <summary>
         /// FontWeight шрифта по умолчанию
         /// </summary>
@@ -60,7 +60,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных семейств шрифтов
         /// </summary>
-        ObservableCollection<Media.FontFamily> FontFamilies { get; set; }
+        ObservableCollection<Media.FontFamily> FontFamilyes { get; set; }
         /// <summary>
         /// Коллекция доступных цветов шрифта
         /// </summary>

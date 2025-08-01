@@ -28,9 +28,9 @@ namespace CryptoBook.ViewModels
         public FontStretch FontStretch { get => model.FontStretch; set => model.FontStretch=value; }
 
 
-        public ObservableCollection<double> FontSizes { get => model.FontSizes;}
+        public ObservableCollection<double> FontSizes => model.FontSizes;
         public ObservableCollection<System.Drawing.FontStyle> FontStyles => model.FontStyles;
-        public ObservableCollection<FontFamily> FontFamilies => model.FontFamilies;
+        public ObservableCollection<Media.FontFamily> FontFamilyes => model.FontFamilyes;
         public ObservableCollection<Color> FontColors => model.FontColors;
         public ObservableCollection<ITextDecorationItem> TextDecorations  => model.TextDecorations;
         public ObservableCollection<FontWeight> FontWeights => model.FontWeights;

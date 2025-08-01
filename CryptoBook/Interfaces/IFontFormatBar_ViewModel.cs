@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 
 using Drawing = System.Drawing;
+using Media = System.Windows.Media;
 
 namespace CryptoBook.Interfaces
 {
@@ -17,7 +18,7 @@ namespace CryptoBook.Interfaces
 
         public double FontSize { get; set; }
         public System.Drawing.FontStyle FontStyle { get; set; }
-        public FontFamily FontFamily { get; set; }    
+        public Media.FontFamily FontFamily { get; set; }    
         public Color FontColor { get; set; }
         public ITextDecorationItem TextDecoration { get; set; }
         public FontWeight FontWeight { get; set; }
@@ -33,7 +34,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных семейств шрифтов
         /// </summary>
-        ObservableCollection<System.Drawing.FontFamily> FontFamilies { get; }
+        ObservableCollection<Media.FontFamily> FontFamilyes { get; }
         /// <summary>
         /// Коллекция доступных цветов шрифта
         /// </summary>

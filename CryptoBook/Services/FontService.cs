@@ -11,9 +11,9 @@ using Drawing= System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using CryptoBook.Infrastructure;
 using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace CryptoBook.Services
 {
@@ -31,8 +31,8 @@ namespace CryptoBook.Services
         Drawing.Color defaultFontColor;
         public Drarwing.Color DefaultFontBackground { get => defaultFontBackground; set => defaultFontBackground=value; }
         Drawing.Color defaultFontBackground;
-        public TextDecoration DefaultTextDecoration { get => defaultTextDecoration; set => defaultTextDecoration = value; }
-        TextDecoration defaultTextDecoration;
+        public ITextDecorationItem DefaultTextDecoration { get => defaultTextDecoration; set => defaultTextDecoration = value; }
+        ITextDecorationItem defaultTextDecoration;
         public FontWeight DefaultFontWeight { get => defaultFontWeight; set => defaultFontWeight=value; }
         FontWeight defaultFontWeight;  
         public FontStretch DefaultFontStretch { get => defaultFontStretch; set => defaultFontStretch=value; }
@@ -40,7 +40,7 @@ namespace CryptoBook.Services
 
         public ObservableCollection<double> FontSizes { get; set; }
         public ObservableCollection<Drarwing.FontStyle> FontStyles { get; set; }
-        public ObservableCollection<Media.FontFamily> FontFamilies { get; set; }
+        public ObservableCollection<Media.FontFamily> FontFamilyes { get; set; }
         public ObservableCollection<Drarwing.Color> FontColors { get; set; }
         public ObservableCollection<ITextDecorationItem> TextDecorations { get; set; }
         public ObservableCollection<FontWeight> FontWeights { get; set; }
@@ -52,7 +52,14 @@ namespace CryptoBook.Services
         {
             Service = service;
             InitializeCollections();
+            InitializeDefaultValues();
+        }
 
+        private void InitializeDefaultValues()
+        {
+            DefaultFontSize = 16.0;
+            DefaultFontStyle = Drawing.FontStyle.Regular;
+            DefaultFontFamily = FontFamilyes[7];
         }
 
         private void InitializeCollections()
@@ -65,11 +72,11 @@ namespace CryptoBook.Services
             FontStyles = new ObservableCollection<Drarwing.FontStyle>(
                 Enum.GetValues(typeof(Drarwing.FontStyle)).Cast<Drarwing.FontStyle>());
 
-            FontFamilies = new ObservableCollection<Media.FontFamily>();
+            FontFamilyes = new ObservableCollection<Media.FontFamily>();
             foreach(var family in Fonts.SystemFontFamilies)
             {
                 if(family is Media.FontFamily fontFamily)
-                    FontFamilies.Add(fontFamily);
+                    FontFamilyes.Add(fontFamily);
             }
 
 
@@ -139,7 +146,7 @@ namespace CryptoBook.Services
             ToggleOrClearFormatting(Service.Selection, TextElement.FontStretchProperty, fontStretch);
         }
 
-        public void SetFontFamily(Drarwing.FontFamily? fontFamily)
+        public void SetFontFamily(Media.FontFamily? fontFamily)
         {
             ToggleOrClearFormatting(Service.Selection, TextElement.FontFamilyProperty, fontFamily);
         }

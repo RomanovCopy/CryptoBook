@@ -18,23 +18,42 @@ namespace CryptoBook.Models
 
         internal ObservableCollection<double> FontSizes => fontService.FontSizes ?? throw new ArgumentNullException(nameof(fontService.FontSizes));
         internal ObservableCollection<Drawing.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
-        internal ObservableCollection<Media.FontFamily> FontFamilies => fontService.FontFamilies ?? throw new ArgumentNullException(nameof(fontService.FontFamilies));
+        internal ObservableCollection<Media.FontFamily> FontFamilyes => fontService.FontFamilyes ?? throw new ArgumentNullException(nameof(fontService.FontFamilyes));
         internal ObservableCollection<Color> FontColors => fontService.FontColors ?? throw new ArgumentNullException(nameof(fontService.FontColors));
         internal ObservableCollection<ITextDecorationItem> TextDecorations => fontService.TextDecorations ?? throw new ArgumentNullException(nameof(fontService.TextDecorations));
         internal ObservableCollection<System.Windows.FontWeight> FontWeights => fontService.FontWeights ?? throw new ArgumentNullException(nameof(fontService.FontWeights));
         internal ObservableCollection<System.Windows.FontStretch> FontStretches => fontService.FontStretches ?? throw new ArgumentNullException(nameof(fontService.FontStretches));
 
-        public double FontSize { get; internal set; }
-        public Drawing.FontStyle FontStyle { get; internal set; }
-        public FontFamily FontFamily { get; internal set; }
-        public Color FontColor { get; internal set; }
-        public ITextDecorationItem TextDecoration { get; internal set; }
-        public FontWeight FontWeight { get; internal set; }
-        public FontStretch FontStretch { get; internal set; }
+        public double FontSize { get=>fontSize; set=>SetProperty(ref fontSize, value); }
+        double fontSize;
+        public Drawing.FontStyle FontStyle { get=>fontStyle; set=>SetProperty(ref fontStyle, value); }
+        Drawing.FontStyle fontStyle;
+        public Media.FontFamily FontFamily { get=>fontFamily; set=>SetProperty(ref fontFamily, value); }
+        Media.FontFamily fontFamily;
+        public Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
+        Color fontColor;
+        public ITextDecorationItem TextDecoration { get=>textDecoration; set=>SetProperty(ref textDecoration, value); }
+        ITextDecorationItem textDecoration;
+        public FontWeight FontWeight { get => fontWeight; set=>SetProperty(ref fontWeight, value); }
+        FontWeight fontWeight;
+        public FontStretch FontStretch { get=>fontStretch; set=>SetProperty(ref fontStretch, value); }
+        FontStretch fontStretch;
+
 
         internal FontFormatBar_Model(IFontService service)
         {
             fontService = service ?? throw new ArgumentNullException(nameof(service));
+            InitializeValues();
+        }
+
+        void InitializeValues()
+        {
+            FontSize=fontService.DefaultFontSize;
+            FontStyle=fontService.DefaultFontStyle;
+            FontWeight=fontService.DefaultFontWeight;
+            FontFamily=fontService.DefaultFontFamily;
+            FontColor=fontService.DefaultFontColor;
+            TextDecoration=fontService.DefaultTextDecoration;
         }
 
 
@@ -82,13 +101,13 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontFamilyCommand(object? obj)
         {
-            if(obj is not FontFamily fontFamily)
+            if(obj is not Media.FontFamily fontFamily)
                 return false;
-            return FontFamilies.Contains(fontFamily);
+            return FontFamilyes.Contains(fontFamily);
         }
         internal void Execute_SetFontFamilyCommand(object? obj)
         {
-            if(obj is not FontFamily fontFamily)
+            if(obj is not Media.FontFamily fontFamily)
                 throw new ArgumentException("obj must be of type FontFamily", nameof(obj));
             fontService.SetFontFamily(fontFamily);
         }
