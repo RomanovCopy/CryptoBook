@@ -14,47 +14,81 @@ namespace CryptoBook.ViewModels
     {
         private readonly FontFormatBar_Model model;
 
-        public ObservableCollection<double> FontSizes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ObservableCollection<System.Drawing.FontStyle> FontStyles { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ObservableCollection<FontFamily> FontFamilies { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ObservableCollection<Color> FontColors { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ObservableCollection<ITextDecorationItem> TextDecorations { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ObservableCollection<FontWeight> FontWeights { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ObservableCollection<FontStretch> FontStretches { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        // IFontFormatBar_ViewModel implementation
+
+        public ObservableCollection<double> FontSizes { get => model.FontSizes;}
+        public ObservableCollection<System.Drawing.FontStyle> FontStyles => model.FontStyles;
+        public ObservableCollection<FontFamily> FontFamilies => model.FontFamilies;
+        public ObservableCollection<Color> FontColors => model.FontColors;
+        public ObservableCollection<ITextDecorationItem> TextDecorations  => model.TextDecorations;
+        public ObservableCollection<FontWeight> FontWeights => model.FontWeights;
+        public ObservableCollection<FontStretch> FontStretches => model.FontStretches;
 
 
-        public FontFormatBar_ViewModel(ILifetimeScope scope)
+        // Constructor
+        public FontFormatBar_ViewModel(IFontService service)
         {
-            this.scope = scope;
-            model = new FontFormatBar_Model(scope ?? throw new ArgumentNullException(nameof(scope)));
+            model = new FontFormatBar_Model(service ?? throw new ArgumentNullException(nameof(service)));
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
 
-        public ICommand SetFontStyleCommand => throw new NotImplementedException();
 
-        public ICommand SetFontWeightCommand => throw new NotImplementedException();
+        // IFontFormatBar_ViewModel implementation
 
-        public ICommand SetFontStretchCommand => throw new NotImplementedException();
+        public ICommand SetFontStyleCommand => setFontStyleCommand??=new RelayCommand(model.Execute_SetFontStyleCommand, model.CanExecute_SetFontStyleCommand);
+        RelayCommand setFontStyleCommand;
 
-        public ICommand SetFontFamilyCommand => throw new NotImplementedException();
+        public ICommand SetFontWeightCommand => 
+            setFontWeightCommand ??= new RelayCommand(model.Execute_SetFontWeightCommand, model.CanExecute_SetFontWeightCommand);
+        RelayCommand setFontWeightCommand;
+        public ICommand SetFontStretchCommand => 
+            setFontStretchCommand ??= new RelayCommand(model.Execute_SetFontStretchCommand, model.CanExecute_SetFontStretchCommand);
+        RelayCommand setFontStretchCommand;
 
-        public ICommand SetTextDecorationCommand => throw new NotImplementedException();
+        public ICommand SetFontFamilyCommand =>
+            setFontFamilyCommand ??= new RelayCommand(model.Execute_SetFontFamilyCommand, model.CanExecute_SetFontFamilyCommand);
+        RelayCommand setFontFamilyCommand;
 
-        public ICommand SetFontColorCommand => throw new NotImplementedException();
+        public ICommand SetTextDecorationCommand => 
+            setTextDecorationCommand ??= new RelayCommand(model.Execute_SetTextDecorationCommand, model.CanExecute_SetTextDecorationCommand);
+        RelayCommand setTextDecorationCommand;
 
-        public ICommand SetFontBackgroundCommand => throw new NotImplementedException();
+        public ICommand SetFontColorCommand => 
+            setFontColorCommand ??= new RelayCommand(model.Execute_SetFontColorCommand, model.CanExecute_SetFontColorCommand);
+        RelayCommand setFontColorCommand;
 
-        public ICommand SetFontSizeCommand => throw new NotImplementedException();
+        public ICommand SetFontBackgroundCommand => 
+            setFontBackgroundCommand ??= new RelayCommand(model.Execute_SetFontBackgroundCommand, model.CanExecute_SetFontBackgroundCommand);
+        RelayCommand setFontBackgroundCommand;
 
-        public ICommand ClearFormattingCommand => throw new NotImplementedException();
+        public ICommand SetFontSizeCommand => 
+            setFontSizeCommand ??= new RelayCommand(model.Execute_SetFontSizeCommand, model.CanExecute_SetFontSizeCommand);
+        RelayCommand setFontSizeCommand;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand ClearFormattingCommand => 
+            clearFormattingCommand ??= new RelayCommand(model.Execute_ClearFormattingCommand, model.CanExecute_ClearFormattingCommand);
+        RelayCommand clearFormattingCommand;
 
-        public ICommand Close => throw new NotImplementedException();
 
-        public ICommand Closing => throw new NotImplementedException();
+        // IViewModel implementation
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Loaded => 
+            loadedCommand ??= new RelayCommand(model.Execute_Loaded, model.CanExecute_Loaded);
+        RelayCommand loadedCommand;
+
+        public ICommand Close => 
+            closeCommand ??= new RelayCommand(model.Execute_Close, model.CanExecute_Close);
+        RelayCommand closeCommand;
+
+        public ICommand Closing => 
+            closingCommand ??= new RelayCommand(model.Execute_Closing, model.CanExecute_Closing);
+        RelayCommand closingCommand;
+
+        public ICommand Closed => 
+            closedCommand ??= new RelayCommand(model.Execute_Closed, model.CanExecute_Closed);
+        RelayCommand closedCommand;
+
+
     }
 }

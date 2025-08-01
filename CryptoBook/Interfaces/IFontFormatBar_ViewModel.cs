@@ -17,31 +17,31 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных размеров шрифта
         /// </summary>
-        ObservableCollection<double> FontSizes { get; set; }
+        ObservableCollection<double> FontSizes { get; }
         /// <summary>
         /// Коллекция доступных стилей шрифта
         /// </summary>
-        ObservableCollection<System.Drawing.FontStyle> FontStyles { get; set; }
+        ObservableCollection<System.Drawing.FontStyle> FontStyles { get; }
         /// <summary>
         /// Коллекция доступных семейств шрифтов
         /// </summary>
-        ObservableCollection<System.Drawing.FontFamily> FontFamilies { get; set; }
+        ObservableCollection<System.Drawing.FontFamily> FontFamilies { get; }
         /// <summary>
         /// Коллекция доступных цветов шрифта
         /// </summary>
-        ObservableCollection<System.Drawing.Color> FontColors { get; set; }
+        ObservableCollection<System.Drawing.Color> FontColors { get; }
         /// <summary>
         /// Коллекция доступных видов форматирования текста
         /// </summary>
-        ObservableCollection<ITextDecorationItem> TextDecorations { get; set; }
+        ObservableCollection<ITextDecorationItem> TextDecorations { get; }
         /// <summary>
         /// Коллекция доступных FontWeight шрифта
         /// </summary>
-        ObservableCollection<FontWeight> FontWeights { get; set; }
+        ObservableCollection<FontWeight> FontWeights { get;}
         /// <summary>
         /// Коллекция доступных FontStretch шрифта
         /// </summary>
-        ObservableCollection<FontStretch> FontStretches { get; set; }
+        ObservableCollection<FontStretch> FontStretches { get; }
 
 
 

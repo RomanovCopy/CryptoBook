@@ -27,21 +27,14 @@
             <Setter Property="FontSize" Value="12"/>
         </Style>
         <Style x:Key="comboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Margin" Value="2"/>
             <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="FontSize" Value="12"/> 
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="IsReadOnly" Value="True"/>
         </Style>
         
-        <Style x:Key="fontSizeComboBox" TargetType="ComboBox" BasedOn="{StaticResource comboBoxStyle}">
-            <Setter Property="ToolTip" Value="Font Size"/>
-            <Setter Property="ItemsSource" Value="{Binding FontSizes}"/>
-            <Setter Property="SelectedItem" Value="{Binding FontSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/> 
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding FontSize}" Value="0">
-                    <Setter Property="Text" Value="Mixed" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -66,7 +59,21 @@
 
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
-
+                    
+                    <ComboBox x:Name="family" Style="{StaticResource comboBoxStyle}"
+                              ItemsSource="{Binding FontFamilies}"
+                              ToolTip="Font Family">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction 
+                                    Command="{Binding SetFontFamilyCommand, UpdateSourceTrigger=PropertyChanged}"
+                                    CommandParameter=
+                                    "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    
+                    
                     <!-- Bold -->
                     <Button ToolTip="Bold"
                     Content="&#xE8DD;"
@@ -89,7 +96,9 @@
                     SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}"/>
 
                     <!-- FontSize -->
-                    <ComboBox Style="{StaticResource fontSizeComboBox}">
+                    <ComboBox x:Name="fontsize" Style="{StaticResource comboBoxStyle}"
+                              ToolTip="Font Size"
+                              ItemsSource="{Binding FontSizes}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding FontSizeCommand,

@@ -79,13 +79,13 @@ namespace CryptoBook.Interfaces
 
 
 
-        void SetFontStyle(System.Drawing.FontStyle fontStyle);
-        void SetFontWeight(FontWeight fontWeight);
-        void SetFontStretch(FontStretch fontStretch);
-        void SetFontFamily(System.Drawing.FontFamily fontFamily);
-        void SetTextDecoration(TextDecoration decoration);
-        void SetFontColor(System.Drawing.Color fontColor);
-        void SetFontBackground(System.Drawing.Color fontBackground);
+        void SetFontStyle(System.Drawing.FontStyle? fontStyle);
+        void SetFontWeight(FontWeight? fontWeight);
+        void SetFontStretch(FontStretch? fontStretch);
+        void SetFontFamily(System.Drawing.FontFamily? fontFamily);
+        void SetTextDecoration(TextDecoration? decoration);
+        void SetFontColor(System.Drawing.Color? fontColor);
+        void SetFontBackground(System.Drawing.Color? fontBackground);
         void SetFontSize(double fontSize);
 
         void ClearFormatting();
