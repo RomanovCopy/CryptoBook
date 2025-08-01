@@ -18,6 +18,8 @@ namespace CryptoBook.Models
 {
     internal class RichtextboxModel: ViewModelBase
     {
+
+
         public RichtextboxModel(ILifetimeScope scope)
         {
         }

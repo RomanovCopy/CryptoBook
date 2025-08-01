@@ -17,6 +17,8 @@ namespace CryptoBook.ViewModels
     public class RichtextboxViewModel: ViewModelBase, IRichtextboxViewModel
     {
         private readonly RichtextboxModel richtextboxModel;
+
+
         /// <summary>
         /// Конструктор ViewModel.
         /// </summary>

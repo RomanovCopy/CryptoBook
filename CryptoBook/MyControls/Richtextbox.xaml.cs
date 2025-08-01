@@ -23,7 +23,7 @@ namespace CryptoBook.MyControls
     /// </summary>
     public partial class Richtextbox: System.Windows.Controls.UserControl
     {
-        public Richtextbox( IRichTextDocumentContext context)
+        public Richtextbox( )
         {
             InitializeComponent();
         }

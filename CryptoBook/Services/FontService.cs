@@ -25,8 +25,8 @@ namespace CryptoBook.Services
         double defaultFontSize;
         public Drarwing.FontStyle DefaultFontStyle { get => defaultFontStyle; set => defaultFontStyle=value; }
         Drawing.FontStyle defaultFontStyle;
-        public Drarwing.FontFamily DefaultFontFamily { get => defaultFontFamily; set => defaultFontFamily=value; }
-        Drawing.FontFamily defaultFontFamily;
+        public Media.FontFamily DefaultFontFamily { get => defaultFontFamily; set => defaultFontFamily=value; }
+        Media.FontFamily defaultFontFamily;
         public Drarwing.Color DefaultFontColor { get => defaultFontColor; set => defaultFontColor=value; }
         Drawing.Color defaultFontColor;
         public Drarwing.Color DefaultFontBackground { get => defaultFontBackground; set => defaultFontBackground=value; }
@@ -40,7 +40,7 @@ namespace CryptoBook.Services
 
         public ObservableCollection<double> FontSizes { get; set; }
         public ObservableCollection<Drarwing.FontStyle> FontStyles { get; set; }
-        public ObservableCollection<Drarwing.FontFamily> FontFamilies { get; set; }
+        public ObservableCollection<Media.FontFamily> FontFamilies { get; set; }
         public ObservableCollection<Drarwing.Color> FontColors { get; set; }
         public ObservableCollection<ITextDecorationItem> TextDecorations { get; set; }
         public ObservableCollection<FontWeight> FontWeights { get; set; }
@@ -65,8 +65,13 @@ namespace CryptoBook.Services
             FontStyles = new ObservableCollection<Drarwing.FontStyle>(
                 Enum.GetValues(typeof(Drarwing.FontStyle)).Cast<Drarwing.FontStyle>());
 
-            FontFamilies = new ObservableCollection<Drarwing.FontFamily>(
-                Drarwing.FontFamily.Families);
+            FontFamilies = new ObservableCollection<Media.FontFamily>();
+            foreach(var family in Fonts.SystemFontFamilies)
+            {
+                if(family is Media.FontFamily fontFamily)
+                    FontFamilies.Add(fontFamily);
+            }
+
 
             FontColors = new ObservableCollection<Drarwing.Color>(
                 new Drarwing.Color[]
@@ -119,37 +124,37 @@ namespace CryptoBook.Services
             };
         }
 
-        public void SetFontStyle(Drarwing.FontStyle fontStyle)
+        public void SetFontStyle(Drarwing.FontStyle? fontStyle)
         {
             ToggleOrClearFormatting(Service.Selection, TextElement.FontStyleProperty, fontStyle);
         }
 
-        public void SetFontWeight(FontWeight fontWeight)
+        public void SetFontWeight(FontWeight? fontWeight)
         {
             ToggleOrClearFormatting(Service.Selection, TextElement.FontWeightProperty, fontWeight);
         }
 
-        public void SetFontStretch(FontStretch fontStretch)
+        public void SetFontStretch(FontStretch? fontStretch)
         {
             ToggleOrClearFormatting(Service.Selection, TextElement.FontStretchProperty, fontStretch);
         }
 
-        public void SetFontFamily(Drarwing.FontFamily fontFamily)
+        public void SetFontFamily(Drarwing.FontFamily? fontFamily)
         {
             ToggleOrClearFormatting(Service.Selection, TextElement.FontFamilyProperty, fontFamily);
         }
 
-        public void SetTextDecoration(TextDecoration decoration)
+        public void SetTextDecoration(TextDecoration? decoration)
         {
             ToggleOrClearFormatting(Service.Selection, Inline.TextDecorationsProperty, decoration);
         }
 
-        public void SetFontColor(Drarwing.Color fontColor)
+        public void SetFontColor(Drarwing.Color? fontColor)
         {
             throw new NotImplementedException();
         }
 
-        public void SetFontBackground(Drarwing.Color fontBackground)
+        public void SetFontBackground(Drarwing.Color? fontBackground)
         {
             throw new NotImplementedException();
         }
@@ -187,7 +192,14 @@ namespace CryptoBook.Services
             } else if(property == TextElement.FontStyleProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultFontStyle : targetValue);
-            } else
+            }
+            else if(property == TextElement.FontStretchProperty)
+            {
+                range.ApplyPropertyValue(property, shouldRemove ? DefaultFontStretch : targetValue);
+            } else if(property == TextElement.FontFamilyProperty)
+            {
+                range.ApplyPropertyValue(property, shouldRemove ? DefaultFontFamily : targetValue);
+            } else 
             {
                 // Общий случай
                 range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);

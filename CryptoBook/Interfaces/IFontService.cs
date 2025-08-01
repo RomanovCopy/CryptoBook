@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
+using Media = System.Windows.Media;
+using Drawing = System.Drawing;
 
 namespace CryptoBook.Interfaces
 {
@@ -22,19 +23,19 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// FontStyle шрифта по умолчанию
         /// </summary>
-        System.Drawing.FontStyle DefaultFontStyle { get; set; }
+        Drawing.FontStyle DefaultFontStyle { get; set; }
         /// <summary>
         /// FontFamily шрифта по умолчанию
         /// </summary>
-        System.Drawing.FontFamily DefaultFontFamily { get; set; }
+        Media.FontFamily DefaultFontFamily { get; set; }
         /// <summary>
         /// FontColor шрифта по умолчанию
         /// </summary>
-        System.Drawing.Color DefaultFontColor { get; set; }
+        Drawing.Color DefaultFontColor { get; set; }
         /// <summary>
         /// FontBackground шрифта по умолчанию
         /// </summary>
-        System.Drawing.Color DefaultFontBackground { get; set; }
+        Drawing.Color DefaultFontBackground { get; set; }
         /// <summary>
         /// TextDecoration шрифта по умолчанию
         /// </summary>
@@ -59,7 +60,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных семейств шрифтов
         /// </summary>
-        ObservableCollection<System.Drawing.FontFamily> FontFamilies { get; set; }
+        ObservableCollection<Media.FontFamily> FontFamilies { get; set; }
         /// <summary>
         /// Коллекция доступных цветов шрифта
         /// </summary>
@@ -82,7 +83,7 @@ namespace CryptoBook.Interfaces
         void SetFontStyle(System.Drawing.FontStyle? fontStyle);
         void SetFontWeight(FontWeight? fontWeight);
         void SetFontStretch(FontStretch? fontStretch);
-        void SetFontFamily(System.Drawing.FontFamily? fontFamily);
+        void SetFontFamily(Media.FontFamily? fontFamily);
         void SetTextDecoration(TextDecoration? decoration);
         void SetFontColor(System.Drawing.Color? fontColor);
         void SetFontBackground(System.Drawing.Color? fontBackground);

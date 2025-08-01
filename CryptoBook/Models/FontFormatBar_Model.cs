@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Documents;
 using Drawing = System.Drawing;
+using Media = System.Windows.Media;
 
 
 namespace CryptoBook.Models
@@ -17,13 +18,19 @@ namespace CryptoBook.Models
 
         internal ObservableCollection<double> FontSizes => fontService.FontSizes ?? throw new ArgumentNullException(nameof(fontService.FontSizes));
         internal ObservableCollection<Drawing.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
-        internal ObservableCollection<FontFamily> FontFamilies => fontService.FontFamilies ?? throw new ArgumentNullException(nameof(fontService.FontFamilies));
+        internal ObservableCollection<Media.FontFamily> FontFamilies => fontService.FontFamilies ?? throw new ArgumentNullException(nameof(fontService.FontFamilies));
         internal ObservableCollection<Color> FontColors => fontService.FontColors ?? throw new ArgumentNullException(nameof(fontService.FontColors));
         internal ObservableCollection<ITextDecorationItem> TextDecorations => fontService.TextDecorations ?? throw new ArgumentNullException(nameof(fontService.TextDecorations));
         internal ObservableCollection<System.Windows.FontWeight> FontWeights => fontService.FontWeights ?? throw new ArgumentNullException(nameof(fontService.FontWeights));
         internal ObservableCollection<System.Windows.FontStretch> FontStretches => fontService.FontStretches ?? throw new ArgumentNullException(nameof(fontService.FontStretches));
 
-
+        public double FontSize { get; internal set; }
+        public Drawing.FontStyle FontStyle { get; internal set; }
+        public FontFamily FontFamily { get; internal set; }
+        public Color FontColor { get; internal set; }
+        public ITextDecorationItem TextDecoration { get; internal set; }
+        public FontWeight FontWeight { get; internal set; }
+        public FontStretch FontStretch { get; internal set; }
 
         internal FontFormatBar_Model(IFontService service)
         {

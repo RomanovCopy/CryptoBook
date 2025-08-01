@@ -14,6 +14,14 @@ namespace CryptoBook.Interfaces
     public interface IFontFormatBar_ViewModel: IViewModel
     {
 
+
+        public double FontSize { get; set; }
+        public System.Drawing.FontStyle FontStyle { get; set; }
+        public FontFamily FontFamily { get; set; }    
+        public Color FontColor { get; set; }
+        public ITextDecorationItem TextDecoration { get; set; }
+        public FontWeight FontWeight { get; set; }
+        public FontStretch FontStretch { get; set; }
         /// <summary>
         /// Коллекция доступных размеров шрифта
         /// </summary>

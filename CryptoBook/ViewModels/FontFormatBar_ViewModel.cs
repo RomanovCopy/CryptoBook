@@ -8,6 +8,9 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 
+using Drawing = System.Drawing;
+using Media= System.Windows.Media;
+
 namespace CryptoBook.ViewModels
 {
     public class FontFormatBar_ViewModel: ViewModelBase, IFontFormatBar_ViewModel
@@ -15,6 +18,15 @@ namespace CryptoBook.ViewModels
         private readonly FontFormatBar_Model model;
 
         // IFontFormatBar_ViewModel implementation
+
+        public double FontSize { get=>model.FontSize; set=>model.FontSize=value; }
+        public System.Drawing.FontStyle FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
+        public Media.FontFamily FontFamily { get => model.FontFamily; set => model.FontFamily=value; }
+        public Color FontColor { get => model.FontColor; set => model.FontColor=value; }
+        public ITextDecorationItem TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
+        public FontWeight FontWeight { get => model.FontWeight; set => model.FontWeight=value; }
+        public FontStretch FontStretch { get => model.FontStretch; set => model.FontStretch=value; }
+
 
         public ObservableCollection<double> FontSizes { get => model.FontSizes;}
         public ObservableCollection<System.Drawing.FontStyle> FontStyles => model.FontStyles;
@@ -88,7 +100,6 @@ namespace CryptoBook.ViewModels
         public ICommand Closed => 
             closedCommand ??= new RelayCommand(model.Execute_Closed, model.CanExecute_Closed);
         RelayCommand closedCommand;
-
 
     }
 }

@@ -33,6 +33,8 @@
             <Setter Property="FontSize" Value="12"/> 
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Standard"/>
+            <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
         </Style>
         
     </UserControl.Resources>
@@ -63,6 +65,12 @@
                     <ComboBox x:Name="family" Style="{StaticResource comboBoxStyle}"
                               ItemsSource="{Binding FontFamilies}"
                               ToolTip="Font Family">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding Path=., UpdateSourceTrigger=PropertyChanged}" 
+                                            FontFamily="{Binding Path=., UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                  <i:InvokeCommandAction 
@@ -72,29 +80,46 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
+
+                    <ComboBox x:Name="style" Style="{StaticResource comboBoxStyle}"
+                              ItemsSource="{Binding FontStyles}"
+                              ToolTip="Font Style">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction 
+                                    Command="{Binding SetFontStyleCommand, UpdateSourceTrigger=PropertyChanged}"
+                                    CommandParameter=
+                                    "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+
+                    <ComboBox x:Name="weight" Style="{StaticResource comboBoxStyle}"
+                              ItemsSource="{Binding FontWeights}"
+                              ToolTip="Font Weight">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction 
+                                    Command="{Binding SetFontWeightCommand, UpdateSourceTrigger=PropertyChanged}"
+                                    CommandParameter=
+                                    "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+
+                    <ComboBox x:Name="decoration" Style="{StaticResource comboBoxStyle}"
+                              ItemsSource="{Binding TextDecorations}"
+                              ToolTip="Font Family">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction 
+                                    Command="{Binding SetTextDecorationCommand, UpdateSourceTrigger=PropertyChanged}"
+                                    CommandParameter=
+                                    "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
                     
-                    
-                    <!-- Bold -->
-                    <Button ToolTip="Bold"
-                    Content="&#xE8DD;"
-                    Command="{Binding BoldCommand, UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <!-- Italic -->
-                    <Button ToolTip="Italic"
-                    Content="&#xE8DB;"
-                    Command="{Binding ItalicCommand,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <!-- Underline -->
-                    <Button ToolTip="Underline"
-                    Content="&#xE8DC;"
-                    Command="{Binding UnderlineCommand, UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <!-- FontFamily -->
-                    <ComboBox 
-                    ToolTip="Font Family"
-                    ItemsSource="{Binding FontFamilies}"
-                    SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}"/>
-
                     <!-- FontSize -->
                     <ComboBox x:Name="fontsize" Style="{StaticResource comboBoxStyle}"
                               ToolTip="Font Size"
@@ -108,6 +133,9 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
+                    
+                    
+
                     <!-- Align Left -->
                     <Button ToolTip="Align Left"
                     Content="&#xE8E4;"
