@@ -17,7 +17,7 @@ namespace CryptoBook.Interfaces
 
 
         public double FontSize { get; set; }
-        public System.Drawing.FontStyle FontStyle { get; set; }
+        public System.Windows.FontStyle FontStyle { get; set; }
         public Media.FontFamily FontFamily { get; set; }    
         public Color FontColor { get; set; }
         public ITextDecorationItem TextDecoration { get; set; }
@@ -30,7 +30,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных стилей шрифта
         /// </summary>
-        ObservableCollection<System.Drawing.FontStyle> FontStyles { get; }
+        ObservableCollection<System.Windows.FontStyle> FontStyles { get; }
         /// <summary>
         /// Коллекция доступных семейств шрифтов
         /// </summary>

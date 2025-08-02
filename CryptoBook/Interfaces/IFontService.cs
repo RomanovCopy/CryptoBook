@@ -23,7 +23,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// FontStyle шрифта по умолчанию
         /// </summary>
-        Drawing.FontStyle DefaultFontStyle { get; set; }
+        System.Windows.FontStyle DefaultFontStyle { get; set; }
         /// <summary>
         /// FontFamily шрифта по умолчанию
         /// </summary>
@@ -56,7 +56,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных стилей шрифта
         /// </summary>
-        ObservableCollection<System.Drawing.FontStyle> FontStyles { get; set; }
+        ObservableCollection<System.Windows.FontStyle> FontStyles { get; set; }
         /// <summary>
         /// Коллекция доступных семейств шрифтов
         /// </summary>
@@ -80,7 +80,7 @@ namespace CryptoBook.Interfaces
 
 
 
-        void SetFontStyle(System.Drawing.FontStyle? fontStyle);
+        void SetFontStyle(System.Windows.FontStyle? fontStyle);
         void SetFontWeight(FontWeight? fontWeight);
         void SetFontStretch(FontStretch? fontStretch);
         void SetFontFamily(Media.FontFamily? fontFamily);

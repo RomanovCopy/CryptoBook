@@ -17,7 +17,7 @@ namespace CryptoBook.Models
         private readonly IFontService fontService;
 
         internal ObservableCollection<double> FontSizes => fontService.FontSizes ?? throw new ArgumentNullException(nameof(fontService.FontSizes));
-        internal ObservableCollection<Drawing.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
+        internal ObservableCollection<System.Windows.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
         internal ObservableCollection<Media.FontFamily> FontFamilyes => fontService.FontFamilyes ?? throw new ArgumentNullException(nameof(fontService.FontFamilyes));
         internal ObservableCollection<Color> FontColors => fontService.FontColors ?? throw new ArgumentNullException(nameof(fontService.FontColors));
         internal ObservableCollection<ITextDecorationItem> TextDecorations => fontService.TextDecorations ?? throw new ArgumentNullException(nameof(fontService.TextDecorations));
@@ -26,8 +26,8 @@ namespace CryptoBook.Models
 
         public double FontSize { get=>fontSize; set=>SetProperty(ref fontSize, value); }
         double fontSize;
-        public Drawing.FontStyle FontStyle { get=>fontStyle; set=>SetProperty(ref fontStyle, value); }
-        Drawing.FontStyle fontStyle;
+        public System.Windows.FontStyle FontStyle { get=>fontStyle; set=>SetProperty(ref fontStyle, value); }
+        System.Windows.FontStyle fontStyle;
         public Media.FontFamily FontFamily { get=>fontFamily; set=>SetProperty(ref fontFamily, value); }
         Media.FontFamily fontFamily;
         public Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
@@ -60,7 +60,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontStyleCommand(object? obj)
         {
-            if(obj is not Drawing.FontStyle fontStyle)
+            if(obj is not System.Windows.FontStyle fontStyle)
                 return false;
             // Проверяем, что стиль шрифта доступен в коллекции
             return FontStyles.Contains(fontStyle);
@@ -68,7 +68,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_SetFontStyleCommand(object? obj)
         {
-            if(obj is not Drawing.FontStyle fontStyle)
+            if(obj is not System.Windows.FontStyle fontStyle)
                 throw new ArgumentException("obj must be of type FontStyle", nameof(obj));
             fontService.SetFontStyle(fontStyle);
         }

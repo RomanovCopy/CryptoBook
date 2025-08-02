@@ -20,7 +20,7 @@ namespace CryptoBook.ViewModels
         // IFontFormatBar_ViewModel implementation
 
         public double FontSize { get=>model.FontSize; set=>model.FontSize=value; }
-        public System.Drawing.FontStyle FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
+        public System.Windows.FontStyle FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
         public Media.FontFamily FontFamily { get => model.FontFamily; set => model.FontFamily=value; }
         public Color FontColor { get => model.FontColor; set => model.FontColor=value; }
         public ITextDecorationItem TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
@@ -29,7 +29,7 @@ namespace CryptoBook.ViewModels
 
 
         public ObservableCollection<double> FontSizes => model.FontSizes;
-        public ObservableCollection<System.Drawing.FontStyle> FontStyles => model.FontStyles;
+        public ObservableCollection<System.Windows.FontStyle> FontStyles => model.FontStyles;
         public ObservableCollection<Media.FontFamily> FontFamilyes => model.FontFamilyes;
         public ObservableCollection<Color> FontColors => model.FontColors;
         public ObservableCollection<ITextDecorationItem> TextDecorations  => model.TextDecorations;

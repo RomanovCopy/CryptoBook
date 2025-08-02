@@ -9,6 +9,6 @@ namespace CryptoBook.Interfaces
     public interface ITextDecorationItem
     {
         public string Name { get; set; }
-        public System.Windows.TextDecorationCollection Decorations { get; set; }
+        public System.Windows.TextDecorationCollection? Decorations { get; set; }
     }
 }

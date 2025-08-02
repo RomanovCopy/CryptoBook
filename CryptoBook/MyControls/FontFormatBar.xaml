@@ -84,6 +84,7 @@
 
                     <ComboBox x:Name="style" Style="{StaticResource comboBoxStyle}"
                               ItemsSource="{Binding FontStyles}"
+                              SelectedItem="{Binding FontStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               ToolTip="Font Style">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
