@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.Infrastructure;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -20,7 +22,7 @@ namespace CryptoBook.Interfaces
         public System.Windows.FontStyle FontStyle { get; set; }
         public Media.FontFamily FontFamily { get; set; }    
         public Color FontColor { get; set; }
-        public ITextDecorationItem TextDecoration { get; set; }
+        public TextDecorationItem TextDecoration { get; set; }
         public FontWeight FontWeight { get; set; }
         public FontStretch FontStretch { get; set; }
         /// <summary>
@@ -42,7 +44,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных видов форматирования текста
         /// </summary>
-        ObservableCollection<ITextDecorationItem> TextDecorations { get; }
+        ObservableCollection<TextDecorationItem> TextDecorations { get; }
         /// <summary>
         /// Коллекция доступных FontWeight шрифта
         /// </summary>

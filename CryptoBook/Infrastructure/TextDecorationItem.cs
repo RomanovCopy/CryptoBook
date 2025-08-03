@@ -13,5 +13,9 @@ namespace CryptoBook.Infrastructure
     {
         public string Name { get; set ; }
         public TextDecorationCollection? Decorations { get ; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

@@ -31,8 +31,8 @@ namespace CryptoBook.Services
         Drawing.Color defaultFontColor;
         public Drarwing.Color DefaultFontBackground { get => defaultFontBackground; set => defaultFontBackground = value; }
         Drawing.Color defaultFontBackground;
-        public ITextDecorationItem DefaultTextDecoration { get => defaultTextDecoration; set => defaultTextDecoration = value; }
-        ITextDecorationItem defaultTextDecoration;
+        public TextDecorationItem DefaultTextDecoration { get => defaultTextDecoration; set => defaultTextDecoration = value; }
+        TextDecorationItem defaultTextDecoration;
         public FontWeight DefaultFontWeight { get => defaultFontWeight; set => defaultFontWeight = value; }
         FontWeight defaultFontWeight;
         public FontStretch DefaultFontStretch { get => defaultFontStretch; set => defaultFontStretch = value; }
@@ -43,7 +43,7 @@ namespace CryptoBook.Services
         public ObservableCollection<System.Windows.FontStyle> FontStyles { get; set; }
         public ObservableCollection<Media.FontFamily> FontFamilyes { get; set; }
         public ObservableCollection<Drarwing.Color> FontColors { get; set; }
-        public ObservableCollection<ITextDecorationItem> TextDecorations { get; set; }
+        public ObservableCollection<TextDecorationItem> TextDecorations { get; set; }
         public ObservableCollection<FontWeight> FontWeights { get; set; }
         public ObservableCollection<FontStretch> FontStretches { get; set; }
 
@@ -66,7 +66,7 @@ namespace CryptoBook.Services
             SetFontStretch(DefaultFontStretch);
             SetFontWeight(DefaultFontWeight);
             SetFontColor(DefaultFontColor);
-            SetTextDecoration(DefaultTextDecoration.Decorations?[0]);
+            SetTextDecoration(DefaultTextDecoration.Decorations);
 
         }
 
@@ -76,10 +76,10 @@ namespace CryptoBook.Services
             DefaultFontStyle = System.Windows.FontStyles.Normal;
             DefaultFontFamily = FontFamilyes.FirstOrDefault(f => f != null && f.Source == "Consolas") ?? FontFamilyes[0];
             DefaultFontColor = FontColors.FirstOrDefault(c => c.Name == "Black");
-            DefaultFontBackground= FontColors.FirstOrDefault(c => c.Name == "Transparent");
+            DefaultFontBackground = FontColors.FirstOrDefault(c => c.Name == "Transparent");
             DefaultTextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "Нет") ?? new TextDecorationItem { Name = "Нет", Decorations = null };
             DefaultFontWeight = FontWeights.FirstOrDefault(f => f == System.Windows.FontWeights.Normal);
-            DefaultFontStretch = FontStretches.FirstOrDefault(s=>s==System.Windows.FontStretches.Normal);
+            DefaultFontStretch = FontStretches.FirstOrDefault(s => s == System.Windows.FontStretches.Normal);
         }
 
         private void InitializeCollections()
@@ -99,12 +99,20 @@ namespace CryptoBook.Services
             }
 
 
-            FontFamilyes = new ObservableCollection<Media.FontFamily>();
-            foreach(var family in Fonts.SystemFontFamilies)
-            {
-                if(family is Media.FontFamily fontFamily)
-                    FontFamilyes.Add(fontFamily);
-            }
+            FontFamilyes =
+            [
+                new Media.FontFamily("Segoe UI"),          // Современный системный шрифт Windows
+                new Media.FontFamily("Arial"),             // Классический без засечек
+                new Media.FontFamily("Times New Roman"),   // С засечками, часто для печатного текста
+                new Media.FontFamily("Calibri"),           // Стандартный в Microsoft Office
+                new Media.FontFamily("Verdana"),           // Отличная читаемость на экране
+                new Media.FontFamily("Tahoma"),            // Компактный и читаемый
+                new Media.FontFamily("Consolas"),          // Моноширинный, идеален для кода
+                new Media.FontFamily("Courier New"),       // Классический моноширинный
+                new Media.FontFamily("Comic Sans MS"),     // Декоративный, "ручной"
+                new Media.FontFamily("Georgia"),           // С засечками, более современный, чем Times
+            ];
+
 
 
             FontColors = new ObservableCollection<Drarwing.Color>(
@@ -124,7 +132,7 @@ namespace CryptoBook.Services
                     Drawing.Color.Transparent
                 });
 
-            TextDecorations = new ObservableCollection<ITextDecorationItem>
+            TextDecorations = new ObservableCollection<TextDecorationItem>
             {
                 new TextDecorationItem { Name = "Нет", Decorations = null },
                 new TextDecorationItem { Name = "Подчеркнутый", Decorations = System.Windows.TextDecorations.Underline },
@@ -180,7 +188,7 @@ namespace CryptoBook.Services
             ToggleOrClearFormatting(Service.Selection, TextElement.FontFamilyProperty, fontFamily);
         }
 
-        public void SetTextDecoration(TextDecoration? decoration)
+        public void SetTextDecoration(TextDecorationCollection decoration)
         {
             ToggleOrClearFormatting(Service.Selection, Inline.TextDecorationsProperty, decoration);
         }
@@ -217,8 +225,14 @@ namespace CryptoBook.Services
 
             if(property == Inline.TextDecorationsProperty)
             {
-                // Особый случай для подчеркивания
+                //if(targetValue is TextDecorationCollection decoration)
+                //{
+                //    range.ApplyPropertyValue(Inline.TextDecorationsProperty, decoration);
+                //}
+                //else
+                //{
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultTextDecoration : targetValue);
+                //}
 
             } else if(property == TextElement.FontWeightProperty)
             {

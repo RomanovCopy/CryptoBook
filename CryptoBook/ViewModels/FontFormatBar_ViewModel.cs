@@ -23,7 +23,7 @@ namespace CryptoBook.ViewModels
         public System.Windows.FontStyle FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
         public Media.FontFamily FontFamily { get => model.FontFamily; set => model.FontFamily=value; }
         public Color FontColor { get => model.FontColor; set => model.FontColor=value; }
-        public ITextDecorationItem TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
+        public TextDecorationItem TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
         public FontWeight FontWeight { get => model.FontWeight; set => model.FontWeight=value; }
         public FontStretch FontStretch { get => model.FontStretch; set => model.FontStretch=value; }
 
@@ -32,7 +32,7 @@ namespace CryptoBook.ViewModels
         public ObservableCollection<System.Windows.FontStyle> FontStyles => model.FontStyles;
         public ObservableCollection<Media.FontFamily> FontFamilyes => model.FontFamilyes;
         public ObservableCollection<Color> FontColors => model.FontColors;
-        public ObservableCollection<ITextDecorationItem> TextDecorations  => model.TextDecorations;
+        public ObservableCollection<TextDecorationItem> TextDecorations  => model.TextDecorations;
         public ObservableCollection<FontWeight> FontWeights => model.FontWeights;
         public ObservableCollection<FontStretch> FontStretches => model.FontStretches;
 

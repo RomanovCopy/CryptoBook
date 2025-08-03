@@ -20,7 +20,7 @@ namespace CryptoBook.Models
         internal ObservableCollection<System.Windows.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
         internal ObservableCollection<Media.FontFamily> FontFamilyes => fontService.FontFamilyes ?? throw new ArgumentNullException(nameof(fontService.FontFamilyes));
         internal ObservableCollection<Color> FontColors => fontService.FontColors ?? throw new ArgumentNullException(nameof(fontService.FontColors));
-        internal ObservableCollection<ITextDecorationItem> TextDecorations => fontService.TextDecorations ?? throw new ArgumentNullException(nameof(fontService.TextDecorations));
+        internal ObservableCollection<TextDecorationItem> TextDecorations => fontService.TextDecorations ?? throw new ArgumentNullException(nameof(fontService.TextDecorations));
         internal ObservableCollection<System.Windows.FontWeight> FontWeights => fontService.FontWeights ?? throw new ArgumentNullException(nameof(fontService.FontWeights));
         internal ObservableCollection<System.Windows.FontStretch> FontStretches => fontService.FontStretches ?? throw new ArgumentNullException(nameof(fontService.FontStretches));
 
@@ -32,8 +32,10 @@ namespace CryptoBook.Models
         Media.FontFamily fontFamily;
         public Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
         Color fontColor;
-        public ITextDecorationItem TextDecoration { get=>textDecoration; set=>SetProperty(ref textDecoration, value); }
-        ITextDecorationItem textDecoration;
+        public TextDecorationItem TextDecoration 
+        { get=>textDecoration; 
+            set=>SetProperty(ref textDecoration, value); }
+        TextDecorationItem textDecoration;
         public FontWeight FontWeight { get => fontWeight; set=>SetProperty(ref fontWeight, value); }
         FontWeight fontWeight;
         public FontStretch FontStretch { get=>fontStretch; set=>SetProperty(ref fontStretch, value); }
@@ -129,12 +131,10 @@ namespace CryptoBook.Models
 
             if(decorations is null || decorations.Count == 0)
             {
-                // "Нет" — снимаем декорации
-                fontService.SetTextDecoration(null);
+                fontService.SetTextDecoration(fontService.DefaultTextDecoration.Decorations);
             } else
             {
-                // Применяем первый элемент
-                fontService.SetTextDecoration(decorations[0]);
+                fontService.SetTextDecoration(decorations);
             }
         }
 

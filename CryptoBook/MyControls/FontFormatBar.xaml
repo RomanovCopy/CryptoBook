@@ -9,7 +9,7 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
              mc:Ignorable="d" 
-             d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IFontFormatBar_ViewModel}}">
+             d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type viewmodels:FontFormatBar_ViewModel}}">
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFontFormatBar_ViewModel}"/>
     </UserControl.DataContext>
@@ -98,6 +98,7 @@
 
                     <ComboBox x:Name="weight" Style="{StaticResource comboBoxStyle}"
                               ItemsSource="{Binding FontWeights}"
+                              SelectedItem="{Binding FontWeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ToolTip="Font Weight">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
@@ -111,7 +112,15 @@
 
                     <ComboBox x:Name="decoration" Style="{StaticResource comboBoxStyle}"
                               ItemsSource="{Binding TextDecorations}"
-                              ToolTip="Font Family">
+                              SelectedItem="{Binding TextDecoration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ToolTip="Text Decoration">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl >
+                                    <TextBlock Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}" TextDecorations="{Binding Path=Decorations}"/>
+                                </ContentControl>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction 
@@ -125,10 +134,11 @@
                     <!-- FontSize -->
                     <ComboBox x:Name="fontsize" Style="{StaticResource comboBoxStyle}"
                               ToolTip="Font Size"
-                              ItemsSource="{Binding FontSizes}">
+                              ItemsSource="{Binding FontSizes}"
+                              SelectedItem="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding FontSizeCommand,
+                                <i:InvokeCommandAction Command="{Binding SetFontSizeCommand,
                                     UpdateSourceTrigger=PropertyChanged}" 
                                     CommandParameter="{Binding SelectedItem, 
                                     RelativeSource={RelativeSource AncestorType=ComboBox}}" />

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Media = System.Windows.Media;
 using Drawing = System.Drawing;
+using CryptoBook.Infrastructure;
 
 namespace CryptoBook.Interfaces
 {
@@ -39,7 +40,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// TextDecoration шрифта по умолчанию
         /// </summary>
-        ITextDecorationItem DefaultTextDecoration { get; set; }
+        TextDecorationItem DefaultTextDecoration { get; set; }
         /// <summary>
         /// FontWeight шрифта по умолчанию
         /// </summary>
@@ -68,7 +69,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных видов форматирования текста
         /// </summary>
-        ObservableCollection<ITextDecorationItem> TextDecorations { get; set; }
+        ObservableCollection<TextDecorationItem> TextDecorations { get; set; }
         /// <summary>
         /// Коллекция доступных FontWeight шрифта
         /// </summary>
@@ -84,7 +85,7 @@ namespace CryptoBook.Interfaces
         void SetFontWeight(FontWeight? fontWeight);
         void SetFontStretch(FontStretch? fontStretch);
         void SetFontFamily(Media.FontFamily? fontFamily);
-        void SetTextDecoration(TextDecoration? decoration);
+        void SetTextDecoration(TextDecorationCollection decoration);
         void SetFontColor(System.Drawing.Color? fontColor);
         void SetFontBackground(System.Drawing.Color? fontBackground);
         void SetFontSize(double fontSize);
