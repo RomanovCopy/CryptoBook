@@ -8,6 +8,7 @@
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+             xmlns:converters="clr-namespace:CryptoBook.Converters"
              mc:Ignorable="d" 
              d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type viewmodels:FontFormatBar_ViewModel}}">
     <UserControl.DataContext>
@@ -30,13 +31,13 @@
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="Height" Value="Auto"/>
-            <Setter Property="FontSize" Value="12"/> 
+            <Setter Property="FontSize" Value="12"/>
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Standard"/>
             <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
         </Style>
-        
+
     </UserControl.Resources>
 
     <Grid>
@@ -61,7 +62,7 @@
 
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
-                    
+
                     <ComboBox x:Name="family" Style="{StaticResource comboBoxStyle}"
                               ItemsSource="{Binding FontFamilyes}"
                               SelectedItem="{Binding FontFamily, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
@@ -74,7 +75,7 @@
                         </ComboBox.ItemTemplate>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                 <i:InvokeCommandAction 
+                                <i:InvokeCommandAction 
                                     Command="{Binding SetFontFamilyCommand, UpdateSourceTrigger=PropertyChanged}"
                                     CommandParameter=
                                     "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
@@ -130,7 +131,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
-                    
+
                     <!-- FontSize -->
                     <ComboBox x:Name="fontsize" Style="{StaticResource comboBoxStyle}"
                               ToolTip="Font Size"
@@ -145,8 +146,32 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
-                    
-                    
+                    <!-- FontColor -->
+                    <ComboBox x:Name="fontcolor" Style="{StaticResource comboBoxStyle}"
+                              ToolTip="Font Color"
+                              ItemsSource="{Binding FontColors}"
+                              SelectedItem="{Binding FontColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding Path=. , UpdateSourceTrigger=PropertyChanged,
+                                    Converter={markup:ResolveConverter 
+                                    ConverterType={x:Type converters:ColorToColorConverter}}}" 
+                                    Width="50" Height="15" Margin="1" CornerRadius="2" BorderBrush="Black"
+                                    BorderThickness="1" HorizontalAlignment="Center"
+                                    ToolTip="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding SetFontSizeCommand,
+                                    UpdateSourceTrigger=PropertyChanged}" 
+                                    CommandParameter="{Binding SelectedItem, 
+                                    RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+
+
 
                     <!-- Align Left -->
                     <Button ToolTip="Align Left"

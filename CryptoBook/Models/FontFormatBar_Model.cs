@@ -32,6 +32,8 @@ namespace CryptoBook.Models
         Media.FontFamily fontFamily;
         public Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
         Color fontColor;
+        public Color FontBackground { get => fontBackground; set => SetProperty(ref fontBackground, value); }
+        Color fontBackground;
         public TextDecorationItem TextDecoration 
         { get=>textDecoration; 
             set=>SetProperty(ref textDecoration, value); }
@@ -55,7 +57,8 @@ namespace CryptoBook.Models
             FontWeight=fontService.DefaultFontWeight;
             FontFamily=fontService.DefaultFontFamily;
             FontColor=fontService.DefaultFontColor;
-            TextDecoration=fontService.DefaultTextDecoration;
+            FontBackground=fontService.DefaultFontBackground;
+            TextDecoration =fontService.DefaultTextDecoration;
         }
 
 
