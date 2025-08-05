@@ -38,6 +38,13 @@
             <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
         </Style>
 
+        <DataTemplate x:Key="SelectedColorTemplate">
+            <Rectangle Width="16" Height="16"
+                Fill="{Binding Converter={markup:ResolveConverter 
+                ConverterType={x:Type converters:ColorToColorConverter}}}" 
+                Stroke="Red" StrokeThickness="1" Margin="0,0,10,0" />
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <Grid>
@@ -146,31 +153,63 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
+
                     <!-- FontColor -->
-                    <ComboBox x:Name="fontcolor" Style="{StaticResource comboBoxStyle}"
-                              ToolTip="Font Color"
-                              ItemsSource="{Binding FontColors}"
-                              SelectedItem="{Binding FontColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                    <ComboBox ItemsSource="{Binding FontColors}" 
+                              SelectedItem="{Binding FontColor, Mode=TwoWay}" Width="100" Height="24">
+
+                        <!-- Вид каждого элемента -->
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="{Binding Path=. , UpdateSourceTrigger=PropertyChanged,
-                                    Converter={markup:ResolveConverter 
-                                    ConverterType={x:Type converters:ColorToColorConverter}}}" 
-                                    Width="50" Height="15" Margin="1" CornerRadius="2" BorderBrush="Black"
-                                    BorderThickness="1" HorizontalAlignment="Center"
-                                    ToolTip="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Width="16" Height="16" Margin="2"
+                                        Fill="{Binding Converter={markup:ResolveConverter 
+                                        ConverterType={x:Type converters:ColorToColorConverter}}}" 
+                                        Stroke="Black" StrokeThickness="1"/>
+                                    <TextBlock Text="{Binding}" Margin="4,0,0,0"/>
+                                </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
+
+                        <!-- Переопределяем ControlTemplate для отображения выбранного цвета -->
+                        <ComboBox.Template>
+                            <ControlTemplate TargetType="ComboBox">
+                                <Grid>
+                                    <ToggleButton x:Name="ToggleButton" Focusable="false"
+                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, 
+                                        RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
+                                        <ContentPresenter x:Name="ContentSite"
+                                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                            Content="{TemplateBinding SelectionBoxItem}" />
+                                    </ToggleButton>
+                                    <ContentPresenter x:Name="SelectedColorRectangle"
+                                        Content="{TemplateBinding SelectedItem}"
+                                        ContentTemplate="{StaticResource SelectedColorTemplate}"
+                                        VerticalAlignment="Center"  Margin="4,0,25,0"/>
+                                    <Popup x:Name="Popup" Placement="Bottom"
+                                        IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"
+                                        Focusable="False" PopupAnimation="Slide">
+                                        <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                            MinWidth="{TemplateBinding ActualWidth}">
+                                            <Border BorderThickness="1" Background="White" BorderBrush="Gray">
+                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                    <StackPanel IsItemsHost="True" />
+                                                </ScrollViewer>
+                                            </Border>
+                                        </Grid>
+                                    </Popup>
+                                </Grid>
+                            </ControlTemplate>
+                        </ComboBox.Template>
+                        <!-- Привязка команды -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SetFontSizeCommand,
-                                    UpdateSourceTrigger=PropertyChanged}" 
-                                    CommandParameter="{Binding SelectedItem, 
-                                    RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                <i:InvokeCommandAction 
+                                    Command="{Binding SetFontColorCommand,UpdateSourceTrigger=PropertyChanged}" 
+                                    CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
-
 
 
                     <!-- Align Left -->
