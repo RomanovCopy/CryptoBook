@@ -57,7 +57,7 @@ namespace CryptoBook.Models
             FontWeight=fontService.DefaultFontWeight;
             FontFamily=fontService.DefaultFontFamily;
             FontColor=fontService.DefaultFontColor;
-            FontBackground=fontService.DefaultFontBackground;
+            FontBackground =fontService.DefaultFontBackground;
             TextDecoration =fontService.DefaultTextDecoration;
         }
 

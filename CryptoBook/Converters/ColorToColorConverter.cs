@@ -12,29 +12,13 @@ namespace CryptoBook.Converters
     public class ColorToColorConverter: IValueConverter
     {
 
-        private readonly ObservableCollection<System.Drawing.Color> MyColors;
-
-        public ColorToColorConverter()
-        {
-            MyColors = [];
-            foreach(PropertyInfo info in typeof(System.Drawing.Color).GetProperties())
-            {
-                if(info != null && info.PropertyType == typeof(System.Drawing.Color))
-                {
-                    var value = info.GetValue(null);
-                    if(value != null)
-                    {
-                        MyColors.Add((System.Drawing.Color)value);
-                    }
-                }
-            }
-        }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
                 object result = null;
+                if(value==null)return DependencyProperty.UnsetValue;
                 var a = value.GetType();
                 if(targetType == typeof(Brush) && value is System.Drawing.Color val)
                 {
@@ -59,6 +43,8 @@ namespace CryptoBook.Converters
             try
             {
                 object result;
+                if(value == null)
+                    return DependencyProperty.UnsetValue;
                 if(targetType == typeof(Brush) && value is System.Drawing.Color val)
                 {
                     result = new SolidColorBrush(System.Windows.Media.Color.FromArgb(val.A, val.R, val.G, val.B));

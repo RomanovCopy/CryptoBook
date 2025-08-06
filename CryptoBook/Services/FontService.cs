@@ -77,7 +77,7 @@ namespace CryptoBook.Services
             DefaultFontFamily = FontFamilyes.FirstOrDefault(f => f != null && f.Source == "Consolas") ?? FontFamilyes[0];
             DefaultFontColor = FontColors.FirstOrDefault(c => c.Name == "Black");
             DefaultFontBackground = FontColors.FirstOrDefault(c => c.Name == "Transparent");
-            DefaultTextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "Нет") ?? new TextDecorationItem { Name = "Нет", Decorations = null };
+            DefaultTextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "None") ?? new TextDecorationItem { Name = "None", Decorations = null };
             DefaultFontWeight = FontWeights.FirstOrDefault(f => f == System.Windows.FontWeights.Normal);
             DefaultFontStretch = FontStretches.FirstOrDefault(s => s == System.Windows.FontStretches.Normal);
         }
@@ -134,11 +134,11 @@ namespace CryptoBook.Services
 
             TextDecorations = new ObservableCollection<TextDecorationItem>
             {
-                new TextDecorationItem { Name = "Нет", Decorations = null },
-                new TextDecorationItem { Name = "Подчеркнутый", Decorations = System.Windows.TextDecorations.Underline },
-                new TextDecorationItem { Name = "Зачеркнутый", Decorations = System.Windows.TextDecorations.Strikethrough },
-                new TextDecorationItem { Name = "Сверху", Decorations = System.Windows.TextDecorations.OverLine },
-                new TextDecorationItem { Name = "Базовая линия", Decorations = System.Windows.TextDecorations.Baseline }
+                new TextDecorationItem { Name = "None", Decorations = null },
+                new TextDecorationItem { Name = "Underline", Decorations = System.Windows.TextDecorations.Underline },
+                new TextDecorationItem { Name = "Strikethrough", Decorations = System.Windows.TextDecorations.Strikethrough },
+                new TextDecorationItem { Name = "OverLine", Decorations = System.Windows.TextDecorations.OverLine },
+                new TextDecorationItem { Name = "Baseline", Decorations = System.Windows.TextDecorations.Baseline }
             };
 
             FontWeights = new ObservableCollection<System.Windows.FontWeight>
@@ -220,6 +220,9 @@ namespace CryptoBook.Services
         private void ToggleOrClearFormatting(TextRange range, DependencyProperty property, object targetValue)
         {
             object current = range.GetPropertyValue(property);
+
+            if(current == null)
+                return;
 
             bool shouldRemove = current != DependencyProperty.UnsetValue && current.Equals(targetValue);
 
