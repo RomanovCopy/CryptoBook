@@ -10,16 +10,18 @@
              xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
              xmlns:converters="clr-namespace:CryptoBook.Converters"
              mc:Ignorable="d" 
-             d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type viewmodels:FontFormatBar_ViewModel}}">
+             d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IFontService}}">
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFontFormatBar_ViewModel}"/>
     </UserControl.DataContext>
     <UserControl.Resources>
+        
         <Style TargetType="Popup">
             <Setter Property="AllowsTransparency" Value="True"/>
             <Setter Property="PopupAnimation" Value="Slide"/>
             <Setter Property="StaysOpen" Value="False"/>
         </Style>
+        
         <Style TargetType="Button">
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Width" Value="24"/>
@@ -97,18 +99,14 @@
             </Grid>
         </ControlTemplate>
 
-
-
-
     </UserControl.Resources>
 
     <Grid>
         <!-- Кнопка для вызова панели -->
         <ToggleButton x:Name="TogglePanelButton"
-                      Content="≡"
+                      Style="{StaticResource RoundedToggleButtonStyle}"
+                      Content="Format"
                       Height="20"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Top"
                       FontWeight="Bold"/>
         <!-- Popup-панель -->
         <Popup PlacementTarget="{Binding ElementName=TogglePanelButton}"
@@ -215,6 +213,21 @@
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction 
                                     Command="{Binding SetFontColorCommand,UpdateSourceTrigger=PropertyChanged}" 
+                                    CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+
+
+                    <!--Background -->
+                    <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Background"
+                              SelectedItem="{Binding FontColor, Mode=TwoWay}" Width="100" Height="24"
+                              ItemTemplate="{StaticResource ComboBoxItemTemplate}" Tag="isColor"
+                              Template="{StaticResource ComboBoxTemplate}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction 
+                                    Command="{Binding SetFontBackgroundCommand,UpdateSourceTrigger=PropertyChanged}" 
                                     CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>

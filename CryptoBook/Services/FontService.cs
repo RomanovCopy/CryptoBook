@@ -1,9 +1,9 @@
 ﻿using CryptoBook.Interfaces;
+using CryptoBook.Infrastructure;
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Drarwing = System.Drawing;
 using System.Linq;
 using Windows.Media.Core;
 using Media = System.Windows.Media;
@@ -11,9 +11,7 @@ using Drawing = System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using CryptoBook.Infrastructure;
 using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace CryptoBook.Services
 {
@@ -27,9 +25,9 @@ namespace CryptoBook.Services
         System.Windows.FontStyle defaultFontStyle;
         public Media.FontFamily DefaultFontFamily { get => defaultFontFamily; set => defaultFontFamily = value; }
         Media.FontFamily defaultFontFamily;
-        public Drarwing.Color DefaultFontColor { get => defaultFontColor; set => defaultFontColor = value; }
+        public Drawing.Color DefaultFontColor { get => defaultFontColor; set => defaultFontColor = value; }
         Drawing.Color defaultFontColor;
-        public Drarwing.Color DefaultFontBackground { get => defaultFontBackground; set => defaultFontBackground = value; }
+        public Drawing.Color DefaultFontBackground { get => defaultFontBackground; set => defaultFontBackground = value; }
         Drawing.Color defaultFontBackground;
         public TextDecorationItem DefaultTextDecoration { get => defaultTextDecoration; set => defaultTextDecoration = value; }
         TextDecorationItem defaultTextDecoration;
@@ -42,7 +40,7 @@ namespace CryptoBook.Services
         public ObservableCollection<double> FontSizes { get; set; }
         public ObservableCollection<System.Windows.FontStyle> FontStyles { get; set; }
         public ObservableCollection<Media.FontFamily> FontFamilyes { get; set; }
-        public ObservableCollection<Drarwing.Color> FontColors { get; set; }
+        public ObservableCollection<Drawing.Color> FontColors { get; set; }
         public ObservableCollection<TextDecorationItem> TextDecorations { get; set; }
         public ObservableCollection<FontWeight> FontWeights { get; set; }
         public ObservableCollection<FontStretch> FontStretches { get; set; }
@@ -115,20 +113,20 @@ namespace CryptoBook.Services
 
 
 
-            FontColors = new ObservableCollection<Drarwing.Color>(
-                new Drarwing.Color[]
+            FontColors = new ObservableCollection<Drawing.Color>(
+                new Drawing.Color[]
                 {
-                    Drarwing.Color.Black,
-                    Drarwing.Color.White,
-                    Drarwing.Color.Red,
-                    Drarwing.Color.Green,
-                    Drarwing.Color.Blue,
-                    Drarwing.Color.Yellow,
-                    Drarwing.Color.Gray,
-                    Drarwing.Color.Orange,
-                    Drarwing.Color.Purple,
-                    Drarwing.Color.Brown,
-                    Drarwing.Color.Cyan,
+                    Drawing.Color.Black,
+                    Drawing.Color.White,
+                    Drawing.Color.Red,
+                    Drawing.Color.Green,
+                    Drawing.Color.Blue,
+                    Drawing.Color.Yellow,
+                    Drawing.Color.Gray,
+                    Drawing.Color.Orange,
+                    Drawing.Color.Purple,
+                    Drawing.Color.Brown,
+                    Drawing.Color.Cyan,
                     Drawing.Color.Transparent
                 });
 
@@ -193,11 +191,16 @@ namespace CryptoBook.Services
             ToggleOrClearFormatting(Service.Selection, Inline.TextDecorationsProperty, decoration);
         }
 
-        public void SetFontColor(Drarwing.Color? fontColor)
+        public void SetFontColor(Drawing.Color? fontColor)
         {
+            if(fontColor is Drawing.Color color)
+            {
+                var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+                ToggleOrClearFormatting(Service.Selection, TextElement.ForegroundProperty, brush);
+            }
         }
 
-        public void SetFontBackground(Drarwing.Color? fontBackground)
+        public void SetFontBackground(Drawing.Color? fontBackground)
         {
         }
 
@@ -228,14 +231,7 @@ namespace CryptoBook.Services
 
             if(property == Inline.TextDecorationsProperty)
             {
-                //if(targetValue is TextDecorationCollection decoration)
-                //{
-                //    range.ApplyPropertyValue(Inline.TextDecorationsProperty, decoration);
-                //}
-                //else
-                //{
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultTextDecoration : targetValue);
-                //}
 
             } else if(property == TextElement.FontWeightProperty)
             {
