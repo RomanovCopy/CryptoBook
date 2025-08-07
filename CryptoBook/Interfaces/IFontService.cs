@@ -8,6 +8,7 @@ using System.Windows;
 using Media = System.Windows.Media;
 using Drawing = System.Drawing;
 using CryptoBook.Infrastructure;
+using Windows.ApplicationModel.VoiceCommands;
 
 namespace CryptoBook.Interfaces
 {
@@ -89,6 +90,7 @@ namespace CryptoBook.Interfaces
         void SetFontColor(System.Drawing.Color? fontColor);
         void SetFontBackground(System.Drawing.Color? fontBackground);
         void SetFontSize(double fontSize);
+        void ApplyTextAlignment(TextAlignment? alignment);
 
         void ClearFormatting();
     }

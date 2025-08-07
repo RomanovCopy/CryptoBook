@@ -15,21 +15,28 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFontFormatBar_ViewModel}"/>
     </UserControl.DataContext>
     <UserControl.Resources>
-        
         <Style TargetType="Popup">
             <Setter Property="AllowsTransparency" Value="True"/>
             <Setter Property="PopupAnimation" Value="Slide"/>
             <Setter Property="StaysOpen" Value="False"/>
         </Style>
-        
         <Style TargetType="Button">
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="Width" Value="24"/>
+            <Setter Property="Margin" Value="3,0,3,2"/>
+            <Setter Property="Width" Value="30"/>
             <Setter Property="Height" Value="24"/>
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontSize" Value="12"/>
         </Style>
-
+        <Style x:Key="textBlockHeader" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Calibri"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="BlueViolet"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
         <DataTemplate x:Key="ComboBoxItemTemplate">
             <StackPanel Orientation="Horizontal">
                 <Rectangle x:Name="ColorRectangle" Width="16" Height="16" Margin="2"
@@ -40,7 +47,8 @@
                            TextDecorations="None"
                            Foreground="Black"
                            Background="Transparent"
-                           FontWeight="Medium"/>
+                           FontWeight="Medium"
+                           FontStretch="Normal"/>
             </StackPanel>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=Tag}"
@@ -68,9 +76,13 @@
                      Value="isFontSize">
                     <Setter TargetName="textblock" Property="Margin" Value="3,0,3,0"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=Tag}"
+                     Value="isFontStretch">
+                    <Setter TargetName="textblock" Property="FontFamily" Value="Bahnschrift"/>
+                    <Setter TargetName="textblock" Property="FontStretch" Value="{Binding}"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
-
         <ControlTemplate x:Key="ComboBoxTemplate" TargetType="ComboBox" >
             <Grid>
                 <ToggleButton x:Name="ToggleButton" Style="{StaticResource RoundedToggleButtonStyle}"
@@ -98,7 +110,6 @@
                 </Popup>
             </Grid>
         </ControlTemplate>
-
     </UserControl.Resources>
 
     <Grid>
@@ -113,147 +124,199 @@
                Placement="Bottom"
                IsOpen="{Binding IsChecked, ElementName=TogglePanelButton}"
                StaysOpen="False">
-            <Border Background="#EEEEEE"
-                    BorderBrush="Gray" BorderThickness="1"
-                    Padding="10"
-                    CornerRadius="4"
+            <Border Background="Gray"
+                    BorderBrush="Black" BorderThickness="1"
+                    Padding="5"
+                    CornerRadius="5"
                     HorizontalAlignment="Stretch"
                     RenderTransformOrigin="0.5,0">
 
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
-
-                    <ComboBox x:Name="family" Tag="isFontFamily"
+                    <StackPanel Orientation="Vertical" x:Name="panelFamily">
+                        <TextBlock Text="Family" Style="{StaticResource textBlockHeader}"/>
+                        <ComboBox x:Name="family" Tag="isFontFamily"
                               ItemsSource="{Binding FontFamilyes}"
                               SelectedItem="{Binding FontFamily, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               ToolTip="FontFamily" Width="100" Height="24"
                               Template="{StaticResource ComboBoxTemplate}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction 
                                     Command="{Binding SetFontFamilyCommand, UpdateSourceTrigger=PropertyChanged}"
                                     CommandParameter=
                                     "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-
-                    <ComboBox x:Name="style" Tag="isFontStyle"
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelStyle">
+                        <TextBlock Text="Style" Style="{StaticResource textBlockHeader}"/>
+                        <ComboBox x:Name="style" Tag="isFontStyle"
                               ItemsSource="{Binding FontStyles}" Width="100" Height="24"
                               SelectedItem="{Binding FontStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               Template="{StaticResource ComboBoxTemplate}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
                               ToolTip="FontStyle">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction 
                                     Command="{Binding SetFontStyleCommand, UpdateSourceTrigger=PropertyChanged}"
                                     CommandParameter=
                                     "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
 
-                    <ComboBox x:Name="weight" Tag="isFontWeight"
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelWeight">
+                        <TextBlock Text="Weight" Style="{StaticResource textBlockHeader}"/>
+                        <ComboBox x:Name="weight" Tag="isFontWeight"
                               ItemsSource="{Binding FontWeights}" Width="100" Height="24"
                               SelectedItem="{Binding FontWeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               Template="{StaticResource ComboBoxTemplate}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
                               ToolTip="FontWeight">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction 
                                     Command="{Binding SetFontWeightCommand, UpdateSourceTrigger=PropertyChanged}"
                                     CommandParameter=
                                     "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
 
-                    <ComboBox x:Name="decoration" Tag="isTextDecoration"
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelDecoration">
+                        <TextBlock Text="Decoration" Style="{StaticResource textBlockHeader}"/>
+                        <ComboBox x:Name="decoration" Tag="isTextDecoration"
                               ItemsSource="{Binding TextDecorations}" Width="100" Height="24"
                               SelectedItem="{Binding TextDecoration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
                               Template="{StaticResource ComboBoxTemplate}"
                               ToolTip="TextDecoration">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction 
                                     Command="{Binding SetTextDecorationCommand, UpdateSourceTrigger=PropertyChanged}"
                                     CommandParameter=
                                     "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelStrech">
+                        <TextBlock Text="Stretch" Style="{StaticResource textBlockHeader}"/>
+                        <ComboBox x:Name="fontstretch" Tag="isFontStretch"
+                              ItemsSource="{Binding FontStretches}" Width="100" Height="24"
+                              SelectedItem="{Binding FontStretch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ItemTemplate="{StaticResource ComboBoxItemTemplate}"
+                              Template="{StaticResource ComboBoxTemplate}"
+                              ToolTip="Font Stretches">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction 
+                                    Command="{Binding SetFontStretchCommand, UpdateSourceTrigger=PropertyChanged}"
+                                    CommandParameter=
+                                    "{Binding SelectedItem,RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
 
-                    <!-- FontSize -->
-                    <ComboBox x:Name="fontsize" 
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelSize">
+                        <TextBlock Text="Size" Style="{StaticResource textBlockHeader}"/>
+                        <!-- FontSize -->
+                        <ComboBox x:Name="fontsize" 
                               ToolTip="FontSize" Tag="isFontSize"
                               ItemsSource="{Binding FontSizes}" Width="40" Height="24"
                               SelectedItem="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
                               Template="{StaticResource ComboBoxTemplate}" >
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SetFontSizeCommand,
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SetFontSizeCommand,
                                     UpdateSourceTrigger=PropertyChanged}" 
                                     CommandParameter="{Binding SelectedItem, 
                                     RelativeSource={RelativeSource AncestorType=ComboBox}}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
 
-                    <!--FontColor-->
-                    <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Foreground"
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelColor">
+                        <TextBlock Text="Color" Style="{StaticResource textBlockHeader}"/>
+                        <!--FontColor-->
+                        <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Foreground"
                               SelectedItem="{Binding FontColor, Mode=TwoWay}" Width="100" Height="24"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}" Tag="isColor"
                               Template="{StaticResource ComboBoxTemplate}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction 
                                     Command="{Binding SetFontColorCommand,UpdateSourceTrigger=PropertyChanged}" 
                                     CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-
-
-                    <!--Background -->
-                    <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Background"
-                              SelectedItem="{Binding FontColor, Mode=TwoWay}" Width="100" Height="24"
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelBackColor">
+                        <TextBlock Text="Back Color" Style="{StaticResource textBlockHeader}"/>
+                        <!--Background -->
+                        <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Background"
+                              SelectedItem="{Binding FontBackground, Mode=TwoWay}" Width="100" Height="24"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}" Tag="isColor"
                               Template="{StaticResource ComboBoxTemplate}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction 
                                     Command="{Binding SetFontBackgroundCommand,UpdateSourceTrigger=PropertyChanged}" 
                                     CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </StackPanel>
 
 
+                    <StackPanel Orientation="Vertical" x:Name="panelAlignLeft">
+                        <TextBlock Text="Left" Style="{StaticResource textBlockHeader}"/>
+                        <!-- Align Left -->
+                        <Button ToolTip="Align Left"
+                            Content="&#xE8E4;"
+                            Command="{Binding AlignLeftCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelAlignCenter">
+                        <TextBlock Text="Center" Style="{StaticResource textBlockHeader}"/>
+                        <!-- Align Center -->
+                        <Button ToolTip="Align Center"
+                            Content="&#xE8E3;"
+                            Command="{Binding AlignCenterCommand}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelAlignRight">
+                        <TextBlock Text="Right" Style="{StaticResource textBlockHeader}"/>
+                        <!-- Align Right -->
+                        <Button ToolTip="Align Right"
+                            Content="&#xE8E2;"
+                            Command="{Binding AlignRightCommand}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelImage">
+                        <TextBlock Text="Justify" Style="{StaticResource textBlockHeader}"/>
+                        <!-- Insert Image -->
+                        <Button Command="{Binding SetTextAlignmentCommand, UpdateSourceTrigger=PropertyChanged}">
+                            <StackPanel Orientation="Vertical">
+                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
+                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
+                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
+                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
+                            </StackPanel>
+                            <Button.CommandParameter>
+                                <TextAlignment>Justify</TextAlignment>
+                            </Button.CommandParameter>
+                        </Button>
+                    </StackPanel>
 
-                    <!-- Align Left -->
-                    <Button ToolTip="Align Left"
-                    Content="&#xE8E4;"
-                    Command="{Binding AlignLeftCommand}"/>
-
-                    <!-- Align Center -->
-                    <Button ToolTip="Align Center"
-                    Content="&#xE8E3;"
-                    Command="{Binding AlignCenterCommand}"/>
-
-                    <!-- Align Right -->
-                    <Button ToolTip="Align Right"
-                    Content="&#xE8E2;"
-                    Command="{Binding AlignRightCommand}"/>
-
-                    <!-- Insert Image -->
-                    <Button ToolTip="Insert Image"
-                    Content="&#xE722;"
-                    Command="{Binding InsertImageCommand}"/>
                 </StackPanel>
             </Border>
         </Popup>

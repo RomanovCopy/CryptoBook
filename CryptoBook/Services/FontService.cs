@@ -3,6 +3,7 @@ using CryptoBook.Infrastructure;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.Media.Core;
@@ -12,6 +13,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Controls;
+
+
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Automation.Text;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace CryptoBook.Services
 {
@@ -50,24 +65,309 @@ namespace CryptoBook.Services
         public FontService(IRichTextBoxService service)
         {
             Service = service;
+            InitializeDocument();
             InitializeCollections();
             InitializeDefaultValues();
             SetDefaultValues();
         }
+
+
+        public void SetFontStyle(System.Windows.FontStyle? fontStyle)
+        {
+            ToggleOrClearFormatting(Service.Selection, TextElement.FontStyleProperty, fontStyle);
+        }
+        public void SetFontWeight(FontWeight? fontWeight)
+        {
+            ToggleOrClearFormatting(Service.Selection, TextElement.FontWeightProperty, fontWeight);
+        }
+        public void SetFontStretch(FontStretch? fontStretch)
+        {
+            if(Service.Selection.IsEmpty)
+            {
+                TextPointer caret = Service.CaretPosition;
+                var oldrun = caret.Parent as Run;
+                // Попробуем найти Inline, к которому привязан курсор
+                Inline currentInline = caret.Parent as Inline;
+                // Создаем новый Run
+                Run newRun = new Run("");
+                newRun.FontStretch = fontStretch ?? DefaultFontStretch;
+                // Если нашли Inline — вставляем до или после него
+                if(currentInline != null && currentInline.Parent is Paragraph paragraph)
+                {
+                    paragraph.Inlines.InsertAfter(currentInline, newRun);
+                    // Переместим курсор за вставленным Run
+                    Service.CaretPosition = newRun.ElementEnd;
+                } else if(caret.Paragraph != null)
+                {
+                    // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
+                    caret.Paragraph.Inlines.Add(newRun);
+                    Service.CaretPosition = newRun.ElementEnd;
+                }
+                if(oldrun != null)
+                {
+                    // Копируем форматирование из старого Run
+                    CopyFormattingExcept(oldrun, newRun, TextElement.FontStretchProperty, fontStretch);
+                }
+                Service.Focus();
+            } else
+            {
+
+                ToggleOrClearFormatting(Service.Selection, TextElement.FontStretchProperty, fontStretch);
+            }
+        }
+        public void SetFontFamily(Media.FontFamily? fontFamily)
+        {
+            if(fontFamily is null)
+            {
+                fontFamily = DefaultFontFamily;
+            }
+            if( Service.Selection.IsEmpty)
+            {
+                TextPointer caret = Service.CaretPosition;
+                var oldrun = caret.Parent as Run;
+                // Попробуем найти Inline, к которому привязан курсор
+                Inline currentInline = caret.Parent as Inline;
+                // Создаем новый Run
+                Run newRun = new Run("");
+                newRun.FontFamily = fontFamily ?? DefaultFontFamily;
+                // Если нашли Inline — вставляем до или после него
+                if(currentInline != null && currentInline.Parent is Paragraph paragraph)
+                {
+                    paragraph.Inlines.InsertAfter(currentInline, newRun);
+                    // Переместим курсор за вставленным Run
+                    Service.CaretPosition = newRun.ElementEnd;
+                } else if(caret.Paragraph != null)
+                {
+                    // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
+                    caret.Paragraph.Inlines.Add(newRun);
+                    Service.CaretPosition = newRun.ElementEnd;
+                }
+                if(oldrun != null)
+                {
+                    // Копируем форматирование из старого Run
+                    CopyFormattingExcept(oldrun, newRun, TextElement.FontFamilyProperty, fontFamily);
+                }
+                Service.Focus();
+            } else
+            {
+                ToggleOrClearFormatting(Service.Selection, TextElement.FontFamilyProperty, fontFamily);
+            }
+
+        }
+        public void SetTextDecoration(TextDecorationCollection decoration)
+        {
+            if(Service.Selection.IsEmpty)
+            {
+                TextPointer caret = Service.CaretPosition;
+                // Попробуем найти Inline, к которому привязан курсор
+                Inline currentInline = caret.Parent as Inline;
+                //находим родительский Run, если есть
+                var oldrun = caret.Parent as Run;
+                // Создаем новый Run
+                Run newRun = new Run("");
+                newRun.TextDecorations = decoration;
+                // Если нашли Inline — вставляем до или после него
+                if(currentInline != null && currentInline.Parent is Paragraph paragraph)
+                {
+                    paragraph.Inlines.InsertAfter(currentInline, newRun);
+                    // Переместим курсор за вставленным Run
+                    Service.CaretPosition = newRun.ElementEnd;
+                } else if(caret.Paragraph != null)
+                {
+                    // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
+                    caret.Paragraph.Inlines.Add(newRun);
+                    Service.CaretPosition = newRun.ElementEnd;
+                }
+                if(oldrun != null)
+                {
+                    // Копируем форматирование из родительского Run
+                    CopyFormattingExcept(oldrun, newRun, Inline.TextDecorationsProperty, decoration);
+                }
+                Service.Focus();
+            } else
+            {
+                // Если выделение не пустое, применяем форматирование к выделенному тексту
+                ToggleOrClearFormatting(Service.Selection, Inline.TextDecorationsProperty, decoration);
+            }
+        }
+        public void SetFontColor(Drawing.Color? fontColor)
+        {
+            if(fontColor is Drawing.Color color)
+            {
+                var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+                if(Service.Selection.IsEmpty)
+                {
+                    TextPointer caret = Service.CaretPosition;
+                    var oldrun = caret.Parent as Run;
+
+                    // Попробуем найти Inline, к которому привязан курсор
+                    Inline currentInline = caret.Parent as Inline;
+
+                    // Создаем новый Run
+                    Run newRun = new Run("");
+                    newRun.Foreground = brush;
+
+                    // Если нашли Inline — вставляем до или после него
+                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
+                    {
+                        paragraph.Inlines.InsertAfter(currentInline, newRun);
+
+                        // Переместим курсор за вставленным Run
+                        Service.CaretPosition = newRun.ElementEnd;
+                    } else if(caret.Paragraph != null)
+                    {
+                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
+                        caret.Paragraph.Inlines.Add(newRun);
+                        Service.CaretPosition = newRun.ElementEnd;
+                    }
+                    if(oldrun != null)
+                    {
+                        // Копируем форматирование из старого Run
+                        CopyFormattingExcept(oldrun, newRun, TextElement.ForegroundProperty, brush);
+                    }
+
+                    Service.Focus();
+                } else
+                {
+                    ToggleOrClearFormatting(Service.Selection, TextElement.ForegroundProperty, brush);
+                }
+            }
+        }
+        public void SetFontBackground(Drawing.Color? fontBackground)
+        {
+            if(fontBackground is Drawing.Color color)
+            {
+                var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+                if(Service.Selection.IsEmpty)
+                {
+                    TextPointer caret = Service.CaretPosition;
+
+                    // Попробуем найти Inline, к которому привязан курсор
+                    Inline currentInline = caret.Parent as Inline;
+                    var oldrun = caret.Parent as Run;
+
+                    // Создаем новый Run
+                    Run newRun = new Run("");
+                    newRun.Background = brush;
+
+                    // Если нашли Inline — вставляем до или после него
+                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
+                    {
+                        paragraph.Inlines.InsertAfter(currentInline, newRun);
+
+                        // Переместим курсор за вставленным Run
+                        Service.CaretPosition = newRun.ElementEnd;
+                    } else if(caret.Paragraph != null)
+                    {
+                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
+                        caret.Paragraph.Inlines.Add(newRun);
+                        Service.CaretPosition = newRun.ElementEnd;
+                    }
+                    if(oldrun != null)
+                    {
+                        // Копируем форматирование из старого Run
+                        CopyFormattingExcept(oldrun, newRun, TextElement.BackgroundProperty, brush);
+                    }
+                    Service.Focus();
+                } else
+                {
+                    ToggleOrClearFormatting(Service.Selection, TextElement.BackgroundProperty, brush);
+
+                }
+
+
+            }
+        }
+        public void SetFontSize(double fontSize)
+        {
+            if(Service.Selection.IsEmpty)
+            {
+                TextPointer caret = Service.CaretPosition;
+                var oldrun = caret.Parent as Run;
+
+                // Попробуем найти Inline, к которому привязан курсор
+                Inline currentInline = caret.Parent as Inline;
+
+                // Создаем новый Run
+                Run newRun = new Run("");
+                newRun.FontSize = fontSize;
+
+                // Если нашли Inline — вставляем до или после него
+                if(currentInline != null && currentInline.Parent is Paragraph paragraph)
+                {
+                    paragraph.Inlines.InsertAfter(currentInline, newRun);
+
+                    // Переместим курсор за вставленным Run
+                    Service.CaretPosition = newRun.ElementEnd;
+                } else if(caret.Paragraph != null)
+                {
+                    // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
+                    caret.Paragraph.Inlines.Add(newRun);
+                    Service.CaretPosition = newRun.ElementEnd;
+                }
+                if(oldrun != null)
+                {
+                    // Копируем форматирование из старого Run
+                    CopyFormattingExcept(oldrun, newRun, TextElement.FontSizeProperty, fontSize);
+                }
+
+                Service.Focus();
+
+            } else
+            {
+                ApplyFontSize(Service.Selection, fontSize);
+
+            }
+        }
+
+
+        public void ApplyTextAlignment(TextAlignment? alignment)
+        {
+            if(alignment == null)return;
+            else if(alignment==TextAlignment.Left)
+            {
+                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Left);
+            } else if(alignment == TextAlignment.Center)
+            {
+                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Center);
+            } else if(alignment == TextAlignment.Right)
+            {
+                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Right);
+            } else 
+            {
+                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Justify);
+            }
+        }
+        public void ClearFormatting()
+        {
+            Service.Selection.ApplyPropertyValue(TextElement.FontStyleProperty, DefaultFontStyle);
+            Service.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, DefaultFontWeight);
+            Service.Selection.ApplyPropertyValue(TextElement.FontStretchProperty, DefaultFontStretch);
+            Service.Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, DefaultFontFamily);
+            Service.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, DefaultTextDecoration);
+            Service.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, DefaultFontSize);
+        }
+
+
+
+
 
         private void SetDefaultValues()
         {
             SetFontSize(DefaultFontSize);
             Service.Document.FontSize = DefaultFontSize;
             SetFontStyle(DefaultFontStyle);
+            Service.Document.FontStyle = DefaultFontStyle;
             SetFontWeight(DefaultFontWeight);
+            Service.Document.FontWeight = DefaultFontWeight;
             SetFontStretch(DefaultFontStretch);
-            SetFontWeight(DefaultFontWeight);
+            Service.Document.FontStretch = DefaultFontStretch;
             SetFontColor(DefaultFontColor);
+            Service.Document.Foreground = new Media.SolidColorBrush(Media.Color.FromArgb(DefaultFontColor.A, DefaultFontColor.R, DefaultFontColor.G, DefaultFontColor.B));
             SetTextDecoration(DefaultTextDecoration.Decorations);
-
+            SetFontBackground(DefaultFontBackground);
+            SetFontFamily(DefaultFontFamily);
         }
-
         private void InitializeDefaultValues()
         {
             DefaultFontSize = 16.0;
@@ -79,7 +379,6 @@ namespace CryptoBook.Services
             DefaultFontWeight = FontWeights.FirstOrDefault(f => f == System.Windows.FontWeights.Normal);
             DefaultFontStretch = FontStretches.FirstOrDefault(s => s == System.Windows.FontStretches.Normal);
         }
-
         private void InitializeCollections()
         {
             FontSizes = new ObservableCollection<double>(new double[]
@@ -109,6 +408,9 @@ namespace CryptoBook.Services
                 new Media.FontFamily("Courier New"),       // Классический моноширинный
                 new Media.FontFamily("Comic Sans MS"),     // Декоративный, "ручной"
                 new Media.FontFamily("Georgia"),           // С засечками, более современный, чем Times
+                new Media.FontFamily("Segoe UI Variable"), // Современный шрифт с переменной шириной
+                new Media.FontFamily("Roboto"),            // Современный шрифт от Google
+                new Media.FontFamily("Bahnschrift")         // Современный шрифт с геометрическим дизайном
             ];
 
 
@@ -165,61 +467,6 @@ namespace CryptoBook.Services
                 System.Windows.FontStretches.UltraExpanded
             };
         }
-
-        public void SetFontStyle(System.Windows.FontStyle? fontStyle)
-        {
-            ToggleOrClearFormatting(Service.Selection, TextElement.FontStyleProperty, fontStyle);
-        }
-
-        public void SetFontWeight(FontWeight? fontWeight)
-        {
-            ToggleOrClearFormatting(Service.Selection, TextElement.FontWeightProperty, fontWeight);
-        }
-
-        public void SetFontStretch(FontStretch? fontStretch)
-        {
-            ToggleOrClearFormatting(Service.Selection, TextElement.FontStretchProperty, fontStretch);
-        }
-
-        public void SetFontFamily(Media.FontFamily? fontFamily)
-        {
-            ToggleOrClearFormatting(Service.Selection, TextElement.FontFamilyProperty, fontFamily);
-        }
-
-        public void SetTextDecoration(TextDecorationCollection decoration)
-        {
-            ToggleOrClearFormatting(Service.Selection, Inline.TextDecorationsProperty, decoration);
-        }
-
-        public void SetFontColor(Drawing.Color? fontColor)
-        {
-            if(fontColor is Drawing.Color color)
-            {
-                var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
-                ToggleOrClearFormatting(Service.Selection, TextElement.ForegroundProperty, brush);
-            }
-        }
-
-        public void SetFontBackground(Drawing.Color? fontBackground)
-        {
-        }
-
-        public void SetFontSize(double fontSize)
-        {
-            ApplyFontSize(Service.Selection, fontSize);
-        }
-
-        public void ClearFormatting()
-        {
-            Service.Selection.ApplyPropertyValue(TextElement.FontStyleProperty, DefaultFontStyle);
-            Service.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, DefaultFontWeight);
-            Service.Selection.ApplyPropertyValue(TextElement.FontStretchProperty, DefaultFontStretch);
-            Service.Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, DefaultFontFamily);
-            Service.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, DefaultTextDecoration);
-            Service.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, DefaultFontSize);
-        }
-
-
         private void ToggleOrClearFormatting(TextRange range, DependencyProperty property, object targetValue)
         {
             object current = range.GetPropertyValue(property);
@@ -251,7 +498,6 @@ namespace CryptoBook.Services
                 range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
             }
         }
-
         private void ApplyFontSize(TextSelection selection, double fontSize)
         {
             if(selection == null)
@@ -291,6 +537,47 @@ namespace CryptoBook.Services
                 var range = new TextRange(selection.Start, selection.End);
                 range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
             }
+        }
+        private void CopyFormattingExcept(Run source, Run target, DependencyProperty exceptProperty, object newValue)
+        {
+            target.FontSize = exceptProperty == TextElement.FontSizeProperty ? (double)newValue : source.FontSize;
+            target.FontFamily = exceptProperty == TextElement.FontFamilyProperty ? (Media.FontFamily)newValue : source.FontFamily;
+            target.FontWeight = exceptProperty == TextElement.FontWeightProperty ? (FontWeight)newValue : source.FontWeight;
+            target.FontStyle = exceptProperty == TextElement.FontStyleProperty ? (System.Windows.FontStyle)newValue : source.FontStyle;
+            target.Foreground = exceptProperty == TextElement.ForegroundProperty ? (Media.Brush)newValue : source.Foreground;
+            target.Background = exceptProperty == TextElement.BackgroundProperty ? (Media.Brush)newValue : source.Background;
+            target.TextDecorations = exceptProperty == Inline.TextDecorationsProperty ? (TextDecorationCollection)newValue : source.TextDecorations;
+        }
+        private void InitializeDocument()
+        {
+            var document=Service.Document;
+
+            if(document == null) throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
+
+            // Создаём пустой абзац, если документ совсем пустой
+            if(document.Blocks.Count == 0)
+            {
+                document.Blocks.Add(new Paragraph());
+            }
+
+            Paragraph firstParagraph = document.Blocks.FirstBlock as Paragraph;
+            if(firstParagraph == null)
+            {
+                firstParagraph = new Paragraph();
+                document.Blocks.InsertBefore(document.Blocks.FirstBlock, firstParagraph);
+            }
+
+            // Создаём новый Run и добавляем в начало абзаца
+            Run newRun = new ("");
+            if(firstParagraph.Inlines.FirstInline != null)
+                firstParagraph.Inlines.InsertBefore(firstParagraph.Inlines.FirstInline, newRun);
+            else
+                firstParagraph.Inlines.Add(newRun); // если Inlines пустой
+
+
+            // Устанавливаем каретку в начало нового Run
+            Service.CaretPosition = newRun.ContentStart;
+            Service.Focus();
         }
 
     }

@@ -23,6 +23,7 @@ namespace CryptoBook.ViewModels
         public System.Windows.FontStyle FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
         public Media.FontFamily FontFamily { get => model.FontFamily; set => model.FontFamily=value; }
         public Color FontColor { get => model.FontColor; set => model.FontColor=value; }
+        public Drawing.Color FontBackground { get => model.FontBackground; set => model.FontBackground=value; }
         public TextDecorationItem TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
         public FontWeight FontWeight { get => model.FontWeight; set => model.FontWeight=value; }
         public FontStretch FontStretch { get => model.FontStretch; set => model.FontStretch=value; }
@@ -38,9 +39,10 @@ namespace CryptoBook.ViewModels
 
 
         // Constructor
-        public FontFormatBar_ViewModel(IFontService service)
+        public FontFormatBar_ViewModel(IFontService service, IRichTextBoxService richService)
         {
-            model = new FontFormatBar_Model(service ?? throw new ArgumentNullException(nameof(service)));
+            model = new FontFormatBar_Model(service ?? throw new ArgumentNullException(nameof(service)), 
+                richService??throw new ArgumentNullException(nameof(richService)));
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -77,6 +79,9 @@ namespace CryptoBook.ViewModels
         public ICommand SetFontSizeCommand => 
             setFontSizeCommand ??= new RelayCommand(model.Execute_SetFontSizeCommand, model.CanExecute_SetFontSizeCommand);
         RelayCommand setFontSizeCommand;
+
+        public ICommand SetTextAlignmentCommand => setTextAlignmentCommand ??= new RelayCommand(model.Execute_SetTextAlignmentCommand, model.CanExecute_SetTextAlignmentCommand);
+        RelayCommand setTextAlignmentCommand;
 
         public ICommand ClearFormattingCommand => 
             clearFormattingCommand ??= new RelayCommand(model.Execute_ClearFormattingCommand, model.CanExecute_ClearFormattingCommand);

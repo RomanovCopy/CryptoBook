@@ -55,8 +55,6 @@ namespace CryptoBook.Services
         {
             this.scope = scope;
             this.LostFocus += RichTextBoxService_LostFocus;
-            this.SelectionChanged += RichTextBoxService_SelectionChanged;
-            this.PreviewMouseLeftButtonUp += RichTextBoxService_PreviewMouseLeftButtonUp;
         }
 
 
@@ -98,23 +96,6 @@ namespace CryptoBook.Services
         void IRichTextBoxService.ApplyAcceptsTab(bool accept) => this.AcceptsTab = accept;
         void IRichTextBoxService.ApplyAcceptsReturn(bool accept) => this.AcceptsReturn = accept;
 
-        private void RichTextBoxService_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            if(!Selection.IsEmpty)
-                userSelectionText = true;
-        }
-
-        private void RichTextBoxService_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if(userSelectionText && this.IsMouseCaptureWithin)
-            {
-                userSelectionText = false;
-                userSelectionTextFinished = true;
-                //var font = scope.Resolve<IFontFormatBar_ViewModel>();
-                //var fontsize = GetFontSizeInSelection();
-                //font.FontSize = fontsize;
-            }
-        }
 
         public double GetFontSizeInSelection()
         {
@@ -159,7 +140,6 @@ namespace CryptoBook.Services
         {
             last_Selection = new TextRange(Selection?.Start, Selection?.End);
         }
-
 
     }
 }

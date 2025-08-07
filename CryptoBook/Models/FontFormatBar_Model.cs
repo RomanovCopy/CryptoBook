@@ -15,6 +15,7 @@ namespace CryptoBook.Models
     internal class FontFormatBar_Model: ViewModelBase
     {
         private readonly IFontService fontService;
+        private readonly IRichTextBoxService richService;
 
         internal ObservableCollection<double> FontSizes => fontService.FontSizes ?? throw new ArgumentNullException(nameof(fontService.FontSizes));
         internal ObservableCollection<System.Windows.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
@@ -44,9 +45,10 @@ namespace CryptoBook.Models
         FontStretch fontStretch;
 
 
-        internal FontFormatBar_Model(IFontService service)
+        internal FontFormatBar_Model(IFontService service, IRichTextBoxService richService)
         {
             fontService = service ?? throw new ArgumentNullException(nameof(service));
+            this.richService = richService;
             InitializeValues();
         }
 
@@ -181,6 +183,22 @@ namespace CryptoBook.Models
             fontService.SetFontSize(fontSize);
         }
 
+
+        internal bool CanExecute_SetTextAlignmentCommand(object? obj)
+        {
+            if(obj is not TextAlignment)
+                return false;
+            return !richService.Selection.IsEmpty;
+        }
+        internal void Execute_SetTextAlignmentCommand(object? obj)
+        {
+            if(obj is TextAlignment alignment)
+            {
+                fontService.ApplyTextAlignment(alignment);
+            }
+        }
+
+
         internal bool CanExecute_ClearFormattingCommand(object? obj)
         {
             if(obj is not null)
@@ -207,8 +225,6 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Closed(object? obj) { return true; }
         internal void Execute_Closed(object? obj) { }
-
-
 
     }
 }

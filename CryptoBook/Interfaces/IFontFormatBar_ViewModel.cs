@@ -21,7 +21,8 @@ namespace CryptoBook.Interfaces
         public double FontSize { get; set; }
         public System.Windows.FontStyle FontStyle { get; set; }
         public Media.FontFamily FontFamily { get; set; }    
-        public Color FontColor { get; set; }
+        public Drawing.Color FontColor { get; set; }
+        public Drawing.Color FontBackground { get; set; }
         public TextDecorationItem TextDecoration { get; set; }
         public FontWeight FontWeight { get; set; }
         public FontStretch FontStretch { get; set; }
@@ -64,6 +65,7 @@ namespace CryptoBook.Interfaces
         ICommand SetFontColorCommand { get; }
         ICommand SetFontBackgroundCommand { get; }
         ICommand SetFontSizeCommand { get; }
+        ICommand SetTextAlignmentCommand { get; }
         ICommand ClearFormattingCommand { get; }
     }
 }
