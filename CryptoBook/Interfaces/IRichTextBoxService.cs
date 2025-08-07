@@ -23,6 +23,11 @@ namespace CryptoBook.Interfaces
         FlowDocument Document { get; }
         TextSelection Selection { get; }
         TextPointer CaretPosition { get; set; }
+
+        Media.Brush CaretBrush {  get; set; }
+        Media.Brush BackGround {  get; set; }
+
+
         bool IsReadOnly { get; set; }
         bool SpellCheckEnabled { get; set; }
         bool CanUndo { get; }

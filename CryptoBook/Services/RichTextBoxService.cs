@@ -37,6 +37,11 @@ namespace CryptoBook.Services
             get => this.CaretPosition;
             set => this.CaretPosition = value;
         }
+
+        Media.Brush IRichTextBoxService.CaretBrush { get => this.CaretBrush; set => this.CaretBrush=value; }
+        Media.Brush IRichTextBoxService.BackGround { get => this.Background; set => this.Background=value; }
+
+
         bool IRichTextBoxService.IsReadOnly
         {
             get => this.IsReadOnly;
@@ -141,5 +146,10 @@ namespace CryptoBook.Services
             last_Selection = new TextRange(Selection?.Start, Selection?.End);
         }
 
+
+        double IRichTextBoxService.GetFontSizeInSelection()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
