@@ -35,6 +35,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MenuContentViewModel>().As<IMenuContentViewModel>().SingleInstance();
             builder.RegisterType<RichtextboxViewModel>().As<IRichtextboxViewModel>().SingleInstance();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().SingleInstance();
+            builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -65,6 +66,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
             builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
             builder.RegisterType<FontService>().As<IFontService>().SingleInstance();
+            builder.RegisterType<TextFormatService>().As<ITextFormatService>().SingleInstance();
 
 
             //Pages
@@ -76,6 +78,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<SideMenu>().SingleInstance();
             builder.RegisterType<Richtextbox>().SingleInstance();
             builder.RegisterType<FontFormatBar>().SingleInstance();
+            builder.RegisterType<TextFormatBar>().SingleInstance();
 
             //Contexts
 

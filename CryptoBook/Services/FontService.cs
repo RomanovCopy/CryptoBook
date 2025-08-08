@@ -391,24 +391,6 @@ namespace CryptoBook.Services
                 }
             }
         }
-        public void ApplyTextAlignment(TextAlignment? alignment)
-        {
-            if(alignment == null)
-                return;
-            else if(alignment == TextAlignment.Left)
-            {
-                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Left);
-            } else if(alignment == TextAlignment.Center)
-            {
-                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Center);
-            } else if(alignment == TextAlignment.Right)
-            {
-                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Right);
-            } else
-            {
-                Service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Justify);
-            }
-        }
         public void ClearFormatting()
         {
             Service.Selection.ApplyPropertyValue(TextElement.FontStyleProperty, DefaultFontStyle);

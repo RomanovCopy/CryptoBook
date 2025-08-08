@@ -65,7 +65,6 @@ namespace CryptoBook.Interfaces
         ICommand SetFontColorCommand { get; }
         ICommand SetFontBackgroundCommand { get; }
         ICommand SetFontSizeCommand { get; }
-        ICommand SetTextAlignmentCommand { get; }
         ICommand ClearFormattingCommand { get; }
     }
 }

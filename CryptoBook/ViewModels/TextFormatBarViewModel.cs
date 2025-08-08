@@ -32,7 +32,8 @@ namespace CryptoBook.ViewModels
 
 
 
-        public ICommand SetTextAlignment => throw new NotImplementedException();
+        public ICommand SetTextAlignment => setTextAlignment ??= new RelayCommand(model.Execute_SetTextAlignment, model.CanExecute_SetTextAlignment);
+        RelayCommand setTextAlignment;
 
         public ICommand SetParagraphIndent => throw new NotImplementedException();
 

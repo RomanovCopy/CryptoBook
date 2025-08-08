@@ -18,7 +18,7 @@ namespace CryptoBook.MyControls
     /// <summary>
     /// Логика взаимодействия для TextFormatBar.xaml
     /// </summary>
-    public partial class TextFormatBar : UserControl
+    public partial class TextFormatBar : System.Windows.Controls.UserControl
     {
         public TextFormatBar()
         {

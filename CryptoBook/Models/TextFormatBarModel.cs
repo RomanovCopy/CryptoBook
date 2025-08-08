@@ -18,5 +18,14 @@ namespace CryptoBook.Models
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
         }
 
+        internal bool CanExecute_SetTextAlignment(object? obj)
+        {
+            return true;
+        }
+
+        internal void Execute_SetTextAlignment(object? obj)
+        {
+            
+        }
     }
 }

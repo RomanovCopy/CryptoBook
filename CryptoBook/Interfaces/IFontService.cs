@@ -90,7 +90,6 @@ namespace CryptoBook.Interfaces
         void SetFontColor(System.Drawing.Color? fontColor);
         void SetFontBackground(System.Drawing.Color? fontBackground);
         void SetFontSize(double fontSize);
-        void ApplyTextAlignment(TextAlignment? alignment);
 
         void ClearFormatting();
     }

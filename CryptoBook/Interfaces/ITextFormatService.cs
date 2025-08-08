@@ -11,7 +11,7 @@ namespace CryptoBook.Interfaces
     public interface ITextFormatService
     {
         // --- Выравнивание ---
-        void SetTextAlignment(TextAlignment alignment);
+        void SetTextAlignment(TextAlignment? alignment);
         void SetParagraphIndent(double indent);
         void SetLineHeight(double lineHeight);
         void SetLineSpacing(double spacing);

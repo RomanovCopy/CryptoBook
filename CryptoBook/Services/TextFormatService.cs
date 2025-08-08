@@ -22,9 +22,24 @@ namespace CryptoBook.Services
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
         }
 
-        public void SetTextAlignment(TextAlignment alignment)
+
+        public void SetTextAlignment(TextAlignment? alignment)
         {
-            throw new NotImplementedException();
+            if(alignment == null)
+                return;
+            else if(alignment == TextAlignment.Left)
+            {
+                service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Left);
+            } else if(alignment == TextAlignment.Center)
+            {
+                service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Center);
+            } else if(alignment == TextAlignment.Right)
+            {
+                service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Right);
+            } else
+            {
+                service.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Justify);
+            }
         }
 
         public void SetParagraphIndent(double indent)
