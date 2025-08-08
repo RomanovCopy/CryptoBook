@@ -15,6 +15,8 @@ namespace CryptoBook.Services
 
         private readonly IRichTextBoxService service;
 
+        public double LineHeight { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public TextFormatService(IRichTextBoxService richTextBoxService)
         {
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
@@ -51,11 +53,6 @@ namespace CryptoBook.Services
         }
 
         public void InsertHyperlink(string url, string displayText)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void InsertImage(Uri imageUri, double width, double height)
         {
             throw new NotImplementedException();
         }
@@ -99,24 +96,5 @@ namespace CryptoBook.Services
             throw new NotImplementedException();
         }
 
-        public bool IsBold()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsItalic()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsUnderline()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsStrikethrough()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

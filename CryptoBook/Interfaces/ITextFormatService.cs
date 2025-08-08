@@ -22,7 +22,6 @@ namespace CryptoBook.Interfaces
 
         // --- Вставка элементов ---
         void InsertHyperlink(string url, string displayText);
-        void InsertImage(Uri imageUri, double width, double height);
 
         // --- Очистка форматирования ---
         void ClearAllFormatting();
@@ -30,6 +29,11 @@ namespace CryptoBook.Interfaces
         // --- Работа с выделением ---
         TextRange GetSelectedTextRange();
         void ReplaceSelectedText(string newText);
+
+        /// <summary>
+        /// межстрочный интервал
+        /// </summary>
+        double LineHeight { get; set; }
 
         // --- Undo/Redo ---
         void Undo();
@@ -43,10 +47,5 @@ namespace CryptoBook.Interfaces
         void MoveCaretToStart();
         void MoveCaretToEnd();
 
-        // --- Получение состояния ---
-        bool IsBold();
-        bool IsItalic();
-        bool IsUnderline();
-        bool IsStrikethrough();
     }
 }
