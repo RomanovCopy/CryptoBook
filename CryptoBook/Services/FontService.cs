@@ -621,6 +621,8 @@ namespace CryptoBook.Services
         {
             var document = Service.Document;
 
+            
+
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
             document.PagePadding = new Thickness(10, 20, 10, 20);
@@ -644,6 +646,17 @@ namespace CryptoBook.Services
             else
                 firstParagraph.Inlines.Add(newRun); // если Inlines пустой
 
+            foreach(var block in document.Blocks)
+            {
+                if(block is Paragraph paragraph)
+                {
+                    paragraph.ClearValue(Paragraph.LineHeightProperty);
+                    paragraph.ClearValue(Paragraph.LineStackingStrategyProperty);
+                }
+            }
+
+            document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+            document.LineHeight = 15;
 
             // Устанавливаем каретку в начало нового Run
             Service.CaretPosition = newRun.ContentStart;

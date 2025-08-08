@@ -38,7 +38,7 @@
             <Setter Property="TextAlignment" Value="Center"/>
         </Style>
         <DataTemplate x:Key="ComboBoxItemTemplate">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel x:Name="panel" Orientation="Horizontal">
                 <Rectangle x:Name="ColorRectangle" Width="16" Height="16" Margin="2"
                    Fill="{Binding Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}}"
                    Stroke="Black" StrokeThickness="1" 
@@ -46,7 +46,7 @@
                 <TextBlock x:Name="textblock" Text="{Binding}" Margin="4,0,0,0"
                            TextDecorations="None"
                            Foreground="Black"
-                           Background="Transparent"
+                           Background="Transparent" 
                            FontWeight="Medium"
                            FontStretch="Normal"/>
             </StackPanel>
@@ -81,6 +81,7 @@
                     <Setter TargetName="textblock" Property="FontFamily" Value="Bahnschrift"/>
                     <Setter TargetName="textblock" Property="FontStretch" Value="{Binding}"/>
                 </DataTrigger>
+
             </DataTemplate.Triggers>
         </DataTemplate>
         <ControlTemplate x:Key="ComboBoxTemplate" TargetType="ComboBox" >
@@ -131,7 +132,6 @@
                     HorizontalAlignment="Stretch"
                     RenderTransformOrigin="0.5,0">
 
-
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
                     <StackPanel Orientation="Vertical" x:Name="panelFamily">
                         <TextBlock Text="Family" Style="{StaticResource textBlockHeader}"/>
@@ -140,7 +140,7 @@
                               SelectedItem="{Binding FontFamily, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               ToolTip="FontFamily" Width="100" Height="24"
                               Template="{StaticResource ComboBoxTemplate}"
-                              ItemTemplate="{StaticResource ComboBoxItemTemplate}">
+                              ItemTemplate="{StaticResource ComboBoxItemTemplate}" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction 
@@ -283,34 +283,45 @@
                     <StackPanel Orientation="Vertical" x:Name="panelAlignLeft">
                         <TextBlock Text="Left" Style="{StaticResource textBlockHeader}"/>
                         <!-- Align Left -->
-                        <Button ToolTip="Align Left"
-                            Content="&#xE8E4;"
-                            Command="{Binding AlignLeftCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Command="{Binding SetTextAlignmentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Align Left"
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                            <Image Source="{StaticResource alignleftimage}"/>
+                            <Button.CommandParameter>
+                                <TextAlignment>Left</TextAlignment>
+                            </Button.CommandParameter>
+                        </Button>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" x:Name="panelAlignCenter">
                         <TextBlock Text="Center" Style="{StaticResource textBlockHeader}"/>
                         <!-- Align Center -->
-                        <Button ToolTip="Align Center"
-                            Content="&#xE8E3;"
-                            Command="{Binding AlignCenterCommand}"/>
+                        <Button Command="{Binding SetTextAlignmentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Align Center"
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                            <Image Source="{StaticResource aligncenterimage}"/>
+                            <Button.CommandParameter>
+                                <TextAlignment>Center</TextAlignment>
+                            </Button.CommandParameter>
+                        </Button>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" x:Name="panelAlignRight">
                         <TextBlock Text="Right" Style="{StaticResource textBlockHeader}"/>
                         <!-- Align Right -->
-                        <Button ToolTip="Align Right"
-                            Content="&#xE8E2;"
-                            Command="{Binding AlignRightCommand}"/>
+                        <Button Command="{Binding SetTextAlignmentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Align Right"
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                            <Image Source="{StaticResource alignrightimage}"/>
+                            <Button.CommandParameter>
+                                <TextAlignment>Right</TextAlignment>
+                            </Button.CommandParameter>
+                        </Button>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" x:Name="panelImage">
                         <TextBlock Text="Justify" Style="{StaticResource textBlockHeader}"/>
-                        <!-- Insert Image -->
-                        <Button Command="{Binding SetTextAlignmentCommand, UpdateSourceTrigger=PropertyChanged}">
-                            <StackPanel Orientation="Vertical">
-                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
-                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
-                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
-                                <Rectangle Height="1" Width="16" Fill="Black" Margin="0,2"/>
-                            </StackPanel>
+                        <Button Command="{Binding SetTextAlignmentCommand, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Align Justify"
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                            <Image Source="{StaticResource alignjustifyimage}"/>
                             <Button.CommandParameter>
                                 <TextAlignment>Justify</TextAlignment>
                             </Button.CommandParameter>

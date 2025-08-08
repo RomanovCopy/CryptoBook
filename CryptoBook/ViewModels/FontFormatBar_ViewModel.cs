@@ -88,6 +88,7 @@ namespace CryptoBook.ViewModels
         RelayCommand clearFormattingCommand;
 
 
+
         // IViewModel implementation
 
         public ICommand Loaded => 

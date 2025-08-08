@@ -146,4 +146,27 @@
     </Style>
 
 
+    <ControlTemplate x:Key="FlatButtonControlTemplate" TargetType="{x:Type Button}">
+        <Border x:Name="OuterBorder" BorderBrush="Gray" BorderThickness="1" CornerRadius="2" VerticalAlignment="Center">
+            <Border x:Name="InnerBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="2">
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" Margin="{TemplateBinding Padding}" />
+            </Border>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="OuterBorder" Property="BorderBrush" Value="#FF7CA0CC" />
+                <Setter TargetName="InnerBorder" Property="BorderBrush" Value="#FFE4EFFD" />
+                <Setter TargetName="InnerBorder" Property="Background" Value="#FFDAE7F5" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="OuterBorder" Property="BorderBrush" Value="#FF2E4E76" />
+                <Setter TargetName="InnerBorder" Property="BorderBrush" Value="#FF116EE4" />
+                <Setter TargetName="InnerBorder" Property="Background" Value="#FF3272B8" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Opacity" Value="0.3"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
 </ResourceDictionary>

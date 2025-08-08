@@ -17,6 +17,7 @@ using Draving = System.Drawing;
 using Controls = System.Windows.Controls;
 using FontStyle = System.Windows.FontStyle;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace CryptoBook.Services
 {
@@ -60,8 +61,22 @@ namespace CryptoBook.Services
         {
             this.scope = scope;
             this.LostFocus += RichTextBoxService_LostFocus;
+            this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
         }
 
+
+        private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                e.Handled = true; // отменяем стандартный Enter
+                var caret = this.CaretPosition;
+
+                // Вставляем перенос строки в текущем параграфе
+                caret.InsertLineBreak();
+                this.CaretPosition = caret.GetNextInsertionPosition(LogicalDirection.Forward);
+            }
+        }
 
         void IRichTextBoxService.Focus() => this.Focus();
         void IRichTextBoxService.ScrollToCaret() => this.ScrollToVerticalOffset(this.VerticalOffset);
