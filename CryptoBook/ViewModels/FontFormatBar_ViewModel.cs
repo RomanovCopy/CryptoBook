@@ -80,9 +80,6 @@ namespace CryptoBook.ViewModels
             setFontSizeCommand ??= new RelayCommand(model.Execute_SetFontSizeCommand, model.CanExecute_SetFontSizeCommand);
         RelayCommand setFontSizeCommand;
 
-        public ICommand SetTextAlignmentCommand => setTextAlignmentCommand ??= new RelayCommand(model.Execute_SetTextAlignmentCommand, model.CanExecute_SetTextAlignmentCommand);
-        RelayCommand setTextAlignmentCommand;
-
         public ICommand ClearFormattingCommand => 
             clearFormattingCommand ??= new RelayCommand(model.Execute_ClearFormattingCommand, model.CanExecute_ClearFormattingCommand);
         RelayCommand clearFormattingCommand;

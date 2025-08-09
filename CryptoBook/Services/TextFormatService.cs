@@ -10,7 +10,7 @@ using System.Windows.Documents;
 
 namespace CryptoBook.Services
 {
-    internal class TextFormatService:ITextFormatService
+    internal class TextFormatService: ITextFormatService
     {
 
         private readonly IRichTextBoxService service;
@@ -22,7 +22,10 @@ namespace CryptoBook.Services
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
         }
 
-
+        /// <summary>
+        /// форматирование выделенного текста
+        /// </summary>
+        /// <param name="alignment">вид форматирования</param>
         public void SetTextAlignment(TextAlignment? alignment)
         {
             if(alignment == null)
@@ -42,10 +45,49 @@ namespace CryptoBook.Services
             }
         }
 
-        public void SetParagraphIndent(double indent)
+        /// <summary>
+        /// создание нового параграфа
+        /// </summary>
+        /// <param name="indent">отступ от начала строки</param>
+        public void SetParagraphIndent(double indent=20)
         {
-            throw new NotImplementedException();
+            if(indent < 0)
+                return;
+
+            var caretPos = service.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
+            var currentParagraph = caretPos.Paragraph;
+            if(currentParagraph == null)
+                return;
+
+            bool isAtStartOfParagraph =
+                currentParagraph != null &&
+                caretPos.CompareTo(currentParagraph.ContentStart) == 0;
+
+            Paragraph newParagraph;
+
+            if(isAtStartOfParagraph)
+            {
+                // Вставляем новый параграф перед текущим
+                newParagraph = new Paragraph();
+                newParagraph.TextIndent = indent;
+                currentParagraph?.SiblingBlocks.InsertBefore(currentParagraph, newParagraph);
+            } else
+            {
+                // Вставляем пустой абзац + новый
+                Paragraph emptyParagraph = new Paragraph(new Run(""));
+                newParagraph = new Paragraph();
+                newParagraph.TextIndent = indent;
+
+                currentParagraph?.SiblingBlocks.InsertAfter(currentParagraph, emptyParagraph);
+                emptyParagraph.SiblingBlocks.InsertAfter(emptyParagraph, newParagraph);
+            }
+
+            // Переносим курсор в новый параграф
+            service.CaretPosition = newParagraph.ContentStart;
+            service.Focus();
         }
+
+
 
         public void SetLineHeight(double lineHeight)
         {

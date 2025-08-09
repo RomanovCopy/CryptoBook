@@ -278,6 +278,7 @@
                             </i:Interaction.Triggers>
                         </ComboBox>
                     </StackPanel>
+                    
 
                 </StackPanel>
             </Border>

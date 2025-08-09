@@ -184,20 +184,6 @@ namespace CryptoBook.Models
         }
 
 
-        internal bool CanExecute_SetTextAlignmentCommand(object? obj)
-        {
-            if(obj is not TextAlignment)
-                return false;
-            return !richService.Selection.IsEmpty;
-        }
-        internal void Execute_SetTextAlignmentCommand(object? obj)
-        {
-            if(obj is TextAlignment alignment)
-            {
-                fontService.ApplyTextAlignment(alignment);
-            }
-        }
-
 
         internal bool CanExecute_ClearFormattingCommand(object? obj)
         {

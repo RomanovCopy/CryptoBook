@@ -109,7 +109,17 @@
                             </Button>
                         </StackPanel>
 
+                    <StackPanel Orientation="Vertical" x:Name="panelNewParagraph">
+                        <TextBlock Text="New Paragraph" Style="{StaticResource textBlockHeader}"/>
+                        <Button Command="{Binding SetParagraphIndent, UpdateSourceTrigger=PropertyChanged}"
+                                CommandParameter="20"
+                                ToolTip="New Paragraph"
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                            <Image Source="{StaticResource newParagraph}"/>
+                        </Button>
                     </StackPanel>
+
+                </StackPanel>
                 </Border>
             </Popup>
 

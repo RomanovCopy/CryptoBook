@@ -23,9 +23,9 @@ namespace CryptoBook.ViewModels
         public TextRange GetSelectedTextRange => throw new NotImplementedException();
 
 
-        public TextFormatBarViewModel(IRichTextBoxService richTextBoxService)
+        public TextFormatBarViewModel(IRichTextBoxService richTextBoxService, ITextFormatService formatService)
         {
-            model= new TextFormatBarModel(richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService)));
+            model= new TextFormatBarModel(richTextBoxService, formatService );
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -35,7 +35,9 @@ namespace CryptoBook.ViewModels
         public ICommand SetTextAlignment => setTextAlignment ??= new RelayCommand(model.Execute_SetTextAlignment, model.CanExecute_SetTextAlignment);
         RelayCommand setTextAlignment;
 
-        public ICommand SetParagraphIndent => throw new NotImplementedException();
+        public ICommand SetParagraphIndent => setParagraphIndent ??=
+            new RelayCommand(model.Execute_SetParagraphIndent, model.CanExecute_SetParagraphIndent);
+        RelayCommand setParagraphIndent;
 
         public ICommand SetLineHeight => throw new NotImplementedException();
 
