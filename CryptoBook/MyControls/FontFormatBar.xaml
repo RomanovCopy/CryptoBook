@@ -117,7 +117,7 @@
         <!-- Кнопка для вызова панели -->
         <ToggleButton x:Name="TogglePanelButton"
                       Style="{StaticResource RoundedToggleButtonStyle}"
-                      Content="Format"
+                      Content="Font"
                       Height="20"
                       FontWeight="Bold"/>
         <!-- Popup-панель -->

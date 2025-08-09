@@ -89,10 +89,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Images\000_aligncenter.png" />
-    <Resource Include="Resources\Images\001_alignjustify.png" />
-    <Resource Include="Resources\Images\002_alignleft.PNG" />
-    <Resource Include="Resources\Images\003_alignright.png" />
     <Resource Include="Resources\Images\004_back.png" />
     <Resource Include="Resources\Images\005_codeblock.png" />
     <Resource Include="Resources\Images\006_codeinline.png" />

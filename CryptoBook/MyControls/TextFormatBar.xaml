@@ -62,60 +62,124 @@
                         
 
                         <StackPanel Orientation="Vertical" x:Name="panelAlignLeft">
-                            <TextBlock Text="Left" Style="{StaticResource textBlockHeader}"/>
                             <!-- Align Left -->
                             <Button Command="{Binding SetTextAlignment, UpdateSourceTrigger=PropertyChanged}"
                                 ToolTip="Align Left"
                                 Template="{StaticResource FlatButtonControlTemplate}">
-                                <Image Source="{StaticResource alignleftimage}"/>
+                                <!--<Image Source="{StaticResource alignleftimage}"/>-->
                                 <Button.CommandParameter>
                                     <TextAlignment>Left</TextAlignment>
                                 </Button.CommandParameter>
-                            </Button>
+                            <Viewbox Width="24" Height="24">
+                                <Canvas Width="24" Height="24">
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="3"/>
+                                    <Rectangle Width="14" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="7"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="11"/>
+                                    <Rectangle Width="18" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="15"/>
+                                </Canvas>
+                            </Viewbox>
+
+                        </Button>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" x:Name="panelAlignCenter">
-                            <TextBlock Text="Center" Style="{StaticResource textBlockHeader}"/>
                             <!-- Align Center -->
                             <Button Command="{Binding SetTextAlignment, UpdateSourceTrigger=PropertyChanged}"
                                 ToolTip="Align Center"
                                 Template="{StaticResource FlatButtonControlTemplate}">
-                                <Image Source="{StaticResource aligncenterimage}"/>
+                                <!--<Image Source="{StaticResource aligncenterimage}"/>-->
                                 <Button.CommandParameter>
                                     <TextAlignment>Center</TextAlignment>
                                 </Button.CommandParameter>
-                            </Button>
+                            <Viewbox Width="24" Height="24">
+                                <Canvas Width="24" Height="24">
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="3"/>
+                                    <Rectangle Width="14" Height="2" Fill="Black"
+                   Canvas.Left="5" Canvas.Top="7"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="11"/>
+                                    <Rectangle Width="18" Height="2" Fill="Black"
+                   Canvas.Left="3" Canvas.Top="15"/>
+                                </Canvas>
+                            </Viewbox>
+
+                        </Button>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" x:Name="panelAlignRight">
-                            <TextBlock Text="Right" Style="{StaticResource textBlockHeader}"/>
                             <!-- Align Right -->
                             <Button Command="{Binding SetTextAlignment, UpdateSourceTrigger=PropertyChanged}"
                                 ToolTip="Align Right"
                                 Template="{StaticResource FlatButtonControlTemplate}">
-                                <Image Source="{StaticResource alignrightimage}"/>
+                                <!--<Image Source="{StaticResource alignrightimage}"/>-->
                                 <Button.CommandParameter>
                                     <TextAlignment>Right</TextAlignment>
                                 </Button.CommandParameter>
-                            </Button>
+                            <Viewbox Width="24" Height="24">
+                                <Canvas Width="24" Height="24">
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="3"/>
+                                    <Rectangle Width="14" Height="2" Fill="Black"
+                   Canvas.Left="9" Canvas.Top="7"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="11"/>
+                                    <Rectangle Width="18" Height="2" Fill="Black"
+                   Canvas.Left="5" Canvas.Top="15"/>
+                                </Canvas>
+                            </Viewbox>
+
+                        </Button>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" x:Name="panelImage">
-                            <TextBlock Text="Justify" Style="{StaticResource textBlockHeader}"/>
                             <Button Command="{Binding SetTextAlignment, UpdateSourceTrigger=PropertyChanged}"
                                 ToolTip="Align Justify"
                                 Template="{StaticResource FlatButtonControlTemplate}">
-                                <Image Source="{StaticResource alignjustifyimage}"/>
+                                <!--<Image Source="{StaticResource alignjustifyimage}"/>-->
                                 <Button.CommandParameter>
                                     <TextAlignment>Justify</TextAlignment>
                                 </Button.CommandParameter>
-                            </Button>
+                            <Viewbox Width="24" Height="24">
+                                <Canvas Width="24" Height="24">
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="3"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="7"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="11"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="15"/>
+                                </Canvas>
+                            </Viewbox>
+
+                        </Button>
                         </StackPanel>
 
                     <StackPanel Orientation="Vertical" x:Name="panelNewParagraph">
-                        <TextBlock Text="New Paragraph" Style="{StaticResource textBlockHeader}"/>
                         <Button Command="{Binding SetParagraphIndent, UpdateSourceTrigger=PropertyChanged}"
-                                CommandParameter="20"
+                                CommandParameter="20" 
                                 ToolTip="New Paragraph"
                                 Template="{StaticResource FlatButtonControlTemplate}">
-                            <Image Source="{StaticResource newParagraph}"/>
+                            <Viewbox Width="24" Height="24">
+                                <Canvas Width="24" Height="24">
+                                    <!-- Первая строка с красной строкой -->
+                                    <Rectangle Width="4" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="3"/>
+                                    <Rectangle Width="17" Height="2" Fill="Black"
+                   Canvas.Left="7" Canvas.Top="3"/>
+
+                                    <!-- Остальные строки -->
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="7"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="11"/>
+                                    <Rectangle Width="22" Height="2" Fill="Black"
+                   Canvas.Left="1" Canvas.Top="15"/>
+                                </Canvas>
+                            </Viewbox>
+
                         </Button>
                     </StackPanel>
 
