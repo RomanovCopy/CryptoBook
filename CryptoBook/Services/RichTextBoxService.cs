@@ -64,17 +64,24 @@ namespace CryptoBook.Services
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
         }
 
-
+        //перенос строки без создания нового параграфа
         private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if(e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
             {
                 e.Handled = true; // отменяем стандартный Enter
+
                 var caret = this.CaretPosition;
 
-                // Вставляем перенос строки в текущем параграфе
+                // Вставляем перенос строки
                 caret.InsertLineBreak();
-                this.CaretPosition = caret.GetNextInsertionPosition(LogicalDirection.Forward);
+
+                // Вставляем пустой Run, чтобы была точка для курсора
+                var emptyRun = new Run("");
+                caret.Paragraph.Inlines.Add(emptyRun);
+
+                // Ставим курсор в этот Run
+                this.CaretPosition = emptyRun.ContentStart;
             }
         }
 
