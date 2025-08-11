@@ -29,8 +29,6 @@ namespace CryptoBook.Services
 
         FlowDocument IRichTextBoxService.Document => this.Document;
 
-        private bool userSelectionText { get; set; }
-        private bool userSelectionTextFinished { get; set; }
         Controls.RichTextBox IRichTextBoxService.Service => this;
         TextSelection IRichTextBoxService.Selection => this.Selection;
         TextPointer IRichTextBoxService.CaretPosition
