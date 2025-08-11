@@ -163,6 +163,7 @@ namespace CryptoBook.Services
             TextRange range = new TextRange(caret, caret);
             return range.GetPropertyValue(property);
         }
+
         private void RichTextBoxService_LostFocus(object sender, RoutedEventArgs e)
         {
             last_Selection = new TextRange(Selection?.Start, Selection?.End);

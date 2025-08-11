@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace CryptoBook.Services
 {
@@ -49,7 +50,7 @@ namespace CryptoBook.Services
         /// создание нового параграфа
         /// </summary>
         /// <param name="indent">отступ от начала строки</param>
-        public void SetParagraphIndent(double indent=20)
+        public void SetParagraphIndent(double indent = 20)
         {
             if(indent < 0)
                 return;
@@ -68,14 +69,14 @@ namespace CryptoBook.Services
             if(isAtStartOfParagraph)
             {
                 // Вставляем новый параграф перед текущим
-                newParagraph = new Paragraph();
+                newParagraph = CreateParagraphWithCaretFormatting(caretPos);
                 newParagraph.TextIndent = indent;
                 currentParagraph?.SiblingBlocks.InsertBefore(currentParagraph, newParagraph);
             } else
             {
                 // Вставляем пустой абзац + новый
                 Paragraph emptyParagraph = new Paragraph(new Run(""));
-                newParagraph = new Paragraph();
+                newParagraph = CreateParagraphWithCaretFormatting(caretPos);
                 newParagraph.TextIndent = indent;
 
                 currentParagraph?.SiblingBlocks.InsertAfter(currentParagraph, emptyParagraph);
@@ -153,5 +154,84 @@ namespace CryptoBook.Services
             throw new NotImplementedException();
         }
 
+
+
+        /// <summary>
+        /// создание нового параграфа с копированием свойств форматирования из текущего параграфа
+        /// </summary>
+        /// <param name="currentParagraph">текущий параграф</param>
+        /// <returns>новый параграф</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        private Paragraph CreateParagraphWithCopiedProperties(Paragraph currentParagraph)
+        {
+            if(currentParagraph == null)
+                throw new ArgumentNullException(nameof(currentParagraph));
+
+            Paragraph newParagraph = new Paragraph();
+
+            // Копируем свойства форматирования из текущего параграфа
+            newParagraph.TextAlignment = currentParagraph.TextAlignment;
+            newParagraph.FlowDirection = currentParagraph.FlowDirection;
+            newParagraph.LineHeight = currentParagraph.LineHeight;
+            newParagraph.Margin = currentParagraph.Margin;
+            newParagraph.Padding = currentParagraph.Padding;
+            newParagraph.Background = currentParagraph.Background;
+            newParagraph.Foreground = currentParagraph.Foreground;
+            newParagraph.FontFamily = currentParagraph.FontFamily;
+            newParagraph.FontSize = currentParagraph.FontSize;
+            newParagraph.FontStretch = currentParagraph.FontStretch;
+            newParagraph.FontStyle = currentParagraph.FontStyle;
+            newParagraph.FontWeight = currentParagraph.FontWeight;
+
+            return newParagraph;
+        }
+
+        public Paragraph CreateParagraphWithCaretFormatting(System.Windows.Documents.TextPointer caretPosition)
+        {
+            if(caretPosition == null)
+                throw new ArgumentNullException(nameof(caretPosition));
+
+            Paragraph newParagraph = new Paragraph();
+
+            // Создаем TextRange из позиции каретки (пустой диапазон)
+            TextRange range = new TextRange(caretPosition, caretPosition);
+
+            var foreground = range.GetPropertyValue(TextElement.ForegroundProperty);
+            if(foreground != DependencyProperty.UnsetValue)
+                newParagraph.Foreground = (System.Windows.Media.Brush)foreground;
+
+            var background = range.GetPropertyValue(TextElement.BackgroundProperty);
+            if(background != DependencyProperty.UnsetValue)
+                newParagraph.Background = (System.Windows.Media.Brush)background;
+
+            var fontFamily = range.GetPropertyValue(TextElement.FontFamilyProperty);
+            if(fontFamily != DependencyProperty.UnsetValue)
+                newParagraph.FontFamily = (System.Windows.Media.FontFamily)fontFamily;
+
+            var fontSize = range.GetPropertyValue(TextElement.FontSizeProperty);
+            if(fontSize != DependencyProperty.UnsetValue)
+                newParagraph.FontSize = (double)fontSize;
+
+            var fontStretch = range.GetPropertyValue(TextElement.FontStretchProperty);
+            if(fontStretch != DependencyProperty.UnsetValue)
+                newParagraph.FontStretch = (FontStretch)fontStretch;
+
+            var fontStyle = range.GetPropertyValue(TextElement.FontStyleProperty);
+            if(fontStyle != DependencyProperty.UnsetValue)
+                newParagraph.FontStyle = (System.Windows.FontStyle)fontStyle;
+
+            var fontWeight = range.GetPropertyValue(TextElement.FontWeightProperty);
+            if(fontWeight != DependencyProperty.UnsetValue)
+                newParagraph.FontWeight = (FontWeight)fontWeight;
+
+            Paragraph currentParagraph = caretPosition.Paragraph;
+            if(currentParagraph != null)
+            {
+                newParagraph.TextAlignment = currentParagraph.TextAlignment;
+                newParagraph.FlowDirection = currentParagraph.FlowDirection;
+            }
+
+            return newParagraph;
+        }
     }
 }
