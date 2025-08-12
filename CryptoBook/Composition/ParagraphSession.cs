@@ -26,14 +26,14 @@ namespace CryptoBook.Composition
 
         public IParagraphSession Set(Action<IParagraphService>? mutate)
         {
-                mutate?.Invoke(_state);
+            mutate?.Invoke(_state);
             return this;
         }
 
         public IParagraphService Next(Action<IParagraphService>? mutate = null)
         {
-            var p = _factory.Create();
-            ((IParagraphService)p).CopyFormattingFrom(_state, copyOnlyLocal: false); // применяем ТЕКУЩЕЕ состояние полностью
+            IParagraphService p = _factory.Create();
+            p.CopyFormattingFrom(_state, copyOnlyLocal: false); // применяем ТЕКУЩЕЕ состояние полностью
             mutate?.Invoke(p);
             _prev = p;
             return p;

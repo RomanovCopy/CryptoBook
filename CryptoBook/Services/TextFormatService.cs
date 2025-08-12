@@ -196,31 +196,31 @@ namespace CryptoBook.Services
             // Создаем TextRange из позиции каретки (пустой диапазон)
             TextRange range = new TextRange(caretPosition, caretPosition);
 
-            var foreground = range.GetPropertyValue(TextElement.ForegroundProperty);
+            var foreground = range.GetPropertyValue(System.Windows.Documents.TextElement.ForegroundProperty);
             if(foreground != DependencyProperty.UnsetValue)
                 newParagraph.Foreground = (System.Windows.Media.Brush)foreground;
 
-            var background = range.GetPropertyValue(TextElement.BackgroundProperty);
+            var background = range.GetPropertyValue(System.Windows.Documents.TextElement.BackgroundProperty);
             if(background != DependencyProperty.UnsetValue)
                 newParagraph.Background = (System.Windows.Media.Brush)background;
 
-            var fontFamily = range.GetPropertyValue(TextElement.FontFamilyProperty);
+            var fontFamily = range.GetPropertyValue(System.Windows.Documents.TextElement.FontFamilyProperty);
             if(fontFamily != DependencyProperty.UnsetValue)
                 newParagraph.FontFamily = (System.Windows.Media.FontFamily)fontFamily;
 
-            var fontSize = range.GetPropertyValue(TextElement.FontSizeProperty);
+            var fontSize = range.GetPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty);
             if(fontSize != DependencyProperty.UnsetValue)
                 newParagraph.FontSize = (double)fontSize;
 
-            var fontStretch = range.GetPropertyValue(TextElement.FontStretchProperty);
+            var fontStretch = range.GetPropertyValue(System.Windows.Documents.TextElement.FontStretchProperty);
             if(fontStretch != DependencyProperty.UnsetValue)
                 newParagraph.FontStretch = (FontStretch)fontStretch;
 
-            var fontStyle = range.GetPropertyValue(TextElement.FontStyleProperty);
+            var fontStyle = range.GetPropertyValue(System.Windows.Documents.TextElement.FontStyleProperty);
             if(fontStyle != DependencyProperty.UnsetValue)
                 newParagraph.FontStyle = (System.Windows.FontStyle)fontStyle;
 
-            var fontWeight = range.GetPropertyValue(TextElement.FontWeightProperty);
+            var fontWeight = range.GetPropertyValue(System.Windows.Documents.TextElement.FontWeightProperty);
             if(fontWeight != DependencyProperty.UnsetValue)
                 newParagraph.FontWeight = (FontWeight)fontWeight;
 

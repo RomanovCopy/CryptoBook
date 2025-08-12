@@ -31,12 +31,12 @@ namespace CryptoBook.Services
 
         void IFlowDocumentService.ToggleBold(TextSelection selection)
         {
-            ToggleOrClearFormatting(selection, TextElement.FontWeightProperty, FontWeights.Bold);
+            ToggleOrClearFormatting(selection, System.Windows.Documents.TextElement.FontWeightProperty, FontWeights.Bold);
         }
 
         void IFlowDocumentService.ToggleItalic(TextSelection selection)
         {
-            ToggleOrClearFormatting(selection, TextElement.FontStyleProperty, FontStyles.Italic);
+            ToggleOrClearFormatting(selection, System.Windows.Documents.TextElement.FontStyleProperty, FontStyles.Italic);
         }
 
         void IFlowDocumentService.ToggleUnderline(TextSelection selection)
@@ -80,14 +80,14 @@ namespace CryptoBook.Services
                 if(start != null && end != null && !start.Equals(end))
                 {
                     var range = new TextRange(start, end);
-                    range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
+                    range.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
                     service.CaretPosition = start;
                 }
                 service.Focus();
             } else
             {
                 var range = new TextRange(selection.Start, selection.End);
-                range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
+                range.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
             }
         }
 
@@ -231,10 +231,10 @@ namespace CryptoBook.Services
                 // Особый случай для подчеркивания
                 range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
 
-            } else if(property == TextElement.FontWeightProperty)
+            } else if(property == System.Windows.Documents.TextElement.FontWeightProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? FontWeights.Normal : targetValue);
-            } else if(property == TextElement.FontStyleProperty)
+            } else if(property == System.Windows.Documents.TextElement.FontStyleProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? FontStyles.Normal : targetValue);
             } else

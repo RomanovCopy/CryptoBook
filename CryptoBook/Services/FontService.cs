@@ -99,12 +99,12 @@ namespace CryptoBook.Services
                     if(oldrun != null)
                     {
                         // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, TextElement.FontStyleProperty, style);
+                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontStyleProperty, style);
                     }
                     Service.Focus();
                 } else
                 {
-                    ToggleOrClearFormatting(Service.Selection, TextElement.FontStyleProperty, style);
+                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontStyleProperty, style);
                 }
             }
 
@@ -137,12 +137,12 @@ namespace CryptoBook.Services
                     if(oldrun != null)
                     {
                         // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, TextElement.FontWeightProperty, weight);
+                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontWeightProperty, weight);
                     }
                     Service.Focus();
                 } else
                 {
-                    ToggleOrClearFormatting(Service.Selection, TextElement.FontWeightProperty, weight);
+                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontWeightProperty, weight);
                 }
             }
         }
@@ -174,12 +174,12 @@ namespace CryptoBook.Services
                     if(oldrun != null)
                     {
                         // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, TextElement.FontStretchProperty, stretch);
+                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontStretchProperty, stretch);
                     }
                     Service.Focus();
                 } else
                 {
-                    ToggleOrClearFormatting(Service.Selection, TextElement.FontStretchProperty, stretch);
+                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontStretchProperty, stretch);
                 }
             }
         }
@@ -211,12 +211,12 @@ namespace CryptoBook.Services
                     if(oldrun != null)
                     {
                         // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, TextElement.FontFamilyProperty, family);
+                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontFamilyProperty, family);
                     }
                     Service.Focus();
                 } else
                 {
-                    ToggleOrClearFormatting(Service.Selection, TextElement.FontFamilyProperty, family);
+                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontFamilyProperty, family);
                 }
             }
 
@@ -291,13 +291,13 @@ namespace CryptoBook.Services
                     if(oldrun != null)
                     {
                         // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, TextElement.ForegroundProperty, brush);
+                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.ForegroundProperty, brush);
                     }
 
                     Service.Focus();
                 } else
                 {
-                    ToggleOrClearFormatting(Service.Selection, TextElement.ForegroundProperty, brush);
+                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.ForegroundProperty, brush);
                 }
             }
         }
@@ -334,12 +334,12 @@ namespace CryptoBook.Services
                     if(oldrun != null)
                     {
                         // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, TextElement.BackgroundProperty, brush);
+                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.BackgroundProperty, brush);
                     }
                     Service.Focus();
                 } else
                 {
-                    ToggleOrClearFormatting(Service.Selection, TextElement.BackgroundProperty, brush);
+                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.BackgroundProperty, brush);
 
                 }
 
@@ -378,7 +378,7 @@ namespace CryptoBook.Services
                     if(oldrun != null)
                     {
                         // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, TextElement.FontSizeProperty, size);
+                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontSizeProperty, size);
                     }
 
                     Service.Focus();
@@ -392,12 +392,12 @@ namespace CryptoBook.Services
         }
         public void ClearFormatting()
         {
-            Service.Selection.ApplyPropertyValue(TextElement.FontStyleProperty, DefaultFontStyle);
-            Service.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, DefaultFontWeight);
-            Service.Selection.ApplyPropertyValue(TextElement.FontStretchProperty, DefaultFontStretch);
-            Service.Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, DefaultFontFamily);
+            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontStyleProperty, DefaultFontStyle);
+            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontWeightProperty, DefaultFontWeight);
+            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontStretchProperty, DefaultFontStretch);
+            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontFamilyProperty, DefaultFontFamily);
             Service.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, DefaultTextDecoration);
-            Service.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, DefaultFontSize);
+            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, DefaultFontSize);
         }
 
 
@@ -530,16 +530,16 @@ namespace CryptoBook.Services
             {
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultTextDecoration : targetValue);
 
-            } else if(property == TextElement.FontWeightProperty)
+            } else if(property == System.Windows.Documents.TextElement.FontWeightProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultFontWeight : targetValue);
-            } else if(property == TextElement.FontStyleProperty)
+            } else if(property == System.Windows.Documents.TextElement.FontStyleProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultFontStyle : targetValue);
-            } else if(property == TextElement.FontStretchProperty)
+            } else if(property == System.Windows.Documents.TextElement.FontStretchProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultFontStretch : targetValue);
-            } else if(property == TextElement.FontFamilyProperty)
+            } else if(property == System.Windows.Documents.TextElement.FontFamilyProperty)
             {
                 range.ApplyPropertyValue(property, shouldRemove ? DefaultFontFamily : targetValue);
             } else
@@ -578,24 +578,24 @@ namespace CryptoBook.Services
                 if(start != null && end != null && !start.Equals(end))
                 {
                     var range = new TextRange(start, end);
-                    range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
+                    range.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
                     Service.CaretPosition = start;
                 }
                 Service.Focus();
             } else
             {
                 var range = new TextRange(selection.Start, selection.End);
-                range.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
+                range.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
             }
         }
         private void CopyFormattingExcept(Run source, Run target, DependencyProperty exceptProperty, object newValue)
         {
-            target.FontSize = exceptProperty == TextElement.FontSizeProperty ? (double)newValue : source.FontSize;
-            target.FontFamily = exceptProperty == TextElement.FontFamilyProperty ? (Media.FontFamily)newValue : source.FontFamily;
-            target.FontWeight = exceptProperty == TextElement.FontWeightProperty ? (FontWeight)newValue : source.FontWeight;
-            target.FontStyle = exceptProperty == TextElement.FontStyleProperty ? (System.Windows.FontStyle)newValue : source.FontStyle;
-            target.Foreground = exceptProperty == TextElement.ForegroundProperty ? (Media.Brush)newValue : source.Foreground;
-            target.Background = exceptProperty == TextElement.BackgroundProperty ? (Media.Brush)newValue : source.Background;
+            target.FontSize = exceptProperty == System.Windows.Documents.TextElement.FontSizeProperty ? (double)newValue : source.FontSize;
+            target.FontFamily = exceptProperty == System.Windows.Documents.TextElement.FontFamilyProperty ? (Media.FontFamily)newValue : source.FontFamily;
+            target.FontWeight = exceptProperty == System.Windows.Documents.TextElement.FontWeightProperty ? (FontWeight)newValue : source.FontWeight;
+            target.FontStyle = exceptProperty == System.Windows.Documents.TextElement.FontStyleProperty ? (System.Windows.FontStyle)newValue : source.FontStyle;
+            target.Foreground = exceptProperty == System.Windows.Documents.TextElement.ForegroundProperty ? (Media.Brush)newValue : source.Foreground;
+            target.Background = exceptProperty == System.Windows.Documents.TextElement.BackgroundProperty ? (Media.Brush)newValue : source.Background;
             target.TextDecorations = exceptProperty == Inline.TextDecorationsProperty ? (TextDecorationCollection)newValue : source.TextDecorations;
         }
 

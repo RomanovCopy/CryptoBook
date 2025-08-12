@@ -128,7 +128,7 @@ namespace CryptoBook.Services
         public double GetFontSizeInSelection()
         {
             if(Selection.IsEmpty)
-                return (double)(Selection.GetPropertyValue(TextElement.FontSizeProperty) ?? 12.0);
+                return (double)(Selection.GetPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty) ?? 12.0);
 
             TextPointer start = Selection.Start;
             TextPointer end = Selection.End;
@@ -141,10 +141,10 @@ namespace CryptoBook.Services
                 if(position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text ||
                     position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.ElementStart)
                 {
-                    var element = position.Parent as TextElement;
+                    var element = position.Parent as System.Windows.Documents.TextElement;
                     if(element != null)
                     {
-                        var sizeObj = element.GetValue(TextElement.FontSizeProperty);
+                        var sizeObj = element.GetValue(System.Windows.Documents.TextElement.FontSizeProperty);
                         if(sizeObj is double size)
                             sizes.Add(size);
                     }
