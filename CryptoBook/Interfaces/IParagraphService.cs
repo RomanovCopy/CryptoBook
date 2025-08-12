@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
+
 namespace CryptoBook.Interfaces
 {
     public interface IParagraphService
@@ -16,6 +17,12 @@ namespace CryptoBook.Interfaces
         /// </summary>
         public interface IParagraphService
         {
+
+
+            // Доступ к реальному WPF-элементу, чтобы добавить в FlowDocument
+            public Paragraph Element { get; }
+
+
             // --- Свойства Paragraph ---
 
             /// <summary>
@@ -129,6 +136,20 @@ namespace CryptoBook.Interfaces
             /// </summary>
             /// <param name="brush">Brush для фона.</param>
             void ApplyBackground(Brush brush);
+
+
+            // Контент
+            void AddText(string text);
+            void AddInlines(params Inline[] inlines);
+
+
+            /// <summary>
+            /// Копирование форматирования (поддерживает ваш сценарий «как у предыдущего»)
+            /// </summary>
+            /// <param name="other"></param>
+            /// <param name="copyOnlyLocal"></param>
+            void CopyFormattingFrom(IParagraphService state, bool copyOnlyLocal);
+
         }
 
     }

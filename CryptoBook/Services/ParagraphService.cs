@@ -11,12 +11,15 @@ namespace CryptoBook.Services
 {
     public class ParagraphService: Paragraph, IParagraphService
     {
-        public ParagraphService()
+        /// <summary>
+        /// Копирование форматирования (поддерживает ваш сценарий «как у предыдущего»)
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="copyOnlyLocal"></param>
+        public void CopyFormattingFrom(IParagraphService state, bool copyOnlyLocal)
         {
+
         }
 
-        public ParagraphService(Inline inline) : base(inline)
-        {
-        }
     }
 }

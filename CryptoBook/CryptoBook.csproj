@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Composition\ParagraphFormattingExtensions.cs" />
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
     <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />

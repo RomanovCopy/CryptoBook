@@ -60,7 +60,10 @@ namespace CryptoBook.Services
             this.scope = scope;
             this.LostFocus += RichTextBoxService_LostFocus;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
+            InitializeDocument();
+            this.AcceptsTab = true; // Разрешаем табы
         }
+
 
         //перенос строки без создания нового параграфа
         private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -172,5 +175,54 @@ namespace CryptoBook.Services
         {
             throw new NotImplementedException();
         }
+
+
+
+
+        private void InitializeDocument()
+        {
+            var document = this.Document;
+
+            if(document == null)
+                throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
+            document.PagePadding = new Thickness(10, 20, 10, 20);
+            // Создаём пустой абзац, если документ совсем пустой
+            if(document.Blocks.Count == 0)
+            {
+                document.Blocks.Add(new Paragraph());
+            }
+
+            Paragraph firstParagraph = document.Blocks.FirstBlock as Paragraph;
+            if(firstParagraph == null)
+            {
+                firstParagraph = new Paragraph();
+                document.Blocks.InsertBefore(document.Blocks.FirstBlock, firstParagraph);
+            }
+
+            // Создаём новый Run и добавляем в начало абзаца
+            Run newRun = new("");
+            if(firstParagraph.Inlines.FirstInline != null)
+                firstParagraph.Inlines.InsertBefore(firstParagraph.Inlines.FirstInline, newRun);
+            else
+                firstParagraph.Inlines.Add(newRun); // если Inlines пустой
+
+            foreach(var block in document.Blocks)
+            {
+                if(block is Paragraph paragraph)
+                {
+                    paragraph.ClearValue(Paragraph.LineHeightProperty);
+                    paragraph.ClearValue(Paragraph.LineStackingStrategyProperty);
+                }
+            }
+
+            document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+            document.LineHeight = 15;
+
+            // Устанавливаем каретку в начало нового Run
+            CaretPosition = newRun.ContentStart;
+            Focus();
+        }
+
+
     }
 }

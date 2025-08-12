@@ -9,16 +9,48 @@ using System.Windows.Documents;
 
 namespace CryptoBook.Composition
 {
-    public sealed class ParagraphSession:IParagraphSession
+    /// <summary>
+    /// Держит «эталон» текущего форматирования (_state) и опционально «предыдущий» абзац (_prev).
+    /// </summary>
+    public class ParagraphSession: IParagraphSession
     {
-        public IParagraphSession Set(Action<Paragraph> mutate)
+        private readonly Interfaces.IParagraphFactory _factory;
+        private readonly Interfaces.IParagraphService _state;   // эталон текущих настроек
+        private Interfaces.IParagraphService? _prev;            // последний выданный абзац (для NextLikePrevious)
+
+        public ParagraphSession(IParagraphFactory factory)
         {
-            throw new NotImplementedException();
+            _factory = factory;
+            _state = factory.Create(); // унаследует базу от FlowDocument, когда будет вставлен — это ок
         }
 
-        public Paragraph Next(Action<Paragraph>? mutate = null)
+        public IParagraphSession Set(Action<IParagraphService>? mutate)
         {
-            throw new NotImplementedException();
+                mutate?.Invoke(_state);
+            return this;
         }
+
+        public IParagraphService Next(Action<IParagraphService>? mutate = null)
+        {
+            var p = _factory.Create();
+            ((IParagraphService)p).CopyFormattingFrom(_state, copyOnlyLocal: false); // применяем ТЕКУЩЕЕ состояние полностью
+            mutate?.Invoke(p);
+            _prev = p;
+            return p;
+        }
+
+        public IParagraphService NextLikePrevious(Action<IParagraphService>? mutate = null)
+        {
+            var p = _factory.Create();
+            if(_prev != null)
+                p.CopyFormattingFrom(_prev, copyOnlyLocal: true); // копируем только локально изменённые у _prev
+            else
+                p.CopyFormattingFrom(_state, copyOnlyLocal: false);
+            mutate?.Invoke(p);
+            _prev = p;
+            return p;
+        }
+
+
     }
 }

@@ -9,6 +9,6 @@ namespace CryptoBook.Interfaces
 {
     public interface IParagraphFactory
     {
-        Paragraph Create(Inline? inline = null);
+        IParagraphService Create(Inline? inline = null);
     }
 }
