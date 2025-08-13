@@ -13,7 +13,7 @@ using Media = System.Windows.Media;
 
 namespace CryptoBook.Services
 {
-    public class TextElement: Paragraph, IParagraphService
+    public class ParagraphService: Paragraph, IParagraphService
     {
 
         #region IParagraphService — properties
@@ -100,7 +100,7 @@ namespace CryptoBook.Services
             var xaml = XamlWriter.Save(this);
             var clonedParagraph = (Paragraph)XamlReader.Parse(xaml);
 
-            var result = new TextElement();
+            var result = new ParagraphService();
             // Копируем форматирование «как есть»
             result.CopyFormattingFrom(this, copyOnlyLocal: false);
 
@@ -121,17 +121,17 @@ namespace CryptoBook.Services
             var dps = new DependencyProperty[]
             {
                 // TextElement-level
-                TextElement.BackgroundProperty,
-                TextElement.ForegroundProperty,
-                TextElement.FontFamilyProperty,
-                TextElement.FontStyleProperty,
-                TextElement.FontWeightProperty,
-                TextElement.FontStretchProperty,
-                TextElement.FontSizeProperty,
-                TextElement.TextEffectsProperty,
-                TextElement.FlowDirectionProperty,
-                TextElement.KeepTogetherProperty,
-                TextElement.KeepWithNextProperty,
+                ParagraphService.BackgroundProperty,
+                ParagraphService.ForegroundProperty,
+                ParagraphService.FontFamilyProperty,
+                ParagraphService.FontStyleProperty,
+                ParagraphService.FontWeightProperty,
+                ParagraphService.FontStretchProperty,
+                ParagraphService.FontSizeProperty,
+                ParagraphService.TextEffectsProperty,
+                ParagraphService.FlowDirectionProperty,
+                ParagraphService.KeepTogetherProperty,
+                ParagraphService.KeepWithNextProperty,
 
                 // Block-level
                 Block.TextAlignmentProperty,

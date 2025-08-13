@@ -18,6 +18,8 @@ using Controls = System.Windows.Controls;
 using FontStyle = System.Windows.FontStyle;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Runtime.CompilerServices;
+using System.CodeDom;
 
 namespace CryptoBook.Services
 {
@@ -124,6 +126,8 @@ namespace CryptoBook.Services
         void IRichTextBoxService.ApplyAcceptsTab(bool accept) => this.AcceptsTab = accept;
         void IRichTextBoxService.ApplyAcceptsReturn(bool accept) => this.AcceptsReturn = accept;
 
+        void IRichTextBoxService.BeginChange()=>this.BeginChange();
+        void IRichTextBoxService.EndChange() => this.EndChange();
 
         public double GetFontSizeInSelection()
         {
@@ -169,28 +173,23 @@ namespace CryptoBook.Services
         {
             last_Selection = new TextRange(Selection?.Start, Selection?.End);
         }
-
-
         double IRichTextBoxService.GetFontSizeInSelection()
         {
             throw new NotImplementedException();
         }
-
-
-
-
         private void InitializeDocument()
         {
             var document = this.Document;
-
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
+            var paragraphFactory = scope.Resolve<IParagraphFactory>();
+            Run newRun = new("");
+            var newParagraph = paragraphFactory.Create();
+            newParagraph.TextIndent = 20;
+
             document.PagePadding = new Thickness(10, 20, 10, 20);
-            // Создаём пустой абзац, если документ совсем пустой
-            if(document.Blocks.Count == 0)
-            {
-                document.Blocks.Add(new Paragraph());
-            }
+            document.Blocks.Clear();
+            document.Blocks.Add((Paragraph)newParagraph);
 
             Paragraph firstParagraph = document.Blocks.FirstBlock as Paragraph;
             if(firstParagraph == null)
@@ -199,21 +198,20 @@ namespace CryptoBook.Services
                 document.Blocks.InsertBefore(document.Blocks.FirstBlock, firstParagraph);
             }
 
-            // Создаём новый Run и добавляем в начало абзаца
-            Run newRun = new("");
+            //// Создаём новый Run и добавляем в начало абзаца
             if(firstParagraph.Inlines.FirstInline != null)
                 firstParagraph.Inlines.InsertBefore(firstParagraph.Inlines.FirstInline, newRun);
             else
                 firstParagraph.Inlines.Add(newRun); // если Inlines пустой
 
-            foreach(var block in document.Blocks)
-            {
-                if(block is Paragraph paragraph)
-                {
-                    paragraph.ClearValue(Paragraph.LineHeightProperty);
-                    paragraph.ClearValue(Paragraph.LineStackingStrategyProperty);
-                }
-            }
+            //foreach(var block in document.Blocks)
+            //{
+            //    if(block is Paragraph paragraph)
+            //    {
+            //        paragraph.ClearValue(Paragraph.LineHeightProperty);
+            //        paragraph.ClearValue(Paragraph.LineStackingStrategyProperty);
+            //    }
+            //}
 
             document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
             document.LineHeight = 15;
@@ -221,6 +219,115 @@ namespace CryptoBook.Services
             // Устанавливаем каретку в начало нового Run
             CaretPosition = newRun.ContentStart;
             Focus();
+        }
+
+        public Run InsertRunAtCaret(
+        (
+            string Text,
+            Media.FontFamily? FontFamily,
+            double? FontSize,
+            FontWeight? FontWeight,
+            FontStyle? FontStyle,
+            Media.Brush? Foreground,
+            Media.Brush? Background,
+            TextDecorationCollection? TextDecorations,
+            BaselineAlignment? Baseline,
+            Action<Run>? Configure
+        ) args)
+        {
+            var rtb = this;
+            if(rtb is null)
+                throw new ArgumentNullException(nameof(rtb));
+            if(args.Text is null)
+                throw new ArgumentNullException(nameof(args.Text));
+
+            rtb.BeginChange();
+            try
+            {
+                if(rtb.Document == null)
+                    throw new ArgumentNullException(nameof(rtb.Document));
+
+                var caret = rtb.CaretPosition;
+                if(!rtb.Selection.IsEmpty)
+                {
+                    rtb.Selection.Text = string.Empty;
+                    caret = rtb.Selection.Start;
+                }
+
+                caret = caret.GetInsertionPosition(LogicalDirection.Forward) ?? caret;
+
+                var paragraph = caret.Paragraph;
+                if(paragraph == null)
+                {
+                    paragraph = new Paragraph();
+                    rtb.Document.Blocks.Add(paragraph);
+                    caret = paragraph.ContentEnd;
+                }
+
+                var newRun = new Run(args.Text);
+                if(args.FontFamily != null)
+                    newRun.FontFamily = args.FontFamily;
+                if(args.FontSize != null)
+                    newRun.FontSize = args.FontSize.Value;
+                if(args.FontWeight != null)
+                    newRun.FontWeight = args.FontWeight.Value;
+                if(args.FontStyle != null)
+                    newRun.FontStyle = args.FontStyle.Value;
+                if(args.Foreground != null)
+                    newRun.Foreground = args.Foreground;
+                if(args.Background != null)
+                    newRun.Background = args.Background;
+                if(args.TextDecorations != null)
+                    newRun.TextDecorations = args.TextDecorations;
+                if(args.Baseline != null)
+                    newRun.BaselineAlignment = args.Baseline.Value;
+                args.Configure?.Invoke(newRun);
+
+                if(caret.Parent is Run hostRun)
+                {
+                    var para = (Paragraph)hostRun.Parent;
+                    var leftText = new TextRange(hostRun.ContentStart, caret).Text;
+                    var rightText = new TextRange(caret, hostRun.ContentEnd).Text;
+                    hostRun.Text = leftText;
+
+                    para.Inlines.InsertAfter(hostRun, newRun);
+
+                    if(!string.IsNullOrEmpty(rightText))
+                    {
+                        var rightRun = new Run(rightText)
+                        {
+                            FontFamily = hostRun.FontFamily,
+                            FontSize = hostRun.FontSize,
+                            FontWeight = hostRun.FontWeight,
+                            FontStyle = hostRun.FontStyle,
+                            Foreground = hostRun.Foreground,
+                            Background = hostRun.Background,
+                            TextDecorations = hostRun.TextDecorations,
+                            BaselineAlignment = hostRun.BaselineAlignment
+                        };
+                        para.Inlines.InsertAfter(newRun, rightRun);
+                    }
+                } else
+                {
+                    var backInline = caret.GetAdjacentElement(LogicalDirection.Backward) as Inline;
+                    var fwdInline = caret.GetAdjacentElement(LogicalDirection.Forward) as Inline;
+
+                    if(backInline != null && backInline.Parent == paragraph)
+                        paragraph.Inlines.InsertAfter(backInline, newRun);
+                    else if(fwdInline != null && fwdInline.Parent == paragraph)
+                        paragraph.Inlines.InsertBefore(fwdInline, newRun);
+                    else
+                        paragraph.Inlines.Add(newRun);
+                }
+
+                rtb.CaretPosition = newRun.ElementEnd;
+                rtb.Focus();
+
+                return newRun;
+            } finally
+            {
+                rtb.EndChange();
+            }
         }
 
 

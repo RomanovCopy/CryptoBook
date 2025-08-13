@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Composition;
 using CryptoBook.Converters;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
@@ -20,6 +21,11 @@ namespace CryptoBook.Injections
 
             //App
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
+
+
+            //Composition
+            builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
+            builder.RegisterType<ParagraphSession>().As<IParagraphSession>().SingleInstance();
 
 
 
@@ -67,6 +73,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
             builder.RegisterType<FontService>().As<IFontService>().SingleInstance();
             builder.RegisterType<TextFormatService>().As<ITextFormatService>().SingleInstance();
+            builder.RegisterType<ParagraphService>().As<IParagraphService>().SingleInstance();
 
 
             //Pages

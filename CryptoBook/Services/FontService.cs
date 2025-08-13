@@ -273,7 +273,7 @@ namespace CryptoBook.Services
                     // Создаем новый Run
                     Run newRun = new Run("");
                     newRun.Foreground = brush;
-                    Service.CaretBrush = brush;
+                    Service.CaretBrush = newRun.Foreground;
 
                     // Если нашли Inline — вставляем до или после него
                     if(currentInline != null && currentInline.Parent is Paragraph paragraph)

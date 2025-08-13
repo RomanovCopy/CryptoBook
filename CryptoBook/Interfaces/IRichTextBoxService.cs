@@ -64,8 +64,11 @@ namespace CryptoBook.Interfaces
         void ApplyContextMenu(ContextMenu menu);
         void ApplyAcceptsTab(bool accept);
         void ApplyAcceptsReturn(bool accept);
+        void BeginChange();
+        void EndChange();
 
 
         double GetFontSizeInSelection();
+
     }
 }
