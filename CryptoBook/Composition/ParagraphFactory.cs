@@ -21,9 +21,14 @@ namespace CryptoBook.Composition
 
         public IParagraphService Create(Inline? inline = null)
         {
-            return inline is null
-                ? scope.Resolve<IParagraphService>() 
-                : scope.Resolve<IParagraphService>(new TypedParameter(typeof(Inline), inline));
+            var paragraph= scope.Resolve<IParagraphService>();
+            paragraph.TextIndent = 20; // Устанавливаем отступ для нового параграфа
+            if (inline != null)
+            {
+                // Если передан Inline, то обернём его в Paragraph
+                paragraph.Inlines.Add(inline);
+            }
+            return paragraph;
         }
     }
 }

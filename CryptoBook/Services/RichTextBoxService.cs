@@ -185,7 +185,6 @@ namespace CryptoBook.Services
             var paragraphFactory = scope.Resolve<IParagraphFactory>();
             Run newRun = new("");
             var newParagraph = paragraphFactory.Create();
-            newParagraph.TextIndent = 20;
 
             document.PagePadding = new Thickness(10, 20, 10, 20);
             document.Blocks.Clear();
