@@ -15,6 +15,8 @@ using System.Globalization;
 using System.ComponentModel;
 using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
+using System.Collections.Concurrent;
+using System.IO;
 
 namespace CryptoBook.Services
 {
@@ -37,14 +39,40 @@ namespace CryptoBook.Services
 
         private sealed class ChangeScope: IInlineChangeScope
         {
-            private readonly FlowDocument _doc;
             private readonly IRichTextBoxService service;
+            private readonly FlowDocument _doc;
+
+            private readonly string _snapshotXaml;
+            private readonly int _caretOffset;
+            private readonly int _selStartOffset;
+            private readonly int _selEndOffset;
+
             private bool _disposed;
+            private bool _canceled;
 
             public ChangeScope(IRichTextBoxService richTextBoxService)
             {
                 service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
                 _doc = service.Document ?? throw new ArgumentNullException(nameof(_doc));
+
+                // ---- снимок документа
+                _snapshotXaml = SaveDocumentToXaml(_doc);
+
+                // ---- снимок позиций
+                var caret = EnsureInsertionPosition(service.CaretPosition);
+                _caretOffset = GetOffset(caret);
+
+                var sel = service.Selection;
+                if(sel != null && !sel.IsEmpty)
+                {
+                    _selStartOffset = GetOffset(sel.Start);
+                    _selEndOffset = GetOffset(sel.End);
+                } else
+                {
+                    _selStartOffset = _caretOffset;
+                    _selEndOffset = _caretOffset;
+                }
+
                 service.BeginChange();
             }
 
@@ -53,12 +81,95 @@ namespace CryptoBook.Services
                 if(_disposed)
                     return;
                 _disposed = true;
-                service.EndChange();
+
+                if(!_canceled)
+                    service.EndChange();
             }
 
             public void Cancel()
             {
-                throw new NotImplementedException();
+                if(_disposed)
+                    return;
+                _canceled = true;
+
+                // 1) восстановим документ из XAML
+                var restored = LoadDocumentFromXaml(_snapshotXaml);
+
+                _doc.Blocks.Clear();
+                foreach(var block in restored.Blocks.ToList())
+                {
+                    restored.Blocks.Remove(block);
+                    _doc.Blocks.Add(block);
+                }
+
+                // 2) восстановим каретку/выделение по сохранённым смещениям
+                RestoreCaretAndSelection(_caretOffset, _selStartOffset, _selEndOffset);
+
+                // завершить BeginChange
+                service.EndChange();
+                _disposed = true;
+            }
+
+            // ---------- helpers ----------
+
+            private static TextPointer EnsureInsertionPosition(TextPointer pos) =>
+                pos.IsAtInsertionPosition ? pos : pos.GetInsertionPosition(LogicalDirection.Forward);
+
+            private int GetOffset(TextPointer position)
+            {
+                var start = _doc.ContentStart;
+                // Смещение вправо от начала документа (всегда >= 0)
+                int back = position.GetOffsetToPosition(start);       // отрицательно/0
+                return Math.Abs(back);
+            }
+
+            private void RestoreCaretAndSelection(int caretOffset, int selStartOffset, int selEndOffset)
+            {
+                // Пересобираем позиции из смещений.
+                var start = _doc.ContentStart;
+                var end = _doc.ContentEnd;
+
+                int max = Math.Max(0, Math.Abs(end.GetOffsetToPosition(start))); // общая длина
+
+                int co = Clamp(caretOffset, 0, max);
+                int sst = Clamp(selStartOffset, 0, max);
+                int sen = Clamp(selEndOffset, 0, max);
+
+                // Получаем позиции (вперёд от ContentStart)
+                var caretPos = start.GetPositionAtOffset(co, LogicalDirection.Forward) ?? end;
+                var sPos = start.GetPositionAtOffset(sst, LogicalDirection.Forward) ?? caretPos;
+                var ePos = start.GetPositionAtOffset(sen, LogicalDirection.Forward) ?? caretPos;
+
+                // нормализуем порядок
+                if(sPos.CompareTo(ePos) > 0)
+                    (sPos, ePos) = (ePos, sPos);
+
+                // Применяем
+                var sel = service.Selection;
+                if(sel != null)
+                {
+                    sel.Select(sPos, ePos);
+                }
+
+                service.CaretPosition = EnsureInsertionPosition(caretPos);
+            }
+
+            private static int Clamp(int v, int min, int max) =>
+                v < min ? min : (v > max ? max : v);
+
+            private static string SaveDocumentToXaml(FlowDocument doc)
+            {
+                using var ms = new MemoryStream();
+                System.Windows.Markup.XamlWriter.Save(doc, ms);
+                ms.Position = 0;
+                using var reader = new StreamReader(ms, Encoding.UTF8);
+                return reader.ReadToEnd();
+            }
+
+            private static FlowDocument LoadDocumentFromXaml(string xaml)
+            {
+                using var ms = new MemoryStream(Encoding.UTF8.GetBytes(xaml));
+                return (FlowDocument)System.Windows.Markup.XamlReader.Load(ms);
             }
         }
 
@@ -382,17 +493,66 @@ namespace CryptoBook.Services
 
         public void NormalizeParagraphInlines(Paragraph paragraph)
         {
-            throw new NotImplementedException();
+            if(paragraph is null)
+                return;
+
+            using(BeginChangeScope())
+            {
+                // Удалим пустые Runs
+                var toRemove = paragraph.Inlines
+                    .OfType<Run>()
+                    .Where(r => string.IsNullOrEmpty(r.Text))
+                    .ToList();
+                foreach(var r in toRemove)
+                    paragraph.Inlines.Remove(r);
+
+                // Сольём соседние совместимые Runs
+                MergeAdjacentRuns(paragraph);
+
+                // Развернём пустые Span'ы
+                var emptySpans = paragraph.Inlines.OfType<Span>()
+                    .Where(s => s.Inlines.Count == 0)
+                    .ToList();
+                foreach(var s in emptySpans)
+                    paragraph.Inlines.Remove(s);
+            }
         }
 
         public Inline? GetInlineAtCaret()
         {
-            throw new NotImplementedException();
+            return GetInlineFromPosition(EnsureInsertionPosition(service.CaretPosition));
         }
 
         public InlineStyle GetEffectiveStyleAtCaret()
         {
-            throw new NotImplementedException();
+            var styleType = FindTypeByName("InlineStyle")
+                            ?? throw new InvalidOperationException("Type InlineStyle not found.");
+            var style = (InlineStyle)Activator.CreateInstance(styleType)!;
+
+            var caret = EnsureInsertionPosition(service.CaretPosition)
+                        ?? throw new InvalidOperationException("Caret position is null.");
+
+            // На пустом выделении TextRange(caret, caret) корректно даёт значение в точке вставки
+            var tr = new TextRange(caret, caret);
+
+            object? GetInlinePropertyAt(DependencyProperty dp)
+            {
+                var v = tr.GetPropertyValue(dp);
+                return ReferenceEquals(v, DependencyProperty.UnsetValue) ? null : v;
+            }
+
+            TrySet(style, "FontFamily", GetInlinePropertyAt(Inline.FontFamilyProperty));
+            TrySet(style, "FontSize", GetInlinePropertyAt(Inline.FontSizeProperty));
+            TrySet(style, "FontWeight", GetInlinePropertyAt(Inline.FontWeightProperty));
+            TrySet(style, "FontStyle", GetInlinePropertyAt(Inline.FontStyleProperty));
+            TrySet(style, "Foreground", GetInlinePropertyAt(TextElement.ForegroundProperty));
+            TrySet(style, "Background", GetInlinePropertyAt(TextElement.BackgroundProperty));
+            TrySet(style, "TextDecorations", GetInlinePropertyAt(Inline.TextDecorationsProperty));
+            TrySet(style, "FontStretch", GetInlinePropertyAt(TextElement.FontStretchProperty));
+            TrySet(style, "BaselineAlignment", GetInlinePropertyAt(Inline.BaselineAlignmentProperty));
+            TrySet(style, "TextEffects", GetInlinePropertyAt(TextElement.TextEffectsProperty));
+
+            return style;
         }
 
 
@@ -460,8 +620,8 @@ namespace CryptoBook.Services
 
             return current as Inline;
         }
-        private void CopyStyleProp( object style, string propName, Action<object> applyValue, bool overwriteNullsOnly, 
-            object currentValue) 
+        private void CopyStyleProp(object style, string propName, Action<object> applyValue, bool overwriteNullsOnly,
+            object currentValue)
         {
             if(style == null)
                 return;
@@ -961,6 +1121,268 @@ namespace CryptoBook.Services
         }
         /* ---------- числовая погрешность ---------- */
         private bool DoubleEquals(double a, double b, double eps = 1e-9) => Math.Abs(a - b) <= eps;
+
+
+        #region Type lookup
+
+        private readonly ConcurrentDictionary<string, Type?> _typeCache =
+            new(StringComparer.Ordinal);
+
+        // Находит тип по короткому имени или по полному (c namespace или AssemblyQualifiedName).
+        // Приоритет: Entry/Executing/Calling assembly, затем остальные загруженные сборки.
+        // Кэширует результат. Возвращает null, если тип не найден.
+        private Type? FindTypeByName(string typeName)
+        {
+            if(string.IsNullOrWhiteSpace(typeName))
+                return null;
+
+            // Кэш
+            if(_typeCache.TryGetValue(typeName, out var cached))
+                return cached;
+
+            // 1) Если пришло полное имя с asm-частью — пробуем сразу
+            //    (Type.GetType понимает AssemblyQualifiedName).
+            if(typeName.IndexOf(',') >= 0 || typeName.Contains('.'))
+            {
+                var t = Type.GetType(typeName, throwOnError: false, ignoreCase: true);
+                if(t != null)
+                {
+                    _typeCache[typeName] = t;
+                    return t;
+                }
+            }
+
+            // Список сборок с приоритетом на "пользовательские"
+            var loaded = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a =>
+                {
+                    try
+                    { return !a.IsDynamic; } catch { return false; }
+                })
+                .ToList();
+
+            // Слегка эвристически сортируем: сначала Entry/Executing/Calling,
+            // затем сборки без "Microsoft"/"System".
+            Assembly? entry = null, exec = null, calling = null;
+            try
+            { entry = Assembly.GetEntryAssembly(); } catch { }
+            try
+            { exec = Assembly.GetExecutingAssembly(); } catch { }
+            try
+            { calling = Assembly.GetCallingAssembly(); } catch { }
+
+            loaded = loaded
+                .OrderByDescending(a => a == entry || a == exec || a == calling)
+                .ThenByDescending(a =>
+                {
+                    var n = a.GetName().Name ?? "";
+                    return !(n.StartsWith("System", StringComparison.OrdinalIgnoreCase)
+                             || n.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase)
+                             || n.StartsWith("Windows", StringComparison.OrdinalIgnoreCase)
+                             || n.StartsWith("Presentation", StringComparison.OrdinalIgnoreCase)
+                             || n.StartsWith("PresentationCore", StringComparison.OrdinalIgnoreCase)
+                             || n.StartsWith("PresentationFramework", StringComparison.OrdinalIgnoreCase)
+                             || n.StartsWith("WindowsBase", StringComparison.OrdinalIgnoreCase));
+                })
+                .ToList();
+
+            // 2) Пробуем точное совпадение по Name (без namespace)
+            foreach(var asm in loaded)
+            {
+                Type? t = null;
+                try
+                {
+                    t = asm.GetTypes().FirstOrDefault(x =>
+                        x.Name.Equals(typeName, StringComparison.OrdinalIgnoreCase));
+                } catch { /* некоторые сборки могут бросить */ }
+
+                if(t != null)
+                {
+                    _typeCache[typeName] = t;
+                    return t;
+                }
+            }
+
+            // 3) Пробуем совпадение по окончанию FullName: ".InlineStyle"
+            foreach(var asm in loaded)
+            {
+                Type? t = null;
+                try
+                {
+                    t = asm.GetTypes().FirstOrDefault(x =>
+                        (x.FullName ?? "").EndsWith("." + typeName, StringComparison.OrdinalIgnoreCase));
+                } catch { }
+
+                if(t != null)
+                {
+                    _typeCache[typeName] = t;
+                    return t;
+                }
+            }
+
+            _typeCache[typeName] = null;
+            return null;
+        }
+
+        #endregion
+
+        #region Safe property set
+
+        // Надёжная установка свойства по имени со множеством fallback-конвертаций.
+        // Тихо игнорирует несовместимые типы и DependencyProperty.UnsetValue.
+        private void TrySet(object target, string propName, object value)
+        {
+            if(target == null || string.IsNullOrWhiteSpace(propName))
+                return;
+
+            // UnsetValue/Null — нечего устанавливать
+            if(value == null || ReferenceEquals(value, DependencyProperty.UnsetValue))
+                return;
+
+            var t = target.GetType();
+            var p = t.GetProperty(propName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+            if(p == null || !p.CanWrite)
+                return;
+
+            var destType = p.PropertyType;
+            var (underlying, isNullable) = UnwrapNullable(destType);
+
+            try
+            {
+                // 1) Если уже совместимо по типу — ставим напрямую
+                if(underlying.IsInstanceOfType(value))
+                {
+                    p.SetValue(target, PrepareAssignable(value, underlying));
+                    return;
+                }
+
+                // 2) Enum: строка/число -> enum
+                if(underlying.IsEnum)
+                {
+                    object? enumVal = TryConvertToEnum(underlying, value);
+                    if(enumVal != null)
+                    {
+                        p.SetValue(target, enumVal);
+                        return;
+                    }
+                }
+
+                // 3) String -> тип (через TypeConverter целевого типа)
+                if(value is string s)
+                {
+                    var conv = TypeDescriptor.GetConverter(underlying);
+                    if(conv is not null && conv.CanConvertFrom(typeof(string)))
+                    {
+                        var converted = conv.ConvertFrom(null, CultureInfo.CurrentCulture, s);
+                        if(converted != null)
+                        {
+                            p.SetValue(target, PrepareAssignable(converted, underlying));
+                            return;
+                        }
+                    }
+                }
+
+                // 4) Конвертер целевого типа из исходного
+                {
+                    var conv = TypeDescriptor.GetConverter(underlying);
+                    if(conv is not null && conv.CanConvertFrom(value.GetType()))
+                    {
+                        var converted = conv.ConvertFrom(null, CultureInfo.CurrentCulture, value);
+                        if(converted != null)
+                        {
+                            p.SetValue(target, PrepareAssignable(converted, underlying));
+                            return;
+                        }
+                    }
+                }
+
+                // 5) Конвертер исходного типа в целевой
+                {
+                    var conv = TypeDescriptor.GetConverter(value);
+                    if(conv is not null && conv.CanConvertTo(underlying))
+                    {
+                        var converted = conv.ConvertTo(null, CultureInfo.CurrentCulture, value, underlying);
+                        if(converted != null)
+                        {
+                            p.SetValue(target, PrepareAssignable(converted, underlying));
+                            return;
+                        }
+                    }
+                }
+
+                // 6) IConvertible -> ChangeType
+                if(value is IConvertible)
+                {
+                    var converted = Convert.ChangeType(value, underlying, CultureInfo.CurrentCulture);
+                    p.SetValue(target, PrepareAssignable(converted, underlying));
+                    return;
+                }
+
+                // 7) Brush/Freezable и др.: последняя попытка — если тип совпадает по AssignableFrom
+                if(underlying.IsAssignableFrom(value.GetType()))
+                {
+                    p.SetValue(target, PrepareAssignable(value, underlying));
+                    return;
+                }
+            } catch
+            {
+                // Глушим — «надежность» = отсутствие падений при странных значениях
+            }
+            // Если сюда дошли — установить не удалось; тихо игнорируем.
+        }
+
+        // Если значение — Freezable (Brush, TextDecorationCollection, и т.п.), возвращаем «безопасную» копию.
+        // Иначе — исходное значение.
+        private object PrepareAssignable(object value, Type targetType)
+        {
+            // Freezable-клонирование: избегаем попыток присвоить "замороженный" объект,
+            // к которому потом кто-то попробует писать.
+            if(value is Freezable fz)
+            {
+                try
+                {
+                    // Если заморожен — клонируем; иначе достаточно CloneCurrentValue
+                    return fz.IsFrozen ? fz.Clone() : fz.CloneCurrentValue();
+                } catch
+                {
+                    // На всякий случай — отдадим оригинал
+                    return value;
+                }
+            }
+
+            // Некоторые типы в WPF неизменяемые (FontFamily, Typeface, etc.) — возвращаем как есть.
+            return value;
+        }
+
+        private (Type underlying, bool isNullable) UnwrapNullable(Type type)
+        {
+            var u = Nullable.GetUnderlyingType(type);
+            return (u ?? type, u != null);
+        }
+
+        private object? TryConvertToEnum(Type enumType, object value)
+        {
+            try
+            {
+                if(value is string s)
+                {
+                    if(Enum.TryParse(enumType, s, ignoreCase: true, out var parsed))
+                        return parsed;
+                    return null;
+                }
+
+                if(value is IConvertible)
+                {
+                    var num = Convert.ChangeType(value, Enum.GetUnderlyingType(enumType), CultureInfo.InvariantCulture);
+                    return Enum.ToObject(enumType, num!);
+                }
+            } catch { }
+            return null;
+        }
+
+        #endregion
 
     }
 }
