@@ -6,6 +6,8 @@ using CryptoBook.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Media;
+
 using Drawing = System.Drawing;
 using Media = System.Windows.Media;
 
@@ -209,21 +211,25 @@ namespace CryptoBook.Models
             var style=inlineService.GetEffectiveStyleAtCaret();
 
 
+
             // Пробуем массово перенести известные свойства по имени (если они есть в style)
             inlineService.CopyStyleProp(style, "FontFamily", val => FontFamily = (System.Windows.Media.FontFamily)val, false, null);
             inlineService.CopyStyleProp(style, "FontSize", val => FontSize = Convert.ToDouble(val), false, null);
             inlineService.CopyStyleProp(style, "FontWeight", val => FontWeight = (FontWeight)val, false, null);
             inlineService.CopyStyleProp(style, "FontStyle", val => FontStyle = (System.Windows.FontStyle)val, false, null);
-            inlineService.CopyStyleProp(style, "Foreground", val => {
-                if(val is System.Drawing.Brush brush )
+            inlineService.CopyStyleProp(style, "Foreground", val =>
+            {
+                if(val is System.Windows.Media.Brush brush)
                 {
+                    FontColor = System.Drawing.Color.FromArgb(brush.A, brush.R, brush.G, brush.B);
+                    var a = new SolidColorBrush().Color;
                 }
             }, false, null);
-            inlineService.CopyStyleProp(style, "Background", val => {
+            inlineService.CopyStyleProp(style, "Background", val => 
+            {
                 if(val is System.Windows.Media.Color color)
                 {
-                    FontBackground = System.Drawing.Color.FromArgb(
-                        color.A, color.R, color.G, color.B);
+                    FontBackground = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
                 }
             }, false, null);
             inlineService.CopyStyleProp(style, "TextDecorations", val => {

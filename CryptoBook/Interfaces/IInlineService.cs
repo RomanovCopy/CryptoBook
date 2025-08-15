@@ -73,12 +73,12 @@ namespace CryptoBook.Interfaces
 
     /// <summary>Набор стилистических опций для вставляемых/изменяемых Inline.</summary>
     public sealed record InlineStyle(
-        FontFamily? FontFamily = null,
+        System.Windows.Media.FontFamily? FontFamily = null,
         double? FontSize = null,
         FontWeight? FontWeight = null,
         System.Windows.FontStyle? FontStyle = null,
-        Brush? Foreground = null,
-        Brush? Background = null,
+        System.Windows.Media.Brush? Foreground = null,
+        System.Windows.Media.Brush? Background = null,
         TextDecorationCollection? TextDecorations = null,
         BaselineAlignment? Baseline = null);
 

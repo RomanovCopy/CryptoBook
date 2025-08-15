@@ -180,28 +180,32 @@ namespace CryptoBook.Services
         private void InitializeDocument()
         {
             var document = this.Document;
+            document.Background=System.Windows.Media.Brushes.Transparent;
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
             var paragraphFactory = scope.Resolve<IParagraphFactory>();
             Run newRun = new("");
+            newRun.Foreground = System.Windows.Media.Brushes.Black;
+            newRun.Background= System.Windows.Media.Brushes.Transparent;
             var newParagraph = paragraphFactory.Create();
 
             document.PagePadding = new Thickness(10, 20, 10, 20);
             document.Blocks.Clear();
             document.Blocks.Add((Paragraph)newParagraph);
 
-            Paragraph firstParagraph = document.Blocks.FirstBlock as Paragraph;
-            if(firstParagraph == null)
-            {
-                firstParagraph = new Paragraph();
-                document.Blocks.InsertBefore(document.Blocks.FirstBlock, firstParagraph);
-            }
 
-            //// Создаём новый Run и добавляем в начало абзаца
-            if(firstParagraph.Inlines.FirstInline != null)
-                firstParagraph.Inlines.InsertBefore(firstParagraph.Inlines.FirstInline, newRun);
-            else
-                firstParagraph.Inlines.Add(newRun); // если Inlines пустой
+            //Paragraph firstParagraph = document.Blocks.FirstBlock as Paragraph;
+            //if(firstParagraph == null)
+            //{
+            //    firstParagraph = new Paragraph();
+            //    document.Blocks.InsertBefore(document.Blocks.FirstBlock, firstParagraph);
+            //}
+
+            ////// Создаём новый Run и добавляем в начало абзаца
+            //if(firstParagraph.Inlines.FirstInline != null)
+            //    firstParagraph.Inlines.InsertBefore(firstParagraph.Inlines.FirstInline, newRun);
+            //else
+            //    firstParagraph.Inlines.Add(newRun); // если Inlines пустой
 
             //foreach(var block in document.Blocks)
             //{
@@ -211,7 +215,7 @@ namespace CryptoBook.Services
             //        paragraph.ClearValue(Paragraph.LineStackingStrategyProperty);
             //    }
             //}
-
+            newParagraph.Inlines.Add(newRun);
             document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
             document.LineHeight = 15;
 
