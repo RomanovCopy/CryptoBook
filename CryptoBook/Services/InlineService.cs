@@ -525,32 +525,29 @@ namespace CryptoBook.Services
 
         public InlineStyle GetEffectiveStyleAtCaret()
         {
-            var styleType = FindTypeByName("InlineStyle")
-                            ?? throw new InvalidOperationException("Type InlineStyle not found.");
-            var style = (InlineStyle)Activator.CreateInstance(styleType)!;
-
             var caret = EnsureInsertionPosition(service.CaretPosition)
-                        ?? throw new InvalidOperationException("Caret position is null.");
+                ?? throw new InvalidOperationException("Caret position is null.");
 
-            // На пустом выделении TextRange(caret, caret) корректно даёт значение в точке вставки
             var tr = new TextRange(caret, caret);
 
-            object? GetInlinePropertyAt(DependencyProperty dp)
+            object? Get(DependencyProperty dp)
             {
                 var v = tr.GetPropertyValue(dp);
                 return ReferenceEquals(v, DependencyProperty.UnsetValue) ? null : v;
             }
 
-            TrySet(style, "FontFamily", GetInlinePropertyAt(Inline.FontFamilyProperty));
-            TrySet(style, "FontSize", GetInlinePropertyAt(Inline.FontSizeProperty));
-            TrySet(style, "FontWeight", GetInlinePropertyAt(Inline.FontWeightProperty));
-            TrySet(style, "FontStyle", GetInlinePropertyAt(Inline.FontStyleProperty));
-            TrySet(style, "Foreground", GetInlinePropertyAt(TextElement.ForegroundProperty));
-            TrySet(style, "Background", GetInlinePropertyAt(TextElement.BackgroundProperty));
-            TrySet(style, "TextDecorations", GetInlinePropertyAt(Inline.TextDecorationsProperty));
-            TrySet(style, "FontStretch", GetInlinePropertyAt(TextElement.FontStretchProperty));
-            TrySet(style, "BaselineAlignment", GetInlinePropertyAt(Inline.BaselineAlignmentProperty));
-            TrySet(style, "TextEffects", GetInlinePropertyAt(TextElement.TextEffectsProperty));
+            var style = new InlineStyle();
+
+            TrySet(style, "FontFamily", Get(Inline.FontFamilyProperty));
+            TrySet(style, "FontSize", Get(Inline.FontSizeProperty));
+            TrySet(style, "FontWeight", Get(Inline.FontWeightProperty));
+            TrySet(style, "FontStyle", Get(Inline.FontStyleProperty));
+            TrySet(style, "Foreground", Get(TextElement.ForegroundProperty));
+            TrySet(style, "Background", Get(TextElement.BackgroundProperty));
+            TrySet(style, "TextDecorations", Get(Inline.TextDecorationsProperty));
+            TrySet(style, "FontStretch", Get(TextElement.FontStretchProperty));
+            TrySet(style, "BaselineAlignment", Get(Inline.BaselineAlignmentProperty));
+            //TrySet(style, "TextEffects", Get(TextElement.TextEffectsProperty));
 
             return style;
         }
@@ -620,8 +617,8 @@ namespace CryptoBook.Services
 
             return current as Inline;
         }
-        private void CopyStyleProp(object style, string propName, Action<object> applyValue, bool overwriteNullsOnly,
-            object currentValue)
+        public void CopyStyleProp(object style, string propName, Action<object> applyValue, bool overwriteNullsOnly,
+            object? currentValue)
         {
             if(style == null)
                 return;

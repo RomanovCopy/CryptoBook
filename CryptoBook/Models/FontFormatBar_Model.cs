@@ -15,6 +15,7 @@ namespace CryptoBook.Models
     internal class FontFormatBar_Model: ViewModelBase
     {
         private readonly IFontService fontService;
+        private readonly IInlineService inlineService;
         private readonly IRichTextBoxService richService;
 
         internal ObservableCollection<double> FontSizes => fontService.FontSizes ?? throw new ArgumentNullException(nameof(fontService.FontSizes));
@@ -45,9 +46,10 @@ namespace CryptoBook.Models
         FontStretch fontStretch;
 
 
-        internal FontFormatBar_Model(IFontService service, IRichTextBoxService richService)
+        internal FontFormatBar_Model(IFontService service, IInlineService inlineService, IRichTextBoxService richService)
         {
             fontService = service ?? throw new ArgumentNullException(nameof(service));
+            this.inlineService = inlineService ?? throw new ArgumentNullException(nameof(inlineService));
             this.richService = richService;
             InitializeValues();
         }
@@ -198,7 +200,44 @@ namespace CryptoBook.Models
 
 
 
+        internal bool CanExecute_Open(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_Open(object? obj)
+        {
+            var style=inlineService.GetEffectiveStyleAtCaret();
 
+
+            // Пробуем массово перенести известные свойства по имени (если они есть в style)
+            inlineService.CopyStyleProp(style, "FontFamily", val => FontFamily = (System.Windows.Media.FontFamily)val, false, null);
+            inlineService.CopyStyleProp(style, "FontSize", val => FontSize = Convert.ToDouble(val), false, null);
+            inlineService.CopyStyleProp(style, "FontWeight", val => FontWeight = (FontWeight)val, false, null);
+            inlineService.CopyStyleProp(style, "FontStyle", val => FontStyle = (System.Windows.FontStyle)val, false, null);
+            inlineService.CopyStyleProp(style, "Foreground", val => {
+                if(val is System.Drawing.Brush brush )
+                {
+                }
+            }, false, null);
+            inlineService.CopyStyleProp(style, "Background", val => {
+                if(val is System.Windows.Media.Color color)
+                {
+                    FontBackground = System.Drawing.Color.FromArgb(
+                        color.A, color.R, color.G, color.B);
+                }
+            }, false, null);
+            inlineService.CopyStyleProp(style, "TextDecorations", val => {
+                if(val is TextDecorationCollection collection)
+                {
+                    TextDecoration = new TextDecorationItem()
+                    {
+                        Name = collection.FirstOrDefault()?.Location.ToString() ?? "Unknown",
+                        Decorations = collection,
+                    };
+                }
+            }, false, null);
+            inlineService.CopyStyleProp(style, "FontStretch", val => FontStretch = (FontStretch)val, false, null);
+        }
 
         internal bool CanExecute_Loaded(object? obj) { return true; }
         internal void Execute_Loaded(object? obj) { }

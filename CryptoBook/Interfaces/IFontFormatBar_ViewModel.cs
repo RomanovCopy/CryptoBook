@@ -66,5 +66,6 @@ namespace CryptoBook.Interfaces
         ICommand SetFontBackgroundCommand { get; }
         ICommand SetFontSizeCommand { get; }
         ICommand ClearFormattingCommand { get; }
+        ICommand Opened { get; }
     }
 }

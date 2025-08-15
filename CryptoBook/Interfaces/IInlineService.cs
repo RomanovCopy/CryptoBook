@@ -65,6 +65,9 @@ namespace CryptoBook.Interfaces
 
         /// <summary>Получить актуальное форматирование в позиции каретки (наследованное/эффективное).</summary>
         InlineStyle GetEffectiveStyleAtCaret();
+
+        void CopyStyleProp(object style, string propName, Action<object> applyValue, bool overwriteNullsOnly,
+            object? currentValue);
     }
 
 

@@ -39,9 +39,11 @@ namespace CryptoBook.ViewModels
 
 
         // Constructor
-        public FontFormatBar_ViewModel(IFontService service, IRichTextBoxService richService)
+        public FontFormatBar_ViewModel(IFontService service, IInlineService inlineService, IRichTextBoxService richService)
         {
-            model = new FontFormatBar_Model(service ?? throw new ArgumentNullException(nameof(service)), 
+            model = new FontFormatBar_Model(
+                service ?? throw new ArgumentNullException(nameof(service)), 
+                inlineService??throw new ArgumentNullException(nameof(inlineService)) ,
                 richService??throw new ArgumentNullException(nameof(richService)));
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
@@ -87,6 +89,10 @@ namespace CryptoBook.ViewModels
 
 
         // IViewModel implementation
+
+        public ICommand Opened => 
+            openCommand ??= new RelayCommand(model.Execute_Open, model.CanExecute_Open);
+        RelayCommand openCommand;
 
         public ICommand Loaded => 
             loadedCommand ??= new RelayCommand(model.Execute_Loaded, model.CanExecute_Loaded);
