@@ -72,15 +72,13 @@ namespace CryptoBook.Interfaces
 
 
     /// <summary>Набор стилистических опций для вставляемых/изменяемых Inline.</summary>
-    public sealed record InlineStyle(
-        System.Windows.Media.FontFamily? FontFamily = null,
-        double? FontSize = null,
-        FontWeight? FontWeight = null,
-        System.Windows.FontStyle? FontStyle = null,
-        System.Windows.Media.Brush? Foreground = null,
-        System.Windows.Media.Brush? Background = null,
-        TextDecorationCollection? TextDecorations = null,
-        BaselineAlignment? Baseline = null);
+    public class InlineStyle: Dictionary<string, object?>
+    {
+        public InlineStyle() : base(StringComparer.OrdinalIgnoreCase) { }
+
+        public T? Get<T>(string key) => TryGetValue(key, out var v) && v is T t ? t : default;
+        public void Set(string key, object? value) => this[key] = value;
+    }
 
     /// <summary>Параметры вставки Run.</summary>
     public sealed record RunInsertOptions(

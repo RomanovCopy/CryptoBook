@@ -349,17 +349,44 @@ namespace CryptoBook.Services
         {
             if(inline is null || style is null)
                 return;
-            // Пробуем массово перенести известные свойства по имени (если они есть в style)
-            CopyStyleProp(style, "FontFamily", val => inline.FontFamily = (System.Windows.Media.FontFamily)val, overwriteNullsOnly, inline.FontFamily);
-            CopyStyleProp(style, "FontSize", val => inline.FontSize = Convert.ToDouble(val), overwriteNullsOnly, inline.FontSize);
-            CopyStyleProp(style, "FontWeight", val => inline.FontWeight = (FontWeight)val, overwriteNullsOnly, inline.FontWeight);
-            CopyStyleProp(style, "FontStyle", val => inline.FontStyle = (System.Windows.FontStyle)val, overwriteNullsOnly, inline.FontStyle);
-            CopyStyleProp(style, "Foreground", val => inline.Foreground = (System.Windows.Media.Brush)val, overwriteNullsOnly, inline.Foreground);
-            CopyStyleProp(style, "Background", val => inline.Background = (System.Windows.Media.Brush)val, overwriteNullsOnly, inline.Background);
-            CopyStyleProp(style, "TextDecorations", val => inline.TextDecorations = (TextDecorationCollection)val, overwriteNullsOnly, inline.TextDecorations);
-            CopyStyleProp(style, "FontStretch", val => inline.FontStretch = (FontStretch)val, overwriteNullsOnly, inline.FontStretch);
-            CopyStyleProp(style, "BaselineAlignment", val => inline.BaselineAlignment = (BaselineAlignment)val, overwriteNullsOnly, inline.BaselineAlignment);
-            CopyStyleProp(style, "TextEffects", val => inline.TextEffects = (TextEffectCollection)val, overwriteNullsOnly, inline.TextEffects);
+
+            foreach(var (name, value) in style)
+            {
+                if(!InlineDpMap.TryGetValue(name, out var dp))
+                    continue;
+                if(overwriteNullsOnly)
+                {
+                    var current = inline.GetValue(dp);
+                    if(current != null && !ReferenceEquals(current, DependencyProperty.UnsetValue))
+                        continue; // пропускаем, если уже что-то есть
+                }
+                var v = PrepareForAssign(value);
+                if(v is not null)
+                    inline.SetValue(dp, v);
+            }
+        }
+
+        private static object? PrepareForAssign(object? value)
+        {
+            if(value is null || ReferenceEquals(value, DependencyProperty.UnsetValue))
+                return null;
+
+            // Безопасное присваивание замороженных объектов WPF
+            if(value is Freezable fz)
+            {
+                try
+                { return fz.IsFrozen ? fz.Clone() : fz.CloneCurrentValue(); } catch { return value; }
+            }
+
+            // Приведение double для числового
+            if(value is IConvertible ic)
+            {
+                // FontSize — double, остальное либо совместимо, либо конвертером займётся WPF
+                // Принудительно не трогаем, если это не число
+                // (ApplyPropertyValue сам умеет конвертировать многие типы)
+            }
+
+            return value;
         }
 
         public void ApplyStyleToSelection(InlineStyle style)
@@ -526,32 +553,38 @@ namespace CryptoBook.Services
         public InlineStyle GetEffectiveStyleAtCaret()
         {
             var caret = EnsureInsertionPosition(service.CaretPosition)
-                ?? throw new InvalidOperationException("Caret position is null.");
+                  ?? throw new InvalidOperationException("Caret position is null.");
 
             var tr = new TextRange(caret, caret);
 
-            object? Get(DependencyProperty dp)
+            object? Read(DependencyProperty dp)
             {
                 var v = tr.GetPropertyValue(dp);
                 return ReferenceEquals(v, DependencyProperty.UnsetValue) ? null : v;
             }
 
             var style = new InlineStyle();
-
-            TrySet(style, "FontFamily", Get(Inline.FontFamilyProperty));
-            TrySet(style, "FontSize", Get(Inline.FontSizeProperty));
-            TrySet(style, "FontWeight", Get(Inline.FontWeightProperty));
-            TrySet(style, "FontStyle", Get(Inline.FontStyleProperty));
-            TrySet(style, "Foreground", Get(TextElement.ForegroundProperty));
-            TrySet(style, "Background", Get(TextElement.BackgroundProperty));
-            TrySet(style, "TextDecorations", Get(Inline.TextDecorationsProperty));
-            TrySet(style, "FontStretch", Get(TextElement.FontStretchProperty));
-            TrySet(style, "BaselineAlignment", Get(Inline.BaselineAlignmentProperty));
-            //TrySet(style, "TextEffects", Get(TextElement.TextEffectsProperty));
+            foreach(var (name, dp) in InlineDpMap)
+                style.Set(name, Read(dp));
 
             return style;
         }
 
+
+        private readonly IReadOnlyDictionary<string, DependencyProperty> InlineDpMap =
+    new Dictionary<string, DependencyProperty>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["FontFamily"] = Inline.FontFamilyProperty,
+        ["FontSize"] = Inline.FontSizeProperty,
+        ["FontWeight"] = Inline.FontWeightProperty,
+        ["FontStyle"] = Inline.FontStyleProperty,
+        ["Foreground"] = TextElement.ForegroundProperty,
+        ["Background"] = TextElement.BackgroundProperty,
+        ["TextDecorations"] = Inline.TextDecorationsProperty,
+        ["FontStretch"] = TextElement.FontStretchProperty,
+        ["BaselineAlignment"] = Inline.BaselineAlignmentProperty,
+        //["TextEffects"] = TextElement.TextEffectsProperty
+    };
 
 
 

@@ -23,7 +23,7 @@ namespace CryptoBook.Models
         internal ObservableCollection<double> FontSizes => fontService.FontSizes ?? throw new ArgumentNullException(nameof(fontService.FontSizes));
         internal ObservableCollection<System.Windows.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
         internal ObservableCollection<Media.FontFamily> FontFamilyes => fontService.FontFamilyes ?? throw new ArgumentNullException(nameof(fontService.FontFamilyes));
-        internal ObservableCollection<Color> FontColors => fontService.FontColors ?? throw new ArgumentNullException(nameof(fontService.FontColors));
+        internal ObservableCollection<Drawing.Color> FontColors => fontService.FontColors ?? throw new ArgumentNullException(nameof(fontService.FontColors));
         internal ObservableCollection<TextDecorationItem> TextDecorations => fontService.TextDecorations ?? throw new ArgumentNullException(nameof(fontService.TextDecorations));
         internal ObservableCollection<System.Windows.FontWeight> FontWeights => fontService.FontWeights ?? throw new ArgumentNullException(nameof(fontService.FontWeights));
         internal ObservableCollection<System.Windows.FontStretch> FontStretches => fontService.FontStretches ?? throw new ArgumentNullException(nameof(fontService.FontStretches));
@@ -34,10 +34,10 @@ namespace CryptoBook.Models
         System.Windows.FontStyle fontStyle;
         public Media.FontFamily FontFamily { get=>fontFamily; set=>SetProperty(ref fontFamily, value); }
         Media.FontFamily fontFamily;
-        public Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
-        Color fontColor;
-        public Color FontBackground { get => fontBackground; set => SetProperty(ref fontBackground, value); }
-        Color fontBackground;
+        public Drawing.Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
+        Drawing.Color fontColor;
+        public Drawing.Color FontBackground { get => fontBackground; set => SetProperty(ref fontBackground, value); }
+        Drawing.Color fontBackground;
         public TextDecorationItem TextDecoration 
         { get=>textDecoration; 
             set=>SetProperty(ref textDecoration, value); }
@@ -221,8 +221,7 @@ namespace CryptoBook.Models
             {
                 if(val is System.Windows.Media.Brush brush)
                 {
-                    FontColor = System.Drawing.Color.FromArgb(brush.A, brush.R, brush.G, brush.B);
-                    var a = new SolidColorBrush().Color;
+                   //FontColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
                 }
             }, false, null);
             inlineService.CopyStyleProp(style, "Background", val => 
