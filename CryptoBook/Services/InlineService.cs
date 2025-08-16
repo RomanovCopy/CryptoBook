@@ -183,34 +183,42 @@ namespace CryptoBook.Services
 
         // ---------- ВСТАВКИ ----------
 
-        public Run InsertRunAtCaret(RunInsertOptions options)
+        public Run InsertRunAtCaret(RunInsertOptions options) 
         {
-            if(service.Document is null)
-                throw new InvalidOperationException("Document is null.");
+            if(options == null)
+                throw new ArgumentNullException(nameof(options));
 
-            var caret = EnsureInsertionPosition(service.CaretPosition);
+            var caret = EnsureInsertionPosition(service.CaretPosition)
+                        ?? throw new InvalidOperationException("Caret is null.");
 
+            var run = new Run(options.Text ?? string.Empty);
 
-            string text = accessor.Read<string>(options, "Text");
-            var style = accessor.Read<InlineStyle>(options, "Style");
-            var configure = accessor.Read<Delegate>(options, "Configure");
-            bool moveCaret = accessor.Read<bool?>(options, "MoveCaretAfterInsert") ?? true;
+            if(options.Style != null)
+                ApplyStyle(run, options.Style);
 
-            var run = new Run(text);
+            options.Configure?.Invoke(run);
+
+            InsertInlineAt(caret, run);
+
+            if(options.MoveCaretAfterInsert)
+                service.CaretPosition = run.ElementEnd;
+
+            return run;
+        }
+        public Run InsertRunAtCaret(string text, InlineStyle? style = null, Action<Run>? configure = null, bool moveCaret = true)
+        {
+            var caret = EnsureInsertionPosition(service.CaretPosition)
+                        ?? throw new InvalidOperationException("Caret is null.");
+
+            var run = new Run(text ?? string.Empty);
             if(style != null)
-                ApplyStyle(run, style, overwriteNullsOnly: false);
-
-            if(configure is Action<Run> conf)
-                conf(run);
+                ApplyStyle(run, style);
+            configure?.Invoke(run);
 
             InsertInlineAt(caret, run);
 
             if(moveCaret)
-            {
-                // Переместим каретку за только что вставленный Run
                 service.CaretPosition = run.ElementEnd;
-            }
-
             return run;
         }
 
@@ -279,13 +287,14 @@ namespace CryptoBook.Services
             if(navigateUri != null)
                 link.NavigateUri = navigateUri;
             if(style != null)
-                ApplyStyle(link, style, overwriteNullsOnly: false);
+                ApplyStyle(link, style);
             configure?.Invoke(link);
 
             InsertInlineAt(EnsureInsertionPosition(service.CaretPosition), link);
             service.CaretPosition = link.ElementEnd;
             return link;
         }
+
 
         public InlineUIContainer InsertInlineUIElementAtCaret(UIElement element, Action<InlineUIContainer>? configure = null)
         {
@@ -301,7 +310,8 @@ namespace CryptoBook.Services
 
         public Run ReplaceSelection(string text, InlineStyle? style = null, Action<Run>? configure = null)
         {
-            var sel = service.Selection;
+            var sel = service.Selection ?? throw new InvalidOperationException("Selection is null.");
+
             using(BeginChangeScope())
             {
                 if(!sel.IsEmpty)
@@ -309,7 +319,7 @@ namespace CryptoBook.Services
 
                 var run = new Run(text ?? string.Empty);
                 if(style != null)
-                    ApplyStyle(run, style, overwriteNullsOnly: false);
+                    ApplyStyle(run, style);
                 configure?.Invoke(run);
 
                 InsertInlineAt(EnsureInsertionPosition(sel.Start), run);
@@ -318,99 +328,74 @@ namespace CryptoBook.Services
             }
         }
 
+
         public Span WrapSelectionInSpan(InlineStyle? spanStyle = null, Action<Span>? configure = null)
         {
-            var sel = service.Selection;
-            if(sel.IsEmpty)
-            {
-                // Пустое выделение — создаём пустой Span и вставляем.
-                var emptySpan = new Span();
-                if(spanStyle != null)
-                    ApplyStyle(emptySpan, spanStyle, overwriteNullsOnly: false);
-                configure?.Invoke(emptySpan);
-                InsertInlineAt(EnsureInsertionPosition(service.CaretPosition), emptySpan);
-                service.CaretPosition = emptySpan.ContentEnd;
-                return emptySpan;
-            }
+            var sel = service.Selection ?? throw new InvalidOperationException("Selection is null.");
+
             using(BeginChangeScope())
             {
-                var span = new Span(sel.Start, sel.End); // WPF: оборачивает существующие инлайны в Span
-                if(spanStyle != null)
-                    ApplyStyle(span, spanStyle, overwriteNullsOnly: false);
-                configure?.Invoke(span);
+                if(sel.IsEmpty)
+                {
+                    // пустое выделение — вставим пустой Span в каретку
+                    var span = new Span();
+                    if(spanStyle != null)
+                        ApplyStyle(span, spanStyle);
+                    configure?.Invoke(span);
 
-                // Переместим каретку в конец новой обертки
-                service.CaretPosition = span.ContentEnd;
-                return span;
+                    InsertInlineAt(EnsureInsertionPosition(service.CaretPosition), span);
+                    service.CaretPosition = span.ContentEnd;
+                    return span;
+                }
+
+                // WPF: Span(start,end) оборачивает существующие инлайны без копирования
+                var s = new Span(sel.Start, sel.End);
+                if(spanStyle != null)
+                    ApplyStyle(s, spanStyle);
+                configure?.Invoke(s);
+
+                service.CaretPosition = s.ContentEnd;
+                return s;
             }
         }
+
 
         public void ApplyStyle(Inline inline, InlineStyle style, bool overwriteNullsOnly = false)
         {
             if(inline is null || style is null)
                 return;
 
-            foreach(var (name, value) in style)
+            foreach(var (dp, value) in style)
             {
-                if(!InlineDpMap.TryGetValue(name, out var dp))
+                var v = PrepareForAssign(value);
+                if(v is null)
                     continue;
+
                 if(overwriteNullsOnly)
                 {
                     var current = inline.GetValue(dp);
                     if(current != null && !ReferenceEquals(current, DependencyProperty.UnsetValue))
-                        continue; // пропускаем, если уже что-то есть
+                        continue;
                 }
-                var v = PrepareForAssign(value);
-                if(v is not null)
-                    inline.SetValue(dp, v);
+                inline.SetValue(dp, v);
             }
-        }
-
-        private static object? PrepareForAssign(object? value)
-        {
-            if(value is null || ReferenceEquals(value, DependencyProperty.UnsetValue))
-                return null;
-
-            // Безопасное присваивание замороженных объектов WPF
-            if(value is Freezable fz)
-            {
-                try
-                { return fz.IsFrozen ? fz.Clone() : fz.CloneCurrentValue(); } catch { return value; }
-            }
-
-            // Приведение double для числового
-            if(value is IConvertible ic)
-            {
-                // FontSize — double, остальное либо совместимо, либо конвертером займётся WPF
-                // Принудительно не трогаем, если это не число
-                // (ApplyPropertyValue сам умеет конвертировать многие типы)
-            }
-
-            return value;
         }
 
         public void ApplyStyleToSelection(InlineStyle style)
         {
-            if(style is null)
-                return;
             var sel = service.Selection;
-            if(sel is null)
+            if(sel is null || style is null)
                 return;
 
             using(BeginChangeScope())
             {
-                ApplySelectionProp(sel, Inline.FontFamilyProperty, style, "FontFamily");
-                ApplySelectionProp(sel, Inline.FontSizeProperty, style, "FontSize");
-                ApplySelectionProp(sel, Inline.FontWeightProperty, style, "FontWeight");
-                ApplySelectionProp(sel, Inline.FontStyleProperty, style, "FontStyle");
-                ApplySelectionProp(sel, TextElement.ForegroundProperty, style, "Foreground");
-                ApplySelectionProp(sel, TextElement.BackgroundProperty, style, "Background");
-                ApplySelectionProp(sel, Inline.TextDecorationsProperty, style, "TextDecorations");
-                ApplySelectionProp(sel, TextElement.FontStretchProperty, style, "FontStretch");
-                ApplySelectionProp(sel, Inline.BaselineAlignmentProperty, style, "BaselineAlignment");
-                ApplySelectionProp(sel, TextElement.TextEffectsProperty, style, "TextEffects");
+                foreach(var (dp, value) in style)
+                {
+                    sel.ApplyPropertyValue(dp, PrepareForAssign(value) ?? DependencyProperty.UnsetValue);
+                }
             }
         }
+
 
         public void ToggleBoldOnSelection()
         {
@@ -553,7 +538,7 @@ namespace CryptoBook.Services
         public InlineStyle GetEffectiveStyleAtCaret()
         {
             var caret = EnsureInsertionPosition(service.CaretPosition)
-                  ?? throw new InvalidOperationException("Caret position is null.");
+                 ?? throw new InvalidOperationException("Caret position is null.");
 
             var tr = new TextRange(caret, caret);
 
@@ -563,32 +548,36 @@ namespace CryptoBook.Services
                 return ReferenceEquals(v, DependencyProperty.UnsetValue) ? null : v;
             }
 
-            var style = new InlineStyle();
-            foreach(var (name, dp) in InlineDpMap)
-                style.Set(name, Read(dp));
-
-            return style;
+            return new InlineStyle
+            {
+                [Inline.FontFamilyProperty] = Read(Inline.FontFamilyProperty),
+                [Inline.FontSizeProperty] = Read(Inline.FontSizeProperty),
+                [Inline.FontWeightProperty] = Read(Inline.FontWeightProperty),
+                [Inline.FontStyleProperty] = Read(Inline.FontStyleProperty),
+                [TextElement.ForegroundProperty] = Read(TextElement.ForegroundProperty),
+                [TextElement.BackgroundProperty] = Read(TextElement.BackgroundProperty),
+                [Inline.TextDecorationsProperty] = Read(Inline.TextDecorationsProperty),
+                [TextElement.FontStretchProperty] = Read(TextElement.FontStretchProperty),
+                [Inline.BaselineAlignmentProperty] = Read(Inline.BaselineAlignmentProperty),
+                //[TextElement.TextEffectsProperty] = Read(TextElement.TextEffectsProperty)
+            };
         }
 
 
-        private readonly IReadOnlyDictionary<string, DependencyProperty> InlineDpMap =
-    new Dictionary<string, DependencyProperty>(StringComparer.OrdinalIgnoreCase)
-    {
-        ["FontFamily"] = Inline.FontFamilyProperty,
-        ["FontSize"] = Inline.FontSizeProperty,
-        ["FontWeight"] = Inline.FontWeightProperty,
-        ["FontStyle"] = Inline.FontStyleProperty,
-        ["Foreground"] = TextElement.ForegroundProperty,
-        ["Background"] = TextElement.BackgroundProperty,
-        ["TextDecorations"] = Inline.TextDecorationsProperty,
-        ["FontStretch"] = TextElement.FontStretchProperty,
-        ["BaselineAlignment"] = Inline.BaselineAlignmentProperty,
-        //["TextEffects"] = TextElement.TextEffectsProperty
-    };
 
+        private object? PrepareForAssign(object? value)
+        {
+            if(value == null || ReferenceEquals(value, DependencyProperty.UnsetValue))
+                return null;
 
+            if(value is Freezable fz)
+            {
+                try
+                { return fz.IsFrozen ? fz.Clone() : fz.CloneCurrentValue(); } catch { return value; }
+            }
 
-
+            return value;
+        }
         private TextPointer EnsureInsertionPosition(TextPointer caret)
         {
             if(caret == null)
@@ -650,256 +639,26 @@ namespace CryptoBook.Services
 
             return current as Inline;
         }
-        public void CopyStyleProp(object style, string propName, Action<object> applyValue, bool overwriteNullsOnly,
-            object? currentValue)
+        public void CopyStyleProp( InlineStyle style, DependencyProperty dp, Action<object> applyValue, 
+            bool overwriteNullsOnly, object? currentValue)
         {
-            if(style == null)
+            if(style is null || dp is null || applyValue is null)
                 return;
 
-            // Находим свойство по имени (без учета регистра)
-            var prop = style.GetType().GetProperty(
-                propName,
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-
-            if(prop == null)
-                return; // В стиле такого свойства нет
-
-            var value = prop.GetValue(style);
-            if(value == null)
-                return; // В стиле значение не задано
-
-            // Если разрешено перезаписывать только null'ы, а текущее значение уже есть — выходим
-            if(overwriteNullsOnly && currentValue != null)
+            if(!style.TryGetValue(dp, out var value) || value is null ||
+                ReferenceEquals(value, DependencyProperty.UnsetValue))
                 return;
 
-            try
-            {
-                // Применяем
-                applyValue(value);
-            } catch(Exception ex)
-            {
-                // Игнорируем несовпадения типов или ошибки приведения
-                System.Diagnostics.Debug.WriteLine(
-                    $"CopyStyleProp: невозможно применить {propName} — {ex.Message}");
-            }
+            if(overwriteNullsOnly &&
+                currentValue is not null &&
+                !ReferenceEquals(currentValue, DependencyProperty.UnsetValue))
+                return;
+
+            var v = PrepareForAssign(value); // ваш хелпер (клонирует Freezable и т.п.)
+            if(v is not null)
+                applyValue(v);
         }
-        private bool ApplySelectionProp(TextSelection sel, DependencyProperty dp, object style, string propName)
-        {
-            if(sel is null || dp is null || style is null)
-                return false;
 
-            // 1) достаём значение из style
-            var srcProp = style.GetType().GetProperty(propName,
-                            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase);
-            if(srcProp == null)
-                return false;
-
-            var rawVal = srcProp.GetValue(style);
-            if(rawVal == null || Equals(rawVal, DependencyProperty.UnsetValue))
-                return false;
-
-            // 2) приводим к типу свойства DP
-            var targetType = dp.PropertyType;
-            if(!TryConvertValue(rawVal, targetType, out var converted))
-                return false;
-
-            // 3) сравним с текущим значением, чтобы не делать лишнюю запись
-            var current = sel.GetPropertyValue(dp);
-            if(!ReferenceEquals(current, DependencyProperty.UnsetValue) &&
-                ValuesEqualForText(current, converted))
-            {
-                return false; // уже задано такое же значение
-            }
-
-            // 4) применяем
-            try
-            {
-                sel.ApplyPropertyValue(dp, converted);
-                return true;
-            } catch(Exception)
-            {
-                // В редких случаях DP может отвергнуть значение (несовместимость контекста и т.п.)
-                return false;
-            }
-        }
-        private bool TryConvertValue(object value, Type targetType, out object? converted)
-        {
-            converted = null;
-            if(value == null)
-                return false;
-
-            // Already compatible
-            if(targetType.IsInstanceOfType(value))
-            {
-                converted = value;
-                return true;
-            }
-
-            // Nullable<T> => T
-            var underlying = Nullable.GetUnderlyingType(targetType) ?? targetType;
-
-            try
-            {
-                // Спец. кейсы
-
-                // Color -> Brush
-                if(underlying == typeof(System.Windows.Media.Brush) && value is System.Windows.Media.Color c)
-                {
-                    converted = new SolidColorBrush(c);
-                    // Чтобы избежать проблем заморозки при шаринге, клонировать необязательно — WPF сам справится.
-                    return true;
-                }
-
-                // string -> FontFamily / Brush / FontStyle / FontWeight / FontStretch / TextDecorations / BaselineAlignment
-                if(value is string s)
-                {
-                    if(underlying == typeof(System.Windows.Media.FontFamily))
-                    {
-                        converted = new System.Windows.Media.FontFamily(s);
-                        return true;
-                    }
-                    if(underlying == typeof(System.Windows.Media.Brush))
-                    {
-                        var bc = new BrushConverter();
-                        if(bc.CanConvertFrom(typeof(string)))
-                        {
-                            converted = bc.ConvertFrom(null, CultureInfo.InvariantCulture, s);
-                            return converted != null;
-                        }
-                    }
-                    if(underlying == typeof(System.Windows.FontStyle))
-                    {
-                        var conv = new FontStyleConverter();
-                        if(conv.CanConvertFrom(typeof(string)))
-                        {
-                            converted = conv.ConvertFrom(null, CultureInfo.InvariantCulture, s);
-                            return converted != null;
-                        }
-                    }
-                    if(underlying == typeof(FontWeight))
-                    {
-                        var conv = new FontWeightConverter();
-                        if(conv.CanConvertFrom(typeof(string)))
-                        {
-                            converted = conv.ConvertFrom(null, CultureInfo.InvariantCulture, s);
-                            return converted != null;
-                        }
-                    }
-                    if(underlying == typeof(FontStretch))
-                    {
-                        var conv = new FontStretchConverter();
-                        if(conv.CanConvertFrom(typeof(string)))
-                        {
-                            converted = conv.ConvertFrom(null, CultureInfo.InvariantCulture, s);
-                            return converted != null;
-                        }
-                    }
-                    if(underlying == typeof(TextDecorationCollection))
-                    {
-                        // Поддержка коротких алиасов
-                        if(string.Equals(s, "Underline", StringComparison.OrdinalIgnoreCase))
-                        {
-                            converted = TextDecorations.Underline;
-                            return true;
-                        }
-                        if(string.Equals(s, "Strikethrough", StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals(s, "StrikeThrough", StringComparison.OrdinalIgnoreCase))
-                        {
-                            converted = TextDecorations.Strikethrough;
-                            return true;
-                        }
-                        if(string.Equals(s, "OverLine", StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals(s, "Overline", StringComparison.OrdinalIgnoreCase))
-                        {
-                            converted = TextDecorations.OverLine;
-                            return true;
-                        }
-                        if(string.Equals(s, "Baseline", StringComparison.OrdinalIgnoreCase))
-                        {
-                            converted = TextDecorations.Baseline;
-                            return true;
-                        }
-
-                        // Попытка стандартного парсинга через TypeConverter
-                        var conv = TypeDescriptor.GetConverter(typeof(TextDecorationCollection));
-                        if(conv != null && conv.CanConvertFrom(typeof(string)))
-                        {
-                            converted = conv.ConvertFrom(null, CultureInfo.InvariantCulture, s);
-                            return converted != null;
-                        }
-                    }
-                    if(underlying.IsEnum)
-                    {
-                        converted = Enum.Parse(underlying, s, ignoreCase: true);
-                        return true;
-                    }
-                }
-
-                // Числа (FontSize и пр.)
-                if(underlying == typeof(double) && value is IConvertible)
-                {
-                    converted = Convert.ToDouble(value, CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                // Общий путь — TypeConverter целевого типа
-                var tc = TypeDescriptor.GetConverter(underlying);
-                if(tc != null && tc.CanConvertFrom(value.GetType()))
-                {
-                    converted = tc.ConvertFrom(null, CultureInfo.InvariantCulture, value);
-                    return converted != null;
-                }
-
-                // Попробуем стандартную Convert.ChangeType (для простых типов)
-                if(value is IConvertible)
-                {
-                    converted = Convert.ChangeType(value, underlying, CultureInfo.InvariantCulture);
-                    return true;
-                }
-            } catch
-            {
-                // падающие конвертации — просто возвращаем false
-                converted = null;
-                return false;
-            }
-
-            return false;
-        }
-        private bool ValuesEqualForText(object a, object b)
-        {
-            if(ReferenceEquals(a, b))
-                return true;
-            if(a == null || b == null)
-                return false;
-
-            // Brush: если обе SolidColorBrush — сравним по Color
-            if(a is System.Windows.Media.Brush ba && b is System.Windows.Media.Brush bb)
-            {
-                if(ba is SolidColorBrush sa && bb is SolidColorBrush sb)
-                    return sa.Color.Equals(sb.Color);
-                // Иначе — откатываемся к Equals
-                return Equals(ba, bb);
-            }
-
-            // FontFamily: сравним по Source (имя/путь)
-            if(a is System.Windows.Media.FontFamily fa && b is System.Windows.Media.FontFamily fb)
-                return string.Equals(fa.Source, fb.Source, StringComparison.OrdinalIgnoreCase);
-
-            // TextDecorationCollection: сравнение по содержимому
-            if(a is TextDecorationCollection ta && b is TextDecorationCollection tb)
-            {
-                if(ta.Count != tb.Count)
-                    return false;
-                // Для стандартных декораций — SequenceEqual нормально работает
-                return ta.Cast<TextDecoration>().SequenceEqual(tb.Cast<TextDecoration>());
-            }
-
-            // double — учтём возможные мелкие расхождения
-            if(a is double da && b is double db)
-                return Math.Abs(da - db) < 0.0001;
-
-            return Equals(a, b);
-        }
         private bool CanMerge(Run a, Run b)
         {
             if(a == null || b == null)
@@ -1152,267 +911,6 @@ namespace CryptoBook.Services
         /* ---------- числовая погрешность ---------- */
         private bool DoubleEquals(double a, double b, double eps = 1e-9) => Math.Abs(a - b) <= eps;
 
-
-        #region Type lookup
-
-        private readonly ConcurrentDictionary<string, Type?> _typeCache =
-            new(StringComparer.Ordinal);
-
-        // Находит тип по короткому имени или по полному (c namespace или AssemblyQualifiedName).
-        // Приоритет: Entry/Executing/Calling assembly, затем остальные загруженные сборки.
-        // Кэширует результат. Возвращает null, если тип не найден.
-        private Type? FindTypeByName(string typeName)
-        {
-            if(string.IsNullOrWhiteSpace(typeName))
-                return null;
-
-            // Кэш
-            if(_typeCache.TryGetValue(typeName, out var cached))
-                return cached;
-
-            // 1) Если пришло полное имя с asm-частью — пробуем сразу
-            //    (Type.GetType понимает AssemblyQualifiedName).
-            if(typeName.IndexOf(',') >= 0 || typeName.Contains('.'))
-            {
-                var t = Type.GetType(typeName, throwOnError: false, ignoreCase: true);
-                if(t != null)
-                {
-                    _typeCache[typeName] = t;
-                    return t;
-                }
-            }
-
-            // Список сборок с приоритетом на "пользовательские"
-            var loaded = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a =>
-                {
-                    try
-                    { return !a.IsDynamic; } catch { return false; }
-                })
-                .ToList();
-
-            // Слегка эвристически сортируем: сначала Entry/Executing/Calling,
-            // затем сборки без "Microsoft"/"System".
-            Assembly? entry = null, exec = null, calling = null;
-            try
-            { entry = Assembly.GetEntryAssembly(); } catch { }
-            try
-            { exec = Assembly.GetExecutingAssembly(); } catch { }
-            try
-            { calling = Assembly.GetCallingAssembly(); } catch { }
-
-            loaded = loaded
-                .OrderByDescending(a => a == entry || a == exec || a == calling)
-                .ThenByDescending(a =>
-                {
-                    var n = a.GetName().Name ?? "";
-                    return !(n.StartsWith("System", StringComparison.OrdinalIgnoreCase)
-                             || n.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase)
-                             || n.StartsWith("Windows", StringComparison.OrdinalIgnoreCase)
-                             || n.StartsWith("Presentation", StringComparison.OrdinalIgnoreCase)
-                             || n.StartsWith("PresentationCore", StringComparison.OrdinalIgnoreCase)
-                             || n.StartsWith("PresentationFramework", StringComparison.OrdinalIgnoreCase)
-                             || n.StartsWith("WindowsBase", StringComparison.OrdinalIgnoreCase));
-                })
-                .ToList();
-
-            // 2) Пробуем точное совпадение по Name (без namespace)
-            foreach(var asm in loaded)
-            {
-                Type? t = null;
-                try
-                {
-                    t = asm.GetTypes().FirstOrDefault(x =>
-                        x.Name.Equals(typeName, StringComparison.OrdinalIgnoreCase));
-                } catch { /* некоторые сборки могут бросить */ }
-
-                if(t != null)
-                {
-                    _typeCache[typeName] = t;
-                    return t;
-                }
-            }
-
-            // 3) Пробуем совпадение по окончанию FullName: ".InlineStyle"
-            foreach(var asm in loaded)
-            {
-                Type? t = null;
-                try
-                {
-                    t = asm.GetTypes().FirstOrDefault(x =>
-                        (x.FullName ?? "").EndsWith("." + typeName, StringComparison.OrdinalIgnoreCase));
-                } catch { }
-
-                if(t != null)
-                {
-                    _typeCache[typeName] = t;
-                    return t;
-                }
-            }
-
-            _typeCache[typeName] = null;
-            return null;
-        }
-
-        #endregion
-
-        #region Safe property set
-
-        // Надёжная установка свойства по имени со множеством fallback-конвертаций.
-        // Тихо игнорирует несовместимые типы и DependencyProperty.UnsetValue.
-        private void TrySet(object target, string propName, object value)
-        {
-            if(target == null || string.IsNullOrWhiteSpace(propName))
-                return;
-
-            // UnsetValue/Null — нечего устанавливать
-            if(value == null || ReferenceEquals(value, DependencyProperty.UnsetValue))
-                return;
-
-            var t = target.GetType();
-            var p = t.GetProperty(propName,
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-
-            if(p == null || !p.CanWrite)
-                return;
-
-            var destType = p.PropertyType;
-            var (underlying, isNullable) = UnwrapNullable(destType);
-
-            try
-            {
-                // 1) Если уже совместимо по типу — ставим напрямую
-                if(underlying.IsInstanceOfType(value))
-                {
-                    p.SetValue(target, PrepareAssignable(value, underlying));
-                    return;
-                }
-
-                // 2) Enum: строка/число -> enum
-                if(underlying.IsEnum)
-                {
-                    object? enumVal = TryConvertToEnum(underlying, value);
-                    if(enumVal != null)
-                    {
-                        p.SetValue(target, enumVal);
-                        return;
-                    }
-                }
-
-                // 3) String -> тип (через TypeConverter целевого типа)
-                if(value is string s)
-                {
-                    var conv = TypeDescriptor.GetConverter(underlying);
-                    if(conv is not null && conv.CanConvertFrom(typeof(string)))
-                    {
-                        var converted = conv.ConvertFrom(null, CultureInfo.CurrentCulture, s);
-                        if(converted != null)
-                        {
-                            p.SetValue(target, PrepareAssignable(converted, underlying));
-                            return;
-                        }
-                    }
-                }
-
-                // 4) Конвертер целевого типа из исходного
-                {
-                    var conv = TypeDescriptor.GetConverter(underlying);
-                    if(conv is not null && conv.CanConvertFrom(value.GetType()))
-                    {
-                        var converted = conv.ConvertFrom(null, CultureInfo.CurrentCulture, value);
-                        if(converted != null)
-                        {
-                            p.SetValue(target, PrepareAssignable(converted, underlying));
-                            return;
-                        }
-                    }
-                }
-
-                // 5) Конвертер исходного типа в целевой
-                {
-                    var conv = TypeDescriptor.GetConverter(value);
-                    if(conv is not null && conv.CanConvertTo(underlying))
-                    {
-                        var converted = conv.ConvertTo(null, CultureInfo.CurrentCulture, value, underlying);
-                        if(converted != null)
-                        {
-                            p.SetValue(target, PrepareAssignable(converted, underlying));
-                            return;
-                        }
-                    }
-                }
-
-                // 6) IConvertible -> ChangeType
-                if(value is IConvertible)
-                {
-                    var converted = Convert.ChangeType(value, underlying, CultureInfo.CurrentCulture);
-                    p.SetValue(target, PrepareAssignable(converted, underlying));
-                    return;
-                }
-
-                // 7) Brush/Freezable и др.: последняя попытка — если тип совпадает по AssignableFrom
-                if(underlying.IsAssignableFrom(value.GetType()))
-                {
-                    p.SetValue(target, PrepareAssignable(value, underlying));
-                    return;
-                }
-            } catch
-            {
-                // Глушим — «надежность» = отсутствие падений при странных значениях
-            }
-            // Если сюда дошли — установить не удалось; тихо игнорируем.
-        }
-
-        // Если значение — Freezable (Brush, TextDecorationCollection, и т.п.), возвращаем «безопасную» копию.
-        // Иначе — исходное значение.
-        private object PrepareAssignable(object value, Type targetType)
-        {
-            // Freezable-клонирование: избегаем попыток присвоить "замороженный" объект,
-            // к которому потом кто-то попробует писать.
-            if(value is Freezable fz)
-            {
-                try
-                {
-                    // Если заморожен — клонируем; иначе достаточно CloneCurrentValue
-                    return fz.IsFrozen ? fz.Clone() : fz.CloneCurrentValue();
-                } catch
-                {
-                    // На всякий случай — отдадим оригинал
-                    return value;
-                }
-            }
-
-            // Некоторые типы в WPF неизменяемые (FontFamily, Typeface, etc.) — возвращаем как есть.
-            return value;
-        }
-
-        private (Type underlying, bool isNullable) UnwrapNullable(Type type)
-        {
-            var u = Nullable.GetUnderlyingType(type);
-            return (u ?? type, u != null);
-        }
-
-        private object? TryConvertToEnum(Type enumType, object value)
-        {
-            try
-            {
-                if(value is string s)
-                {
-                    if(Enum.TryParse(enumType, s, ignoreCase: true, out var parsed))
-                        return parsed;
-                    return null;
-                }
-
-                if(value is IConvertible)
-                {
-                    var num = Convert.ChangeType(value, Enum.GetUnderlyingType(enumType), CultureInfo.InvariantCulture);
-                    return Enum.ToObject(enumType, num!);
-                }
-            } catch { }
-            return null;
-        }
-
-        #endregion
 
     }
 }

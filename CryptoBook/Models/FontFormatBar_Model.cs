@@ -32,16 +32,16 @@ namespace CryptoBook.Models
         double fontSize;
         public System.Windows.FontStyle FontStyle { get=>fontStyle; set=>SetProperty(ref fontStyle, value); }
         System.Windows.FontStyle fontStyle;
-        public Media.FontFamily FontFamily { get=>fontFamily; set=>SetProperty(ref fontFamily, value); }
+        public Media.FontFamily? FontFamily { get=>fontFamily; set=>SetProperty(ref fontFamily, value); }
         Media.FontFamily fontFamily;
         public Drawing.Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
         Drawing.Color fontColor;
         public Drawing.Color FontBackground { get => fontBackground; set => SetProperty(ref fontBackground, value); }
         Drawing.Color fontBackground;
-        public TextDecorationItem TextDecoration 
+        public TextDecorationItem? TextDecoration 
         { get=>textDecoration; 
             set=>SetProperty(ref textDecoration, value); }
-        TextDecorationItem textDecoration;
+        TextDecorationItem? textDecoration;
         public FontWeight FontWeight { get => fontWeight; set=>SetProperty(ref fontWeight, value); }
         FontWeight fontWeight;
         public FontStretch FontStretch { get=>fontStretch; set=>SetProperty(ref fontStretch, value); }
@@ -210,38 +210,25 @@ namespace CryptoBook.Models
         {
             var style=inlineService.GetEffectiveStyleAtCaret();
 
+            FontSize = style.Get<double>(TextElement.FontSizeProperty);
+            FontFamily=style.Get<Media.FontFamily>(TextElement.FontFamilyProperty);
+            FontWeight=style.Get<FontWeight>(TextElement.FontWeightProperty);
+            FontStyle=style.Get<System.Windows.FontStyle>(TextElement.FontStyleProperty);
+            FontStretch=style.Get<FontStretch>(TextElement.FontStretchProperty);
+            var decor = style.Get<TextDecorationCollection>(Inline.TextDecorationsProperty);
+            if(decor != null && decor.Count>0)
+                TextDecoration = TextDecorations.FirstOrDefault(d => d.Decorations?.First() == decor.First());
+            else
+                TextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "None");
 
-
-            // Пробуем массово перенести известные свойства по имени (если они есть в style)
-            inlineService.CopyStyleProp(style, "FontFamily", val => FontFamily = (System.Windows.Media.FontFamily)val, false, null);
-            inlineService.CopyStyleProp(style, "FontSize", val => FontSize = Convert.ToDouble(val), false, null);
-            inlineService.CopyStyleProp(style, "FontWeight", val => FontWeight = (FontWeight)val, false, null);
-            inlineService.CopyStyleProp(style, "FontStyle", val => FontStyle = (System.Windows.FontStyle)val, false, null);
-            inlineService.CopyStyleProp(style, "Foreground", val =>
+            if(TryGetDrawingColor(style, TextElement.ForegroundProperty, out var color))
             {
-                if(val is System.Windows.Media.Brush brush)
-                {
-                   //FontColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
-                }
-            }, false, null);
-            inlineService.CopyStyleProp(style, "Background", val => 
+                FontColor = FontColors.FirstOrDefault(c => c.ToArgb() == color.ToArgb());
+            }
+            if(TryGetDrawingColor(style, TextElement.BackgroundProperty, out var backcolor))
             {
-                if(val is System.Windows.Media.Color color)
-                {
-                    FontBackground = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
-                }
-            }, false, null);
-            inlineService.CopyStyleProp(style, "TextDecorations", val => {
-                if(val is TextDecorationCollection collection)
-                {
-                    TextDecoration = new TextDecorationItem()
-                    {
-                        Name = collection.FirstOrDefault()?.Location.ToString() ?? "Unknown",
-                        Decorations = collection,
-                    };
-                }
-            }, false, null);
-            inlineService.CopyStyleProp(style, "FontStretch", val => FontStretch = (FontStretch)val, false, null);
+                FontBackground = FontColors.FirstOrDefault(c => c.ToArgb() == backcolor.ToArgb());
+            }
         }
 
         internal bool CanExecute_Loaded(object? obj) { return true; }
@@ -255,6 +242,67 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Closed(object? obj) { return true; }
         internal void Execute_Closed(object? obj) { }
+
+
+
+        // ===== ЧТЕНИЕ ЦВЕТА ИЗ InlineStyle =====
+
+        private bool TryGetMediaColor(InlineStyle style, DependencyProperty dp, out Media.Color color)
+        {
+            color = default;
+            if(!style.TryGetValue(dp, out var v) || v is null)
+                return false;
+
+            if(v is SolidColorBrush scb)
+            {
+                color = scb.Color;
+                return true;
+            }
+            if(v is GradientBrush gb && gb.GradientStops.Count > 0)
+            {
+                // эвристика: берём первый стоп (или можно усреднять)
+                color = gb.GradientStops[0].Color;
+                return true;
+            }
+            if(v is Media.Brush mb)
+            {
+                // других кистей (VisualBrush/ImageBrush) в один цвет не сведёшь
+                return false;
+            }
+            if(v is Media.Color mc)
+            {
+                color = mc;
+                return true;
+            }
+            if(v is Drawing.Color dc)
+            {
+                color = Media.Color.FromArgb(dc.A, dc.R, dc.G, dc.B);
+                return true;
+            }
+            return false;
+        }
+
+        private bool TryGetDrawingColor(InlineStyle style, DependencyProperty dp, out Drawing.Color color)
+        {
+            color = default;
+            if(!TryGetMediaColor(style, dp, out var mc))
+                return false;
+            color = Drawing.Color.FromArgb(mc.A, mc.R, mc.G, mc.B);
+            return true;
+        }
+
+        // ===== ЗАПИСЬ ЦВЕТА В InlineStyle =====
+
+        private void SetMediaColor(InlineStyle style, DependencyProperty dp, Media.Color color)
+        {
+            // solid-кисть; можно добавить клон, если хотите всегда несвязанную кисть
+            style[dp] = new SolidColorBrush(color);
+        }
+
+        private void SetDrawingColor(InlineStyle style, DependencyProperty dp, Drawing.Color color)
+        {
+            SetMediaColor(style, dp, Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+        }
 
     }
 }

@@ -18,6 +18,8 @@ namespace CryptoBook.Interfaces
         /// <summary>Вставить новый Run в позицию каретки. При наличии выделения — заменить его.</summary>
         Run InsertRunAtCaret(RunInsertOptions options);
 
+        Run InsertRunAtCaret(string text, InlineStyle? style = null, Action<Run>? configure = null, bool moveCaret = true);
+
         /// <summary>Вставить Inline в заданную позицию (между символами). Если позиция внутри Run — корректно распилит.</summary>
         Inline InsertInlineAt(TextPointer position, Inline inline);
 
@@ -66,23 +68,42 @@ namespace CryptoBook.Interfaces
         /// <summary>Получить актуальное форматирование в позиции каретки (наследованное/эффективное).</summary>
         InlineStyle GetEffectiveStyleAtCaret();
 
-        void CopyStyleProp(object style, string propName, Action<object> applyValue, bool overwriteNullsOnly,
-            object? currentValue);
+        void CopyStyleProp(InlineStyle style, DependencyProperty dp, Action<object> applyValue,
+            bool overwriteNullsOnly, object? currentValue);
     }
 
 
     /// <summary>Набор стилистических опций для вставляемых/изменяемых Inline.</summary>
-    public class InlineStyle: Dictionary<string, object?>
+    public class InlineStyle: Dictionary<DependencyProperty, object?>
     {
-        public InlineStyle() : base(StringComparer.OrdinalIgnoreCase) { }
+        public InlineStyle() : base() { }
 
-        public T? Get<T>(string key) => TryGetValue(key, out var v) && v is T t ? t : default;
-        public void Set(string key, object? value) => this[key] = value;
+        public T? Get<T>(DependencyProperty dp)
+        {
+            return TryGetValue(dp, out var v) && v is T t ? t : default;
+        }
+
+        public void Set(DependencyProperty dp, object? value)
+        {
+            this[dp] = value;
+        }
     }
 
-    /// <summary>Параметры вставки Run.</summary>
-    public sealed record RunInsertOptions(
-        string Text,
-        InlineStyle? Style = null,
-        Action<Run>? Configure = null);
+    /// <summary>
+    /// Параметры вставки Run
+    /// MoveCaretAfterInsert: bool — флаг:
+    /// true → после вставки Run каретка (CaretPosition) переносится за конец нового инлайна
+    /// false → каретка остаётся там, где была до вставки.
+    /// </summary>
+    public class RunInsertOptions
+    {
+        public string Text { get; set; } = string.Empty;
+        public InlineStyle? Style { get; set; }
+        public Action<Run>? Configure { get; set; }
+        public bool MoveCaretAfterInsert { get; set; } = true;
+    }
 }
+
+
+;
+
