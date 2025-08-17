@@ -81,7 +81,19 @@ namespace CryptoBook.Models
         {
             if(obj is not System.Windows.FontStyle fontStyle)
                 throw new ArgumentException("obj must be of type FontStyle", nameof(obj));
-            fontService.SetFontStyle(fontStyle);
+            //var inline = inlineService.GetInlineAtCaret();
+            //var style=inlineService.GetEffectiveStyleAtCaret();
+            var style=new InlineStyle();
+            style.Set(TextElement.FontStyleProperty, fontStyle);
+
+            if( style!=null)
+            {
+                //style.Set(TextElement.FontStyleProperty, fontStyle);
+                inlineService.InsertRunAtCaret(new RunInsertOptions() { Style=style});
+                //inlineService.ApplyStyle(inline, style);
+            }
+
+            //fontService.SetFontStyle(fontStyle);
         }
 
         internal bool CanExecute_SetFontWeightCommand(object? obj)
@@ -211,7 +223,7 @@ namespace CryptoBook.Models
             var style=inlineService.GetEffectiveStyleAtCaret();
 
             FontSize = style.Get<double>(TextElement.FontSizeProperty);
-            FontFamily=style.Get<Media.FontFamily>(TextElement.FontFamilyProperty);
+            FontFamily =style.Get<Media.FontFamily>(TextElement.FontFamilyProperty);
             FontWeight=style.Get<FontWeight>(TextElement.FontWeightProperty);
             FontStyle=style.Get<System.Windows.FontStyle>(TextElement.FontStyleProperty);
             FontStretch=style.Get<FontStretch>(TextElement.FontStretchProperty);
@@ -221,13 +233,16 @@ namespace CryptoBook.Models
             else
                 TextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "None");
 
-            if(TryGetDrawingColor(style, TextElement.ForegroundProperty, out var color))
+            // Цвета: сначала точно, иначе ближайший
+            if(TryGetDrawingColor(style, TextElement.ForegroundProperty, out var fore))
             {
-                FontColor = FontColors.FirstOrDefault(c => c.ToArgb() == color.ToArgb());
+                FontColor = FindColorInPalette(FontColors, fore, exactMatch: true)
+                            ?? FindNearestColor(FontColors, fore);
             }
-            if(TryGetDrawingColor(style, TextElement.BackgroundProperty, out var backcolor))
+            if(TryGetDrawingColor(style, TextElement.BackgroundProperty, out var back))
             {
-                FontBackground = FontColors.FirstOrDefault(c => c.ToArgb() == backcolor.ToArgb());
+                FontBackground = FindColorInPalette(FontColors, back, exactMatch: true)
+                                 ?? FindNearestColor(FontColors, back);
             }
         }
 
@@ -302,6 +317,41 @@ namespace CryptoBook.Models
         private void SetDrawingColor(InlineStyle style, DependencyProperty dp, Drawing.Color color)
         {
             SetMediaColor(style, dp, Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+        }
+
+        /// <summary>
+        /// Поиск цвета в палитре (точное совпадение)
+        /// </summary>
+        /// <param name="palette">коллекция цветов</param>
+        /// <param name="target">искомый цвет</param>
+        /// <param name="exactMatch"></param>
+        /// <returns></returns>
+        private System.Drawing.Color? FindColorInPalette(
+            System.Collections.ObjectModel.ObservableCollection<System.Drawing.Color> palette,
+            System.Drawing.Color target,
+            bool exactMatch)
+        {
+            if(exactMatch)
+            {
+                var found = palette.FirstOrDefault(c => c.ToArgb() == target.ToArgb());
+                return found != default ? found : (System.Drawing.Color?)null;
+            }
+            return null;
+        }
+
+        // 4) Поиск ближайшего цвета (если точного нет)
+        private System.Drawing.Color FindNearestColor(
+            System.Collections.ObjectModel.ObservableCollection<System.Drawing.Color> palette,
+            System.Drawing.Color target)
+        {
+            // евклидово расстояние в RGB
+            return palette.OrderBy(c =>
+            {
+                int dr = c.R - target.R;
+                int dg = c.G - target.G;
+                int db = c.B - target.B;
+                return dr * dr + dg * dg + db * db;
+            }).FirstOrDefault();
         }
 
     }
