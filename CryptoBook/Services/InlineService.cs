@@ -183,6 +183,14 @@ namespace CryptoBook.Services
 
         // ---------- ВСТАВКИ ----------
 
+
+        /// <summary>
+        /// вставляем <see cref="Run"/> елемент в текущую позицию курсора
+        /// </summary>
+        /// <param name="options">набор свойств  для <see cref="Run"/> </param>
+        /// <returns>The <see cref="Run"/> вставленный элемент </returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="options"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the caret position is <see langword="null"/> or invalid.</exception>
         public Run InsertRunAtCaret(RunInsertOptions options) 
         {
             if(options == null)
@@ -359,7 +367,12 @@ namespace CryptoBook.Services
             }
         }
 
-
+        /// <summary>
+        /// задание параметров стиля для Inline.
+        /// </summary>
+        /// <param name="inline">изменяемый  Inline</param>
+        /// <param name="style">набор свойств</param>
+        /// <param name="overwriteNullsOnly">флаг: true - задаются только не установленные свойства; false - задаются все свойства</param>
         public void ApplyStyle(Inline inline, InlineStyle style, bool overwriteNullsOnly = false)
         {
             if(inline is null || style is null)
@@ -372,7 +385,7 @@ namespace CryptoBook.Services
                     continue;
 
                 if(overwriteNullsOnly)
-                {
+                {//если свойство уже задано и не null — пропустим
                     var current = inline.GetValue(dp);
                     if(current != null && !ReferenceEquals(current, DependencyProperty.UnsetValue))
                         continue;
