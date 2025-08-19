@@ -80,17 +80,7 @@ namespace CryptoBook.Models
         {
             if(obj is not System.Windows.FontStyle fontStyle)
                 throw new ArgumentException("obj must be of type FontStyle", nameof(obj));
-            ////var inline = inlineService.GetInlineAtCaret();
-            //var style = inlineService.GetEffectiveStyleAtCaret();
-            var style = new InlineStyle();
-            style.Set(TextElement.FontStyleProperty, fontStyle);
-            //    //style.Set(TextElement.FontStyleProperty, fontStyle);
-            inlineService.InsertRunAtCaret(new RunInsertOptions() { Style = style,  Text="RSM", MoveCaretAfterInsert=false });
-            //    //inlineService.ApplyStyle(inline, style);
-
-            //fontService.SetFontStyle(fontStyle);
-
-            string doc= System.Windows.Markup.XamlWriter.Save(richService.Document);
+            fontService.SetFontStyle(fontStyle);
         }
 
         internal bool CanExecute_SetFontWeightCommand(object? obj)
