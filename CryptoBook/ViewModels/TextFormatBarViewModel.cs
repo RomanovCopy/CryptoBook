@@ -39,7 +39,8 @@ namespace CryptoBook.ViewModels
             new RelayCommand(model.Execute_SetParagraphIndent, model.CanExecute_SetParagraphIndent);
         RelayCommand setParagraphIndent;
 
-        public ICommand SetLineHeight => throw new NotImplementedException();
+        public ICommand SetLineHeight => setLineHeight ??= new RelayCommand(model.Execute_SetLineHeight, model.CanExecute_SetLineHeight);
+        RelayCommand setLineHeight;
 
         public ICommand SetLineSpacing => throw new NotImplementedException();
 

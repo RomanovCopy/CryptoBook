@@ -40,4 +40,42 @@
     <BitmapImage x:Key="fileV001" UriSource="\Resources\Images\035FileV001.png"/>
     <BitmapImage x:Key="newParagraph" UriSource="\Resources\Images\005_new_paragraph.png"/>
 
+
+    <!-- УВЕЛИЧИТЬ LineHeight -->
+    <Canvas x:Key="Icon_IncreaseLineHeight" Width="24" Height="24"
+        SnapsToDevicePixels="True">
+        <!-- "строки текста" -->
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="Black"/>
+
+        <!-- вертикальная шкала -->
+        <Path Stroke="Black" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        Data="M20,7 L20,17"/>
+
+        <!-- стрелка вверх (увеличить) -->
+        <Path Fill="Black" Data="M20,3 L17,7 L23,7 Z"/>
+        <!-- стрелка вниз (увеличить) -->
+        <Path Fill="Black" Data="M20,21 L23,17 L17,17 Z"/>
+    </Canvas>
+
+    <!-- УМЕНЬШИТЬ LineHeight -->
+    <Canvas x:Key="Icon_DecreaseLineHeight" Width="24" Height="24"
+        SnapsToDevicePixels="True">
+        <!-- "строки текста" -->
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="Black"/>
+
+        <!-- короткая вертикальная шкала (сжатие) -->
+        <Path Stroke="Black" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        Data="M20,11 L20,13"/>
+
+        <!-- верхняя стрелка вниз (уменьшить) -->
+        <Path Fill="Black" Data="M17,7 L23,7 L20,11 Z"/>
+        <!-- нижняя стрелка вверх (уменьшить) -->
+        <Path Fill="Black" Data="M17,17 L23,17 L20,13 Z"/>
+    </Canvas>
+
+
 </ResourceDictionary>

@@ -49,5 +49,13 @@ namespace CryptoBook.Models
             }
         }
 
+        internal bool CanExecute_SetLineHeight(object? obj)
+        {
+            return obj is double; 
+        }
+        internal void Execute_SetLineHeight(object? obj)
+        {
+
+        }
     }
 }
