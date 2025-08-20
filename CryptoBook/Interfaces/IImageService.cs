@@ -87,7 +87,7 @@ namespace CryptoBook.Interfaces
 
         // --------- Утилиты/метаданные ---------
 
-        Size GetSizeDip(Image image);
+        System.Windows.Size GetSizeDip(Image image);
         (double dpiX, double dpiY) GetDpi(Image image);
 
         // --------- События ---------
@@ -95,5 +95,120 @@ namespace CryptoBook.Interfaces
         event EventHandler<ImageInsertedEventArgs> ImageInserted;
         event EventHandler<ImageChangedEventArgs> ImageChanged;
         event EventHandler<ImageRemovedEventArgs> ImageRemoved;
+
+
+
+        // ==================== Options / DTOs ====================
+
+        /// <summary>Опции загрузки битмапа: экономичная декодировка и освобождение файловых дескрипторов.</summary>
+        public sealed record ImageLoadOptions(
+            int? DecodePixelWidth = null,
+            int? DecodePixelHeight = null,
+            BitmapCacheOption CacheOption = BitmapCacheOption.OnLoad,
+            bool Freeze = true
+        );
+
+        /// <summary>Общие визуальные опции изображения.</summary>
+        public sealed record ImageVisualOptions(
+            double? WidthDip = null,
+            double? HeightDip = null,
+            Stretch Stretch = Stretch.Uniform,
+            string? AltText = null // можно хранить в AttachedProperty для доступности
+        );
+
+        public sealed record InlineInsertOptions(
+            ImageVisualOptions? Visual = null,
+            BaselineAlignment Baseline = BaselineAlignment.Baseline
+        )
+        {
+            public InlineInsertOptions() : this(new ImageVisualOptions(), BaselineAlignment.Baseline) { }
+        }
+
+        public sealed record BlockInsertOptions(
+            ImageVisualOptions? Visual = null,
+            TextAlignment Alignment = TextAlignment.Left
+        )
+        {
+            public BlockInsertOptions() : this(new ImageVisualOptions(), TextAlignment.Left) { }
+        }
+
+        /// <summary>Опции Figure для обтекания и позиционирования.</summary>
+        public sealed record FigureInsertOptions(
+            ImageVisualOptions Visual,
+            WrapDirection WrapDirection,
+            FigureLength Width,
+            FigureLength Height,
+            FigureHorizontalAnchor HorizontalAnchor,
+            FigureVerticalAnchor VerticalAnchor,
+            double HorizontalOffset = 0,
+            double VerticalOffset = 0
+        )
+        {
+            public static FigureInsertOptions LeftWrap(double pixelWidthDip, double? pixelHeightDip = null) =>
+                new FigureInsertOptions(
+                    new ImageVisualOptions(pixelWidthDip, pixelHeightDip),
+                    WrapDirection.Right,                           // текст справа от картинки
+                    new FigureLength(pixelWidthDip, FigureUnitType.Pixel),
+                    new FigureLength(double.NaN, FigureUnitType.Auto),
+                    FigureHorizontalAnchor.ContentLeft,
+                    FigureVerticalAnchor.ParagraphTop
+                );
+
+            public static FigureInsertOptions RightWrap(double pixelWidthDip, double? pixelHeightDip = null) =>
+                new FigureInsertOptions(
+                    new ImageVisualOptions(pixelWidthDip, pixelHeightDip),
+                    WrapDirection.Left,                            // текст слева от картинки
+                    new FigureLength(pixelWidthDip, FigureUnitType.Pixel),
+                    new FigureLength(double.NaN, FigureUnitType.Auto),
+                    FigureHorizontalAnchor.ContentRight,
+                    FigureVerticalAnchor.ParagraphTop
+                );
+        }
+
+        public sealed record FigurePlacementOptions(
+            WrapDirection WrapDirection,
+            FigureLength Width,
+            FigureLength Height,
+            FigureHorizontalAnchor HorizontalAnchor,
+            FigureVerticalAnchor VerticalAnchor,
+            double HorizontalOffset = 0,
+            double VerticalOffset = 0
+        );
+
+        // ==================== Events ====================
+
+        public enum ImageChangeKind { Size, Stretch, Position, Wrap, Alignment, Dpi, Other }
+
+        public sealed class ImageInsertedEventArgs: EventArgs
+        {
+            public Image Image { get; }
+            public TextPointer Position { get; }
+            public TextElement Container { get; } // InlineUIContainer | BlockUIContainer | Figure
+            public ImageInsertedEventArgs(Image image, TextPointer position, TextElement container)
+            {
+                Image = image;
+                Position = position;
+                Container = container;
+            }
+        }
+
+        public sealed class ImageChangedEventArgs: EventArgs
+        {
+            public Image Image { get; }
+            public ImageChangeKind Kind { get; }
+            public ImageChangedEventArgs(Image image, ImageChangeKind kind)
+            {
+                Image = image;
+                Kind = kind;
+            }
+        }
+
+        public sealed class ImageRemovedEventArgs: EventArgs
+        {
+            public TextPointer RemovePosition { get; }
+            public ImageRemovedEventArgs(TextPointer removePosition) => RemovePosition = removePosition;
+        }
     }
+
+
 }
