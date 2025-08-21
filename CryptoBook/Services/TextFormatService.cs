@@ -92,7 +92,7 @@ namespace CryptoBook.Services
 
         public void SetLineHeight(double lineHeight)
         {
-            throw new NotImplementedException();
+            AdjustLineHeight(lineHeight);
         }
 
         public void SetLineSpacing(double spacing)
@@ -185,7 +185,6 @@ namespace CryptoBook.Services
 
             return newParagraph;
         }
-
         public Paragraph CreateParagraphWithCaretFormatting(System.Windows.Documents.TextPointer caretPosition)
         {
             if(caretPosition == null)
@@ -233,5 +232,122 @@ namespace CryptoBook.Services
 
             return newParagraph;
         }
+
+
+        /// <summary>
+        /// Регулирует LineHeight у абзацев: -1 уменьшить, 0 без изменений, +1 увеличить.
+        /// Если нет выделения — применяется к текущему Paragraph (у каретки).
+        /// Если выделены несколько Paragraph — применяется ко всем в диапазоне.
+        /// </summary>
+        /// <param name="service">RichTextBox</param>
+        /// <param name="direction">-1, 0, +1</param>
+        /// <param name="stepFactor">Шаг как доля FontSize (по умолчанию 0.1 → 10%)</param>
+        /// <param name="minFactor">Нижняя граница как доля FontSize (по умолчанию 0.5)</param>
+        /// <param name="maxFactor">Верхняя граница как доля FontSize (по умолчанию 2.0)</param>
+        private void AdjustLineHeight( double direction, double stepFactor = 0.10, double minFactor = 0.50, double maxFactor = 2.00)
+        {
+            if(service == null)
+                return;
+            if(direction != -1 && direction != 0 && direction != 1)
+                direction = 0;
+            if(direction == 0)
+                return; // ничего не меняем
+
+            // Определяем целевые параграфы: либо у каретки, либо все в выделении
+            var targets = GetTargetParagraphs();
+            if(targets.Count == 0)
+                return;
+
+            foreach(var p in targets)
+            {
+                if(p == null)
+                    continue;
+
+                // Текущий размер шрифта абзаца
+                double fontSize = GetEffectiveFontSize(p);
+                if(fontSize <= 0)
+                    fontSize = 12.0; // безопасное значение по умолчанию
+
+                // Текущий lineHeight; если неопределён — возьмём «эффективный» старт от FontSize
+                double current = (double.IsNaN(p.LineHeight) || p.LineHeight <= 0)
+                                 ? fontSize * 1.0 // базовая отправная точка — 1.0×FontSize
+                                 : p.LineHeight;
+
+                // Шаг и границы
+                double stepPx = Math.Max(1.0, fontSize * stepFactor);
+                double minPx = Math.Max(1.0, fontSize * minFactor);
+                double maxPx = Math.Max(minPx + 1.0, fontSize * maxFactor);
+
+                double updated = current + direction * stepPx;
+                updated = Math.Max(minPx, Math.Min(maxPx, updated));
+
+                p.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+                p.LineHeight = updated;
+
+                // При желании можно убрать межабзацные поля (раскомментируйте):
+                // p.Margin = new Thickness(0);
+            }
+        }
+
+        /// <summary>
+        /// Возвращает Paragraph для каретки либо все Paragraph внутри выделения.
+        /// </summary>
+        private List<Paragraph> GetTargetParagraphs()
+        {
+            var result = new List<Paragraph>();
+
+            // Если выделение пустое — текущий параграф
+            if(service.Selection == null || service.Selection.IsEmpty)
+            {
+                var p = service.CaretPosition?.Paragraph;
+                if(p != null)
+                    result.Add(p);
+                return result;
+            }
+
+            // Иначе — все параграфы в диапазоне выделения
+            var startP = service.Selection.Start?.Paragraph;
+            var endP = service.Selection.End?.Paragraph;
+
+            if(startP == null && endP == null)
+                return result;
+
+            if(startP == null && endP != null)
+                startP = endP;
+            if(endP == null && startP != null)
+                endP = startP;
+
+            var pIt = startP;
+            while(pIt != null)
+            {
+                result.Add(pIt);
+                if(ReferenceEquals(pIt, endP))
+                    break;
+                pIt = pIt.NextBlock as Paragraph;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Аккуратно берём FontSize абзаца; если не задан — пробуем у документа/RTB.
+        /// </summary>
+        private double GetEffectiveFontSize(Paragraph p)
+        {
+            object val = p.GetValue(TextElement.FontSizeProperty);
+            if(val is double d && d > 0)
+                return d;
+
+            // Пробуем взять у документа
+            if(p.Parent is FlowDocument doc && doc.FontSize > 0)
+                return doc.FontSize;
+
+            // Или у самого RichTextBox
+            if(service.Service.FontSize > 0)
+                return service.Service.FontSize;
+
+            return 12.0;
+        }
     }
+
 }

@@ -142,6 +142,14 @@
                         </Button.CommandParameter>
                         <ContentPresenter Content="{StaticResource Icon_IncreaseLineHeight}"/>
                     </Button>
+                    <Button Command="{Binding SetLineHeight, UpdateSourceTrigger=PropertyChanged}"
+                            Template="{StaticResource FlatButtonControlTemplate}"
+                            ToolTip="Decrease Line Height">
+                        <Button.CommandParameter>
+                            <sys:Double>-1.0</sys:Double>
+                        </Button.CommandParameter>
+                        <ContentPresenter Content="{StaticResource Icon_DecreaseLineHeight}"/>
+                    </Button>
                 </StackPanel>
             </Border>
         </Popup>

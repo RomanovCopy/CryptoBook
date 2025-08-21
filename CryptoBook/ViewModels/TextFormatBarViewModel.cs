@@ -30,8 +30,6 @@ namespace CryptoBook.ViewModels
         }
 
 
-
-
         public ICommand SetTextAlignment => setTextAlignment ??= new RelayCommand(model.Execute_SetTextAlignment, model.CanExecute_SetTextAlignment);
         RelayCommand setTextAlignment;
 
@@ -42,11 +40,11 @@ namespace CryptoBook.ViewModels
         public ICommand SetLineHeight => setLineHeight ??= new RelayCommand(model.Execute_SetLineHeight, model.CanExecute_SetLineHeight);
         RelayCommand setLineHeight;
 
-        public ICommand SetLineSpacing => throw new NotImplementedException();
-
         public ICommand ToggleBulletList => throw new NotImplementedException();
 
         public ICommand ToggleNumberedList => throw new NotImplementedException();
+
+        public ICommand ClearListOnSelection => throw new NotImplementedException();
 
         public ICommand InsertHyperlink => throw new NotImplementedException();
 
@@ -76,5 +74,6 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => throw new NotImplementedException();
 
         public ICommand Closed => throw new NotImplementedException();
+
     }
 }
