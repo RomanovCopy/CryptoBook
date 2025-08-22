@@ -21,7 +21,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_ToggleBulleted(object? obj)
         {
-            return true;
+            return service.CanToggle;
         }
         internal void Execute_ToggleBulleted(object? obj)
         {
@@ -31,7 +31,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_ToggleNumbered(object? obj)
         {
-            return true;
+            return service.CanToggle;
         }
         internal void Execute_ToggleNumbered(object? obj)
         {
@@ -41,7 +41,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_ClearLists(object? obj)
         {
-            return true;
+            return service.CanClear;
         }
         internal void Execute_ClearLists(object? obj)
         {

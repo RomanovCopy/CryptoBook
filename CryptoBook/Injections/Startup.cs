@@ -57,7 +57,8 @@ namespace CryptoBook.Injections
 
 
             //Helpers
-
+            builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
+            builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf();
 
             //Windows
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
