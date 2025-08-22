@@ -40,12 +40,6 @@ namespace CryptoBook.ViewModels
         public ICommand SetLineHeight => setLineHeight ??= new RelayCommand(model.Execute_SetLineHeight, model.CanExecute_SetLineHeight);
         RelayCommand setLineHeight;
 
-        public ICommand ToggleBulletList => throw new NotImplementedException();
-
-        public ICommand ToggleNumberedList => throw new NotImplementedException();
-
-        public ICommand ClearListOnSelection => throw new NotImplementedException();
-
         public ICommand InsertHyperlink => throw new NotImplementedException();
 
         public ICommand InsertImage => throw new NotImplementedException();

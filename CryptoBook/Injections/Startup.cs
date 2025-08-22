@@ -43,6 +43,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<RichtextboxViewModel>().As<IRichtextboxViewModel>().SingleInstance();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().SingleInstance();
             builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().SingleInstance();
+            builder.RegisterType<ListFormatBarViewModel>().As<IListFormatBarViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -76,6 +77,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TextFormatService>().As<ITextFormatService>().SingleInstance();
             builder.RegisterType<ParagraphService>().As<IParagraphService>().SingleInstance();
             builder.RegisterType<InlineService>().As<IInlineService>().SingleInstance();
+            builder.RegisterType<ListService>().As<IListService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
@@ -95,6 +97,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<Richtextbox>().SingleInstance();
             builder.RegisterType<FontFormatBar>().SingleInstance();
             builder.RegisterType<TextFormatBar>().SingleInstance();
+            builder.RegisterType<ListFormatBar>().SingleInstance();
 
             //Contexts
 
