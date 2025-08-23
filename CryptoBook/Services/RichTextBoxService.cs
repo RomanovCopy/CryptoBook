@@ -183,8 +183,10 @@ namespace CryptoBook.Services
             document.Background=System.Windows.Media.Brushes.Transparent;
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
+            document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+            document.LineHeight = 20;
             var paragraphFactory = scope.Resolve<IParagraphFactory>();
-            Run newRun = new("");
+            Run newRun = new("     ");
             newRun.Foreground = System.Windows.Media.Brushes.Black;
             newRun.Background= System.Windows.Media.Brushes.Transparent;
             var newParagraph = paragraphFactory.Create();
@@ -193,145 +195,13 @@ namespace CryptoBook.Services
             document.Blocks.Clear();
             document.Blocks.Add((Paragraph)newParagraph);
 
-
-            //Paragraph firstParagraph = document.Blocks.FirstBlock as Paragraph;
-            //if(firstParagraph == null)
-            //{
-            //    firstParagraph = new Paragraph();
-            //    document.Blocks.InsertBefore(document.Blocks.FirstBlock, firstParagraph);
-            //}
-
-            ////// Создаём новый Run и добавляем в начало абзаца
-            //if(firstParagraph.Inlines.FirstInline != null)
-            //    firstParagraph.Inlines.InsertBefore(firstParagraph.Inlines.FirstInline, newRun);
-            //else
-            //    firstParagraph.Inlines.Add(newRun); // если Inlines пустой
-
-            //foreach(var block in document.Blocks)
-            //{
-            //    if(block is Paragraph paragraph)
-            //    {
-            //        paragraph.ClearValue(Paragraph.LineHeightProperty);
-            //        paragraph.ClearValue(Paragraph.LineStackingStrategyProperty);
-            //    }
-            //}
             newParagraph.Inlines.Add(newRun);
-            document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
-            document.LineHeight = 15;
 
             // Устанавливаем каретку в начало нового Run
             CaretPosition = newRun.ContentStart;
             Focus();
         }
 
-        public Run InsertRunAtCaret(
-        (
-            string Text,
-            Media.FontFamily? FontFamily,
-            double? FontSize,
-            FontWeight? FontWeight,
-            FontStyle? FontStyle,
-            Media.Brush? Foreground,
-            Media.Brush? Background,
-            TextDecorationCollection? TextDecorations,
-            BaselineAlignment? Baseline,
-            Action<Run>? Configure
-        ) args)
-        {
-            var rtb = this;
-            if(rtb is null)
-                throw new ArgumentNullException(nameof(rtb));
-            if(args.Text is null)
-                throw new ArgumentNullException(nameof(args.Text));
-
-            rtb.BeginChange();
-            try
-            {
-                if(rtb.Document == null)
-                    throw new ArgumentNullException(nameof(rtb.Document));
-
-                var caret = rtb.CaretPosition;
-                if(!rtb.Selection.IsEmpty)
-                {
-                    rtb.Selection.Text = string.Empty;
-                    caret = rtb.Selection.Start;
-                }
-
-                caret = caret.GetInsertionPosition(LogicalDirection.Forward) ?? caret;
-
-                var paragraph = caret.Paragraph;
-                if(paragraph == null)
-                {
-                    paragraph = new Paragraph();
-                    rtb.Document.Blocks.Add(paragraph);
-                    caret = paragraph.ContentEnd;
-                }
-
-                var newRun = new Run(args.Text);
-                if(args.FontFamily != null)
-                    newRun.FontFamily = args.FontFamily;
-                if(args.FontSize != null)
-                    newRun.FontSize = args.FontSize.Value;
-                if(args.FontWeight != null)
-                    newRun.FontWeight = args.FontWeight.Value;
-                if(args.FontStyle != null)
-                    newRun.FontStyle = args.FontStyle.Value;
-                if(args.Foreground != null)
-                    newRun.Foreground = args.Foreground;
-                if(args.Background != null)
-                    newRun.Background = args.Background;
-                if(args.TextDecorations != null)
-                    newRun.TextDecorations = args.TextDecorations;
-                if(args.Baseline != null)
-                    newRun.BaselineAlignment = args.Baseline.Value;
-                args.Configure?.Invoke(newRun);
-
-                if(caret.Parent is Run hostRun)
-                {
-                    var para = (Paragraph)hostRun.Parent;
-                    var leftText = new TextRange(hostRun.ContentStart, caret).Text;
-                    var rightText = new TextRange(caret, hostRun.ContentEnd).Text;
-                    hostRun.Text = leftText;
-
-                    para.Inlines.InsertAfter(hostRun, newRun);
-
-                    if(!string.IsNullOrEmpty(rightText))
-                    {
-                        var rightRun = new Run(rightText)
-                        {
-                            FontFamily = hostRun.FontFamily,
-                            FontSize = hostRun.FontSize,
-                            FontWeight = hostRun.FontWeight,
-                            FontStyle = hostRun.FontStyle,
-                            Foreground = hostRun.Foreground,
-                            Background = hostRun.Background,
-                            TextDecorations = hostRun.TextDecorations,
-                            BaselineAlignment = hostRun.BaselineAlignment
-                        };
-                        para.Inlines.InsertAfter(newRun, rightRun);
-                    }
-                } else
-                {
-                    var backInline = caret.GetAdjacentElement(LogicalDirection.Backward) as Inline;
-                    var fwdInline = caret.GetAdjacentElement(LogicalDirection.Forward) as Inline;
-
-                    if(backInline != null && backInline.Parent == paragraph)
-                        paragraph.Inlines.InsertAfter(backInline, newRun);
-                    else if(fwdInline != null && fwdInline.Parent == paragraph)
-                        paragraph.Inlines.InsertBefore(fwdInline, newRun);
-                    else
-                        paragraph.Inlines.Add(newRun);
-                }
-
-                rtb.CaretPosition = newRun.ElementEnd;
-                rtb.Focus();
-
-                return newRun;
-            } finally
-            {
-                rtb.EndChange();
-            }
-        }
 
 
     }

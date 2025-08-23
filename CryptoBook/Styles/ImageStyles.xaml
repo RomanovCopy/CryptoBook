@@ -40,4 +40,90 @@
     <BitmapImage x:Key="fileV001" UriSource="\Resources\Images\035FileV001.png"/>
     <BitmapImage x:Key="newParagraph" UriSource="\Resources\Images\005_new_paragraph.png"/>
 
+
+    <!-- УВЕЛИЧИТЬ LineHeight -->
+    <Canvas x:Key="Icon_IncreaseLineHeight" Width="24" Height="24"
+        SnapsToDevicePixels="True">
+        <!-- "строки текста" -->
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="Black"/>
+
+        <!-- вертикальная шкала -->
+        <Path Stroke="Black" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        Data="M20,7 L20,17"/>
+
+        <!-- стрелка вверх (увеличить) -->
+        <Path Fill="Black" Data="M20,3 L17,7 L23,7 Z"/>
+        <!-- стрелка вниз (увеличить) -->
+        <Path Fill="Black" Data="M20,21 L23,17 L17,17 Z"/>
+    </Canvas>
+
+    <!-- УМЕНЬШИТЬ LineHeight -->
+    <Canvas x:Key="Icon_DecreaseLineHeight" Width="24" Height="24"
+        SnapsToDevicePixels="True">
+        <!-- "строки текста" -->
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="Black"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="Black"/>
+
+        <!-- короткая вертикальная шкала (сжатие) -->
+        <Path Stroke="Black" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        Data="M20,11 L20,13"/>
+
+        <!-- верхняя стрелка вниз (уменьшить) -->
+        <Path Fill="Black" Data="M17,7 L23,7 L20,11 Z"/>
+        <!-- нижняя стрелка вверх (уменьшить) -->
+        <Path Fill="Black" Data="M17,17 L23,17 L20,13 Z"/>
+    </Canvas>
+    
+    <!--Bullet List-->
+    <Canvas x:Key="Icon_BulletList" Width="24" Height="24">
+        <!-- Первая строка -->
+        <Ellipse Width="3" Height="3" Fill="Black" Canvas.Left="3" Canvas.Top="5" />
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="Black" StrokeThickness="1"/>
+
+        <!-- Вторая строка -->
+        <Ellipse Width="3" Height="3" Fill="Black" Canvas.Left="3" Canvas.Top="11"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="Black" StrokeThickness="1"/>
+
+        <!-- Третья строка -->
+        <Ellipse Width="3" Height="3" Fill="Black" Canvas.Left="3" Canvas.Top="17"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="Black" StrokeThickness="1"/>
+    </Canvas>
+
+    <!--Numbered List-->
+    <Canvas x:Key="Icon_NumberedList" Width="24" Height="24">
+        <!-- 1 -->
+        <TextBlock FontSize="8" FontWeight="Normal" Text="1" Canvas.Left="2" Canvas.Top="1"/>
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="Black" StrokeThickness="1"/>
+
+        <!-- 2 -->
+        <TextBlock FontSize="8" FontWeight="Normal" Text="2" Canvas.Left="2" Canvas.Top="7"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="Black" StrokeThickness="1"/>
+
+        <!-- 3 -->
+        <TextBlock FontSize="8" FontWeight="Normal" Text="3" Canvas.Left="2" Canvas.Top="13"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="Black" StrokeThickness="1"/>
+    </Canvas>
+
+    <!--Clear List-->
+    <Canvas x:Key="Icon_ClearList" Width="24" Height="24">
+        <!-- bullets + lines -->
+        <Ellipse Width="3" Height="3" Fill="Black" Canvas.Left="3" Canvas.Top="5"/>
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="Black" StrokeThickness="1"/>
+
+        <Ellipse Width="3" Height="3" Fill="Black" Canvas.Left="3" Canvas.Top="11"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="Black" StrokeThickness="1"/>
+
+        <Ellipse Width="3" Height="3" Fill="Black" Canvas.Left="3" Canvas.Top="17"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="Black" StrokeThickness="1"/>
+
+        <!-- крест -->
+        <Line X1="4" Y1="4" X2="20" Y2="20" Stroke="Red" StrokeThickness="1"/>
+        <Line X1="20" Y1="4" X2="4" Y2="20" Stroke="Red" StrokeThickness="1"/>
+    </Canvas>
+
+
+
 </ResourceDictionary>

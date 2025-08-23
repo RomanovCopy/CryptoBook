@@ -7,7 +7,6 @@ using CryptoBook.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Documents;
-using System.Windows.Media;
 
 using Drawing = System.Drawing;
 using Media = System.Windows.Media;
@@ -82,12 +81,16 @@ namespace CryptoBook.Models
         {
             if(obj is not System.Windows.FontStyle fontStyle)
                 throw new ArgumentException("obj must be of type FontStyle", nameof(obj));
+<<<<<<< HEAD
             var style = new InlineStyle();
             style.Set(TextElement.FontStyleProperty, fontStyle);
             inlineService.InsertRunAtCaret(new RunInsertOptions() { Style = style });
 
             //fontService.SetFontStyle(fontStyle);
 
+=======
+            fontService.SetFontStyle(fontStyle);
+>>>>>>> 8b4bdc048d0622a33f09f28e5c9dd91194a66f0c
         }
 
         internal bool CanExecute_SetFontWeightCommand(object? obj)
@@ -282,12 +285,12 @@ namespace CryptoBook.Models
             if(!style.TryGetValue(dp, out var v) || v is null)
                 return false;
 
-            if(v is SolidColorBrush scb)
+            if(v is Media.SolidColorBrush scb)
             {
                 color = scb.Color;
                 return true;
             }
-            if(v is GradientBrush gb && gb.GradientStops.Count > 0)
+            if(v is Media.GradientBrush gb && gb.GradientStops.Count > 0)
             {
                 // эвристика: берём первый стоп (или можно усреднять)
                 color = gb.GradientStops[0].Color;
@@ -325,7 +328,7 @@ namespace CryptoBook.Models
         private void SetMediaColor(InlineStyle style, DependencyProperty dp, Media.Color color)
         {
             // solid-кисть; можно добавить клон, если хотите всегда несвязанную кисть
-            style[dp] = new SolidColorBrush(color);
+            style[dp] = new Media.SolidColorBrush(color);
         }
 
         private void SetDrawingColor(InlineStyle style, DependencyProperty dp, Drawing.Color color)

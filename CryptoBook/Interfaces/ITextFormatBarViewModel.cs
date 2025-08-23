@@ -13,9 +13,6 @@ namespace CryptoBook.Interfaces
         public ICommand SetTextAlignment { get; }
         public ICommand SetParagraphIndent { get; }
         public ICommand SetLineHeight { get; }
-        public ICommand SetLineSpacing { get; }
-        public ICommand ToggleBulletList { get; }
-        public ICommand ToggleNumberedList { get; }
         public ICommand InsertHyperlink { get; }
         public ICommand InsertImage { get; }
         public ICommand ClearAllFormatting { get; }

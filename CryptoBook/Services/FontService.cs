@@ -32,6 +32,8 @@ namespace CryptoBook.Services
 {
     public class FontService: IFontService
     {
+        private readonly IInlineService inline;
+
         public IRichTextBoxService Service { get; set; }
 
         public double DefaultFontSize { get => defaultFontSize; set => defaultFontSize = value; }
@@ -62,12 +64,22 @@ namespace CryptoBook.Services
 
 
 
-        public FontService(IRichTextBoxService service)
+        public FontService(IRichTextBoxService service,IInlineService inlineService)
         {
             Service = service;
+            inline = inlineService;
             InitializeCollections();
             InitializeDefaultValues();
             SetDefaultValues();
+        }
+        private TextPointer EnsureInsertionPosition(TextPointer caret)
+        {
+            if(caret == null)
+                throw new ArgumentNullException(nameof(caret));
+
+            return caret.IsAtInsertionPosition
+                ? caret
+                : caret.GetInsertionPosition(LogicalDirection.Forward);
         }
 
 
@@ -78,6 +90,7 @@ namespace CryptoBook.Services
                 if(Service.Selection.IsEmpty)
                 {
                     TextPointer caret = Service.CaretPosition;
+                    caret = EnsureInsertionPosition(caret);
                     var oldrun = caret.Parent as Run;
                     // Попробуем найти Inline, к которому привязан курсор
                     Inline currentInline = caret.Parent as Inline;
@@ -106,6 +119,7 @@ namespace CryptoBook.Services
                 {
                     ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontStyleProperty, style);
                 }
+
             }
 
         }
@@ -598,6 +612,5 @@ namespace CryptoBook.Services
             target.Background = exceptProperty == System.Windows.Documents.TextElement.BackgroundProperty ? (Media.Brush)newValue : source.Background;
             target.TextDecorations = exceptProperty == Inline.TextDecorationsProperty ? (TextDecorationCollection)newValue : source.TextDecorations;
         }
-
     }
 }
