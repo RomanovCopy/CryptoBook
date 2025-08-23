@@ -24,7 +24,7 @@ namespace CryptoBook.ViewModels
         public ICommand ToggleBulleted => toggleBulleted ??= new RelayCommand(model.Execute_ToggleBulleted, model.CanExecute_ToggleBulleted);
         RelayCommand toggleBulleted;
 
-        public ICommand ToggleNumbered => toggleBulleted ??= new RelayCommand(model.Execute_ToggleNumbered, model.CanExecute_ToggleNumbered);
+        public ICommand ToggleNumbered => toggleNumbered ??= new RelayCommand(model.Execute_ToggleNumbered, model.CanExecute_ToggleNumbered);
         RelayCommand toggleNumbered;
 
         public ICommand ClearLists => clearLists ??= new RelayCommand(model.Execute_ClearLists, model.CanExecute_ClearLists);

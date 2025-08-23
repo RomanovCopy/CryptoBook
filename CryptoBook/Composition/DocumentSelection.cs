@@ -18,20 +18,16 @@ namespace CryptoBook.Composition
 
         public IReadOnlyList<Paragraph> GetSelectedParagraphsOrCurrent()
         {
-            if(Selection != null && !Selection.IsEmpty)
-            {
-                var startPara = Selection.Start?.Paragraph ?? GetNextParagraph(Selection.Start);
-                var endPara = Selection.End?.Paragraph ?? GetPreviousParagraph(Selection.End);
-
-                if(startPara == null || endPara == null)
-                    return Array.Empty<Paragraph>();
-                return EnumerateParagraphs(startPara, endPara).ToList();
-            }
-
-            var caretPara = _rtb.CaretPosition?.Paragraph ?? GetNextParagraph(_rtb.CaretPosition);
-            if(caretPara == null)
+            if(Selection == null || Selection.IsEmpty)
                 return Array.Empty<Paragraph>();
-            return new[] { caretPara };
+
+            var startPara = Selection.Start?.Paragraph ?? GetNextParagraph(Selection.Start);
+            var endPara = Selection.End?.Paragraph ?? GetPreviousParagraph(Selection.End);
+
+            if(startPara == null || endPara == null)
+                return Array.Empty<Paragraph>();
+
+            return EnumerateParagraphs(startPara, endPara).ToList();
         }
 
         // --- helpers (локальные) ---

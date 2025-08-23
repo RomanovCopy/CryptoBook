@@ -81,16 +81,7 @@ namespace CryptoBook.Models
         {
             if(obj is not System.Windows.FontStyle fontStyle)
                 throw new ArgumentException("obj must be of type FontStyle", nameof(obj));
-<<<<<<< HEAD
-            var style = new InlineStyle();
-            style.Set(TextElement.FontStyleProperty, fontStyle);
-            inlineService.InsertRunAtCaret(new RunInsertOptions() { Style = style });
-
-            //fontService.SetFontStyle(fontStyle);
-
-=======
             fontService.SetFontStyle(fontStyle);
->>>>>>> 8b4bdc048d0622a33f09f28e5c9dd91194a66f0c
         }
 
         internal bool CanExecute_SetFontWeightCommand(object? obj)

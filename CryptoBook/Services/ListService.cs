@@ -20,7 +20,8 @@ namespace CryptoBook.Services
             get
             {
                 var paras = _sel.GetSelectedParagraphsOrCurrent();
-                return paras != null && paras.Count > 0;
+                bool a=paras != null && paras.Count > 0;
+                return a;
             }
         }
 

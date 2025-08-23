@@ -25,7 +25,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleBulleted(object? obj)
         {
-
+            
         }
 
 
@@ -35,7 +35,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleNumbered(object? obj)
         {
-
+            service.ToggleNumbered();
         }
 
 
