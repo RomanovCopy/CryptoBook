@@ -559,7 +559,6 @@ namespace CryptoBook.Services
                 [Inline.TextDecorationsProperty] = Read(Inline.TextDecorationsProperty),
                 [TextElement.FontStretchProperty] = Read(TextElement.FontStretchProperty),
                 [Inline.BaselineAlignmentProperty] = Read(Inline.BaselineAlignmentProperty),
-                //[TextElement.TextEffectsProperty] = Read(TextElement.TextEffectsProperty)
             };
         }
 

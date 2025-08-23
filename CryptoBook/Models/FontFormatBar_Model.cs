@@ -2,6 +2,7 @@
 
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -81,19 +82,12 @@ namespace CryptoBook.Models
         {
             if(obj is not System.Windows.FontStyle fontStyle)
                 throw new ArgumentException("obj must be of type FontStyle", nameof(obj));
-            //var inline = inlineService.GetInlineAtCaret();
-            //var style=inlineService.GetEffectiveStyleAtCaret();
-            var style=new InlineStyle();
+            var style = new InlineStyle();
             style.Set(TextElement.FontStyleProperty, fontStyle);
-
-            if( style!=null)
-            {
-                //style.Set(TextElement.FontStyleProperty, fontStyle);
-                inlineService.InsertRunAtCaret(new RunInsertOptions() { Style=style});
-                //inlineService.ApplyStyle(inline, style);
-            }
+            inlineService.InsertRunAtCaret(new RunInsertOptions() { Style = style });
 
             //fontService.SetFontStyle(fontStyle);
+
         }
 
         internal bool CanExecute_SetFontWeightCommand(object? obj)
@@ -213,13 +207,16 @@ namespace CryptoBook.Models
         }
 
 
-
+        private TextPointer caretposition;
         internal bool CanExecute_Open(object? obj)
         {
             return true;
         }
         internal void Execute_Open(object? obj)
         {
+            caretposition = richService.CaretPosition;
+
+            //синхронизируем свойтсва в ToolBar со свойствами текста в позиции каретки
             var style=inlineService.GetEffectiveStyleAtCaret();
 
             FontSize = style.Get<double>(TextElement.FontSizeProperty);
@@ -244,7 +241,24 @@ namespace CryptoBook.Models
                 FontBackground = FindColorInPalette(FontColors, back, exactMatch: true)
                                  ?? FindNearestColor(FontColors, back);
             }
+
         }
+
+        internal bool CanExecute_PopupClosed(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_PopupClosed(object? obj)
+        {
+            richService.CaretPosition = caretposition;
+        }
+
+
+
+
+
+
+
 
         internal bool CanExecute_Loaded(object? obj) { return true; }
         internal void Execute_Loaded(object? obj) { }
@@ -326,10 +340,7 @@ namespace CryptoBook.Models
         /// <param name="target">искомый цвет</param>
         /// <param name="exactMatch"></param>
         /// <returns></returns>
-        private System.Drawing.Color? FindColorInPalette(
-            System.Collections.ObjectModel.ObservableCollection<System.Drawing.Color> palette,
-            System.Drawing.Color target,
-            bool exactMatch)
+        private System.Drawing.Color? FindColorInPalette( ObservableCollection<Drawing.Color> palette, Drawing.Color target, bool exactMatch)
         {
             if(exactMatch)
             {
@@ -339,10 +350,13 @@ namespace CryptoBook.Models
             return null;
         }
 
-        // 4) Поиск ближайшего цвета (если точного нет)
-        private System.Drawing.Color FindNearestColor(
-            System.Collections.ObjectModel.ObservableCollection<System.Drawing.Color> palette,
-            System.Drawing.Color target)
+        /// <summary>
+        ///  Поиск ближайшего цвета (если точного нет)
+        /// </summary>
+        /// <param name="palette"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private System.Drawing.Color FindNearestColor( ObservableCollection<Drawing.Color> palette, Drawing.Color target)
         {
             // евклидово расстояние в RGB
             return palette.OrderBy(c =>
@@ -353,6 +367,7 @@ namespace CryptoBook.Models
                 return dr * dr + dg * dg + db * db;
             }).FirstOrDefault();
         }
+
 
     }
 }

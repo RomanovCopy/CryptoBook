@@ -122,7 +122,7 @@
                       FontWeight="Bold"/>
         <!-- Popup-панель -->
         <Popup PlacementTarget="{Binding ElementName=TogglePanelButton}"
-               Placement="Bottom" 
+               Placement="Bottom"
                IsOpen="{Binding IsChecked, ElementName=TogglePanelButton}"
                StaysOpen="False">
             <Border Background="Gray"
@@ -285,6 +285,9 @@
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Opened">
                     <i:InvokeCommandAction Command="{Binding Opened, UpdateSourceTrigger=PropertyChanged}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="Closed">
+                    <i:InvokeCommandAction Command="{Binding PopupClosed, UpdateSourceTrigger=PropertyChanged}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Popup>

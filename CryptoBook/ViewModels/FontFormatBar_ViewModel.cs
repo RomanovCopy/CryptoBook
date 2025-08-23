@@ -86,13 +86,17 @@ namespace CryptoBook.ViewModels
             clearFormattingCommand ??= new RelayCommand(model.Execute_ClearFormattingCommand, model.CanExecute_ClearFormattingCommand);
         RelayCommand clearFormattingCommand;
 
+        public ICommand Opened => 
+            openCommand ??= new RelayCommand(model.Execute_Open, model.CanExecute_Open);
+        RelayCommand openCommand;
+
+        public ICommand PopupClosed =>
+            popupClosed ??= new RelayCommand(model.Execute_PopupClosed, model.CanExecute_PopupClosed);
+        RelayCommand popupClosed;
 
 
         // IViewModel implementation
 
-        public ICommand Opened => 
-            openCommand ??= new RelayCommand(model.Execute_Open, model.CanExecute_Open);
-        RelayCommand openCommand;
 
         public ICommand Loaded => 
             loadedCommand ??= new RelayCommand(model.Execute_Loaded, model.CanExecute_Loaded);
