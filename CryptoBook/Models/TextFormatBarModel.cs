@@ -36,8 +36,18 @@ namespace CryptoBook.Models
             }
         }
 
+        //вставка ссылки
+        internal bool CanExecute_InsertHyperlink(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_InsertHyperlink(object? obj)
+        {
+
+        }
+
         //создание нового параграфа с заданным отступом от начала строки
-         internal bool CanExecute_SetParagraphIndent(object? obj)
+        internal bool CanExecute_SetParagraphIndent(object? obj)
         {
             return true;
         }

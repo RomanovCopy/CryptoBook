@@ -134,6 +134,11 @@
                    Canvas.Left="1" Canvas.Top="19" Margin="0"/>
                         </Canvas>
                     </Button>
+                    <Button Command="{Binding InsertHyperlink, UpdateSourceTrigger=PropertyChanged}"
+                            Template="{StaticResource FlatButtonControlTemplate}"
+                            ToolTip="InsertHyperlink">
+                        <ContentPresenter Content="{StaticResource Icon_InsertHyperlink}"/>
+                    </Button>
                     <Button Command="{Binding SetLineHeight, UpdateSourceTrigger=PropertyChanged}"
                             Template="{StaticResource FlatButtonControlTemplate}"
                             ToolTip="Increase Line Height">

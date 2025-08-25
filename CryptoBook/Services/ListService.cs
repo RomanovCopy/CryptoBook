@@ -19,9 +19,8 @@ namespace CryptoBook.Services
         {
             get
             {
-                var paras = _sel.GetSelectedParagraphsOrCurrent();
-                bool a=paras != null && paras.Count > 0;
-                return a;
+                var sel = _sel.GetSelectedParagraphsOrCurrent();
+                return sel.Any(p => !IsParagraphEmptyOrWhitespace(p));
             }
         }
 
@@ -29,12 +28,9 @@ namespace CryptoBook.Services
         {
             get
             {
-                var paras = _sel.GetSelectedParagraphsOrCurrent();
-                if(paras.Count == 0)
-                    return false;
-
-                // хотя бы один параграф внутри списка
-                return paras.Any(p => FindAncestor<List>(p) != null);
+                var sel = _sel.GetSelectedParagraphsOrCurrent();
+                // можно чистить, если среди НЕпустых есть те, что находятся внутри списка
+                return sel.Any(p => !IsParagraphEmptyOrWhitespace(p) && FindAncestor<List>(p) != null);
             }
         }
 
@@ -64,44 +60,72 @@ namespace CryptoBook.Services
         {
             using(_tx.Begin())
             {
-                var paras = _sel.GetSelectedParagraphsOrCurrent();
-                if(paras.Count == 0)
+                var selected = _sel.GetSelectedParagraphsOrCurrent();
+                if(selected.Count == 0)
                     return;
 
-                if(AllInSameListWithMarker(paras, marker))
+                // Вычисляем крайние блоки выделения
+                var firstBlock = selected.First();    // гарантированно Paragraph
+                var lastBlock = selected.Last();
+
+                // Нормализуем: снять любые списки с непустых параграфов в выделении
+                var nonEmpty = selected.Where(p => !IsParagraphEmptyOrWhitespace(p)).ToList();
+                if(nonEmpty.Count == 0)
+                    return; // всё пусто — нечего делать
+
+                if(AllInSameListWithMarkerIgnoringEmpty(selected, marker))
                 {
-                    UnwrapParagraphsFromLists(paras);
-                    return;
+                    UnwrapParagraphsFromLists(nonEmpty);
+                    return; // toggle off
                 }
 
-                // Нормализуем: убираем любые списки из выбранных параграфов
-                UnwrapParagraphsFromLists(paras);
+                //UnwrapParagraphsFromLists(nonEmpty);
 
-                // Группируем по владельцу блоков (FlowDocument/Section)
-                foreach(var g in paras.GroupBy(GetBlocksOwner))
+
+                // Пробег от первого до последнего по указателю конца последнего
+                var endAnchor = lastBlock.ElementEnd;           // граница, до которой идём
+
+                // Владелец блока (FlowDocument/Section/ListItem)
+                var owner = GetBlocksOwner(firstBlock);
+                if(owner is null)
+                    return;
+
+                // 1) создаём ЕДИНЫЙ список перед первым блоком выделения
+                var list = new List { MarkerStyle = marker, StartIndex = startIndex };
+                InsertBefore(owner, firstBlock, list);
+
+                // 2) идём по блокам в рамках ЭТОГО ЖЕ owner, от firstBlock до lastBlock ВКЛЮЧИТЕЛЬНО
+                for(Block current = firstBlock; current != null;)
                 {
-                    var owner = g.Key;
-                    if(owner is null)
-                        continue;
-                    var ordered = g.ToList();
-                    // вставляем новый List перед первым из группы
-                    var first = ordered.First();
-                    var list = new List { MarkerStyle = marker, StartIndex = startIndex };
-                    InsertBefore(owner, first, list);
+                    var next = GetNextSiblingInOwner(owner, current); // берём next ДО возможного перемещения
 
-                    // переносим параграфы в ListItem'ы
-                    foreach(var p in ordered)
+                    if(current is Paragraph p && !IsParagraphEmptyOrWhitespace(p))
                     {
                         RemoveFromOwner(p);
                         var li = new ListItem();
                         li.Blocks.Add(p);
                         list.ListItems.Add(li);
                     }
+                    // пустые параграфы пропускаем (оставляем на месте)
 
-                    EnsureFirstItemHasContent(list);
+                    if(ReferenceEquals(current, lastBlock))
+                        break; // включили lastBlock — выходим
+                    current = next;
                 }
+
+                // если ничего не перенесли — удаляем пустой список
+                if(list.ListItems.Count == 0)
+                {
+                    RemoveFromOwner(list);
+                    return;
+                }
+
+                EnsureFirstItemHasContent(list);
+                // MergeAdjacentLists(owner); // опционально
+
             }
         }
+
 
         // -------- helpers: unwrap/detect --------
 
@@ -148,30 +172,9 @@ namespace CryptoBook.Services
             }
         }
 
-        private bool AllInSameListWithMarker(IReadOnlyList<Paragraph> paras, TextMarkerStyle marker)
-        {
-            if(paras.Count == 0)
-                return false;
-
-            List commonList = null;
-            foreach(var p in paras)
-            {
-                var list = FindAncestor<List>(p);
-                if(list == null)
-                    return false;
-
-                if(commonList == null)
-                    commonList = list;
-                if(!ReferenceEquals(commonList, list))
-                    return false;
-            }
-
-            return commonList != null && commonList.MarkerStyle == marker;
-        }
-
         // -------- helpers: structure ops --------
 
-        private BlockCollection GetBlocksOwner(Block b)
+        private BlockCollection? GetBlocksOwner(Block b)
         {
             if(b.Parent is FlowDocument d)
                 return d.Blocks;
@@ -207,7 +210,7 @@ namespace CryptoBook.Services
             return cur as T;
         }
 
-        private static void EnsureFirstItemHasContent(List list)
+        private void EnsureFirstItemHasContent(List list)
         {
             var firstItem = list.ListItems.FirstOrDefault();
             if(firstItem == null)
@@ -229,6 +232,52 @@ namespace CryptoBook.Services
             if(firstPara.Inlines.FirstInline == null)
                 firstPara.Inlines.Add(new Run()); // пустой Run, чтобы каретка могла «встать»
         }
+
+        private bool IsParagraphEmptyOrWhitespace(Paragraph p)
+        {
+            if(p == null)
+                return true;
+            var tr = new TextRange(p.ContentStart, p.ContentEnd);
+            // В WF/WPF пустой параграф обычно даёт "\r\n" — это считается пробелами
+            return string.IsNullOrWhiteSpace(tr?.Text);
+        }
+
+        private bool AllInSameListWithMarkerIgnoringEmpty(
+            IReadOnlyList<Paragraph> selected, TextMarkerStyle marker)
+        {
+            var nonEmpty = selected.Where(p => !IsParagraphEmptyOrWhitespace(p)).ToList();
+            if(nonEmpty.Count == 0)
+                return false;
+
+            List common = null;
+            foreach(var p in nonEmpty)
+            {
+                var list = FindAncestor<List>(p);
+                if(list == null)
+                    return false;
+                if(common == null)
+                    common = list;
+                if(!ReferenceEquals(common, list))
+                    return false;
+            }
+            return common != null && common.MarkerStyle == marker;
+        }
+
+        private Block? GetNextSiblingInOwner(BlockCollection owner, Block current)
+        {
+            // Проходим owner последовательно и возвращаем блок, следующий за current
+            Block prev = null;
+            foreach(var b in owner)
+            {
+                if(ReferenceEquals(prev, current))
+                    return b;
+                prev = b;
+            }
+            return null; // текущий был последним
+        }
+
+
+
 
 
     }

@@ -25,7 +25,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ToggleBulleted(object? obj)
         {
-            
+            service.ToggleBulleted();
         }
 
 
@@ -45,7 +45,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ClearLists(object? obj)
         {
-
+            service.ClearLists();
         }
     }
 }

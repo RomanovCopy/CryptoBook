@@ -40,7 +40,8 @@ namespace CryptoBook.ViewModels
         public ICommand SetLineHeight => setLineHeight ??= new RelayCommand(model.Execute_SetLineHeight, model.CanExecute_SetLineHeight);
         RelayCommand setLineHeight;
 
-        public ICommand InsertHyperlink => throw new NotImplementedException();
+        public ICommand InsertHyperlink => insertHyperlink ??= new RelayCommand(model.Execute_InsertHyperlink, model.CanExecute_InsertHyperlink);
+        RelayCommand insertHyperlink;
 
         public ICommand InsertImage => throw new NotImplementedException();
 

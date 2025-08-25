@@ -27,7 +27,7 @@ namespace CryptoBook.Composition
             if(startPara == null || endPara == null)
                 return Array.Empty<Paragraph>();
 
-            return EnumerateParagraphs(startPara, endPara).ToList();
+            return [.. EnumerateParagraphs(startPara, endPara)];
         }
 
         // --- helpers (локальные) ---
