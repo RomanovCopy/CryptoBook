@@ -1,5 +1,8 @@
-﻿using System;
+﻿using CryptoBook.ViewModels;
+
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +14,7 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Публично доступное хранилище закладок
         /// </summary>
-        Dictionary<string, Uri> Bookmarks { get; }
+        ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; }
 
         /// <summary>
         /// Добавить закладку в позицию каретки с именем пользователя

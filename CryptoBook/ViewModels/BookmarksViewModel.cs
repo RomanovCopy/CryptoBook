@@ -1,8 +1,10 @@
 ﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Models;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +14,15 @@ namespace CryptoBook.ViewModels
 {
     public class BookmarksViewModel: ViewModelBase, IBookmarksViewModel
     {
+        private readonly BookmarksModel model;
 
-        public Dictionary<string, Uri> Bookmarks => throw new NotImplementedException();
+        public ObservableCollection<BookmarkEntryViewModel> Bookmarks => throw new NotImplementedException();
 
-        public BookmarksViewModel(IRichTextBoxService service)
+
+        public BookmarksViewModel(IRichTextBoxService service, IBookmarkService bookmarkService)
         {
-
+            model=new BookmarksModel(service, bookmarkService);
+            model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
 
