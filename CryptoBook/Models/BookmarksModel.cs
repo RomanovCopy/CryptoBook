@@ -15,11 +15,14 @@ namespace CryptoBook.Models
     {
         private readonly IRichTextBoxService service;
         private readonly IBookmarkService bookmarkService;
+        private readonly IBookmarkValidationService bookmarkValidationService;
 
 
-        public BookmarksModel(IRichTextBoxService service, IBookmarkService bookmarkService)
+        public BookmarksModel(IRichTextBoxService service, IBookmarkService bookmarkService, 
+            IBookmarkValidationService bookmarkValidationService)
         {
             this.service = service;
+            this.bookmarkValidationService = bookmarkValidationService;
             this.bookmarkService = bookmarkService;
         }
 
@@ -27,17 +30,17 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_AddAtCaret(object? obj)
         {
-            throw new NotImplementedException();
+            return bookmarkValidationService.CanInsertBookmark(service,null) == ValidationResult.Success;
         }
         internal void Execute_AddAtCaret(object? obj)
         {
-            throw new NotImplementedException();
+
         }
 
 
         internal bool CanExecute_Remove(object? obj)
         {
-            throw new NotImplementedException();
+            return bookmarkValidationService.CanRemoveBookmark == ValidationResult.Success;
         }
         internal void Execute_Remove(object? obj)
         {
@@ -47,7 +50,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Rename(object? obj)
         {
-            throw new NotImplementedException();
+            return bookmarkValidationService.CanRenameBookmark == ValidationResult.Success;
         }
         internal void Execute_Rename(object? obj)
         {
@@ -67,7 +70,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_InsertHyperlinkTo(object? obj)
         {
-            throw new NotImplementedException();
+            return bookmarkValidationService.CanInsertHyperlink == ValidationResult.Success;  
         }
         internal void Execute_InsertHyperlinkTo(object? obj)
         {

@@ -20,9 +20,10 @@ namespace CryptoBook.ViewModels
         public ObservableCollection<BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
 
 
-        public BookmarksViewModel(IRichTextBoxService service, IBookmarkService bookmarkService)
+        public BookmarksViewModel(IRichTextBoxService service, IBookmarkService bookmarkService, 
+            IBookmarkValidationService bookmarkValidationService)
         {
-            model=new BookmarksModel(service, bookmarkService);
+            model = new BookmarksModel(service, bookmarkService, bookmarkValidationService);
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             this.bookmarkService = bookmarkService;
             this.bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);

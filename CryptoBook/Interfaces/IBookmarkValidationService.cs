@@ -12,6 +12,8 @@ namespace CryptoBook.Interfaces
         ValidationResult CanRenameBookmark(IRichTextBoxService svc, string oldName, string newName, Func<string, bool> existsByName);
         ValidationResult CanRemoveBookmark(IRichTextBoxService svc, string name);
         ValidationResult CanInsertHyperlink(IRichTextBoxService svc, string? linkText);
+        ValidationResult CanNavigateTo(IRichTextBoxService svc, string name);
+        ValidationResult CanRebuildIndexFromDocument(IRichTextBoxService svc);
     }
 
     public enum ValidationCode
@@ -35,7 +37,10 @@ namespace CryptoBook.Interfaces
         RangeNotInline,
         InsideHyperlink,
         OverlapsHyperlink,
-        NeedLinkText
+        NeedLinkText,
+
+        // навигация
+        TargetDetached // цель найдена, но не привязана к визуальному/поточному дереву
     }
 
     public readonly struct ValidationResult
@@ -45,10 +50,10 @@ namespace CryptoBook.Interfaces
         public string? Message { get; }
 
         public static ValidationResult Success()
-            => new ValidationResult(ValidationCode.Ok, null);
+            => new (ValidationCode.Ok, null);
 
         public static ValidationResult Fail(ValidationCode code, string? msg = null)
-            => new ValidationResult(code, msg);
+            => new (code, msg);
 
         private ValidationResult(ValidationCode code, string? message)
         {

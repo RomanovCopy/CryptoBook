@@ -17,7 +17,7 @@ namespace CryptoBook.ViewModels
 
         public string Name { get => model.Name; set => model.Name = value; }
         public string Note { get=>model.Note; set => model.Note = value; }
-        public Uri BookmarkUri { get => model.BookmarkUri; set => model.BookmarkUri = value; }
+        public Uri BookmarkUri => model.BookmarkUri;
 
         public BookmarkEntryViewModel()
         {
