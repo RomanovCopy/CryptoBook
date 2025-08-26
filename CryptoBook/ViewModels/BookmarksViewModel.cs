@@ -15,35 +15,48 @@ namespace CryptoBook.ViewModels
     public class BookmarksViewModel: ViewModelBase, IBookmarksViewModel
     {
         private readonly BookmarksModel model;
+        private IBookmarkService bookmarkService;
 
-        public ObservableCollection<BookmarkEntryViewModel> Bookmarks => throw new NotImplementedException();
+        public ObservableCollection<BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
 
 
         public BookmarksViewModel(IRichTextBoxService service, IBookmarkService bookmarkService)
         {
             model=new BookmarksModel(service, bookmarkService);
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            this.bookmarkService = bookmarkService;
+            this.bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
 
-        public ICommand AddAtCaret => throw new NotImplementedException();
+        public ICommand AddAtCaret => addAtCaret ??= new RelayCommand(model.Execute_AddAtCaret, model.CanExecute_AddAtCaret);
+        RelayCommand addAtCaret;
 
-        public ICommand Remove => throw new NotImplementedException();
+        public ICommand Remove => remove??= new RelayCommand(model.Execute_Remove, model.CanExecute_Remove);
+        RelayCommand remove;
 
-        public ICommand Rename => throw new NotImplementedException();
+        public ICommand Rename => rename ??= new RelayCommand(model.Execute_Rename, model.CanExecute_Rename);
+        RelayCommand rename;
 
-        public ICommand NavigateTo => throw new NotImplementedException();
+        public ICommand NavigateTo => navigateTo ??= new RelayCommand(model.Execute_NavigateTo, model.CanExecute_NavigateTo);
+        RelayCommand navigateTo;
 
-        public ICommand InsertHyperlinkTo => throw new NotImplementedException();
+        public ICommand InsertHyperlinkTo => insertHyperlinkTo ??= new RelayCommand(model.Execute_InsertHyperlinkTo, model.CanExecute_InsertHyperlinkTo);
+        RelayCommand insertHyperlinkTo;
 
-        public ICommand RebuildIndexFromDocument => throw new NotImplementedException();
+        public ICommand RebuildIndexFromDocument => rebuildIndexFromDocument ??= new RelayCommand(model.Execute_RebuildIndexFromDocument, model.CanExecute_RebuildIndexFromDocument);
+        RelayCommand rebuildIndexFromDocument;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand Loaded => loaded ??= new RelayCommand(model.Execute_Loaded, model.CanExecute_Loaded);
+        RelayCommand loaded;
 
-        public ICommand Close => throw new NotImplementedException();
+        public ICommand Close => close ??= new RelayCommand(model.Execute_Close, model.CanExecute_Close);
+        RelayCommand close;
 
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand Closing => closing ??= new RelayCommand(model.Execute_Closing, model.CanExecute_Closing);
+        RelayCommand closing;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closed => closed ??= new RelayCommand(model.Execute_Closed, model.CanExecute_Closed);
+        RelayCommand closed;
     }
 }

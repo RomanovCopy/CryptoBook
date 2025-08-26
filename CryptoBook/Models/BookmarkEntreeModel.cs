@@ -10,11 +10,11 @@ namespace CryptoBook.Models
 {
     internal class BookmarkEntryModel: ViewModelBase
     {
-        internal string Name { get => name; set => SetProperty(ref name, value); }
+        internal string Name { get => name; set  { SetProperty(ref name, value); BookmarkUri = new Uri("#" + name, UriKind.Relative); } }
         string name;
         internal string Note { get => note is null ? string.Empty : note; set => SetProperty(ref note, value); }
         string? note;
-        internal Uri BookmarkUri { get => bookmarkUri; set => SetProperty(ref bookmarkUri, value); }
+        internal Uri BookmarkUri { get => bookmarkUri; private set => SetProperty(ref bookmarkUri, value); }
         Uri bookmarkUri;
 
         internal BookmarkEntryModel()

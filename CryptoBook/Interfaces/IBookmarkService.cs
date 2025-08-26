@@ -3,18 +3,24 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IBookmarkService
+    public interface IBookmarkService:INotifyPropertyChanged
     {
         /// <summary>
         /// Публично доступное хранилище закладок
         /// </summary>
         ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; }
+
+        /// <summary>
+        /// закладка с таким именем уже существует?
+        /// </summary>
+        bool Exists(string name);
 
         /// <summary>
         /// Добавить закладку в позицию каретки с именем пользователя
