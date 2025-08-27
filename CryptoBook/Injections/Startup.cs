@@ -44,6 +44,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().SingleInstance();
             builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().SingleInstance();
             builder.RegisterType<ListFormatBarViewModel>().As<IListFormatBarViewModel>().SingleInstance();
+            builder.RegisterType<BookmarksViewModel>().As<IBookmarksViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -69,6 +70,8 @@ namespace CryptoBook.Injections
 
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox>().InstancePerDependency();
+            builder.RegisterType<BookmarksEditor>().InstancePerDependency();
+
 
             //Services
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
