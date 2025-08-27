@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace CryptoBook.Interfaces
+{
+    public interface IBookmarksEditorViewModel: IViewModel, IWindowWithId
+    {
+        double Width { get; set; }
+        double Height { get; set; }
+        double WindowTop { get; set; }
+        double WindowLeft { get; set; }
+        WindowState WindowState { get; set; }
+
+    }
+}

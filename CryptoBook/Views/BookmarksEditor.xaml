@@ -14,20 +14,21 @@
         Background="{DynamicResource CurrentWindowBackground}"
         BorderBrush="{DynamicResource CurrentBorderColor}"
         BorderThickness="1,0,1,1"
-        d:DataContext="{x:Type interfaces:IBookmarksViewModel}"
+        d:DataContext="{x:Type interfaces:IBookmarksEditorViewModel}"
         WindowStyle="None"
         Title="BookmarksEditor">
     <Window.DataContext>
-        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksViewModel}"/>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksEditorViewModel}"/>
     </Window.DataContext>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
+    
     <Window.Width>
         <Binding Path="Width"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Width>
     <Window.Height>
-        <Binding Path="WindowHeight"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+        <Binding Path="Height"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Height>
     <Window.Top>
         <Binding Path="WindowTop"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
@@ -117,10 +118,10 @@
             <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
-            <i:InvokeCommandAction Command="{Binding Closing}"/>
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="Closed">
-            <i:InvokeCommandAction Command="{Binding Closed}"/>
+            <i:InvokeCommandAction Command="{Binding Closed, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 </Window>

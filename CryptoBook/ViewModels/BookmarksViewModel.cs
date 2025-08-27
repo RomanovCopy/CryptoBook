@@ -13,21 +13,12 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class BookmarksViewModel: ViewModelBase, IBookmarksViewModel, IWindowWithId, ICloseable
+    public class BookmarksViewModel: ViewModelBase, IBookmarksViewModel
     {
         private readonly BookmarksModel model;
         private IBookmarkService bookmarkService;
 
         public ObservableCollection<BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
-
-        public Guid WindowId => model.WindowId;
-        public event EventHandler RequestClose;
-
-        public double Width { get => model.Width; set => model.Width = value; }
-        public double Height { get => model.Height; set => model.Height = value; }
-        public double WindowTop { get => model.WindowTop; set => model.WindowTop = value; }
-        public double WindowLeft { get => model.WindowLeft; set => model.WindowLeft = value; }
-        public WindowState WindowState { get => model.WindowState; set => model.WindowState = value; }
 
 
         public BookmarksViewModel(IRichTextBoxService service, IBookmarkService bookmarkService, 

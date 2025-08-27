@@ -19,21 +19,6 @@ namespace CryptoBook.Models
         private readonly IBookmarkValidationService bookmarkValidationService;
 
 
-        internal double Width { get => width; set => SetProperty(ref width, value); }
-        double width;
-        internal double Height { get => height; set => SetProperty(ref height, value); }
-        double height;
-        internal double WindowTop { get => windowTop; set => SetProperty(ref windowTop, value); }
-        double windowTop;
-        internal double WindowLeft { get => windowLeft; set => SetProperty(ref windowLeft, value); }
-        double windowLeft;
-        internal WindowState WindowState { get => windowState; set => SetProperty(ref windowState, value); }
-        WindowState windowState;
-        public Guid WindowId { get=>windowId ; private set=>windowId=value; }
-        Guid windowId;
-
-
-
 
         public BookmarksModel(IRichTextBoxService service, IBookmarkService bookmarkService, 
             IBookmarkValidationService bookmarkValidationService)

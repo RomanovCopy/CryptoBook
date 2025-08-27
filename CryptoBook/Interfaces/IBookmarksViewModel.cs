@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
@@ -17,10 +18,11 @@ namespace CryptoBook.Interfaces
         /// </summary>
         ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; }
 
+
         /// <summary>
         /// Добавить закладку в позицию каретки с именем пользователя
         /// </summary>
-        ICommand AddAtCaret{ get; }
+        ICommand AddAtCaret { get; }
         /// <summary>
         /// Удалить закладку
         /// </summary>

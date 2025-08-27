@@ -262,5 +262,65 @@ namespace CryptoBook.Properties {
                 this["FontSizeDefault"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double BookmarksEditor_Width {
+            get {
+                return ((double)(this["BookmarksEditor_Width"]));
+            }
+            set {
+                this["BookmarksEditor_Width"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double BookmarksEditor_Height {
+            get {
+                return ((double)(this["BookmarksEditor_Height"]));
+            }
+            set {
+                this["BookmarksEditor_Height"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double BookmarksEditor_Top {
+            get {
+                return ((double)(this["BookmarksEditor_Top"]));
+            }
+            set {
+                this["BookmarksEditor_Top"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double BookmarksEditor_Left {
+            get {
+                return ((double)(this["BookmarksEditor_Left"]));
+            }
+            set {
+                this["BookmarksEditor_Left"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public string BookmarksEditor_State {
+            get {
+                return ((string)(this["BookmarksEditor_State"]));
+            }
+            set {
+                this["BookmarksEditor_State"] = value;
+            }
+        }
     }
 }
