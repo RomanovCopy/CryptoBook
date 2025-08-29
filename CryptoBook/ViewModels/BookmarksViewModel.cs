@@ -22,9 +22,9 @@ namespace CryptoBook.ViewModels
 
 
         public BookmarksViewModel(IRichTextBoxService service, IBookmarkService bookmarkService, 
-            IBookmarkValidationService bookmarkValidationService)
+            IBookmarkValidationService bookmarkValidationService, IWindowManager windowManager)
         {
-            model = new BookmarksModel(service, bookmarkService, bookmarkValidationService);
+            model = new BookmarksModel(service, bookmarkService, bookmarkValidationService, windowManager);
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             this.bookmarkService = bookmarkService;
             this.bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);

@@ -17,15 +17,17 @@ namespace CryptoBook.Models
         private readonly IRichTextBoxService service;
         private readonly IBookmarkService bookmarkService;
         private readonly IBookmarkValidationService bookmarkValidationService;
+        private readonly IWindowManager windowManager;
 
 
 
         public BookmarksModel(IRichTextBoxService service, IBookmarkService bookmarkService, 
-            IBookmarkValidationService bookmarkValidationService)
+            IBookmarkValidationService bookmarkValidationService, IWindowManager windowManager)
         {
             this.service = service;
             this.bookmarkValidationService = bookmarkValidationService;
             this.bookmarkService = bookmarkService;
+            this.windowManager = windowManager;
         }
 
 
@@ -36,7 +38,8 @@ namespace CryptoBook.Models
         }
         internal void Execute_AddAtCaret(object? obj)
         {
-
+            var win = windowManager.CreateWindow<Views.BookmarksEditor>();
+            windowManager.ShowWindow<Views.BookmarksEditor>(((IBookmarksEditorViewModel)win.DataContext).WindowId);
         }
 
         internal bool CanExecute_PreviousBookmark(object? obj)

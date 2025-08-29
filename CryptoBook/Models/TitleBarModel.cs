@@ -68,6 +68,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_MouseLeftButtonDown(object? obj)
         {
+
             if(!_isDragging)
             {
                 _isDragging = true;

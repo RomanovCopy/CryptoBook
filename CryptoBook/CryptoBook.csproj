@@ -29,9 +29,11 @@
     <Compile Remove="Interfaces\ILastFileName.cs" />
     <Compile Remove="Interfaces\ITitleBarRB_ViewModel.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
+    <Compile Remove="Models\BookmarksBarModel.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
     <Compile Remove="Models\TitleBarRB_Model.cs" />
     <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
+    <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
     <Compile Remove="ViewModels\TitleBarRB_ViewModel.cs" />
   </ItemGroup>

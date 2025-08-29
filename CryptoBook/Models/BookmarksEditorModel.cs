@@ -88,11 +88,10 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
         }
     }
 }

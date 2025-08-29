@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:control="clr-namespace:CryptoBook.MyControls"
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
@@ -15,15 +16,15 @@
         BorderBrush="{DynamicResource CurrentBorderColor}"
         BorderThickness="1,0,1,1"
         d:DataContext="{x:Type interfaces:IBookmarksEditorViewModel}"
-        WindowStyle="None"
+        
         Title="BookmarksEditor">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksEditorViewModel}"/>
     </Window.DataContext>
-    <WindowChrome.WindowChrome>
+    <!--<WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
-    </WindowChrome.WindowChrome>
-    
+    </WindowChrome.WindowChrome>-->
+
     <Window.Width>
         <Binding Path="Width"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Width>
@@ -39,28 +40,32 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-
-
-    <!-- Общая сетка: левая колонка, разделитель, правая колонка -->
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" MinWidth="200"/>
-            <!-- Левая часть -->
-            <ColumnDefinition Width="5"/>
-            <!-- Вертикальный сплиттер -->
-            <ColumnDefinition Width="3*" MinWidth="250"/>
-            <!-- Правая часть -->
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!--<ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:TitleBar}}" Grid.Row="0"/>-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" MinWidth="200"/>
+                <!-- Левая часть -->
+                <ColumnDefinition Width="5"/>
+                <!-- Вертикальный сплиттер -->
+                <ColumnDefinition Width="3*" MinWidth="250"/>
+                <!-- Правая часть -->
+            </Grid.ColumnDefinitions>
 
-        <!-- Левая часть: список -->
-        <Border Grid.Column="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,1,0">
-            <ListBox ItemsSource="{Binding Items}"
+            <!-- Левая часть: список -->
+            <Border Grid.Column="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,1,0">
+                <ListBox ItemsSource="{Binding Items}"
                      SelectedItem="{Binding SelectedItem}"
                      />
-        </Border>
+            </Border>
 
-        <!-- Вертикальный разделитель между левой и правой частью -->
-        <GridSplitter Grid.Column="1"
+            <!-- Вертикальный разделитель между левой и правой частью -->
+            <GridSplitter Grid.Column="1"
                       Width="5"
                       Background="#EEE"
                       HorizontalAlignment="Stretch"
@@ -69,30 +74,30 @@
                       ResizeDirection="Columns"
                       ShowsPreview="True"/>
 
-        <!-- Правая часть: собственная сетка с горизонтальным делением -->
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="120"/>
-                <!-- Верхняя панель -->
-                <RowDefinition Height="5"/>
-                <!-- Горизонтальный сплиттер -->
-                <RowDefinition Height="*" MinHeight="120"/>
-                <!-- Нижняя панель -->
-            </Grid.RowDefinitions>
+            <!-- Правая часть: собственная сетка с горизонтальным делением -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MinHeight="120"/>
+                    <!-- Верхняя панель -->
+                    <RowDefinition Height="5"/>
+                    <!-- Горизонтальный сплиттер -->
+                    <RowDefinition Height="*" MinHeight="120"/>
+                    <!-- Нижняя панель -->
+                </Grid.RowDefinitions>
 
-            <!-- Верхний многострочный текстовый блок (readonly TextBox для скролла и переносов) -->
-            <Border Grid.Row="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,0,1">
-                <TextBox Text="{Binding RightTopText}"
+                <!-- Верхний многострочный текстовый блок (readonly TextBox для скролла и переносов) -->
+                <Border Grid.Row="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,0,1">
+                    <TextBox Text="{Binding RightTopText}"
                          IsReadOnly="True"
                          TextWrapping="Wrap"
                          AcceptsReturn="True"
                          VerticalScrollBarVisibility="Auto"
                          BorderThickness="0"
                          />
-            </Border>
+                </Border>
 
-            <!-- Горизонтальный разделитель между верхом и низом -->
-            <GridSplitter Grid.Row="1"
+                <!-- Горизонтальный разделитель между верхом и низом -->
+                <GridSplitter Grid.Row="1"
                           Height="5"
                           Background="#EEE"
                           HorizontalAlignment="Stretch"
@@ -101,18 +106,23 @@
                           ResizeDirection="Rows"
                           ShowsPreview="True"/>
 
-            <!-- Нижний многострочный текстовый блок -->
-            <Border Grid.Row="2" Padding="8">
-                <TextBox Text="{Binding RightBottomText}"
+                <!-- Нижний многострочный текстовый блок -->
+                <Border Grid.Row="2" Padding="8">
+                    <TextBox Text="{Binding RightBottomText}"
                          IsReadOnly="True"
                          TextWrapping="Wrap"
                          AcceptsReturn="True"
                          VerticalScrollBarVisibility="Auto"
                          BorderThickness="0"
                          />
-            </Border>
+                </Border>
+            </Grid>
         </Grid>
+
+
     </Grid>
+
+    <!-- Общая сетка: левая колонка, разделитель, правая колонка -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
