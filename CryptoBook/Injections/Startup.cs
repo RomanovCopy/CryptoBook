@@ -27,8 +27,8 @@ namespace CryptoBook.Injections
             //Composition
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
             builder.RegisterType<ParagraphSession>().As<IParagraphSession>().SingleInstance();
-
-
+            builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().SingleInstance();
+            builder.RegisterType<EditTransaction>().As<IEditTransaction>().SingleInstance();
 
 
             //ViewModels
@@ -83,6 +83,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<ParagraphService>().As<IParagraphService>().SingleInstance();
             builder.RegisterType<InlineService>().As<IInlineService>().SingleInstance();
             builder.RegisterType<ListService>().As<IListService>().SingleInstance();
+            builder.RegisterType<BookmarksService>().As<IBookmarkService>().SingleInstance();
+            builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
@@ -103,6 +105,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FontFormatBar>().SingleInstance();
             builder.RegisterType<TextFormatBar>().SingleInstance();
             builder.RegisterType<ListFormatBar>().SingleInstance();
+            builder.RegisterType<BookmarksBar>().SingleInstance();
 
             //Contexts
 

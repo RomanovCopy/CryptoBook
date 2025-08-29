@@ -3,10 +3,110 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:markup="clr-namespace:CryptoBook.Markup"
+             xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IBookmarksViewModel}}">
+    <UserControl.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksViewModel}"/>
+    </UserControl.DataContext>
+    
     <Grid>
-            
+        <!-- Кнопка для вызова панели -->
+        <ToggleButton x:Name="TogglePanelButton"
+                      Style="{StaticResource RoundedToggleButtonStyle}"
+                      Content="Bookmarks"
+                      Height="20"
+                      FontWeight="Medium"/>
+        <!-- Popup-панель -->
+        <Popup PlacementTarget="{Binding ElementName=TogglePanelButton}"
+                Placement="Bottom"
+                IsOpen="{Binding IsChecked, ElementName=TogglePanelButton}"
+                AllowsTransparency="True"
+                PopupAnimation="Slide"
+                StaysOpen="False">
+            <Border Background="Gray"
+                    BorderBrush="Black" BorderThickness="1"
+                    Padding="5"
+                    CornerRadius="5"
+                    HorizontalAlignment="Stretch"
+                    RenderTransformOrigin="0.5,0">
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
+                    <!-- Add bookmark -->
+                    <Button Command="{Binding AddAtCaret, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Add Bookmark" 
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                        <Canvas Width="24" Height="24" >
+                            <!-- Фон закладки -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Transparent" Data="M6,2 L18,2 L18,22 L12,18 L6,22 Z"/>
+                            <!-- Плюс -->
+                            <Line X1="12" Y1="7" X2="12" Y2="13" Stroke="Black" StrokeThickness="2"/>
+                            <Line X1="9" Y1="10" X2="15" Y2="10" Stroke="Black" StrokeThickness="2"/>
+                        </Canvas>
+                    </Button>
+                    <!-- Previous bookmark -->
+                    <Button Command="{Binding PreviousBookmark, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Previous Bookmark" 
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                        <Canvas Width="24" Height="24" >
+                            <!-- Фон закладки -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Transparent" Data="M6,2 L18,2 L18,22 L12,18 L6,22 Z"/>
+                            <!-- Стрелка влево, как в Visual Studio -->
+                            <Polygon Points="14,8 8,12 14,16" Fill="Black"/>
+                        </Canvas>
+                    </Button>
+                    <!-- Next bookmark -->
+                    <Button Command="{Binding NextBookmark, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Next Bookmark" 
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                        <Canvas Width="24" Height="24" >
+                            <!-- Фон закладки -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Transparent" Data="M6,2 L18,2 L18,22 L12,18 L6,22 Z"/>
+                            <!-- Стрелка вправо, как в Visual Studio -->
+                            <Polygon Points="10,8 16,12 10,16" Fill="Black"/>
+                        </Canvas>
+                    </Button>
+                    <!-- Remove bookmark -->
+                    <Button Command="{Binding Remove, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Remove Bookmark" 
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                        <Canvas Width="24" Height="24" >
+                            <!-- Фон закладки -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Transparent" Data="M6,2 L18,2 L18,22 L12,18 L6,22 Z"/>
+                            <!-- Крестик -->
+                            <Line X1="9" Y1="9" X2="15" Y2="15" Stroke="Black" StrokeThickness="2"/>
+                            <Line X1="15" Y1="9" X2="9" Y2="15" Stroke="Black" StrokeThickness="2"/>
+                        </Canvas>
+                    </Button>
+                    <!-- Rename bookmark -->
+                    <Button Command="{Binding Rename, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Rename Bookmark" 
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                        <Canvas Width="24" Height="24" >
+                            <!-- Фон закладки -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Transparent" Data="M6,2 L18,2 L18,22 L12,18 L6,22 Z"/>
+                            <!-- Карандаш -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Black" Data="M14,6 L17,3 L20,6 L17,9 Z"/>
+                        </Canvas>
+                    </Button>
+                    <!-- All bookmarks -->
+                    <Button Command="{Binding NavigateTo, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="All Bookmarks" 
+                                Template="{StaticResource FlatButtonControlTemplate}">
+                        <Canvas Width="24" Height="24" >
+                            <!-- Первая закладка -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Transparent" Data="M4,4 L20,4 L20,10 L12,8 L4,10 Z"/>
+                            <!-- Вторая закладка -->
+                            <Path Stroke="Black" StrokeThickness="2" Fill="Transparent" Data="M4,12 L20,12 L20,18 L12,16 L4,18 Z"/>
+                        </Canvas>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Popup>
     </Grid>
 </UserControl>

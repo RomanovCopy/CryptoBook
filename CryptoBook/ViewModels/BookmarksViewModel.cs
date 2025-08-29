@@ -33,6 +33,11 @@ namespace CryptoBook.ViewModels
 
         public ICommand AddAtCaret => addAtCaret ??= new RelayCommand(model.Execute_AddAtCaret, model.CanExecute_AddAtCaret);
         RelayCommand addAtCaret;
+        public ICommand NextBookmark => nextBookmark ??= new RelayCommand(model.Execute_NextBookmark, model.CanExecute_NextBookmark);
+        RelayCommand nextBookmark;
+
+        public ICommand PreviousBookmark => previousBookmark ??= new RelayCommand(model.Execute_PreviousBookmark, model.CanExecute_PreviousBookmark);
+        RelayCommand previousBookmark;
 
         public ICommand Remove => remove??= new RelayCommand(model.Execute_Remove, model.CanExecute_Remove);
         RelayCommand remove;

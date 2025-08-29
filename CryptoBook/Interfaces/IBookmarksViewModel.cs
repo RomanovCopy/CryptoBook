@@ -24,6 +24,14 @@ namespace CryptoBook.Interfaces
         /// </summary>
         ICommand AddAtCaret { get; }
         /// <summary>
+        /// перейти к следующей закладке
+        /// </summary>
+        ICommand NextBookmark { get; }
+        /// <summary>
+        /// переход к передыдущей закладке
+        /// </summary>
+        ICommand PreviousBookmark { get; }
+        /// <summary>
         /// Удалить закладку
         /// </summary>
         ICommand Remove{ get; }

@@ -27,10 +27,12 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:FontFormatBar}}"  HorizontalAlignment="Stretch" Grid.Column="0"  Margin="{StaticResource CurrentMargin}"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:TextFormatBar}}"  HorizontalAlignment="Stretch" Grid.Column="1"  Margin="{StaticResource CurrentMargin}"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:ListFormatBar}}" HorizontalAlignment="Stretch" Grid.Column="2" Margin="{StaticResource CurrentMargin}"/>
+            <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:BookmarksBar}}" HorizontalAlignment="Stretch" Grid.Column="3" Margin="{StaticResource CurrentMargin}"/>
         </Grid>
         <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:Richtextbox}}"
                             Grid.Row="1" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"

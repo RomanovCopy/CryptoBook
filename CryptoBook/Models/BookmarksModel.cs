@@ -39,10 +39,30 @@ namespace CryptoBook.Models
 
         }
 
+        internal bool CanExecute_PreviousBookmark(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_PreviousBookmark(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal bool CanExecute_NextBookmark(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_NextBookmark(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         internal bool CanExecute_Remove(object? obj)
         {
-            return bookmarkValidationService.CanRemoveBookmark == ValidationResult.Success;
+            return true;
         }
         internal void Execute_Remove(object? obj)
         {
@@ -52,7 +72,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Rename(object? obj)
         {
-            return bookmarkValidationService.CanRenameBookmark == ValidationResult.Success;
+            return true;
         }
         internal void Execute_Rename(object? obj)
         {
@@ -62,7 +82,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_NavigateTo(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_NavigateTo(object? obj)
         {
@@ -72,7 +92,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_InsertHyperlinkTo(object? obj)
         {
-            return bookmarkValidationService.CanInsertHyperlink == ValidationResult.Success;  
+            return true;
         }
         internal void Execute_InsertHyperlinkTo(object? obj)
         {
@@ -83,7 +103,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_RebuildIndexFromDocument(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         internal void Execute_RebuildIndexFromDocument(object? obj)
         {
@@ -130,5 +150,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
     }
 }
