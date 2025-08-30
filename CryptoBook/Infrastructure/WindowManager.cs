@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Interfaces;
+using CryptoBook.Views;
 
 using System.Windows;
 
@@ -17,11 +18,17 @@ namespace CryptoBook.Infrastructure
             _openWindows = [];
         }
 
-        public T CreateWindow<T>() where T : Window
+        public T CreateWindow<T>(Guid? owner) where T : Window
         {
             if(!_scope.IsRegistered<T>())
                 throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
             var window = _scope.Resolve<T>();
+            if(owner != null)
+            {
+                //устанавливаем родительское окно для согласованного закрытия
+                var ownerWin=_openWindows.Where(x=>(x.DataContext as IWindowWithId)?.WindowId==owner).FirstOrDefault();
+                window.Owner=ownerWin;
+            }
             RegisterWindow<T>(window);
             return window;
         }
@@ -58,11 +65,15 @@ namespace CryptoBook.Infrastructure
                 .FirstOrDefault(w => w.DataContext is { } dc && dc is IWindowWithId id && id.WindowId == windowId);
         }
 
+        public IEnumerable<T> FindWindow<T>() where T : Window
+        {
+            return _openWindows.OfType<T>();
+        }
+
 
 
         private void RegisterWindow<T>(T window) where T : Window
         {
-
             if(window.DataContext is ICloseable vm)
             {
                 vm.RequestClose += (s, e) => WinClose<T>(window);
@@ -90,6 +101,7 @@ namespace CryptoBook.Infrastructure
         {
             _scope?.Dispose();
         }
+
     }
 
 }

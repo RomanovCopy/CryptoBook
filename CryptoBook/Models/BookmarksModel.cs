@@ -1,6 +1,7 @@
 ﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
+using CryptoBook.Views;
 
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,10 @@ namespace CryptoBook.Models
         }
         internal void Execute_AddAtCaret(object? obj)
         {
-            var win = windowManager.CreateWindow<Views.BookmarksEditor>();
+            //Id родительского окна
+            var owner = ((windowManager.FindWindow<MainWindow>().FirstOrDefault())?.DataContext as IWindowWithId)?.WindowId;
+            //новое окно с передачей Id родителя
+            var win = windowManager.CreateWindow<Views.BookmarksEditor>(owner);
             windowManager.ShowWindow<Views.BookmarksEditor>(((IBookmarksEditorViewModel)win.DataContext).WindowId);
         }
 

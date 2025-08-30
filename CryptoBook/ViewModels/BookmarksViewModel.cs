@@ -18,6 +18,8 @@ namespace CryptoBook.ViewModels
         private readonly BookmarksModel model;
         private IBookmarkService bookmarkService;
 
+        public event EventHandler RequestClose;
+
         public ObservableCollection<BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
 
 

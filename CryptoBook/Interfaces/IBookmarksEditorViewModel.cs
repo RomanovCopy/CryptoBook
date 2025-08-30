@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IBookmarksEditorViewModel: IViewModel, IWindowWithId
+    public interface IBookmarksEditorViewModel: IViewModel, IWindowWithId, ICloseable
     {
         double Width { get; set; }
         double Height { get; set; }

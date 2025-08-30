@@ -16,6 +16,8 @@ namespace CryptoBook.ViewModels
     {
         private readonly BookmarksEditorModel model;
 
+        public event EventHandler RequestClose;
+
         public Guid WindowId => model.WindowId;
 
         public double Width { get => model.Width; set => model.Width=value; }
@@ -45,7 +47,6 @@ namespace CryptoBook.ViewModels
 
         public ICommand Closed => closed ??= new RelayCommand(model.Execute_Closed, model.CanExecute_Closed);
         RelayCommand closed;
-
 
     }
 }

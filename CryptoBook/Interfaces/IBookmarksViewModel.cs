@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IBookmarksViewModel:IViewModel
+    public interface IBookmarksViewModel:IViewModel, ICloseable
     {
         /// <summary>
         /// Публично доступное хранилище закладок
