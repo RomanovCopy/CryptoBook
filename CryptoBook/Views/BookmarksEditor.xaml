@@ -10,20 +10,16 @@
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
-        MinHeight="100" MinWidth="300"
+        MinHeight="300" MinWidth="300"
         HorizontalContentAlignment="Stretch"
         Background="{DynamicResource CurrentWindowBackground}"
         BorderBrush="{DynamicResource CurrentBorderColor}"
         BorderThickness="1,0,1,1"
         d:DataContext="{x:Type interfaces:IBookmarksEditorViewModel}"
-        
         Title="BookmarksEditor">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksEditorViewModel}"/>
     </Window.DataContext>
-    <!--<WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0"/>
-    </WindowChrome.WindowChrome>-->
 
     <Window.Width>
         <Binding Path="Width"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
@@ -59,7 +55,7 @@
 
             <!-- Левая часть: список -->
             <Border Grid.Column="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,1,0">
-                <ListBox ItemsSource="{Binding Items}"
+                <ListBox ItemsSource="{}"
                      SelectedItem="{Binding SelectedItem}"
                      />
             </Border>

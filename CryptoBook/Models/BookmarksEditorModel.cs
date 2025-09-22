@@ -14,6 +14,7 @@ namespace CryptoBook.Models
     internal class BookmarksEditorModel: ViewModelBase
     {
         private readonly IWindowManager windowManager;
+        private readonly IBookmarkService bookmarkService;
 
         internal double Width { get => width; set => SetProperty(ref width,value); }
         double width;
@@ -32,9 +33,11 @@ namespace CryptoBook.Models
 
 
 
-        internal BookmarksEditorModel(IWindowManager manager)
+        internal BookmarksEditorModel(IWindowManager manager, IBookmarkService service)
         {
             windowManager= manager;
+            bookmarkService= service;
+            bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             WindowId = Guid.NewGuid();
             //восстанавливаем размеры и позицию окна
             Width = Properties.Settings.Default.BookmarksEditor_Width;
