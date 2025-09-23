@@ -8,7 +8,7 @@ using System.Windows.Documents;
 
 namespace CryptoBook.Interfaces
 {
-    public interface ITextFormatService
+    public interface ITextFormatService: IService
     {
         // --- Выравнивание ---
         void SetTextAlignment(TextAlignment? alignment);

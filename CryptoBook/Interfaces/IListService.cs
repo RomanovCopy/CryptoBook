@@ -7,7 +7,7 @@ using System.Windows.Documents;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IListService
+    public interface IListService: IService
     {
         void ToggleBulleted();
         void ToggleNumbered(int startIndex = 1);

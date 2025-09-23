@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IBookmarkService:INotifyPropertyChanged
+    public interface IBookmarkService:INotifyPropertyChanged, IService
     {
         /// <summary>
         /// Публично доступное хранилище закладок

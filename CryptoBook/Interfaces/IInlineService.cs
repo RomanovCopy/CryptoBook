@@ -9,7 +9,7 @@ using System.Windows.Documents;
 namespace CryptoBook.Interfaces
 {
 
-    public interface IInlineService
+    public interface IInlineService: IService
     {
         // --- Управление транзакциями изменений (Undo-группа, оптимизация перерисовки) ---
         IInlineChangeScope BeginChangeScope();

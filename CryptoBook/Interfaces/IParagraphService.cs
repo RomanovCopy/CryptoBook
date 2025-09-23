@@ -11,7 +11,7 @@ using Media = System.Windows.Media;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IParagraphService
+    public interface IParagraphService: IService
     {
 
         // Доступ к реальному WPF-элементу, чтобы добавить в FlowDocument

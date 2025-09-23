@@ -16,7 +16,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IRichTextBoxService
+    public interface IRichTextBoxService: IService
     {
         Controls.RichTextBox Service { get; } // если нужно получить доступ к контролу
 

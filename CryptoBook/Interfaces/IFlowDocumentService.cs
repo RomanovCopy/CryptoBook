@@ -13,7 +13,7 @@ using Controls = System.Windows.Controls;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFlowDocumentService
+    public interface IFlowDocumentService: IService
     {
 
         // Форматирование

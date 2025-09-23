@@ -12,7 +12,7 @@ using Windows.ApplicationModel.VoiceCommands;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFontService
+    public interface IFontService: IService
     {
         /// <summary>
         /// Interface для работы с RichTextBox

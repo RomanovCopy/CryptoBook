@@ -55,9 +55,17 @@
 
             <!-- Левая часть: список -->
             <Border Grid.Column="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,1,0">
-                <ListBox ItemsSource="{}"
-                     SelectedItem="{Binding SelectedItem}"
-                     />
+                <ListBox DataContext="{markup:ResolveService ServiceType={x:Type interfaces:IBookmarkService}}"
+                         ItemsSource="{Binding BookMarks, UpdateSourceTrigger=PropertyChanged}">
+>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+                    
             </Border>
 
             <!-- Вертикальный разделитель между левой и правой частью -->

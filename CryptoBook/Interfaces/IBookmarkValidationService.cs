@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IBookmarkValidationService
+    public interface IBookmarkValidationService: IService
     {
         ValidationResult CanInsertBookmark(IRichTextBoxService svc, string name, Func<string, bool> existsByName);
         ValidationResult CanRenameBookmark(IRichTextBoxService svc, string oldName, string newName, Func<string, bool> existsByName);

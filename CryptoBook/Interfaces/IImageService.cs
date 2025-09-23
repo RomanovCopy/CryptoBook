@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IImageService
+    public interface IImageService: IService
     {
         /// <summary>Присоединить/отсоединить сервис к конкретному редактору.</summary>
         void Attach(RichTextBox editor);
