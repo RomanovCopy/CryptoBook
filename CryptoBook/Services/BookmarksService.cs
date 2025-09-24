@@ -28,9 +28,18 @@ namespace CryptoBook.Services
         {
             this.service = service;
             index= new(StringComparer.Ordinal);
+            //testAddIndex();
         }
 
-
+        private void testAddIndex()
+        {
+            var vm = new BookmarkEntryViewModel { Name = "Test" };
+            Bookmarks.Add(vm);
+            index[vm.Name] = vm;
+            vm=new BookmarkEntryViewModel { Name = "Test2" };
+            Bookmarks.Add(vm);
+            index[vm.Name] = vm;
+        }
 
 
         public void AddAtCaret(IRichTextBoxService service, string name)

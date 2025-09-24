@@ -15,7 +15,7 @@
         Background="{DynamicResource CurrentWindowBackground}"
         BorderBrush="{DynamicResource CurrentBorderColor}"
         BorderThickness="1,0,1,1"
-        d:DataContext="{x:Type interfaces:IBookmarksEditorViewModel}"
+        d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IBookmarksEditorViewModel}}"
         Title="BookmarksEditor">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksEditorViewModel}"/>
@@ -55,12 +55,13 @@
 
             <!-- Левая часть: список -->
             <Border Grid.Column="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,1,0">
-                <ListBox DataContext="{markup:ResolveService ServiceType={x:Type interfaces:IBookmarkService}}"
-                         ItemsSource="{Binding BookMarks, UpdateSourceTrigger=PropertyChanged}">
+                <ListBox ItemsSource="{Binding Bookmarks}">
 >
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
 
