@@ -37,7 +37,7 @@ namespace CryptoBook.ViewModels
             this.bookmarkService = bookmarkService ?? throw new ArgumentNullException(nameof(bookmarkService));
             model = new BookmarksEditorModel(manager, bookmarkService);
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
-            bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            this.bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
 

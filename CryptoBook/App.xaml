@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="/Styles/ImageStyles.xaml"/>
                 <ResourceDictionary Source="/Themes/LightTheme.xaml"/>
                 <ResourceDictionary Source="/Themes/DarkTheme.xaml"/>
+                <ResourceDictionary Source="/Styles/ListStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <SolidColorBrush x:Key="CurrentWindowBackground" Color="Gray" />
             <SolidColorBrush x:Key="CurrentWindowForeground" Color="Black" />

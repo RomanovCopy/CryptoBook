@@ -28,7 +28,7 @@ namespace CryptoBook.Services
         {
             this.service = service;
             index= new(StringComparer.Ordinal);
-            //testAddIndex();
+            testAddIndex();
         }
 
         private void testAddIndex()
