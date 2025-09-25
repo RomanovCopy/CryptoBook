@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
@@ -21,5 +22,14 @@ namespace CryptoBook.Interfaces
 
         ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; }
 
+        /// <summary>
+        /// выбранная закладка (для привязки в UI)
+        /// </summary>
+        BookmarkEntryViewModel? SelctedBookmark { get; set; }
+
+        /// <summary>
+        /// обработка изменения выделения в списке закладок
+        /// </summary>
+        ICommand SelectionChangedBookmarks { get; }
     }
 }

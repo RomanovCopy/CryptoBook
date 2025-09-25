@@ -17,6 +17,7 @@ namespace CryptoBook.Interfaces
         /// </summary>
         ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; }
 
+
         /// <summary>
         /// закладка с таким именем уже существует?
         /// </summary>

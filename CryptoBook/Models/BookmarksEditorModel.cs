@@ -4,6 +4,7 @@ using CryptoBook.Views;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,8 +30,10 @@ namespace CryptoBook.Models
         internal Guid WindowId { get=>windowId; private set=>windowId=value; }
         Guid windowId;
 
+        internal ObservableCollection<ViewModels.BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
 
-
+        public ViewModels.BookmarkEntryViewModel? SelctedBookmark { get => selectedBookmark; set => SetProperty(ref selectedBookmark, value); }
+        private ViewModels.BookmarkEntryViewModel? selectedBookmark;
 
 
         internal BookmarksEditorModel(IWindowManager manager, IBookmarkService service)
@@ -39,15 +42,20 @@ namespace CryptoBook.Models
             bookmarkService= service;
             bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             WindowId = Guid.NewGuid();
-            //восстанавливаем размеры и позицию окна
-            Width = Properties.Settings.Default.BookmarksEditor_Width;
-            Height = Properties.Settings.Default.BookmarksEditor_Height;
-            WindowTop = Properties.Settings.Default.BookmarksEditor_Top;
-            WindowLeft = Properties.Settings.Default.BookmarksEditor_Left;
-            //восстанавливаем состояние окна
-            var state = Properties.Settings.Default.BookmarksEditor_State;
-            WindowState = state == "Normal" ? WindowState.Normal : state == "Minimized" ? WindowState.Minimized : state == "Maximized" ? WindowState.Maximized : WindowState.Minimized;
+            RestoreWindowSettings();
         }
+
+
+
+
+        internal bool CanExecute_SelectionChangedBookmarks(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_SelectionChangedBookmarks(object? obj)
+        {
+        }
+
 
 
         internal bool CanExecute_Loaded(object? obj)
@@ -96,5 +104,19 @@ namespace CryptoBook.Models
         internal void Execute_Closed(object? obj)
         {
         }
+
+
+        private void RestoreWindowSettings()
+        {
+            //восстанавливаем размеры и позицию окна
+            Width = Properties.Settings.Default.BookmarksEditor_Width;
+            Height = Properties.Settings.Default.BookmarksEditor_Height;
+            WindowTop = Properties.Settings.Default.BookmarksEditor_Top;
+            WindowLeft = Properties.Settings.Default.BookmarksEditor_Left;
+            //восстанавливаем состояние окна
+            var state = Properties.Settings.Default.BookmarksEditor_State;
+            WindowState = state == "Normal" ? WindowState.Normal : state == "Minimized" ? WindowState.Minimized : state == "Maximized" ? WindowState.Maximized : WindowState.Minimized;
+        }
+
     }
 }

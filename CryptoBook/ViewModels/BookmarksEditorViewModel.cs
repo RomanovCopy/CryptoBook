@@ -29,16 +29,23 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => model.WindowLeft; set => model.WindowLeft=value; }
         public WindowState WindowState { get => model.WindowState; set => model.WindowState=value; }
 
-        public ObservableCollection<BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
+        public ObservableCollection<BookmarkEntryViewModel> Bookmarks => model.Bookmarks;
+
+        public BookmarkEntryViewModel? SelctedBookmark { get => model.SelctedBookmark; set => model.SelctedBookmark=value; }
+
 
 
         public BookmarksEditorViewModel(IWindowManager manager,IBookmarkService bookmarkService)
         {
-            this.bookmarkService = bookmarkService ?? throw new ArgumentNullException(nameof(bookmarkService));
             model = new BookmarksEditorModel(manager, bookmarkService);
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
-            this.bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
+
+
+
+
+        public ICommand SelectionChangedBookmarks => selectionChangedBookmarks ??= new RelayCommand(model.Execute_SelectionChangedBookmarks, model.CanExecute_SelectionChangedBookmarks);
+        RelayCommand selectionChangedBookmarks;
 
 
         public ICommand Loaded => loaded ??= new RelayCommand(model.Execute_Loaded, model.CanExecute_Loaded);

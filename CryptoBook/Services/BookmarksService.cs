@@ -21,6 +21,7 @@ namespace CryptoBook.Services
         private bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name) && name.All(ch => char.IsLetterOrDigit(ch) || ch is '_' or '-');
 
         public ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; } = [];
+
         public bool Exists(string name)=> index.ContainsKey(name);
 
 
@@ -33,10 +34,10 @@ namespace CryptoBook.Services
 
         private void testAddIndex()
         {
-            var vm = new BookmarkEntryViewModel { Name = "Test" };
+            var vm = new BookmarkEntryViewModel { Name = "Test", Note = "Comment01" };
             Bookmarks.Add(vm);
             index[vm.Name] = vm;
-            vm=new BookmarkEntryViewModel { Name = "Test2" };
+            vm=new BookmarkEntryViewModel { Name = "Test2", Note="Comment02" };
             Bookmarks.Add(vm);
             index[vm.Name] = vm;
         }
