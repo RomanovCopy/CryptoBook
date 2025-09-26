@@ -30,10 +30,10 @@ namespace CryptoBook.Models
         internal Guid WindowId { get=>windowId; private set=>windowId=value; }
         Guid windowId;
 
-        internal ObservableCollection<ViewModels.BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
+        internal ObservableCollection<IBookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
 
-        public ViewModels.BookmarkEntryViewModel? SelctedBookmark { get => selectedBookmark; set => SetProperty(ref selectedBookmark, value); }
-        private ViewModels.BookmarkEntryViewModel? selectedBookmark;
+        public IBookmarkEntryViewModel? SelctedBookmark { get => selectedBookmark; set => SetProperty(ref selectedBookmark, value); }
+        private IBookmarkEntryViewModel? selectedBookmark;
 
 
         internal BookmarksEditorModel(IWindowManager manager, IBookmarkService service)
@@ -50,10 +50,14 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SelectionChangedBookmarks(object? obj)
         {
-            return true;
+            return obj is not null;
         }
         internal void Execute_SelectionChangedBookmarks(object? obj)
         {
+            if(obj is IBookmarkEntryViewModel vm)
+            {
+                SelctedBookmark = vm;
+            }
         }
 
 

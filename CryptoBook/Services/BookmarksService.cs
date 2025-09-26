@@ -16,11 +16,11 @@ namespace CryptoBook.Services
     public class BookmarksService:ViewModelBase, IBookmarkService
     {
         private readonly IRichTextBoxService service;
-        private readonly Dictionary<string, BookmarkEntryViewModel> index;
+        private readonly Dictionary<string, IBookmarkEntryViewModel> index;
 
         private bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name) && name.All(ch => char.IsLetterOrDigit(ch) || ch is '_' or '-');
 
-        public ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; } = [];
+        public ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; } = [];
 
         public bool Exists(string name)=> index.ContainsKey(name);
 

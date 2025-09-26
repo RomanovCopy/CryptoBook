@@ -20,12 +20,12 @@ namespace CryptoBook.Interfaces
         WindowState WindowState { get; set; }
 
 
-        ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; }
+        ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; }
 
         /// <summary>
         /// выбранная закладка (для привязки в UI)
         /// </summary>
-        BookmarkEntryViewModel? SelctedBookmark { get; set; }
+        IBookmarkEntryViewModel? SelctedBookmark { get; set; }
 
         /// <summary>
         /// обработка изменения выделения в списке закладок

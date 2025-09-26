@@ -29,9 +29,9 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => model.WindowLeft; set => model.WindowLeft=value; }
         public WindowState WindowState { get => model.WindowState; set => model.WindowState=value; }
 
-        public ObservableCollection<BookmarkEntryViewModel> Bookmarks => model.Bookmarks;
+        public ObservableCollection<IBookmarkEntryViewModel> Bookmarks => model.Bookmarks;
 
-        public BookmarkEntryViewModel? SelctedBookmark { get => model.SelctedBookmark; set => model.SelctedBookmark=value; }
+        public IBookmarkEntryViewModel? SelctedBookmark { get => model.SelctedBookmark; set => model.SelctedBookmark=value; }
 
 
 

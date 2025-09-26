@@ -1,8 +1,9 @@
-﻿using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IViewModel
+    public interface IViewModel:INotifyPropertyChanged
     {
 
         public static Action Ready { get; set; }
