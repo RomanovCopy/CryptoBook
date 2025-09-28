@@ -1,11 +1,12 @@
-﻿namespace CryptoBook.Infrastructure
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows;
+
+namespace CryptoBook.Infrastructure
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using System.Windows;
 
     [Serializable]
     public class ViewModelBase: INotifyPropertyChanged
