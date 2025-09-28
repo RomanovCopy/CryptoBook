@@ -16,11 +16,12 @@ namespace CryptoBook.Services
     public class BookmarksService:ViewModelBase, IBookmarkService
     {
         private readonly IRichTextBoxService service;
-        private readonly Dictionary<string, BookmarkEntryViewModel> index;
+        private readonly Dictionary<string, IBookmarkEntryViewModel> index;
 
         private bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name) && name.All(ch => char.IsLetterOrDigit(ch) || ch is '_' or '-');
 
-        public ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; } = [];
+        public ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; } = [];
+
         public bool Exists(string name)=> index.ContainsKey(name);
 
 
@@ -28,9 +29,18 @@ namespace CryptoBook.Services
         {
             this.service = service;
             index= new(StringComparer.Ordinal);
+            testAddIndex();
         }
 
-
+        private void testAddIndex()
+        {
+            var vm = new BookmarkEntryViewModel { Name = "Test", Note = "Comment01" };
+            Bookmarks.Add(vm);
+            index[vm.Name] = vm;
+            vm=new BookmarkEntryViewModel { Name = "Test2", Note="Comment02" };
+            Bookmarks.Add(vm);
+            index[vm.Name] = vm;
+        }
 
 
         public void AddAtCaret(IRichTextBoxService service, string name)

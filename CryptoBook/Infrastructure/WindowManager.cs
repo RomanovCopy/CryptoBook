@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Styles;
 using CryptoBook.Interfaces;
 using CryptoBook.Views;
 

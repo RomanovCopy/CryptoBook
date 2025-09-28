@@ -15,7 +15,8 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Публично доступное хранилище закладок
         /// </summary>
-        ObservableCollection<BookmarkEntryViewModel> Bookmarks { get; }
+        ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; }
+
 
         /// <summary>
         /// закладка с таким именем уже существует?

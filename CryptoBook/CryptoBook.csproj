@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Icons\icon002.ico" />
     <None Remove="Resources\Images\000_aligncenter.png" />
     <None Remove="Resources\Images\001_alignjustify.png" />
     <None Remove="Resources\Images\002_alignleft.PNG" />
@@ -79,6 +80,12 @@
 
   <ItemGroup>
     <Page Remove="MyControls\TitleBarRB.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\icon002.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

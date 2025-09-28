@@ -1,9 +1,11 @@
 ﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
+using CryptoBook.Services;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +17,7 @@ namespace CryptoBook.ViewModels
     public class BookmarksEditorViewModel: ViewModelBase, IBookmarksEditorViewModel
     {
         private readonly BookmarksEditorModel model;
+        private readonly IBookmarkService bookmarkService;
 
         public event EventHandler RequestClose;
 
@@ -26,14 +29,23 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => model.WindowLeft; set => model.WindowLeft=value; }
         public WindowState WindowState { get => model.WindowState; set => model.WindowState=value; }
 
+        public ObservableCollection<IBookmarkEntryViewModel> Bookmarks => model.Bookmarks;
+
+        public IBookmarkEntryViewModel? SelctedBookmark { get => model.SelctedBookmark; set => model.SelctedBookmark=value; }
 
 
 
-        public BookmarksEditorViewModel(IWindowManager manager)
+        public BookmarksEditorViewModel(IWindowManager manager,IBookmarkService bookmarkService)
         {
-            model = new BookmarksEditorModel(manager);
+            model = new BookmarksEditorModel(manager, bookmarkService);
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
+
+
+
+
+        public ICommand SelectionChangedBookmarks => selectionChangedBookmarks ??= new RelayCommand(model.Execute_SelectionChangedBookmarks, model.CanExecute_SelectionChangedBookmarks);
+        RelayCommand selectionChangedBookmarks;
 
 
         public ICommand Loaded => loaded ??= new RelayCommand(model.Execute_Loaded, model.CanExecute_Loaded);

@@ -14,9 +14,11 @@
         HorizontalContentAlignment="Stretch"
         Background="{DynamicResource CurrentWindowBackground}"
         BorderBrush="{DynamicResource CurrentBorderColor}"
-        BorderThickness="1,0,1,1"
-        d:DataContext="{x:Type interfaces:IBookmarksEditorViewModel}"
+        BorderThickness="1"
+        d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IBookmarksEditorViewModel}}"
+        Icon="Resources\Icons\icon002.ico"
         Title="BookmarksEditor">
+    
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksEditorViewModel}"/>
     </Window.DataContext>
@@ -42,7 +44,6 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <!--<ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:TitleBar}}" Grid.Row="0"/>-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" MinWidth="200"/>
@@ -54,23 +55,31 @@
             </Grid.ColumnDefinitions>
 
             <!-- Левая часть: список -->
-            <Border Grid.Column="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,1,0">
-                <ListBox DataContext="{markup:ResolveService ServiceType={x:Type interfaces:IBookmarkService}}"
-                         ItemsSource="{Binding BookMarks, UpdateSourceTrigger=PropertyChanged}">
->
+            <Border Grid.Column="0" Padding="2" BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="1">
+                <ListBox x:Name="list" ItemsSource="{Binding Bookmarks, UpdateSourceTrigger=PropertyChanged}"
+                         Background="{DynamicResource CurrentWindowBackground}">
+                    
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource bokmarksEditorNames}"/>
+                    </ListBox.ItemContainerStyle>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectionChangedBookmarks, UpdateSourceTrigger=PropertyChanged}"
+                                                   CommandParameter="{Binding ElementName=list, Path=SelectedItem}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </ListBox>
                     
             </Border>
 
             <!-- Вертикальный разделитель между левой и правой частью -->
             <GridSplitter Grid.Column="1"
-                      Width="5"
+                      Width="3"
                       Background="#EEE"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
@@ -89,10 +98,9 @@
                     <!-- Нижняя панель -->
                 </Grid.RowDefinitions>
 
-                <!-- Верхний многострочный текстовый блок (readonly TextBox для скролла и переносов) -->
+                <!-- Верхний многострочный текстовый блок -->
                 <Border Grid.Row="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,0,1">
-                    <TextBox Text="{Binding RightTopText}"
-                         IsReadOnly="True"
+                    <TextBox Text="{Binding ElementName=list, Path=SelectedItem.Note, UpdateSourceTrigger=PropertyChanged}"
                          TextWrapping="Wrap"
                          AcceptsReturn="True"
                          VerticalScrollBarVisibility="Auto"
@@ -112,8 +120,7 @@
 
                 <!-- Нижний многострочный текстовый блок -->
                 <Border Grid.Row="2" Padding="8">
-                    <TextBox Text="{Binding RightBottomText}"
-                         IsReadOnly="True"
+                    <TextBox Text="{Binding ElementName=list, Path=SelectedItem.BookmarkUriString, UpdateSourceTrigger=PropertyChanged , Mode=OneWay}"
                          TextWrapping="Wrap"
                          AcceptsReturn="True"
                          VerticalScrollBarVisibility="Auto"
@@ -126,7 +133,6 @@
 
     </Grid>
 
-    <!-- Общая сетка: левая колонка, разделитель, правая колонка -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>

@@ -1,9 +1,13 @@
-﻿using System;
+﻿using CryptoBook.ViewModels;
+
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
@@ -15,5 +19,17 @@ namespace CryptoBook.Interfaces
         double WindowLeft { get; set; }
         WindowState WindowState { get; set; }
 
+
+        ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; }
+
+        /// <summary>
+        /// выбранная закладка (для привязки в UI)
+        /// </summary>
+        IBookmarkEntryViewModel? SelctedBookmark { get; set; }
+
+        /// <summary>
+        /// обработка изменения выделения в списке закладок
+        /// </summary>
+        ICommand SelectionChangedBookmarks { get; }
     }
 }

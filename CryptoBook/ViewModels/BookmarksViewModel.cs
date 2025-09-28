@@ -20,7 +20,7 @@ namespace CryptoBook.ViewModels
 
         public event EventHandler RequestClose;
 
-        public ObservableCollection<BookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
+        public ObservableCollection<IBookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
 
 
         public BookmarksViewModel(IRichTextBoxService service, IBookmarkService bookmarkService, 

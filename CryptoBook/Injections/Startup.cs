@@ -46,6 +46,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ListFormatBarViewModel>().As<IListFormatBarViewModel>().SingleInstance();
             builder.RegisterType<BookmarksViewModel>().As<IBookmarksViewModel>().SingleInstance();
             builder.RegisterType<BookmarksEditorViewModel>().As<IBookmarksEditorViewModel>().SingleInstance();
+            builder.RegisterType<BookmarkEntryViewModel>().As<IBookmarkEntryViewModel>().AsSelf();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
