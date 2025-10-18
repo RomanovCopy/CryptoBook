@@ -54,9 +54,9 @@ namespace CryptoBook.Infrastructure
         public void ErrorWindow(Exception e, [CallerMemberName] string name = "")
         {
             var mytype = GetType().ToString().Split('.').LastOrDefault();
-            Application.Current.Dispatcher.Invoke(() =>
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(e.Message, $"{mytype}.{name}");
+                System.Windows.MessageBox.Show(e.Message, $"{mytype}.{name}");
             });
         }
     }

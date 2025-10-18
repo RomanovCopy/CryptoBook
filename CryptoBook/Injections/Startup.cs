@@ -5,6 +5,7 @@ using CryptoBook.Composition;
 using CryptoBook.Converters;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Models;
 using CryptoBook.MyControls;
 using CryptoBook.MyPages;
 using CryptoBook.Services;
@@ -29,7 +30,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<ParagraphSession>().As<IParagraphSession>().SingleInstance();
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().SingleInstance();
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().SingleInstance();
-
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
