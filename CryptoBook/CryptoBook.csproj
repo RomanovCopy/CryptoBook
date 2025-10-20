@@ -76,6 +76,7 @@
     <None Remove="Resources\Images\033UpFileOverview.png" />
     <None Remove="Resources\Images\034CatalogV001.png" />
     <None Remove="Resources\Images\035FileV001.png" />
+    <None Remove="Resources\widget.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -86,6 +87,7 @@
     <EmbeddedResource Include="Resources\Icons\icon002.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\widget.html" />
   </ItemGroup>
 
   <ItemGroup>

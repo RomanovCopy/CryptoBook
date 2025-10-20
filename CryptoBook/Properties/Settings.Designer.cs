@@ -322,5 +322,17 @@ namespace CryptoBook.Properties {
                 this["BookmarksEditor_State"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AgentId {
+            get {
+                return ((string)(this["AgentId"]));
+            }
+            set {
+                this["AgentId"] = value;
+            }
+        }
     }
 }
