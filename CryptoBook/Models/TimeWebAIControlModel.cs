@@ -30,13 +30,13 @@ namespace CryptoBook.Models
 
             bool showDialog = string.IsNullOrWhiteSpace(AgentId);
             service.InitializeAsync();
-            string path = ExtractHtmlResourceToTemp("TimeWebAI.Resources.widget.html");
+            string path = ExtractHtmlResourceToTemp("CryptoBook.Resources.widget.html");
             service.CurrentSource = new Uri(path);
 
         }
 
 
-        public bool CanExecuteNewAgent(object? obj)
+        public bool CanExecute_NewAgent(object? obj)
         {
             if(obj is string str)
             {
@@ -47,7 +47,7 @@ namespace CryptoBook.Models
 
         }
 
-        public void ExecuteNewAgent(object? obj)
+        public void Execute_NewAgent(object? obj)
         {
 
         }

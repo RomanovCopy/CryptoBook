@@ -169,4 +169,85 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
+
+    <!-- Цвета кнопки — уже как Brush, не Color -->
+    <SolidColorBrush x:Key="BtnBg">#FF3B82F6</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnBgHover">#FF2563EB</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnBgPressed">#FF1D4ED8</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnBorder">#FF2563EB</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnBorderHover">#FF1D4ED8</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnBorderPressed">#FF1E40AF</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnDisabledBg">#FFE5E7EB</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnDisabledBorder">#FFCBD5E1</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnDisabledFg">#FF9CA3AF</SolidColorBrush>
+    <SolidColorBrush x:Key="BtnFocusBorder">#FF93C5FD</SolidColorBrush>
+
+    <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{StaticResource BtnBg}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BtnBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="12,7"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid SnapsToDevicePixels="True">
+                        <!-- Основной бэкграунд -->
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"/>
+
+                        <!-- Контент -->
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            RecognizesAccessKey="True"/>
+
+                        <!-- Обводка фокуса с клавиатуры -->
+                        <Border x:Name="FocusRing"
+                                CornerRadius="7"
+                                BorderThickness="2"
+                                BorderBrush="{StaticResource BtnFocusBorder}"
+                                Opacity="0.9"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Наведение -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnBgHover}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource BtnBorderHover}"/>
+                        </Trigger>
+
+                        <!-- Нажатие -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnBgPressed}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource BtnBorderPressed}"/>
+                        </Trigger>
+
+                        <!-- Отключено -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnDisabledBg}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource BtnDisabledBorder}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BtnDisabledFg}"/>
+                            <Setter Property="Cursor" Value="Arrow"/>
+                        </Trigger>
+
+                        <!-- Фокус с клавиатуры -->
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

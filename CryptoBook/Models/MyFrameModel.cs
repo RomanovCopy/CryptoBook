@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.MyControls;
 using CryptoBook.MyPages;
 using CryptoBook.Views;
 
@@ -111,7 +112,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object? obj)
         {
-            Execute_FrameListAddPage(scope.Resolve<Home>());
+            Execute_FrameListAddPage(scope.Resolve<TimeWebAIPage>());
         }
 
         internal bool CanExecute_Closing(object? obj)

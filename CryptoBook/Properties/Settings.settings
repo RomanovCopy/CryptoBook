@@ -78,7 +78,7 @@
       <Value Profile="(Default)">Normal</Value>
     </Setting>
     <Setting Name="AgentId" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">d3a739ec-2d39-40b2-a3ef-c92c372fd016</Value>
     </Setting>
   </Settings>
 </SettingsFile>

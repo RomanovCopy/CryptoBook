@@ -12,6 +12,8 @@ using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
+using TimeWebAI.ViewModels;
+
 namespace CryptoBook.Injections
 {
     public class Startup
@@ -31,6 +33,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().SingleInstance();
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().SingleInstance();
 
+
+            //Models
+            builder.RegisterType<TimeWebAIControlModel>().As<ITimeWebAIControlModel>().SingleInstance();
+            builder.RegisterType<TimeWebAIPageModel>().As<ITimeWebAIPageModel>().SingleInstance();
+            builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().SingleInstance();
+
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().SingleInstance();
@@ -47,6 +55,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksViewModel>().As<IBookmarksViewModel>().SingleInstance();
             builder.RegisterType<BookmarksEditorViewModel>().As<IBookmarksEditorViewModel>().SingleInstance();
             builder.RegisterType<BookmarkEntryViewModel>().As<IBookmarkEntryViewModel>().AsSelf();
+            builder.RegisterType<TimeWebAIControlViewModel>().As<ITimeWebAIControlViewModel>().SingleInstance();
+            builder.RegisterType<TimeWebAIPageViewModel>().As<ITimeWebAIPageViewModel>().SingleInstance();
+            builder.RegisterType<TitleBarTimeWebAIControlViewModel>().As<ITitleBarTimeWebAIControlViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -86,6 +97,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ListService>().As<IListService>().SingleInstance();
             builder.RegisterType<BookmarksService>().As<IBookmarkService>().SingleInstance();
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
+            builder.RegisterType<WebViewService>().As<IWebViewService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
@@ -97,6 +109,7 @@ namespace CryptoBook.Injections
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();
+            builder.RegisterType<TimeWebAIPage>().SingleInstance();
 
             //Controls
             builder.RegisterType<TitleBar>().SingleInstance();
@@ -107,6 +120,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<TextFormatBar>().SingleInstance();
             builder.RegisterType<ListFormatBar>().SingleInstance();
             builder.RegisterType<BookmarksBar>().SingleInstance();
+            builder.RegisterType<TimeWebAIControl>().SingleInstance();
+            builder.RegisterType<TitleBarTimeWebAIControl>().SingleInstance();
 
             //Contexts
 

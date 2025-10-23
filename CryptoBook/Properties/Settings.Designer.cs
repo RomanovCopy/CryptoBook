@@ -325,7 +325,7 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("d3a739ec-2d39-40b2-a3ef-c92c372fd016")]
         public string AgentId {
             get {
                 return ((string)(this["AgentId"]));

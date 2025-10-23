@@ -10,7 +10,7 @@ namespace CryptoBook.Interfaces
     {
         string Url { get; set; }
 
-        bool CanExecuteNewAgent(object? obj);
-        void ExecuteNewAgent(object? obj);
+        bool CanExecute_NewAgent(object? obj);
+        void Execute_NewAgent(object? obj);
     }
 }
