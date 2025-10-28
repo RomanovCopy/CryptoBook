@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.DTO
 {
-    public class DirectoryContent:IDirectoryContent
+    public class DirectoryContent
     {
         public string DirectoryPath { get => directoryPath; init => directoryPath=value; }
         string directoryPath;

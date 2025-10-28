@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.DTO
 {
-    public class FileItem:IFileItem
+    public class FileItem
     {
         public string FullPath { get=>fullPath; init=>fullPath=value; }
         string fullPath;
