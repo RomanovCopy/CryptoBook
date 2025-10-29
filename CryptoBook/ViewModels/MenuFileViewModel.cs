@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
@@ -8,16 +9,21 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class MenuFileViewModel: ViewModelBase, IMenuFileViewModel
+    public class MenuFileViewModel: ViewModelBase, IMenuFileViewModel,ICommandRegistry
     {
-        private readonly MenuFileModel menuFileModel;
+        private readonly IMenuFileModel menuFileModel;
+        private readonly ICommandService commandService;
 
-
-        public MenuFileViewModel(ILifetimeScope scope)
+        public MenuFileViewModel(IMenuFileModel model, ICommandService commandService)
         {
-            menuFileModel = new MenuFileModel(scope);
+            menuFileModel = model;
+            this.commandService = commandService;
             menuFileModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            RegistryCommands();
         }
+
+
+        //    IMenuFileViewModel
 
         public ICommand NewFile => newFile ??= new RelayCommand(menuFileModel.Execute_NewFile, menuFileModel.CanExecute_NewFile);
         RelayCommand newFile;
@@ -49,5 +55,24 @@ namespace CryptoBook.ViewModels
         public ICommand Close { get; }
         public ICommand Closing { get; }
 
+
+        //    ICommandRegistry
+
+
+        /// <summary>
+        /// регистрирует команд для внешнего использования
+        /// </summary>
+        public void RegistryCommands()
+        {
+            commandService.Register(CommandKey.menuFile_NewFile, NewFile);
+            commandService.Register(CommandKey.menuFile_OpenFile, OpenFile);
+            commandService.Register(CommandKey.menuFile_SaveFile, SaveFile);
+            commandService.Register(CommandKey.menuFile_SaveAsFile, SaveAsFile);
+            commandService.Register(CommandKey.menuFile_FileOverview, FileOverview);
+            commandService.Register(CommandKey.menuFile_OpenDirectory, OpenDirectory);
+            commandService.Register(CommandKey.menuFile_CloseFile, CloseFile);
+            commandService.Register(CommandKey.menuFile_UpdateFile, UpdateFile);
+            commandService.Register(CommandKey.menuFile_WorkingDirectorySynchronization, WorkingDirectorySynchronization);
+        }
     }
 }

@@ -38,6 +38,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<TimeWebAIControlModel>().As<ITimeWebAIControlModel>().SingleInstance();
             builder.RegisterType<TimeWebAIPageModel>().As<ITimeWebAIPageModel>().SingleInstance();
             builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().SingleInstance();
+            builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().SingleInstance();
+            builder.RegisterType<SideMenuModel>().As<ISide>().SingleInstance();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
@@ -98,6 +100,10 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksService>().As<IBookmarkService>().SingleInstance();
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
             builder.RegisterType<WebViewService>().As<IWebViewService>().SingleInstance();
+            builder.RegisterType<FileClipboardService>().As<IFileClipboardService>().SingleInstance();
+            builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
+            builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();
+            builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();

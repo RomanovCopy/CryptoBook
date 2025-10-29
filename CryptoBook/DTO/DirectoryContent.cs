@@ -12,6 +12,6 @@ namespace CryptoBook.DTO
     {
         public string DirectoryPath { get => directoryPath; init => directoryPath=value; }
         string directoryPath;
-        public IReadOnlyList<IFileItem> Items { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+        public IReadOnlyList<FileItem> Items { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
     }
 }
