@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class MenuFileViewModel: ViewModelBase, IMenuFileViewModel,ICommandRegistry
+    public class MenuFileViewModel: MenuItemBase, IMenuFileViewModel, ICommandRegistry
     {
         private readonly IMenuFileModel menuFileModel;
         private readonly ICommandService commandService;
@@ -54,6 +54,13 @@ namespace CryptoBook.ViewModels
         public ICommand Loaded { get; }
         public ICommand Close { get; }
         public ICommand Closing { get; }
+
+
+        protected override void Initialize()
+        {
+            Name = "File";
+            
+        }
 
 
         //    ICommandRegistry

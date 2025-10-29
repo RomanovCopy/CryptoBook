@@ -1,18 +1,23 @@
 ﻿using Autofac;
 
+using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+
+using System.Windows.Input;
 
 namespace CryptoBook.Models
 {
     public class MenuFileModel: ViewModelBase,IMenuFileModel
     {
         private readonly IWindowManager windowManager;
+        private readonly ICommandService commandService;
 
 
-        public MenuFileModel(IWindowManager windowManager)
+        public MenuFileModel(IWindowManager windowManager, ICommandService commandService)
         {
             this.windowManager = windowManager;
+            this.commandService = commandService; 
         }
 
         public bool CanExecute_NewFile(object? obj)
@@ -125,6 +130,16 @@ namespace CryptoBook.Models
         }
         public void Execute_Closed(object? obj)
         {
+        }
+
+        public MenuItem CreateItem(string name, CommandKey commandKey)
+        {
+            return new MenuItem()
+            {
+                Name = name,
+                Command = commandService.GetCommand(commandKey) ?? throw new NullReferenceException($"ICommand {commandKey} not defined")
+            };
+                
         }
     }
 }
