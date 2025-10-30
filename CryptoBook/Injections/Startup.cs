@@ -39,7 +39,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TimeWebAIPageModel>().As<ITimeWebAIPageModel>().SingleInstance();
             builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().SingleInstance();
             builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().SingleInstance();
-            builder.RegisterType<SideMenuModel>().As<ISide>().SingleInstance();
+            //builder.RegisterType<SideMenuModel>().As<ISideMenuModel>().SingleInstance();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();

@@ -28,15 +28,14 @@
                                                 IsChecked="{Binding IsExpanded, 
                                                           RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
                                                 ClickMode="Press"
-                                                Visibility="{Binding HasItems, 
-                                                           RelativeSource={RelativeSource AncestorType=TreeViewItem}, 
+                                                Visibility="{Binding HasChildren,
                                                            Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">
                                     <ToggleButton.Style>
                                         <Style TargetType="ToggleButton">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ToggleButton">
-                                                        <Border Background="{DynamicResource CurrentWindowBackground}">
+                                                        <Border Background="{DynamicResource CurrentWindowBackground}" VerticalAlignment="Center">
                                                             <Path x:Name="ExpandPath" 
                                                                       Fill="Black"
                                                                       Data="M 0 8 L 5 3 L 5 13 Z">
@@ -86,7 +85,7 @@
 
                                 <!-- Содержимое элемента -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="1" >
-                                    <ContentControl Content="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" 
+                                    <!--<ContentControl Content="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" 
                                                      Margin="5,0,10,0" FontFamily="Segoe UI Symbol">
                                         <ContentControl.Style>
                                             <Style TargetType="ContentControl">
@@ -108,22 +107,25 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </ContentControl.Style>
-                                    </ContentControl>
+                                    </ContentControl>-->
                                     <ContentControl Content="{Binding Name, UpdateSourceTrigger=PropertyChanged}" 
-                                                     VerticalAlignment="Center">
+                                                     VerticalAlignment="Center" >
                                         <ContentControl.Style>
                                             <Style TargetType="ContentControl">
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="Opacity" Value="0.3"/>
                                                     </Trigger>
-                                                    <DataTrigger Binding="{Binding IsParrent}" Value="True">
-                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={markup:ResolveConverter ConverterType=converters:SizeLocationConverter}, ConverterParameter=height}"/>
+                                                    <Trigger Property="IsMouseOver" Value="False">
+                                                        <Setter Property="Opacity" Value="1"/>
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding HasChildren}" Value="True">
+                                                        <Setter Property="FontSize" Value="16"/>
                                                         <Setter Property="FontWeight" Value="DemiBold"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsParrent}" Value="False">
-                                                        <Setter Property="FontSize" Value="{Binding FontSize, Converter={markup:ResolveConverter ConverterType=converters:SizeLocationConverter}, ConverterParameter=height}"/>
-                                                        <Setter Property="FontWeight" Value="Medium"/>
+                                                    <DataTrigger Binding="{Binding HasChildren}" Value="False">
+                                                        <Setter Property="FontSize" Value="14"/>
+                                                        <Setter Property="FontWeight" Value="Normal"/>
                                                     </DataTrigger>
                                                     <DataTrigger 
                                                         Binding="{Binding IsEnabled }" Value="False">
@@ -136,7 +138,7 @@
                                     </ContentControl>
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseLeftButtonDown">
-                                            <i:InvokeCommandAction Command="{Binding SelectItem, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <i:InvokeCommandAction Command="{Binding Command, UpdateSourceTrigger=PropertyChanged}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </StackPanel>
@@ -150,7 +152,7 @@
                                                     RelativeSource={RelativeSource AncestorType=TreeViewItem},
                                                     Converter={markup:ResolveConverter ConverterType=converters:VisibilityConverter}}"/>
                     </StackPanel>
-                    <ControlTemplate.Triggers>
+                    <!--<ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="True">
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
@@ -172,7 +174,7 @@
                             </Trigger.ExitActions>
                         </Trigger>
 
-                    </ControlTemplate.Triggers>
+                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

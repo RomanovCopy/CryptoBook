@@ -132,14 +132,5 @@ namespace CryptoBook.Models
         {
         }
 
-        public MenuItem CreateItem(string name, CommandKey commandKey)
-        {
-            return new MenuItem()
-            {
-                Name = name,
-                Command = commandService.GetCommand(commandKey) ?? throw new NullReferenceException($"ICommand {commandKey} not defined")
-            };
-                
-        }
     }
 }

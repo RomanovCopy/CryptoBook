@@ -12,7 +12,6 @@ namespace CryptoBook.Interfaces
 {
     public interface IMenuFileModel:IModel
     {
-        public DTO.MenuItem CreateItem(string name, DTO.CommandKey commandKey);
 
         public bool CanExecute_NewFile(object? obj);
         public void Execute_NewFile(object? obj);
