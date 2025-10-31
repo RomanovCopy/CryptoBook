@@ -3,6 +3,7 @@
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Views;
 
 using System.Windows.Input;
 
@@ -26,7 +27,10 @@ namespace CryptoBook.Models
         }
         public void Execute_NewFile(object? obj)
         {
-
+            if((windowManager.CreateWindow<NewFileDialog>()).DataContext is IWindowWithId cid)
+            {
+                windowManager.ShowWindow<NewFileDialog>(cid.WindowId);
+            }
         }
 
         public bool CanExecute_OpenFile(object? obj)

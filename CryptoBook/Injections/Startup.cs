@@ -3,6 +3,7 @@
 using CryptoBook.Accessors;
 using CryptoBook.Composition;
 using CryptoBook.Converters;
+using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
@@ -39,7 +40,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TimeWebAIPageModel>().As<ITimeWebAIPageModel>().SingleInstance();
             builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().SingleInstance();
             builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().SingleInstance();
-            //builder.RegisterType<SideMenuModel>().As<ISideMenuModel>().SingleInstance();
+            builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().SingleInstance();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
@@ -60,6 +61,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TimeWebAIControlViewModel>().As<ITimeWebAIControlViewModel>().SingleInstance();
             builder.RegisterType<TimeWebAIPageViewModel>().As<ITimeWebAIPageViewModel>().SingleInstance();
             builder.RegisterType<TitleBarTimeWebAIControlViewModel>().As<ITitleBarTimeWebAIControlViewModel>().SingleInstance();
+            builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -75,6 +77,7 @@ namespace CryptoBook.Injections
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf();
+            builder.RegisterType<FileTemplateRegistry>().As<IFileTemplateRegistry>().AsSelf();
 
             //Windows
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
@@ -86,6 +89,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox>().InstancePerDependency();
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
+            builder.RegisterType<NewFileDialog>().SingleInstance();
 
 
             //Services
@@ -104,6 +108,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();
             builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
+            builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
+            builder.RegisterType<FileCreationService>().As<IFileCreationService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
