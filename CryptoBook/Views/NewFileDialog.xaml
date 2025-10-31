@@ -35,7 +35,7 @@
         <!-- Пример подсказки расширения -->
         <TextBlock x:Name="filename" Grid.Row="2" Margin="0,8,0,0" Opacity="0.7">
       <Run Text="Расширение: "/>
-      <Run Text="{Binding SelectedTemplate.DefaultExtension}"/>
+      <Run Text="{Binding  SelectedTemplate.DefaultExtension, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
         </TextBlock>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">

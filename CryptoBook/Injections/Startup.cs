@@ -77,7 +77,6 @@ namespace CryptoBook.Injections
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf();
-            builder.RegisterType<FileTemplateRegistry>().As<IFileTemplateRegistry>().AsSelf();
 
             //Windows
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
@@ -90,6 +89,16 @@ namespace CryptoBook.Injections
             builder.RegisterType<MyMessageBox>().InstancePerDependency();
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
             builder.RegisterType<NewFileDialog>().SingleInstance();
+
+            //FileTemplate
+            builder.RegisterType<TextFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<MarkdownFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<JsonFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<RichTextFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<SourceCodeTemplate>().As<IFileTemplate>().SingleInstance();
+
+            // реестр собирает их автоматически
+            builder.RegisterType<FileTemplateRegistry>().As<IFileTemplateRegistry>().SingleInstance();
 
 
             //Services
