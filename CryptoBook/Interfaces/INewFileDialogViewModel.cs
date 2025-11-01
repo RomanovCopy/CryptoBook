@@ -17,13 +17,19 @@ namespace CryptoBook.Interfaces
 
         public IFileTemplate? SelectedTemplate { get; set; }
 
+        public string TargetDirectory { get; set; }
+
         public string FileName { get; set; }
+
+        public string ErrorMessage { get;}
+        public bool CanWrite { get; }
 
         public IfExistsMode IfExists { get; set; }
 
-
-        ICommand InitSuggested { get; }
-        ICommand Create { get; }
-        ICommand Cancel { get; }
+        public ICommand Browse { get; }
+        public ICommand CreateDirectory { get; }
+        public ICommand InitSuggested { get; }
+        public ICommand Create { get; }
+        public ICommand Cancel { get; }
     }
 }

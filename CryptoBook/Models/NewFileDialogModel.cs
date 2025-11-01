@@ -4,6 +4,7 @@ using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace CryptoBook.Models
     {
         private readonly IFileTemplateRegistry _registry;
         private readonly IFileCreationService _creator;
+        private readonly IFileManagerService _fileManager;
+        private readonly IFolderPickerService _folderPicker;
 
         private CancellationTokenSource? _cts;
 
@@ -27,17 +30,35 @@ namespace CryptoBook.Models
         IFileTemplate? template;
 
         public string FileName { get => fileName ?? string.Empty; set => SetProperty(ref fileName, value ?? string.Empty); }
-        string fileName;
+        string? fileName;
 
         public IfExistsMode IfExists { get => ifExist = IfExistsMode.AutoRename; set => SetProperty(ref ifExist, value); } 
         IfExistsMode ifExist;
 
+        public bool CreateDirectoryIfMissing { get=>createDirectoryIfMissing=true; set=>SetProperty(ref createDirectoryIfMissing, value); }
+        bool createDirectoryIfMissing;
 
-        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator)
+        public string TargetDirectory { get => targetDirectory??string.Empty; set => SetProperty(ref targetDirectory, value); }
+        string? targetDirectory;
+
+        public string? ErrorMessage { get => errorMessage; private set => SetProperty(ref errorMessage, value); }
+        string? errorMessage;
+
+        public bool CanWrite { get=>canWrite; private set=>SetProperty(ref canWrite, value); }
+        bool canWrite;
+
+        public bool IsBusy { get=>isBusy; private set=>SetProperty(ref isBusy, value); }
+        bool isBusy;
+
+
+        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker)
         {
+            WindowId = Guid.NewGuid();
             _registry = registry;
             _creator = creator;
-            WindowId = Guid.NewGuid();
+            _fileManager = fileManager;
+            _folderPicker = folderPicker;
+            _fileManager = fileManager;
             Templates = _registry.GetAll();
             SelectedTemplate = Templates.FirstOrDefault();
         }
@@ -58,6 +79,23 @@ namespace CryptoBook.Models
             }
         }
 
+        public bool CanExecute_Browse(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        public void Execute_Browse(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanExecute_CreateDirectory(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        public void Execute_CreateDirectory(object? obj)
+        {
+            throw new NotImplementedException();
+        }
 
         public bool CanExecute_Create(object? obj)
         {
@@ -142,6 +180,96 @@ namespace CryptoBook.Models
 
             return await _creator.CreateAsync(targetDirectory, FileName, SelectedTemplate, IfExists, ct);
         }
+
+
+        private async Task CreateAsync(CancellationToken ct)
+        {
+            try
+            {
+                IsBusy = true;
+                ErrorMessage = null;
+
+                var normalizedDir = Normalize(TargetDirectory);
+                bool exists = await DirectoryExistsAsync(normalizedDir, ct);
+
+                if(!exists)
+                {
+                    if(!CreateDirectoryIfMissing)
+                    {
+                        ErrorMessage = "Directory does not exist.";
+                        return;
+                    }
+
+                    // создадим папку через фасад провайдера
+                    var createDir = await _fileManager.CreateDirectoryAsync(normalizedDir, ".__tmp__", ct); // хитрый хак? нет :)
+                                                                                                   // лучше корректно:
+                    var dirResult = await EnsureDirectoryAsync(normalizedDir, ct);
+                    if(!dirResult.Success)
+                    {
+                        ErrorMessage = dirResult.ErrorMessage;
+                        return;
+                    }
+                    // после EnsureDirectoryAsync директория существует
+                }
+
+                if(SelectedTemplate is null)
+                {
+                    ErrorMessage = "No file type selected.";
+                    return;
+                }
+
+                var result = await _creator.CreateAsync(
+                    normalizedDir,
+                    FileName,
+                    SelectedTemplate,
+                    IfExists,
+                    ct);
+
+                if(!result.Success)
+                    ErrorMessage = result.ErrorMessage;
+
+                if(CloseRequested != null)
+                    await CloseRequested(result);
+            } catch(OperationCanceledException)
+            {
+                ErrorMessage = "The operation was canceled.";
+            } catch(Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            } finally
+            {
+                IsBusy = false;
+                (CreateCommand as AsyncRelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+
+        private string Normalize(string path) => _fileManager.NormalizePath(path);
+
+        private async Task<bool> DirectoryExistsAsync(string normalizedPath, CancellationToken ct)
+        {
+            // мягкая проверка: попытаться прочитать содержимое
+            try
+            {
+                _ = await _fileManager.BrowseAsync(normalizedPath, ct);
+                return true;
+            } catch(DirectoryNotFoundException) { return false; } catch(IOException io) when(io.Message.Contains("Not found", StringComparison.OrdinalIgnoreCase)) { return false; } catch { return false; }
+        }
+
+
+        private async Task<FileOperationResult> EnsureDirectoryAsync(string normalizedPath, CancellationToken ct)
+        {
+            // создадим «как есть» (для local это просто CreateDirectory); для zip/ssh будет своя логика в провайдере
+            try
+            {
+                return await _fileManager.CreateDirectoryAsync(normalizedPath, string.Empty, ct);
+            } catch(Exception ex)
+            {
+                return FileOperationResult.Fail(ex.Message);
+            }
+        }
+
+
 
     }
 }

@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class NewFileDialogViewModel: ViewModelBase,INewFileDialogViewModel
+    public class NewFileDialogViewModel: ViewModelBase, INewFileDialogViewModel
     {
         private readonly INewFileDialogModel newFileDialogModel;
 
@@ -25,6 +25,10 @@ namespace CryptoBook.ViewModels
 
         public IfExistsMode IfExists { get => newFileDialogModel.IfExists; set => newFileDialogModel.IfExists = value; }
 
+        public string TargetDirectory { get => newFileDialogModel.TargetDirectory; set => newFileDialogModel.TargetDirectory=value; }
+        public string ErrorMessage { get => newFileDialogModel.ErrorMessage; }
+        public bool CanWrite { get => newFileDialogModel.CanWrite; }
+
 
         public NewFileDialogViewModel(INewFileDialogModel newFileDialogModel)
         {
@@ -35,6 +39,12 @@ namespace CryptoBook.ViewModels
 
         public ICommand InitSuggested => initSuggested ??= new RelayCommand(newFileDialogModel.Execute_InitSuggested, newFileDialogModel.CanExceute_InitSuggested);
         RelayCommand? initSuggested;
+
+        public ICommand Browse => browse ??= new RelayCommand(newFileDialogModel.Execute_Browse, newFileDialogModel.CanExecute_Browse);
+        RelayCommand? browse;
+
+        public ICommand CreateDirectory => createDirectory ??= new RelayCommand(newFileDialogModel.Execute_CreateDirectory, newFileDialogModel.CanExecute_CreateDirectory);
+        RelayCommand? createDirectory;
 
         public ICommand Create => create ??= new RelayCommand(newFileDialogModel.Execute_Create, newFileDialogModel.CanExecute_Create);
         RelayCommand? create;
