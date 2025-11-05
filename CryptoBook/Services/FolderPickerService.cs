@@ -30,7 +30,7 @@ namespace CryptoBook.Services
             {
                 SelectedPath = native,
                 ShowNewFolderButton = true,
-                Description = "Выберите папку для нового файла"
+                Description = "Select a folder for the new file"
             };
 
             var result = dlg.ShowDialog();
