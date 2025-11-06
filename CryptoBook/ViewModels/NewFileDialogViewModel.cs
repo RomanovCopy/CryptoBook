@@ -11,9 +11,10 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class NewFileDialogViewModel: ViewModelBase, INewFileDialogViewModel
+    public class NewFileDialogViewModel: ViewModelBase, INewFileDialogViewModel,ICommandRegistry
     {
         private readonly INewFileDialogModel newFileDialogModel;
+        private readonly ICommandService commandService;
 
         public Guid WindowId { get => newFileDialogModel.WindowId; }
 
@@ -26,13 +27,14 @@ namespace CryptoBook.ViewModels
         public IfExistsMode IfExists { get => newFileDialogModel.IfExists; set => newFileDialogModel.IfExists = value; }
 
         public string TargetDirectory { get => newFileDialogModel.TargetDirectory; set => newFileDialogModel.TargetDirectory=value; }
-        public string ErrorMessage { get => newFileDialogModel.ErrorMessage; }
+        public string ErrorMessage { get => newFileDialogModel.ErrorMessage ?? string.Empty; }
         public bool CanWrite { get => newFileDialogModel.CanWrite; }
 
 
-        public NewFileDialogViewModel(INewFileDialogModel newFileDialogModel)
+        public NewFileDialogViewModel(INewFileDialogModel newFileDialogModel, ICommandService commandService)
         {
             this.newFileDialogModel = newFileDialogModel;
+            this.commandService = commandService;
             this.newFileDialogModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName??string.Empty);
         }
 
@@ -66,5 +68,9 @@ namespace CryptoBook.ViewModels
         public ICommand Closed => closed??=new RelayCommand(newFileDialogModel.Execute_Closed, newFileDialogModel.CanExecute_Closed);
         RelayCommand? closed;
 
+        public void RegistryCommands()
+        {
+            commandService.Register(CommandKey.NewFileDialog_Create, Browse);
+        }
     }
 }

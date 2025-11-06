@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.FileTemplates
 {
+    /// <summary>
+    /// дефолтный реестр шаблонов файлов
+    /// </summary>
     public sealed class DefaultFileTemplateRegistry: IFileTemplateRegistry
     {
         private readonly IFileTemplate[] _items;

@@ -1,10 +1,12 @@
-﻿using System.Windows.Input;
+﻿using CryptoBook.Interfaces;
+
+using System.Windows.Input;
 
 
 namespace CryptoBook.Infrastructure
 {
     [Serializable]
-    public class RelayCommand: ICommand
+    public class RelayCommand: ICommand, IRaiseCanExecuteChanged
     {
         private readonly Action<object?> _execute;
         private readonly Func<object?, bool> _canExecute;

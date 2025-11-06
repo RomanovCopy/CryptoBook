@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Models
 {
-    public class NewFileDialogModel:ViewModelBase,INewFileDialogModel,IWindowWithId
+    public class NewFileDialogModel: ViewModelBase, INewFileDialogModel, IWindowWithId
     {
         private readonly IFileTemplateRegistry _registry;
         private readonly IFileCreationService _creator;
@@ -29,28 +29,36 @@ namespace CryptoBook.Models
         public IReadOnlyList<IFileTemplate> Templates { get => templates; private set => SetProperty(ref templates, value); }
         IReadOnlyList<IFileTemplate> templates;
 
-        public IFileTemplate? SelectedTemplate { get=>template; set=>SetProperty(ref template, value); }
+        public IFileTemplate? SelectedTemplate { get => template; set => SetProperty(ref template, value); }
         IFileTemplate? template;
 
         public string FileName { get => fileName ?? string.Empty; set => SetProperty(ref fileName, value ?? string.Empty); }
         string? fileName;
 
-        public IfExistsMode IfExists { get => ifExist = IfExistsMode.AutoRename; set => SetProperty(ref ifExist, value); } 
+        public IfExistsMode IfExists { get => ifExist = IfExistsMode.AutoRename; set => SetProperty(ref ifExist, value); }
         IfExistsMode ifExist;
 
-        public bool CreateDirectoryIfMissing { get=>createDirectoryIfMissing=true; set=>SetProperty(ref createDirectoryIfMissing, value); }
+        public bool CreateDirectoryIfMissing { get => createDirectoryIfMissing = true; set => SetProperty(ref createDirectoryIfMissing, value); }
         bool createDirectoryIfMissing;
 
-        public string TargetDirectory { get => targetDirectory??string.Empty; set => SetProperty(ref targetDirectory, value); }
+        public string TargetDirectory { get => targetDirectory ?? string.Empty; set => SetProperty(ref targetDirectory, value); }
         string? targetDirectory;
 
         public string? ErrorMessage { get => errorMessage; private set => SetProperty(ref errorMessage, value); }
         string? errorMessage;
 
-        public bool CanWrite { get=>canWrite; private set=>SetProperty(ref canWrite, value); }
+        public bool CanWrite { get => canWrite; private set => SetProperty(ref canWrite, value); }
         bool canWrite;
 
-        public bool IsBusy { get=>isBusy; private set=>SetProperty(ref isBusy, value); }
+        public bool IsBusy
+        {
+            get => isBusy;
+            private set
+            {
+                SetProperty(ref isBusy, value);
+                (_commandService.GetCommand(CommandKey.NewFileDialog_Create) as IRaiseCanExecuteChanged)?.RaiseCanExecuteChanged();
+            }
+        }
         bool isBusy;
 
 
@@ -110,7 +118,7 @@ namespace CryptoBook.Models
         }
         public void Execute_Create(object? obj)
         {
-            if(obj is string targetDirectory) 
+            if(obj is string targetDirectory)
             {
                 _cts?.Cancel();
                 _cts = new CancellationTokenSource();
@@ -226,8 +234,8 @@ namespace CryptoBook.Models
                     }
 
                     // создадим папку через фасад провайдера
-                    var createDir = await _fs.CreateDirectoryAsync(normalizedDir, ".__tmp__", ct); // хитрый хак? нет :)
-                                                                                                   // лучше корректно:
+                    var createDir = await _fileManager.CreateDirectoryAsync(normalizedDir, ".__tmp__", ct); // хитрый хак? нет :)
+                                                                                                            // лучше корректно:
                     var dirResult = await EnsureDirectoryAsync(normalizedDir, ct);
                     if(!dirResult.Success)
                     {
@@ -239,7 +247,7 @@ namespace CryptoBook.Models
 
                 if(SelectedTemplate is null)
                 {
-                    ErrorMessage = "Не выбран тип файла.";
+                    ErrorMessage = "No file type selected";
                     return;
                 }
 
@@ -257,14 +265,14 @@ namespace CryptoBook.Models
                     await CloseRequested(result);
             } catch(OperationCanceledException)
             {
-                ErrorMessage = "Операция отменена.";
+                ErrorMessage = "The operation was canceled";
             } catch(Exception ex)
             {
                 ErrorMessage = ex.Message;
             } finally
             {
                 IsBusy = false;
-                (CreateCommand as AsyncRelayCommand)?.RaiseCanExecuteChanged();
+                (_commandService.GetCommand(CommandKey.NewFileDialog_Create) as IRaiseCanExecuteChanged)?.RaiseCanExecuteChanged();
             }
         }
 
@@ -293,23 +301,15 @@ namespace CryptoBook.Models
                 var normalized = Normalize(TargetDirectory);
                 // если директории ещё нет — CanWrite=false, но можно создать при OK
                 bool exists = await DirectoryExistsAsync(normalized, ct);
-                CanWrite = exists && await _fs.CanWriteAsync(normalized, ct);
+                CanWrite = exists && await _fileManager.CanWriteAsync(normalized, ct);
             } catch(Exception ex)
             {
                 ErrorMessage = ex.Message;
             } finally
             {
                 IsBusy = false;
-                (CreateCommand as AsyncRelayCommand)?.RaiseCanExecuteChanged();
             }
         }
-
-
-
-
-
-
-
 
         private string Normalize(string path) => _fileManager.NormalizePath(path);
 
@@ -318,7 +318,7 @@ namespace CryptoBook.Models
             // мягкая проверка: попытаться прочитать содержимое
             try
             {
-                _ = await _fs.BrowseAsync(normalizedPath, ct);
+                _ = await _fileManager.BrowseAsync(normalizedPath, ct);
                 return true;
             } catch(DirectoryNotFoundException) { return false; } catch(IOException io) when(io.Message.Contains("not found", StringComparison.OrdinalIgnoreCase)) { return false; } catch { return false; }
         }
@@ -329,14 +329,11 @@ namespace CryptoBook.Models
             // создадим «как есть» (для local это просто CreateDirectory); для zip/ssh будет своя логика в провайдере
             try
             {
-                return await _fs.CreateDirectoryAsync(normalizedPath, string.Empty, ct);
+                return await _fileManager.CreateDirectoryAsync(normalizedPath, string.Empty, ct);
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
             }
         }
-
-
-
     }
 }
