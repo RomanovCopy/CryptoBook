@@ -13,23 +13,32 @@ namespace CryptoBook.Infrastructure
         private readonly ILifetimeScope _scope;
         private readonly HashSet<Window> _openWindows;
 
+        static Window? GetOwner()
+        {
+            var windows = System.Windows.Application.Current.Windows;
+            if(windows.Count > 0)
+            {
+                foreach(Window vin in windows)
+                {
+                    if(vin.IsActive)
+                        return vin;
+                }
+            }
+            return null;
+        }
+
         public WindowManager(ILifetimeScope scope)
         {
             _scope = scope;
             _openWindows = [];
         }
 
-        public T CreateWindow<T>(Guid? owner) where T : Window
+        public T CreateWindow<T>() where T : Window
         {
             if(!_scope.IsRegistered<T>())
                 throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
             var window = _scope.Resolve<T>();
-            if(owner != null)
-            {
-                //устанавливаем родительское окно для согласованного закрытия
-                var ownerWin=_openWindows.Where(x=>(x.DataContext as IWindowWithId)?.WindowId==owner).FirstOrDefault();
-                window.Owner=ownerWin;
-            }
+            window.Owner = GetOwner();
             RegisterWindow<T>(window);
             return window;
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFileCreationService
+    public interface IFileCreationService:IService
     {
         // Подсказывает уникальное имя с учетом расширения и уже существующих файлов.
         Task<string> SuggestUniqueNameAsync(

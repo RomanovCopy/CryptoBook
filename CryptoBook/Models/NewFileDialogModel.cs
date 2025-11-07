@@ -96,25 +96,23 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Browse(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_Browse(object? obj)
         {
-            throw new NotImplementedException();
         }
 
         public bool CanExecute_CreateDirectory(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_CreateDirectory(object? obj)
         {
-            throw new NotImplementedException();
         }
 
         public bool CanExecute_Create(object? obj)
         {
-            return SelectedTemplate is not null && !string.IsNullOrWhiteSpace(FileName);
+            return CanCreate();
         }
         public void Execute_Create(object? obj)
         {
@@ -142,21 +140,19 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_Close(object? obj)
         {
-            throw new NotImplementedException();
         }
 
 
         public bool CanExecute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
         }
 
 
@@ -173,13 +169,17 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
         }
 
+
+
+
+
+        private string Normalize(string path) => _fileManager.NormalizePath(path);
 
         private async Task InitSuggestedAsync(string targetDirectory, CancellationToken ct)
         {
@@ -311,7 +311,6 @@ namespace CryptoBook.Models
             }
         }
 
-        private string Normalize(string path) => _fileManager.NormalizePath(path);
 
         private async Task<bool> DirectoryExistsAsync(string normalizedPath, CancellationToken ct)
         {

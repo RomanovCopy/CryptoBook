@@ -10,38 +10,73 @@
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         d:DataContext="{x:Type interfaces:INewFileDialogViewModel}"
-        Title="NewFileDialog" Height="450" Width="800">
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight" MinWidth="520" MinHeight="300"
+        Title="New File" >
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:INewFileDialogViewModel}"/>
     </Window.DataContext>
-    <Grid>
+    <Grid Margin="16"  >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <!-- Директория -->
+        <TextBlock Text="Папка:" VerticalAlignment="Center"/>
+        <DockPanel Grid.Column="1" Margin="8,0,0,8">
+            <TextBox Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
+            <Button Content="Обзор…" Margin="8,0,0,0" Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
 
-        <TextBlock Text="File type:"/>
-        <ComboBox Grid.Row="0" Margin="100,0,0,0"
-            ItemsSource="{Binding Templates,UpdateSourceTrigger=PropertyChanged}"
-            DisplayMemberPath="DisplayName"
-            SelectedItem="{Binding SelectedTemplate,UpdateSourceTrigger=PropertyChanged}"/>
+        <!-- Создать при отсутствии -->
+        <CheckBox Grid.Row="1" Grid.Column="1" Margin="8,0,0,8"
+              Content="Создать папку, если её нет"
+              IsChecked="{Binding CreateDirectoryIfMissing}" />
 
-        <TextBlock Grid.Row="1" Text="File name:"/>
-        <TextBox Grid.Row="1" Margin="100,0,0,0"
-           Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-
-        <!-- Пример подсказки расширения -->
-        <TextBlock x:Name="filename" Grid.Row="2" Margin="0,8,0,0" Opacity="0.7">
-      <Run Text="Расширение: "/>
-      <Run Text="{Binding  SelectedTemplate.DefaultExtension, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+        <!-- Статус прав -->
+        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,8" Opacity="0.8">
+      <Run Text="Права на запись: "/>
+      <Run Text="{Binding CanWrite, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
         </TextBlock>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-            <Button Content="OK" Command="{Binding Create,UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=filename, Path=Text}"/>
-            <Button Content="Cancel" Margin="8,0,0,0" Command="{Binding Cancel, UpdateSourceTrigger=PropertyChanged}"/>
+        <!-- Тип файла -->
+        <TextBlock Grid.Row="3" Text="Тип файла:" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" Margin="8,0,0,8"
+              ItemsSource="{Binding Templates, UpdateSourceTrigger=PropertyChanged}"
+              DisplayMemberPath="DisplayName"
+              SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Имя файла -->
+        <TextBlock Grid.Row="4" Text="Имя файла:" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="4" Grid.Column="1" Margin="8,0,0,8">
+            <TextBox Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
+            <TextBlock Opacity="0.7">
+        <Run Text="Расширение: "/>
+        <Run Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}"/>
+            </TextBlock>
         </StackPanel>
+
+        <!-- Ошибка -->
+        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Foreground="Tomato" TextWrapping="Wrap"
+               Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="ОК" IsDefault="True" Margin="0,0,8,0"
+              Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Отмена" IsCancel="True"/>
+        </StackPanel>
+
+
     </Grid>
 
 </Window>

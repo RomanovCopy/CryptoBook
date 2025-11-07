@@ -23,6 +23,7 @@ namespace CryptoBook.Interfaces
 
         public string ErrorMessage { get;}
         public bool CanWrite { get; }
+        public bool CreateDirectoryIfMissing { get; set; }  
 
         public IfExistsMode IfExists { get; set; }
 

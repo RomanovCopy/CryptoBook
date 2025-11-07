@@ -9,6 +9,8 @@
     <UseWindowsForms>True</UseWindowsForms>
     <StartupObject>CryptoBook.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
   </PropertyGroup>
 
   <ItemGroup>

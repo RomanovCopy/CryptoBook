@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFolderPickerService
+    public interface IFolderPickerService:IService
     {
         // Вернёт нормализованный путь (например "local://C:/..") или null, если отменили.
         Task<string?> PickFolderAsync(string? initialDirectory, CancellationToken ct);

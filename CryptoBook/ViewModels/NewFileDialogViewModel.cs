@@ -29,6 +29,7 @@ namespace CryptoBook.ViewModels
         public string TargetDirectory { get => newFileDialogModel.TargetDirectory; set => newFileDialogModel.TargetDirectory=value; }
         public string ErrorMessage { get => newFileDialogModel.ErrorMessage ?? string.Empty; }
         public bool CanWrite { get => newFileDialogModel.CanWrite; }
+        public bool CreateDirectoryIfMissing { get => newFileDialogModel.CreateDirectoryIfMissing; set => newFileDialogModel.CreateDirectoryIfMissing = value; }
 
 
         public NewFileDialogViewModel(INewFileDialogModel newFileDialogModel, ICommandService commandService)
