@@ -19,13 +19,13 @@ namespace CryptoBook.Interfaces
 
 
         public double FontSize { get; set; }
-        public System.Windows.FontStyle FontStyle { get; set; }
-        public Media.FontFamily FontFamily { get; set; }    
-        public Drawing.Color FontColor { get; set; }
-        public Drawing.Color FontBackground { get; set; }
-        public TextDecorationItem TextDecoration { get; set; }
-        public FontWeight FontWeight { get; set; }
-        public FontStretch FontStretch { get; set; }
+        public System.Windows.FontStyle? FontStyle { get; set; }
+        public Media.FontFamily? FontFamily { get; set; }    
+        public Drawing.Color? FontColor { get; set; }
+        public Drawing.Color? FontBackground { get; set; }
+        public TextDecorationItem? TextDecoration { get; set; }
+        public FontWeight? FontWeight { get; set; }
+        public FontStretch? FontStretch { get; set; }
         /// <summary>
         /// Коллекция доступных размеров шрифта
         /// </summary>

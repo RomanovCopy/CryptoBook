@@ -97,7 +97,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Close(object? obj)
         {
-            windowManager.CloseWindow<MainWindow>(WindowId);
+            windowManager.CloseWindow(WindowId);
         }
 
 

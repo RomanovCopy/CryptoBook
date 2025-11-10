@@ -13,7 +13,7 @@ namespace CryptoBook.Converters
         /// </summary>
         double sum = 0;
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var window = (Window)System.Windows.Application.Current.MainWindow;
             try

@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Models
 {
-    public class MenuFileModel: ViewModelBase,IMenuFileModel
+    public class MenuFileModel: ViewModelBase, IMenuFileModel
     {
         private readonly IWindowManager windowManager;
         private readonly ICommandService commandService;
@@ -18,7 +18,7 @@ namespace CryptoBook.Models
         public MenuFileModel(IWindowManager windowManager, ICommandService commandService)
         {
             this.windowManager = windowManager;
-            this.commandService = commandService; 
+            this.commandService = commandService;
         }
 
         public bool CanExecute_NewFile(object? obj)
@@ -27,10 +27,8 @@ namespace CryptoBook.Models
         }
         public void Execute_NewFile(object? obj)
         {
-            if((windowManager.CreateWindow<NewFileDialog>()).DataContext is IWindowWithId cid)
-            {
-                windowManager.ShowWindow<NewFileDialog>(cid.WindowId);
-            }
+            var id = windowManager.CreateWindow<NewFileDialog>();
+            windowManager.ShowWindow(id);
         }
 
         public bool CanExecute_OpenFile(object? obj)

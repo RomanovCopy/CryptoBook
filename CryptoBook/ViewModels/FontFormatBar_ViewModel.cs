@@ -20,19 +20,19 @@ namespace CryptoBook.ViewModels
         // IFontFormatBar_ViewModel implementation
 
         public double FontSize { get=>model.FontSize; set=>model.FontSize=value; }
-        public System.Windows.FontStyle FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
-        public Media.FontFamily FontFamily { get => model.FontFamily; set => model.FontFamily=value; }
-        public Color FontColor { get => model.FontColor; set => model.FontColor=value; }
-        public Drawing.Color FontBackground { get => model.FontBackground; set => model.FontBackground=value; }
-        public TextDecorationItem TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
-        public FontWeight FontWeight { get => model.FontWeight; set => model.FontWeight=value; }
-        public FontStretch FontStretch { get => model.FontStretch; set => model.FontStretch=value; }
+        public System.Windows.FontStyle? FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
+        public Media.FontFamily? FontFamily { get => model.FontFamily; set => model.FontFamily=value; }
+        public Drawing.Color? FontColor { get => model.FontColor; set => model.FontColor=value; }
+        public Drawing.Color? FontBackground { get => model.FontBackground; set => model.FontBackground=value; }
+        public TextDecorationItem? TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
+        public FontWeight? FontWeight { get => model.FontWeight; set => model.FontWeight=value; }
+        public FontStretch? FontStretch { get => model.FontStretch; set => model.FontStretch=value; }
 
 
         public ObservableCollection<double> FontSizes => model.FontSizes;
         public ObservableCollection<System.Windows.FontStyle> FontStyles => model.FontStyles;
         public ObservableCollection<Media.FontFamily> FontFamilyes => model.FontFamilyes;
-        public ObservableCollection<Color> FontColors => model.FontColors;
+        public ObservableCollection<Drawing.Color> FontColors => model.FontColors;
         public ObservableCollection<TextDecorationItem> TextDecorations  => model.TextDecorations;
         public ObservableCollection<FontWeight> FontWeights => model.FontWeights;
         public ObservableCollection<FontStretch> FontStretches => model.FontStretches;
@@ -53,46 +53,46 @@ namespace CryptoBook.ViewModels
         // IFontFormatBar_ViewModel implementation
 
         public ICommand SetFontStyleCommand => setFontStyleCommand??=new RelayCommand(model.Execute_SetFontStyleCommand, model.CanExecute_SetFontStyleCommand);
-        RelayCommand setFontStyleCommand;
+        RelayCommand? setFontStyleCommand;
 
         public ICommand SetFontWeightCommand => 
             setFontWeightCommand ??= new RelayCommand(model.Execute_SetFontWeightCommand, model.CanExecute_SetFontWeightCommand);
-        RelayCommand setFontWeightCommand;
+        RelayCommand? setFontWeightCommand;
         public ICommand SetFontStretchCommand => 
             setFontStretchCommand ??= new RelayCommand(model.Execute_SetFontStretchCommand, model.CanExecute_SetFontStretchCommand);
-        RelayCommand setFontStretchCommand;
+        RelayCommand? setFontStretchCommand;
 
         public ICommand SetFontFamilyCommand =>
             setFontFamilyCommand ??= new RelayCommand(model.Execute_SetFontFamilyCommand, model.CanExecute_SetFontFamilyCommand);
-        RelayCommand setFontFamilyCommand;
+        RelayCommand? setFontFamilyCommand;
 
         public ICommand SetTextDecorationCommand => 
             setTextDecorationCommand ??= new RelayCommand(model.Execute_SetTextDecorationCommand, model.CanExecute_SetTextDecorationCommand);
-        RelayCommand setTextDecorationCommand;
+        RelayCommand? setTextDecorationCommand;
 
         public ICommand SetFontColorCommand => 
             setFontColorCommand ??= new RelayCommand(model.Execute_SetFontColorCommand, model.CanExecute_SetFontColorCommand);
-        RelayCommand setFontColorCommand;
+        RelayCommand? setFontColorCommand;
 
         public ICommand SetFontBackgroundCommand => 
             setFontBackgroundCommand ??= new RelayCommand(model.Execute_SetFontBackgroundCommand, model.CanExecute_SetFontBackgroundCommand);
-        RelayCommand setFontBackgroundCommand;
+        RelayCommand? setFontBackgroundCommand;
 
         public ICommand SetFontSizeCommand => 
             setFontSizeCommand ??= new RelayCommand(model.Execute_SetFontSizeCommand, model.CanExecute_SetFontSizeCommand);
-        RelayCommand setFontSizeCommand;
+        RelayCommand? setFontSizeCommand;
 
         public ICommand ClearFormattingCommand => 
             clearFormattingCommand ??= new RelayCommand(model.Execute_ClearFormattingCommand, model.CanExecute_ClearFormattingCommand);
-        RelayCommand clearFormattingCommand;
+        RelayCommand? clearFormattingCommand;
 
         public ICommand Opened => 
             openCommand ??= new RelayCommand(model.Execute_Open, model.CanExecute_Open);
-        RelayCommand openCommand;
+        RelayCommand? openCommand;
 
         public ICommand PopupClosed =>
             popupClosed ??= new RelayCommand(model.Execute_PopupClosed, model.CanExecute_PopupClosed);
-        RelayCommand popupClosed;
+        RelayCommand? popupClosed;
 
 
         // IViewModel implementation
@@ -100,19 +100,19 @@ namespace CryptoBook.ViewModels
 
         public ICommand Loaded => 
             loadedCommand ??= new RelayCommand(model.Execute_Loaded, model.CanExecute_Loaded);
-        RelayCommand loadedCommand;
+        RelayCommand? loadedCommand;
 
         public ICommand Close => 
             closeCommand ??= new RelayCommand(model.Execute_Close, model.CanExecute_Close);
-        RelayCommand closeCommand;
+        RelayCommand? closeCommand;
 
         public ICommand Closing => 
             closingCommand ??= new RelayCommand(model.Execute_Closing, model.CanExecute_Closing);
-        RelayCommand closingCommand;
+        RelayCommand? closingCommand;
 
         public ICommand Closed => 
             closedCommand ??= new RelayCommand(model.Execute_Closed, model.CanExecute_Closed);
-        RelayCommand closedCommand;
+        RelayCommand? closedCommand;
 
     }
 }

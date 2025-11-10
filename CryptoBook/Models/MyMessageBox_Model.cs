@@ -59,7 +59,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ButtonLeftClick(object? obj)
         {
-            windowManager.CloseWindow<MyMessageBox>(WindowId);
+            windowManager.CloseWindow(WindowId);
         }
 
         internal bool CanExecute_ButtonRightClick(object? obj)
@@ -68,7 +68,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_ButtonRightClick(object? obj)
         {
-            windowManager.CloseWindow<MyMessageBox>(WindowId);
+            windowManager.CloseWindow(WindowId);
         }
 
 

@@ -30,11 +30,11 @@ namespace CryptoBook
                 {
                     // Разрешение и запуск главного окна
                     var winmanager = Container.Resolve<IWindowManager>();
-                    var win = winmanager.CreateWindow<MainWindow>();
-                    winmanager.ShowWindow<MainWindow>(((IWindowWithId)win.DataContext).WindowId);
+                    var id = winmanager.CreateWindow<MainWindow>();
+                    winmanager.ShowWindow(id);
                 }
 
-            } catch(Exception ex)
+            } catch
             {
                 Shutdown();
             }

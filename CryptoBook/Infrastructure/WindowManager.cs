@@ -33,46 +33,47 @@ namespace CryptoBook.Infrastructure
             _openWindows = [];
         }
 
-        public T CreateWindow<T>() where T : Window
+        public Guid CreateWindow<T>() where T : Window
         {
             if(!_scope.IsRegistered<T>())
                 throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
             var window = _scope.Resolve<T>();
             window.Owner = GetOwner();
             RegisterWindow<T>(window);
-            return window;
+            if(window.DataContext is not IWindowWithId)
+                throw new InvalidOperationException($"The DataContext of window type {typeof(T).Name} does not implement IWindowWithId.");
+            return ((IWindowWithId)window.DataContext).WindowId;
         }
 
 
-        public void ShowWindow<T>(Guid windowId) where T : Window
+        public void ShowWindow(Guid windowId)
         {
-            var window = FindWindow<T>(windowId);
-            window?.Show();
+            var window = FindWindow(windowId);
+            if(window is Window win)
+                win.Show();
         }
 
-        public void CloseWindow<T>(Guid windowId) where T : Window
+        public void CloseWindow(Guid windowId)
         {
-            if(IsWindowOpen<T>(windowId))
+            if(IsWindowOpen(windowId))
             {
-                var window = FindWindow<T>(windowId);
-                if(window != null)
+                var window = FindWindow(windowId);
+                if(window is Window win)
                 {
-                    window.Close();
-                    UnregisterWindow<T>(window);
+                    win.Close();
+                    UnregisterWindow(win);
                 }
             }
         }
 
-        public bool IsWindowOpen<T>(Guid windowId) where T : Window
+        public bool IsWindowOpen(Guid windowId)
         {
-            return FindWindow<T>(windowId) != null;
+            return FindWindow(windowId) != null;
         }
 
-        public T? FindWindow<T>(Guid windowId) where T : Window
+        public object? FindWindow(Guid windowId)
         {
-            return _openWindows
-                .OfType<T>()
-                .FirstOrDefault(w => w.DataContext is { } dc && dc is IWindowWithId id && id.WindowId == windowId);
+            return _openWindows.FirstOrDefault(w => w.DataContext is { } dc && dc is IWindowWithId id && id.WindowId == windowId);
         }
 
         public IEnumerable<T> FindWindow<T>() where T : Window

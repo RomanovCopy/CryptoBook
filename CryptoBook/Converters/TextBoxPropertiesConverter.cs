@@ -11,7 +11,7 @@ namespace CryptoBook.Converters
 {
     class TextBoxPropertiesConverter: IValueConverter
     {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        object? IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace CryptoBook.Converters
             }
         }
 
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        object? IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
