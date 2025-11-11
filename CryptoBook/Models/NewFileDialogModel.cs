@@ -18,6 +18,7 @@ namespace CryptoBook.Models
         private readonly IFileManagerService _fileManager;
         private readonly IFolderPickerService _folderPicker;
         private readonly ICommandService _commandService;
+        private readonly IWindowManager _windowManager;
 
         private CancellationTokenSource? _cts;
 
@@ -65,7 +66,7 @@ namespace CryptoBook.Models
         bool isBusy;
 
 
-        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService)
+        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService, IWindowManager windowManager )
         {
             WindowId = Guid.NewGuid();
             _registry = registry;
@@ -74,6 +75,7 @@ namespace CryptoBook.Models
             _folderPicker = folderPicker;
             _fileManager = fileManager;
             _commandService = commandService;
+            _windowManager = windowManager;
             Templates = _registry.GetAll();
             SelectedTemplate = Templates.FirstOrDefault();
         }

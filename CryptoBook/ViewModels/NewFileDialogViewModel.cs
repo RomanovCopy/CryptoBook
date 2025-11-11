@@ -11,12 +11,15 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class NewFileDialogViewModel: ViewModelBase, INewFileDialogViewModel,ICommandRegistry
+    public class NewFileDialogViewModel: ViewModelBase, INewFileDialogViewModel,ICommandRegistry,ICloseable
     {
         private readonly INewFileDialogModel newFileDialogModel;
         private readonly ICommandService commandService;
 
+        public event EventHandler RequestClose;
+
         public Guid WindowId { get => newFileDialogModel.WindowId; }
+
 
         public IReadOnlyList<IFileTemplate> Templates { get => newFileDialogModel.Templates;}
 

@@ -60,7 +60,7 @@ namespace CryptoBook.Infrastructure
                 var window = FindWindow(windowId);
                 if(window is Window win)
                 {
-                    win.Close();
+                    WinClose(win);
                     UnregisterWindow(win);
                 }
             }
@@ -89,8 +89,8 @@ namespace CryptoBook.Infrastructure
             {
                 vm.RequestClose += (s, e) => WinClose<T>(window);
             }
-            _openWindows.Add(window);
             window.Closed += (s, e) => UnregisterWindow<T>(window);
+            _openWindows.Add(window);
         }
 
         private void UnregisterWindow<T>(T window) where T : Window
