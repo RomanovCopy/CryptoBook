@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,38 +23,29 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        public async Task<DirectoryContent> GetDirectoryContentAsync(string path, CancellationToken cancellationToken)
+        public async Task<DirectoryContent> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden=false)
         {
-            // В локальной ФС это синхронно и очень быстро,
-            // но мы оборачиваем в Task.Run чтобы не блокировать UI-поток,
-            // и чтобы это было консистентно с другими провайдерами (ssh и т.д.).
             return await Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var dirInfo = new DirectoryInfo(path);
                 if(!dirInfo.Exists)
-                    throw new DirectoryNotFoundException($"Directory not found: {path}");
+                    throw new DirectoryNotFoundException(path);
 
-                // Сначала каталоги
                 var directories = dirInfo.EnumerateDirectories()
+                    .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
                     .Select(d => ToFileItem(d))
                     .ToList();
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                // Потом файлы
                 var files = dirInfo.EnumerateFiles()
+                    .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
                     .Select(f => ToFileItem(f))
                     .ToList();
 
-                var all = directories.Concat(files).ToList();
-
-                return new DirectoryContent
-                {
-                    DirectoryPath = path,
-                    Items = all
-                };
+                return new DirectoryContent { DirectoryPath = path, Items = directories.Concat(files).ToList() };
             }, cancellationToken);
         }
 
@@ -396,6 +388,73 @@ namespace CryptoBook.Services
             }
         }
 
+        public async Task<bool> IsHiddenAsync(string path, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return await Task.Run(() =>
+            {
+                if(Directory.Exists(path) || File.Exists(path))
+                {
+                    var fsi = GetFileSystemInfo(path);
+                    return IsFileSystemInfoHidden(fsi);
+                }
+                throw new FileNotFoundException(path);
+            }, cancellationToken);
+        }
+
+        public async Task<FileOperationResult> SetHiddenAsync(string path, bool hidden, CancellationToken cancellationToken)
+        {
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    var fsi = Directory.Exists(path) ? (FileSystemInfo)new DirectoryInfo(path) : new FileInfo(path) as FileSystemInfo;
+                    if(fsi == null)
+                        return FileOperationResult.Fail("Path not found.");
+
+                    await Task.Run(() =>
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        var attrs = fsi.Attributes;
+                        if(hidden)
+                            fsi.Attributes = attrs | FileAttributes.Hidden;
+                        else
+                            fsi.Attributes = attrs & ~FileAttributes.Hidden;
+                    }, cancellationToken);
+
+                    return FileOperationResult.Ok();
+                } else
+                {
+                    // Unix-like: скрытость по имени. Переименование.
+                    if(!File.Exists(path) && !Directory.Exists(path))
+                        return FileOperationResult.Fail("Path not found.");
+
+                    string dir = Path.GetDirectoryName(path) ?? "";
+                    string name = Path.GetFileName(path);
+
+                    bool currentlyHidden = name.StartsWith('.');
+                    if(hidden == currentlyHidden)
+                        return FileOperationResult.Ok();
+
+                    string newName = hidden ? "." + name : name.TrimStart('.');
+                    string newPath = Path.Combine(dir, newName);
+
+                    // аккуратно: проверяем, не существует ли уже newPath
+                    if(File.Exists(newPath) || Directory.Exists(newPath))
+                        return FileOperationResult.Fail("Target name already exists.");
+
+                    await Task.Run(() => {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        Directory.Move(path, newPath); // Directory.Move работает для файлов и каталогов
+                    }, cancellationToken);
+
+                    return FileOperationResult.Ok();
+                }
+            } catch(OperationCanceledException) { return FileOperationResult.Fail("Operation canceled."); } catch(Exception ex) { return FileOperationResult.Fail(ex.Message); }
+        }
+
 
 
         // --------------------------
@@ -519,6 +578,35 @@ namespace CryptoBook.Services
 
                 await CopyDirectoryRecursiveAsync(subDir, destSubDir, progress, cancellationToken);
             }
+        }
+
+        private static bool IsFileSystemInfoHidden(FileSystemInfo info)
+        {
+            // Windows: атрибут Hidden
+            try
+            {
+                if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    return (info.Attributes & FileAttributes.Hidden) != 0;
+                } else
+                {
+                    // Unix: скрытый — имя начинается с '.'
+                    return info.Name.StartsWith('.');
+                }
+            } catch
+            {
+                // В случае проблем — не считать скрытым, чтобы не ломать UX
+                return false;
+            }
+        }
+
+        private static FileSystemInfo GetFileSystemInfo(string path)
+        {
+            if(File.Exists(path))
+                return new FileInfo(path);
+            if(Directory.Exists(path))
+                return new DirectoryInfo(path);
+            throw new FileNotFoundException($"Путь не найден: {path}");
         }
     }
 }

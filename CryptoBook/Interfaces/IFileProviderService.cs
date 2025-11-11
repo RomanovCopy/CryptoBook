@@ -15,7 +15,7 @@ namespace CryptoBook.Interfaces
         string Scheme { get; }
 
         // Чтение содержимого директории
-        Task<DirectoryContent> GetDirectoryContentAsync( string path, CancellationToken cancellationToken);
+        Task<DirectoryContent> GetDirectoryContentAsync( string path, CancellationToken cancellationToken, bool includeHidden = false);
 
         // Создать поток для чтения файла
         Task<Stream> OpenReadAsync( string path, CancellationToken cancellationToken);
@@ -55,5 +55,8 @@ namespace CryptoBook.Interfaces
         Task<FileOperationResult> CreateDirectoryAsync(
             string directoryPath,
             CancellationToken cancellationToken);
+
+        Task<bool> IsHiddenAsync(string path, CancellationToken cancellationToken);
+        Task<FileOperationResult> SetHiddenAsync(string path, bool hidden, CancellationToken cancellationToken);
     }
 }

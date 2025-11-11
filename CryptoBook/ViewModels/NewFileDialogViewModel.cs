@@ -28,7 +28,8 @@ namespace CryptoBook.ViewModels
 
         public string TargetDirectory { get => newFileDialogModel.TargetDirectory; set => newFileDialogModel.TargetDirectory=value; }
         public string ErrorMessage { get => newFileDialogModel.ErrorMessage ?? string.Empty; }
-        public bool CanWrite { get => newFileDialogModel.CanWrite; }
+        public bool CanWrite { get => newFileDialogModel.CanWrite; set => newFileDialogModel.CanWrite = value; }
+        public bool ShowHiddenFiles { get => newFileDialogModel.ShowHiddenFiles; set => newFileDialogModel.ShowHiddenFiles = value; }
         public bool CreateDirectoryIfMissing { get => newFileDialogModel.CreateDirectoryIfMissing; set => newFileDialogModel.CreateDirectoryIfMissing = value; }
 
 
@@ -73,5 +74,6 @@ namespace CryptoBook.ViewModels
         {
             commandService.Register(CommandKey.NewFileDialog_Create, Browse);
         }
+
     }
 }

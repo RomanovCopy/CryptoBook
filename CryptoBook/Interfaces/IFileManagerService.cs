@@ -12,9 +12,7 @@ namespace CryptoBook.Interfaces
     public interface IFileManagerService:IService
     {
         // Унифицированное перечисление содержимого каталога
-        Task<DirectoryContent> BrowseAsync(
-            string path,
-            CancellationToken cancellationToken);
+        Task<DirectoryContent> BrowseAsync(string path,  CancellationToken ct, bool includeHidden=false);
 
         // Копирование (одного файла/папки) с прогрессом
         Task<FileOperationResult> CopyAsync(
@@ -49,6 +47,9 @@ namespace CryptoBook.Interfaces
         // Потоки для превью/редактирования
         Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken);
         Task<Stream> OpenWriteAsync(string path, bool overwrite, CancellationToken cancellationToken);
+
+        Task<bool> IsHiddenAsync(string path, CancellationToken cancellationToken);
+        Task<FileOperationResult> SetHiddenAsync(string path, bool hidden, CancellationToken cancellationToken);
 
         // Нормализация путей
         string NormalizePath(string rawPath);

@@ -36,26 +36,11 @@ namespace CryptoBook.Services
         }
 
 
-        public async Task<DirectoryContent> BrowseAsync(string path, CancellationToken cancellationToken)
+        public Task<DirectoryContent> BrowseAsync(string path, CancellationToken ct, bool includeHidden = false)
         {
-            var desc = ParsePath(path);
+            var desc = ParsePath(path); // как раньше
             var provider = ResolveProvider(desc.Scheme);
-
-            try
-            {
-                return await provider.GetDirectoryContentAsync(desc.NativePath, cancellationToken);
-            } catch(OperationCanceledException)
-            {
-                // Отмена — не считаем это ошибкой, просто прокинем дальше
-                throw;
-            } catch(Exception ex)
-            {
-                // Здесь решение такое:
-                // Либо кидаем дальше Exception (пусть VM сама покажет ошибку пользователю),
-                // либо возвращаем пустой DirectoryContent с объяснением.
-                // Я предпочитаю бросить исключение, чтобы VM могла показать диалог об ошибке.
-                throw new IOException($"Failed to browse '{path}': {ex.Message}", ex);
-            }
+            return provider.GetDirectoryContentAsync(desc.NativePath, ct, includeHidden );
         }
 
         public async Task<FileOperationResult> CopyAsync(string sourcePath, string destinationPath, IProgressReporter? progress, CancellationToken cancellationToken)
@@ -170,7 +155,17 @@ namespace CryptoBook.Services
             return $"{desc.Scheme}://{desc.NativePath}";
         }
 
+        public Task<bool> IsHiddenAsync(string path, CancellationToken ct)
+        {
+            var desc = ParsePath(path);
+            return ResolveProvider(desc.Scheme).IsHiddenAsync(desc.NativePath, ct);
+        }
 
+        public Task<FileOperationResult> SetHiddenAsync(string path, bool hidden, CancellationToken ct)
+        {
+            var desc = ParsePath(path);
+            return ResolveProvider(desc.Scheme).SetHiddenAsync(desc.NativePath, hidden, ct);
+        }
 
 
         // ------------------------

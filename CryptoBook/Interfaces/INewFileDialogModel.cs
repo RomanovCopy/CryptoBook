@@ -17,8 +17,9 @@ namespace CryptoBook.Interfaces
         string TargetDirectory { get; set; }
         string? ErrorMessage { get; }
         public bool CreateDirectoryIfMissing { get; set; }
-        public bool CanWrite { get; }
+        public bool CanWrite { get; set; }
         public bool IsBusy { get; }
+        bool ShowHiddenFiles { get; set; }
 
         public bool CanExceute_InitSuggested(object? obj);
         public void Execute_InitSuggested(object? obj);

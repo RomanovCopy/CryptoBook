@@ -47,8 +47,11 @@ namespace CryptoBook.Models
         public string? ErrorMessage { get => errorMessage; private set => SetProperty(ref errorMessage, value); }
         string? errorMessage;
 
-        public bool CanWrite { get => canWrite; private set => SetProperty(ref canWrite, value); }
+        public bool CanWrite { get => canWrite; set => SetProperty(ref canWrite, value); }
         bool canWrite;
+
+        public bool ShowHiddenFiles { get => showHiddenFiles; set => SetProperty(ref showHiddenFiles, value); }
+        bool showHiddenFiles;
 
         public bool IsBusy
         {
@@ -96,10 +99,14 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Browse(object? obj)
         {
-            return true;
+            return !IsBusy;
         }
         public void Execute_Browse(object? obj)
         {
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            var ct = _cts.Token;
+            _ = BrowseAsync(ct);
         }
 
         public bool CanExecute_CreateDirectory(object? obj)
@@ -317,7 +324,7 @@ namespace CryptoBook.Models
             // мягкая проверка: попытаться прочитать содержимое
             try
             {
-                _ = await _fileManager.BrowseAsync(normalizedPath, ct);
+                _ = await _fileManager.BrowseAsync(normalizedPath, ct, ShowHiddenFiles);
                 return true;
             } catch(DirectoryNotFoundException) { return false; } catch(IOException io) when(io.Message.Contains("not found", StringComparison.OrdinalIgnoreCase)) { return false; } catch { return false; }
         }
@@ -334,5 +341,6 @@ namespace CryptoBook.Models
                 return FileOperationResult.Fail(ex.Message);
             }
         }
+
     }
 }
