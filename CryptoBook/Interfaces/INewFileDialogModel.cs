@@ -18,6 +18,8 @@ namespace CryptoBook.Interfaces
         string? ErrorMessage { get; }
         public bool CreateDirectoryIfMissing { get; set; }
         public bool CanWrite { get; set; }
+        public bool IsReadOnly { get; set; }
+        public bool IsHidden { get; set; }
         public bool IsBusy { get; }
         bool ShowHiddenFiles { get; set; }
 

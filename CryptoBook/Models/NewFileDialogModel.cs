@@ -39,7 +39,7 @@ namespace CryptoBook.Models
         public IfExistsMode IfExists { get => ifExist = IfExistsMode.AutoRename; set => SetProperty(ref ifExist, value); }
         IfExistsMode ifExist;
 
-        public bool CreateDirectoryIfMissing { get => createDirectoryIfMissing = true; set => SetProperty(ref createDirectoryIfMissing, value); }
+        public bool CreateDirectoryIfMissing { get => createDirectoryIfMissing; set => SetProperty(ref createDirectoryIfMissing, value); }
         bool createDirectoryIfMissing;
 
         public string TargetDirectory { get => targetDirectory ?? string.Empty; set => SetProperty(ref targetDirectory, value); }
@@ -47,6 +47,12 @@ namespace CryptoBook.Models
 
         public string? ErrorMessage { get => errorMessage; private set => SetProperty(ref errorMessage, value); }
         string? errorMessage;
+
+        public bool IsReadOnly { get => isReadOnly; set => SetProperty(ref isReadOnly, value); }
+        bool isReadOnly;
+
+        public bool IsHidden { get => isHidden; set => SetProperty(ref isHidden, value); }
+        bool isHidden;
 
         public bool CanWrite { get => canWrite; set => SetProperty(ref canWrite, value); }
         bool canWrite;
@@ -64,7 +70,6 @@ namespace CryptoBook.Models
             }
         }
         bool isBusy;
-
 
         public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService, IWindowManager windowManager )
         {

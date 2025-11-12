@@ -29,6 +29,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <!-- Директория -->
         <TextBlock Text="Папка:" VerticalAlignment="Center"/>
@@ -40,24 +41,25 @@
         <!-- Создать при отсутствии -->
         <CheckBox Grid.Row="1" Grid.Column="1" Margin="8,0,0,8"
               Content="Создать папку, если её нет"
-              IsChecked="{Binding CreateDirectoryIfMissing}" />
+              IsChecked="{Binding CreateDirectoryIfMissing, UpdateSourceTrigger=PropertyChanged}" />
 
         <!-- Статус прав -->
-        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,8" Opacity="0.8">
-      <Run Text="Права на запись: "/>
-      <Run Text="{Binding CanWrite, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
-        </TextBlock>
+        <CheckBox Grid.Row="2" Content="Только для чтения" VerticalAlignment="Center"
+              IsChecked="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"/>
+        <!-- Статус прав -->
+        <CheckBox Grid.Row="3" Content="Скрытый" VerticalAlignment="Center"
+              IsChecked="{Binding IsHidden, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!-- Тип файла -->
-        <TextBlock Grid.Row="3" Text="Тип файла:" VerticalAlignment="Center"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" Margin="8,0,0,8"
+        <TextBlock Grid.Row="4" Text="Тип файла:" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="4" Grid.Column="1" Margin="8,0,0,8" VerticalAlignment="Center"
               ItemsSource="{Binding Templates, UpdateSourceTrigger=PropertyChanged}"
               DisplayMemberPath="DisplayName"
               SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!-- Имя файла -->
-        <TextBlock Grid.Row="4" Text="Имя файла:" VerticalAlignment="Center"/>
-        <StackPanel Grid.Row="4" Grid.Column="1" Margin="8,0,0,8">
+        <TextBlock Grid.Row="5" Text="Имя файла:" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="5" Grid.Column="1" Margin="8,0,0,8">
             <TextBox Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
             <TextBlock Opacity="0.7">
         <Run Text="Расширение: "/>
@@ -66,11 +68,11 @@
         </StackPanel>
 
         <!-- Ошибка -->
-        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Foreground="Tomato" TextWrapping="Wrap"
+        <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Foreground="Tomato" TextWrapping="Wrap"
                Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
 
         <!-- Кнопки -->
-        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <Button Content="ОК" IsDefault="True" Margin="0,0,8,0"
               Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Отмена" IsCancel="True"/>
