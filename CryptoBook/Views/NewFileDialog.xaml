@@ -59,20 +59,19 @@
 
         <!-- Имя файла -->
         <TextBlock Grid.Row="5" Text="Имя файла:" VerticalAlignment="Center"/>
-        <StackPanel Grid.Row="5" Grid.Column="1" Margin="8,0,0,8">
-            <TextBox Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
-            <TextBlock Opacity="0.7">
-        <Run Text="Расширение: "/>
-        <Run Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}"/>
-            </TextBlock>
-        </StackPanel>
+        <TextBox Grid.Row="5" Grid.Column="1" Margin="8,0,0,8" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
+        
+        <!--Расширение файла-->
+
+        <TextBlock Grid.Row="6" Text="Расширение файла:" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}" VerticalAlignment="Center"/>
 
         <!-- Ошибка -->
-        <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Foreground="Tomato" TextWrapping="Wrap"
+        <TextBlock Grid.Row="7" Grid.ColumnSpan="2" Foreground="Tomato" TextWrapping="Wrap"
                Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
 
         <!-- Кнопки -->
-        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <Button Content="ОК" IsDefault="True" Margin="0,0,8,0"
               Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Отмена" IsCancel="True"/>
