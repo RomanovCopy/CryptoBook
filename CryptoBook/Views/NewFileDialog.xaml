@@ -34,7 +34,7 @@
         <!-- Директория -->
         <TextBlock Text="Папка:" VerticalAlignment="Center"/>
         <DockPanel Grid.Column="1" Margin="8,0,0,8">
-            <TextBox Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
+            <TextBox x:Name="directory" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
             <Button Content="Обзор…" Margin="8,0,0,0" Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
 
@@ -73,7 +73,7 @@
         <!-- Кнопки -->
         <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <Button Content="ОК" IsDefault="True" Margin="0,0,8,0"
-              Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
+              Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=directory,Path=Text, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Отмена" IsCancel="True"/>
         </StackPanel>
 

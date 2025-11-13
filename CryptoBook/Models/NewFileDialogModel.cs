@@ -136,6 +136,7 @@ namespace CryptoBook.Models
                 _cts = new CancellationTokenSource();
                 var ct = _cts.Token;
                 _ = CreateAsync(targetDirectory, ct);
+                _windowManager.CloseWindow(WindowId);
             }
         }
 
@@ -146,6 +147,7 @@ namespace CryptoBook.Models
         public void Execute_Cancel(object? obj)
         {
             _cts?.Cancel();
+            _windowManager.CloseWindow(WindowId);
         }
 
 
