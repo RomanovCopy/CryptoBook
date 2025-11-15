@@ -395,7 +395,7 @@ namespace CryptoBook.Services
             {
                 if(Directory.Exists(path) || File.Exists(path))
                 {
-                    var fsi = GetFileSystemInfo(path);
+                    FileSystemInfo fsi = GetFileSystemInfo(path);
                     return IsFileSystemInfoHidden(fsi);
                 }
                 throw new FileNotFoundException(path);

@@ -180,6 +180,7 @@ namespace CryptoBook.Models
         public void Execute_Closing(object? obj)
         {
             _cts?.Dispose();
+            _cts = null;
         }
 
 
