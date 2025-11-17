@@ -43,10 +43,10 @@
               Content="Создать папку, если её нет"
               IsChecked="{Binding CreateDirectoryIfMissing, UpdateSourceTrigger=PropertyChanged}" />
 
-        <!-- Статус прав -->
+        <!-- Только для чтения -->
         <CheckBox Grid.Row="2" Content="Только для чтения" VerticalAlignment="Center"
               IsChecked="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"/>
-        <!-- Статус прав -->
+        <!-- Скрытый -->
         <CheckBox Grid.Row="3" Content="Скрытый" VerticalAlignment="Center"
               IsChecked="{Binding IsHidden, UpdateSourceTrigger=PropertyChanged}"/>
 

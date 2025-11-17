@@ -10,13 +10,27 @@ namespace CryptoBook.Interfaces
 {
     public interface IFileCreationService:IService
     {
-        // Подсказывает уникальное имя с учетом расширения и уже существующих файлов.
+        /// <summary>
+        /// Подсказывает уникальное имя с учетом расширения и уже существующих файлов
+        /// </summary>
+        /// <param name="targetDirectory">директория</param>
+        /// <param name="template">шаблон файла</param>
+        /// <param name="ct">токен отмены</param>
+        /// <returns></returns>
         Task<string> SuggestUniqueNameAsync(
             string targetDirectory,  // "local://C:/Temp"
             IFileTemplate template,
             CancellationToken ct);
 
-        // Создает файл по шаблону.
+        /// <summary>
+        /// Создает файл по шаблону
+        /// </summary>
+        /// <param name="targetDirectory">директория</param>
+        /// <param name="fileNameWithOrWithoutExt">имя файла с расширением или без</param>
+        /// <param name="template">шаблон файла</param>
+        /// <param name="ifExists"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         Task<FileOperationResult> CreateAsync(
             string targetDirectory,  // "local://C:/Temp"
             string fileNameWithOrWithoutExt, // "readme" или "readme.txt"
