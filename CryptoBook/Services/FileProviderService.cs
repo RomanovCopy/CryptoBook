@@ -388,6 +388,39 @@ namespace CryptoBook.Services
             }
         }
 
+        public async Task<bool> IsReadOnlyAsync(string path, CancellationToken cancellationToken)
+        {
+            return await Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if(File.Exists(path))
+                {
+                    var fileInfo = new FileInfo(path);
+                    return fileInfo.IsReadOnly;
+                }
+
+                if(Directory.Exists(path))
+                {
+                    var dirInfo = new DirectoryInfo(path);
+                    try
+                    {
+                        // Проверяем, можно ли создать временный файл
+                        string testFile = Path.Combine(dirInfo.FullName, Path.GetRandomFileName());
+                        using(File.Create(testFile, 1, FileOptions.DeleteOnClose))
+                        { }
+                        return false;
+                    } catch(UnauthorizedAccessException)
+                    {
+                        return true;
+                    }
+                }
+
+                throw new FileNotFoundException(path);
+            }, cancellationToken);
+        }
+
+
         public async Task<bool> IsHiddenAsync(string path, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -608,5 +641,6 @@ namespace CryptoBook.Services
                 return new DirectoryInfo(path);
             throw new FileNotFoundException($"Путь не найден: {path}");
         }
+
     }
 }

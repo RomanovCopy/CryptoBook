@@ -167,6 +167,17 @@ namespace CryptoBook.Services
             return ResolveProvider(desc.Scheme).SetHiddenAsync(desc.NativePath, hidden, ct);
         }
 
+        public Task<bool> IsReadOnlyAsync(string path, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FileOperationResult> SetReadOnlyAsync(string path, bool isReadOnly, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         // ------------------------
         // Внутренняя утилита
@@ -232,5 +243,6 @@ namespace CryptoBook.Services
                 return parent + child;
             return parent + "/" + child;
         }
+
     }
 }

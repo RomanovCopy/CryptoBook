@@ -12,7 +12,11 @@ namespace CryptoBook.Interfaces
         string DisplayName { get; }           // "Текстовый файл", "Markdown"
         string DefaultExtension { get; }      // ".txt", ".md"
         string SuggestedBaseName { get; }     // "New file"
-                                              // Возвращает начальный контент (можно пустой). Например, JSON "{}\n".
+                                              // Возвращает начальный контент (можно пустой). Например, JSON "{}\n"
+                                              
+        bool DefaultIsHidden => false;
+        bool DefaultIsReadOnly => false;
+
         Task<byte[]> GetInitialContentAsync(CancellationToken ct);
         // Опционально: кодировка подписи/комментария и т.п. Если null — оставим как есть.
         Encoding? DefaultEncoding => null;

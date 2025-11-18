@@ -50,6 +50,8 @@ namespace CryptoBook.Interfaces
 
         Task<bool> IsHiddenAsync(string path, CancellationToken cancellationToken);
         Task<FileOperationResult> SetHiddenAsync(string path, bool hidden, CancellationToken cancellationToken);
+        Task<bool> IsReadOnlyAsync(string path, CancellationToken cancellationToken);
+        public Task<FileOperationResult> SetReadOnlyAsync(string path, bool isReadOnly, CancellationToken ct);
 
         // Нормализация путей
         string NormalizePath(string rawPath);
