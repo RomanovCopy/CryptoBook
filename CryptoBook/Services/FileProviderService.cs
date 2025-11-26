@@ -1,6 +1,8 @@
 ﻿using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
+using Mono.Unix;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -486,6 +488,63 @@ namespace CryptoBook.Services
                     return FileOperationResult.Ok();
                 }
             } catch(OperationCanceledException) { return FileOperationResult.Fail("Operation canceled."); } catch(Exception ex) { return FileOperationResult.Fail(ex.Message); }
+        }
+
+        public async Task<FileOperationResult> SetReadOnlyAsync(string path, bool isReadOnly, CancellationToken cancellationToken)
+        {
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    var fsi = Directory.Exists(path) ? (FileSystemInfo)new DirectoryInfo(path) : new FileInfo(path) as FileSystemInfo;
+                    if(fsi == null)
+                        return FileOperationResult.Fail("Path not found.");
+
+                    await Task.Run(() =>
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        var attrs = fsi.Attributes;
+                        if(isReadOnly)
+                            fsi.Attributes = attrs | FileAttributes.ReadOnly;
+                        else
+                            fsi.Attributes = attrs & ~FileAttributes.ReadOnly;
+                    }, cancellationToken);
+
+                    return FileOperationResult.Ok();
+                } else
+                {
+                    // Linux / macOS: используем POSIX-права
+                    return await Task.Run(() =>
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        var unixFile = new UnixFileInfo(path);
+                        var perms = unixFile.FileAccessPermissions;
+
+                        if(isReadOnly)
+                        {
+                            // Убираем право записи владельцу
+                            perms &= ~FileAccessPermissions.UserWrite;
+                        } else
+                        {
+                            // Возвращаем UserWrite
+                            perms |= FileAccessPermissions.UserWrite;
+                        }
+
+                        unixFile.FileAccessPermissions = perms;
+                        return FileOperationResult.Ok();
+
+                    }, cancellationToken);
+                }
+            } catch(OperationCanceledException) 
+            { 
+                return FileOperationResult.Fail("Operation canceled."); 
+            } catch(Exception ex) 
+            { 
+                return FileOperationResult.Fail(ex.Message); 
+            }
         }
 
 
