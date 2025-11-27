@@ -169,12 +169,14 @@ namespace CryptoBook.Services
 
         public Task<bool> IsReadOnlyAsync(string path, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var desc = ParsePath(path);
+            return ResolveProvider(desc.Scheme).IsReadOnlyAsync(desc.NativePath, cancellationToken);
         }
 
         public Task<FileOperationResult> SetReadOnlyAsync(string path, bool isReadOnly, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var desc = ParsePath(path);
+            return ResolveProvider(desc.Scheme).SetReadOnlyAsync(desc.NativePath, isReadOnly, ct);
         }
 
 

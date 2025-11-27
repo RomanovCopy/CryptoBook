@@ -112,7 +112,11 @@ namespace CryptoBook.Services
                     cancellationToken: ct);
 
                 if(content.Length > 0)
-                    await stream.WriteAsync(content, 0, content.Length, ct);
+                {
+                    await stream.WriteAsync(content, ct);
+                }
+                await _fs.SetHiddenAsync(fullPath, isHidden, ct);
+                await _fs.SetReadOnlyAsync(fullPath, isReadOnly, ct);
 
                 return FileOperationResult.Ok();
             } catch(OperationCanceledException)
