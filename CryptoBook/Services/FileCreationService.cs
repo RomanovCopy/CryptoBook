@@ -69,6 +69,8 @@ namespace CryptoBook.Services
             string fileNameWithOrWithoutExt,
             IFileTemplate template,
             IfExistsMode ifExists,
+            bool isHidden,
+            bool isReadOnly,
             CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();

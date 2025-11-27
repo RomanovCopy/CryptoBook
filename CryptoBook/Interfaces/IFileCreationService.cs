@@ -28,7 +28,9 @@ namespace CryptoBook.Interfaces
         /// <param name="targetDirectory">директория</param>
         /// <param name="fileNameWithOrWithoutExt">имя файла с расширением или без</param>
         /// <param name="template">шаблон файла</param>
-        /// <param name="ifExists"></param>
+        /// <param name="ifExists">что делать если файл существует</param>
+        /// <param name="isHidden">скрытый</param>
+        /// <param name="isHidden">только для чтения</param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<FileOperationResult> CreateAsync(
@@ -36,6 +38,8 @@ namespace CryptoBook.Interfaces
             string fileNameWithOrWithoutExt, // "readme" или "readme.txt"
             IFileTemplate template,
             IfExistsMode ifExists,
+            bool isHidden,
+            bool isReadOnly,
             CancellationToken ct);
     }
 }

@@ -210,7 +210,7 @@ namespace CryptoBook.Models
             if(SelectedTemplate is null)
                 return FileOperationResult.Fail("Не выбран тип файла.");
 
-            return await _creator.CreateAsync(targetDirectory, FileName, SelectedTemplate, IfExists, ct);
+            return await _creator.CreateAsync(targetDirectory, FileName, SelectedTemplate, IfExists, IsHidden, IsReadOnly, ct);
         }
 
 
@@ -232,66 +232,6 @@ namespace CryptoBook.Models
         !string.IsNullOrWhiteSpace(FileName) &&
         (CanWrite || CreateDirectoryIfMissing);
 
-        private async Task CreateAsync(CancellationToken ct)
-        {
-            try
-            {
-                IsBusy = true;
-                ErrorMessage = null;
-
-                var normalizedDir = Normalize(TargetDirectory);
-                bool exists = await DirectoryExistsAsync(normalizedDir, ct);
-
-                if(!exists)
-                {
-                    if(!CreateDirectoryIfMissing)
-                    {
-                        ErrorMessage = "Каталог не существует.";
-                        return;
-                    }
-
-                    // создадим папку через фасад провайдера
-                    var createDir = await _fileManager.CreateDirectoryAsync(normalizedDir, ".__tmp__", ct); // хитрый хак? нет :)
-                                                                                                            // лучше корректно:
-                    var dirResult = await EnsureDirectoryAsync(normalizedDir, ct);
-                    if(!dirResult.Success)
-                    {
-                        ErrorMessage = dirResult.ErrorMessage;
-                        return;
-                    }
-                    // после EnsureDirectoryAsync директория существует
-                }
-
-                if(SelectedTemplate is null)
-                {
-                    ErrorMessage = "No file type selected";
-                    return;
-                }
-
-                var result = await _creator.CreateAsync(
-                    normalizedDir,
-                    FileName,
-                    SelectedTemplate,
-                    IfExists,
-                    ct);
-
-                if(!result.Success)
-                    ErrorMessage = result.ErrorMessage;
-
-                if(CloseRequested != null)
-                    await CloseRequested(result);
-            } catch(OperationCanceledException)
-            {
-                ErrorMessage = "The operation was canceled";
-            } catch(Exception ex)
-            {
-                ErrorMessage = ex.Message;
-            } finally
-            {
-                IsBusy = false;
-                (_commandService.GetCommand(CommandKey.NewFileDialog_Create) as IRaiseCanExecuteChanged)?.RaiseCanExecuteChanged();
-            }
-        }
 
         private async Task BrowseAsync(CancellationToken ct)
         {
