@@ -94,6 +94,10 @@ namespace CryptoBook.Interfaces
         /// Команда для создания файла с использованием текущих параметров.
         /// </summary>
         public ICommand Create { get; }
+        /// <summary>
+        /// команда определяющая действие при смене расширения файла(SelectedTemplate)
+        /// </summary>
+        public ICommand SelectedNewTemplate {  get; }   
 
         /// <summary>
         /// Команда для отмены диалогового окна и отмены изменений.

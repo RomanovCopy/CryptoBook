@@ -71,7 +71,7 @@ namespace CryptoBook.Models
         }
         bool isBusy;
 
-        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService, IWindowManager windowManager )
+        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService, IWindowManager windowManager)
         {
             WindowId = Guid.NewGuid();
             _registry = registry;
@@ -114,6 +114,17 @@ namespace CryptoBook.Models
             _cts = new CancellationTokenSource();
             var ct = _cts.Token;
             _ = BrowseAsync(ct);
+        }
+
+
+        public bool CanExecute_SelectedNewTemplate(object? obj)
+        {
+            return FileName.Length > 3 && SelectedTemplate is not null;
+        }
+
+        public void Execute_SelectedNewTemplate(object? obj)
+        {
+            FileName = FileName.Split('.')[0].Trim() + SelectedTemplate?.DefaultExtension;
         }
 
         public bool CanExecute_CreateDirectory(object? obj)

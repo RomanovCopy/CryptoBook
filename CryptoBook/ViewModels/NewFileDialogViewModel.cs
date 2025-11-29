@@ -49,6 +49,9 @@ namespace CryptoBook.ViewModels
         public ICommand InitSuggested => initSuggested ??= new RelayCommand(newFileDialogModel.Execute_InitSuggested, newFileDialogModel.CanExceute_InitSuggested);
         RelayCommand? initSuggested;
 
+        public ICommand SelectedNewTemplate=>selectedNewTemplate??=new RelayCommand(newFileDialogModel.Execute_SelectedNewTemplate, newFileDialogModel.CanExecute_SelectedNewTemplate);
+        RelayCommand selectedNewTemplate;
+
         public ICommand Browse => browse ??= new RelayCommand(newFileDialogModel.Execute_Browse, newFileDialogModel.CanExecute_Browse);
         RelayCommand? browse;
 

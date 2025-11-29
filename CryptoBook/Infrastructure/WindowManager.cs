@@ -106,7 +106,12 @@ namespace CryptoBook.Infrastructure
 
         private void WinClose<T>(T? window) where T : Window
         {
-            window?.Close();
+            if(window is not null)
+            {
+                window.Owner?.Focus();
+                window.Close();
+
+            }
         }
 
         public void Dispose()

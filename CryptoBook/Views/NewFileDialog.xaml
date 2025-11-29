@@ -8,7 +8,7 @@
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d"
+        mc:Ignorable="d" Background="{StaticResource CurrentWindowBackground}"
         d:DataContext="{x:Type interfaces:INewFileDialogViewModel}"
         WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight" MinWidth="520" MinHeight="300"
@@ -16,6 +16,10 @@
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:INewFileDialogViewModel}"/>
     </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        </Style>
+    </Window.Resources>
     <Grid Margin="16"  >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -35,7 +39,7 @@
         <TextBlock Text="Папка:" VerticalAlignment="Center"/>
         <DockPanel Grid.Column="1" Margin="8,0,0,8">
             <TextBox x:Name="directory" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
-            <Button Content="Обзор…" Margin="8,0,0,0" Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="Обзор…" Margin="8,0,0,0" Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
 
         <!-- Создать при отсутствии -->
@@ -54,8 +58,14 @@
         <TextBlock Grid.Row="4" Text="Тип файла:" VerticalAlignment="Center"/>
         <ComboBox Grid.Row="4" Grid.Column="1" Margin="8,0,0,8" VerticalAlignment="Center"
               ItemsSource="{Binding Templates, UpdateSourceTrigger=PropertyChanged}"
-              DisplayMemberPath="DisplayName"
-              SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}"/>
+              DisplayMemberPath="DisplayName" 
+              SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectedNewTemplate, UpdateSourceTrigger=PropertyChanged}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
 
         <!-- Имя файла -->
         <TextBlock Grid.Row="5" Text="Имя файла:" VerticalAlignment="Center"/>

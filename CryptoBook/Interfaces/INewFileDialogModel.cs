@@ -29,6 +29,9 @@ namespace CryptoBook.Interfaces
         bool CanExecute_Browse(object? obj);
         void Execute_Browse(object? obj);
 
+        bool CanExecute_SelectedNewTemplate(object? obj);
+        void Execute_SelectedNewTemplate(object? obj);
+
         void Execute_CreateDirectory(object? obj);
         bool CanExecute_CreateDirectory(object? obj);
 
