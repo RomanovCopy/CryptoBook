@@ -29,7 +29,7 @@ namespace CryptoBook.Services
             using var dlg = new FolderBrowserDialog
             {
                 SelectedPath = native,
-                ShowNewFolderButton = true,
+                ShowNewFolderButton = false,
                 Description = "Select a folder for the new file"
             };
 

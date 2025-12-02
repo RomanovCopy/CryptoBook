@@ -141,14 +141,11 @@ namespace CryptoBook.Models
         }
         public void Execute_Create(object? obj)
         {
-            if(obj is string targetDirectory)
-            {
                 _cts?.Cancel();
                 _cts = new CancellationTokenSource();
                 var ct = _cts.Token;
-                _ = CreateAsync(targetDirectory, ct);
+                _ = CreateAsync(TargetDirectory, ct);
                 _windowManager.CloseWindow(WindowId);
-            }
         }
 
         public bool CanExecute_Cancel(object? obj)

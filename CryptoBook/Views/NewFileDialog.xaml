@@ -36,16 +36,18 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <!-- Директория -->
-        <TextBlock Text="Папка:" VerticalAlignment="Center"/>
-        <DockPanel Grid.Column="1" Margin="8,0,0,8">
-            <TextBox x:Name="directory" Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" />
-            <Button Content="Обзор…" Margin="8,0,0,0" Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}"/>
-        </DockPanel>
+        <Border Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="1" CornerRadius="5" BorderBrush="Black" Margin="5">
+            <Grid>
+                <TextBlock Text="Папка:" VerticalAlignment="Center" Grid.Column="0"/>
+                <TextBlock Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" VerticalAlignment="Center" Margin="8,0,0,0" HorizontalAlignment="Stretch" TextAlignment="Left"/>
+                <Button Content="Обзор…" Width="20" Margin="8,0,0,0" Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+            </Grid>
+        </Border>
 
         <!-- Создать при отсутствии -->
-        <CheckBox Grid.Row="1" Grid.Column="1" Margin="8,0,0,8"
+        <!--<CheckBox Grid.Row="1" Grid.Column="1" Margin="8,0,0,8"
               Content="Создать папку, если её нет"
-              IsChecked="{Binding CreateDirectoryIfMissing, UpdateSourceTrigger=PropertyChanged}" />
+              IsChecked="{Binding CreateDirectoryIfMissing, UpdateSourceTrigger=PropertyChanged}" />-->
 
         <!-- Только для чтения -->
         <CheckBox Grid.Row="2" Content="Только для чтения" VerticalAlignment="Center"
@@ -70,10 +72,12 @@
         <!-- Имя файла -->
         <TextBlock Grid.Row="5" Text="Имя файла:" VerticalAlignment="Center"/>
         <TextBox Grid.Row="5" Grid.Column="1" Margin="8,0,0,8" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
-        
+
         <!--Расширение файла-->
 
         <TextBlock Grid.Row="6" Text="Расширение файла:" VerticalAlignment="Center"/>
+
+
         <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}" VerticalAlignment="Center"/>
 
         <!-- Ошибка -->
@@ -83,7 +87,7 @@
         <!-- Кнопки -->
         <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <Button Content="ОК" IsDefault="True" Margin="0,0,8,0"
-              Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding ElementName=directory,Path=Text, UpdateSourceTrigger=PropertyChanged}"/>
+              Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Отмена" IsCancel="True"/>
         </StackPanel>
 
