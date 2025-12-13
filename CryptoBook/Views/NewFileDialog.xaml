@@ -42,8 +42,11 @@
         </Grid.RowDefinitions>
         <!-- Директория -->
         <TextBlock Text="Папка:" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0"/>
-        <TextBlock Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" MinWidth="360" VerticalAlignment="Center" Margin="8,0,8,0" TextAlignment="Center" Grid.Column="1" Grid.Row="0"/>
-        <Button Content="Обзор…" HorizontalAlignment="Stretch" Margin="8,0,0,0" Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}" 
+        <TextBlock Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" 
+                   MinWidth="360" VerticalAlignment="Center" Margin="15,0,15,0" 
+                   TextAlignment="Center" Grid.Column="1" Grid.Row="0"/>
+        <Button Content="Обзор…" HorizontalAlignment="Stretch" Margin="8,0,0,0" 
+                Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}" 
                         Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0"/>
 
         <!-- Только для чтения -->
@@ -57,9 +60,9 @@
 
         <!-- Тип файла -->
         <TextBlock Grid.Row="3" Text="Тип файла:" VerticalAlignment="Center"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center"
+        <ComboBox Grid.Row="3" Grid.Column="1" Margin="15,0,15,0" VerticalAlignment="Center"
               ItemsSource="{Binding Templates, UpdateSourceTrigger=PropertyChanged}"
-              DisplayMemberPath="DisplayName" 
+              DisplayMemberPath="DisplayName" Grid.ColumnSpan="3"
               SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
@@ -70,12 +73,14 @@
 
         <!-- Имя файла -->
         <TextBlock Grid.Row="4" Text="Имя файла:" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Margin="15,0,0,0" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Margin="15,0,15,0" 
+                 Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
 
         <!--Расширение файла-->
 
         <TextBlock Grid.Row="5" Text="Расширение файла:" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}" VerticalAlignment="Center"
+        <TextBlock Grid.Row="5" Grid.Column="1" 
+                   Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}" VerticalAlignment="Center"
                    Margin="15,0,0,0"/>
 
         <!-- Ошибка -->
@@ -83,10 +88,11 @@
                Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
 
         <!-- Кнопки -->
-        <StackPanel Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-            <Button Content="ОК" IsDefault="True" Margin="8,0,8,0"
+        <StackPanel Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" 
+                    HorizontalAlignment="Right" >
+            <Button Content="ОК" IsDefault="True" Margin="15,0,15,0"
               Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Отмена" IsCancel="True"/>
+            <Button Content="Отмена" IsCancel="True" Margin="0,0,15,0"/>
         </StackPanel>
 
     </Grid>
