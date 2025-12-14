@@ -92,7 +92,8 @@
                     HorizontalAlignment="Right" >
             <Button Content="ОК" IsDefault="True" Margin="15,0,15,0"
               Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Отмена" IsCancel="True" Margin="0,0,15,0"/>
+            <Button Content="Отмена" IsCancel="True" Margin="0,0,15,0"
+                    Command="{Binding Cancel, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
     </Grid>
