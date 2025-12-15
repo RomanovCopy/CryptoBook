@@ -12,9 +12,13 @@ namespace CryptoBook.Services
     public sealed class FilePickerService:IFilePickerService
     {
         private readonly IFileManagerService _fs;
-        public FilePickerService(IFileManagerService fileManagerService)
+        private readonly IFileTemplateRegistry _fileTemplate;
+
+
+        public FilePickerService(IFileManagerService fileManagerService, IFileTemplateRegistry fileTemplate)
         {
-            _fs = fileManagerService??throw new ArgumentNullException(nameof(fileManagerService));
+            _fs = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
+            _fileTemplate = fileTemplate ?? throw new ArgumentNullException(nameof(fileTemplate));
         }
 
         public Task<string?> PickFileAsync(string? initialDirectory, CancellationToken ct)
@@ -29,11 +33,25 @@ namespace CryptoBook.Services
                 ? start[(start.IndexOf("://") + 3)..]
                 : start;
 
-            using var dlg = new OpenFileDialog()
-            {
-                InitialDirectory = initialDirectory,
+            
 
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Выберите файл",
+                Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
+                FilterIndex = 1,
+                Multiselect = false,
+                CheckFileExists = true,
+                CheckPathExists = true
             };
+
+            bool? result = dialog.ShowDialog();
+
+            if(result == true)
+            {
+                string filePath = dialog.FileName;
+                // работа с файлом
+            }
 
             //using var dlg = new FolderBrowserDialog
             //{
@@ -51,9 +69,19 @@ namespace CryptoBook.Services
             return Task.FromResult<string?>(null);
         }
 
-        public void Dispose()
+
+        private string GetFilterString()
         {
-            throw new NotImplementedException();
+            var templates = _fileTemplate.GetAll();
+            var filterParts = new List<string>();
+            foreach(var template in templates)
+            {
+                string extensions = string.Join(";", template.DefaultExtension.Select(ext => $"*{ext}"));
+                filterParts.Add($"{template.DisplayName} ({extensions})|{extensions}");
+            }
+            filterParts.Add("All Files (*.*)|*.*");
+            return string.Join("|", filterParts);
         }
+
     }
 }
