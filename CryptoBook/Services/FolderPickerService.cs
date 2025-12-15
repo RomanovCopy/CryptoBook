@@ -18,7 +18,7 @@ namespace CryptoBook.Services
         {
             // допускаем "сырой" локальный путь или уже "local://..."
             string start = string.IsNullOrWhiteSpace(initialDirectory)
-                ? "local://C:/"
+                ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
                 : _fs.NormalizePath(initialDirectory);
 
             // отрезаем схему для FolderBrowserDialog
@@ -29,10 +29,10 @@ namespace CryptoBook.Services
             using var dlg = new FolderBrowserDialog
             {
                 SelectedPath = native,
-                ShowNewFolderButton = false,
-                Description = "Select a folder for the new file"
+                ShowNewFolderButton = true,
+                Description = "Select a folder",
             };
-
+            
             var result = dlg.ShowDialog();
             if(result == DialogResult.OK && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
             {

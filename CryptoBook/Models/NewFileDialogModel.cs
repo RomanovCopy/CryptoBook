@@ -23,6 +23,12 @@ namespace CryptoBook.Models
         private CancellationTokenSource? _cts;
 
         /// <summary>
+        /// предыдущая рабочая директория
+        /// </summary>
+        private string _lastTargetDirection { get; set; }
+
+
+        /// <summary>
         /// Событие запроса на закрытие окна диалога.
         /// Вызывается из VM → View с результатом операции (успех/ошибка).
         /// </summary>
@@ -67,6 +73,7 @@ namespace CryptoBook.Models
         /// </summary>
         public bool CreateDirectoryIfMissing { get => createDirectoryIfMissing; set => SetProperty(ref createDirectoryIfMissing, value); }
         bool createDirectoryIfMissing;
+
 
         /// <summary>
         /// Целевая директория для создаваемого файла.
@@ -255,6 +262,7 @@ namespace CryptoBook.Models
         public void Execute_Cancel(object? obj)
         {
             _cts?.Cancel();
+            TargetDirectory=_lastTargetDirection;
             _windowManager.CloseWindow(WindowId);
         }
 
@@ -383,6 +391,7 @@ namespace CryptoBook.Models
         !string.IsNullOrWhiteSpace(FileName) &&
         (CanWrite || CreateDirectoryIfMissing);
 
+
         /// <summary>
         /// Открывает диалог выбора папки, при выборе обновляет TargetDirectory,
         /// выполняет проверку директории и предлагает имя файла при необходимости.
@@ -393,6 +402,7 @@ namespace CryptoBook.Models
             var chosen = await _folderPicker.PickFolderAsync(TargetDirectory, ct);
             if(chosen != null)
             {
+                _lastTargetDirection = TargetDirectory;
                 TargetDirectory = chosen;
                 await CheckDirectoryAsync(ct);
 
