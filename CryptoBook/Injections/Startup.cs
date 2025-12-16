@@ -120,6 +120,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
             builder.RegisterType<FileCreationService>().As<IFileCreationService>().SingleInstance();
             builder.RegisterType<FolderPickerService>().As<IFolderPickerService>().SingleInstance();
+            builder.RegisterType<FilePickerService>().As<IFilePickerService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();

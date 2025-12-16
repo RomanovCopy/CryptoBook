@@ -28,7 +28,7 @@ namespace CryptoBook.Services
                 ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
                 : _fs.NormalizePath(initialDirectory);
 
-            // отрезаем схему для FolderBrowserDialog
+            // отрезаем схему для OpenFileDialog
             string native = start.Contains("://")
                 ? start[(start.IndexOf("://") + 3)..]
                 : start;
@@ -38,11 +38,12 @@ namespace CryptoBook.Services
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
                 Title = "Выберите файл",
-                Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
+                Filter = GetFilterString()?? "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
                 FilterIndex = 1,
                 Multiselect = false,
                 CheckFileExists = true,
-                CheckPathExists = true
+                CheckPathExists = true,
+                DefaultDirectory=native,
             };
 
             bool? result = dialog.ShowDialog();
@@ -50,21 +51,8 @@ namespace CryptoBook.Services
             if(result == true)
             {
                 string filePath = dialog.FileName;
-                // работа с файлом
+                return Task.FromResult<string?>(_fs.NormalizePath(filePath));
             }
-
-            //using var dlg = new FolderBrowserDialog
-            //{
-            //    SelectedPath = native,
-            //    ShowNewFolderButton = true,
-            //    Description = "Select a folder",
-            //};
-
-            //var result = dlg.ShowDialog();
-            //if(result == DialogResult.OK && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
-            //{
-            //    return Task.FromResult<string?>(_fs.NormalizePath(dlg.SelectedPath));
-            //}
 
             return Task.FromResult<string?>(null);
         }
