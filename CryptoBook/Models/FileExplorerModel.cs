@@ -1,5 +1,6 @@
 ﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Views;
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace CryptoBook.Models
     {
 
         private readonly IFileManagerService _fileManagerService;
-        private readonly IFilePickerService _filePickerService;
+        private readonly IWindowManager _windowManager;
 
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         private Guid _windowId;
@@ -28,10 +29,10 @@ namespace CryptoBook.Models
         private List<string> _directories;
 
 
-        public FileExplorerModel(IFileManagerService fileManagerService, IFilePickerService filePickerService)
+        public FileExplorerModel(IFileManagerService fileManagerService, IWindowManager windowManager)
         {
             _fileManagerService = fileManagerService;
-            _filePickerService = filePickerService;
+            _windowManager = windowManager;
         }
 
 
@@ -40,12 +41,12 @@ namespace CryptoBook.Models
 
         public bool CanExecute_CreateFile(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool CanExecute_CreateDirectory(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool CanExecute_DeleteFile(object? obj)
@@ -68,9 +69,14 @@ namespace CryptoBook.Models
             throw new NotImplementedException();
         }
 
+
+
+
+
         public void Execute_CreateFile(object? obj)
         {
-            throw new NotImplementedException();
+            var id = _windowManager.CreateWindow<NewFileDialog>();
+            _windowManager.ShowWindow(id);
         }
 
         public void Execute_CreateDirectory(object? obj)
