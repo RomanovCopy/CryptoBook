@@ -48,6 +48,10 @@ namespace CryptoBook.Models
         {
             return true;
         }
+        public bool CanExecute_RenameFile(object? obj)
+        {
+            throw new NotImplementedException();
+        }
 
         public bool CanExecute_DeleteFile(object? obj)
         {
@@ -83,6 +87,10 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+        public void Execute_RenameFile(object? obj)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Execute_DeleteFile(object? obj)
         {
@@ -104,12 +112,14 @@ namespace CryptoBook.Models
             throw new NotImplementedException();
         }
 
+
+
+
         public bool CanExecute_Close(object? obj)
         {
             throw new NotImplementedException();
         }
-
-        public void Execute_Loaded(object? obj)
+        public void Execute_Close(object? obj)
         {
             throw new NotImplementedException();
         }
@@ -118,11 +128,12 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
-        public void Execute_Close(object? obj)
+        public void Execute_Loaded(object? obj)
         {
             throw new NotImplementedException();
         }
+
+
 
         public bool CanExecute_Closing(object? obj)
         {

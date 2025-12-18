@@ -22,32 +22,45 @@ namespace CryptoBook.ViewModels
         public Guid WindowId => _fileExplorerModel.WindowId;
 
 
-        public FileExplorerViewModel(IFileExplorerModel fileExplorerModel)
+        public FileExplorerViewModel( IFileExplorerModel fileExplorerModel)
         {
             _fileExplorerModel = fileExplorerModel ?? throw new ArgumentNullException(nameof(fileExplorerModel));
         }
 
 
 
-        public ICommand CreateFileCommand => throw new NotImplementedException();
+        public ICommand CreateFileCommand => _createFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateFile, _fileExplorerModel.CanExecute_CreateFile);
+        RelayCommand _createFileCommand;
 
-        public ICommand CreateDirectoryCommand => throw new NotImplementedException();
+        public ICommand CreateDirectoryCommand => _createDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateDirectory, _fileExplorerModel.CanExecute_CreateDirectory);
+        RelayCommand _createDirectoryCommand;
 
-        public ICommand DeleteFileCommand => throw new NotImplementedException();
+        public ICommand RenameFileCommand => _renameFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameFile, _fileExplorerModel.CanExecute_RenameFile);
+        RelayCommand _renameFileCommand;
 
-        public ICommand DeleteDirectoryCommand => throw new NotImplementedException();
+        public ICommand DeleteFileCommand => _deleteFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteFile, _fileExplorerModel.CanExecute_DeleteFile);
+        RelayCommand _deleteFileCommand;
 
-        public ICommand MoveFileCommand => throw new NotImplementedException();
+        public ICommand DeleteDirectoryCommand => _deleteDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteDirectory, _fileExplorerModel.CanExecute_DeleteDirectory);
+        RelayCommand _deleteDirectoryCommand;
 
-        public ICommand MoveDirectoryCommand => throw new NotImplementedException();
+        public ICommand MoveFileCommand => _moveFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveFile, _fileExplorerModel.CanExecute_MoveFile);
+        RelayCommand _moveFileCommand;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand MoveDirectoryCommand => _moveDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveDirectory, _fileExplorerModel.CanExecute_MoveDirectory);
+        RelayCommand _moveDirectoryCommand;
 
-        public ICommand Close => throw new NotImplementedException();
+        public ICommand Loaded => _loadedCommand ??= new RelayCommand(_fileExplorerModel.Execute_Loaded, _fileExplorerModel.CanExecute_Loaded);
+        RelayCommand _loadedCommand;
 
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand Close => _closeCommand ??= new RelayCommand(_fileExplorerModel.Execute_Close, _fileExplorerModel.CanExecute_Close);
+        RelayCommand _closeCommand;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closing => _closingCommand ??= new RelayCommand(_fileExplorerModel.Execute_Closing, _fileExplorerModel.CanExecute_Closing);
+        RelayCommand _closingCommand;
+
+        public ICommand Closed => _closedCommand ??= new RelayCommand(_fileExplorerModel.Execute_Closed, _fileExplorerModel.CanExecute_Closed);
+        RelayCommand _closedCommand;
 
     }
 }

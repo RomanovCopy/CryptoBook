@@ -41,6 +41,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().SingleInstance();
             builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().SingleInstance();
             builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().SingleInstance();
+            builder.RegisterType<FileExplorerModel>().As<IFileExplorerModel>().SingleInstance();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
@@ -62,6 +63,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TimeWebAIPageViewModel>().As<ITimeWebAIPageViewModel>().SingleInstance();
             builder.RegisterType<TitleBarTimeWebAIControlViewModel>().As<ITitleBarTimeWebAIControlViewModel>().SingleInstance();
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
+            builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().SingleInstance();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
