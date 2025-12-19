@@ -74,6 +74,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MediBrushSerializeConverter>().AsSelf();
             builder.RegisterType<VisibilityConverter>().AsSelf();
             builder.RegisterType<InternalSizeConverter>().AsSelf();
+            builder.RegisterType<FilePathToIconConverter>().AsSelf();
 
 
             //Helpers
@@ -91,6 +92,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MyMessageBox>().InstancePerDependency();
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
             builder.RegisterType<NewFileDialog>().InstancePerDependency();
+            builder.RegisterType<FileExplorer>().InstancePerDependency();
 
             //FileTemplate
             builder.RegisterType<TextFileTemplate>().As<IFileTemplate>().SingleInstance();

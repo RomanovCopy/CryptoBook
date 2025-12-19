@@ -37,7 +37,8 @@ namespace CryptoBook.Models
         }
         public void Execute_OpenFile(object? obj)
         {
-
+            var id = windowManager.CreateWindow<FileExplorer>();
+            windowManager.ShowWindow(id);
         }
 
         public bool CanExecute_SaveFile(object? obj)

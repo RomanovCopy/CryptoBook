@@ -3,18 +3,112 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:icons="System.Drawing.Icon.ExtractAssociatedIcon"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
-        Title="FileExplorer" Height="450" Width="800">
-    <Grid>
+        d:DataContext=""
+        Height="600" Width="1000"
+        WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
+        Title="FileExplorer">
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
+    </Window.DataContext>
+    
+    <Grid Background="#F3F3F3">
+
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="forNavigetePanel" Height="Auto"/>
-            <RowDefinition x:Name="forOperationPanel" Height="Auto"/>
-            <RowDefinition x:Name="forListView" Height="Auto"/>
+            <RowDefinition Height="Auto"/><!-- Command Bar -->
+            <RowDefinition Height="Auto"/><!-- Address Bar + Tabs -->
+            <RowDefinition Height="*"/><!-- Main Content: Nav Pane + File View -->
+            <RowDefinition Height="Auto"/><!-- Status Bar -->
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="forNavigationPane" Width="200"/>
-        </Grid.ColumnDefinitions>
-        
+
+        <!-- 1. Command Bar (упрощённая в Win11) -->
+        <ToolBar Grid.Row="0" Height="48" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+            <Button Content="New" Margin="5,0" Padding="10,5"/>
+            <Separator/>
+            <Button Content="Cut" Margin="5,0" Padding="10,5"/>
+            <Button Content="Copy" Margin="5,0" Padding="10,5"/>
+            <Button Content="Paste" Margin="5,0" Padding="10,5"/>
+            <Button Content="Rename" Margin="5,0" Padding="10,5"/>
+            <Button Content="Delete" Margin="5,0" Padding="10,5"/>
+            <Separator/>
+            <Button Content="Sort" Margin="5,0" Padding="10,5"/>
+            <Button Content="View" Margin="5,0" Padding="10,5"/>
+        </ToolBar>
+
+        <!-- 2. Tabs + Address Bar -->
+        <TabControl Grid.Row="1" Margin="0,0,0,5" Background="Transparent" BorderThickness="0">
+            <TabItem Header="Home" IsSelected="True">
+                <Grid>
+                    <TextBox Text="Этот ПК > Диск C: > Users" Margin="10,5" Height="32" 
+                             VerticalAlignment="Center" Padding="10,0" FontSize="14"/>
+                    <!-- Breadcrumb можно реализовать через ItemsControl -->
+                </Grid>
+            </TabItem>
+            <TabItem Header="Documents"/>
+            <TabItem Header="+"/>
+            <!-- Кнопка новой вкладки -->
+        </TabControl>
+
+        <!-- 3. Основная область: Navigation Pane слева + File View справа -->
+        <Grid Grid.Row="2">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/><!-- Navigation Pane -->
+                <ColumnDefinition Width="*"/><!-- File List -->
+                <ColumnDefinition Width="250"/><!-- Details Pane (опционально) -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Navigation Pane (левая панель) -->
+            <TreeView Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
+                <TreeViewItem Header="Quick access" IsExpanded="True">
+                    <TreeViewItem Header="Desktop"/>
+                    <TreeViewItem Header="Downloads"/>
+                    <TreeViewItem Header="Documents"/>
+                </TreeViewItem>
+                <TreeViewItem Header="Home" IsExpanded="True"/>
+                <TreeViewItem Header="This PC" IsExpanded="True">
+                    <TreeViewItem Header="Desktop"/>
+                    <TreeViewItem Header="Documents"/>
+                    <TreeViewItem Header="Local Disk (C:)"/>
+                    <TreeViewItem Header="DVD Drive (D:)"/>
+                </TreeViewItem>
+                <TreeViewItem Header="Network"/>
+            </TreeView>
+
+            <!-- File List View (основная область файлов) -->
+            <ListView Grid.Column="1" Background="White">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" Width="300"/>
+                        <GridViewColumn Header="Date modified" Width="150"/>
+                        <GridViewColumn Header="Type" Width="150"/>
+                        <GridViewColumn Header="Size" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!-- Details Pane (правая панель деталей) -->
+            <Border Grid.Column="2" Background="White" BorderBrush="#E0E0E0" BorderThickness="1,0,0,0">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Details" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Name: Folder1"/>
+                    <TextBlock Text="Type: File folder"/>
+                    <TextBlock Text="Size: --"/>
+                    <Image Source="placeholder.png" Height="200" Margin="0,20,0,0"/>
+                </StackPanel>
+            </Border>
+
+
+        </Grid>
+
+        <!-- 4. Status Bar снизу -->
+        <StatusBar Grid.Row="3" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0">
+            <StatusBarItem Content="5 items | 1 selected"/>
+        </StatusBar>
+
     </Grid>
 </Window>

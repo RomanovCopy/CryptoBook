@@ -10,7 +10,7 @@ namespace CryptoBook.Interfaces
     /// Сервис для асинхронного выбора файла пользователем.
     /// Реализации показывают UI-диалог (или эквивалент) и возвращают путь к выбранному файлу.
     /// </summary>
-    public interface IFilePickerService
+    public interface IFilePickerService : IService
     {
         /// <summary>
         /// Асинхронно открывает диалог выбора файла и возвращает путь к выбранному файлу.
