@@ -14,13 +14,14 @@ namespace CryptoBook.Interfaces
         List<string> GetFiles{ get; }
         List<string> GetDirectories{ get; }
 
+        ICommand CutCommand { get; }
+        ICommand CopyCommand { get; }
+        ICommand PasteCommand { get; }
+        ICommand DeleteCommand { get; }
         ICommand CreateFileCommand { get; }
         ICommand CreateDirectoryCommand { get; }
-        ICommand RenameFileCommand { get; }
-        ICommand DeleteFileCommand { get; }
-        ICommand DeleteDirectoryCommand { get; }
-        ICommand MoveFileCommand { get; }
-        ICommand MoveDirectoryCommand { get; }
+        ICommand RenameCommand { get; }
+        ICommand MoveCommand { get; }
 
     }
 }

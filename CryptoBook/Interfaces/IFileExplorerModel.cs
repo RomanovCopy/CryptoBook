@@ -14,20 +14,23 @@ namespace CryptoBook.Interfaces
         List<string> GetFiles { get; }
         List<string> GetDirectories { get;}
 
-        bool CanExecute_CreateFile(object? obj);
-        bool CanExecute_CreateDirectory(object? obj);
-        bool CanExecute_RenameFile(object? obj);
-        bool CanExecute_DeleteFile(object? obj);
-        bool CanExecute_DeleteDirectory(object? obj);
-        bool CanExecute_MoveFile(object? obj);
-        bool CanExecute_MoveDirectory(object? obj);
+        bool CanExecute_CutCommand(object? obj);
+        bool CanExecute_CopyCommand(object? obj);
+        bool CanExecute_PasteCommand(object? obj);
+        bool CanExecute_DeleteCommand(object? obj);
+        bool CanExecute_CreateFileCommand(object? obj);
+        bool CanExecute_CreateDirectoryCommand(object? obj);
+        bool CanExecute_RenameCommand(object? obj);
+        bool CanExecute_MoveCommand(object? obj);
 
-        void Execute_CreateFile(object? obj);
-        void Execute_CreateDirectory(object? obj);
-        void Execute_RenameFile(object? obj);
-        void Execute_DeleteFile(object? obj);
-        void Execute_DeleteDirectory(object? obj);
-        void Execute_MoveFile(object? obj);
-        void Execute_MoveDirectory(object? obj);
+
+        void Execute_CutCommand(object? obj);
+        void Execute_CopyCommand(object? obj);
+        void Execute_PasteCommand(object? obj);
+        void Execute_DeleteCommand(object? obj);
+        void Execute_CreateFileCommand(object? obj);
+        void Execute_CreateDirectoryCommand(object? obj);
+        void Execute_RenameCommand(object? obj);
+        void Execute_MoveCommand(object? obj);
     }
 }

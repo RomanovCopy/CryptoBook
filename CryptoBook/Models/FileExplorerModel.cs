@@ -38,37 +38,41 @@ namespace CryptoBook.Models
 
 
 
+        public bool CanExecute_CutCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
 
-        public bool CanExecute_CreateFile(object? obj)
+        public bool CanExecute_CopyCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanExecute_PasteCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanExecute_DeleteCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanExecute_CreateFileCommand(object? obj)
         {
             return true;
         }
 
-        public bool CanExecute_CreateDirectory(object? obj)
+        public bool CanExecute_CreateDirectoryCommand(object? obj)
         {
             return true;
         }
-        public bool CanExecute_RenameFile(object? obj)
+        public bool CanExecute_RenameCommand(object? obj)
         {
             throw new NotImplementedException();
         }
 
-        public bool CanExecute_DeleteFile(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CanExecute_DeleteDirectory(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CanExecute_MoveFile(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CanExecute_MoveDirectory(object? obj)
+        public bool CanExecute_MoveCommand(object? obj)
         {
             throw new NotImplementedException();
         }
@@ -77,17 +81,37 @@ namespace CryptoBook.Models
 
 
 
-        public void Execute_CreateFile(object? obj)
+        public void Execute_CutCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute_CopyCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute_PasteCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute_DeleteCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute_CreateFileCommand(object? obj)
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
             _windowManager.ShowWindow(id);
         }
 
-        public void Execute_CreateDirectory(object? obj)
+        public void Execute_CreateDirectoryCommand(object? obj)
         {
             throw new NotImplementedException();
         }
-        public void Execute_RenameFile(object? obj)
+        public void Execute_RenameCommand(object? obj)
         {
             throw new NotImplementedException();
         }
@@ -102,7 +126,7 @@ namespace CryptoBook.Models
             throw new NotImplementedException();
         }
 
-        public void Execute_MoveFile(object? obj)
+        public void Execute_MoveCommand(object? obj)
         {
             throw new NotImplementedException();
         }

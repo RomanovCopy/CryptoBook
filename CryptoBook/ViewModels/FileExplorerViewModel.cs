@@ -27,28 +27,31 @@ namespace CryptoBook.ViewModels
             _fileExplorerModel = fileExplorerModel ?? throw new ArgumentNullException(nameof(fileExplorerModel));
         }
 
+        public ICommand CutCommand => _cutCommand ??= new RelayCommand(_fileExplorerModel.Execute_CutCommand, _fileExplorerModel.CanExecute_CutCommand);
+        RelayCommand _cutCommand;
 
+        public ICommand CopyCommand => _copyCommand ??= new RelayCommand(_fileExplorerModel.Execute_CopyCommand, _fileExplorerModel.CanExecute_CopyCommand);
+        RelayCommand _copyCommand;
 
-        public ICommand CreateFileCommand => _createFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateFile, _fileExplorerModel.CanExecute_CreateFile);
+        public ICommand PasteCommand => _pasteCommand ??= new RelayCommand(_fileExplorerModel.Execute_PasteCommand, _fileExplorerModel.CanExecute_PasteCommand);
+        RelayCommand _pasteCommand;
+
+        public ICommand DeleteCommand => _deleteCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteCommand, _fileExplorerModel.CanExecute_DeleteCommand);
+        RelayCommand _deleteCommand;
+
+        public ICommand CreateFileCommand => _createFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateFileCommand, _fileExplorerModel.CanExecute_CreateFileCommand);
         RelayCommand _createFileCommand;
 
-        public ICommand CreateDirectoryCommand => _createDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateDirectory, _fileExplorerModel.CanExecute_CreateDirectory);
+        public ICommand CreateDirectoryCommand => _createDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateDirectoryCommand, _fileExplorerModel.CanExecute_CreateDirectoryCommand);
         RelayCommand _createDirectoryCommand;
 
-        public ICommand RenameFileCommand => _renameFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameFile, _fileExplorerModel.CanExecute_RenameFile);
+        public ICommand RenameCommand => _renameFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameCommand, _fileExplorerModel.CanExecute_RenameCommand);
         RelayCommand _renameFileCommand;
 
-        public ICommand DeleteFileCommand => _deleteFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteFile, _fileExplorerModel.CanExecute_DeleteFile);
-        RelayCommand _deleteFileCommand;
+        public ICommand MoveCommand => _moveCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveCommand, _fileExplorerModel.CanExecute_MoveCommand);
+        RelayCommand _moveCommand;
 
-        public ICommand DeleteDirectoryCommand => _deleteDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteDirectory, _fileExplorerModel.CanExecute_DeleteDirectory);
-        RelayCommand _deleteDirectoryCommand;
 
-        public ICommand MoveFileCommand => _moveFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveFile, _fileExplorerModel.CanExecute_MoveFile);
-        RelayCommand _moveFileCommand;
-
-        public ICommand MoveDirectoryCommand => _moveDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveDirectory, _fileExplorerModel.CanExecute_MoveDirectory);
-        RelayCommand _moveDirectoryCommand;
 
         public ICommand Loaded => _loadedCommand ??= new RelayCommand(_fileExplorerModel.Execute_Loaded, _fileExplorerModel.CanExecute_Loaded);
         RelayCommand _loadedCommand;

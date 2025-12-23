@@ -8,7 +8,7 @@
         xmlns:icons="System.Drawing.Icon.ExtractAssociatedIcon"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
-        d:DataContext=""
+        d:DataContext="{x:Type interfaces:IFileExplorerViewModel}"
         Height="600" Width="1000"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
         Title="FileExplorer">
@@ -16,7 +16,7 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
     
-    <Grid Background="#F3F3F3">
+    <Grid Background="{DynamicResource CurrentWindowBackground}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/><!-- Command Bar -->
@@ -26,13 +26,13 @@
         </Grid.RowDefinitions>
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
-        <ToolBar Grid.Row="0" Height="48" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+        <ToolBar Grid.Row="0" Height="48" Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
             <Button Content="New" Margin="5,0" Padding="10,5"/>
             <Separator/>
-            <Button Content="Cut" Margin="5,0" Padding="10,5"/>
-            <Button Content="Copy" Margin="5,0" Padding="10,5"/>
-            <Button Content="Paste" Margin="5,0" Padding="10,5"/>
-            <Button Content="Rename" Margin="5,0" Padding="10,5"/>
+            <Button Content="Cut" Margin="5,0" Padding="10,5" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Copy" Margin="5,0" Padding="10,5" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Paste" Margin="5,0" Padding="10,5" Command="{Binding CopyCommand,UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Rename" Margin="5,0" Padding="10,5" Command="{Binding RenameCommand, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Delete" Margin="5,0" Padding="10,5"/>
             <Separator/>
             <Button Content="Sort" Margin="5,0" Padding="10,5"/>
