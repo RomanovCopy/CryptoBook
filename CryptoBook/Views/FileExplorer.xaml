@@ -31,9 +31,9 @@
             <Separator/>
             <Button Content="Cut" Margin="5,0" Padding="10,5" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Copy" Margin="5,0" Padding="10,5" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Paste" Margin="5,0" Padding="10,5" Command="{Binding CopyCommand,UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Paste" Margin="5,0" Padding="10,5" Command="{Binding PasteCommand,UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Rename" Margin="5,0" Padding="10,5" Command="{Binding RenameCommand, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Delete" Margin="5,0" Padding="10,5"/>
+            <Button Content="Delete" Margin="5,0" Padding="10,5" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Sort" Margin="5,0" Padding="10,5"/>
             <Button Content="View" Margin="5,0" Padding="10,5"/>
