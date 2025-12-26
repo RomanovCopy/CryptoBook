@@ -15,14 +15,20 @@
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
-    
+
     <Grid Background="{DynamicResource CurrentWindowBackground}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/><!-- Command Bar -->
-            <RowDefinition Height="Auto"/><!-- Address Bar + Tabs -->
-            <RowDefinition Height="*"/><!-- Main Content: Nav Pane + File View -->
-            <RowDefinition Height="Auto"/><!-- Status Bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Command Bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Address Bar + Tabs -->
+            <RowDefinition Height="*"/>
+            <!-- Main Content: Nav Pane + File View -->
+            <RowDefinition Height="Auto"/>
+            <!--Selected File-->
+            <RowDefinition Height="Auto"/>
+            <!-- Status Bar -->
         </Grid.RowDefinitions>
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
@@ -55,11 +61,14 @@
 
         <!-- 3. Основная область: Navigation Pane слева + File View справа -->
         <Grid Grid.Row="2">
-            
+
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/><!-- Navigation Pane -->
-                <ColumnDefinition Width="*"/><!-- File List -->
-                <ColumnDefinition Width="250"/><!-- Details Pane (опционально) -->
+                <ColumnDefinition Width="250"/>
+                <!-- Navigation Pane -->
+                <ColumnDefinition Width="*"/>
+                <!-- File List -->
+                <ColumnDefinition Width="250"/>
+                <!-- Details Pane (опционально) -->
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Pane (левая панель) -->
@@ -104,9 +113,12 @@
 
 
         </Grid>
+        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="5">
+            <TextBox x:Name="selected"  Text="Selected Path" HorizontalAlignment="Stretch"/>
+        </Border>
 
         <!-- 4. Status Bar снизу -->
-        <StatusBar Grid.Row="3" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0">
+        <StatusBar Grid.Row="4" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Margin="3">
             <StatusBarItem Content="5 items | 1 selected"/>
         </StatusBar>
 

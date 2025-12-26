@@ -31,6 +31,7 @@ namespace CryptoBook.Models
 
         public FileExplorerModel(IFileManagerService fileManagerService, IWindowManager windowManager)
         {
+            WindowId= Guid.NewGuid();
             _fileManagerService = fileManagerService;
             _windowManager = windowManager;
         }
