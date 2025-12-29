@@ -23,9 +23,12 @@ namespace CryptoBook.Injections
         {
 
             ContainerBuilder builder = new();
+            var dispatcher = System.Windows.Application.Current.Dispatcher;
 
             //App
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
+            builder.RegisterInstance(dispatcher);
+
 
 
             //Composition
@@ -75,7 +78,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<VisibilityConverter>().AsSelf();
             builder.RegisterType<InternalSizeConverter>().AsSelf();
             builder.RegisterType<FilePathToIconConverter>().AsSelf();
-
+            builder.RegisterType<BytesToGbConverter>().AsSelf();
 
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
@@ -125,6 +128,13 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileCreationService>().As<IFileCreationService>().SingleInstance();
             builder.RegisterType<FolderPickerService>().As<IFolderPickerService>().SingleInstance();
             builder.RegisterType<FilePickerService>().As<IFilePickerService>().SingleInstance();
+            builder.RegisterType<DriveMonitoringService>().As<IDriveMonitoringService>().SingleInstance();
+            builder.RegisterType<DriveManagerService>().As<IDriveManagerService>().SingleInstance();
+
+
+
+
+            builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();

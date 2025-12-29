@@ -15,7 +15,7 @@ namespace CryptoBook.Interfaces
         event Action<DriveInfoEx> OnDriveConnected;
         event Action<string> OnDriveDisconnected;  // Только RootDirectory, т.к. после отключения DriveInfo недоступен
 
-        Task StartMonitoringAsync();
+        void StartMonitoring();
         void StopMonitoring();
     }
 }

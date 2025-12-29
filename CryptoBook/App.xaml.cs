@@ -13,7 +13,7 @@ namespace CryptoBook
     /// </summary>
     public partial class App: System.Windows.Application, IContainerProvider
     {
-
+        private IDriveManagerService _driveManagerService;
         public IContainer Container { get; private set; }
         public App()
         {
@@ -28,6 +28,8 @@ namespace CryptoBook
             {
                 if(Container != null)
                 {
+                    _driveManagerService = Container.Resolve<IDriveManagerService>();
+                    _driveManagerService.StartMonitoring();
                     // Разрешение и запуск главного окна
                     var winmanager = Container.Resolve<IWindowManager>();
                     var id = winmanager.CreateWindow<MainWindow>();
@@ -40,6 +42,11 @@ namespace CryptoBook
             }
 
 
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            _driveManagerService.Dispose();
+            base.OnExit(e);
         }
     }
 

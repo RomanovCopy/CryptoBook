@@ -35,22 +35,16 @@ namespace CryptoBook.Services
             }
         }
 
-        public async Task StartMonitoringAsync()
+        public void StartMonitoring()
         {
-            await Task.Run(async () =>
-            {
-                var query = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2 OR EventType = 3");
-                _watcher = new ManagementEventWatcher(query);
-                _watcher.EventArrived += OnVolumeChangeEvent;
-                _watcher.Start();
+            var query = new WqlEventQuery(
+            "SELECT * FROM Win32_VolumeChangeEvent");
 
-                // Ждём отмены
-                while(!_cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    await Task.Delay(100, _cancellationTokenSource.Token);
-                }
-            }, _cancellationTokenSource.Token);
+            _watcher = new ManagementEventWatcher(query);
+            _watcher.EventArrived += OnVolumeChangeEvent;
+            _watcher.Start();
         }
+
 
         public void StopMonitoring()
         {
@@ -177,7 +171,6 @@ namespace CryptoBook.Services
 
         public void Dispose()
         {
-            StopMonitoring();
             _cancellationTokenSource?.Dispose();
         }
     }

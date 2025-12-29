@@ -1,9 +1,11 @@
-﻿using CryptoBook.Infrastructure;
+﻿using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -16,24 +18,30 @@ namespace CryptoBook.Models
 
         private readonly IFileManagerService _fileManagerService;
         private readonly IWindowManager _windowManager;
+        private readonly IDriveManagerService _driveManagerService;
 
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         private Guid _windowId;
         public bool IsHiddenFilesVisible { get => _isHiddenFilesVisible; set => SetProperty(ref _isHiddenFilesVisible, value); }
         private bool _isHiddenFilesVisible;
+        public DriveInfoEx SelectedDrive { get => _selectedDrive; set => SetProperty(ref _selectedDrive, value); }
+        private DriveInfoEx _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
-        public List<string> GetFiles{ get=>_files; private set=>SetProperty(ref _files, value); }
-        private List<string> _files;
-        public List<string> GetDirectories{ get=>_directories; private set=>SetProperty(ref _directories, value); }
-        private List<string> _directories;
+        public ObservableCollection<string> GetFiles{ get=>_files; private set=>SetProperty(ref _files, value); }
+        private ObservableCollection<string> _files;
+        public ReadOnlyObservableCollection<DriveInfoEx> GetDirectories{ get=>_directories; private set=>SetProperty(ref _directories, value); }
+        private ReadOnlyObservableCollection<DriveInfoEx> _directories;
 
 
-        public FileExplorerModel(IFileManagerService fileManagerService, IWindowManager windowManager)
+        public FileExplorerModel(IFileManagerService fileManagerService,IDriveManagerService driveManagerService, IWindowManager windowManager)
         {
             WindowId= Guid.NewGuid();
             _fileManagerService = fileManagerService;
+            _driveManagerService = driveManagerService;
             _windowManager = windowManager;
+            GetDirectories = _driveManagerService.WritableDrives;
+
         }
 
 
@@ -179,7 +187,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
 
     }
 }

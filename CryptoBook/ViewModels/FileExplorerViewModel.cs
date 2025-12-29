@@ -1,8 +1,10 @@
-﻿using CryptoBook.Infrastructure;
+﻿using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -16,8 +18,9 @@ namespace CryptoBook.ViewModels
         private readonly IFileExplorerModel _fileExplorerModel;
 
         public bool IsHiddenFilesVisible { get => _fileExplorerModel.IsHiddenFilesVisible; set => _fileExplorerModel.IsHiddenFilesVisible=value; }
-        public List<string> GetFiles => _fileExplorerModel.GetFiles;
-        public List<string> GetDirectories => _fileExplorerModel.GetDirectories;
+        public DriveInfoEx SelectedDrive{ get=> _fileExplorerModel.SelectedDrive; set => _fileExplorerModel.SelectedDrive=value; }
+        public ObservableCollection<string> GetFiles => _fileExplorerModel.GetFiles;
+        public ReadOnlyObservableCollection<DriveInfoEx> GetDirectories => _fileExplorerModel.GetDirectories;
         public string CurrentPath { get => _fileExplorerModel.CurrentPath; set => _fileExplorerModel.CurrentPath=value; }
         public Guid WindowId => _fileExplorerModel.WindowId;
 
@@ -25,6 +28,7 @@ namespace CryptoBook.ViewModels
         public FileExplorerViewModel( IFileExplorerModel fileExplorerModel)
         {
             _fileExplorerModel = fileExplorerModel ?? throw new ArgumentNullException(nameof(fileExplorerModel));
+            _fileExplorerModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
         public ICommand CutCommand => _cutCommand ??= new RelayCommand(_fileExplorerModel.Execute_CutCommand, _fileExplorerModel.CanExecute_CutCommand);

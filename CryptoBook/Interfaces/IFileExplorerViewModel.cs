@@ -1,5 +1,8 @@
-﻿using System;
+﻿using CryptoBook.DTO;
+
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +14,9 @@ namespace CryptoBook.Interfaces
     {
         bool IsHiddenFilesVisible { get; set; }
         string CurrentPath { get; set; }
-        List<string> GetFiles{ get; }
-        List<string> GetDirectories{ get; }
+        DriveInfoEx SelectedDrive{ get; set; }
+        ObservableCollection<string> GetFiles{ get; }
+        ReadOnlyObservableCollection<DriveInfoEx> GetDirectories{ get; }
 
         ICommand CutCommand { get; }
         ICommand CopyCommand { get; }
