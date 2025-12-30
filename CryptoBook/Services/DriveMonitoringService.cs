@@ -172,6 +172,13 @@ namespace CryptoBook.Services
         public void Dispose()
         {
             _cancellationTokenSource?.Dispose();
+          if(_watcher != null)
+            {
+                _watcher.EventArrived -= OnVolumeChangeEvent;
+                _watcher.Stop();
+                _watcher.Dispose();
+                _watcher = null;
+            }
         }
     }
 
