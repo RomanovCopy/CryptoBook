@@ -15,8 +15,9 @@ namespace CryptoBook.Interfaces
         bool IsHiddenFilesVisible { get; set; }
         string CurrentPath { get; set; }
         DriveInfoEx SelectedDrive{ get; set; }
-        ObservableCollection<string> GetFiles{ get; }
-        ReadOnlyObservableCollection<DriveInfoEx> GetDirectories{ get; }
+        ReadOnlyObservableCollection<FileItem> GetFiles{ get; }
+        ReadOnlyObservableCollection<DriveInfoEx> GetDrives{ get; }
+        ReadOnlyObservableCollection<DirectoryContent> GetDirectoies { get; }
 
         ICommand CutCommand { get; }
         ICommand CopyCommand { get; }

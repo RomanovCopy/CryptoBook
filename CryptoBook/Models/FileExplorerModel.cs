@@ -28,10 +28,13 @@ namespace CryptoBook.Models
         private DriveInfoEx _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
-        public ObservableCollection<string> GetFiles{ get=>_files; private set=>SetProperty(ref _files, value); }
-        private ObservableCollection<string> _files;
-        public ReadOnlyObservableCollection<DriveInfoEx> GetDirectories{ get=>_directories; private set=>SetProperty(ref _directories, value); }
-        private ReadOnlyObservableCollection<DriveInfoEx> _directories;
+        public ReadOnlyObservableCollection<FileItem> GetFiles{ get=>_files; private set=>SetProperty(ref _files, value); }
+        private ReadOnlyObservableCollection<FileItem> _files;
+        public ReadOnlyObservableCollection<DriveInfoEx> GetDrives{ get=>_drives; private set=>SetProperty(ref _drives, value); }
+        private ReadOnlyObservableCollection<DriveInfoEx> _drives;
+        public ReadOnlyObservableCollection<DirectoryContent> GetDirectories { get => _directories; private set => SetProperty(ref _directories, value); }
+        private ReadOnlyObservableCollection<DirectoryContent> _directories;
+
 
 
         public FileExplorerModel(IFileManagerService fileManagerService,IDriveManagerService driveManagerService, IWindowManager windowManager)
@@ -40,7 +43,7 @@ namespace CryptoBook.Models
             _fileManagerService = fileManagerService;
             _driveManagerService = driveManagerService;
             _windowManager = windowManager;
-            GetDirectories = _driveManagerService.WritableDrives;
+            GetDrives = _driveManagerService.WritableDrives;
 
         }
 

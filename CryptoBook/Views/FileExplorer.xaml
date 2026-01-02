@@ -6,18 +6,58 @@
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:dto="clr-namespace:CryptoBook.DTO"
         xmlns:icons="System.Drawing.Icon.ExtractAssociatedIcon"
+        xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
-        d:DataContext="{x:Type interfaces:IFileExplorerViewModel}"
+        d:DataContext="{x:Type viewmodels:FileExplorerViewModel}"
         Height="600" Width="1000"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
         Title="FileExplorer">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
+    <Window.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type dto:DriveInfoEx}"
+                                      ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}">
+            <DockPanel LastChildFill="True">
+                <Image Width="{StaticResource Tv_IconSize}"
+                       Height="{StaticResource Tv_IconSize}"
+                       Margin="0,0,6,0"
+                       Source="{Binding Icon}"/>
+                <TextBlock Text="{Binding Name}"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryContent}" 
+                                      ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}">
+            <DockPanel LastChildFill="True">
+                <Image Width="{StaticResource Tv_IconSize}"
+                       Height="{StaticResource Tv_IconSize}"
+                       Margin="0,0,6,0"
+                       Source="{Binding Icon}"/>
+                <TextBlock Text="{Binding Name}"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+        </HierarchicalDataTemplate>
+        <DataTemplate DataType="{x:Type dto:FileItem}">
+            <DockPanel LastChildFill="True">
+                <Image Width="{StaticResource Tv_IconSize}"
+                       Height="{StaticResource Tv_IconSize}"
+                       Margin="0,0,6,0"
+                       Source="{Binding Icon}"/>
+                <TextBlock Text="{Binding Name}"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+        </DataTemplate>
+    </Window.Resources>
 
-    <Grid Background="{DynamicResource CurrentWindowBackground}">
+
+        <Grid Background="{DynamicResource CurrentWindowBackground}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -76,7 +116,8 @@
             <TreeView Grid.Column="0" ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}"
                       Style="{StaticResource DiskTree_TreeViewStyle}">
                 <!-- 1) Для папок/дисков (есть Children) -->
-                <HierarchicalDataTemplate DataType="{x:Type vm:FileSystemNode}" ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate DataType="{x:Type dto:FileItem}" 
+                                          ItemsSource="{Binding GetFiles,UpdateSourceTrigger=PropertyChanged}">
                     <DockPanel LastChildFill="True">
                         <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"

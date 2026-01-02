@@ -19,7 +19,7 @@ namespace CryptoBook.ViewModels
 
         public bool IsHiddenFilesVisible { get => _fileExplorerModel.IsHiddenFilesVisible; set => _fileExplorerModel.IsHiddenFilesVisible=value; }
         public DriveInfoEx SelectedDrive{ get=> _fileExplorerModel.SelectedDrive; set => _fileExplorerModel.SelectedDrive=value; }
-        public ObservableCollection<string> GetFiles => _fileExplorerModel.GetFiles;
+        public ReadOnlyObservableCollection<FileItem> GetFiles => _fileExplorerModel.GetFiles;
         public ReadOnlyObservableCollection<DriveInfoEx> GetDirectories => _fileExplorerModel.GetDirectories;
         public string CurrentPath { get => _fileExplorerModel.CurrentPath; set => _fileExplorerModel.CurrentPath=value; }
         public Guid WindowId => _fileExplorerModel.WindowId;
