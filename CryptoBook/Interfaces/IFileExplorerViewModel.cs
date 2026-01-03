@@ -17,7 +17,7 @@ namespace CryptoBook.Interfaces
         DriveInfoEx SelectedDrive{ get; set; }
         ReadOnlyObservableCollection<FileItem> GetFiles{ get; }
         ReadOnlyObservableCollection<DriveInfoEx> GetDrives{ get; }
-        ReadOnlyObservableCollection<DirectoryContent> GetDirectoies { get; }
+        ReadOnlyObservableCollection<DirectoryContent> GetDirectories { get; }
 
         ICommand CutCommand { get; }
         ICommand CopyCommand { get; }
@@ -27,6 +27,6 @@ namespace CryptoBook.Interfaces
         ICommand CreateDirectoryCommand { get; }
         ICommand RenameCommand { get; }
         ICommand MoveCommand { get; }
-
+        ICommand TreeViewItemSelectedCommand { get; }
     }
 }

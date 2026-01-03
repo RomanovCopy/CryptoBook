@@ -90,6 +90,11 @@ namespace CryptoBook.Models
         }
 
 
+        public bool CanExecute_TreeViewItemSelectedCommand(object? obj)
+        {
+            return true;
+        }
+
 
 
 
@@ -148,6 +153,13 @@ namespace CryptoBook.Models
             throw new NotImplementedException();
         }
 
+        public void Execute_TreeViewItemSelectedCommand(object? obj)
+        {
+            if(obj is EventArgs args)
+            {
+
+            }
+        }
 
 
 

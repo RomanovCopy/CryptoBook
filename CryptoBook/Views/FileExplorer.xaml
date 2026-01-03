@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:markup="clr-namespace:CryptoBook.Markup"
@@ -21,15 +22,33 @@
     <Window.Resources>
         <HierarchicalDataTemplate DataType="{x:Type dto:DriveInfoEx}"
                                       ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}">
-            <DockPanel LastChildFill="True">
-                <Image Width="{StaticResource Tv_IconSize}"
-                       Height="{StaticResource Tv_IconSize}"
-                       Margin="0,0,6,0"
-                       Source="{Binding Icon}"/>
-                <TextBlock Text="{Binding Name}"
-                           VerticalAlignment="Center"
-                           TextTrimming="CharacterEllipsis"/>
-            </DockPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <!-- Иконка диска (можно улучшить с Image) -->
+                <TextBlock Text="💾" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+
+                <StackPanel>
+                    <TextBlock FontWeight="Bold">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} [{1}]">
+                                <Binding Path="RootDirectory"/>
+                                <Binding Path="VolumeLabel"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <TextBlock FontSize="11" Foreground="Gray">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} • Свободно: {1:F1} ГБ из {2:F1} ГБ">
+                                <Binding Path="DriveFormat"/>
+                                <Binding Path="AvailableFreeSpace" Converter="{markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}"/>
+                                <Binding Path="TotalSize" Converter="{markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryContent}" 
                                       ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}">
@@ -113,55 +132,13 @@
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Pane (левая панель) -->
-            <TreeView Grid.Column="0" ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}"
-                      Style="{StaticResource DiskTree_TreeViewStyle}">
-                <!-- 1) Для папок/дисков (есть Children) -->
-                <HierarchicalDataTemplate DataType="{x:Type dto:FileItem}" 
-                                          ItemsSource="{Binding GetFiles,UpdateSourceTrigger=PropertyChanged}">
-                    <DockPanel LastChildFill="True">
-                        <Image Width="{StaticResource Tv_IconSize}"
-                       Height="{StaticResource Tv_IconSize}"
-                       Margin="0,0,6,0"
-                       Source="{Binding Icon}"/>
-
-                        <TextBlock Text="{Binding Name}"
-                           VerticalAlignment="Center"
-                           TextTrimming="CharacterEllipsis"/>
-                    </DockPanel>
-
-                    <!-- Можно добавить контекстное меню прямо на "строку" -->
-                    <HierarchicalDataTemplate.Resources>
-                        <Style TargetType="{x:Type DockPanel}">
-                            <Setter Property="ContextMenu">
-                                <Setter.Value>
-                                    <ContextMenu>
-                                        <MenuItem Header="Открыть"
-                                          Command="{Binding OpenCommand}"/>
-                                        <MenuItem Header="Копировать путь"
-                                          Command="{Binding CopyPathCommand}"/>
-                                        <Separator/>
-                                        <MenuItem Header="Переименовать"
-                                          Command="{Binding RenameCommand}"/>
-                                        <MenuItem Header="Удалить"
-                                          Command="{Binding DeleteCommand}"/>
-                                    </ContextMenu>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </HierarchicalDataTemplate.Resources>
-
-                    <!-- Ключевой момент: чтобы файлы не пытались “вести” детей,
-                 ниже добавим триггер переключающий ItemsSource в null
-                 (иначе HasItems будет False и expander будет скрыт, но ItemsSource может быть пустой коллекцией) -->
-                    <HierarchicalDataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IsDirectory}" Value="False">
-                            <!-- файл: ItemsSource отключаем -->
-                            <Setter Property="ItemsSource" Value="{x:Null}"/>
-                        </DataTrigger>
-                    </HierarchicalDataTemplate.Triggers>
-
-                </HierarchicalDataTemplate>
-
+            <TreeView Grid.Column="0" ItemsSource="{Binding GetDrives,UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding TreeViewItemSelectedCommand, UpdateSourceTrigger=PropertyChanged}"
+                                               PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </TreeView>
 
             <!-- File List View (основная область файлов) -->
