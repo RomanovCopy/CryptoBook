@@ -14,7 +14,7 @@ using System.Windows;
 
 namespace CryptoBook.Models
 {
-    public class FileExplorerModel:ViewModelBase, IFileExplorerModel
+    public class FileExplorerModel: ViewModelBase, IFileExplorerModel
     {
 
         private readonly IFileManagerService _fileManagerService;
@@ -31,18 +31,18 @@ namespace CryptoBook.Models
         private DriveInfoEx _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
-        public ReadOnlyObservableCollection<FileItem> GetFiles{ get=>_files; private set=>SetProperty(ref _files, value); }
+        public ReadOnlyObservableCollection<FileItem> GetFiles { get => _files; private set => SetProperty(ref _files, value); }
         private ReadOnlyObservableCollection<FileItem> _files;
-        public ReadOnlyObservableCollection<DriveInfoEx> GetDrives{ get=>_drives; private set=>SetProperty(ref _drives, value); }
+        public ReadOnlyObservableCollection<DriveInfoEx> GetDrives { get => _drives; private set => SetProperty(ref _drives, value); }
         private ReadOnlyObservableCollection<DriveInfoEx> _drives;
         public ReadOnlyObservableCollection<DirectoryContent> GetDirectories { get => _directories; private set => SetProperty(ref _directories, value); }
         private ReadOnlyObservableCollection<DirectoryContent> _directories;
 
 
 
-        public FileExplorerModel(IFileManagerService fileManagerService,IDriveManagerService driveManagerService, IWindowManager windowManager)
+        public FileExplorerModel(IFileManagerService fileManagerService, IDriveManagerService driveManagerService, IWindowManager windowManager)
         {
-            WindowId= Guid.NewGuid();
+            WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService;
             _driveManagerService = driveManagerService;
             _windowManager = windowManager;
@@ -158,22 +158,15 @@ namespace CryptoBook.Models
 
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
-            if(obj is RoutedPropertyChangedEventArgs<object> args)
+            if(obj is DriveInfoEx drive)
             {
-                if(args.NewValue is DriveInfoEx drive)
-                {
-                    SelectedDrive = drive;
-                    CurrentPath = drive.RootDirectory;
-                    var files = await _fileManagerService.BrowseAsync(CurrentPath,_cancellationTokenSource.Token, IsHiddenFilesVisible);
-                    //var directories = _fileManagerService.GetDirectoriesInDirectory(CurrentPath, IsHiddenFilesVisible);
-                }
-                else if(obj is DirectoryContent dir)
-                {
-                    //CurrentPath = dir.FullPath;
-                    //GetFiles = _fileManagerService.GetFilesInDirectory(CurrentPath, IsHiddenFilesVisible);
-                    //GetDirectories = _fileManagerService.GetDirectoriesInDirectory(CurrentPath, IsHiddenFilesVisible);
-                }
+                SelectedDrive = drive;
+                CurrentPath = drive.RootDirectory;
+            } else if(obj is DirectoryContent dir)
+            {
+                CurrentPath = dir.DirectoryPath;
             }
+            var files = await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
         }
 
 
