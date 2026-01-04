@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CryptoBook.Models
 {
@@ -19,6 +20,8 @@ namespace CryptoBook.Models
         private readonly IFileManagerService _fileManagerService;
         private readonly IWindowManager _windowManager;
         private readonly IDriveManagerService _driveManagerService;
+
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         private Guid _windowId;
@@ -44,7 +47,7 @@ namespace CryptoBook.Models
             _driveManagerService = driveManagerService;
             _windowManager = windowManager;
             GetDrives = _driveManagerService.WritableDrives;
-
+            _isHiddenFilesVisible = true;
         }
 
 
@@ -153,11 +156,23 @@ namespace CryptoBook.Models
             throw new NotImplementedException();
         }
 
-        public void Execute_TreeViewItemSelectedCommand(object? obj)
+        public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
-            if(obj is EventArgs args)
+            if(obj is RoutedPropertyChangedEventArgs<object> args)
             {
-
+                if(args.NewValue is DriveInfoEx drive)
+                {
+                    SelectedDrive = drive;
+                    CurrentPath = drive.RootDirectory;
+                    var files = await _fileManagerService.BrowseAsync(CurrentPath,_cancellationTokenSource.Token, IsHiddenFilesVisible);
+                    //var directories = _fileManagerService.GetDirectoriesInDirectory(CurrentPath, IsHiddenFilesVisible);
+                }
+                else if(obj is DirectoryContent dir)
+                {
+                    //CurrentPath = dir.FullPath;
+                    //GetFiles = _fileManagerService.GetFilesInDirectory(CurrentPath, IsHiddenFilesVisible);
+                    //GetDirectories = _fileManagerService.GetDirectoriesInDirectory(CurrentPath, IsHiddenFilesVisible);
+                }
             }
         }
 
