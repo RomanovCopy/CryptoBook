@@ -1,4 +1,5 @@
-﻿using CryptoBook.Interfaces;
+﻿using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -8,21 +9,21 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.DTO
 {
-    public class FileItem
+    public class FileItem:ViewModelBase
     {
-        public string FullPath { get=>fullPath; init=>fullPath=value; }
+        public string FullPath { get=>fullPath; set=>SetProperty(ref fullPath,value); }
         string fullPath;
-        public string Name { get=>name; init=>name=value; }
+        public string Name { get=>name; set=>SetProperty(ref name,value); }
         string name;
-        public bool IsDirectory { get => isDirectory; init => isDirectory=value; }
+        public bool IsDirectory { get => isDirectory; set =>SetProperty(ref isDirectory,value); }
         bool isDirectory;
-        public long? SizeBytes { get => sizeBytes; init => sizeBytes=value; }
+        public long? SizeBytes { get => sizeBytes; set =>SetProperty(ref sizeBytes,value); }
         long? sizeBytes;
-        public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; init => lastWriteTimeUtc=value; }
+        public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc,value); }
         DateTime lastWriteTimeUtc;
-        public bool IsHidden { get => isHidden; init =>isHidden=value; }
+        public bool IsHidden { get => isHidden; set =>SetProperty(ref isHidden,value); }
         bool isHidden;
-        public bool IsReadOnly { get => isReadOnly; init =>isReadOnly=value; }
+        public bool IsReadOnly { get => isReadOnly; set =>SetProperty(ref isReadOnly,value); }
         bool isReadOnly;
     }
 }

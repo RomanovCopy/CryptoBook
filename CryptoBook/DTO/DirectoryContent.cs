@@ -1,18 +1,22 @@
-﻿using CryptoBook.Interfaces;
+﻿using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CryptoBook.DTO
 {
-    public class DirectoryContent
+    public class DirectoryContent:ViewModelBase
     {
-        public string DirectoryPath { get => directoryPath; init => directoryPath=value; }
+        public string DirectoryPath { get => directoryPath; set => SetProperty(ref directoryPath,value); }
         string directoryPath;
-        public IReadOnlyList<FileItem> Items { get => items; init => items=value; }
-        IReadOnlyList<FileItem> items;
+        public bool IsHidden { get => isHidden; set => SetProperty(ref isHidden, value); }
+        bool isHidden;
+        public ObservableCollection<FileItem> Items { get => items; }
+        private readonly ObservableCollection<FileItem> items;
     }
 }
