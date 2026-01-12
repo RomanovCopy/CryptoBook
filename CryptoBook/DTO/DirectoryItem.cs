@@ -32,17 +32,84 @@ namespace CryptoBook.DTO
         /// </summary>
         public IRootItem Root { get => root; set => SetProperty(ref root, value); }
         IRootItem root;
+        /// <summary>
+        /// флаг - дочерние элементы загружены
+        /// </summary>
+        public bool IsLoaded { get => isLoaded; set => SetProperty(ref isLoaded, value); }
+        bool isLoaded;
 
-        public ReadOnlyObservableCollection<IFileSystemItem> Children => throw new NotImplementedException();
+        ///<summary>
+        ///Получает значение, указывающее, должен ли текущий элемент иметь дочерние элементы.
+        ///</summary>
+        ///<remarks> Это свойство предоставляет подсказку и может не отражать фактическое присутствие нижестоящего элемента
+        ///Значение обычно используется для оптимизации визуализации пользовательского интерфейса или сценариев загрузки данных, где определение
+        ///существование детей дорого. </remarks>
+        public bool HasChildrenHint => throw new NotImplementedException();
 
-        public bool IsLoaded => throw new NotImplementedException();
+        /// <summary>
+        /// Возвращает доступную только для чтения наблюдаемую коллекцию дочерних элементов,
+        /// содержащихся в этом элементе файловой системы.
+        /// </summary>
+        /// <remarks>Коллекция отражает текущий набор дочерних элементов и уведомляет наблюдателей об изменениях,
+        /// таких как добавление или удаление. Коллекция пуста, если у элемента нет дочерних элементов.</remarks>
+        public ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
+        ObservableCollection<IFileSystemItem>_children;
 
+
+        public DirectoryItem()
+        {
+            Children = new ReadOnlyObservableCollection<IFileSystemItem>(_children = []);
+        }
+
+
+
+        /// <summary>
+        /// Обеспечивает асинхронную загрузку необходимых данных, если они еще не загружены.
+        /// </summary>
+        /// <param name="ct">Маркер отмены, который можно использовать для отмены асинхронной операции. </param>
+        /// <returns>Задача, представляющая асинхронную операцию загрузки. Задача завершается после загрузки данных. </returns>
         public Task EnsureLoadedAsync(CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Инвалидирует текущие данные, помечая их как устаревшие и требующие перезагрузки при следующем доступе.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public void Invalidate()
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        public Task RefreshAsync(CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddChildAsync(IFileSystemItem item, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RemoveChildAsync(IFileSystemItem item, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ClearChildrenAsync(CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IFileItem> CreateFileAsync(string name, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IDirectoryItem> CreateDirectoryAsync(string name, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

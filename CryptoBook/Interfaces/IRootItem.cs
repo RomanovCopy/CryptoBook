@@ -8,8 +8,8 @@ namespace CryptoBook.Interfaces
 {
     public interface IRootItem
     {
-        string RootPath { get; }          // "C:\"
-        string VolumeLabel { get; }       // "System" (если доступно)
-        string DriveFormat { get; }       // "NTFS" (если доступно)
+        string RootPath { get; }          // "C:\", "\\server\share\"
+        string? VolumeLabel { get; }      // опционально
+        bool IsReady { get; }             // для съемных/сетевых
     }
 }

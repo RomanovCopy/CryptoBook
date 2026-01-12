@@ -11,7 +11,19 @@ namespace CryptoBook.Interfaces
     {
         ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
         bool IsLoaded { get; }
+        bool HasChildrenHint { get; }     // чтобы показывать "стрелку" до загрузки (опционально)
+
+        // Загрузка / инвалидация
         Task EnsureLoadedAsync(CancellationToken ct = default);
-        void Invalidate(); // пометить как не загруженную
+        Task RefreshAsync(CancellationToken ct = default);  // перечитать содержимое
+
+        // Мутации коллекции (UI-safe)
+        Task AddChildAsync(IFileSystemItem item, CancellationToken ct = default);
+        Task<bool> RemoveChildAsync(IFileSystemItem item, CancellationToken ct = default);
+        Task ClearChildrenAsync(CancellationToken ct = default);
+
+        // Операции файловой системы (на чистовую)
+        Task<IFileItem> CreateFileAsync(string name, CancellationToken ct = default);
+        Task<IDirectoryItem> CreateDirectoryAsync(string name, CancellationToken ct = default);
     }
 }
