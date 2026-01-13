@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.DTO;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace CryptoBook.Interfaces
 {
     public interface IDirectoryItem:IFileSystemItem
     {
-        ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
+        ObservableCollection<FileItem> Children { get; }
         bool IsLoaded { get; }
 
         // Загрузка / инвалидация

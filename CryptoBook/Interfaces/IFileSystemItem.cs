@@ -11,13 +11,13 @@ namespace CryptoBook.Interfaces
     /// </summary>
     public interface IFileSystemItem
     {
-        string Name { get; }
-        string FullPath { get; }
-        bool IsDirectory { get; }
-        bool IsHidden { get; }
-        bool IsReadOnly { get; }
+        string Name { get; set; }
+        string FullPath { get; set; }
+        bool IsDirectory { get; set; }
+        bool IsHidden { get; set; }
+        bool IsReadOnly { get; set; }
 
-        IDirectoryItem? Parent { get; }   // у корня диска Parent = null
-        IRootItem Root { get; }           // всегда НЕ null
+        IDirectoryItem? Parent { get; set; }   // у корня диска Parent = null
+        IRootItem Root { get; set; }           // всегда НЕ null
     }
 }

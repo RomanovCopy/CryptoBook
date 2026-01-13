@@ -48,8 +48,7 @@ namespace CryptoBook.DTO
         /// </summary>
         /// <remarks>Коллекция отражает текущий набор дочерних элементов и уведомляет наблюдателей об изменениях,
         /// таких как добавление или удаление. Коллекция пуста, если у элемента нет дочерних элементов.</remarks>
-        public ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
-        ObservableCollection<IFileSystemItem>_children;
+        public readonly ObservableCollection<FileItem> Children;
 
         public bool IsHidden { get => isHidden; set => SetProperty(ref isHidden, value); }
         bool isHidden;
@@ -63,16 +62,9 @@ namespace CryptoBook.DTO
         public DirectoryItem( IFileManagerService? fileManagerService)
         {
             _fileManagerService = fileManagerService??throw new ArgumentNullException(nameof(fileManagerService));
-            Children = new ReadOnlyObservableCollection<IFileSystemItem>(_children = []);
+            Children = new ObservableCollection<FileItem>();
         }
 
-        public DirectoryItem(List<IFileSystemItem> children, IFileManagerService? fileManagerService) : this(fileManagerService)
-        {
-            foreach (var item in children)
-            {
-                _children.Add(item);
-            }
-        }
 
 
 
@@ -81,9 +73,13 @@ namespace CryptoBook.DTO
         /// </summary>
         /// <param name="ct">Маркер отмены, который можно использовать для отмены асинхронной операции. </param>
         /// <returns>Задача, представляющая асинхронную операцию загрузки. Задача завершается после загрузки данных. </returns>
-        public Task EnsureLoadedAsync(CancellationToken ct = default)
+        public async Task EnsureLoadedAsync(CancellationToken ct = default)
         {
-            var item = _fileManagerService.BrowseAsync(FullPath, ct, true);
+            var list = await _fileManagerService.BrowseAsync(FullPath, ct, true);
+            foreach(var item in list)
+            {
+                Children.Add(item);
+            }
         }
 
         /// <summary>

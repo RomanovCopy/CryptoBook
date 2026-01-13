@@ -25,7 +25,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        //public async Task<IDirectoryItem> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden=false)
+        public async Task<List<FileItem>> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden=false)
         {
             return await Task.Run(() =>
             {
@@ -47,7 +47,7 @@ namespace CryptoBook.Services
                 .Select(f => ToFileItem(f))
                 .ToList();
             var allItems = directories.Concat(files).ToList();
-            return new DirectoryItem(allItems);
+            return allItems;
         }, cancellationToken);
         }
 
@@ -553,7 +553,7 @@ namespace CryptoBook.Services
         // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
         // --------------------------
 
-        private static IFileSystemItem ToFileItem(FileSystemInfo info)
+        private static FileItem ToFileItem(FileSystemInfo info)
         {
             bool isDir = info is DirectoryInfo;
 
@@ -566,7 +566,7 @@ namespace CryptoBook.Services
             bool isHidden = (info.Attributes & FileAttributes.Hidden) != 0;
             bool isReadOnly = (info.Attributes & FileAttributes.ReadOnly) != 0;
 
-            return new FileItem
+            return new FileItem()
             {
                 FullPath = info.FullName,
                 Name = info.Name,

@@ -15,9 +15,9 @@ namespace CryptoBook.Interfaces
     ///поддержка операций может варьироваться в зависимости от реализации.</remarks>
     public interface IFileItem:IFileSystemItem
     {
-        long Size { get; }
-        string Extension { get; }
-        public DateTime LastWriteTimeUtc { get; }
+        long? Size { get; set; }
+        string Extension { get; set; }
+        public DateTime LastWriteTimeUtc { get; set; }
 
     }
 }
