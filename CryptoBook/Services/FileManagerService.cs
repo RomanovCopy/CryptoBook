@@ -36,7 +36,7 @@ namespace CryptoBook.Services
         }
 
 
-        public Task<DirectoryContent> BrowseAsync(string path, CancellationToken ct, bool includeHidden = false)
+        public Task<IDirectoryItem> BrowseAsync(string path, CancellationToken ct, bool includeHidden = false)
         {
             var desc = ParsePath(path); // как раньше
             var provider = ResolveProvider(desc.Scheme);

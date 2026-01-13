@@ -11,7 +11,6 @@ namespace CryptoBook.Interfaces
     {
         ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
         bool IsLoaded { get; }
-        bool HasChildrenHint { get; }     // чтобы показывать "стрелку" до загрузки (опционально)
 
         // Загрузка / инвалидация
         Task EnsureLoadedAsync(CancellationToken ct = default);

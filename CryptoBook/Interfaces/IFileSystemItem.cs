@@ -11,8 +11,9 @@ namespace CryptoBook.Interfaces
     /// </summary>
     public interface IFileSystemItem
     {
+        string Name { get; }
         string FullPath { get; }
-
+        bool IsDirectory { get; }
         bool IsHidden { get; }
         bool IsReadOnly { get; }
 

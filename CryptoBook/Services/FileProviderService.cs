@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Services
 {
-    public class FileProviderService:IFileProviderService
+    public class FileProviderService: IFileProviderService
     {
         public string Scheme => "local";
 
@@ -25,30 +25,30 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        public async Task<DirectoryContent> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden=false)
+        //public async Task<IDirectoryItem> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden=false)
         {
             return await Task.Run(() =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
-                var dirInfo = new DirectoryInfo(path);
-                if(!dirInfo.Exists)
-                    throw new DirectoryNotFoundException(path);
+            var dirInfo = new DirectoryInfo(path);
+            if(!dirInfo.Exists)
+                throw new DirectoryNotFoundException(path);
 
-                var directories = dirInfo.EnumerateDirectories()
-                    .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
-                    .Select(d => ToFileItem(d))
-                    .ToList();
+            var directories = dirInfo.EnumerateDirectories()
+                .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
+                .Select(d => ToFileItem(d))
+                .ToList();
 
-                cancellationToken.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
-                var files = dirInfo.EnumerateFiles()
-                    .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
-                    .Select(f => ToFileItem(f))
-                    .ToList();
-
-                return new DirectoryContent { DirectoryPath = path, Items = directories.Concat(files).ToList() };
-            }, cancellationToken);
+            var files = dirInfo.EnumerateFiles()
+                .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
+                .Select(f => ToFileItem(f))
+                .ToList();
+            var allItems = directories.Concat(files).ToList();
+            return new DirectoryItem(allItems);
+        }, cancellationToken);
         }
 
         /// <summary>
@@ -538,12 +538,12 @@ namespace CryptoBook.Services
 
                     }, cancellationToken);
                 }
-            } catch(OperationCanceledException) 
-            { 
-                return FileOperationResult.Fail("Operation canceled."); 
-            } catch(Exception ex) 
-            { 
-                return FileOperationResult.Fail(ex.Message); 
+            } catch(OperationCanceledException)
+            {
+                return FileOperationResult.Fail("Operation canceled.");
+            } catch(Exception ex)
+            {
+                return FileOperationResult.Fail(ex.Message);
             }
         }
 
@@ -553,7 +553,7 @@ namespace CryptoBook.Services
         // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
         // --------------------------
 
-        private static FileItem ToFileItem(FileSystemInfo info)
+        private static IFileSystemItem ToFileItem(FileSystemInfo info)
         {
             bool isDir = info is DirectoryInfo;
 
@@ -571,7 +571,7 @@ namespace CryptoBook.Services
                 FullPath = info.FullName,
                 Name = info.Name,
                 IsDirectory = isDir,
-                SizeBytes = size,
+                Size = size,
                 LastWriteTimeUtc = info.LastWriteTimeUtc,
                 IsHidden = isHidden,
                 IsReadOnly = isReadOnly
@@ -700,6 +700,6 @@ namespace CryptoBook.Services
                 return new DirectoryInfo(path);
             throw new FileNotFoundException($"Путь не найден: {path}");
         }
-
     }
+
 }

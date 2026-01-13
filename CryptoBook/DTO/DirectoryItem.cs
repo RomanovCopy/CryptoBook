@@ -12,6 +12,9 @@ namespace CryptoBook.DTO
 {
     public class DirectoryItem:ViewModelBase,IDirectoryItem
     {
+        private readonly IFileManagerService _fileManagerService;
+
+
         /// <summary>
         /// имя директории
         /// </summary>
@@ -38,13 +41,6 @@ namespace CryptoBook.DTO
         public bool IsLoaded { get => isLoaded; set => SetProperty(ref isLoaded, value); }
         bool isLoaded;
 
-        ///<summary>
-        ///Получает значение, указывающее, должен ли текущий элемент иметь дочерние элементы.
-        ///</summary>
-        ///<remarks> Это свойство предоставляет подсказку и может не отражать фактическое присутствие нижестоящего элемента
-        ///Значение обычно используется для оптимизации визуализации пользовательского интерфейса или сценариев загрузки данных, где определение
-        ///существование детей дорого. </remarks>
-        public bool HasChildrenHint => throw new NotImplementedException();
 
         /// <summary>
         /// Возвращает доступную только для чтения наблюдаемую коллекцию дочерних элементов,
@@ -55,10 +51,27 @@ namespace CryptoBook.DTO
         public ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
         ObservableCollection<IFileSystemItem>_children;
 
+        public bool IsHidden { get => isHidden; set => SetProperty(ref isHidden, value); }
+        bool isHidden;
 
-        public DirectoryItem()
+        public bool IsReadOnly { get => isReadOnly; set => SetProperty(ref isReadOnly, value); }
+        bool isReadOnly;
+
+        public bool IsDirectory { get => isDirectory; set => SetProperty(ref isDirectory, value); }
+        bool isDirectory;
+
+        public DirectoryItem( IFileManagerService? fileManagerService)
         {
+            _fileManagerService = fileManagerService??throw new ArgumentNullException(nameof(fileManagerService));
             Children = new ReadOnlyObservableCollection<IFileSystemItem>(_children = []);
+        }
+
+        public DirectoryItem(List<IFileSystemItem> children, IFileManagerService? fileManagerService) : this(fileManagerService)
+        {
+            foreach (var item in children)
+            {
+                _children.Add(item);
+            }
         }
 
 
@@ -70,7 +83,7 @@ namespace CryptoBook.DTO
         /// <returns>Задача, представляющая асинхронную операцию загрузки. Задача завершается после загрузки данных. </returns>
         public Task EnsureLoadedAsync(CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            var item = _fileManagerService.BrowseAsync(FullPath, ct, true);
         }
 
         /// <summary>
@@ -113,5 +126,6 @@ namespace CryptoBook.DTO
         {
             throw new NotImplementedException();
         }
+
     }
 }

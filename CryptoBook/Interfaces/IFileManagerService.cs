@@ -24,7 +24,7 @@ namespace CryptoBook.Interfaces
         /// <returns>Объект <see cref="DirectoryContent"/>, содержащий элементы каталога и метаданные.</returns>
         /// <exception cref="DirectoryNotFoundException">Если каталог не найден.</exception>
         /// <exception cref="UnauthorizedAccessException">Если нет прав доступа к каталогу.</exception>
-        Task<DirectoryContent> BrowseAsync(string path,  CancellationToken ct, bool includeHidden=false);
+        Task<IDirectoryItem> BrowseAsync(string path,  CancellationToken ct, bool includeHidden=false);
 
         /// <summary>
         /// Копирование одного файла или папки с поддержкой отчёта о прогрессе.
