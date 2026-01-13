@@ -9,21 +9,50 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.DTO
 {
-    public class FileItem:ViewModelBase
+    public class FileItem:ViewModelBase, IFileItem
     {
         public string FullPath { get=>fullPath; set=>SetProperty(ref fullPath,value); }
         string fullPath;
         public string Name { get=>name; set=>SetProperty(ref name,value); }
         string name;
-        public bool IsDirectory { get => isDirectory; set =>SetProperty(ref isDirectory,value); }
-        bool isDirectory;
-        public long? SizeBytes { get => sizeBytes; set =>SetProperty(ref sizeBytes,value); }
-        long? sizeBytes;
-        public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc,value); }
-        DateTime lastWriteTimeUtc;
-        public bool IsHidden { get => isHidden; set =>SetProperty(ref isHidden,value); }
+        public long Size { get => size; private set => SetProperty(ref size, value); }
+        long size;
+        public string Extension{ get => extension; private set => SetProperty(ref extension, value); }
+        string extension;
+        public bool IsHidden { get => isHidden; private set => SetProperty(ref isHidden, value); }
         bool isHidden;
-        public bool IsReadOnly { get => isReadOnly; set =>SetProperty(ref isReadOnly,value); }
+        public bool IsReadOnly { get => isReadOnly; private set => SetProperty(ref isReadOnly, value); }
         bool isReadOnly;
+
+        public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; private set => SetProperty(ref lastWriteTimeUtc,value); }
+        DateTime lastWriteTimeUtc;
+        public IDirectoryItem? Parent{ get => parent; private set => SetProperty(ref parent, value); }
+        IDirectoryItem? parent;
+        public IRootItem Root { get => root; private set => SetProperty(ref root, value); }
+        IRootItem root;
+
+
+        public FileItem()
+        {
+
+        }
+
+
+
+        public Task RenameAsync(string newName, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MoveToAsync(IDirectoryItem targetDir, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

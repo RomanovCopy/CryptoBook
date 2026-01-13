@@ -6,13 +6,19 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
+    /// <summary>
+    ///Представляет элемент файла в файловой системе, предоставляя свойства и методы для операций, специфичных для файла, таких как
+    ///переименование, удаление и перемещение файла.
+    /// </summary>
+    /// <remarks>Этот интерфейс расширяет IFileSystemItem и включает функции, специфичные для файла.
+    ///Реализации могут представлять файлы на диске, в памяти или в виртуализированных файловых системах. Безопасность и
+    ///поддержка операций может варьироваться в зависимости от реализации.</remarks>
     public interface IFileItem:IFileSystemItem
     {
+        string Name { get; }
         long Size { get; }
         string Extension { get; }
+        public DateTime LastWriteTimeUtc { get; }
 
-        Task RenameAsync(string newName, CancellationToken ct = default);
-        Task DeleteAsync(CancellationToken ct = default);
-        Task MoveToAsync(IDirectoryItem targetDir, CancellationToken ct = default);
     }
 }
