@@ -11,7 +11,7 @@ namespace CryptoBook.Interfaces
 {
     public interface IDirectoryItem:IFileSystemItem
     {
-        ObservableCollection<FileItem> Children { get; }
+        ObservableCollection<IFileItem> Children { get; }
         bool IsLoaded { get; }
 
         // Загрузка / инвалидация

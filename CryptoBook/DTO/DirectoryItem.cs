@@ -48,7 +48,8 @@ namespace CryptoBook.DTO
         /// </summary>
         /// <remarks>Коллекция отражает текущий набор дочерних элементов и уведомляет наблюдателей об изменениях,
         /// таких как добавление или удаление. Коллекция пуста, если у элемента нет дочерних элементов.</remarks>
-        public readonly ObservableCollection<FileItem> Children;
+        public ObservableCollection<IFileItem> Children { get=>children; private set=>SetProperty(ref children, value); }
+        ObservableCollection<IFileItem> children;
 
         public bool IsHidden { get => isHidden; set => SetProperty(ref isHidden, value); }
         bool isHidden;
@@ -62,7 +63,7 @@ namespace CryptoBook.DTO
         public DirectoryItem( IFileManagerService? fileManagerService)
         {
             _fileManagerService = fileManagerService??throw new ArgumentNullException(nameof(fileManagerService));
-            Children = new ObservableCollection<FileItem>();
+            Children = [];
         }
 
 

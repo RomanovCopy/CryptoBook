@@ -31,12 +31,12 @@ namespace CryptoBook.Models
         private DriveInfoEx _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
-        public ReadOnlyObservableCollection<FileItem> GetFiles { get => _files; private set => SetProperty(ref _files, value); }
-        private ReadOnlyObservableCollection<FileItem> _files;
+        public ReadOnlyObservableCollection<IFileItem> GetFiles { get => _files; private set => SetProperty(ref _files, value); }
+        private ReadOnlyObservableCollection<IFileItem> _files;
         public ReadOnlyObservableCollection<DriveInfoEx> GetDrives { get => _drives; private set => SetProperty(ref _drives, value); }
         private ReadOnlyObservableCollection<DriveInfoEx> _drives;
-        public ReadOnlyObservableCollection<DirectoryContent> GetDirectories { get => _directories; private set => SetProperty(ref _directories, value); }
-        private ReadOnlyObservableCollection<DirectoryContent> _directories;
+        public ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get => _directories; private set => SetProperty(ref _directories, value); }
+        private ReadOnlyObservableCollection<IDirectoryItem> _directories;
 
 
 
@@ -162,9 +162,9 @@ namespace CryptoBook.Models
             {
                 SelectedDrive = drive;
                 CurrentPath = drive.RootDirectory;
-            } else if(obj is DirectoryContent dir)
+            } else if(obj is IDirectoryItem dir)
             {
-                CurrentPath = dir.DirectoryPath;
+                CurrentPath = dir.FullPath;
             }
             var files = await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
         }
