@@ -48,7 +48,7 @@
                     </StackPanel>
                 </StackPanel>
         </HierarchicalDataTemplate>
-        <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryContent}" 
+        <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryItem}" 
                                       ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}">
             <DockPanel LastChildFill="True">
                 <Image Width="{StaticResource Tv_IconSize}"
