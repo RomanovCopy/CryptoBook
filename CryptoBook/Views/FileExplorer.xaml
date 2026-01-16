@@ -25,7 +25,6 @@
                 <StackPanel Orientation="Horizontal" Margin="2">
                     <!-- Иконка диска (можно улучшить с Image) -->
                     <TextBlock Text="💾" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
-
                     <StackPanel>
                         <TextBlock FontWeight="Bold">
                             <TextBlock.Text>
@@ -35,7 +34,6 @@
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-
                         <TextBlock FontSize="11" Foreground="Gray">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} • Свободно: {1:F1} ГБ из {2:F1} ГБ">
@@ -49,7 +47,7 @@
                 </StackPanel>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryItem}" 
-                                      ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding GetFiles,UpdateSourceTrigger=PropertyChanged}">
             <DockPanel LastChildFill="True">
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"

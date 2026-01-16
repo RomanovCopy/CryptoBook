@@ -16,7 +16,7 @@ namespace CryptoBook.Interfaces
         bool IsDirectory { get; set; }
         bool IsHidden { get; set; }
         bool IsReadOnly { get; set; }
-
+        public DateTime LastWriteTimeUtc { get; set; }
         IDirectoryItem? Parent { get; set; }   // у корня диска Parent = null
         IRootItem Root { get; set; }           // всегда НЕ null
     }

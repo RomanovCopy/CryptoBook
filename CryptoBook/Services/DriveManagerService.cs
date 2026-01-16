@@ -64,8 +64,8 @@ namespace CryptoBook.Services
         {
             InvokeOnUiThread(() =>
             {
-                var driveToRemove = _writableDrives.FirstOrDefault(d =>
-                    string.Equals(d.RootDirectory.TrimEnd('\\'), driveName.TrimEnd(':'), StringComparison.OrdinalIgnoreCase));
+                var driveToRemove = _writableDrives.FirstOrDefault(d => string.Equals(d.RootDirectory,
+                    driveName.TrimEnd(':', '\\') + ":\\", StringComparison.OrdinalIgnoreCase));
 
                 if(driveToRemove != null)
                 {

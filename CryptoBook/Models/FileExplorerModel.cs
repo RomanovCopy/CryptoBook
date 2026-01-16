@@ -31,12 +31,12 @@ namespace CryptoBook.Models
         private DriveInfoEx _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
-        public ReadOnlyObservableCollection<IFileItem> GetFiles { get => _files; private set => SetProperty(ref _files, value); }
-        private ReadOnlyObservableCollection<IFileItem> _files;
-        public ReadOnlyObservableCollection<DriveInfoEx> GetDrives { get => _drives; private set => SetProperty(ref _drives, value); }
-        private ReadOnlyObservableCollection<DriveInfoEx> _drives;
-        public ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get => _directories; private set => SetProperty(ref _directories, value); }
-        private ReadOnlyObservableCollection<IDirectoryItem> _directories;
+        public ReadOnlyObservableCollection<IFileItem> GetFiles { get; private set; }
+        private ObservableCollection<IFileItem> _files;
+        public ReadOnlyObservableCollection<DriveInfoEx> GetDrives { get; private set; }
+        private ObservableCollection<DriveInfoEx> _drives;
+        public ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get; private set; }
+        private ObservableCollection<IDirectoryItem> _directories;
 
 
 
@@ -48,9 +48,33 @@ namespace CryptoBook.Models
             _windowManager = windowManager;
             GetDrives = _driveManagerService.WritableDrives;
             _isHiddenFilesVisible = true;
+            //_drives = [];
+            //GetDrives=new(_drives);
+            _directories = [];
+            GetDirectories=new(_directories);
+            _files = [];
+            GetFiles=new(_files);
+
         }
 
+        private void update()
+        {
+            foreach(var file in GetFiles)
+            {
+                if(file.IsDirectory)
+                {
+                    
+                } else
+                {
 
+                }
+            }
+        }
+
+        private IDirectoryItem ToDirectoryItem(IFileItem file)
+        {
+            var directory = new DirectoryItem(file.FullPath);
+        }
 
 
         public bool CanExecute_CutCommand(object? obj)

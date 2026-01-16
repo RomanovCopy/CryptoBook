@@ -17,7 +17,6 @@ namespace CryptoBook.Interfaces
     {
         long? Size { get; set; }
         string Extension { get; set; }
-        public DateTime LastWriteTimeUtc { get; set; }
 
     }
 }

@@ -60,6 +60,9 @@ namespace CryptoBook.DTO
         public bool IsDirectory { get => isDirectory; set => SetProperty(ref isDirectory, value); }
         bool isDirectory;
 
+        public DateTime LastWriteTimeUtc { get => lastWriteTimeUTc; set => SetProperty(ref lastWriteTimeUTc, value); }
+        DateTime lastWriteTimeUTc;
+
         public DirectoryItem( IFileManagerService? fileManagerService)
         {
             _fileManagerService = fileManagerService??throw new ArgumentNullException(nameof(fileManagerService));
