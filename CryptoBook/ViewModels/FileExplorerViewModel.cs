@@ -18,10 +18,11 @@ namespace CryptoBook.ViewModels
         private readonly IFileExplorerModel _fileExplorerModel;
 
         public bool IsHiddenFilesVisible { get => _fileExplorerModel.IsHiddenFilesVisible; set => _fileExplorerModel.IsHiddenFilesVisible=value; }
-        public DriveInfoEx SelectedDrive{ get=> _fileExplorerModel.SelectedDrive; set => _fileExplorerModel.SelectedDrive=value; }
-        public ReadOnlyObservableCollection<IFileItem> GetFiles => _fileExplorerModel.GetFiles;
+        public object SelectedItem { get => _fileExplorerModel.SelectedItem; set => _fileExplorerModel.SelectedItem=value; }
+        public DriveItem SelectedDrive{ get=> _fileExplorerModel.SelectedDrive; set => _fileExplorerModel.SelectedDrive=value; }
+        public ReadOnlyObservableCollection<IFileSystemItem> GetFiles => _fileExplorerModel.GetFiles;
         public ReadOnlyObservableCollection<IDirectoryItem> GetDirectories => _fileExplorerModel.GetDirectories;
-        public ReadOnlyObservableCollection<DriveInfoEx> GetDrives => _fileExplorerModel.GetDrives;
+        public ReadOnlyObservableCollection<DriveItem> GetDrives => _fileExplorerModel.GetDrives;
         public string CurrentPath { get => _fileExplorerModel.CurrentPath; set => _fileExplorerModel.CurrentPath=value; }
         public Guid WindowId => _fileExplorerModel.WindowId;
 

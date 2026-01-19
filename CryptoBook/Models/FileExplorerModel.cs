@@ -27,14 +27,17 @@ namespace CryptoBook.Models
         private Guid _windowId;
         public bool IsHiddenFilesVisible { get => _isHiddenFilesVisible; set => SetProperty(ref _isHiddenFilesVisible, value); }
         private bool _isHiddenFilesVisible;
-        public DriveInfoEx SelectedDrive { get => _selectedDrive; set => SetProperty(ref _selectedDrive, value); }
-        private DriveInfoEx _selectedDrive;
+        public object? SelectedItem { get => _selectedItem; set => SetProperty(ref _selectedItem, value); }
+        private object? _selectedItem;
+
+        public DriveItem SelectedDrive { get => _selectedDrive; set => SetProperty(ref _selectedDrive, value); }
+        private DriveItem _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
-        public ReadOnlyObservableCollection<IFileItem> GetFiles { get; private set; }
-        private ObservableCollection<IFileItem> _files;
-        public ReadOnlyObservableCollection<DriveInfoEx> GetDrives { get; private set; }
-        private ObservableCollection<DriveInfoEx> _drives;
+        public ReadOnlyObservableCollection<IFileSystemItem> GetFiles { get; private set; }
+        private ObservableCollection<IFileSystemItem> _files;
+        public ReadOnlyObservableCollection<DriveItem> GetDrives { get; private set; }
+        private ObservableCollection<DriveItem> _drives;
         public ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get; private set; }
         private ObservableCollection<IDirectoryItem> _directories;
 
@@ -48,34 +51,23 @@ namespace CryptoBook.Models
             _windowManager = windowManager;
             GetDrives = _driveManagerService.WritableDrives;
             _isHiddenFilesVisible = true;
-            //_drives = [];
-            //GetDrives=new(_drives);
             _directories = [];
             GetDirectories=new(_directories);
             _files = [];
             GetFiles=new(_files);
-
+            CurrentPath = GetDrives.FirstOrDefault()?.RootDirectory ?? string.Empty;
         }
 
-        private void update()
+        private async void update(object o)
         {
-            foreach(var file in GetFiles)
+            _files.Clear();
+            var files = await _fileManagerService.BrowseAsync(path, _cancellationTokenSource.Token, isHidden);
+            if(files == null) return;
+            foreach(var file in files)
             {
-                if(file.IsDirectory)
-                {
-                    
-                } else
-                {
-
-                }
+                _files.Add(file);
             }
         }
-
-        private IDirectoryItem ToDirectoryItem(IFileItem file)
-        {
-            var directory = new DirectoryItem(file.FullPath);
-        }
-
 
         public bool CanExecute_CutCommand(object? obj)
         {
@@ -182,15 +174,15 @@ namespace CryptoBook.Models
 
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
-            if(obj is DriveInfoEx drive)
+            if((obj is IContainerFileSystemItem))
             {
-                SelectedDrive = drive;
-                CurrentPath = drive.RootDirectory;
-            } else if(obj is IDirectoryItem dir)
-            {
-                CurrentPath = dir.FullPath;
+                if(obj is IDirectoryItem directory)
+                {
+
+                } else if(obj is DriveItem drive)
+                {
+                }
             }
-            var files = await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
         }
 
 

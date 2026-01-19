@@ -25,30 +25,30 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        public async Task<List<IFileItem>> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden=false)
+        public async Task<List<IFileSystemItem>> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden = false)
         {
             return await Task.Run(() =>
             {
-            cancellationToken.ThrowIfCancellationRequested();
+                cancellationToken.ThrowIfCancellationRequested();
 
-            var dirInfo = new DirectoryInfo(path);
-            if(!dirInfo.Exists)
-                throw new DirectoryNotFoundException(path);
+                var dirInfo = new DirectoryInfo(path);
+                if(!dirInfo.Exists)
+                    throw new DirectoryNotFoundException(path);
 
-            var directories = dirInfo.EnumerateDirectories()
-                .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
-                .Select(d => ToFileItem(d))
-                .ToList();
+                var directories = dirInfo.EnumerateDirectories()
+                    .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
+                    .Select(d => ToFileItem(d))
+                    .ToList();
 
-            cancellationToken.ThrowIfCancellationRequested();
+                cancellationToken.ThrowIfCancellationRequested();
 
-            var files = dirInfo.EnumerateFiles()
-                .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
-                .Select(f => ToFileItem(f))
-                .ToList();
-            var allItems = directories.Concat(files).ToList();
-            return allItems;
-        }, cancellationToken);
+                var files = dirInfo.EnumerateFiles()
+                    .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
+                    .Select(f => ToFileItem(f))
+                    .ToList();
+                var allItems = directories.Concat(files).ToList();
+                return allItems;
+            }, cancellationToken);
         }
 
         /// <summary>
@@ -480,7 +480,8 @@ namespace CryptoBook.Services
                     if(File.Exists(newPath) || Directory.Exists(newPath))
                         return FileOperationResult.Fail("Target name already exists.");
 
-                    await Task.Run(() => {
+                    await Task.Run(() =>
+                    {
                         cancellationToken.ThrowIfCancellationRequested();
                         Directory.Move(path, newPath); // Directory.Move работает для файлов и каталогов
                     }, cancellationToken);
@@ -553,7 +554,7 @@ namespace CryptoBook.Services
         // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
         // --------------------------
 
-        private static IFileItem ToFileItem(FileSystemInfo info)
+        private static IFileSystemItem ToFileItem(FileSystemInfo info)
         {
             bool isDir = info is DirectoryInfo;
 
@@ -566,16 +567,33 @@ namespace CryptoBook.Services
             bool isHidden = (info.Attributes & FileAttributes.Hidden) != 0;
             bool isReadOnly = (info.Attributes & FileAttributes.ReadOnly) != 0;
 
-            return new FileItem()
+            switch(isDir)
             {
-                FullPath = info.FullName,
-                Name = info.Name,
-                IsDirectory = isDir,
-                Size = size,
-                LastWriteTimeUtc = info.LastWriteTimeUtc,
-                IsHidden = isHidden,
-                IsReadOnly = isReadOnly
-            };
+                case true:
+                var dirInfo = info as DirectoryInfo;
+                return new DirectoryItem()
+                {
+                    FullPath = dirInfo!.FullName,
+                    Name = dirInfo.Name,
+                    IsDirectory = true,
+                    LastWriteTimeUtc = dirInfo.LastWriteTimeUtc,
+                    IsHidden = isHidden,
+                    IsReadOnly = isReadOnly
+                };
+                case false:
+                var fileInfo = info as FileInfo;
+                return new FileItem()
+                {
+                    FullPath = fileInfo!.FullName,
+                    Name = fileInfo.Name,
+                    Size = size,
+                    Extension = fileInfo.Extension,
+                    IsDirectory = false,
+                    LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
+                    IsHidden = isHidden,
+                    IsReadOnly = isReadOnly
+                };
+            }
         }
 
         private async Task CopyFileAsync(

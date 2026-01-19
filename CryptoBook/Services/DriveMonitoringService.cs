@@ -17,9 +17,9 @@ namespace CryptoBook.Services
 
         private ManagementEventWatcher? _watcher;
         private readonly object _lock = new object();
-        private List<DriveInfoEx> _currentDrives = new List<DriveInfoEx>();
+        private List<DriveItem> _currentDrives = new List<DriveItem>();
 
-        public event Action<DriveInfoEx> OnDriveConnected;
+        public event Action<DriveItem> OnDriveConnected;
         public event Action<string> OnDriveDisconnected;
 
         public DriveMonitoringService()
@@ -27,7 +27,7 @@ namespace CryptoBook.Services
             RefreshCurrentDrives();
         }
 
-        public IReadOnlyList<DriveInfoEx> GetWritableDrives()
+        public IReadOnlyList<DriveItem> GetWritableDrives()
         {
             lock(_lock)
             {
@@ -113,7 +113,7 @@ namespace CryptoBook.Services
             }
         }
 
-        private DriveInfoEx? GetDriveIfWritable(string root)
+        private DriveItem? GetDriveIfWritable(string root)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace CryptoBook.Services
                     drive.DriveType != DriveType.Ram &&
                     drive.AvailableFreeSpace > 0)
                 {
-                    return new DriveInfoEx
+                    return new DriveItem
                     {
                         RootDirectory = drive.Name,
                         VolumeLabel = drive.VolumeLabel,
@@ -141,7 +141,7 @@ namespace CryptoBook.Services
             return null;
         }
 
-        private async Task<DriveInfoEx?> WaitForDriveReadyAsync(string root, CancellationToken ct, int maxAttempts = 15, int delayMs = 200)
+        private async Task<DriveItem?> WaitForDriveReadyAsync(string root, CancellationToken ct, int maxAttempts = 15, int delayMs = 200)
         {
             for(int i = 0; i < maxAttempts; i++)
             {

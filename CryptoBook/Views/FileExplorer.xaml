@@ -20,8 +20,8 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
     <Window.Resources>
-        <HierarchicalDataTemplate DataType="{x:Type dto:DriveInfoEx}"
-                                      ItemsSource="{Binding GetDirectories,UpdateSourceTrigger=PropertyChanged}">
+        <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
+                                      ItemsSource="{Binding Children,UpdateSourceTrigger=PropertyChanged}">
                 <StackPanel Orientation="Horizontal" Margin="2">
                     <!-- Иконка диска (можно улучшить с Image) -->
                     <TextBlock Text="💾" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
@@ -47,7 +47,7 @@
                 </StackPanel>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryItem}" 
-                                      ItemsSource="{Binding GetFiles,UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding Children,UpdateSourceTrigger=PropertyChanged}">
             <DockPanel LastChildFill="True">
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
@@ -128,7 +128,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Pane (левая панель) -->
-            <TreeView Grid.Column="0" ItemsSource="{Binding GetDrives,UpdateSourceTrigger=PropertyChanged}">
+            <TreeView Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}">
+
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
                         <i:InvokeCommandAction Command="{Binding TreeViewItemSelectedCommand, UpdateSourceTrigger=PropertyChanged}"

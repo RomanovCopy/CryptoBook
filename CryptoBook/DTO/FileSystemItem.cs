@@ -31,5 +31,8 @@ namespace CryptoBook.DTO
 
         public IRootItem Root { get => root; set => SetProperty(ref root, value); }
         IRootItem root;
+
+        public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
+        DateTime lastWriteTimeUtc;
     }
 }
