@@ -15,12 +15,12 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// Коллекция доступных для записи дисков (включая USB). Только для чтения.
         /// </summary>
-        ReadOnlyObservableCollection<DriveItem> WritableDrives { get; }
+        ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; }
 
         /// <summary>
         /// Событие: подключён новый подходящий диск
         /// </summary>
-        event Action<DriveItem> DriveConnected;
+        event Action<IDriveItem> DriveConnected;
 
         /// <summary>
         /// Событие: отключён диск (передаётся буква, например "E:")

@@ -14,13 +14,13 @@ namespace CryptoBook.Services
     public class DriveManagerService: IDriveManagerService
     {
         private readonly IDriveMonitoringService _monitoringService;
-        private readonly ObservableCollection<DriveItem> _writableDrives;
+        private readonly ObservableCollection<IDriveItem> _writableDrives;
 
         private readonly IDispatcherService _uiDispatcher;
 
-        public ReadOnlyObservableCollection<DriveItem> WritableDrives { get; }
+        public ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; }
 
-        public event Action<DriveItem> DriveConnected;
+        public event Action<IDriveItem> DriveConnected;
         public event Action<string> DriveDisconnected;
 
        public DriveManagerService(IDriveMonitoringService monitoringService, IDispatcherService dispatcherService)
@@ -28,9 +28,9 @@ namespace CryptoBook.Services
             _monitoringService = monitoringService ?? throw new ArgumentNullException(nameof(monitoringService));
 
             _uiDispatcher = dispatcherService;
-            _writableDrives = new ObservableCollection<DriveItem>(_monitoringService.GetWritableDrives());
+            _writableDrives = new ObservableCollection<IDriveItem>(_monitoringService.GetWritableDrives());
 
-            WritableDrives = new ReadOnlyObservableCollection<DriveItem>(_writableDrives);
+            WritableDrives = new ReadOnlyObservableCollection<IDriveItem>(_writableDrives);
 
             _monitoringService.OnDriveConnected += OnDriveConnected;
             _monitoringService.OnDriveDisconnected += OnDriveDisconnected;

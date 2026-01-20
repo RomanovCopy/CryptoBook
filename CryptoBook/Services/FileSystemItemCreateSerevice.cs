@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Services
 {
-    public class FileSystemItemCreateSerevice:IFileSystemItemCreateService
+    public class FileSystemItemCreateService:IFileSystemItemCreateService
     {
         private readonly Func<string, IRootItem> _createRoot;
         private readonly Func<string, IContainerFileSystemItem, IDirectoryItem> _createDirectory;
         private readonly Func<string, IContainerFileSystemItem, IFileItem> _createFile;
 
-        public FileSystemItemCreateSerevice(
+        public FileSystemItemCreateService(
             Func<string, IRootItem> createRoot,
             Func<string, IContainerFileSystemItem, IDirectoryItem> createDirectory,
             Func<string, IContainerFileSystemItem, IFileItem> createFile)

@@ -39,6 +39,15 @@ namespace CryptoBook.DTO
         }
 
 
+        public FileOperationResult AddChild(IFileSystemItem item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FileOperationResult RemoveChild(IFileSystemItem item)
+        {
+            throw new NotImplementedException();
+        }
 
 
 

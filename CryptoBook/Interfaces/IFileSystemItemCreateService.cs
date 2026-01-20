@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFileSystemItemCreateService
+    public interface IFileSystemItemCreateService:IService
     {
         IRootItem CreateRoot(string rootPath);
         IDirectoryItem CreateDirectory(string path, IContainerFileSystemItem parent);
@@ -15,4 +15,3 @@ namespace CryptoBook.Interfaces
     }
 }
 
-}

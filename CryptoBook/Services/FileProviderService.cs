@@ -584,31 +584,15 @@ namespace CryptoBook.Services
                         dirInfo!.FullName, 
                         dirInfo.Parent != null ? ToFileItem(dirInfo.Parent) as IDirectoryItem : null);
                 }
-                //var dirInfo = info as DirectoryInfo;
-                //return new DirectoryItem()
-                //{
-                //    FullPath = dirInfo!.FullName,
-                //    Name = dirInfo.Name,
-                //    IsDirectory = true,
-                //    LastWriteTimeUtc = dirInfo.LastWriteTimeUtc,
-                //    Parent=dirInfo.Parent != null ? ToFileItem(dirInfo.Parent) as IDirectoryItem : null,
-                //    Root=dirInfo.Root != null ? ToFileItem(dirInfo.Root) as IRootItem : null,
-                //    IsHidden = isHidden,
-                //    IsReadOnly = isReadOnly
-                //};
                 case false:
-                var fileInfo = info as FileInfo;
-                return new FileItem()
                 {
-                    FullPath = fileInfo!.FullName,
-                    Name = fileInfo.Name,
-                    Size = size,
-                    Extension = fileInfo.Extension,
-                    IsDirectory = false,
-                    LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
-                    IsHidden = isHidden,
-                    IsReadOnly = isReadOnly
-                };
+                    var fileInfo = info as FileInfo;
+                    var path=fileInfo!.FullName;
+                    var parent = new FileInfo(path).Directory!=null ? new FileInfo(path).Directory : null;
+                    return _itemCreateService.CreateFile( 
+                        fileInfo!.FullName, 
+                        Path.GetDirectoryName(fileInfo.FullName) != null ? ToFileItem(parent) as IDirectoryItem : null);
+                }
             }
         }
 

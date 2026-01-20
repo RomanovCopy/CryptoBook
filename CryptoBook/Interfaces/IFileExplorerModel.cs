@@ -15,10 +15,10 @@ namespace CryptoBook.Interfaces
         bool IsHiddenFilesVisible { get; set; } 
         string CurrentPath { get; set; }
         object SelectedItem { get; set; }
-        DriveItem SelectedDrive { get; set; }
+        IDriveItem SelectedDrive { get; set; }
         ReadOnlyObservableCollection<IFileSystemItem> GetFiles { get; }
         ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get;}
-        ReadOnlyObservableCollection<DriveItem>GetDrives { get; }
+        ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
 
         bool CanExecute_CutCommand(object? obj);
         bool CanExecute_CopyCommand(object? obj);

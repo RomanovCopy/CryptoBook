@@ -31,14 +31,14 @@ namespace CryptoBook.Models
         public object? SelectedItem { get => _selectedItem; set => SetProperty(ref _selectedItem, value); }
         private object? _selectedItem;
 
-        public DriveItem SelectedDrive { get => _selectedDrive; set => SetProperty(ref _selectedDrive, value); }
-        private DriveItem _selectedDrive;
+        public IDriveItem SelectedDrive { get => _selectedDrive; set => SetProperty(ref _selectedDrive, value); }
+        private IDriveItem _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
         public ReadOnlyObservableCollection<IFileSystemItem> GetFiles { get; private set; }
         private ObservableCollection<IFileSystemItem> _files;
-        public ReadOnlyObservableCollection<DriveItem> GetDrives { get; private set; }
-        private ObservableCollection<DriveItem> _drives;
+        public ReadOnlyObservableCollection<IDriveItem> GetDrives { get; private set; }
+        private ObservableCollection<IDriveItem> _drives;
         public ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get; private set; }
         private ObservableCollection<IDirectoryItem> _directories;
 
