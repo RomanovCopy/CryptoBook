@@ -15,8 +15,15 @@ namespace CryptoBook.Services
 {
     public class FileProviderService: IFileProviderService
     {
+        private readonly IFileSystemItemCreateService _itemCreateService;
+
+
         public string Scheme => "local";
 
+        public FileProviderService(IFileSystemItemCreateService? itemCreateService)
+        {
+            _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
+        }
 
         /// <summary>
         /// Возвращает список файлов/подкаталогов внутри заданной директории.
@@ -554,14 +561,14 @@ namespace CryptoBook.Services
         // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
         // --------------------------
 
-        private static IFileSystemItem ToFileItem(FileSystemInfo info)
+        private IFileSystemItem ToFileItem(FileSystemInfo info)
         {
             bool isDir = info is DirectoryInfo;
-
             long? size = null;
             if(!isDir && info is FileInfo fi)
             {
                 size = fi.Length;
+                
             }
 
             bool isHidden = (info.Attributes & FileAttributes.Hidden) != 0;
@@ -570,16 +577,25 @@ namespace CryptoBook.Services
             switch(isDir)
             {
                 case true:
-                var dirInfo = info as DirectoryInfo;
-                return new DirectoryItem()
                 {
-                    FullPath = dirInfo!.FullName,
-                    Name = dirInfo.Name,
-                    IsDirectory = true,
-                    LastWriteTimeUtc = dirInfo.LastWriteTimeUtc,
-                    IsHidden = isHidden,
-                    IsReadOnly = isReadOnly
-                };
+                    var dirInfo = info as DirectoryInfo;
+
+                    return _itemCreateService.CreateDirectory( 
+                        dirInfo!.FullName, 
+                        dirInfo.Parent != null ? ToFileItem(dirInfo.Parent) as IDirectoryItem : null);
+                }
+                //var dirInfo = info as DirectoryInfo;
+                //return new DirectoryItem()
+                //{
+                //    FullPath = dirInfo!.FullName,
+                //    Name = dirInfo.Name,
+                //    IsDirectory = true,
+                //    LastWriteTimeUtc = dirInfo.LastWriteTimeUtc,
+                //    Parent=dirInfo.Parent != null ? ToFileItem(dirInfo.Parent) as IDirectoryItem : null,
+                //    Root=dirInfo.Root != null ? ToFileItem(dirInfo.Root) as IRootItem : null,
+                //    IsHidden = isHidden,
+                //    IsReadOnly = isReadOnly
+                //};
                 case false:
                 var fileInfo = info as FileInfo;
                 return new FileItem()

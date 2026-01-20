@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.DTO;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,7 +11,9 @@ namespace CryptoBook.Interfaces
 {
     public interface IContainerFileSystemItem
     {
-        ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
         bool IsLoaded { get; }
+        ReadOnlyObservableCollection<IFileSystemItem> Children { get; }
+        FileOperationResult AddChild(IFileSystemItem item);
+        FileOperationResult RemoveChild(IFileSystemItem item);
     }
 }

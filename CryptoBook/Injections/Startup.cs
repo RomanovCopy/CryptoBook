@@ -3,6 +3,7 @@
 using CryptoBook.Accessors;
 using CryptoBook.Composition;
 using CryptoBook.Converters;
+using CryptoBook.DTO;
 using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
@@ -108,6 +109,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileTemplateRegistry>().As<IFileTemplateRegistry>().SingleInstance();
 
 
+            //DTOs
+            builder.RegisterType<DirectoryItem>().As<IDirectoryItem>().InstancePerDependency();
+            builder.RegisterType<FileItem>().As<IFileItem>().InstancePerDependency();
+            builder.RegisterType<DriveItem>().As<IDriveItem>().InstancePerDependency();
+
+
             //Services
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
@@ -130,6 +137,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FilePickerService>().As<IFilePickerService>().SingleInstance();
             builder.RegisterType<DriveMonitoringService>().As<IDriveMonitoringService>().SingleInstance();
             builder.RegisterType<DriveManagerService>().As<IDriveManagerService>().SingleInstance();
+            builder.RegisterType<FileSystemItemCreateSerevice>().As<IFileSystemItemCreateService>().SingleInstance();
 
 
 
