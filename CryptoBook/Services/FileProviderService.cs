@@ -566,18 +566,18 @@ namespace CryptoBook.Services
             bool isHidden = (info.Attributes & FileAttributes.Hidden) != 0;
             bool isReadOnly = (info.Attributes & FileAttributes.ReadOnly) != 0;
 
-
+            //DriveInfo drive = new DriveInfo(info is DirectoryInfo d ? d.Root.Name : ((FileInfo)info).Directory!.Root.Name);
 
             if(info is DirectoryInfo d )
             {
                 if(d.Parent == null)
                 {
-                    return _itemCreateService.CreateRoot(d.FullName);
+                    return _itemCreateService.CreateRoot(d.Root.Name);
                 } else
                 {
                     return _itemCreateService.CreateDirectory(
                         d.FullName,
-                        d.Parent != null ? ToFileItem(d.Parent) as IDirectoryItem : null);
+                        d.Parent != null ? ToFileItem(d.Parent) as IContainerSystemItem : null);
 
                 }
             }else if(info is FileInfo f)
@@ -587,7 +587,7 @@ namespace CryptoBook.Services
                 var parent = new FileInfo(path).Directory;
                 return _itemCreateService.CreateFile(
                     f.FullName,
-                    Path.GetDirectoryName(f.FullName) != null ? ToFileItem(parent) as IDirectoryItem : null);
+                    Path.GetDirectoryName(f.FullName) != null ? ToFileItem(parent) as IContainerSystemItem : null);
             }
             else
                 throw new InvalidOperationException("Unknown FileSystemInfo type.");

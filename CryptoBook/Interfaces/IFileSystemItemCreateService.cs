@@ -8,7 +8,7 @@ namespace CryptoBook.Interfaces
 {
     public interface ISystemItemCreateService:IService
     {
-        IRootItem CreateRoot(string rootPath);
+        IDriveItem CreateRoot(string rootPath);
         IDirectoryItem CreateDirectory(string path, IContainerSystemItem parent);
         IFileItem CreateFile(string path, IContainerSystemItem parent);
     }

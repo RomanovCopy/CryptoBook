@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Services
 {
-    public class FileSystemItemCreateService:ISystemItemCreateService
+    public class SystemItemCreateService:ISystemItemCreateService
     {
         private readonly ILifetimeScope _scope;
-        public FileSystemItemCreateService(ILifetimeScope scope)
+        public SystemItemCreateService(ILifetimeScope scope)
         {
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
-        public IRootItem CreateRoot(string rootPath)
+        public IDriveItem CreateRoot(string rootPath)
         {
             var normalized = NormalizeRootPath(rootPath);
-            return _scope.Resolve<IRootItem>(new NamedParameter("rootPath", normalized));
+            return _scope.Resolve<IDriveItem>(new NamedParameter("rootPath", normalized));
         }
 
         public IDirectoryItem CreateDirectory(string path, IContainerSystemItem parent)

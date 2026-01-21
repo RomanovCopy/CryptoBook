@@ -137,7 +137,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FilePickerService>().As<IFilePickerService>().SingleInstance();
             builder.RegisterType<DriveMonitoringService>().As<IDriveMonitoringService>().SingleInstance();
             builder.RegisterType<DriveManagerService>().As<IDriveManagerService>().SingleInstance();
-            builder.RegisterType<FileSystemItemCreateService>().As<ISystemItemCreateService>().SingleInstance();
+            builder.RegisterType<SystemItemCreateService>().As<ISystemItemCreateService>().SingleInstance();
 
 
 
