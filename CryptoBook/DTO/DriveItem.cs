@@ -13,7 +13,7 @@ namespace CryptoBook.DTO
 {
     public class DriveItem: ViewModelBase,IDriveItem
     {
-        public string RootDirectory { get=>rootDirectory; set=>SetProperty(ref rootDirectory, value); }  // Например, "E:\"
+        public string RootDirectory { get => rootDirectory; set => SetProperty(ref rootDirectory, value); }  // Например, "E:\"
         string rootDirectory;
         public string VolumeLabel { get=>volumeLabel; set=>SetProperty(ref volumeLabel, value); }
         string volumeLabel;
@@ -26,25 +26,30 @@ namespace CryptoBook.DTO
         public long TotalSize { get=>totalSize; set=>SetProperty(ref totalSize, value); } // В байтах
         long totalSize;
 
-        public ReadOnlyObservableCollection<IFileSystemItem> Children{ get; private set; }
-        ObservableCollection<IFileSystemItem> _children;
+        public ReadOnlyObservableCollection<ISystemItem> Children{ get; private set; }
+        ObservableCollection<ISystemItem> _children;
 
         public bool IsLoaded{ get => _isLoaded; set => SetProperty(ref _isLoaded, value); }
         bool _isLoaded;
 
+        public bool IsExpanded { get =>_isExpanded; set =>SetProperty(ref _isExpanded, value); }
+        bool _isExpanded;
+        public string FullPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime LastWriteTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public DriveItem()
         {
-            _children = new ObservableCollection<IFileSystemItem>();
-            Children = new ReadOnlyObservableCollection<IFileSystemItem>(_children);
+            _children = new ObservableCollection<ISystemItem>();
+            Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
         }
 
 
-        public FileOperationResult AddChild(IFileSystemItem item)
+        public FileOperationResult AddChild(ISystemItem item)
         {
             throw new NotImplementedException();
         }
 
-        public FileOperationResult RemoveChild(IFileSystemItem item)
+        public FileOperationResult RemoveChild(ISystemItem item)
         {
             throw new NotImplementedException();
         }

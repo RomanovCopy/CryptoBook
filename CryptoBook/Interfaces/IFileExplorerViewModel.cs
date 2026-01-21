@@ -13,12 +13,8 @@ namespace CryptoBook.Interfaces
     public interface IFileExplorerViewModel:IViewModel,IWindowWithId
     {
         bool IsHiddenFilesVisible { get; set; }
-        string CurrentPath { get; set; }
-        object SelectedItem { get; set; }
-        IDriveItem SelectedDrive{ get; set; }
-        ReadOnlyObservableCollection<IFileSystemItem> GetFiles{ get; }
+        ISystemItem SelectedItem { get; set; }
         ReadOnlyObservableCollection<IDriveItem> GetDrives{ get; }
-        ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get; }
 
         ICommand CutCommand { get; }
         ICommand CopyCommand { get; }

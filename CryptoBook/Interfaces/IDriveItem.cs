@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IDriveItem:IContainerFileSystemItem
+    public interface IDriveItem:IContainerSystemItem
     {
-        public string RootDirectory { get; set; }  // Например, "E:\"
         public string VolumeLabel { get; set; }
         public string DriveFormat { get; set; }
         public DriveType DriveType { get; set; }

@@ -1,4 +1,6 @@
-﻿using CryptoBook.Interfaces;
+﻿using Autofac;
+
+using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -9,46 +11,44 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Services
 {
-    public class FileSystemItemCreateService:IFileSystemItemCreateService
+    public class FileSystemItemCreateService:ISystemItemCreateService
     {
-        private readonly Func<string, IRootItem> _createRoot;
-        private readonly Func<string, IContainerFileSystemItem, IDirectoryItem> _createDirectory;
-        private readonly Func<string, IContainerFileSystemItem, IFileItem> _createFile;
-
-        public FileSystemItemCreateService(
-            Func<string, IRootItem> createRoot,
-            Func<string, IContainerFileSystemItem, IDirectoryItem> createDirectory,
-            Func<string, IContainerFileSystemItem, IFileItem> createFile)
+        private readonly ILifetimeScope _scope;
+        public FileSystemItemCreateService(ILifetimeScope scope)
         {
-            _createRoot = createRoot ?? throw new ArgumentNullException(nameof(createRoot));
-            _createDirectory = createDirectory ?? throw new ArgumentNullException(nameof(createDirectory));
-            _createFile = createFile ?? throw new ArgumentNullException(nameof(createFile));
+            _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
         public IRootItem CreateRoot(string rootPath)
         {
             var normalized = NormalizeRootPath(rootPath);
-            return _createRoot(normalized);
+            return _scope.Resolve<IRootItem>(new NamedParameter("rootPath", normalized));
         }
 
-        public IDirectoryItem CreateDirectory(string path, IContainerFileSystemItem parent)
+        public IDirectoryItem CreateDirectory(string path, IContainerSystemItem parent)
         {
             if(parent is null)
                 throw new ArgumentNullException(nameof(parent));
+
             var normalized = NormalizePath(path);
-            return _createDirectory(normalized, parent);
+
+            return _scope.Resolve<IDirectoryItem>(
+                new NamedParameter("path", normalized),
+                new NamedParameter("parent", parent));
         }
 
-        public IFileItem CreateFile(string path, IContainerFileSystemItem parent)
+        public IFileItem CreateFile(string path, IContainerSystemItem parent)
         {
             if(parent is null)
                 throw new ArgumentNullException(nameof(parent));
+
             var normalized = NormalizePath(path);
-            return _createFile(normalized, parent);
+
+            return _scope.Resolve<IFileItem>(
+                new NamedParameter("path", normalized),
+                new NamedParameter("parent", parent));
         }
 
-        public IContainerFileSystemItem CreateContainerDirectory(string path, IContainerFileSystemItem parent)
-            => CreateDirectory(path, parent);
 
         private static string NormalizePath(string path)
         {

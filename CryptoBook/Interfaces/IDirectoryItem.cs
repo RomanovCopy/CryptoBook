@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IDirectoryItem:IFileSystemItem,IContainerFileSystemItem
+    public interface IDirectoryItem:IContainerSystemItem
     {
+        string Name { get; set; }
+        IContainerSystemItem? Parent { get; set; }
 
     }
 }

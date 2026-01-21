@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFileSystemItemCreateService:IService
+    public interface ISystemItemCreateService:IService
     {
         IRootItem CreateRoot(string rootPath);
-        IDirectoryItem CreateDirectory(string path, IContainerFileSystemItem parent);
-        IFileItem CreateFile(string path, IContainerFileSystemItem parent);
-        IContainerFileSystemItem CreateContainerDirectory(string path, IContainerFileSystemItem parent);
+        IDirectoryItem CreateDirectory(string path, IContainerSystemItem parent);
+        IFileItem CreateFile(string path, IContainerSystemItem parent);
     }
 }
 

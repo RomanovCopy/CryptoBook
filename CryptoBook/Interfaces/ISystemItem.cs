@@ -9,15 +9,10 @@ namespace CryptoBook.Interfaces
     /// <summary>
     /// содержит имя и путь к файлу, а так же его родителей(диск и директория)
     /// </summary>
-    public interface IFileSystemItem
+    public interface ISystemItem
     {
-        string Name { get; set; }
+        string RootDirectory { get; set; }  // Например, "E:\"
         string FullPath { get; set; }
-        bool IsDirectory { get; set; }
-        bool IsHidden { get; set; }
-        bool IsReadOnly { get; set; }
         public DateTime LastWriteTimeUtc { get; set; }
-        IDirectoryItem? Parent { get; set; }   // у корня диска Parent = null
-        IRootItem Root { get; set; }           // всегда НЕ null
     }
 }

@@ -13,10 +13,14 @@ namespace CryptoBook.Interfaces
     /// <remarks>Этот интерфейс расширяет IFileSystemItem и включает функции, специфичные для файла.
     ///Реализации могут представлять файлы на диске, в памяти или в виртуализированных файловых системах. Безопасность и
     ///поддержка операций может варьироваться в зависимости от реализации.</remarks>
-    public interface IFileItem:IFileSystemItem
+    public interface IFileItem:ISystemItem
     {
-        long? Size { get; set; }
+        string Name { get; set; }
+        long Size { get; set; }
         string Extension { get; set; }
+        bool IsHidden {  get; set; }
+        bool IsReadOnly {  get; set; }
+        IContainerSystemItem Parent { get; set; }
 
     }
 }

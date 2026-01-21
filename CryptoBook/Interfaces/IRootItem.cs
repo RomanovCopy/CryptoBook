@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IRootItem
+    public interface IRootItem:IContainerSystemItem
     {
         string RootPath { get; }          // "C:\", "\\server\share\"
         string? VolumeLabel { get; }      // опционально

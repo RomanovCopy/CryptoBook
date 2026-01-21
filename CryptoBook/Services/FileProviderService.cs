@@ -15,12 +15,12 @@ namespace CryptoBook.Services
 {
     public class FileProviderService: IFileProviderService
     {
-        private readonly IFileSystemItemCreateService _itemCreateService;
+        private readonly ISystemItemCreateService _itemCreateService;
 
 
         public string Scheme => "local";
 
-        public FileProviderService(IFileSystemItemCreateService? itemCreateService)
+        public FileProviderService(ISystemItemCreateService? itemCreateService)
         {
             _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
         }
@@ -32,7 +32,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        public async Task<List<IFileSystemItem>> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden = false)
+        public async Task<List<ISystemItem>> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden = false)
         {
             return await Task.Run(() =>
             {
@@ -561,39 +561,36 @@ namespace CryptoBook.Services
         // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
         // --------------------------
 
-        private IFileSystemItem ToFileItem(FileSystemInfo info)
+        private ISystemItem ToFileItem(FileSystemInfo info)
         {
-            bool isDir = info is DirectoryInfo;
-            long? size = null;
-            if(!isDir && info is FileInfo fi)
-            {
-                size = fi.Length;
-                
-            }
-
             bool isHidden = (info.Attributes & FileAttributes.Hidden) != 0;
             bool isReadOnly = (info.Attributes & FileAttributes.ReadOnly) != 0;
 
-            switch(isDir)
-            {
-                case true:
-                {
-                    var dirInfo = info as DirectoryInfo;
 
-                    return _itemCreateService.CreateDirectory( 
-                        dirInfo!.FullName, 
-                        dirInfo.Parent != null ? ToFileItem(dirInfo.Parent) as IDirectoryItem : null);
-                }
-                case false:
+
+            if(info is DirectoryInfo d )
+            {
+                if(d.Parent == null)
                 {
-                    var fileInfo = info as FileInfo;
-                    var path=fileInfo!.FullName;
-                    var parent = new FileInfo(path).Directory!=null ? new FileInfo(path).Directory : null;
-                    return _itemCreateService.CreateFile( 
-                        fileInfo!.FullName, 
-                        Path.GetDirectoryName(fileInfo.FullName) != null ? ToFileItem(parent) as IDirectoryItem : null);
+                    return _itemCreateService.CreateRoot(d.FullName);
+                } else
+                {
+                    return _itemCreateService.CreateDirectory(
+                        d.FullName,
+                        d.Parent != null ? ToFileItem(d.Parent) as IDirectoryItem : null);
+
                 }
+            }else if(info is FileInfo f)
+            {
+                var size = f.Length;
+                var path = f.FullName;
+                var parent = new FileInfo(path).Directory;
+                return _itemCreateService.CreateFile(
+                    f.FullName,
+                    Path.GetDirectoryName(f.FullName) != null ? ToFileItem(parent) as IDirectoryItem : null);
             }
+            else
+                throw new InvalidOperationException("Unknown FileSystemInfo type.");
         }
 
         private async Task CopyFileAsync(

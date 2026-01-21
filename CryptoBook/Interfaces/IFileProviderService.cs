@@ -23,7 +23,7 @@ namespace CryptoBook.Interfaces
         /// <param name="cancellationToken">токен отмены</param>
         /// <param name="includeHidden">показывать скрытые файлы</param>
         /// <returns></returns>
-        Task<List<IFileSystemItem>> GetDirectoryContentAsync( string path, CancellationToken cancellationToken, bool includeHidden = false);
+        Task<List<ISystemItem>> GetDirectoryContentAsync( string path, CancellationToken cancellationToken, bool includeHidden = false);
 
         /// <summary>
         /// Создать поток для чтения файла

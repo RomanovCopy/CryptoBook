@@ -20,7 +20,7 @@ namespace CryptoBook.Models
         private readonly IFileManagerService _fileManagerService;
         private readonly IWindowManager _windowManager;
         private readonly IDriveManagerService _driveManagerService;
-        private readonly IFileSystemItemCreateService _itemCreateService;
+        private readonly ISystemItemCreateService _itemCreateService;
 
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
@@ -28,24 +28,17 @@ namespace CryptoBook.Models
         private Guid _windowId;
         public bool IsHiddenFilesVisible { get => _isHiddenFilesVisible; set => SetProperty(ref _isHiddenFilesVisible, value); }
         private bool _isHiddenFilesVisible;
-        public object? SelectedItem { get => _selectedItem; set => SetProperty(ref _selectedItem, value); }
-        private object? _selectedItem;
+        public ISystemItem? SelectedItem { get => _selectedItem; set => SetProperty(ref _selectedItem, value); }
+        private ISystemItem? _selectedItem;
 
-        public IDriveItem SelectedDrive { get => _selectedDrive; set => SetProperty(ref _selectedDrive, value); }
-        private IDriveItem _selectedDrive;
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
-        public ReadOnlyObservableCollection<IFileSystemItem> GetFiles { get; private set; }
-        private ObservableCollection<IFileSystemItem> _files;
         public ReadOnlyObservableCollection<IDriveItem> GetDrives { get; private set; }
         private ObservableCollection<IDriveItem> _drives;
-        public ReadOnlyObservableCollection<IDirectoryItem> GetDirectories { get; private set; }
-        private ObservableCollection<IDirectoryItem> _directories;
-
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService, 
-            IWindowManager? windowManager, IFileSystemItemCreateService? itemCreateService)
+            IWindowManager? windowManager, ISystemItemCreateService? itemCreateService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService??throw new ArgumentNullException(nameof(fileManagerService));
@@ -54,10 +47,6 @@ namespace CryptoBook.Models
             _itemCreateService = itemCreateService??throw new ArgumentNullException(nameof(itemCreateService));
             GetDrives = _driveManagerService.WritableDrives;
             _isHiddenFilesVisible = true;
-            _directories = [];
-            GetDirectories=new(_directories);
-            _files = [];
-            GetFiles=new(_files);
             CurrentPath = GetDrives.FirstOrDefault()?.RootDirectory ?? string.Empty;
         }
 
@@ -193,7 +182,7 @@ namespace CryptoBook.Models
                         {
                             foreach(var child in children)
                             {
-                                if(child is IFileSystemItem fsItem && item is IContainerFileSystemItem container)
+                                if(child is ISystemItem fsItem && item is IContainerSystemItem container)
                                 {
                                     container.AddChild(fsItem);
                                 }
@@ -212,7 +201,7 @@ namespace CryptoBook.Models
                         {
                             foreach(var child in children)
                             {
-                                if(child is IFileSystemItem fsItem && drive is IContainerFileSystemItem container)
+                                if(child is ISystemItem fsItem && drive is IContainerSystemItem container)
                                 {
                                     container.AddChild(fsItem);
                                 }
@@ -227,7 +216,7 @@ namespace CryptoBook.Models
                 default:
                     return;
             }
-            if((obj is IContainerFileSystemItem))
+            if((obj is IContainerSystemItem))
             {
                 var files= await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
             }

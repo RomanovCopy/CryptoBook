@@ -12,12 +12,14 @@ namespace CryptoBook.DTO
 {
     public class DirectoryItem:ViewModelBase,IDirectoryItem
     {
-
+        private readonly IFileManagerService _fileManagerService;
         /// <summary>
         /// имя директории
         /// </summary>
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
+        public string RootDirectory { get => _rootDirectory; set => SetProperty(ref _rootDirectory, value); }
+        string _rootDirectory;
         /// <summary>
         /// полный путь к директории
         /// </summary>
@@ -26,18 +28,16 @@ namespace CryptoBook.DTO
         /// <summary>
         /// родительская директория(если лежит на диске то null)
         /// </summary>
-        public IDirectoryItem? Parent { get=> parent; set => SetProperty(ref parent, value); }
-        IDirectoryItem? parent;
-        /// <summary>
-        /// родительский корневой элемент(диск)
-        /// </summary>
-        public IRootItem Root { get => root; set => SetProperty(ref root, value); }
-        IRootItem root;
+        public IContainerSystemItem? Parent { get=> parent; set => SetProperty(ref parent, value); }
+        IContainerSystemItem? parent;
         /// <summary>
         /// флаг - дочерние элементы загружены
         /// </summary>
         public bool IsLoaded { get => isLoaded; set => SetProperty(ref isLoaded, value); }
         bool isLoaded;
+
+        public bool IsExpanded { get=>_isExpanded; set=>SetProperty(ref _isExpanded, value); }
+        bool _isExpanded;
 
 
         /// <summary>
@@ -46,44 +46,36 @@ namespace CryptoBook.DTO
         /// </summary>
         /// <remarks>Коллекция отражает текущий набор дочерних элементов и уведомляет наблюдателей об изменениях,
         /// таких как добавление или удаление. Коллекция пуста, если у элемента нет дочерних элементов.</remarks>
-        public ReadOnlyObservableCollection<IFileSystemItem> Children { get; private set; }
-        ObservableCollection<IFileSystemItem> _children;
+        public ReadOnlyObservableCollection<ISystemItem> Children { get; private set; }
+        ObservableCollection<ISystemItem> _children;
 
-        public bool IsHidden { get => isHidden; set => SetProperty(ref isHidden, value); }
-        bool isHidden;
-
-        public bool IsReadOnly { get => isReadOnly; set => SetProperty(ref isReadOnly, value); }
-        bool isReadOnly;
-
-        public bool IsDirectory { get => isDirectory; set => SetProperty(ref isDirectory, value); }
-        bool isDirectory;
 
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUTc; set => SetProperty(ref lastWriteTimeUTc, value); }
         DateTime lastWriteTimeUTc;
 
-        public DirectoryItem()
+        public DirectoryItem(IFileManagerService fileManagerService)
         {
+            _fileManagerService = fileManagerService;
             _children = [];
-            Children = new ReadOnlyObservableCollection<IFileSystemItem>(_children);
+            Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
         }
 
-        public FileOperationResult AddChild(IFileSystemItem item)
+        public FileOperationResult AddChild(ISystemItem item)
         {
             if(item is null)
                 return FileOperationResult.Fail("Item is null");
 
+
             if(item is not (IFileItem or IDirectoryItem))
                 return FileOperationResult.Fail("Item must be of type IFileItem or IDirectoryItem");
 
-            // В Windows имя уникально в рамках одной директории (и для файла, и для папки)
-            if(_children.Any(c => string.Equals(c.Name, item.Name, StringComparison.OrdinalIgnoreCase)))
-                return FileOperationResult.Fail("Item already exists in the directory");
+            //никаих проверок не делаем т.к. это лишь слепок уже существующей директории
 
             _children.Add(item);
             return FileOperationResult.Ok();
         }
 
-        public FileOperationResult RemoveChild(IFileSystemItem item)
+        public FileOperationResult RemoveChild(ISystemItem item)
         {
             if(item is null)
                 return FileOperationResult.Fail("Item is null");
@@ -97,7 +89,7 @@ namespace CryptoBook.DTO
             //Если объект другой инстанс, но описывает тот же элемент — пробуем по имени
             // (в пределах одной директории имя уникально в Windows)
             existing ??= _children.FirstOrDefault(c =>
-                string.Equals(c.Name, item.Name, StringComparison.OrdinalIgnoreCase));
+                string.Equals(c.FullPath, item.FullPath, StringComparison.OrdinalIgnoreCase));
 
             if(existing is null)
                 return FileOperationResult.Fail("Item not found in the directory");
