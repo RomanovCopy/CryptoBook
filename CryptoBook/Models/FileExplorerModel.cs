@@ -37,14 +37,14 @@ namespace CryptoBook.Models
         private ObservableCollection<IDriveItem> _drives;
 
 
-        public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService, 
+        public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
             IWindowManager? windowManager, ISystemItemCreateService? itemCreateService)
         {
             WindowId = Guid.NewGuid();
-            _fileManagerService = fileManagerService??throw new ArgumentNullException(nameof(fileManagerService));
-            _driveManagerService = driveManagerService??throw new ArgumentNullException(nameof(driveManagerService));
-            _windowManager = windowManager??throw new ArgumentNullException(nameof(windowManager));
-            _itemCreateService = itemCreateService??throw new ArgumentNullException(nameof(itemCreateService));
+            _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
+            _driveManagerService = driveManagerService ?? throw new ArgumentNullException(nameof(driveManagerService));
+            _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+            _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
             GetDrives = _driveManagerService.WritableDrives;
             _isHiddenFilesVisible = true;
             CurrentPath = GetDrives.FirstOrDefault()?.RootDirectory ?? string.Empty;
@@ -175,17 +175,14 @@ namespace CryptoBook.Models
                 {
                     CurrentPath = directory.FullPath;
                     item = directory;
-                    if(!item.IsLoaded)
+                    if(!item.IsLoaded && item is IContainerSystemItem container)
                     {
                         var children = await _fileManagerService.BrowseAsync(directory.FullPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
-                        if(children != null)
+                        if(children is not null)
                         {
                             foreach(var child in children)
                             {
-                                if(child is ISystemItem fsItem && item is IContainerSystemItem container)
-                                {
-                                    container.AddChild(fsItem);
-                                }
+                                container.AddChild(child);
                             }
                         }
                     }
@@ -194,31 +191,28 @@ namespace CryptoBook.Models
                 case IDriveItem drive:
                 {
                     CurrentPath = drive.RootDirectory;
-                    if(!drive.IsLoaded)
+                    if(!drive.IsLoaded && drive is IContainerSystemItem container)
                     {
                         var children = await _fileManagerService.BrowseAsync(drive.RootDirectory, _cancellationTokenSource.Token, IsHiddenFilesVisible);
                         if(children != null)
                         {
                             foreach(var child in children)
                             {
-                                if(child is ISystemItem fsItem && drive is IContainerSystemItem container)
-                                {
-                                    container.AddChild(fsItem);
-                                }
+                                container.AddChild(child);
                             }
                         }
                     }
                     break;
                 }
                 case IFileItem file:
-                    CurrentPath = System.IO.Path.GetDirectoryName(file.FullPath) ?? string.Empty;
-                    break;
+                CurrentPath = System.IO.Path.GetDirectoryName(file.FullPath) ?? string.Empty;
+                break;
                 default:
-                    return;
+                return;
             }
             if((obj is IContainerSystemItem))
             {
-                var files= await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
+                var files = await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
             }
         }
 
