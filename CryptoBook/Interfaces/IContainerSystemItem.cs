@@ -11,7 +11,8 @@ namespace CryptoBook.Interfaces
 {
     public interface IContainerSystemItem:ISystemItem
     {
-        bool IsLoaded { get; }
+        string Name { get; set; }
+        bool IsLoaded { get; set; }
         bool IsExpanded { get; set; }
         ReadOnlyObservableCollection<ISystemItem> Children { get; }
         FileOperationResult AddChild(ISystemItem item);

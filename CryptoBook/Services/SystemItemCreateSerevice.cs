@@ -30,11 +30,15 @@ namespace CryptoBook.Services
             else if(!string.Equals(sourceDrive.RootDirectory.FullName, normalized, StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException($"Root path '{normalized}' is invalid.", nameof(rootPath));
             var root = _scope.Resolve<IDriveItem>(new NamedParameter("rootPath", normalized));
+            root.Name = sourceDrive.Name;
             root.VolumeLabel = sourceDrive.VolumeLabel;
             root.DriveFormat = sourceDrive.DriveFormat;
             root.DriveType = sourceDrive.DriveType;
             root.AvailableFreeSpace = sourceDrive.AvailableFreeSpace;
+            root.RootDirectory = sourceDrive.RootDirectory.ToString();
             root.TotalSize = sourceDrive.TotalSize;
+            root.FullPath = sourceDrive.RootDirectory.FullName;
+            root.LastWriteTimeUtc = sourceDrive.RootDirectory.LastWriteTimeUtc;
             return root;
         }
 
@@ -72,6 +76,7 @@ namespace CryptoBook.Services
             file.IsReadOnly = fileInfo.IsReadOnly;
             file.Parent = parent;
             file.FullPath = fileInfo.FullName;
+            file.RootDirectory = fileInfo.Directory?.Root.FullName ?? string.Empty;
             return file;
         }
 
