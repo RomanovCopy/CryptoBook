@@ -12,7 +12,7 @@ namespace CryptoBook.Interfaces
     public interface IDirectoryItem:IContainerSystemItem
     {
         string Name { get; set; }
-        IContainerSystemItem? Parent { get; set; }
+        ISystemItem? Parent { get; set; }
 
     }
 }

@@ -53,9 +53,8 @@
                        Height="{StaticResource Tv_IconSize}"
                        Margin="0,0,6,0"
                        Source="{Binding Icon}"/>
-                <TextBlock Text="{Binding Name}"
-                           VerticalAlignment="Center"
-                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </DockPanel>
         </HierarchicalDataTemplate>
         <DataTemplate DataType="{x:Type dto:FileItem}">
@@ -129,7 +128,6 @@
 
             <!-- Navigation Pane (левая панель) -->
             <TreeView Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}">
-
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
                         <i:InvokeCommandAction Command="{Binding TreeViewItemSelectedCommand, UpdateSourceTrigger=PropertyChanged}"

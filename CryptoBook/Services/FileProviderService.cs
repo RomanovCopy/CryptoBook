@@ -37,54 +37,19 @@ namespace CryptoBook.Services
             return await Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
+                var directories = new List<ISystemItem>();
                 var dirInfo = new DirectoryInfo(path);
                 if(!dirInfo.Exists)
                     throw new DirectoryNotFoundException(path);
-
-                var directories = new List<ISystemItem>();
                 foreach(var d in dirInfo.EnumerateDirectories())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     if(includeHidden || !IsFileSystemInfoHidden(d))
                     {
-                        var fileItem = ToFileItem(d);
-                        if(fileItem is IContainerSystemItem container){
-                            container.LastWriteTimeUtc=d.LastWriteTimeUtc;
-                            container.RootDirectory=d.Root.Name;
-                            container.FullPath=d.FullName;
-                            if(container is IDriveItem drive)
-                            {
-                                DriveInfo driveinfo = new DriveInfo(d.Root.Name);
-                                drive.VolumeLabel=driveinfo.VolumeLabel;
-                                drive.TotalSize=driveinfo.TotalSize;
-                                drive.AvailableFreeSpace=driveinfo.AvailableFreeSpace;
-                                drive.DriveFormat=driveinfo.DriveFormat;
-                                drive.DriveType=driveinfo.DriveType;
-                                directories.Add(drive); 
-                            } else
-                                directories.Add(container);
-                        }
-                        //else if(fileItem is IFileItem file){
-                        //    file.LastWriteTimeUtc=d.LastWriteTimeUtc;
-                        //    file.RootDirectory=d.Root.Name;
-                        //    file.FullPath=d.FullName;
-                        //    file.Size=file.Size;
-                        //    file.Extension=file.Extension;
-                        //    file.Name=file.Name;
-                        //    file.IsHidden=(d.Attributes & FileAttributes.Hidden) != 0;
-                        //    file.IsReadOnly=(d.Attributes & FileAttributes.ReadOnly) != 0;
-                        //    directories.Add(file);
-                        //}
+                        if(CanAccess(d.FullName))
+                            directories.Add(ToFileItem(d));
                     }
                 }
-
-                //var directories = dirInfo.EnumerateDirectories()
-                //    .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
-                //    .Select(d => ToFileItem(d))
-                //    .ToList();
-
-                //cancellationToken.ThrowIfCancellationRequested();
 
                 var files = new List<ISystemItem>();
                 foreach(var f in dirInfo.EnumerateFiles())
@@ -92,25 +57,9 @@ namespace CryptoBook.Services
                     cancellationToken.ThrowIfCancellationRequested();
                     if(includeHidden || !IsFileSystemInfoHidden(f))
                     {
-                        var fileItem = ToFileItem(f);
-                        if(fileItem is IFileItem file){
-                            file.LastWriteTimeUtc=f.LastWriteTimeUtc;
-                            file.RootDirectory=f.Directory!.Root.Name;
-                            file.FullPath=f.FullName;
-                            file.Size=f.Length;
-                            file.Extension=f.Extension;
-                            file.Name=f.Name;
-                            file.IsHidden=(f.Attributes & FileAttributes.Hidden) != 0;
-                            file.IsReadOnly=(f.Attributes & FileAttributes.ReadOnly) != 0;
-                            files.Add(file);
-                        }
+                        files.Add(ToFileItem(f));
                     }
                 }
-
-                //var files = dirInfo.EnumerateFiles()
-                //    .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
-                //    .Select(f => ToFileItem(f))
-                //    .ToList();
                 var allItems = directories.Concat(files).ToList();
                 return allItems;
             }, cancellationToken);
@@ -619,35 +568,40 @@ namespace CryptoBook.Services
         // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
         // --------------------------
 
+        private bool IsReparsePoint(DirectoryInfo dir) => dir.Attributes.HasFlag(FileAttributes.ReparsePoint);
+
+        private bool CanAccess(string path)
+        {
+            try
+            {
+                Directory.EnumerateFileSystemEntries(path).FirstOrDefault();
+                return true;
+            } catch(UnauthorizedAccessException)
+            {
+                return false;
+            }
+        }
+
+
         private ISystemItem ToFileItem(FileSystemInfo info)
         {
-            bool isHidden = (info.Attributes & FileAttributes.Hidden) != 0;
-            bool isReadOnly = (info.Attributes & FileAttributes.ReadOnly) != 0;
-
-            //DriveInfo drive = new DriveInfo(info is DirectoryInfo d ? d.Root.Name : ((FileInfo)info).Directory!.Root.Name);
-
-            if(info is DirectoryInfo d )
+            if(info is DirectoryInfo d)
             {
                 if(d.Parent == null)
                 {
                     return _itemCreateService.CreateRoot(d.Root.Name);
                 } else
                 {
-                    return _itemCreateService.CreateDirectory(
-                        d.FullName,
-                        d.Parent != null ? ToFileItem(d.Parent) as IContainerSystemItem : null);
-
+                    return _itemCreateService.CreateDirectory(d.FullName,
+                        d.Parent != null ? ToFileItem(d.Parent) : null);
                 }
-            }else if(info is FileInfo f)
+            } else if(info is FileInfo f)
             {
-                var size = f.Length;
                 var path = f.FullName;
                 var parent = new FileInfo(path).Directory;
-                return _itemCreateService.CreateFile(
-                    f.FullName,
-                    Path.GetDirectoryName(f.FullName) != null ? ToFileItem(parent) as IContainerSystemItem : null);
-            }
-            else
+                return _itemCreateService.CreateFile(f.FullName,
+                    Path.GetDirectoryName(f.FullName) != null ? ToFileItem(parent) : null);
+            } else
                 throw new InvalidOperationException("Unknown FileSystemInfo type.");
         }
 

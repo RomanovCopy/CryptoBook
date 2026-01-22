@@ -30,7 +30,7 @@ namespace CryptoBook.DTO
 
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
-        public IContainerSystemItem Parent { get => parent; set => SetProperty(ref parent, value); }
-        IContainerSystemItem parent;
+        public ISystemItem? Parent { get => parent; set => SetProperty(ref parent, value); }
+        ISystemItem? parent;
     }
 }

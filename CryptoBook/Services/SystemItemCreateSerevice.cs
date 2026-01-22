@@ -9,9 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Windows.Graphics.DirectX.Direct3D11;
+
 namespace CryptoBook.Services
 {
-    public class SystemItemCreateService:ISystemItemCreateService
+    public class SystemItemCreateService: ISystemItemCreateService
     {
         private readonly ILifetimeScope _scope;
         public SystemItemCreateService(ILifetimeScope scope)
@@ -22,31 +24,55 @@ namespace CryptoBook.Services
         public IDriveItem CreateRoot(string rootPath)
         {
             var normalized = NormalizeRootPath(rootPath);
-            return _scope.Resolve<IDriveItem>(new NamedParameter("rootPath", normalized));
+            var sourceDrive = new DriveInfo(normalized);
+            if(!sourceDrive.IsReady)
+                throw new IOException($"Drive '{normalized}' is not ready.");
+            else if(!string.Equals(sourceDrive.RootDirectory.FullName, normalized, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException($"Root path '{normalized}' is invalid.", nameof(rootPath));
+            var root = _scope.Resolve<IDriveItem>(new NamedParameter("rootPath", normalized));
+            root.VolumeLabel = sourceDrive.VolumeLabel;
+            root.DriveFormat = sourceDrive.DriveFormat;
+            root.DriveType = sourceDrive.DriveType;
+            root.AvailableFreeSpace = sourceDrive.AvailableFreeSpace;
+            root.TotalSize = sourceDrive.TotalSize;
+            return root;
         }
 
-        public IDirectoryItem CreateDirectory(string path, IContainerSystemItem parent)
+        public IDirectoryItem CreateDirectory(string path, ISystemItem parent)
         {
+            var normalized = NormalizePath(path);
             if(parent is null)
                 throw new ArgumentNullException(nameof(parent));
-
-            var normalized = NormalizePath(path);
-
-            return _scope.Resolve<IDirectoryItem>(
-                new NamedParameter("path", normalized),
-                new NamedParameter("parent", parent));
+            var dirInfo = new DirectoryInfo(normalized);
+            if(!dirInfo.Exists)
+                throw new DirectoryNotFoundException($"Directory '{normalized}' not found.");
+            var dir = _scope.Resolve<IDirectoryItem>(new NamedParameter("path", normalized), new NamedParameter("parent", parent));
+            dir.Name = dirInfo.Name;
+            dir.FullPath = dirInfo.FullName;
+            dir.Parent = parent;
+            dir.IsExpanded = false;
+            dir.LastWriteTimeUtc = dirInfo.LastWriteTimeUtc;
+            dir.RootDirectory = dirInfo.Root.FullName;
+            return dir;
         }
 
-        public IFileItem CreateFile(string path, IContainerSystemItem parent)
+        public IFileItem CreateFile(string path, ISystemItem parent)
         {
+            var normalized = NormalizePath(path);
             if(parent is null)
                 throw new ArgumentNullException(nameof(parent));
-
-            var normalized = NormalizePath(path);
-
-            return _scope.Resolve<IFileItem>(
-                new NamedParameter("path", normalized),
-                new NamedParameter("parent", parent));
+            var fileInfo = new FileInfo(normalized);
+            if(!fileInfo.Exists)
+                throw new FileNotFoundException($"File '{normalized}' not found.");
+            var file = _scope.Resolve<IFileItem>(new NamedParameter("path", normalized), new NamedParameter("parent", parent));
+            file.Name = fileInfo.Name;
+            file.Size = fileInfo.Length;
+            file.Extension = fileInfo.Extension;
+            file.IsHidden = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden;
+            file.IsReadOnly = fileInfo.IsReadOnly;
+            file.Parent = parent;
+            file.FullPath = fileInfo.FullName;
+            return file;
         }
 
 

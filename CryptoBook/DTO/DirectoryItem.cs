@@ -28,8 +28,8 @@ namespace CryptoBook.DTO
         /// <summary>
         /// родительская директория(если лежит на диске то null)
         /// </summary>
-        public IContainerSystemItem? Parent { get=> parent; set => SetProperty(ref parent, value); }
-        IContainerSystemItem? parent;
+        public ISystemItem? Parent { get=> parent; set => SetProperty(ref parent, value); }
+        ISystemItem? parent;
         /// <summary>
         /// флаг - дочерние элементы загружены
         /// </summary>
