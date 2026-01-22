@@ -40,7 +40,7 @@ namespace CryptoBook.Services
         {
             var desc = ParsePath(path); // как раньше
             var provider = ResolveProvider(desc.Scheme);
-            return provider.GetDirectoryContentAsync(desc.NativePath, ct, includeHidden );
+            return provider.GetContainerContentAsync(desc.NativePath, ct, includeHidden );
         }
 
         public async Task<FileOperationResult> CopyAsync(string sourcePath, string destinationPath, IProgressReporter? progress, CancellationToken cancellationToken)

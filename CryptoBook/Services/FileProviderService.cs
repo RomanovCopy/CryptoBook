@@ -32,7 +32,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        public async Task<List<ISystemItem>> GetDirectoryContentAsync(string path, CancellationToken cancellationToken, bool includeHidden = false)
+        public async Task<List<ISystemItem>> GetContainerContentAsync(string path, CancellationToken cancellationToken, bool includeHidden = false)
         {
             return await Task.Run(() =>
             {
@@ -42,17 +42,75 @@ namespace CryptoBook.Services
                 if(!dirInfo.Exists)
                     throw new DirectoryNotFoundException(path);
 
-                var directories = dirInfo.EnumerateDirectories()
-                    .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
-                    .Select(d => ToFileItem(d))
-                    .ToList();
+                var directories = new List<ISystemItem>();
+                foreach(var d in dirInfo.EnumerateDirectories())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if(includeHidden || !IsFileSystemInfoHidden(d))
+                    {
+                        var fileItem = ToFileItem(d);
+                        if(fileItem is IContainerSystemItem container){
+                            container.LastWriteTimeUtc=d.LastWriteTimeUtc;
+                            container.RootDirectory=d.Root.Name;
+                            container.FullPath=d.FullName;
+                            if(container is IDriveItem drive)
+                            {
+                                DriveInfo driveinfo = new DriveInfo(d.Root.Name);
+                                drive.VolumeLabel=driveinfo.VolumeLabel;
+                                drive.TotalSize=driveinfo.TotalSize;
+                                drive.AvailableFreeSpace=driveinfo.AvailableFreeSpace;
+                                drive.DriveFormat=driveinfo.DriveFormat;
+                                drive.DriveType=driveinfo.DriveType;
+                                directories.Add(drive); 
+                            } else
+                                directories.Add(container);
+                        }
+                        //else if(fileItem is IFileItem file){
+                        //    file.LastWriteTimeUtc=d.LastWriteTimeUtc;
+                        //    file.RootDirectory=d.Root.Name;
+                        //    file.FullPath=d.FullName;
+                        //    file.Size=file.Size;
+                        //    file.Extension=file.Extension;
+                        //    file.Name=file.Name;
+                        //    file.IsHidden=(d.Attributes & FileAttributes.Hidden) != 0;
+                        //    file.IsReadOnly=(d.Attributes & FileAttributes.ReadOnly) != 0;
+                        //    directories.Add(file);
+                        //}
+                    }
+                }
 
-                cancellationToken.ThrowIfCancellationRequested();
+                //var directories = dirInfo.EnumerateDirectories()
+                //    .Where(d => includeHidden || !IsFileSystemInfoHidden(d))
+                //    .Select(d => ToFileItem(d))
+                //    .ToList();
 
-                var files = dirInfo.EnumerateFiles()
-                    .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
-                    .Select(f => ToFileItem(f))
-                    .ToList();
+                //cancellationToken.ThrowIfCancellationRequested();
+
+                var files = new List<ISystemItem>();
+                foreach(var f in dirInfo.EnumerateFiles())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if(includeHidden || !IsFileSystemInfoHidden(f))
+                    {
+                        var fileItem = ToFileItem(f);
+                        if(fileItem is IFileItem file){
+                            file.LastWriteTimeUtc=f.LastWriteTimeUtc;
+                            file.RootDirectory=f.Directory!.Root.Name;
+                            file.FullPath=f.FullName;
+                            file.Size=f.Length;
+                            file.Extension=f.Extension;
+                            file.Name=f.Name;
+                            file.IsHidden=(f.Attributes & FileAttributes.Hidden) != 0;
+                            file.IsReadOnly=(f.Attributes & FileAttributes.ReadOnly) != 0;
+                            files.Add(file);
+                        }
+                    }
+                }
+
+                //var files = dirInfo.EnumerateFiles()
+                //    .Where(f => includeHidden || !IsFileSystemInfoHidden(f))
+                //    .Select(f => ToFileItem(f))
+                //    .ToList();
                 var allItems = directories.Concat(files).ToList();
                 return allItems;
             }, cancellationToken);
