@@ -25,6 +25,7 @@ namespace CryptoBook.Interfaces
         bool CanExecute_CreateDirectoryCommand(object? obj);
         bool CanExecute_RenameCommand(object? obj);
         bool CanExecute_MoveCommand(object? obj);
+        bool CanExecure_RefreshCommand(object? obj);
         bool CanExecute_TreeViewItemSelectedCommand (object? obj);
 
 
@@ -36,6 +37,7 @@ namespace CryptoBook.Interfaces
         void Execute_CreateDirectoryCommand(object? obj);
         void Execute_RenameCommand(object? obj);
         void Execute_MoveCommand(object? obj);
+        void Execute_RefreshCommand(object? obj);
         void Execute_TreeViewItemSelectedCommand (object? obj);
     }
 }

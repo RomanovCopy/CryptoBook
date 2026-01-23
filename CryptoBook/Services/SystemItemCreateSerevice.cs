@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
 using System;
@@ -57,6 +58,7 @@ namespace CryptoBook.Services
             dir.IsExpanded = false;
             dir.LastWriteTimeUtc = dirInfo.LastWriteTimeUtc;
             dir.RootDirectory = dirInfo.Root.FullName;
+            dir.AddChild(new FileItem()); // заглушка для отображения иконки раскрытия
             return dir;
         }
 

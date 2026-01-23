@@ -100,5 +100,19 @@ namespace CryptoBook.DTO
                 : FileOperationResult.Fail("Failed to remove item from the directory");
         }
 
+        public FileOperationResult ClearChildren()
+        {
+            _children.Clear();
+            IsLoaded= false;
+            IsExpanded= false;
+            if(_children.Count == 0)
+                return FileOperationResult.Ok();
+            return FileOperationResult.Fail("Failed to clear children");
+        }
+
+        public void SyncCollections<T, TKey>(IEnumerable<T> source, Func<T, TKey> keySelector)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

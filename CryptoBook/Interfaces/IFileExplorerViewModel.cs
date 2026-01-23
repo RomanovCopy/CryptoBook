@@ -24,6 +24,7 @@ namespace CryptoBook.Interfaces
         ICommand CreateDirectoryCommand { get; }
         ICommand RenameCommand { get; }
         ICommand MoveCommand { get; }
+        ICommand RefreshCommand { get; }
         ICommand TreeViewItemSelectedCommand { get; }
     }
 }

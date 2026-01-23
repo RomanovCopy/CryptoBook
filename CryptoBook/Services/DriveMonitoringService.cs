@@ -103,10 +103,11 @@ namespace CryptoBook.Services
             {
                 _currentDrives.Clear();
                 foreach(var drive in DriveInfo.GetDrives())
-                {
+                { 
                     var ex = GetDriveIfWritable(drive.Name);
                     if(ex != null)
                     {
+                        ex.AddChild(new DTO.FileItem());
                         _currentDrives.Add(ex);
                     }
                 }

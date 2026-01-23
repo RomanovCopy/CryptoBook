@@ -99,6 +99,10 @@ namespace CryptoBook.Models
             throw new NotImplementedException();
         }
 
+        public bool CanExecure_RefreshCommand(object? obj)
+        {
+            return obj is IContainerSystemItem;
+        }
 
         public bool CanExecute_TreeViewItemSelectedCommand(object? obj)
         {
@@ -162,20 +166,25 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+        public void Execute_RefreshCommand(object? obj)
+        {
+            if(obj is IContainerSystemItem container)
+            {
+            }
+        }
 
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
-            IDirectoryItem? item;
-            IDriveItem? dir;
 
             switch(obj)
             {
                 case IDirectoryItem directory:
                 {
                     CurrentPath = directory.FullPath;
-                    item = directory;
+                    var item = directory;
                     if(!item.IsLoaded && item is IContainerSystemItem container)
                     {
+                        container.ClearChildren();
                         var children = await _fileManagerService.BrowseAsync(directory.FullPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
                         if(children is not null)
                         {
@@ -193,6 +202,7 @@ namespace CryptoBook.Models
                     CurrentPath = drive.RootDirectory;
                     if(!drive.IsLoaded && drive is IContainerSystemItem container)
                     {
+                        container.ClearChildren();
                         var children = await _fileManagerService.BrowseAsync(drive.RootDirectory, _cancellationTokenSource.Token, IsHiddenFilesVisible);
                         if(children != null)
                         {
@@ -205,8 +215,10 @@ namespace CryptoBook.Models
                     break;
                 }
                 case IFileItem file:
-                CurrentPath = System.IO.Path.GetDirectoryName(file.FullPath) ?? string.Empty;
-                break;
+                {
+                    CurrentPath = System.IO.Path.GetDirectoryName(file.FullPath) ?? string.Empty;
+                    break;
+                }
                 default:
                 return;
             }
@@ -257,6 +269,7 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
 
     }
 }

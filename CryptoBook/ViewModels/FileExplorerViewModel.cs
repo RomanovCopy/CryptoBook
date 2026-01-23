@@ -54,6 +54,9 @@ namespace CryptoBook.ViewModels
         public ICommand MoveCommand => _moveCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveCommand, _fileExplorerModel.CanExecute_MoveCommand);
         RelayCommand _moveCommand;
 
+        public ICommand RefreshCommand => _refreshCommand ??= new RelayCommand(_fileExplorerModel.Execute_RefreshCommand, _fileExplorerModel.CanExecure_RefreshCommand);
+        RelayCommand _refreshCommand;
+
         public ICommand TreeViewItemSelectedCommand => _treeViewItemSelectedCommand ??= new RelayCommand(_fileExplorerModel.Execute_TreeViewItemSelectedCommand, _fileExplorerModel.CanExecute_TreeViewItemSelectedCommand);
         RelayCommand _treeViewItemSelectedCommand;
 
