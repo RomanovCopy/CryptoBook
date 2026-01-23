@@ -13,8 +13,10 @@ namespace CryptoBook.DTO
     public abstract class ContainerSystemItem:ViewModelBase,IContainerSystemItem
     {
 
-        public string RootDirectory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string FullPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string RootDirectory { get => _rootDirectory; set => SetProperty(ref _rootDirectory,value); }
+        string _rootDirectory;
+        public string FullPath { get => _fullPath; set => SetProperty(ref _fullPath,value); }
+        string _fullPath;
         public DateTime LastWriteTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool IsLoaded { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
