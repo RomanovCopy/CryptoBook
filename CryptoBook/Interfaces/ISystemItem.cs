@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
@@ -11,8 +12,12 @@ namespace CryptoBook.Interfaces
     /// </summary>
     public interface ISystemItem
     {
-        string RootDirectory { get; set; }  // Например, "E:\"
+        string Name { get; set; }
         string FullPath { get; set; }
+        string RootDirectory { get; set; }
+        long Size { get; }
         public DateTime LastWriteTimeUtc { get; set; }
+        [JsonIgnore]
+        ISystemItem? Parent { get; set; }
     }
 }

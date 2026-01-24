@@ -11,7 +11,6 @@ namespace CryptoBook.Interfaces
 {
     public interface IDirectoryItem:IContainerSystemItem
     {
-        ISystemItem? Parent { get; set; }
 
     }
 }

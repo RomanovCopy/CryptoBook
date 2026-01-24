@@ -11,7 +11,6 @@ namespace CryptoBook.Interfaces
 {
     public interface IContainerSystemItem:ISystemItem
     {
-        string Name { get; set; }
         bool IsLoaded { get; set; }
         bool IsExpanded { get; set; }
         ReadOnlyObservableCollection<ISystemItem> Children { get; }
@@ -34,6 +33,6 @@ namespace CryptoBook.Interfaces
         /// Реализация должна учитывать потокобезопасность и корректную генерацию событий уведомления об изменениях
         /// (например, для привязки в UI).
         /// </remarks>
-        void SyncCollections<T, TKey>( IEnumerable<T> source, Func<T, TKey> keySelector);
+        void SyncCollectionsAsync( IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector);
     }
 }

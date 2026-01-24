@@ -13,8 +13,8 @@ namespace CryptoBook.DTO
     {
         public string FullPath { get => fullPath; set => SetProperty(ref fullPath, value); }
         string fullPath;
-        public string RootDirectory { get => _rootDirectory; set => SetProperty(ref _rootDirectory, value); }
-        string _rootDirectory;
+        //public string RootDirectory { get => _rootDirectory; set => SetProperty(ref _rootDirectory, value); }
+        //string _rootDirectory;
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -26,8 +26,6 @@ namespace CryptoBook.DTO
         bool isHidden;
         public bool IsReadOnly { get => isReadOnly; set => SetProperty(ref isReadOnly, value); }
         bool isReadOnly;
-
-
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
         public ISystemItem? Parent { get => parent; set => SetProperty(ref parent, value); }

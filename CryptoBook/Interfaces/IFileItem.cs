@@ -15,12 +15,8 @@ namespace CryptoBook.Interfaces
     ///поддержка операций может варьироваться в зависимости от реализации.</remarks>
     public interface IFileItem:ISystemItem
     {
-        string Name { get; set; }
-        long Size { get; set; }
         string Extension { get; set; }
         bool IsHidden {  get; set; }
         bool IsReadOnly {  get; set; }
-        ISystemItem? Parent { get; set; }
-
     }
 }
