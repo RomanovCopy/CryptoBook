@@ -30,7 +30,7 @@ namespace CryptoBook.Services
                 throw new IOException($"Drive '{normalized}' is not ready.");
             else if(!string.Equals(sourceDrive.RootDirectory.FullName, normalized, StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException($"Root path '{normalized}' is invalid.", nameof(rootPath));
-            var root = _scope.Resolve<IDriveItem>(new NamedParameter("rootPath", normalized));
+            var root = _scope.Resolve<IDriveItem>();
             root.Name = sourceDrive.Name;
             root.VolumeLabel = sourceDrive.VolumeLabel;
             root.DriveFormat = sourceDrive.DriveFormat;

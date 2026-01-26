@@ -18,5 +18,18 @@ namespace CryptoBook.DTO
 
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
+
+        public string Name { get => _name; set => SetProperty(ref _name, value); }
+        string _name;
+
+        public long Size { get => _size; set => SetProperty(ref _size, value); }
+        long _size;
+
+        public ISystemItem? Parent { get => _parent; set => SetProperty(ref _parent, value); }
+        ISystemItem? _parent;
+
+        public SystemItem()
+        {
+        }
     }
 }

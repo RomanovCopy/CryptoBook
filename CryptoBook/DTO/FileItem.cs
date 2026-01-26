@@ -13,8 +13,8 @@ namespace CryptoBook.DTO
     {
         public string FullPath { get => fullPath; set => SetProperty(ref fullPath, value); }
         string fullPath;
-        //public string RootDirectory { get => _rootDirectory; set => SetProperty(ref _rootDirectory, value); }
-        //string _rootDirectory;
+        public string RootDirectory { get => _rootDirectory; set => SetProperty(ref _rootDirectory, value); }
+        string _rootDirectory;
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;

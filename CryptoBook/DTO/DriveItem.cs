@@ -13,11 +13,16 @@ namespace CryptoBook.DTO
 {
     public class DriveItem: ContainerSystemItem, IDriveItem
     {
-        public string VolumeLabel { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string DriveFormat { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DriveType DriveType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public long AvailableFreeSpace { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public long TotalSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string VolumeLabel { get => _volumeLabel; set => SetProperty(ref _volumeLabel, value); }
+        string _volumeLabel;
+        public string DriveFormat { get => _driveFormat; set => SetProperty(ref _driveFormat, value); }
+        string _driveFormat;
+        public DriveType DriveType { get => _driveType; set => SetProperty(ref _driveType,value); }
+        DriveType _driveType;
+        public long AvailableFreeSpace { get => _availableFreeSpace; set => SetProperty(ref _availableFreeSpace, value); }
+        long _availableFreeSpace;
+        public long TotalSize { get => _totalSize; set => SetProperty(ref _totalSize, value); }
+        long _totalSize;
 
         public DriveItem()
         {

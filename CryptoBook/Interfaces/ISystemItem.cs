@@ -15,7 +15,7 @@ namespace CryptoBook.Interfaces
         string Name { get; set; }
         string FullPath { get; set; }
         string RootDirectory { get; set; }
-        long Size { get; }
+        long Size { get; set; }
         public DateTime LastWriteTimeUtc { get; set; }
         [JsonIgnore]
         ISystemItem? Parent { get; set; }
