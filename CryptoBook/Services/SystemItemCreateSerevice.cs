@@ -43,7 +43,7 @@ namespace CryptoBook.Services
             return root;
         }
 
-        public IDirectoryItem CreateDirectory(string path, ISystemItem parent)
+        public IDirectoryItem CreateDirectory(string path, ISystemItem? parent)
         {
             var normalized = NormalizePath(path);
             if(parent is null)
@@ -58,11 +58,10 @@ namespace CryptoBook.Services
             dir.IsExpanded = false;
             dir.LastWriteTimeUtc = dirInfo.LastWriteTimeUtc;
             dir.RootDirectory = dirInfo.Root.FullName;
-            dir.AddChild(new FileItem()); // заглушка для отображения иконки раскрытия
             return dir;
         }
 
-        public IFileItem CreateFile(string path, ISystemItem parent)
+        public IFileItem CreateFile(string path, ISystemItem? parent)
         {
             var normalized = NormalizePath(path);
             if(parent is null)

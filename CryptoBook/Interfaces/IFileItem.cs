@@ -18,5 +18,6 @@ namespace CryptoBook.Interfaces
         string Extension { get; set; }
         bool IsHidden {  get; set; }
         bool IsReadOnly {  get; set; }
+
     }
 }

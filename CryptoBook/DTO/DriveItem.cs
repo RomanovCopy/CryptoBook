@@ -13,6 +13,8 @@ namespace CryptoBook.DTO
 {
     public class DriveItem: ContainerSystemItem, IDriveItem
     {
+        private readonly IDispatcherService dispatcherService;    
+
         public string VolumeLabel { get => _volumeLabel; set => SetProperty(ref _volumeLabel, value); }
         string _volumeLabel;
         public string DriveFormat { get => _driveFormat; set => SetProperty(ref _driveFormat, value); }
@@ -24,8 +26,9 @@ namespace CryptoBook.DTO
         public long TotalSize { get => _totalSize; set => SetProperty(ref _totalSize, value); }
         long _totalSize;
 
-        public DriveItem()
+        public DriveItem(IDispatcherService dispatcherService) : base(dispatcherService)
         {
+            this.dispatcherService = dispatcherService;
         }
 
     }

@@ -13,6 +13,7 @@ namespace CryptoBook.Services
 {
     public class DriveMonitoringService:IService, IDriveMonitoringService
     {
+        private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private ManagementEventWatcher? _watcher;
@@ -22,8 +23,9 @@ namespace CryptoBook.Services
         public event Action<DriveItem> OnDriveConnected;
         public event Action<string> OnDriveDisconnected;
 
-        public DriveMonitoringService()
+        public DriveMonitoringService(ISystemItemCreateService systemItemCreateService)
         {
+            _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
             RefreshCurrentDrives();
         }
 
@@ -107,7 +109,6 @@ namespace CryptoBook.Services
                     var ex = GetDriveIfWritable(drive.Name);
                     if(ex != null)
                     {
-                        ex.AddChild(new DTO.FileItem());
                         _currentDrives.Add(ex);
                     }
                 }
@@ -127,15 +128,7 @@ namespace CryptoBook.Services
                     drive.DriveType != DriveType.Ram &&
                     drive.AvailableFreeSpace > 0)
                 {
-                    return new DriveItem
-                    {
-                        RootDirectory = drive.Name,
-                        VolumeLabel = drive.VolumeLabel,
-                        DriveFormat = drive.DriveFormat,
-                        DriveType = drive.DriveType,
-                        AvailableFreeSpace = drive.AvailableFreeSpace,
-                        TotalSize = drive.TotalSize
-                    };
+                    return _systemItemCreateService.CreateRoot(drive.Name)
                 }
             } catch { /* Игнорируем недоступные диски */ }
 

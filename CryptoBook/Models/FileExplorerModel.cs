@@ -175,7 +175,12 @@ namespace CryptoBook.Models
 
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
-
+            if(_cancellationTokenSource!=null && !_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+            }
+            _cancellationTokenSource = new CancellationTokenSource();
             switch(obj)
             {
                 case IDirectoryItem directory:
@@ -190,7 +195,7 @@ namespace CryptoBook.Models
                         {
                             foreach(var child in children)
                             {
-                                container.AddChild(child);
+                                await container.AddChildAsync(child,(x)=>x.FullPath, _cancellationTokenSource.Token);
                             }
                         }
                         item.IsLoaded = true;
@@ -208,7 +213,7 @@ namespace CryptoBook.Models
                         {
                             foreach(var child in children)
                             {
-                                container.AddChild(child);
+                                await container.AddChildAsync(child, (x) => x.FullPath, _cancellationTokenSource.Token);
                             }
                         }
                     }
