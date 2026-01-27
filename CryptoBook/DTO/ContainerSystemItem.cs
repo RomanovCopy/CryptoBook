@@ -12,6 +12,7 @@ namespace CryptoBook.DTO
 {
     public abstract class ContainerSystemItem: ViewModelBase, IContainerSystemItem
     {
+        private readonly IDispatcherService _dispatcherService;
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -53,26 +54,44 @@ namespace CryptoBook.DTO
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUTc; set => SetProperty(ref lastWriteTimeUTc, value); }
         DateTime lastWriteTimeUTc;
 
-        protected ContainerSystemItem()
+        protected ContainerSystemItem(IDispatcherService dispatcherService)
         {
             _children = new ObservableCollection<ISystemItem>();
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
+            _dispatcherService = dispatcherService;
         }
 
-        public virtual FileOperationResult AddChild(ISystemItem item)
+        public virtual Task<FileOperationResult> AddChildAsync( ISystemItem item, Func<ISystemItem, string> keySelector, CancellationToken ct = default)
         {
             if(item is null)
-                return FileOperationResult.Fail("Item is null");
+                return Task.FromResult(FileOperationResult.Fail("Item is null"));
 
+            if(keySelector is null)
+                return Task.FromResult(FileOperationResult.Fail("Key selector is null"));
 
             if(item is not (IFileItem or IDirectoryItem))
-                return FileOperationResult.Fail("Item must be of type IFileItem or IDirectoryItem");
+                return Task.FromResult(FileOperationResult.Fail("Item must be of type IFileItem or IDirectoryItem"));
 
-            //никаих проверок не делаем т.к. это лишь слепок уже существующей директории
+            if(ct.IsCancellationRequested)
+                return Task.FromCanceled<FileOperationResult>(ct);
 
-            _children.Add(item);
-            return FileOperationResult.Ok();
+            // Решение принимаем снаружи UI-потока, но саму мутацию — только на UI
+            return _dispatcherService.InvokeAsync(() =>
+            {
+                ct.ThrowIfCancellationRequested();
+
+                var key = keySelector(item);
+
+                // Важно: проверка дубликатов должна быть на UI, иначе гонки
+                if(_children.Any(c => keySelector(c).Equals(key, StringComparison.OrdinalIgnoreCase)))
+                    return FileOperationResult.Fail("Item already exists");
+
+                _children.Add(item);
+                return FileOperationResult.Ok();
+            });
         }
+
+
 
         public virtual FileOperationResult RemoveChild(ISystemItem item)
         {
@@ -99,6 +118,8 @@ namespace CryptoBook.DTO
                 : FileOperationResult.Fail("Failed to remove item from the directory");
         }
 
+
+
         public virtual FileOperationResult ClearChildren()
         {
             _children.Clear();
@@ -109,34 +130,64 @@ namespace CryptoBook.DTO
             return FileOperationResult.Fail("Failed to clear children");
         }
 
-        public virtual async void SyncCollectionsAsync(IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector)
+
+
+        public async Task SyncCollectionsAsync(IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector,
+            Action<ISystemItem, ISystemItem>? updateExisting = null, CancellationToken ct = default)
         {
-            await Task.Run(() =>
+            // Снимок цели на UI потоке (если _children привязан к UI)
+            var targetSnapshot = _children.ToList();
+
+            // Тяжёлое сравнение — в фоне
+            var plan = await Task.Run(() =>
             {
+                ct.ThrowIfCancellationRequested();
+
                 var sourceList = source.ToList();
-                var sourceKeys = sourceList.ToDictionary(keySelector);
-                var targetKeys = _children.ToList().ToDictionary(keySelector);
-                // 1. Удаляем те, которых больше нет в источнике
+
+                // sourceMap: key -> item (последний wins, либо можно выбирать первый)
+                var sourceMap = new Dictionary<string, ISystemItem>(StringComparer.OrdinalIgnoreCase);
+                foreach(var s in sourceList)
+                {
+                    var k = keySelector(s);
+                    sourceMap[k] = s;
+                }
+
+                var targetMap = new Dictionary<string, ISystemItem>(StringComparer.OrdinalIgnoreCase);
+                foreach(var t in targetSnapshot)
+                {
+                    var k = keySelector(t);
+                    targetMap[k] = t;
+                }
+
+                var toRemoveKeys = targetMap.Keys.Where(k => !sourceMap.ContainsKey(k)).ToList();
+                var toAdd = sourceMap.Where(kv => !targetMap.ContainsKey(kv.Key))
+                                     .Select(kv => kv.Value)
+                                     .ToList();
+
+                var toUpdate = sourceMap.Where(kv => targetMap.ContainsKey(kv.Key))
+                                        .Select(kv => (existing: targetMap[kv.Key], incoming: kv.Value))
+                                        .ToList();
+
+                return (toRemoveKeys, toAdd, toUpdate);
+            }, ct);
+
+            await _dispatcherService.InvokeAsync(new Action(() =>
+            {
                 for(int i = _children.Count - 1; i >= 0; i--)
                 {
-                    if(!sourceKeys.ContainsKey(keySelector(_children[i])))
+                    ct.ThrowIfCancellationRequested();
+                    var key = keySelector(_children[i]);
+                    if(plan.toRemoveKeys.Contains(key))
                         _children.RemoveAt(i);
                 }
 
-                // 2. Обновляем существующие и добавляем новые
-                foreach(var sourceItem in sourceList)
-                {
-                    var key = keySelector(sourceItem);
-                    if(targetKeys.TryGetValue(key, out var existingItem))
-                    {
-                        // Логика обновления свойств существующего объекта
-                    } else
-                    {
-                        _children.Add(sourceItem);
-                    }
-                }
-            });
-        }
+                foreach(var (existing, incoming) in plan.toUpdate)
+                    updateExisting?.Invoke(existing, incoming);
 
+                foreach(var item in plan.toAdd)
+                    _children.Add(item);
+            }));
+        }
     }
 }

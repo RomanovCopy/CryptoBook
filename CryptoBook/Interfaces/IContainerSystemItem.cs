@@ -14,7 +14,7 @@ namespace CryptoBook.Interfaces
         bool IsLoaded { get; set; }
         bool IsExpanded { get; set; }
         ReadOnlyObservableCollection<ISystemItem> Children { get; }
-        FileOperationResult AddChild(ISystemItem item);
+        Task<FileOperationResult> AddChildAsync(ISystemItem item, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
         FileOperationResult RemoveChild(ISystemItem item);
         FileOperationResult ClearChildren();
         /// <summary>
@@ -33,6 +33,7 @@ namespace CryptoBook.Interfaces
         /// Реализация должна учитывать потокобезопасность и корректную генерацию событий уведомления об изменениях
         /// (например, для привязки в UI).
         /// </remarks>
-        void SyncCollectionsAsync( IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector);
+        Task SyncCollectionsAsync(IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector,
+                                    Action<ISystemItem, ISystemItem>? updateExisting, CancellationToken ct);
     }
 }
