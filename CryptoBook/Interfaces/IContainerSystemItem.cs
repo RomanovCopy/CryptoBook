@@ -14,9 +14,9 @@ namespace CryptoBook.Interfaces
         bool IsLoaded { get; set; }
         bool IsExpanded { get; set; }
         ReadOnlyObservableCollection<ISystemItem> Children { get; }
-        Task<FileOperationResult> AddChildAsync(ISystemItem item, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
-        FileOperationResult RemoveChild(ISystemItem item);
-        FileOperationResult ClearChildren();
+        Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
+        Task< FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
+        Task< FileOperationResult> ClearChildrenAsync();
         /// <summary>
         /// Синхронизирует коллекцию дочерних элементов текущего контейнера с указанной коллекцией <paramref name="source"/>.
         /// Для каждого элемента <paramref name="source"/> вычисляется ключ с помощью <paramref name="keySelector"/>, по которому

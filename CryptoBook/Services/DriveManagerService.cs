@@ -47,7 +47,7 @@ namespace CryptoBook.Services
         }
 
 
-        private void OnDriveConnected(DriveItem drive)
+        private void OnDriveConnected(IDriveItem drive)
         {
             InvokeOnUiThread(() =>
             {

@@ -16,7 +16,7 @@ namespace CryptoBook.Models
 {
     public class FileExplorerModel: ViewModelBase, IFileExplorerModel
     {
-
+        private readonly SemaphoreSlim _gate = new(1, 1);
         private readonly IFileManagerService _fileManagerService;
         private readonly IWindowManager _windowManager;
         private readonly IDriveManagerService _driveManagerService;
@@ -175,62 +175,59 @@ namespace CryptoBook.Models
 
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
-            if(_cancellationTokenSource!=null && !_cancellationTokenSource.IsCancellationRequested)
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            await _gate.WaitAsync(_cancellationTokenSource.Token);
+            try
+            {
+                switch(obj)
+                {
+                    case IDirectoryItem directory:
+                    {
+                        CurrentPath = directory.FullPath;
+                        var item = directory;
+                        if(!item.IsLoaded && item is IContainerSystemItem container)
+                        {
+                            await container.ClearChildrenAsync();
+                            var children = await _fileManagerService.BrowseAsync(directory.FullPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
+                            if(children is not null)
+                            {
+                                await container.AddChildAsync(children, (x) => x.FullPath, _cancellationTokenSource.Token);
+                            }
+                            item.IsLoaded = true;
+                        }
+                        break;
+                    }
+                    case IDriveItem drive:
+                    {
+                        CurrentPath = drive.RootDirectory;
+                        if(!drive.IsLoaded && drive is IContainerSystemItem container)
+                        {
+                            await container.ClearChildrenAsync();
+                            var children = await _fileManagerService.BrowseAsync(drive.RootDirectory, _cancellationTokenSource.Token, IsHiddenFilesVisible);
+                            if(children != null)
+                            {
+                                await container.AddChildAsync(children, (x) => x.FullPath, _cancellationTokenSource.Token);
+                            }
+                        }
+                        break;
+                    }
+                    case IFileItem file:
+                    {
+                        CurrentPath = System.IO.Path.GetDirectoryName(file.FullPath) ?? string.Empty;
+                        break;
+                    }
+                    default:
+                    return;
+                }
+            } catch
             {
                 _cancellationTokenSource.Cancel();
-                _cancellationTokenSource.Dispose();
-            }
-            _cancellationTokenSource = new CancellationTokenSource();
-            switch(obj)
+            } finally
             {
-                case IDirectoryItem directory:
-                {
-                    CurrentPath = directory.FullPath;
-                    var item = directory;
-                    if(!item.IsLoaded && item is IContainerSystemItem container)
-                    {
-                        container.ClearChildren();
-                        var children = await _fileManagerService.BrowseAsync(directory.FullPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
-                        if(children is not null)
-                        {
-                            foreach(var child in children)
-                            {
-                                await container.AddChildAsync(child,(x)=>x.FullPath, _cancellationTokenSource.Token);
-                            }
-                        }
-                        item.IsLoaded = true;
-                    }
-                    break;
-                }
-                case IDriveItem drive:
-                {
-                    CurrentPath = drive.RootDirectory;
-                    if(!drive.IsLoaded && drive is IContainerSystemItem container)
-                    {
-                        container.ClearChildren();
-                        var children = await _fileManagerService.BrowseAsync(drive.RootDirectory, _cancellationTokenSource.Token, IsHiddenFilesVisible);
-                        if(children != null)
-                        {
-                            foreach(var child in children)
-                            {
-                                await container.AddChildAsync(child, (x) => x.FullPath, _cancellationTokenSource.Token);
-                            }
-                        }
-                    }
-                    break;
-                }
-                case IFileItem file:
-                {
-                    CurrentPath = System.IO.Path.GetDirectoryName(file.FullPath) ?? string.Empty;
-                    break;
-                }
-                default:
-                return;
+                _gate.Release();
             }
-            if((obj is IContainerSystemItem))
-            {
-                var files = await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
-            }
+
         }
 
 

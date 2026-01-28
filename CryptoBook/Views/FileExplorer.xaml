@@ -127,7 +127,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Pane (левая панель) -->
-            <TreeView Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}">
+            <TreeView Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}"
+                      VirtualizingPanel.IsContainerVirtualizable="True">
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

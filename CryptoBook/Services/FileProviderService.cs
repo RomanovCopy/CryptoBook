@@ -17,7 +17,7 @@ namespace CryptoBook.Services
     {
         private readonly ISystemItemCreateService _itemCreateService;
 
-
+        private object _lock = new object();
         public string Scheme => "local";
 
         public FileProviderService(ISystemItemCreateService? itemCreateService)
@@ -36,32 +36,35 @@ namespace CryptoBook.Services
         {
             return await Task.Run(() =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                var directories = new List<ISystemItem>();
-                var dirInfo = new DirectoryInfo(path);
-                if(!dirInfo.Exists)
-                    throw new DirectoryNotFoundException(path);
-                foreach(var d in dirInfo.EnumerateDirectories())
+                lock(_lock)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    if(includeHidden || !IsFileSystemInfoHidden(d))
+                    var directories = new List<ISystemItem>();
+                    var dirInfo = new DirectoryInfo(path);
+                    if(!dirInfo.Exists)
+                        throw new DirectoryNotFoundException(path);
+                    foreach(var d in dirInfo.EnumerateDirectories())
                     {
-                        if(CanAccess(d.FullName))
-                            directories.Add(ToFileItem(d));
+                        cancellationToken.ThrowIfCancellationRequested();
+                        if(includeHidden || !IsFileSystemInfoHidden(d))
+                        {
+                            if(CanAccess(d.FullName))
+                                directories.Add(ToFileItem(d));
+                        }
                     }
-                }
 
-                var files = new List<ISystemItem>();
-                foreach(var f in dirInfo.EnumerateFiles())
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    if(includeHidden || !IsFileSystemInfoHidden(f))
+                    var files = new List<ISystemItem>();
+                    foreach(var f in dirInfo.EnumerateFiles())
                     {
-                        files.Add(ToFileItem(f));
+                        cancellationToken.ThrowIfCancellationRequested();
+                        if(includeHidden || !IsFileSystemInfoHidden(f))
+                        {
+                            files.Add(ToFileItem(f));
+                        }
                     }
+                    var allItems = directories.Concat(files).ToList();
+                    return allItems;
                 }
-                var allItems = directories.Concat(files).ToList();
-                return allItems;
             }, cancellationToken);
         }
 

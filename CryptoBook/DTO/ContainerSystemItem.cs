@@ -61,70 +61,68 @@ namespace CryptoBook.DTO
             _dispatcherService = dispatcherService;
         }
 
-        public virtual Task<FileOperationResult> AddChildAsync( ISystemItem item, Func<ISystemItem, string> keySelector, CancellationToken ct = default)
+        public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items, Func<ISystemItem, string> keySelector, CancellationToken ct = default)
         {
-            if(item is null)
-                return Task.FromResult(FileOperationResult.Fail("Item is null"));
+            if(items is null)
+                return FileOperationResult.Fail("Items is null");
 
             if(keySelector is null)
-                return Task.FromResult(FileOperationResult.Fail("Key selector is null"));
+                return FileOperationResult.Fail("Key selector is null");
 
-            if(item is not (IFileItem or IDirectoryItem))
-                return Task.FromResult(FileOperationResult.Fail("Item must be of type IFileItem or IDirectoryItem"));
+            ct.ThrowIfCancellationRequested();
 
-            if(ct.IsCancellationRequested)
-                return Task.FromCanceled<FileOperationResult>(ct);
-
+            bool exists = false;
             // Решение принимаем снаружи UI-потока, но саму мутацию — только на UI
-            return _dispatcherService.InvokeAsync(() =>
+            await _dispatcherService.InvokeAsync(() =>
             {
-                ct.ThrowIfCancellationRequested();
-
-                var key = keySelector(item);
-
-                // Важно: проверка дубликатов должна быть на UI, иначе гонки
-                if(_children.Any(c => keySelector(c).Equals(key, StringComparison.OrdinalIgnoreCase)))
-                    return FileOperationResult.Fail("Item already exists");
-
-                _children.Add(item);
-                return FileOperationResult.Ok();
+                foreach(var item in items)
+                {
+                    var key = keySelector(item);
+                    exists = _children.Any(c => keySelector(c).Equals(key, StringComparison.OrdinalIgnoreCase));
+                    if(!exists)
+                        _children.Add(item);
+                }
             });
+            return exists ? FileOperationResult.Fail("Item already exists") : FileOperationResult.Ok();
         }
 
 
 
-        public virtual FileOperationResult RemoveChild(ISystemItem item)
+        public async virtual Task<FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem> items, Func<ISystemItem, string> keySelector, CancellationToken ct = default)
         {
-            if(item is null)
-                return FileOperationResult.Fail("Item is null");
+            if(items is null)
+                return FileOperationResult.Fail("Items is null");
 
-            if(item is not (IFileItem or IDirectoryItem))
-                return FileOperationResult.Fail("Item must be of type IFileItem or IDirectoryItem");
+            ct.ThrowIfCancellationRequested();
+            bool removed = false;
+            ISystemItem? existing = null;
+            await _dispatcherService.InvokeAsync(() =>
+            {
+                foreach(var item in items)
+                {
+                    // передали тот же объект, что хранится в _children
+                    existing = _children.FirstOrDefault(c => ReferenceEquals(c, items));
+                    //Если объект другой инстанс, но описывает тот же элемент — пробуем по имени
+                    // (в пределах одной директории имя уникально в Windows)
+                    existing ??= _children.FirstOrDefault(c =>
+                        string.Equals(c.FullPath, item.FullPath, StringComparison.OrdinalIgnoreCase));
+                    removed = existing is not null && _children.Remove(item);
+                }
+            });
 
-            // передали тот же объект, что хранится в _children
-            var existing = _children.FirstOrDefault(c => ReferenceEquals(c, item));
-
-            //Если объект другой инстанс, но описывает тот же элемент — пробуем по имени
-            // (в пределах одной директории имя уникально в Windows)
-            existing ??= _children.FirstOrDefault(c =>
-                string.Equals(c.FullPath, item.FullPath, StringComparison.OrdinalIgnoreCase));
-
-            if(existing is null)
-                return FileOperationResult.Fail("Item not found in the directory");
-
-            var removed = _children.Remove(existing);
-            return removed
-                ? FileOperationResult.Ok()
-                : FileOperationResult.Fail("Failed to remove item from the directory");
+            return existing is null ? FileOperationResult.Fail("Item not found in the directory") : removed ? FileOperationResult.Ok() : FileOperationResult.Fail("Failed to remove item from the directory");
         }
 
 
 
-        public virtual FileOperationResult ClearChildren()
+        public async virtual Task<FileOperationResult> ClearChildrenAsync()
         {
-            _children.Clear();
             IsLoaded = false;
             IsExpanded = false;
+            await _dispatcherService.InvokeAsync(() =>
+            {
+                _children.Clear();
+            });
             if(_children.Count == 0)
                 return FileOperationResult.Ok();
             return FileOperationResult.Fail("Failed to clear children");
