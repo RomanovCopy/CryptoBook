@@ -6,6 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
+        xmlns:services="clr-namespace:CryptoBook.Services"
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:dto="clr-namespace:CryptoBook.DTO"
         xmlns:icons="System.Drawing.Icon.ExtractAssociatedIcon"
@@ -20,11 +21,16 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
     <Window.Resources>
+        
         <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
                                       ItemsSource="{Binding Children,UpdateSourceTrigger=PropertyChanged}">
             <StackPanel Orientation="Horizontal" Margin="2">
-                <!-- Иконка диска (можно улучшить с Image) -->
-                <TextBlock Text="💾" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <Image Width="{StaticResource Tv_IconSize}"
+                       Height="{StaticResource Tv_IconSize}"
+                       Margin="0,0,6,0"
+                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+
+                <!--<TextBlock Text="💾" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>-->
                 <StackPanel>
                     <TextBlock FontWeight="Bold">
                         <TextBlock.Text>
@@ -52,7 +58,7 @@
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
                        Margin="0,0,6,0"
-                       Source="{Binding Icon}"/>
+                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
                 <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </DockPanel>
@@ -62,7 +68,7 @@
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
                        Margin="0,0,6,0"
-                       Source="{Binding Icon}"/>
+                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:ExtensionToIconConverter}}}"/>
                 <TextBlock Text="{Binding Name}"
                            VerticalAlignment="Center"
                            TextTrimming="CharacterEllipsis"/>
@@ -128,15 +134,14 @@
 
             <!-- Navigation Pane (левая панель) -->
             <TreeView Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}"
-                      VirtualizingPanel.IsContainerVirtualizable="True">
+                      VirtualizingPanel.IsContainerVirtualizable="True" >
                 <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem">
+                    <Style TargetType="TreeViewItem" >
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <!--<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
                     </Style>
                 </TreeView.ItemContainerStyle>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedItemChanged">
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding TreeViewItemSelectedCommand, UpdateSourceTrigger=PropertyChanged}"
                                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}},Path=SelectedValue}"/>
                     </i:EventTrigger>

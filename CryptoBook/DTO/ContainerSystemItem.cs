@@ -61,7 +61,8 @@ namespace CryptoBook.DTO
             _dispatcherService = dispatcherService;
         }
 
-        public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items, Func<ISystemItem, string> keySelector, CancellationToken ct = default)
+        public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items, 
+        Func<ISystemItem, string> keySelector, CancellationToken ct = default)
         {
             if(items is null)
                 return FileOperationResult.Fail("Items is null");

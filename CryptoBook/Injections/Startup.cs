@@ -78,8 +78,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<MediBrushSerializeConverter>().AsSelf();
             builder.RegisterType<VisibilityConverter>().AsSelf();
             builder.RegisterType<InternalSizeConverter>().AsSelf();
-            builder.RegisterType<FilePathToIconConverter>().AsSelf();
             builder.RegisterType<BytesToGbConverter>().AsSelf();
+            builder.RegisterType<ExtensionToIconConverter>().AsSelf();
+            builder.RegisterType<PathToIconConverter>().AsSelf();
 
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
@@ -138,7 +139,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<DriveMonitoringService>().As<IDriveMonitoringService>().SingleInstance();
             builder.RegisterType<DriveManagerService>().As<IDriveManagerService>().SingleInstance();
             builder.RegisterType<SystemItemCreateService>().As<ISystemItemCreateService>().SingleInstance();
-
+            builder.RegisterType<SystemIconService>().As<ISystemIconService>().SingleInstance();
 
 
 
