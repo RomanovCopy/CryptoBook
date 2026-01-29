@@ -106,7 +106,7 @@ namespace CryptoBook.Models
 
         public bool CanExecute_TreeViewItemSelectedCommand(object? obj)
         {
-            return true;
+            return obj is not null;
         }
 
 
@@ -176,7 +176,6 @@ namespace CryptoBook.Models
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
             _cancellationTokenSource = new CancellationTokenSource();
-
             await _gate.WaitAsync(_cancellationTokenSource.Token);
             try
             {

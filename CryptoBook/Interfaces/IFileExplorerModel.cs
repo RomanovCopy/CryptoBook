@@ -14,7 +14,7 @@ namespace CryptoBook.Interfaces
     {
         bool IsHiddenFilesVisible { get; set; } 
         string CurrentPath { get; set; }
-        ISystemItem SelectedItem { get; set; }
+        ISystemItem? SelectedItem { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
 
         bool CanExecute_CutCommand(object? obj);

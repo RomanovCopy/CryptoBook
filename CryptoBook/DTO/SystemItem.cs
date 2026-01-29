@@ -31,5 +31,10 @@ namespace CryptoBook.DTO
         public SystemItem()
         {
         }
+
+        public override string ToString()
+        {
+            return FullPath;
+        }
     }
 }
