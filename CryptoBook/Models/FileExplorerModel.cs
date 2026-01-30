@@ -22,7 +22,12 @@ namespace CryptoBook.Models
         private readonly IDriveManagerService _driveManagerService;
         private readonly ISystemItemCreateService _itemCreateService;
 
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource = new();
+
+        public double LeftCololumnPercent { get => _leftCololumnPercent; set => SetProperty(ref _leftCololumnPercent, value); }
+        private double _leftCololumnPercent;
+        public double RightColumnPercent { get => _rightColumnPercent; set => SetProperty(ref _rightColumnPercent, value); }
+        private double _rightColumnPercent;
 
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         private Guid _windowId;
@@ -47,17 +52,6 @@ namespace CryptoBook.Models
             _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
             GetDrives = _driveManagerService.WritableDrives;
             _isHiddenFilesVisible = true;
-        }
-
-        private async void update(object o)
-        {
-            //_files.Clear();
-            //var files = await _fileManagerService.BrowseAsync(path, _cancellationTokenSource.Token, isHidden);
-            //if(files == null) return;
-            //foreach(var file in files)
-            //{
-            //    _files.Add(file);
-            //}
         }
 
         public bool CanExecute_CutCommand(object? obj)
@@ -173,6 +167,8 @@ namespace CryptoBook.Models
             }
         }
 
+        bool _expanded = false;
+
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -200,14 +196,16 @@ namespace CryptoBook.Models
                     case IDriveItem drive:
                     {
                         CurrentPath = drive.RootDirectory;
-                        if(!drive.IsLoaded && drive is IContainerSystemItem container)
+                        var item = drive;
+                        if(!item.IsLoaded && item is IContainerSystemItem container)
                         {
                             await container.ClearChildrenAsync();
-                            var children = await _fileManagerService.BrowseAsync(drive.RootDirectory, _cancellationTokenSource.Token, IsHiddenFilesVisible);
+                            var children = await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
                             if(children != null)
                             {
                                 await container.AddChildAsync(children, (x) => x.FullPath, _cancellationTokenSource.Token);
                             }
+                            item.IsLoaded = true;
                         }
                         break;
                     }
@@ -270,7 +268,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
 
     }
 }

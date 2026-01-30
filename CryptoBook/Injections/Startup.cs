@@ -72,7 +72,6 @@ namespace CryptoBook.Injections
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
             builder.RegisterType<ColorToColorConverter>().InstancePerDependency();
-            builder.RegisterType<ColumnsWidthConverter>().AsSelf();
             builder.RegisterType<SizeLocationConverter>().AsSelf();
             builder.RegisterType<FontSizeAdjustConverter>().AsSelf();
             builder.RegisterType<MediBrushSerializeConverter>().AsSelf();
@@ -81,6 +80,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<BytesToGbConverter>().AsSelf();
             builder.RegisterType<ExtensionToIconConverter>().AsSelf();
             builder.RegisterType<PathToIconConverter>().AsSelf();
+            builder.RegisterType<PercentToGridLengthConverter>().AsSelf();
 
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();

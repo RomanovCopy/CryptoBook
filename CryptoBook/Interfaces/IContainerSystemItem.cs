@@ -12,7 +12,7 @@ namespace CryptoBook.Interfaces
     public interface IContainerSystemItem:ISystemItem
     {
         bool IsLoaded { get; set; }
-        bool IsExpanded { get; set; }
+        bool IsExpanded { get; }
         ReadOnlyObservableCollection<ISystemItem> Children { get; }
         Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
         Task< FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);

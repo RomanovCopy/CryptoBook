@@ -40,8 +40,6 @@ namespace CryptoBook.Services
             root.TotalSize = sourceDrive.TotalSize;
             root.FullPath = sourceDrive.RootDirectory.FullName;
             root.LastWriteTimeUtc = sourceDrive.RootDirectory.LastWriteTimeUtc;
-            if(sourceDrive.RootDirectory.GetDirectories().Length > 0)
-                root.AddChildAsync(new List<IDirectoryItem>() { _scope.Resolve<IDirectoryItem>() },(x)=>x.FullPath);
             return root;
         }
 
@@ -57,11 +55,8 @@ namespace CryptoBook.Services
             dir.Name = dirInfo.Name;
             dir.FullPath = dirInfo.FullName;
             dir.Parent = parent;
-            dir.IsExpanded = false;
             dir.LastWriteTimeUtc = dirInfo.LastWriteTimeUtc;
             dir.RootDirectory = dirInfo.Root.FullName;
-            if(dirInfo.GetDirectories().Length > 0)
-                dir.AddChildAsync(new List<IDirectoryItem>() { _scope.Resolve<IDirectoryItem>() }, (x) => x.FullPath);
             return dir;
         }
 

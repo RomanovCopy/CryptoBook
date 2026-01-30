@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFileExplorerModel:INotifyPropertyChanged, IModel,IWindowWithId
+    public interface IFileExplorerModel:IModel,IWindowWithId
     {
+        double LeftCololumnPercent { get; set; }
+        double RightColumnPercent { get; set; }
         bool IsHiddenFilesVisible { get; set; } 
         string CurrentPath { get; set; }
         ISystemItem? SelectedItem { get; set; }

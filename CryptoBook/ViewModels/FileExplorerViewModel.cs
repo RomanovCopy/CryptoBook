@@ -17,8 +17,11 @@ namespace CryptoBook.ViewModels
     {
         private readonly IFileExplorerModel _fileExplorerModel;
 
+        public double LeftCololumnPercent { get => _fileExplorerModel.LeftCololumnPercent; set => _fileExplorerModel.LeftCololumnPercent=value; }
+        public double RightColumnPercent { get => _fileExplorerModel.RightColumnPercent; set => _fileExplorerModel.RightColumnPercent = value; }
+
         public bool IsHiddenFilesVisible { get => _fileExplorerModel.IsHiddenFilesVisible; set => _fileExplorerModel.IsHiddenFilesVisible=value; }
-        public ISystemItem SelectedItem { get => _fileExplorerModel.SelectedItem; set => _fileExplorerModel.SelectedItem=value; }
+        public ISystemItem? SelectedItem { get => _fileExplorerModel.SelectedItem; set => _fileExplorerModel.SelectedItem=value; }
         public ReadOnlyObservableCollection<IDriveItem> GetDrives => _fileExplorerModel.GetDrives;
         public string CurrentPath { get => _fileExplorerModel.CurrentPath; set => _fileExplorerModel.CurrentPath=value; }
         public Guid WindowId => _fileExplorerModel.WindowId;

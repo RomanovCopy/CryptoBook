@@ -12,8 +12,10 @@ namespace CryptoBook.Interfaces
 {
     public interface IFileExplorerViewModel:IViewModel,IWindowWithId
     {
+        double LeftCololumnPercent { get; set; }
+        double RightColumnPercent{  get; set; }
         bool IsHiddenFilesVisible { get; set; }
-        ISystemItem SelectedItem { get; set; }
+        ISystemItem? SelectedItem { get; set; }
         ReadOnlyObservableCollection<IDriveItem> GetDrives{ get; }
 
         ICommand CutCommand { get; }

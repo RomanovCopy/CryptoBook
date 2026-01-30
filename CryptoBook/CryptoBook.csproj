@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Compile Remove="Composition\ParagraphFormattingExtensions.cs" />
+    <Compile Remove="Converters\ColumnsWidthConverter.cs" />
     <Compile Remove="Converters\FilePathToIconConverter.cs" />
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
     <Compile Remove="DTO\TreeNodeDirectory.cs" />

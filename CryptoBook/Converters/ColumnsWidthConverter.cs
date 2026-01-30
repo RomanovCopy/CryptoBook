@@ -29,7 +29,7 @@ namespace CryptoBook.Converters
                     sum += width;
                     return width;
                 }
-            } catch(Exception e) { ErrorWindow(e); return null; }
+            } catch(Exception e) {  return null; }
         }
 
         public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -41,14 +41,8 @@ namespace CryptoBook.Converters
                 return (double)value / window.Width * 100;
                 //если обратное преобразование не требуется, возвращает пустое значение для свойста
                 //return DependencyProperty.UnsetValu
-            } catch(Exception e) { ErrorWindow(e); return null; }
+            } catch(Exception e) { return null; }
         }
 
-        private void ErrorWindow(Exception e, [CallerMemberName] string name = "")
-        {
-            var mytype = GetType().ToString().Split('.').LastOrDefault();
-            System.Windows.Application.Current.Dispatcher.Invoke((Action)(() =>
-            { System.Windows.MessageBox.Show(e.Message, $"{mytype}.{name}"); }));
-        }
     }
 }

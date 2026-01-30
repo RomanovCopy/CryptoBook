@@ -2,7 +2,7 @@
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMainWindowViewModel: IViewModel
+    public interface IMainWindowViewModel: IViewModel,IWindowOptions
     {
         /// <summary>
         /// скрыть окно в трее

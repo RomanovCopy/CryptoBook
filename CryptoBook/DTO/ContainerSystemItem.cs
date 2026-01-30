@@ -34,8 +34,7 @@ namespace CryptoBook.DTO
         public bool IsLoaded { get => isLoaded; set => SetProperty(ref isLoaded, value); }
         bool isLoaded;
 
-        public bool IsExpanded { get => _isExpanded; set => SetProperty(ref _isExpanded, value); }
-        bool _isExpanded;
+        public bool IsExpanded { get; }
 
         public long Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
         long _size;
@@ -119,7 +118,6 @@ namespace CryptoBook.DTO
         public async virtual Task<FileOperationResult> ClearChildrenAsync()
         {
             IsLoaded = false;
-            IsExpanded = false;
             await _dispatcherService.InvokeAsync(() =>
             {
                 _children.Clear();
