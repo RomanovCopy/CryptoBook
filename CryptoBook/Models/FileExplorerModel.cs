@@ -24,7 +24,18 @@ namespace CryptoBook.Models
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
-        public double LeftCololumnPercent { get => _leftCololumnPercent; set => SetProperty(ref _leftCololumnPercent, value); }
+        public double WindowWidth { get => _windowWidth; set => SetProperty(ref _windowWidth, value); }
+        private double _windowWidth;
+        public double WindowHeight { get => _windowHeight; set => SetProperty(ref _windowHeight, value); }
+        private double _windowHeight;
+        public double WindowTop { get => _windowTop; set => SetProperty(ref _windowTop, value); }
+        private double _windowTop;
+        public double WindowLeft { get => _windowLeft; set => SetProperty(ref _windowLeft, value); }
+        private double _windowLeft;
+        public WindowState WindowState { get =>_windowState; set => SetProperty(ref _windowState, value); }
+        private WindowState _windowState;
+
+        public double LeftColumnPercent { get => _leftCololumnPercent; set => SetProperty(ref _leftCololumnPercent, value); }
         private double _leftCololumnPercent;
         public double RightColumnPercent { get => _rightColumnPercent; set => SetProperty(ref _rightColumnPercent, value); }
         private double _rightColumnPercent;
@@ -52,6 +63,8 @@ namespace CryptoBook.Models
             _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
             GetDrives = _driveManagerService.WritableDrives;
             _isHiddenFilesVisible = true;
+            LeftColumnPercent = 0.2;
+            WindowWidth = 600;
         }
 
         public bool CanExecute_CutCommand(object? obj)
@@ -268,6 +281,7 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
 
     }
 }

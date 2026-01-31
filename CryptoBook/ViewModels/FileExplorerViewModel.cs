@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -17,7 +18,14 @@ namespace CryptoBook.ViewModels
     {
         private readonly IFileExplorerModel _fileExplorerModel;
 
-        public double LeftCololumnPercent { get => _fileExplorerModel.LeftCololumnPercent; set => _fileExplorerModel.LeftCololumnPercent=value; }
+        public double WindowWidth { get =>_fileExplorerModel.WindowWidth; set => _fileExplorerModel.WindowWidth=value; }
+        public double WindowHeight { get => _fileExplorerModel.WindowHeight; set => _fileExplorerModel.WindowHeight=value; }
+        public double WindowTop { get => _fileExplorerModel.WindowTop; set => _fileExplorerModel.WindowTop=value; }
+        public double WindowLeft { get => _fileExplorerModel.WindowLeft; set => _fileExplorerModel.WindowLeft=value; }
+        public WindowState WindowState { get => _fileExplorerModel.WindowState; set => _fileExplorerModel.WindowState=value; }
+
+
+        public double LeftCololumnPercent { get => _fileExplorerModel.LeftColumnPercent; set => _fileExplorerModel.LeftColumnPercent=value; }
         public double RightColumnPercent { get => _fileExplorerModel.RightColumnPercent; set => _fileExplorerModel.RightColumnPercent = value; }
 
         public bool IsHiddenFilesVisible { get => _fileExplorerModel.IsHiddenFilesVisible; set => _fileExplorerModel.IsHiddenFilesVisible=value; }

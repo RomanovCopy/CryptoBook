@@ -14,7 +14,7 @@
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         d:DataContext="{x:Type viewmodels:FileExplorerViewModel}"
-        Height="600" Width="1000"
+        MinHeight="400" MinWidth="600"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
         Title="FileExplorer">
     <Window.DataContext>
@@ -76,6 +76,22 @@
         </DataTemplate>
     </Window.Resources>
 
+    <Window.Width>
+        <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="WindowHeight"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left >
+        <Binding Path="WindowLeft"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.WindowState>
+        <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.WindowState>
+
 
     <Grid Background="{DynamicResource CurrentWindowBackground}">
 
@@ -124,11 +140,11 @@
         <Grid Grid.Row="2">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition  MinWidth="100"/><!-- Navigation Pane -->
+                <ColumnDefinition x:Name="leftcolumn"  Width="{Binding LeftCololumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/><!-- Navigation Pane -->
                 
                 <ColumnDefinition Width="3"/><!--Splitter-->
                 
-                <ColumnDefinition MinWidth="200" Width="*"/><!-- File List -->
+                <ColumnDefinition MinWidth="100" Width="*"/><!-- File List -->
 
                 <ColumnDefinition Width="3"/> <!--Splitter-->
                
@@ -138,7 +154,7 @@
 
             <!-- Navigation Pane (левая панель) -->
             <TreeView x:Name="treeView" Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}"
-                      VirtualizingPanel.IsContainerVirtualizable="True" >
+                      VirtualizingPanel.IsContainerVirtualizable="True" HorizontalAlignment="Stretch" >
                 
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem" >
@@ -153,7 +169,12 @@
                 </i:Interaction.Triggers>
             </TreeView>
 
-            <GridSplitter Width="3" Grid.Column="1"/>
+            <GridSplitter Grid.Column="1"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Stretch"
+                  Width="3"
+                  ResizeBehavior="PreviousAndNext"
+                  ResizeDirection="Columns"/>
 
             <!-- File List View (основная область файлов) -->
             <ListView Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children, ElementName=treeView, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True">
@@ -179,10 +200,15 @@
                 </ListView.View>
             </ListView>
 
-            <GridSplitter Width="3" Grid.Column="2"/>
+            <GridSplitter Grid.Column="3"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Stretch"
+                  Width="3"
+                  ResizeBehavior="PreviousAndNext"
+                  ResizeDirection="Columns"/>
 
             <!-- Details Pane (правая панель деталей) -->
-            <Border Grid.Column="3" Background="White" BorderBrush="#E0E0E0" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch">
+            <Border Grid.Column="4" Background="White" BorderBrush="#E0E0E0" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch">
                 <StackPanel Margin="10">
                     <TextBlock Text="Details" FontWeight="Bold" FontSize="16"/>
                     <TextBlock Text="Name: Folder1"/>
