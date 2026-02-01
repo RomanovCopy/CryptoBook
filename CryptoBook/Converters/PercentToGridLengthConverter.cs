@@ -21,14 +21,14 @@ namespace CryptoBook.Converters
         /// <summary>
         /// преобразование процента (0 - 1) от размера Grid в GridLength левой или правой колонки
         /// </summary>
-        /// <param name="value">процент</param>
+        /// <param name="values">процент</param>
         /// <param name="targetType"></param>
         /// <param name="parameter">IFileExplorerViewModel</param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object values, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is double percent && parameter is IWindowOptions options)
+            if(values is double percent && parameter is IWindowOptions options )
             {
                 // фактическая ширина Window
                 double width = options.WindowWidth;
@@ -58,6 +58,8 @@ namespace CryptoBook.Converters
                 return Math.Clamp(gl.Value / width, 0.05, 0.95);//защита от схлопывания в 0
             }
             return 0.3;
+
         }
     }
+
 }

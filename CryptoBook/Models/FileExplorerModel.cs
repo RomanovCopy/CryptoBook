@@ -35,8 +35,8 @@ namespace CryptoBook.Models
         public WindowState WindowState { get => _windowState; set => SetProperty(ref _windowState, value); }
         private WindowState _windowState;
 
-        public double LeftColumnPercent { get => _leftCololumnPercent; set => SetProperty(ref _leftCololumnPercent, value); }
-        private double _leftCololumnPercent;
+        public double LeftColumnPercent { get => _leftColumnPercent; set => SetProperty(ref _leftColumnPercent, value); }
+        private double _leftColumnPercent;
         public double RightColumnPercent { get => _rightColumnPercent; set => SetProperty(ref _rightColumnPercent, value); }
         private double _rightColumnPercent;
 
@@ -62,10 +62,6 @@ namespace CryptoBook.Models
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
             GetDrives = _driveManagerService.WritableDrives;
-            //_isHiddenFilesVisible = true;
-            //LeftColumnPercent = 0.2;
-            //RightColumnPercent = 0.2;
-            //WindowWidth = 600;
         }
 
         public bool CanExecute_CutCommand(object? obj)
@@ -116,7 +112,10 @@ namespace CryptoBook.Models
         {
             return obj is not null;
         }
-
+        public bool CanExecute_WindowSizeChanged(object? obj)
+        {
+            return true;
+        }
 
 
 
@@ -241,7 +240,10 @@ namespace CryptoBook.Models
 
         }
 
-
+        public void Execute_WindowSizeChanged(object? obj)
+        {
+            OnPropertyChanged([nameof(LeftColumnPercent), nameof(RightColumnPercent)]);
+        }
 
         public bool CanExecute_Close(object? obj)
         {
@@ -286,7 +288,6 @@ namespace CryptoBook.Models
             Properties.Settings.Default.LeftColumnPercent_FileExplorer=LeftColumnPercent;
             Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer=IsHiddenFilesVisible;
             Properties.Settings.Default.Save();
-            //Properties.Settings.Default.Reset();
         }
 
         public bool CanExecute_Closed(object? obj)
@@ -298,7 +299,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
 
     }
 }

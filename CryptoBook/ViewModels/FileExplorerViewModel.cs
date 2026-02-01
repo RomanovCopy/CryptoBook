@@ -25,7 +25,7 @@ namespace CryptoBook.ViewModels
         public WindowState WindowState { get => _fileExplorerModel.WindowState; set => _fileExplorerModel.WindowState=value; }
 
 
-        public double LeftCololumnPercent { get => _fileExplorerModel.LeftColumnPercent; set => _fileExplorerModel.LeftColumnPercent=value; }
+        public double LeftColumnPercent { get => _fileExplorerModel.LeftColumnPercent; set => _fileExplorerModel.LeftColumnPercent=value; }
         public double RightColumnPercent { get => _fileExplorerModel.RightColumnPercent; set => _fileExplorerModel.RightColumnPercent = value; }
 
         public bool IsHiddenFilesVisible { get => _fileExplorerModel.IsHiddenFilesVisible; set => _fileExplorerModel.IsHiddenFilesVisible=value; }
@@ -70,6 +70,8 @@ namespace CryptoBook.ViewModels
 
         public ICommand TreeViewItemSelectedCommand => _treeViewItemSelectedCommand ??= new RelayCommand(_fileExplorerModel.Execute_TreeViewItemSelectedCommand, _fileExplorerModel.CanExecute_TreeViewItemSelectedCommand);
         RelayCommand _treeViewItemSelectedCommand;
+        public ICommand WindowSizeChangedCommand => _windowSizeChangedCommand ??= new RelayCommand(_fileExplorerModel.Execute_WindowSizeChanged, _fileExplorerModel.CanExecute_WindowSizeChanged);
+        RelayCommand _windowSizeChangedCommand;
 
 
         public ICommand Loaded => _loadedCommand ??= new RelayCommand(_fileExplorerModel.Execute_Loaded, _fileExplorerModel.CanExecute_Loaded);

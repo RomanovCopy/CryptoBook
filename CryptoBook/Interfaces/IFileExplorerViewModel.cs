@@ -12,7 +12,7 @@ namespace CryptoBook.Interfaces
 {
     public interface IFileExplorerViewModel:IViewModel,IWindowOptions,IWindowWithId
     {
-        double LeftCololumnPercent { get; set; }
+        double LeftColumnPercent { get; set; }
         double RightColumnPercent{  get; set; }
         bool IsHiddenFilesVisible { get; set; }
         ISystemItem? SelectedItem { get; set; }
@@ -28,5 +28,6 @@ namespace CryptoBook.Interfaces
         ICommand MoveCommand { get; }
         ICommand RefreshCommand { get; }
         ICommand TreeViewItemSelectedCommand { get; }
+        ICommand WindowSizeChangedCommand { get; }
     }
 }
