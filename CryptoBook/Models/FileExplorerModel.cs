@@ -32,7 +32,7 @@ namespace CryptoBook.Models
         private double _windowTop;
         public double WindowLeft { get => _windowLeft; set => SetProperty(ref _windowLeft, value); }
         private double _windowLeft;
-        public WindowState WindowState { get =>_windowState; set => SetProperty(ref _windowState, value); }
+        public WindowState WindowState { get => _windowState; set => SetProperty(ref _windowState, value); }
         private WindowState _windowState;
 
         public double LeftColumnPercent { get => _leftCololumnPercent; set => SetProperty(ref _leftCololumnPercent, value); }
@@ -62,9 +62,10 @@ namespace CryptoBook.Models
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
             GetDrives = _driveManagerService.WritableDrives;
-            _isHiddenFilesVisible = true;
-            LeftColumnPercent = 0.2;
-            WindowWidth = 600;
+            //_isHiddenFilesVisible = true;
+            //LeftColumnPercent = 0.2;
+            //RightColumnPercent = 0.2;
+            //WindowWidth = 600;
         }
 
         public bool CanExecute_CutCommand(object? obj)
@@ -253,23 +254,39 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            WindowHeight = Properties.Settings.Default.WindowHeight_FileExplorer;
+            WindowLeft = Properties.Settings.Default.WindowLeft_FileExplorer;
+            WindowTop = Properties.Settings.Default.WindowTop_FileExplorer;
+            WindowWidth = Properties.Settings.Default.WindowWidth_FileExplorer;
+            WindowState = Properties.Settings.Default.WindowState_FileExplorer;
+            RightColumnPercent=Properties.Settings.Default.RightColumnPercent_FileExplorer;
+            LeftColumnPercent=Properties.Settings.Default.LeftColumnPercent_FileExplorer;
+            IsHiddenFilesVisible=Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer;
         }
 
 
 
         public bool CanExecute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void Execute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            Properties.Settings.Default.WindowHeight_FileExplorer=WindowHeight;
+            Properties.Settings.Default.WindowLeft_FileExplorer=WindowLeft;
+            Properties.Settings.Default.WindowTop_FileExplorer=WindowTop;
+            Properties.Settings.Default.WindowWidth_FileExplorer=WindowWidth;
+            Properties.Settings.Default.WindowState_FileExplorer=WindowState;
+            Properties.Settings.Default.RightColumnPercent_FileExplorer=RightColumnPercent;
+            Properties.Settings.Default.LeftColumnPercent_FileExplorer=LeftColumnPercent;
+            Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer=IsHiddenFilesVisible;
+            Properties.Settings.Default.Save();
+            //Properties.Settings.Default.Reset();
         }
 
         public bool CanExecute_Closed(object? obj)

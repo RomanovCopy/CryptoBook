@@ -25,4 +25,5 @@
             <infra:ResourceWrapper x:Key="Res"/>
         </ResourceDictionary>
     </Application.Resources>
+
 </Application>

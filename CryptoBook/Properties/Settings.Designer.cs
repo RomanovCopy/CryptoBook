@@ -334,5 +334,101 @@ namespace CryptoBook.Properties {
                 this["AgentId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public double WindowHeight_FileExplorer {
+            get {
+                return ((double)(this["WindowHeight_FileExplorer"]));
+            }
+            set {
+                this["WindowHeight_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        public double WindowWidth_FileExplorer {
+            get {
+                return ((double)(this["WindowWidth_FileExplorer"]));
+            }
+            set {
+                this["WindowWidth_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowLeft_FileExplorer {
+            get {
+                return ((double)(this["WindowLeft_FileExplorer"]));
+            }
+            set {
+                this["WindowLeft_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowTop_FileExplorer {
+            get {
+                return ((double)(this["WindowTop_FileExplorer"]));
+            }
+            set {
+                this["WindowTop_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
+        public double RightColumnPercent_FileExplorer {
+            get {
+                return ((double)(this["RightColumnPercent_FileExplorer"]));
+            }
+            set {
+                this["RightColumnPercent_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
+        public double LeftColumnPercent_FileExplorer {
+            get {
+                return ((double)(this["LeftColumnPercent_FileExplorer"]));
+            }
+            set {
+                this["LeftColumnPercent_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState WindowState_FileExplorer {
+            get {
+                return ((global::System.Windows.WindowState)(this["WindowState_FileExplorer"]));
+            }
+            set {
+                this["WindowState_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsHiddenFilesVisible_FileExplorer {
+            get {
+                return ((bool)(this["IsHiddenFilesVisible_FileExplorer"]));
+            }
+            set {
+                this["IsHiddenFilesVisible_FileExplorer"] = value;
+            }
+        }
     }
 }
