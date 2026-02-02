@@ -430,5 +430,17 @@ namespace CryptoBook.Properties {
                 this["IsHiddenFilesVisible_FileExplorer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GridViewColumnRatios {
+            get {
+                return ((string)(this["GridViewColumnRatios"]));
+            }
+            set {
+                this["GridViewColumnRatios"] = value;
+            }
+        }
     }
 }

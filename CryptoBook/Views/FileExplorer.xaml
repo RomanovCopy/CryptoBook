@@ -11,6 +11,7 @@
         xmlns:dto="clr-namespace:CryptoBook.DTO"
         xmlns:icons="System.Drawing.Icon.ExtractAssociatedIcon"
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+        xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         d:DataContext="{x:Type viewmodels:FileExplorerViewModel}"
@@ -21,7 +22,7 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
     <Window.Resources>
-        
+
         <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
                                       ItemsSource="{Binding Children,UpdateSourceTrigger=PropertyChanged}">
             <StackPanel Orientation="Horizontal" Margin="2">
@@ -141,21 +142,25 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="leftcolumn"  Width="{Binding LeftColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/>
-                
-                <ColumnDefinition Width="3"/><!--Splitter-->
-                
-                <ColumnDefinition Width="*"/><!-- File List -->
 
-                <ColumnDefinition Width="3"/> <!--Splitter-->
+                <ColumnDefinition Width="3"/>
+                <!--Splitter-->
 
-                <ColumnDefinition  Width="{Binding RightColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/><!-- Details Pane (опционально) -->
-                
+                <ColumnDefinition Width="*"/>
+                <!-- File List -->
+
+                <ColumnDefinition Width="3"/>
+                <!--Splitter-->
+
+                <ColumnDefinition  Width="{Binding RightColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/>
+                <!-- Details Pane (опционально) -->
+
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Pane (левая панель) -->
             <TreeView x:Name="treeView" Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}"
                       VirtualizingPanel.IsContainerVirtualizable="True" HorizontalAlignment="Stretch" >
-                
+
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem" >
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, UpdateSourceTrigger=PropertyChanged}"/>
@@ -177,7 +182,7 @@
                   ResizeDirection="Columns"/>
 
             <!-- File List View (основная область файлов) -->
-            <ListView Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children, ElementName=treeView, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True">
+            <ListView Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children, ElementName=treeView, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True" >
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Name" Width="300">
@@ -198,6 +203,15 @@
                         <GridViewColumn Header="Size" Width="100"/>
                     </GridView>
                 </ListView.View>
+                <i:Interaction.Behaviors>
+                    <behaviors:GridViewColumnRatioBehavior
+                        ViewId="FileExplorer.MainGrid"
+                        MinColumnWidth="60"
+                        ReflowOnSizeChanged="True"
+                        ReflowOnScrollViewerChanged="True"
+                        SaveDebounceMs="400"
+                        Store="{markup:ResolveService ServiceType={x:Type interfaces:IColumnLayoutStore}}" />
+                </i:Interaction.Behaviors>
             </ListView>
 
             <GridSplitter Grid.Column="3"
@@ -238,7 +252,7 @@
             <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="SizeChanged">
-            <i:InvokeCommandAction Command="{Binding WindowSizeChangedCommand, UpdateSourceTrigger=PropertyChanged}"/> 
+            <i:InvokeCommandAction Command="{Binding WindowSizeChangedCommand, UpdateSourceTrigger=PropertyChanged}"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="Closed">
             <i:InvokeCommandAction Command="{Binding Closed, UpdateSourceTrigger=PropertyChanged}"/>

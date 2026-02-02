@@ -140,6 +140,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<DriveManagerService>().As<IDriveManagerService>().SingleInstance();
             builder.RegisterType<SystemItemCreateService>().As<ISystemItemCreateService>().SingleInstance();
             builder.RegisterType<SystemIconService>().As<ISystemIconService>().SingleInstance();
+            builder.RegisterType<ColumnLayoutStoreService>().As<IColumnLayoutStore>().SingleInstance();
 
 
 
