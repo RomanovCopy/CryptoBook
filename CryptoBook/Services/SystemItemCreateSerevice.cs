@@ -77,6 +77,7 @@ namespace CryptoBook.Services
             file.Parent = parent;
             file.FullPath = fileInfo.FullName;
             file.RootDirectory = fileInfo.Directory?.Root.FullName ?? string.Empty;
+            file.LastWriteTimeUtc = fileInfo.LastWriteTimeUtc;
             return file;
         }
 
