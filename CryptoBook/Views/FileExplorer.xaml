@@ -22,9 +22,10 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
     <Window.Resources>
+        
 
         <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
-                                      ItemsSource="{Binding Children,UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
@@ -54,7 +55,7 @@
             </StackPanel>
         </HierarchicalDataTemplate>
         <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryItem}"
-                                      ItemsSource="{Binding Children,UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
             <DockPanel LastChildFill="True">
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
@@ -75,6 +76,7 @@
                            TextTrimming="CharacterEllipsis"/>
             </DockPanel>
         </DataTemplate>
+
     </Window.Resources>
 
     <Window.Width>

@@ -20,7 +20,7 @@ namespace CryptoBook.Models
         private readonly IFileManagerService _fileManagerService;
         private readonly IWindowManager _windowManager;
         private readonly IDriveManagerService _driveManagerService;
-        private readonly ISystemItemCreateService _itemCreateService;
+        private readonly IFileLauncherService _fileLauncherService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -54,13 +54,13 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, ISystemItemCreateService? itemCreateService)
+            IWindowManager? windowManager, IFileLauncherService? fileLauncherService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
             _driveManagerService = driveManagerService ?? throw new ArgumentNullException(nameof(driveManagerService));
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
-            _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
+            _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(_fileLauncherService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -306,7 +306,7 @@ namespace CryptoBook.Models
         }
 
 
-        private void ContainerLoad(IContainerSystemItem container, CancellationToken token)
+        private void ContainerLoad(IContainerSystemItem container,  CancellationToken token)
         {
             if(!container.IsLoaded)
             {
