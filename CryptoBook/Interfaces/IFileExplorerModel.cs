@@ -29,6 +29,7 @@ namespace CryptoBook.Interfaces
         bool CanExecute_MoveCommand(object? obj);
         bool CanExecure_RefreshCommand(object? obj);
         bool CanExecute_TreeViewItemSelectedCommand (object? obj);
+        bool CanExecute_ListViewItemDoubleClickCommand(object? obj);
         bool CanExecute_WindowSizeChanged(object? obj);
 
 
@@ -42,6 +43,7 @@ namespace CryptoBook.Interfaces
         void Execute_MoveCommand(object? obj);
         void Execute_RefreshCommand(object? obj);
         void Execute_TreeViewItemSelectedCommand (object? obj);
+        void Execute_ListViewItemDoubleClickCommand(object? obj);
         void Execute_WindowSizeChanged(object? obj);
     }
 }

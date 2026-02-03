@@ -36,8 +36,8 @@ namespace CryptoBook.DTO
 
         public bool IsExpanded { get; }
 
-        public long Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
-        long _size;
+        public long? Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
+        long? _size;
 
 
         /// <summary>

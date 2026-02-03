@@ -112,6 +112,12 @@ namespace CryptoBook.Models
         {
             return obj is not null;
         }
+
+        public bool CanExecute_ListViewItemDoubleClickCommand(object? obj)
+        {
+            return obj is not null;
+        }
+
         public bool CanExecute_WindowSizeChanged(object? obj)
         {
             return true;
@@ -190,41 +196,16 @@ namespace CryptoBook.Models
             {
                 switch(obj)
                 {
-                    case IDirectoryItem directory:
+                    case IContainerSystemItem container:
                     {
-                        CurrentPath = directory.FullPath;
-                        var item = directory;
-                        if(!item.IsLoaded && item is IContainerSystemItem container)
-                        {
-                            await container.ClearChildrenAsync();
-                            var children = await _fileManagerService.BrowseAsync(directory.FullPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
-                            if(children is not null)
-                            {
-                                await container.AddChildAsync(children, (x) => x.FullPath, _cancellationTokenSource.Token);
-                            }
-                            item.IsLoaded = true;
-                        }
-                        break;
-                    }
-                    case IDriveItem drive:
-                    {
-                        CurrentPath = drive.RootDirectory;
-                        var item = drive;
-                        if(!item.IsLoaded && item is IContainerSystemItem container)
-                        {
-                            await container.ClearChildrenAsync();
-                            var children = await _fileManagerService.BrowseAsync(CurrentPath, _cancellationTokenSource.Token, IsHiddenFilesVisible);
-                            if(children != null)
-                            {
-                                await container.AddChildAsync(children, (x) => x.FullPath, _cancellationTokenSource.Token);
-                            }
-                            item.IsLoaded = true;
-                        }
+                        SelectedItem = container;
+                        CurrentPath = container.FullPath;
+                        ContainerLoad(container, _cancellationTokenSource.Token);
                         break;
                     }
                     case IFileItem file:
                     {
-                        CurrentPath = System.IO.Path.GetDirectoryName(file.FullPath) ?? string.Empty;
+                        CurrentPath = file.FullPath ?? string.Empty;
                         break;
                     }
                     default:
@@ -238,6 +219,30 @@ namespace CryptoBook.Models
                 _gate.Release();
             }
 
+        }
+
+
+        public async void Execute_ListViewItemDoubleClickCommand(object? obj)
+        {
+            if(obj is IContainerSystemItem container)
+            {
+                _cancellationTokenSource = new CancellationTokenSource();
+                await _gate.WaitAsync(_cancellationTokenSource.Token);
+                try
+                {
+                    SelectedItem = container;
+                    CurrentPath = container.FullPath;
+                    ContainerLoad(container, _cancellationTokenSource.Token);
+                }
+                catch
+                {
+                    _cancellationTokenSource.Cancel();
+                }
+                finally
+                {
+                    _gate.Release();
+                }
+            }
         }
 
         public void Execute_WindowSizeChanged(object? obj)
@@ -265,9 +270,9 @@ namespace CryptoBook.Models
             WindowTop = Properties.Settings.Default.WindowTop_FileExplorer;
             WindowWidth = Properties.Settings.Default.WindowWidth_FileExplorer;
             WindowState = Properties.Settings.Default.WindowState_FileExplorer;
-            RightColumnPercent=Properties.Settings.Default.RightColumnPercent_FileExplorer;
-            LeftColumnPercent=Properties.Settings.Default.LeftColumnPercent_FileExplorer;
-            IsHiddenFilesVisible=Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer;
+            RightColumnPercent = Properties.Settings.Default.RightColumnPercent_FileExplorer;
+            LeftColumnPercent = Properties.Settings.Default.LeftColumnPercent_FileExplorer;
+            IsHiddenFilesVisible = Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer;
         }
 
 
@@ -279,14 +284,14 @@ namespace CryptoBook.Models
 
         public void Execute_Closing(object? obj)
         {
-            Properties.Settings.Default.WindowHeight_FileExplorer=WindowHeight;
-            Properties.Settings.Default.WindowLeft_FileExplorer=WindowLeft;
-            Properties.Settings.Default.WindowTop_FileExplorer=WindowTop;
-            Properties.Settings.Default.WindowWidth_FileExplorer=WindowWidth;
-            Properties.Settings.Default.WindowState_FileExplorer=WindowState;
-            Properties.Settings.Default.RightColumnPercent_FileExplorer=RightColumnPercent;
-            Properties.Settings.Default.LeftColumnPercent_FileExplorer=LeftColumnPercent;
-            Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer=IsHiddenFilesVisible;
+            Properties.Settings.Default.WindowHeight_FileExplorer = WindowHeight;
+            Properties.Settings.Default.WindowLeft_FileExplorer = WindowLeft;
+            Properties.Settings.Default.WindowTop_FileExplorer = WindowTop;
+            Properties.Settings.Default.WindowWidth_FileExplorer = WindowWidth;
+            Properties.Settings.Default.WindowState_FileExplorer = WindowState;
+            Properties.Settings.Default.RightColumnPercent_FileExplorer = RightColumnPercent;
+            Properties.Settings.Default.LeftColumnPercent_FileExplorer = LeftColumnPercent;
+            Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer = IsHiddenFilesVisible;
             Properties.Settings.Default.Save();
         }
 
@@ -299,6 +304,25 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
+
+        private void ContainerLoad(IContainerSystemItem container, CancellationToken token)
+        {
+            if(!container.IsLoaded)
+            {
+                _ = Task.Run(async () =>
+                {
+                    await container.ClearChildrenAsync();
+                    var children = await _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible);
+                    if(children is not null)
+                    {
+                        await container.AddChildAsync(children, (x) => x.FullPath, token);
+                    }
+                    container.IsLoaded = true;
+                });
+            }
+        }
+
 
     }
 }

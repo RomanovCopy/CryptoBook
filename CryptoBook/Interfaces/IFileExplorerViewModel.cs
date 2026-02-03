@@ -28,6 +28,7 @@ namespace CryptoBook.Interfaces
         ICommand MoveCommand { get; }
         ICommand RefreshCommand { get; }
         ICommand TreeViewItemSelectedCommand { get; }
+        ICommand ListViewItemDoubleClickCommand{ get; }
         ICommand WindowSizeChangedCommand { get; }
     }
 }

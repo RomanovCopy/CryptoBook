@@ -70,6 +70,10 @@ namespace CryptoBook.ViewModels
 
         public ICommand TreeViewItemSelectedCommand => _treeViewItemSelectedCommand ??= new RelayCommand(_fileExplorerModel.Execute_TreeViewItemSelectedCommand, _fileExplorerModel.CanExecute_TreeViewItemSelectedCommand);
         RelayCommand _treeViewItemSelectedCommand;
+
+        public ICommand ListViewItemDoubleClickCommand => _listViewItemDoubleClickCommand??= new RelayCommand(_fileExplorerModel.Execute_ListViewItemDoubleClickCommand, _fileExplorerModel.CanExecute_ListViewItemDoubleClickCommand);
+        RelayCommand _listViewItemDoubleClickCommand;
+
         public ICommand WindowSizeChangedCommand => _windowSizeChangedCommand ??= new RelayCommand(_fileExplorerModel.Execute_WindowSizeChanged, _fileExplorerModel.CanExecute_WindowSizeChanged);
         RelayCommand _windowSizeChangedCommand;
 

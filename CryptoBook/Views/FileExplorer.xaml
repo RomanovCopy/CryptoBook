@@ -182,7 +182,7 @@
                   ResizeDirection="Columns"/>
 
             <!-- File List View (основная область файлов) -->
-            <ListView Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children, ElementName=treeView, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True" >
+            <ListView x:Name="listview" Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children,  UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Name">
@@ -221,7 +221,18 @@
                                 <DataTemplate>
                                     <DockPanel LastChildFill="True">
                                         <TextBlock Text="{Binding Size, UpdateSourceTrigger=PropertyChanged, 
-                                            Converter={markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}}" />
+                                            Converter={markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}}" >
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Size, UpdateSourceTrigger=PropertyChanged}"
+                                                                     Value="{x:Null}">
+                                                            <Setter Property="Foreground" Value="Transparent"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
                                     </DockPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -235,6 +246,11 @@
                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="FontSize" Value="16"/>
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="MouseDoubleClick">
+                                
+                            </EventTrigger>
+                        </Style.Triggers>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <i:Interaction.Behaviors>
@@ -246,6 +262,12 @@
                         SaveDebounceMs="400"
                         Store="{markup:ResolveService ServiceType={x:Type interfaces:IColumnLayoutStore}}" />
                 </i:Interaction.Behaviors>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding ListViewItemDoubleClickCommand, UpdateSourceTrigger=PropertyChanged}"
+                                               CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </ListView>
 
             <GridSplitter Grid.Column="3"
