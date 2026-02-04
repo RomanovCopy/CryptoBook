@@ -13,6 +13,7 @@ namespace CryptoBook.DTO
     public class DirectoryItem: ContainerSystemItem, IDirectoryItem
     {
         private readonly IDispatcherService dispatcherService;
+        
         public DirectoryItem(IDispatcherService dispatcherService):base(dispatcherService)
         {   
             this.dispatcherService = dispatcherService;

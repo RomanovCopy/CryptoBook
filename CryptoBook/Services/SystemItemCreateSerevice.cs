@@ -17,9 +17,11 @@ namespace CryptoBook.Services
     public class SystemItemCreateService: ISystemItemCreateService
     {
         private readonly ILifetimeScope _scope;
-        public SystemItemCreateService(ILifetimeScope scope)
+        private readonly IDirectoryMonitoringService _directoryMonitoringService;
+        public SystemItemCreateService(ILifetimeScope scope, IDirectoryMonitoringService directoryMonitoringService)
         {
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            _directoryMonitoringService = directoryMonitoringService;
         }
 
         public IDriveItem CreateRoot(string rootPath)
@@ -40,6 +42,16 @@ namespace CryptoBook.Services
             root.TotalSize = sourceDrive.TotalSize;
             root.FullPath = sourceDrive.RootDirectory.FullName;
             root.LastWriteTimeUtc = sourceDrive.RootDirectory.LastWriteTimeUtc;
+            _directoryMonitoringService.StartMonitoring(normalized,
+            (e) =>
+            {
+                root.AddChildAsync(SystemItemCreate(e, root), (x) => x.FullPath);
+            },
+            (e) =>
+            {
+            }, (e) =>
+            {
+            });
             return root;
         }
 
@@ -81,6 +93,24 @@ namespace CryptoBook.Services
             return file;
         }
 
+
+        private List<ISystemItem> SystemItemCreate(FileSystemEventArgs e, IContainerSystemItem container)
+        {
+            var items = new List<ISystemItem>();
+            var path = e.FullPath;
+            if(Directory.Exists(path))
+            {
+                var dirInfo = new DirectoryInfo(path);
+                var dirItem = CreateDirectory(e.FullPath, container);
+                items.Add(dirItem);
+            } else if(File.Exists(path))
+            {
+                var fileInfo = new FileInfo(path);
+                var fileItem = CreateFile(path, container);
+                items.Add(fileItem);
+            }
+            return items;
+        }
 
         private static string NormalizePath(string path)
         {

@@ -233,12 +233,10 @@ namespace CryptoBook.Models
                     SelectedItem = container;
                     CurrentPath = container.FullPath;
                     ContainerLoad(container, _cancellationTokenSource.Token);
-                }
-                catch
+                } catch
                 {
                     _cancellationTokenSource.Cancel();
-                }
-                finally
+                } finally
                 {
                     _gate.Release();
                 }
@@ -306,7 +304,7 @@ namespace CryptoBook.Models
         }
 
 
-        private void ContainerLoad(IContainerSystemItem container,  CancellationToken token)
+        private void ContainerLoad(IContainerSystemItem container, CancellationToken token)
         {
             if(!container.IsLoaded)
             {
@@ -319,7 +317,17 @@ namespace CryptoBook.Models
                         await container.AddChildAsync(children, (x) => x.FullPath, token);
                     }
                     container.IsLoaded = true;
-                });
+                }, token);
+            } else
+            {
+                _ = Task.Run(async () =>
+                {
+                    var children = await _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible);
+                    if(children is not null)
+                    {
+                        await container.SyncCollectionsAsync(children, (x) => x.FullPath, null, token);
+                    }
+                }, token);
             }
         }
 

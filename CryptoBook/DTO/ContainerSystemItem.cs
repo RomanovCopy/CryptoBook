@@ -49,6 +49,8 @@ namespace CryptoBook.DTO
         public ReadOnlyObservableCollection<ISystemItem> Children { get; private set; }
         protected ObservableCollection<ISystemItem> _children;
 
+        public ReadOnlyObservableCollection<IContainerSystemItem> FilteredChildren{ get; private set; }
+
 
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUTc; set => SetProperty(ref lastWriteTimeUTc, value); }
         DateTime lastWriteTimeUTc;
@@ -58,6 +60,7 @@ namespace CryptoBook.DTO
             _children = new ObservableCollection<ISystemItem>();
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
             _dispatcherService = dispatcherService;
+            FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
         }
 
         public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items, 
@@ -186,5 +189,6 @@ namespace CryptoBook.DTO
                     _children.Add(item);
             }));
         }
+
     }
 }

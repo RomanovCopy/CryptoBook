@@ -1,4 +1,5 @@
 ﻿using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace CryptoBook.Interfaces
         bool IsLoaded { get; set; }
         bool IsExpanded { get; }
         ReadOnlyObservableCollection<ISystemItem> Children { get; }
+        ReadOnlyObservableCollection<IContainerSystemItem> FilteredChildren { get; }
         Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
         Task< FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
         Task< FileOperationResult> ClearChildrenAsync();

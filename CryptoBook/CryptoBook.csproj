@@ -34,6 +34,7 @@
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\IFileOperationResult.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
+    <Compile Remove="Interfaces\IReadOnlyObservableCollection.cs" />
     <Compile Remove="Interfaces\ITitleBarRB_ViewModel.cs" />
     <Compile Remove="Interfaces\ITreeNodeVm.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
