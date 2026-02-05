@@ -45,10 +45,12 @@ namespace CryptoBook.Services
             _directoryMonitoringService.StartMonitoring(normalized,
             (e) =>
             {
+                var list=new List<ISystemItem>();
                 root.AddChildAsync(SystemItemCreate(e, root), (x) => x.FullPath);
             },
             (e) =>
             {
+                root.RemoveChildAsync(SystemItemCreate(e, root), (x=>x.FullPath));
             }, (e) =>
             {
             });
@@ -98,12 +100,15 @@ namespace CryptoBook.Services
         {
             var items = new List<ISystemItem>();
             var path = e.FullPath;
-            if(Directory.Exists(path))
+
+
+
+            if( container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
             {
                 var dirInfo = new DirectoryInfo(path);
                 var dirItem = CreateDirectory(e.FullPath, container);
                 items.Add(dirItem);
-            } else if(File.Exists(path))
+            } else if(File.Exists(path) || container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
             {
                 var fileInfo = new FileInfo(path);
                 var fileItem = CreateFile(path, container);
