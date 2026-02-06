@@ -45,12 +45,11 @@ namespace CryptoBook.Services
             _directoryMonitoringService.StartMonitoring(normalized,
             (e) =>
             {
-                var list=new List<ISystemItem>();
                 root.AddChildAsync(SystemItemCreate(e, root), (x) => x.FullPath);
             },
             (e) =>
             {
-                root.RemoveChildAsync(SystemItemCreate(e, root), (x=>x.FullPath));
+                root.RemoveChildAsync(SystemItemCreate(e, root), (x => x.FullPath));
             }, (e) =>
             {
             });
@@ -99,16 +98,14 @@ namespace CryptoBook.Services
         private List<ISystemItem> SystemItemCreate(FileSystemEventArgs e, IContainerSystemItem container)
         {
             var items = new List<ISystemItem>();
-            var path = e.FullPath;
+            var path = NormalizePath(e.FullPath);
 
-
-
-            if( container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
+            if(Directory.Exists(path) && !container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
             {
                 var dirInfo = new DirectoryInfo(path);
                 var dirItem = CreateDirectory(e.FullPath, container);
                 items.Add(dirItem);
-            } else if(File.Exists(path) || container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
+            } else if(File.Exists(path) && container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
             {
                 var fileInfo = new FileInfo(path);
                 var fileItem = CreateFile(path, container);
