@@ -86,7 +86,6 @@ namespace CryptoBook.DTO
                         _children.Add(item);
                 }
             });
-            OnPropertyChanged("Children");
             return exists ? FileOperationResult.Fail("Item already exists") : FileOperationResult.Ok();
         }
 

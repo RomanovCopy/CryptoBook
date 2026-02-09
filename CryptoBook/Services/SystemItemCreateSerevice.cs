@@ -50,8 +50,6 @@ namespace CryptoBook.Services
             (e) =>
             {
                 root.RemoveChildAsync(SystemItemCreate(e, root), (x => x.FullPath));
-            }, (e) =>
-            {
             });
             return root;
         }
@@ -100,17 +98,30 @@ namespace CryptoBook.Services
             var items = new List<ISystemItem>();
             var path = NormalizePath(e.FullPath);
 
-            if(Directory.Exists(path) && !container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
+            switch(e.ChangeType)
             {
-                var dirInfo = new DirectoryInfo(path);
-                var dirItem = CreateDirectory(e.FullPath, container);
-                items.Add(dirItem);
-            } else if(File.Exists(path) && container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
-            {
-                var fileInfo = new FileInfo(path);
-                var fileItem = CreateFile(path, container);
-                items.Add(fileItem);
+                case WatcherChangeTypes.Deleted:
+                {
+                    var existing = container.Children.FirstOrDefault(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase));
+                    if(existing != null)
+                        items.Add(existing);
+                    break;
+                }
+                case WatcherChangeTypes.Created:
+                {
+                    if(Directory.Exists(path) && !container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var dirItem = CreateDirectory(path, container);
+                        items.Add(dirItem);
+                    } else if(File.Exists(path) && !container.Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var fileItem = CreateFile(path, container);
+                        items.Add(fileItem);
+                    }
+                    break;
+                }
             }
+
             return items;
         }
 
