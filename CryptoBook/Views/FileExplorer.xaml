@@ -165,7 +165,7 @@
 
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem" >
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                     </Style>
                 </TreeView.ItemContainerStyle>
                 <i:Interaction.Triggers>

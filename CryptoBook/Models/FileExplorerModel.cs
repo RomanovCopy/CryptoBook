@@ -186,7 +186,6 @@ namespace CryptoBook.Models
             }
         }
 
-        bool _expanded = false;
 
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {

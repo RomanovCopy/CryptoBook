@@ -13,6 +13,7 @@ namespace CryptoBook.DTO
     public abstract class ContainerSystemItem: ViewModelBase, IContainerSystemItem
     {
         private readonly IDispatcherService _dispatcherService;
+        private readonly IDirectoryMonitoringService _directoryMonitoringService;
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -34,7 +35,43 @@ namespace CryptoBook.DTO
         public bool IsLoaded { get => isLoaded; set => SetProperty(ref isLoaded, value); }
         bool isLoaded;
 
-        public bool IsExpanded { get; }
+        public bool IsExpanded
+        {
+            get => isExpanded;
+            set
+            {
+                SetProperty(ref isExpanded, value);
+                if(value)
+                {
+                    StartMonitoring();
+                } else
+                {
+                    StopMonitoring();
+                }
+            }
+        }
+
+        //private IDisposable? _monitor;
+
+        private void StartMonitoring()
+        {
+            //if(_monitor != null)// защита от двойной подписки
+            //    return;
+
+            //_directoryMonitoringService.StartMonitoring(
+            //    FullPath,
+            //    onCreated:
+            
+        }
+
+        private void StopMonitoring()
+        {
+            //_monitor?.Dispose();
+            //_monitor = null;
+        }
+
+
+        bool isExpanded;
 
         public long? Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
         long? _size;
@@ -49,21 +86,22 @@ namespace CryptoBook.DTO
         public ReadOnlyObservableCollection<ISystemItem> Children { get; private set; }
         protected ObservableCollection<ISystemItem> _children;
 
-        public ReadOnlyObservableCollection<IContainerSystemItem> FilteredChildren{ get; private set; }
+        public ReadOnlyObservableCollection<IContainerSystemItem> FilteredChildren { get; private set; }
 
 
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUTc; set => SetProperty(ref lastWriteTimeUTc, value); }
         DateTime lastWriteTimeUTc;
 
-        protected ContainerSystemItem(IDispatcherService dispatcherService)
+        protected ContainerSystemItem(IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService)
         {
             _children = new ObservableCollection<ISystemItem>();
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
             _dispatcherService = dispatcherService;
             FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
+            _directoryMonitoringService = directoryMonitoringService;
         }
 
-        public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items, 
+        public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items,
         Func<ISystemItem, string> keySelector, CancellationToken ct = default)
         {
             if(items is null)

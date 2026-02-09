@@ -42,15 +42,6 @@ namespace CryptoBook.Services
             root.TotalSize = sourceDrive.TotalSize;
             root.FullPath = sourceDrive.RootDirectory.FullName;
             root.LastWriteTimeUtc = sourceDrive.RootDirectory.LastWriteTimeUtc;
-            _directoryMonitoringService.StartMonitoring(normalized,
-            (e) =>
-            {
-                root.AddChildAsync(SystemItemCreate(e, root), (x) => x.FullPath);
-            },
-            (e) =>
-            {
-                root.RemoveChildAsync(SystemItemCreate(e, root), (x => x.FullPath));
-            });
             return root;
         }
 
