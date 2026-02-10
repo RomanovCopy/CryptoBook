@@ -50,6 +50,7 @@ namespace CryptoBook.DTO
                 }
             }
         }
+        bool isExpanded;
 
         //private IDisposable? _monitor;
 
@@ -71,7 +72,26 @@ namespace CryptoBook.DTO
         }
 
 
-        bool isExpanded;
+        private void StopMonitoringRecursive()
+        {
+            // 1) остановить себя
+            StopMonitoring();
+
+            // 2) остановить раскрытых потомков
+            foreach(var child in Children.OfType<IContainerSystemItem>())
+            {
+                if(child.IsExpanded)
+                {
+                    child.IsExpanded = false; // это триггернет их StopMonitoring()
+                } else
+                {
+                    // даже если IsExpanded уже false, но у тебя может быть “ручной” мониторинг
+                    // тогда нужен явный метод StopMonitoringRecursive у детей
+                }
+            }
+        }
+
+
 
         public long? Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
         long? _size;
