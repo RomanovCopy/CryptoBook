@@ -87,7 +87,10 @@ namespace CryptoBook.Services
         private List<ISystemItem> SystemItemCreate(FileSystemEventArgs e, IContainerSystemItem container)
         {
             var items = new List<ISystemItem>();
-            var path = NormalizePath(e.FullPath);
+            var path = e.FullPath;
+            if(string.IsNullOrWhiteSpace(path) || !Path.Exists(path))
+                return items;
+            path = Path.GetFullPath(path);
 
             switch(e.ChangeType)
             {

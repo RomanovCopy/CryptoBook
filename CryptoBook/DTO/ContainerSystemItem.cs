@@ -52,17 +52,18 @@ namespace CryptoBook.DTO
         }
         bool isExpanded;
 
-        //private IDisposable? _monitor;
+        private bool _monitor;
 
         private void StartMonitoring()
         {
-            //if(_monitor != null)// защита от двойной подписки
-            //    return;
+            if(_monitor )// защита от двойной подписки
+                return;
 
-            //_directoryMonitoringService.StartMonitoring(
-            //    FullPath,
-            //    onCreated:
-            
+            _directoryMonitoringService.StartMonitoring(
+                FullPath,
+                onCreated: ()=>AddChildAsync(new[] { new FileSystemItem { Name = "NewItem", FullPath = $"{FullPath}\\NewItem", Parent = this } }, i => i.FullPath), 
+
+
         }
 
         private void StopMonitoring()
@@ -72,24 +73,6 @@ namespace CryptoBook.DTO
         }
 
 
-        private void StopMonitoringRecursive()
-        {
-            // 1) остановить себя
-            StopMonitoring();
-
-            // 2) остановить раскрытых потомков
-            foreach(var child in Children.OfType<IContainerSystemItem>())
-            {
-                if(child.IsExpanded)
-                {
-                    child.IsExpanded = false; // это триггернет их StopMonitoring()
-                } else
-                {
-                    // даже если IsExpanded уже false, но у тебя может быть “ручной” мониторинг
-                    // тогда нужен явный метод StopMonitoringRecursive у детей
-                }
-            }
-        }
 
 
 
