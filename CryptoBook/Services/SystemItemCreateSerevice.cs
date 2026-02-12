@@ -41,7 +41,7 @@ namespace CryptoBook.Services
             root.RootDirectory = sourceDrive.RootDirectory.ToString();
             root.TotalSize = sourceDrive.TotalSize;
             root.FullPath = sourceDrive.RootDirectory.FullName;
-            root.LastWriteTimeUtc = sourceDrive.RootDirectory.LastWriteTimeUtc;
+            root.LastWriteTimeUtc = sourceDrive.RootDirectory.LastWriteTimeUtc.ToLocalTime();
             return root;
         }
 
@@ -57,7 +57,7 @@ namespace CryptoBook.Services
             dir.Name = dirInfo.Name;
             dir.FullPath = dirInfo.FullName;
             dir.Parent = parent;
-            dir.LastWriteTimeUtc = dirInfo.LastWriteTimeUtc;
+            dir.LastWriteTimeUtc = dirInfo.LastWriteTimeUtc.ToLocalTime();
             dir.RootDirectory = dirInfo.Root.FullName;
             return dir;
         }
@@ -79,7 +79,7 @@ namespace CryptoBook.Services
             file.Parent = parent;
             file.FullPath = fileInfo.FullName;
             file.RootDirectory = fileInfo.Directory?.Root.FullName ?? string.Empty;
-            file.LastWriteTimeUtc = fileInfo.LastWriteTimeUtc;
+            file.LastWriteTimeUtc = fileInfo.LastWriteTimeUtc.ToLocalTime();
             return file;
         }
 

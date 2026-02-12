@@ -14,11 +14,15 @@ namespace CryptoBook.DTO
     {
         private readonly IDispatcherService dispatcherService;
         private readonly IDirectoryMonitoringService directoryMonitoringService;
+        private readonly ISystemItemCreateService systemItemCreateService;
+        private readonly IFileManagerService fileManagerService;
 
-        public DirectoryItem(IDispatcherService dispatcherService,IDirectoryMonitoringService directoryMonitoringService):base(dispatcherService,directoryMonitoringService)
+        public DirectoryItem(IFileManagerService fileManagerService, IDispatcherService dispatcherService,IDirectoryMonitoringService directoryMonitoringService,ISystemItemCreateService systemItemCreateService):base(fileManagerService, dispatcherService,directoryMonitoringService,systemItemCreateService)
         {   
             this.dispatcherService = dispatcherService;
             this.directoryMonitoringService = directoryMonitoringService;
+            this.systemItemCreateService = systemItemCreateService;
+            this.fileManagerService = fileManagerService;
         }
     }
 }
