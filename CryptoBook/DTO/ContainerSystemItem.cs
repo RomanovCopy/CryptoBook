@@ -73,9 +73,7 @@ namespace CryptoBook.DTO
         }
         bool isSelected;
 
-
         private bool _monitor;// защита от двойной подписки
-
 
         public long? Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
         long? _size;
@@ -91,7 +89,6 @@ namespace CryptoBook.DTO
         protected ObservableCollection<ISystemItem> _children;
 
         public ReadOnlyObservableCollection<IContainerSystemItem> FilteredChildren { get; private set; }
-
 
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
@@ -133,8 +130,6 @@ namespace CryptoBook.DTO
             return exists ? FileOperationResult.Fail("Item already exists") : FileOperationResult.Ok();
         }
 
-
-
         public async virtual Task<FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem> items, Func<ISystemItem, string> keySelector, CancellationToken ct = default)
         {
             if(items is null)
@@ -160,8 +155,6 @@ namespace CryptoBook.DTO
             return existing is null ? FileOperationResult.Fail("Item not found in the directory") : removed ? FileOperationResult.Ok() : FileOperationResult.Fail("Failed to remove item from the directory");
         }
 
-
-
         public async virtual Task<FileOperationResult> ClearChildrenAsync()
         {
             IsLoaded = false;
@@ -173,8 +166,6 @@ namespace CryptoBook.DTO
                 return FileOperationResult.Ok();
             return FileOperationResult.Fail("Failed to clear children");
         }
-
-
 
         public async Task SyncCollectionsAsync(IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector,
             Action<ISystemItem, ISystemItem>? updateExisting = null, CancellationToken ct = default)
@@ -270,11 +261,6 @@ namespace CryptoBook.DTO
             if(!(IsExpanded || IsSelected))
                 _monitor = !_directoryMonitoringService.StopMonitoring(FullPath);
         }
-
-
-
-
-
 
         private List<ISystemItem> SystemItemCreate(string changeType, string fullPath)
         {

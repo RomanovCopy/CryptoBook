@@ -22,7 +22,7 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
     </Window.DataContext>
     <Window.Resources>
-        
+
 
         <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
                                       ItemsSource="{Binding FilteredChildren, UpdateSourceTrigger=PropertyChanged}">
@@ -32,7 +32,6 @@
                        Margin="0,0,6,0"
                        Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
 
-                <!--<TextBlock Text="💾" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>-->
                 <StackPanel>
                     <TextBlock FontWeight="Bold">
                         <TextBlock.Text>
@@ -113,16 +112,30 @@
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
         <ToolBar Grid.Row="0" Height="48" Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
-            <Button Content="New" Margin="5,0" Padding="10,5"/>
+            <Button Content="New" Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
             <Separator/>
-            <Button Content="Cut" Margin="5,0" Padding="10,5" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Copy" Margin="5,0" Padding="10,5" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Paste" Margin="5,0" Padding="10,5" Command="{Binding PasteCommand,UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Rename" Margin="5,0" Padding="10,5" Command="{Binding RenameCommand, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Delete" Margin="5,0" Padding="10,5" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Cut" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
             <Separator/>
-            <Button Content="Sort" Margin="5,0" Padding="10,5"/>
-            <Button Content="View" Margin="5,0" Padding="10,5"/>
+            <Button Content="Copy" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="Paste" Command="{Binding PasteCommand,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="Rename" Command="{Binding RenameCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="Sort" 
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="View" 
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
         </ToolBar>
 
         <!-- 2. Tabs + Address Bar -->
@@ -185,7 +198,7 @@
                   ResizeDirection="Columns"/>
 
             <!-- File List View (основная область файлов) -->
-            <ListView x:Name="listview" Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children,  UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True">
+            <ListView x:Name="listview" Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children,  UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True" >
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Name">
@@ -249,11 +262,6 @@
                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="FontSize" Value="16"/>
-                        <Style.Triggers>
-                            <EventTrigger RoutedEvent="MouseDoubleClick">
-                                
-                            </EventTrigger>
-                        </Style.Triggers>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <i:Interaction.Behaviors>
@@ -269,6 +277,9 @@
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding ListViewItemDoubleClickCommand, UpdateSourceTrigger=PropertyChanged}"
                                                CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding ListViewSelectionChangedCommand, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding SelectedValue, ElementName=listview}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListView>
@@ -294,7 +305,8 @@
 
         </Grid>
         <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="5">
-            <TextBox x:Name="selected"  Text="{Binding Path=SelectedItem.FullPath, ElementName=treeView, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
+            <TextBlock Text="{Binding Path=SelectedItem.FullPath, StringFormat='Selected: {0}', 
+                UpdateSourceTrigger=PropertyChanged, ElementName=listview}" Foreground="White" FontSize="16"/>
         </Border>
 
         <!-- 4. Status Bar снизу -->

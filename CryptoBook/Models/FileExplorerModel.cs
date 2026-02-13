@@ -21,6 +21,7 @@ namespace CryptoBook.Models
         private readonly IWindowManager _windowManager;
         private readonly IDriveManagerService _driveManagerService;
         private readonly IFileLauncherService _fileLauncherService;
+        private readonly IStockIconService _stockIconService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -54,19 +55,20 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileLauncherService? fileLauncherService)
+            IWindowManager? windowManager, IFileLauncherService? fileLauncherService, IStockIconService stockIconService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
             _driveManagerService = driveManagerService ?? throw new ArgumentNullException(nameof(driveManagerService));
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
-            _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(_fileLauncherService));
+            _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(fileLauncherService));
+            _stockIconService = stockIconService?? throw new ArgumentNullException(nameof(stockIconService));  
             GetDrives = _driveManagerService.WritableDrives;
         }
 
         public bool CanExecute_CutCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool CanExecute_CopyCommand(object? obj)
@@ -86,7 +88,7 @@ namespace CryptoBook.Models
 
         public bool CanExecute_CreateFileCommand(object? obj)
         {
-            return true;
+            return false;
         }
 
         public bool CanExecute_CreateDirectoryCommand(object? obj)
@@ -114,6 +116,11 @@ namespace CryptoBook.Models
         }
 
         public bool CanExecute_ListViewItemDoubleClickCommand(object? obj)
+        {
+            return obj is not null;
+        }
+
+        public bool CanExecute_ListViewSelectionChangedCommand(object? obj)
         {
             return obj is not null;
         }
@@ -242,6 +249,15 @@ namespace CryptoBook.Models
             }
         }
 
+
+        public void Execute_ListViewSelectionChangedCommand(object? obj)
+        {
+            //if(obj is ISystemItem item)
+            //{
+            //    SelectedItem=item;
+            //}
+        }
+
         public void Execute_WindowSizeChanged(object? obj)
         {
             OnPropertyChanged([nameof(LeftColumnPercent), nameof(RightColumnPercent)]);
@@ -329,7 +345,6 @@ namespace CryptoBook.Models
                 }, token);
             }
         }
-
 
     }
 }

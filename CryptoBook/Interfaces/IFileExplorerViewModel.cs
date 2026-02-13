@@ -10,13 +10,14 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFileExplorerViewModel:IViewModel,IWindowOptions,IWindowWithId
+    public interface IFileExplorerViewModel: IViewModel, IWindowOptions, IWindowWithId
     {
         double LeftColumnPercent { get; set; }
-        double RightColumnPercent{  get; set; }
+        double RightColumnPercent { get; set; }
         bool IsHiddenFilesVisible { get; set; }
         ISystemItem? SelectedItem { get; set; }
-        ReadOnlyObservableCollection<IDriveItem> GetDrives{ get; }
+        ReadOnlyObservableCollection<IDriveItem> GetDrives { get; }
+
 
         ICommand CutCommand { get; }
         ICommand CopyCommand { get; }
@@ -28,7 +29,8 @@ namespace CryptoBook.Interfaces
         ICommand MoveCommand { get; }
         ICommand RefreshCommand { get; }
         ICommand TreeViewItemSelectedCommand { get; }
-        ICommand ListViewItemDoubleClickCommand{ get; }
+        ICommand ListViewItemDoubleClickCommand { get; }
+        ICommand ListViewSelectionChangedCommand { get; }
         ICommand WindowSizeChangedCommand { get; }
     }
 }

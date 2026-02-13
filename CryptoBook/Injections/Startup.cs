@@ -81,6 +81,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ExtensionToIconConverter>().AsSelf();
             builder.RegisterType<PathToIconConverter>().AsSelf();
             builder.RegisterType<PercentToGridLengthConverter>().AsSelf();
+            builder.RegisterType<StockIconIdToImageSourceConverter>().AsSelf();
 
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
@@ -143,7 +144,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ColumnLayoutStoreService>().As<IColumnLayoutStore>().SingleInstance();
             builder.RegisterType<FileLauncherService>().As<IFileLauncherService>().SingleInstance();
             builder.RegisterType<DirectoryMonitoringService>().As<IDirectoryMonitoringService>().SingleInstance();
-
+            builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
 
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
 

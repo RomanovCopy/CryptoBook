@@ -1,0 +1,12 @@
+E792	SaveAs
+E74E	Save
+E74D	Delete
+E74A	Up
+E74B	Down
+E73E	CheckMark
+E72E	Lock
+E72A	Forward
+E72B	Back
+E71F	ZoomOut
+E71E	Zoom
+E713	Setting

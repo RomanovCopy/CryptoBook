@@ -35,6 +35,7 @@ namespace CryptoBook.ViewModels
         public Guid WindowId => _fileExplorerModel.WindowId;
 
 
+
         public FileExplorerViewModel( IFileExplorerModel fileExplorerModel)
         {
             _fileExplorerModel = fileExplorerModel ?? throw new ArgumentNullException(nameof(fileExplorerModel));
@@ -73,6 +74,10 @@ namespace CryptoBook.ViewModels
 
         public ICommand ListViewItemDoubleClickCommand => _listViewItemDoubleClickCommand??= new RelayCommand(_fileExplorerModel.Execute_ListViewItemDoubleClickCommand, _fileExplorerModel.CanExecute_ListViewItemDoubleClickCommand);
         RelayCommand _listViewItemDoubleClickCommand;
+
+        public ICommand ListViewSelectionChangedCommand => _listViewSelectionChangedCommand ??= new RelayCommand(_fileExplorerModel.Execute_ListViewSelectionChangedCommand, _fileExplorerModel.CanExecute_ListViewSelectionChangedCommand);
+        RelayCommand _listViewSelectionChangedCommand;
+
 
         public ICommand WindowSizeChangedCommand => _windowSizeChangedCommand ??= new RelayCommand(_fileExplorerModel.Execute_WindowSizeChanged, _fileExplorerModel.CanExecute_WindowSizeChanged);
         RelayCommand _windowSizeChangedCommand;
