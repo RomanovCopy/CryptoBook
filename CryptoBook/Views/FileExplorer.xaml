@@ -116,7 +116,8 @@
                     Style="{StaticResource PrimaryButtonStyle}"/>
             <Separator/>
             <Button Content="Cut" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItems,
+                UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Copy" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}"/>

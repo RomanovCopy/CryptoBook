@@ -4,6 +4,7 @@ using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 
 namespace CryptoBook.Models
 {
@@ -68,7 +70,7 @@ namespace CryptoBook.Models
 
         public bool CanExecute_CutCommand(object? obj)
         {
-            return true;
+            return obj is IList { Count: > 0 };
         }
 
         public bool CanExecute_CopyCommand(object? obj)
@@ -134,7 +136,7 @@ namespace CryptoBook.Models
 
         public void Execute_CutCommand(object? obj)
         {
-            throw new NotImplementedException();
+
         }
 
         public void Execute_CopyCommand(object? obj)
