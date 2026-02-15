@@ -24,6 +24,7 @@ namespace CryptoBook.Models
         private readonly IDriveManagerService _driveManagerService;
         private readonly IFileLauncherService _fileLauncherService;
         private readonly IStockIconService _stockIconService;
+        private readonly IFileClipboardService _fileClipboardService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -57,14 +58,16 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileLauncherService? fileLauncherService, IStockIconService stockIconService)
+            IWindowManager? windowManager, IFileLauncherService? fileLauncherService, IStockIconService stockIconService,
+            IFileClipboardService fileClipboardService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
             _driveManagerService = driveManagerService ?? throw new ArgumentNullException(nameof(driveManagerService));
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(fileLauncherService));
-            _stockIconService = stockIconService?? throw new ArgumentNullException(nameof(stockIconService));  
+            _stockIconService = stockIconService ?? throw new ArgumentNullException(nameof(stockIconService));
+            _fileClipboardService = fileClipboardService ?? throw new ArgumentNullException(nameof(fileClipboardService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -80,7 +83,10 @@ namespace CryptoBook.Models
 
         public bool CanExecute_PasteCommand(object? obj)
         {
-            throw new NotImplementedException();
+            if (obj is not null) {
+                return _fileClipboardService.GetData().SourcePaths.Count > 0;
+            }
+            return false;
         }
 
         public bool CanExecute_DeleteCommand(object? obj)
@@ -136,7 +142,25 @@ namespace CryptoBook.Models
 
         public void Execute_CutCommand(object? obj)
         {
-
+            if(obj is IList list && list.Count > 0)
+            {
+                var systemItems = new List<string>();
+                foreach(var item in list)
+                {
+                    if(item is ISystemItem systemItem && systemItem.FullPath is not null)
+                    {
+                        systemItems.Add(systemItem.FullPath);
+                    }
+                }
+                _fileClipboardService.SetCopy(systemItems);
+                foreach(var item in systemItems)
+                {
+                    _fileManagerService.DeleteAsync(item, CancellationToken.None);
+                }
+            } else
+            {
+                throw new ArgumentException("Invalid argument for CutCommand", nameof(obj));
+            }
         }
 
         public void Execute_CopyCommand(object? obj)
@@ -146,7 +170,6 @@ namespace CryptoBook.Models
 
         public void Execute_PasteCommand(object? obj)
         {
-            throw new NotImplementedException();
         }
 
         public void Execute_DeleteCommand(object? obj)
