@@ -83,7 +83,7 @@ namespace CryptoBook.Models
 
         public bool CanExecute_PasteCommand(object? obj)
         {
-            if (obj is not null) {
+            if (!string.IsNullOrEmpty(CurrentPath)) {
                 return _fileClipboardService.GetData().SourcePaths.Count > 0;
             }
             return false;
@@ -152,11 +152,7 @@ namespace CryptoBook.Models
                         systemItems.Add(systemItem.FullPath);
                     }
                 }
-                _fileClipboardService.SetCopy(systemItems);
-                foreach(var item in systemItems)
-                {
-                    _fileManagerService.DeleteAsync(item, CancellationToken.None);
-                }
+                _fileClipboardService.SetMove(systemItems);
             } else
             {
                 throw new ArgumentException("Invalid argument for CutCommand", nameof(obj));
@@ -170,6 +166,22 @@ namespace CryptoBook.Models
 
         public void Execute_PasteCommand(object? obj)
         {
+            if(!string.IsNullOrEmpty(CurrentPath) && _fileClipboardService.GetData().SourcePaths.Count > 0)
+            {
+                var sourcePaths = _fileClipboardService.GetData().SourcePaths;
+                _ = Task.Run(async () =>
+                {
+                    foreach(var sourcePath in sourcePaths)
+                    {
+                        var fileName = System.IO.Path.GetFileName(sourcePath);
+                        //var destinationPath = System.IO.Path.Combine(CurrentPath, fileName);
+                        await _fileClipboardService.PasteAsync(CurrentPath, null, CancellationToken.None);
+                    }
+                });
+            } else
+            {
+                throw new ArgumentException("Invalid argument for PasteCommand", nameof(obj));
+            }
         }
 
         public void Execute_DeleteCommand(object? obj)
@@ -236,7 +248,6 @@ namespace CryptoBook.Models
                     }
                     case IFileItem file:
                     {
-                        CurrentPath = file.FullPath ?? string.Empty;
                         break;
                     }
                     default:
@@ -264,6 +275,7 @@ namespace CryptoBook.Models
                     SelectedItem = container;
                     CurrentPath = container.FullPath;
                     ContainerLoad(container, _cancellationTokenSource.Token);
+                    container.IsExpanded = !container.IsExpanded || true;
                 } catch
                 {
                     _cancellationTokenSource.Cancel();

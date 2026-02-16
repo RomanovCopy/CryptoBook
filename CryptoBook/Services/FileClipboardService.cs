@@ -129,12 +129,12 @@ namespace CryptoBook.Services
 
                 // destinationDirectory может быть "local://C:/Target"
                 // нам нужно получить канонический вид назначения
-                string normalizedDestDir = _fileManager.NormalizePath(destinationDirectory);
+                //string normalizedDestDir = _fileManager.NormalizePath(destinationDirectory);
 
                 // Сформируем полный путь назначения как `<destDir>/<name>`
                 // В local это превратится в "local://C:/Target/filename".
                 // В ssh это будет "ssh://user@host:/home/user/filename".
-                string finalDestPath = AppendChild(normalizedDestDir, itemName);
+                string finalDestPath = AppendChild(destinationDirectory, itemName);
 
                 FileOperationResult result;
                 if(data.Operation == ClipboardOperationKind.Copy)

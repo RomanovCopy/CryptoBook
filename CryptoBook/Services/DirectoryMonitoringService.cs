@@ -17,8 +17,7 @@ using System.Threading.Tasks;
 /// </summary>
 public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDisposable
 {
-    private readonly Dictionary<string, WatcherEntry> _watchers =
-        new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Entry> _entries = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly object _lock = new();
 
@@ -55,98 +54,89 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
 
         lock(_lock)
         {
-            if(_watchers.ContainsKey(key))
-                return false;
-
-            FileSystemWatcher? watcher = null;
-            try
+            if(!_entries.TryGetValue(key, out var entry))
             {
-                watcher = CreateWatcher(key, includeSubdirectories, notifyFilters, internalBufferSize);
 
-                // handlers (держим ссылки, чтобы уметь отписаться)
-                FileSystemEventHandler? createdHandler = null;
-                FileSystemEventHandler? deletedHandler = null;
-                RenamedEventHandler? renamedHandler = null;
-                FileSystemEventHandler? changedHandler = null;
-                ErrorEventHandler? errorHandler = null;
-
-                if(onCreated != null)
+                FileSystemWatcher? watcher = null;
+                try
                 {
-                    createdHandler = (_, e) => SafeInvoke(() => onCreated(e));
-                    watcher.Created += createdHandler;
-                }
+                    watcher = CreateWatcher(key, includeSubdirectories, notifyFilters, internalBufferSize);
 
-                if(onDeleted != null)
-                {
-                    deletedHandler = (_, e) => SafeInvoke(() => onDeleted(e));
-                    watcher.Deleted += deletedHandler;
-                }
+                    // handlers (держим ссылки, чтобы уметь отписаться)
+                    FileSystemEventHandler? createdHandler = null;
+                    FileSystemEventHandler? deletedHandler = null;
+                    RenamedEventHandler? renamedHandler = null;
+                    FileSystemEventHandler? changedHandler = null;
+                    ErrorEventHandler? errorHandler = null;
 
-                if(onRenamed != null)
-                {
-                    renamedHandler = (_, e) => SafeInvoke(() => onRenamed(e));
-                    watcher.Renamed += renamedHandler;
-                }
+                    if(onCreated != null)
+                    {
+                        createdHandler = (_, e) => SafeInvoke(() => onCreated(e));
+                        watcher.Created += createdHandler;
+                    }
 
-                if(onChanged != null)
-                {
-                    // Важно: Changed бывает “шумным”, пользователь сам решает что с этим делать.
-                    changedHandler = (_, e) => SafeInvoke(() => onChanged(e));
-                    watcher.Changed += changedHandler;
-                }
+                    if(onDeleted != null)
+                    {
+                        deletedHandler = (_, e) => SafeInvoke(() => onDeleted(e));
+                        watcher.Deleted += deletedHandler;
+                    }
 
-                // Entry заранее создаём, чтобы errorHandler мог дергать entry.ScheduleRestart()
-                WatcherEntry? entry = null;
+                    if(onRenamed != null)
+                    {
+                        renamedHandler = (_, e) => SafeInvoke(() => onRenamed(e));
+                        watcher.Renamed += renamedHandler;
+                    }
 
-                errorHandler = (_, e) =>
+                    if(onChanged != null)
+                    {
+                        // Важно: Changed бывает “шумным”, пользователь сам решает что с этим делать.
+                        changedHandler = (_, e) => SafeInvoke(() => onChanged(e));
+                        watcher.Changed += changedHandler;
+                    }
+
+                    // Entry заранее создаём, чтобы errorHandler мог дергать entry.ScheduleRestart()
+                    WatcherEntry? watcherEntry = null;
+
+                    errorHandler = (_, e) =>
+                    {
+                        try
+                        {
+                            var ex = e.GetException();
+                            // overflow / IO / Win32 — считаем “перезапускаем и просим рескан”
+                            if(ex is InternalBufferOverflowException ||
+                                ex is IOException ||
+                                ex is Win32Exception)
+                            {
+                                SafeInvoke(() => onOverflowOrError?.Invoke(ex));
+                                watcherEntry?.ScheduleRestart(ex);
+                            } else
+                            {
+                                // прочие ошибки — тоже сообщим, но перезапуск можно оставить на усмотрение
+                                SafeInvoke(() => onOverflowOrError?.Invoke(ex));
+                                watcherEntry?.ScheduleRestart(ex);
+                            }
+                        } catch
+                        {
+                            // НИКОГДА не бросаем из обработчика Error
+                        }
+                    };
+                    watcher.Error += errorHandler;
+                    watcher.EnableRaisingEvents = true;
+                    entry=new Entry(key, watcher);
+
+                    _entries[key] = entry;
+
+                    return true;
+                } catch
                 {
                     try
-                    {
-                        var ex = e.GetException();
-                        // overflow / IO / Win32 — считаем “перезапускаем и просим рескан”
-                        if(ex is InternalBufferOverflowException ||
-                            ex is IOException ||
-                            ex is Win32Exception)
-                        {
-                            SafeInvoke(() => onOverflowOrError?.Invoke(ex));
-                            entry?.ScheduleRestart(ex);
-                        } else
-                        {
-                            // прочие ошибки — тоже сообщим, но перезапуск можно оставить на усмотрение
-                            SafeInvoke(() => onOverflowOrError?.Invoke(ex));
-                            entry?.ScheduleRestart(ex);
-                        }
-                    } catch
-                    {
-                        // НИКОГДА не бросаем из обработчика Error
-                    }
-                };
-                watcher.Error += errorHandler;
-
-                entry = new WatcherEntry(
-                    key: key,
-                    watcher: watcher,
-                    includeSubdirs: includeSubdirectories,
-                    notifyFilters: notifyFilters,
-                    internalBufferSize: internalBufferSize,
-                    restartDebounce: _restartDebounce,
-                    restartMaxAttempts: _restartMaxAttempts,
-                    restartBaseDelay: _restartBaseDelay,
-                    created: createdHandler,
-                    deleted: deletedHandler,
-                    renamed: renamedHandler,
-                    changed: changedHandler,
-                    error: errorHandler);
-
-                _watchers[key] = entry;
-
-                watcher.EnableRaisingEvents = true;
+                    { watcher?.Dispose(); } catch { }
+                    return false;
+                }
+            } else
+            {                 
+                entry.RefCount++;
                 return true;
-            } catch
-            {
-                try
-                { watcher?.Dispose(); } catch { }
-                return false;
             }
         }
     }
@@ -165,27 +155,31 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
             return false;
         }
 
-        WatcherEntry? entry;
+        Entry? entry;
         lock(_lock)
         {
-            if(!_watchers.TryGetValue(key, out entry))
+            if(!_entries.TryGetValue(key, out entry))
                 return false;
-
-            _watchers.Remove(key);
+            else
+            {
+                entry.RefCount--;
+                if(entry.RefCount > 0)
+                    return true; // кто-то ещё держит ссылку, не удаляем
+            }
+            _entries.Remove(key);
         }
-
         entry.Dispose();
         return true;
     }
 
     public void Dispose()
     {
-        WatcherEntry[] entries;
+        Entry[] entries;
         lock(_lock)
         {
-            entries = new WatcherEntry[_watchers.Count];
-            _watchers.Values.CopyTo(entries, 0);
-            _watchers.Clear();
+            entries = new Entry[_entries.Count];
+            _entries.Values.CopyTo(entries, 0);
+            _entries.Clear();
         }
 
         foreach(var e in entries)
@@ -460,6 +454,30 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
 
                 try
                 { w.Dispose(); } catch { }
+            } catch { }
+        }
+    }
+
+
+    private sealed class Entry: IDisposable
+    {
+        public string Path { get; }
+        public FileSystemWatcher Watcher { get; }
+        public int RefCount;
+
+        public Entry(string path, FileSystemWatcher watcher)
+        {
+            Path = path;
+            Watcher = watcher;
+            RefCount = 0;
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                Watcher.EnableRaisingEvents = false;
+                Watcher.Dispose();
             } catch { }
         }
     }
