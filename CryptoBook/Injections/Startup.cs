@@ -99,6 +99,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
             builder.RegisterType<NewFileDialog>().InstancePerDependency();
             builder.RegisterType<FileExplorer>().InstancePerDependency();
+            builder.RegisterType<SystemItemName_Editor>().InstancePerDependency();
 
             //FileTemplate
             builder.RegisterType<TextFileTemplate>().As<IFileTemplate>().SingleInstance();

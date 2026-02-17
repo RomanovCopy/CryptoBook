@@ -78,7 +78,7 @@ namespace CryptoBook.Models
 
         public bool CanExecute_CopyCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return obj is IList { Count: > 0 };
         }
 
         public bool CanExecute_PasteCommand(object? obj)
@@ -161,7 +161,21 @@ namespace CryptoBook.Models
 
         public void Execute_CopyCommand(object? obj)
         {
-            throw new NotImplementedException();
+            if(obj is IList list && list.Count > 0)
+            {
+                var systemItems = new List<string>();
+                foreach(var item in list)
+                {
+                    if(item is ISystemItem systemItem && systemItem.FullPath is not null)
+                    {
+                        systemItems.Add(systemItem.FullPath);
+                    }
+                }
+                _fileClipboardService.SetCopy(systemItems);
+            } else
+            {
+                throw new ArgumentException("Invalid argument for CopyCommand", nameof(obj));
+            }
         }
 
         public void Execute_PasteCommand(object? obj)

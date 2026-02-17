@@ -120,7 +120,8 @@
                     CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Copy" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Paste" Command="{Binding PasteCommand,UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}" 
@@ -209,9 +210,9 @@
                                     <DockPanel LastChildFill="True">
                                         <Image Width="16" Height="16" Margin="0,0,6,0"
                                                Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
-                                        <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}"
-                                                   VerticalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBox Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap"
+                                                   VerticalAlignment="Center" IsReadOnly="False" BorderBrush="Transparent"/>
+                                        <!--TextTrimming="CharacterEllipsis"/>-->
                                     </DockPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
