@@ -128,7 +128,7 @@
                     CommandParameter="{Binding ElementName=listview, Path=SelectedValue, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Rename" Command="{Binding RenameCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}"/>
@@ -210,9 +210,8 @@
                                     <DockPanel LastChildFill="True">
                                         <Image Width="16" Height="16" Margin="0,0,6,0"
                                                Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
-                                        <TextBox Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap"
-                                                   VerticalAlignment="Center" IsReadOnly="False" BorderBrush="Transparent"/>
-                                        <!--TextTrimming="CharacterEllipsis"/>-->
+                                        <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap"
+                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                     </DockPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>

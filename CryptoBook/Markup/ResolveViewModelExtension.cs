@@ -38,7 +38,6 @@ namespace CryptoBook.Markup
             if(!typeof(IViewModel).IsAssignableFrom(ViewModelType))
                 throw new InvalidOperationException($"Type {ViewModelType.FullName} must implement IViewModel.");
 
-            // Используем GetOrAdd для потокобезопасного кэширования
             return viewModelCache.GetOrAdd(ViewModelType, type =>
             {
                 var container = GetContainer();

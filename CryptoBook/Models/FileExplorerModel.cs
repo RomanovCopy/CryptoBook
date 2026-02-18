@@ -83,7 +83,8 @@ namespace CryptoBook.Models
 
         public bool CanExecute_PasteCommand(object? obj)
         {
-            if (!string.IsNullOrEmpty(CurrentPath)) {
+            if(!string.IsNullOrEmpty(CurrentPath))
+            {
                 return _fileClipboardService.GetData().SourcePaths.Count > 0;
             }
             return false;
@@ -105,7 +106,7 @@ namespace CryptoBook.Models
         }
         public bool CanExecute_RenameCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return obj is not null;
         }
 
         public bool CanExecute_MoveCommand(object? obj)
@@ -215,7 +216,14 @@ namespace CryptoBook.Models
         }
         public void Execute_RenameCommand(object? obj)
         {
-            throw new NotImplementedException();
+            if(obj is ISystemItem systemItem)
+            {
+                var id = _windowManager.CreateWindow<SystemItemName_Editor>();
+                _windowManager.ShowWindow(id);
+            } else
+            {
+                throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
+            }
         }
 
         public void Execute_DeleteFile(object? obj)

@@ -442,5 +442,65 @@ namespace CryptoBook.Properties {
                 this["GridViewColumnRatios"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        public double WindowWidth_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowWidth_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowWidth_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public double WindowHeight_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowHeight_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowHeight_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowTop_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowTop_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowTop_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowLeft_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowLeft_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowLeft_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState WindowState_SystemItemName_Editor {
+            get {
+                return ((global::System.Windows.WindowState)(this["WindowState_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowState_SystemItemName_Editor"] = value;
+            }
+        }
     }
 }
