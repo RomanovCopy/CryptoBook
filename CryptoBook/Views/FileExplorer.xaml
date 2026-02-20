@@ -19,7 +19,7 @@
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
         Title="FileExplorer">
     <Window.DataContext>
-        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}"/>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}" />
     </Window.DataContext>
     <Window.Resources>
 

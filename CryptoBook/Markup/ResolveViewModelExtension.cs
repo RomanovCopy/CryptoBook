@@ -21,7 +21,7 @@ namespace CryptoBook.Markup
         /// Тип ViewModel, который должен быть разрешен.
         /// </summary>
         public Type ViewModelType { get; set; }
-
+        public object Parameter { get; set; }
 
 
         /// <summary>
