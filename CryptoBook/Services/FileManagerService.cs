@@ -55,6 +55,14 @@ namespace CryptoBook.Services
                 return FileOperationResult.Fail("Copy across different providers is not supported yet.");
             }
 
+            if(IsSameOrSubdirectory(sourcePath, destinationPath))
+            {
+                throw new InvalidOperationException(
+                    "Нельзя копировать каталог в самого себя " +
+                    "или во вложенный подкаталог.");
+            }
+
+
             var provider = ResolveProvider(src.Scheme);
             return await provider.CopyAsync(src.NativePath, dst.NativePath, progress, cancellationToken);
         }
@@ -70,6 +78,13 @@ namespace CryptoBook.Services
                 // но это уже "интеллектуальное перемещение".
                 // Пока не лезем.
                 return FileOperationResult.Fail("Move across different providers is not supported yet.");
+            }
+
+            if(IsSameOrSubdirectory(sourcePath,destinationPath))
+            {
+                throw new InvalidOperationException(
+                    "Нельзя копировать каталог в самого себя " +
+                    "или во вложенный подкаталог.");
             }
 
             var provider = ResolveProvider(src.Scheme);
@@ -184,6 +199,21 @@ namespace CryptoBook.Services
         // ------------------------
         // Внутренняя утилита
         // ------------------------
+
+
+        private bool IsSameOrSubdirectory(
+        string sourceFull,
+        string destFull)
+        {
+            if(string.Equals(sourceFull,
+                             destFull,
+                             StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return destFull.StartsWith(
+                sourceFull + Path.DirectorySeparatorChar,
+                StringComparison.OrdinalIgnoreCase);
+        }
 
         internal readonly struct PathDescriptor
         {
