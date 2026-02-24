@@ -369,12 +369,12 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+
         }
 
 

@@ -5,13 +5,14 @@ using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
 using System.Windows;
+using CryptoBook.DTO;
 
 namespace CryptoBook.Infrastructure
 {
     public class WindowManager: IWindowManager, IDisposable
     {
-        private readonly ILifetimeScope _scope;
-        private readonly HashSet<Window> _openWindows;
+        private readonly ILifetimeScope _root;
+        private readonly Dictionary<Guid, WindowHost> _windowHosts;
 
         static Window? GetOwner()
         {
@@ -29,36 +30,41 @@ namespace CryptoBook.Infrastructure
 
         public WindowManager(ILifetimeScope scope)
         {
-            _scope = scope;
-            _openWindows = [];
+            _root = scope;
+            _windowHosts = [];
         }
 
-        public Guid CreateWindow<T>() where T : Window
+        public Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window
         {
-            if(!_scope.IsRegistered<T>())
-                throw new InvalidOperationException($"Window of type {typeof(T).Name} is not registered in the container.");
-            var window = _scope.Resolve<T>();
+            using var scope = _root.BeginLifetimeScope(b =>
+            {
+                b.RegisterInstance<IWindowContext>(new WindowContext(args ?? new Dictionary<string, object?>()))
+                 .As<IWindowContext>()
+                 .SingleInstance();
+            });
+            var window = scope.Resolve<T>();
             window.Owner = GetOwner();
-            RegisterWindow<T>(window);
-            if(window.DataContext is not IWindowWithId)
-                throw new InvalidOperationException($"The DataContext of window type {typeof(T).Name} does not implement IWindowWithId.");
-            return ((IWindowWithId)window.DataContext).WindowId;
+            var host = RegisterWindow(scope, window)??throw new InvalidOperationException("Failed to register window");
+
+            return host.Key;
         }
 
 
         public void ShowWindow(Guid windowId)
         {
-            var window = FindWindow(windowId);
-            if(window is Window win)
-                win.Show();
+            var winHost = FindHostWindow(windowId);
+            if(winHost is null)
+                return;
+            if(winHost is WindowHost host)
+                host.Window.Show();
         }
 
         public void CloseWindow(Guid windowId)
         {
             if(IsWindowOpen(windowId))
             {
-                var window = FindWindow(windowId);
-                if(window is Window win)
+                var winHost = FindHostWindow(windowId);
+                if(winHost is WindowHost win)
                 {
                     WinClose(win);
                     UnregisterWindow(win);
@@ -68,55 +74,49 @@ namespace CryptoBook.Infrastructure
 
         public bool IsWindowOpen(Guid windowId)
         {
-            return FindWindow(windowId) != null;
+            return FindHostWindow(windowId) != null;
         }
 
-        public object? FindWindow(Guid windowId)
+        public WindowHost? FindHostWindow(Guid windowId)
         {
-            return _openWindows.FirstOrDefault(w => w.DataContext is { } dc && dc is IWindowWithId id && id.WindowId == windowId);
-        }
-
-        public IEnumerable<T> FindWindow<T>() where T : Window
-        {
-            return _openWindows.OfType<T>();
+            return _windowHosts.ContainsKey(windowId) ? _windowHosts[windowId] : null;
         }
 
 
 
-        private void RegisterWindow<T>(T window) where T : Window
+        private WindowHost? RegisterWindow<T>(ILifetimeScope scope, T window) where T : Window
         {
-            if(window.DataContext is ICloseable vm)
+            if(window.DataContext is IWindowWithId withId)
             {
-                vm.RequestClose += (s, e) => WinClose<T>(window);
-            }
-            window.Closed += (s, e) => UnregisterWindow<T>(window);
-            _openWindows.Add(window);
+                var host = new WindowHost(withId.WindowId, scope, window);
+                _windowHosts[host.Key] = host;
+                return host;
+            } else
+                throw new InvalidOperationException("Window's DataContext must implement IWindowWithId");
         }
 
-        private void UnregisterWindow<T>(T window) where T : Window
+        private void UnregisterWindow(WindowHost windowHost)
         {
-            if(window.DataContext is ICloseable vm)
-            {
-                vm.RequestClose -= (s, e) => WinClose<T>(window);
-            }
-            window.Closed -= (s, e) => UnregisterWindow<T>(window);
-            (window.Parent as Window)?.Focus();
-            _openWindows.Remove(window);
+            if(windowHost is null)
+                return;
+            if(_windowHosts.ContainsKey(windowHost.Key))
+                _windowHosts.Remove(windowHost.Key);
+
+            (windowHost.Window.Parent as Window)?.Focus();
         }
 
-        private void WinClose<T>(T? window) where T : Window
+        private void WinClose(WindowHost windowHost)
         {
-            if(window is not null)
+            if(windowHost is not null)
             {
-                window.Owner?.Focus();
-                window.Close();
-
+                windowHost.Window.Owner?.Focus();
+                windowHost.Window.Close();
             }
         }
 
         public void Dispose()
         {
-            _scope?.Dispose();
+            _root?.Dispose();
         }
 
     }

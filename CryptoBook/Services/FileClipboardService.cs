@@ -3,6 +3,7 @@ using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -219,8 +220,8 @@ namespace CryptoBook.Services
             int schemeSep = normalizedDestinationDirectory.IndexOf("://", StringComparison.Ordinal);
             if(schemeSep <= 0)
             {
-                // крайне маловероятно, но fallback: просто добавим /child
-                return normalizedDestinationDirectory.TrimEnd('/', '\\') + "/" + childName;
+                // крайне маловероятно, но fallback: просто добавим \child
+                return normalizedDestinationDirectory.TrimEnd('/', '\\') + Path.DirectorySeparatorChar + childName;
             }
 
             string scheme = normalizedDestinationDirectory.Substring(0, schemeSep);
