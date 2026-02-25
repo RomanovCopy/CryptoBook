@@ -34,17 +34,36 @@ namespace CryptoBook.Infrastructure
             _windowHosts = [];
         }
 
-        public Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window
+        public Guid CreateWindow<T>( IReadOnlyDictionary<string, object?>? args = null) where T : Window
         {
-            using var scope = _root.BeginLifetimeScope(b =>
+            var scope = _root.BeginLifetimeScope(b =>
             {
-                b.RegisterInstance<IWindowContext>(new WindowContext(args ?? new Dictionary<string, object?>()))
+                b.RegisterInstance<IWindowContext>(
+                     new WindowContext(args ?? new Dictionary<string, object?>()))
                  .As<IWindowContext>()
                  .SingleInstance();
             });
-            var window = scope.Resolve<T>();
+
+            T window;
+            try
+            {
+                window = scope.Resolve<T>();
+            } catch
+            {
+                scope.Dispose();
+                throw;
+            }
+
             window.Owner = GetOwner();
-            var host = RegisterWindow(scope, window)??throw new InvalidOperationException("Failed to register window");
+
+            var host = RegisterWindow(scope, window)
+                ?? throw new InvalidOperationException("Failed to register window");
+
+            window.Closed += (_, __) =>
+            {
+                UnregisterWindow(host); // если у вас есть такой метод
+                scope.Dispose();
+            };
 
             return host.Key;
         }

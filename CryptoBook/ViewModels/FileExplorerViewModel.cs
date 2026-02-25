@@ -36,7 +36,7 @@ namespace CryptoBook.ViewModels
 
 
 
-        public FileExplorerViewModel( IFileExplorerModel fileExplorerModel)
+        public FileExplorerViewModel( IFileExplorerModel fileExplorerModel,IWindowContext context)
         {
             _fileExplorerModel = fileExplorerModel ?? throw new ArgumentNullException(nameof(fileExplorerModel));
             _fileExplorerModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
