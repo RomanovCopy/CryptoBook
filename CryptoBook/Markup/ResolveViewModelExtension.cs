@@ -1,9 +1,12 @@
 ﻿using Autofac;
 
+using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 
 using System.Collections.Concurrent;
+using System.Windows;
 using System.Windows.Markup;
+using System.Windows.Media;
 
 namespace CryptoBook.Markup
 {
@@ -40,9 +43,22 @@ namespace CryptoBook.Markup
 
             return viewModelCache.GetOrAdd(ViewModelType, type =>
             {
-                var container = GetContainer();
-                object viewModel = container.Resolve(type)
-                    ?? throw new InvalidOperationException($"Type {type.FullName} could not be resolved from Autofac container.");
+                //var container = GetContainer();
+                //object viewModel = container.Resolve(type)
+                //    ?? throw new InvalidOperationException($"Type {type.FullName} could not be resolved from Autofac container.");
+
+
+                //var target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
+
+                //var d = target?.TargetObject as DependencyObject;
+                //if(d is null)
+                //    return Binding.ReferenceEquals(target?.TargetObject, null) ? throw new InvalidOperationException("Target object is null.") : throw new InvalidOperationException($"Target object of type {target.TargetObject.GetType().FullName} is not a DependencyObject.");
+
+                //var obj = target?.TargetObject ?? throw new InvalidOperationException("Target object is null.");
+
+
+                var viewModel = AmbientScope.Current.Resolve(ViewModelType);
+
 
                 if(viewModel is not IViewModel resolvedViewModel)
                     throw new InvalidOperationException($"Resolved type {type.FullName} does not implement IViewModel.");
@@ -61,6 +77,19 @@ namespace CryptoBook.Markup
                     "Ensure your Application implements IContainerProvider and Container is properly initialized.");
             }
             return container;
+        }
+
+
+        private static Window? FindWindow(DependencyObject d)
+        {
+            for(DependencyObject? cur = d; cur is not null;)
+            {
+                if(cur is Window w)
+                    return w;
+
+                cur = VisualTreeHelper.GetParent(cur);
+            }
+            return null;
         }
     }
 }

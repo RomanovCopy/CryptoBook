@@ -6,6 +6,7 @@ using CryptoBook.Views;
 
 using System.Windows;
 using CryptoBook.DTO;
+using CryptoBook.Injections;
 
 namespace CryptoBook.Infrastructure
 {
@@ -47,7 +48,8 @@ namespace CryptoBook.Infrastructure
             T window;
             try
             {
-                window = scope.Resolve<T>();
+                AmbientScope.Push(scope);
+                    window = scope.Resolve<T>();
             } catch
             {
                 scope.Dispose();

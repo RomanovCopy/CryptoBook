@@ -28,6 +28,7 @@
     <Compile Remove="DTO\TreeNodeDirectory.cs" />
     <Compile Remove="DTO\TreeNodeFile.cs" />
     <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
+    <Compile Remove="Injections\DiScope.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
     <Compile Remove="Interfaces\IDownloadItem.cs" />
@@ -97,10 +98,6 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\widget.html" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Injections\" />
   </ItemGroup>
 
   <ItemGroup>
