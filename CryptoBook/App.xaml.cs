@@ -11,43 +11,51 @@ namespace CryptoBook
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App: System.Windows.Application, IContainerProvider
+    public partial class App: System.Windows.Application
     {
-        private IDriveManagerService _driveManagerService;
-        public IContainer Container { get; private set; }
+        private IDriveManagerService? _driveManagerService;
+        IContainer? _container;
+
         public App()
         {
             var startup = new Startup();
-            Container = startup.ConfigureServices(this);
+            _container = startup.ConfigureServices(this);
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
             try
             {
-                if(Container != null)
-                {
-                    _driveManagerService = Container.Resolve<IDriveManagerService>();
-                    _driveManagerService.StartMonitoring();
-                    // Разрешение и запуск главного окна
-                    var winmanager = Container.Resolve<IWindowManager>();
-                    var id = winmanager.CreateWindow<MainWindow>();
-                    winmanager.ShowWindow(id);
-                }
+                if(_container is null)
+                    throw new InvalidOperationException("Container is null.");
+
+                _driveManagerService = _container.Resolve<IDriveManagerService>();
+                _driveManagerService.StartMonitoring();
+
+                var windowManager = _container.Resolve<IWindowManager>();
+
+                windowManager.ShowWindow(windowManager.CreateWindow<MainWindow>());
 
             } catch
             {
-                Shutdown();
+                Shutdown(-1);
             }
-
-
         }
+
         protected override void OnExit(ExitEventArgs e)
         {
-            _driveManagerService.Dispose();
-            base.OnExit(e);
+            try
+            {
+                _driveManagerService?.Dispose();
+                _container?.Dispose();
+            } finally
+            {
+                base.OnExit(e);
+            }
         }
+
     }
 
 }

@@ -4,6 +4,6 @@ namespace CryptoBook.Interfaces
 {
     internal interface IContainerProvider
     {
-        IContainer Container { get; }
+        IContainer? Container { get; }
     }
 }

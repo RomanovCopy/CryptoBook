@@ -13,7 +13,7 @@ namespace CryptoBook.Markup
     /// <summary>
     /// MarkupExtension для разрешения ViewModel из контейнера Autofac с кэшированием.
     /// </summary>
-    public class ResolveViewModelExtension: MarkupExtension
+    public class ResolveViewModelExtension: DiMarkupExtension
     {
 
 
@@ -24,7 +24,6 @@ namespace CryptoBook.Markup
         /// Тип ViewModel, который должен быть разрешен.
         /// </summary>
         public Type ViewModelType { get; set; }
-        public object Parameter { get; set; }
 
 
         /// <summary>
@@ -43,22 +42,8 @@ namespace CryptoBook.Markup
 
             return viewModelCache.GetOrAdd(ViewModelType, type =>
             {
-                //var container = GetContainer();
-                //object viewModel = container.Resolve(type)
-                //    ?? throw new InvalidOperationException($"Type {type.FullName} could not be resolved from Autofac container.");
-
-
-                //var target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
-
-                //var d = target?.TargetObject as DependencyObject;
-                //if(d is null)
-                //    return Binding.ReferenceEquals(target?.TargetObject, null) ? throw new InvalidOperationException("Target object is null.") : throw new InvalidOperationException($"Target object of type {target.TargetObject.GetType().FullName} is not a DependencyObject.");
-
-                //var obj = target?.TargetObject ?? throw new InvalidOperationException("Target object is null.");
-
-
-                var viewModel = AmbientScope.Current.Resolve(ViewModelType);
-
+                var scope = GetScope(serviceProvider);
+                var viewModel =  scope.Resolve(ViewModelType);
 
                 if(viewModel is not IViewModel resolvedViewModel)
                     throw new InvalidOperationException($"Resolved type {type.FullName} does not implement IViewModel.");
@@ -68,28 +53,28 @@ namespace CryptoBook.Markup
             });
         }
 
-        private static IContainer GetContainer()
-        {
-            if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
-                containerProvider.Container is not IContainer container)
-            {
-                throw new InvalidOperationException("Autofac container not found in Application.Current. " +
-                    "Ensure your Application implements IContainerProvider and Container is properly initialized.");
-            }
-            return container;
-        }
+        //private static IContainer GetContainer()
+        //{
+        //    if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
+        //        containerProvider.Container is not IContainer container)
+        //    {
+        //        throw new InvalidOperationException("Autofac container not found in Application.Current. " +
+        //            "Ensure your Application implements IContainerProvider and Container is properly initialized.");
+        //    }
+        //    return container;
+        //}
 
 
-        private static Window? FindWindow(DependencyObject d)
-        {
-            for(DependencyObject? cur = d; cur is not null;)
-            {
-                if(cur is Window w)
-                    return w;
+        //private static Window? FindWindow(DependencyObject d)
+        //{
+        //    for(DependencyObject? cur = d; cur is not null;)
+        //    {
+        //        if(cur is Window w)
+        //            return w;
 
-                cur = VisualTreeHelper.GetParent(cur);
-            }
-            return null;
-        }
+        //        cur = VisualTreeHelper.GetParent(cur);
+        //    }
+        //    return null;
+        //}
     }
 }

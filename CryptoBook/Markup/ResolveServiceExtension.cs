@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 
 using System;
@@ -12,7 +13,7 @@ using System.Windows.Markup;
 
 namespace CryptoBook.Markup
 {
-    public class ResolveServiceExtension:MarkupExtension
+    public class ResolveServiceExtension:DiMarkupExtension
     {
             /// <summary>
             /// Тип Service, который требуется разрешить через DI.
@@ -37,8 +38,8 @@ namespace CryptoBook.Markup
 
             return _cache.GetOrAdd(ServiceType, type =>
             {
-                var container = GetContainer();
-                object service = container.Resolve(type)
+                var scope = GetScope(serviceProvider);
+                object service = scope.Resolve(type)
                     ?? throw new InvalidOperationException($"Type {type.FullName} could not be resolved from Autofac container.");
 
                 if(service is not IService resolvedService)
@@ -49,15 +50,15 @@ namespace CryptoBook.Markup
             });
         }
 
-        private static IContainer GetContainer()
-        {
-            if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
-                containerProvider.Container is not IContainer container)
-            {
-                throw new InvalidOperationException("Autofac container not found in Application.Current. " +
-                    "Ensure your Application implements IContainerProvider and Container is properly initialized.");
-            }
-            return container;
-        }
+        //private static IContainer GetContainer()
+        //{
+        //    if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
+        //        containerProvider.Container is not IContainer container)
+        //    {
+        //        throw new InvalidOperationException("Autofac container not found in Application.Current. " +
+        //            "Ensure your Application implements IContainerProvider and Container is properly initialized.");
+        //    }
+        //    return container;
+        //}
     }
 }

@@ -28,7 +28,6 @@
     <Compile Remove="DTO\TreeNodeDirectory.cs" />
     <Compile Remove="DTO\TreeNodeFile.cs" />
     <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
-    <Compile Remove="Injections\DiScope.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
     <Compile Remove="Interfaces\IDownloadItem.cs" />

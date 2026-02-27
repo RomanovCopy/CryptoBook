@@ -39,8 +39,7 @@ namespace CryptoBook.Infrastructure
         {
             var scope = _root.BeginLifetimeScope(b =>
             {
-                b.RegisterInstance<IWindowContext>(
-                     new WindowContext(args ?? new Dictionary<string, object?>()))
+                b.RegisterInstance<IWindowContext>( new WindowContext(args ?? new Dictionary<string, object?>()))
                  .As<IWindowContext>()
                  .SingleInstance();
             });
@@ -48,15 +47,18 @@ namespace CryptoBook.Infrastructure
             T window;
             try
             {
-                AmbientScope.Push(scope);
+                using(AmbientScope.Push(scope))
+                {
                     window = scope.Resolve<T>();
+                    DiScope.SetScope(window, scope);
+                    window.Owner = GetOwner();
+                }
             } catch
             {
                 scope.Dispose();
                 throw;
             }
 
-            window.Owner = GetOwner();
 
             var host = RegisterWindow(scope, window)
                 ?? throw new InvalidOperationException("Failed to register window");
@@ -66,7 +68,7 @@ namespace CryptoBook.Infrastructure
                 UnregisterWindow(host); // если у вас есть такой метод
                 scope.Dispose();
             };
-
+            
             return host.Key;
         }
 

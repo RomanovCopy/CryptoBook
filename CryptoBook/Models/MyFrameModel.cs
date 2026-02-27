@@ -112,7 +112,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Loaded(object? obj)
         {
-            Execute_FrameListAddPage(scope.Resolve<Home>());
+            //Execute_FrameListAddPage(scope.Resolve<Home>());
         }
 
         internal bool CanExecute_Closing(object? obj)

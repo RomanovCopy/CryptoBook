@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 
 using System.Collections.Concurrent;
@@ -8,7 +9,7 @@ using System.Windows.Markup;
 
 namespace CryptoBook.Markup
 {
-    public class ResolveConverterExtension: MarkupExtension
+    public class ResolveConverterExtension: DiMarkupExtension
     {
         private static readonly ConcurrentDictionary<Type, IValueConverter> converterCashe = new();
 
@@ -32,10 +33,11 @@ namespace CryptoBook.Markup
             //экземпляр не найден в кэш 
 
             //получаем котейнер , а при неудаче вызываем исключение
-            IContainer container = ((IContainerProvider)App.Current).Container ?? throw new InvalidOperationException("Autofac container not found.");
+            //IContainer container = ((IContainerProvider)App.Current).Container ?? throw new InvalidOperationException("Autofac container not found.");
+            var scope = GetScope(serviceProvider);
 
             //получаем конвертер с учетом параметра
-            var converter = (IValueConverter)container.Resolve(ConverterType);
+            var converter = (IValueConverter)scope.Resolve(ConverterType);
 
             //добавляем в кэш
             converterCashe.TryAdd(key, converter);
