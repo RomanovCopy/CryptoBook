@@ -15,6 +15,8 @@ namespace CryptoBook.Interfaces
         /// </summary>
         public Page CurrentPage { get; }
 
+        public string CurrentPageKey {  get; }
+
 
 
         /// <summary>

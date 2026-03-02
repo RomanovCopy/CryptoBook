@@ -19,6 +19,7 @@ namespace CryptoBook.ViewModels
 
         public Page CurrentPage => myFrameModel.CurrentPage;
 
+        public string CurrentPageKey => myFrameModel.CurrentPageKey;
 
 
         public MyFrameViewModel(ILifetimeScope scope)

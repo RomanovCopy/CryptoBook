@@ -163,6 +163,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<Home>().SingleInstance();
             builder.RegisterType<TimeWebAIPage>().SingleInstance();
 
+            builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
+
             //Controls
             builder.RegisterType<TitleBar>().SingleInstance();
             builder.RegisterType<MyFrame>().SingleInstance();

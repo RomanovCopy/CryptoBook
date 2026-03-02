@@ -10,6 +10,8 @@ using System.Windows.Markup;
 
 using CryptoBook.Interfaces;
 using CryptoBook.Injections;
+using System.Windows.Data;
+using CryptoBook.Converters;
 
 namespace CryptoBook.Markup
 {
@@ -18,38 +20,22 @@ namespace CryptoBook.Markup
     /// </summary>
     public class ResolvePageExtension:DiMarkupExtension
     {
-        /// <summary>
-        /// Тип Page, который требуется разрешить через DI.
-        /// </summary>
-        public Type? PageType { get; set; }
 
-        private static readonly ConcurrentDictionary<Type, object> _cache = new();
-
+        public BindingBase? PageKey { get; set; }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if(PageType == null)
-                throw new InvalidOperationException("PageType must be set.");
+            if(PageKey is null)
+                throw new InvalidOperationException("PageKey binding is null.");
 
-            return _cache.GetOrAdd(PageType, type =>
+            var binding = new System.Windows.Data.Binding
             {
-                var scope = GetScope(serviceProvider);
-                return scope.Resolve(type);
-            });
+                Path = ((System.Windows.Data.Binding)PageKey).Path,
+                Mode = BindingMode.OneWay,
+                Converter = new PageKeyToPageConverter(serviceProvider)
+            };
+
+            return binding.ProvideValue(serviceProvider);
         }
-
-
-        //private static IContainer GetContainer()
-        //{
-        //    if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
-        //        containerProvider.Container is not IContainer container)
-        //    {
-        //        throw new InvalidOperationException("Autofac container not found in Application.Current. " +
-        //            "Ensure your Application implements IContainerProvider and Container is properly initialized.");
-        //    }
-        //    return container;
-        //}
-
-
     }
 }

@@ -16,8 +16,11 @@ namespace CryptoBook.Models
 
 
 
-        public ObservableCollection<Page> FrameList { get; internal set; }
+        public ObservableCollection<Page> FrameList { get; public set; }
         public Page CurrentPage { get => currentPage; private set => SetProperty(ref currentPage, value); }
+        public string CurrentPageKey { get => currentPageKey; private set => SetProperty(ref currentPageKey, value); }
+        private string currentPageKey;
+
         private Page currentPage;
 
 
@@ -25,15 +28,16 @@ namespace CryptoBook.Models
         public MyFrameModel(ILifetimeScope scope)
         {
             this.scope = scope;
+            CurrentPageKey="Home";
 
             FrameList = new();
         }
 
-        internal bool CanExecute_FrameListAddPage(object? obj)
+        public bool CanExecute_FrameListAddPage(object? obj)
         {
             return obj != null;
         }
-        internal void Execute_FrameListAddPage(object? obj)
+        public void Execute_FrameListAddPage(object? obj)
         {
             if(obj is Page page)
             {
@@ -50,7 +54,7 @@ namespace CryptoBook.Models
             }
         }
 
-        internal bool CanExecute_FramelistGoForward(object? obj)
+        public bool CanExecute_FramelistGoForward(object? obj)
         {
             if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) < FrameList.Count - 1)
                 return true;
@@ -58,28 +62,28 @@ namespace CryptoBook.Models
                 return false;
 
         }
-        internal void Execute_FramelistGoForward(object? obj)
+        public void Execute_FramelistGoForward(object? obj)
         {
             CurrentPage = FrameList[FrameList.IndexOf(CurrentPage) + 1];
         }
 
-        internal bool CanExecute_FramelistGoBack(object? obj)
+        public bool CanExecute_FramelistGoBack(object? obj)
         {
             if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) > 0)
                 return true;
             else
                 return false;
         }
-        internal void Execute_FramelistGoBack(object? obj)
+        public void Execute_FramelistGoBack(object? obj)
         {
             CurrentPage = FrameList[FrameList.IndexOf(CurrentPage) - 1];
         }
 
-        internal bool CanExecute_FrameListRemovePage(object? obj)
+        public bool CanExecute_FrameListRemovePage(object? obj)
         {
             return FrameList.Count > 1;
         }
-        internal void Execute_FrameListRemovePage(object? obj)
+        public void Execute_FrameListRemovePage(object? obj)
         {
             if(obj is Page page)
             {
@@ -106,36 +110,37 @@ namespace CryptoBook.Models
             scope.Resolve<MainWindow>().Focus();
         }
 
-        internal bool CanExecute_Loaded(object? obj)
+        public bool CanExecute_Loaded(object? obj)
         {
             return true;
         }
-        internal void Execute_Loaded(object? obj)
+        public void Execute_Loaded(object? obj)
         {
             //Execute_FrameListAddPage(scope.Resolve<Home>());
+            //CurrentPageKey = "Home";
         }
 
-        internal bool CanExecute_Closing(object? obj)
+        public bool CanExecute_Closing(object? obj)
         {
             return true;
         }
-        internal void Execute_Closing(object? obj)
+        public void Execute_Closing(object? obj)
         {
         }
 
-        internal bool CanExecute_Close(object? obj)
+        public bool CanExecute_Close(object? obj)
         {
             return true;
         }
-        internal void Execute_Close(object? obj)
+        public void Execute_Close(object? obj)
         {
         }
 
-        internal bool CanExecute_Closed(object? obj)
+        public bool CanExecute_Closed(object? obj)
         {
             return true;
         }
-        internal void Execute_Closed(object? obj)
+        public void Execute_Closed(object? obj)
         {
         }
     }

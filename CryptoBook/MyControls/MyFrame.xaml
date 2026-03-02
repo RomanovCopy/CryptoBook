@@ -15,7 +15,8 @@
     </UserControl.DataContext>
     <Grid Background="Gray">
         <!--<Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />-->
-        <Frame Content="{markup:ResolvePage PageType={x:Type pages:Home}}"/>
+        <Frame Content="{markup:ResolvePage PageKey={Binding CurrentPageKey,
+            UpdateSourceTrigger=PropertyChanged}}" NavigationUIVisibility="Hidden"/>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

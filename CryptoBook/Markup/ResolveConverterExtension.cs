@@ -32,8 +32,6 @@ namespace CryptoBook.Markup
             }
             //экземпляр не найден в кэш 
 
-            //получаем котейнер , а при неудаче вызываем исключение
-            //IContainer container = ((IContainerProvider)App.Current).Container ?? throw new InvalidOperationException("Autofac container not found.");
             var scope = GetScope(serviceProvider);
 
             //получаем конвертер с учетом параметра
