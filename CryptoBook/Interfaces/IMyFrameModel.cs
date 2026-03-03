@@ -9,15 +9,15 @@ namespace CryptoBook.Interfaces
 {
     public interface IMyFrameModel:INotifyPropertyChanged, IModel
     {
-        string CurrentPageKey { get; }
+        string? CurrentPageKey { get; }
 
-        bool CanExecute_FrameListAddPage(object? obj);
-        void Execute_FrameListAddPage(object? obj);
-        bool CanExecute_FramelistGoForward(object? obj);
-        void Execute_FramelistGoForward(object? obj);
-        bool CanExecute_FramelistGoBack(object? obj);
-        void Execute_FramelistGoBack(object? obj);
-        bool CanExecute_FrameListRemovePage(object? obj);
-        void Execute_FrameListRemovePage(object? obj);   
+        bool CanExecute_Navigate(object? obj);
+        void Execute_Navigate(object? obj);
+        bool CanExecute_GoForward(object? obj);
+        void Execute_GoForward(object? obj);
+        bool CanExecute_GoBack(object? obj);
+        void Execute_GoBack(object? obj);
+        bool CanExecute_RemovePage(object? obj);
+        void Execute_RemovePage(object? obj);   
     }
 }

@@ -47,6 +47,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().SingleInstance();
             builder.RegisterType<FileExplorerModel>().As<IFileExplorerModel>().SingleInstance();
             builder.RegisterType<SystemItemName_Editor_Model>().As<ISystemItemName_Editor_Model>().SingleInstance();
+            builder.RegisterType<TitleBarModel>().As<ITitleBarModel>().SingleInstance();
+            builder.RegisterType<MyFrameModel>().As<IMyFrameModel>().SingleInstance();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
@@ -148,7 +150,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileLauncherService>().As<IFileLauncherService>().SingleInstance();
             builder.RegisterType<DirectoryMonitoringService>().As<IDirectoryMonitoringService>().SingleInstance();
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
-
+            builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().SingleInstance();
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
 
             //Factory

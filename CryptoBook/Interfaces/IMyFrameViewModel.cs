@@ -6,35 +6,24 @@ namespace CryptoBook.Interfaces
 {
     public interface IMyFrameViewModel: IViewModel
     {
-        /// <summary>
-        /// коллекция страниц
-        /// </summary>
-        public ObservableCollection<Page> FrameList { get; }
-        /// <summary>
-        /// текущая страница
-        /// </summary>
-        public Page CurrentPage { get; }
-
-        public string CurrentPageKey {  get; }
-
-
+        string? CurrentPageKey { get; }
 
         /// <summary>
         /// добавление страницы
         /// </summary>
-        public ICommand FrameListAddPage { get; }
+        public ICommand Navigate { get; }
         /// <summary>
         /// удаление страницы
         /// </summary>
-        public ICommand FrameListRemovePage { get; }
+        public ICommand RemovePage { get; }
         /// <summary>
         /// переход к следующей странице
         /// </summary>
-        public ICommand FramelistGoForward { get; }
+        public ICommand GoForward { get; }
         /// <summary>
         /// переход к предыдущей странице
         /// </summary>
-        public ICommand FramelistGoBack { get; }
+        public ICommand GoBack { get; }
 
 
     }
