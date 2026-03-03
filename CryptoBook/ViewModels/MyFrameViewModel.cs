@@ -15,7 +15,8 @@ namespace CryptoBook.ViewModels
 
         private readonly IMyFrameModel myFrameModel;
 
-        public string CurrentPageKey => myFrameModel.CurrentPageKey;
+        public string? CurrentPageKey => myFrameModel.CurrentPageKey;
+        public Page? CurrentPage => myFrameModel.CurrentPage;
 
 
         public MyFrameViewModel(IMyFrameModel myFrameModel)

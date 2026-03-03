@@ -14,9 +14,7 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyFrameViewModel}"/>
     </UserControl.DataContext>
     <Grid Background="Gray">
-        <!--<Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />-->
-        <Frame Content="{markup:ResolvePage PageKey={Binding CurrentPageKey,
-            UpdateSourceTrigger=PropertyChanged}}" NavigationUIVisibility="Hidden"/>
+        <Frame  Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

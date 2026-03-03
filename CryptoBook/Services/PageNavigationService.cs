@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Converters;
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Injections;
@@ -93,9 +94,13 @@ namespace CryptoBook.Services
 
             Page page;
 
+            var registry = pageScope.Resolve<IPageRegistry>();
+            var pageType = registry.Resolve(key);
+
+
             using(AmbientScope.Push(pageScope))
             {
-                page = pageScope.ResolveNamed<Page>(key);
+                page = (Page)pageScope.Resolve(pageType);
             }
 
             return new PageEntry(key, page, pageScope);

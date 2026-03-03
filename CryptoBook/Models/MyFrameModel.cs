@@ -16,18 +16,19 @@ namespace CryptoBook.Models
 
         private readonly IPageNavigationService pageNavigationService;
 
-        public string? CurrentPageKey => pageNavigationService.CurrentKey;   
+        public string? CurrentPageKey => pageNavigationService.CurrentKey;
+        public Page? CurrentPage => pageNavigationService.CurrentPage;
 
 
         public MyFrameModel( IPageNavigationService pageNavigationService)
         {
             this.pageNavigationService = pageNavigationService ?? throw new ArgumentNullException(nameof(pageNavigationService));
-            Execute_Navigate("Home");
+            pageNavigationService.Navigate("Home");
         }
 
         public bool CanExecute_Navigate(object? obj)
         {
-            return pageNavigationService.Keys != null && obj is string key && pageNavigationService.Keys.Contains(key);
+            return pageNavigationService.Keys != null && obj is string key && !pageNavigationService.Keys.Contains(key);
         }
         public void Execute_Navigate(object? obj)
         {
@@ -74,7 +75,6 @@ namespace CryptoBook.Models
         }
         public void Execute_Loaded(object? obj)
         {
-            pageNavigationService.Navigate("Home");
         }
 
         public bool CanExecute_Closing(object? obj)

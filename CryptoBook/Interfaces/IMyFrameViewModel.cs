@@ -7,6 +7,7 @@ namespace CryptoBook.Interfaces
     public interface IMyFrameViewModel: IViewModel
     {
         string? CurrentPageKey { get; }
+        Page? CurrentPage { get; }
 
         /// <summary>
         /// добавление страницы

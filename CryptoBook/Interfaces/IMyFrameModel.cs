@@ -4,12 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace CryptoBook.Interfaces
 {
     public interface IMyFrameModel:INotifyPropertyChanged, IModel
     {
         string? CurrentPageKey { get; }
+        Page? CurrentPage { get; }
 
         bool CanExecute_Navigate(object? obj);
         void Execute_Navigate(object? obj);
