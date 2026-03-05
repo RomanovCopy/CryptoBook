@@ -44,7 +44,6 @@ namespace CryptoBook.Markup
             {
                 var scope = GetScope(serviceProvider);
                 var viewModel =  scope.Resolve(ViewModelType);
-
                 if(viewModel is not IViewModel resolvedViewModel)
                     throw new InvalidOperationException($"Resolved type {type.FullName} does not implement IViewModel.");
 
@@ -53,28 +52,5 @@ namespace CryptoBook.Markup
             });
         }
 
-        //private static IContainer GetContainer()
-        //{
-        //    if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
-        //        containerProvider.Container is not IContainer container)
-        //    {
-        //        throw new InvalidOperationException("Autofac container not found in Application.Current. " +
-        //            "Ensure your Application implements IContainerProvider and Container is properly initialized.");
-        //    }
-        //    return container;
-        //}
-
-
-        //private static Window? FindWindow(DependencyObject d)
-        //{
-        //    for(DependencyObject? cur = d; cur is not null;)
-        //    {
-        //        if(cur is Window w)
-        //            return w;
-
-        //        cur = VisualTreeHelper.GetParent(cur);
-        //    }
-        //    return null;
-        //}
     }
 }

@@ -1,4 +1,6 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
 using System;
@@ -13,6 +15,8 @@ namespace CryptoBook.Models
 {
     public class SystemItemName_Editor_Model : ViewModelBase, ISystemItemName_Editor_Model
     {
+
+        private readonly IWindowManager windowManager;
 
         public Guid WindowId { get => windowId; private set => windowId = value; }
         Guid windowId;
@@ -39,9 +43,9 @@ namespace CryptoBook.Models
 
 
 
-        public SystemItemName_Editor_Model()
-        {
-
+        public SystemItemName_Editor_Model(IWindowManager windowManager)
+        {              
+            this.windowManager = windowManager;
         }
 
 
@@ -67,11 +71,12 @@ namespace CryptoBook.Models
 
         public void Execute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            var scope = windowManager.FindHostWindow(WindowId)?.Scope;
+            var args = scope.Resolve<IWindowContext>();
         }
         public bool CanExecute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool CanExecute_Close(object? obj)

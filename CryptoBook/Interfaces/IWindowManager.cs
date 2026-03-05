@@ -14,6 +14,8 @@ namespace CryptoBook.Interfaces
         void CloseWindow(Guid windowId);
         bool IsWindowOpen(Guid windowId);
 
+        IWindowContext? GetContext(Guid winId);
+
         WindowHost? FindHostWindow(Guid windowId);
 
     }

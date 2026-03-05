@@ -40,8 +40,7 @@ namespace CryptoBook.Infrastructure
             var scope = _root.BeginLifetimeScope(b =>
             {
                 b.RegisterInstance<IWindowContext>( new WindowContext(args ?? new Dictionary<string, object?>()))
-                 .As<IWindowContext>()
-                 .SingleInstance();
+                 .As<IWindowContext>().SingleInstance();
             });
 
             T window;
@@ -105,7 +104,10 @@ namespace CryptoBook.Infrastructure
             return _windowHosts.ContainsKey(windowId) ? _windowHosts[windowId] : null;
         }
 
-
+        public IWindowContext? GetContext(Guid winId)
+        {
+            return FindHostWindow(winId)?.Scope?.Resolve<IWindowContext>();
+        }
 
         private WindowHost? RegisterWindow<T>(ILifetimeScope scope, T window) where T : Window
         {

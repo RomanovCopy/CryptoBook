@@ -49,6 +49,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<SystemItemName_Editor_Model>().As<ISystemItemName_Editor_Model>().SingleInstance();
             builder.RegisterType<TitleBarModel>().As<ITitleBarModel>().SingleInstance();
             builder.RegisterType<MyFrameModel>().As<IMyFrameModel>().SingleInstance();
+            builder.RegisterType<MainWindowModel>().As<IMainWindowModel>().SingleInstance();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
