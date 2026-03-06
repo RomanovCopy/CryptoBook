@@ -40,39 +40,39 @@ namespace CryptoBook.Injections
 
 
             //Models
-            builder.RegisterType<TimeWebAIControlModel>().As<ITimeWebAIControlModel>().SingleInstance();
-            builder.RegisterType<TimeWebAIPageModel>().As<ITimeWebAIPageModel>().SingleInstance();
-            builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().SingleInstance();
-            builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().SingleInstance();
-            builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().SingleInstance();
-            builder.RegisterType<FileExplorerModel>().As<IFileExplorerModel>().SingleInstance();
-            builder.RegisterType<SystemItemName_Editor_Model>().As<ISystemItemName_Editor_Model>().SingleInstance();
-            builder.RegisterType<TitleBarModel>().As<ITitleBarModel>().SingleInstance();
-            builder.RegisterType<MyFrameModel>().As<IMyFrameModel>().SingleInstance();
-            builder.RegisterType<MainWindowModel>().As<IMainWindowModel>().SingleInstance();
+            builder.RegisterType<TimeWebAIControlModel>().As<ITimeWebAIControlModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TimeWebAIPageModel>().As<ITimeWebAIPageModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().InstancePerLifetimeScope();
+            builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().InstancePerLifetimeScope();
+            builder.RegisterType<FileExplorerModel>().As<IFileExplorerModel>().InstancePerLifetimeScope();
+            builder.RegisterType<SystemItemName_Editor_Model>().As<ISystemItemName_Editor_Model>().InstancePerLifetimeScope();
+            builder.RegisterType<TitleBarModel>().As<ITitleBarModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MyFrameModel>().As<IMyFrameModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MainWindowModel>().As<IMainWindowModel>().InstancePerLifetimeScope();
 
             //ViewModels
-            builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().SingleInstance();
-            builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().SingleInstance();
-            builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().SingleInstance();
-            builder.RegisterType<MenuFileViewModel>().As<IMenuFileViewModel>().SingleInstance();
-            builder.RegisterType<SideMenuViewModel>().As<ISideMenuViewModel>().SingleInstance();
-            builder.RegisterType<MenuSettingsViewModel>().As<IMenuSettingsViewModel>().SingleInstance();
-            builder.RegisterType<MenuEncryptionViewModel>().As<IMenuEncryptionViewModel>().SingleInstance();
-            builder.RegisterType<MenuContentViewModel>().As<IMenuContentViewModel>().SingleInstance();
-            builder.RegisterType<RichtextboxViewModel>().As<IRichtextboxViewModel>().SingleInstance();
-            builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().SingleInstance();
-            builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().SingleInstance();
-            builder.RegisterType<ListFormatBarViewModel>().As<IListFormatBarViewModel>().SingleInstance();
-            builder.RegisterType<BookmarksViewModel>().As<IBookmarksViewModel>().SingleInstance();
-            builder.RegisterType<BookmarksEditorViewModel>().As<IBookmarksEditorViewModel>().SingleInstance();
+            builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuFileViewModel>().As<IMenuFileViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<SideMenuViewModel>().As<ISideMenuViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuSettingsViewModel>().As<IMenuSettingsViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuEncryptionViewModel>().As<IMenuEncryptionViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuContentViewModel>().As<IMenuContentViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<RichtextboxViewModel>().As<IRichtextboxViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<ListFormatBarViewModel>().As<IListFormatBarViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<BookmarksViewModel>().As<IBookmarksViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<BookmarksEditorViewModel>().As<IBookmarksEditorViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarkEntryViewModel>().As<IBookmarkEntryViewModel>().AsSelf();
-            builder.RegisterType<TimeWebAIControlViewModel>().As<ITimeWebAIControlViewModel>().SingleInstance();
-            builder.RegisterType<TimeWebAIPageViewModel>().As<ITimeWebAIPageViewModel>().SingleInstance();
-            builder.RegisterType<TitleBarTimeWebAIControlViewModel>().As<ITitleBarTimeWebAIControlViewModel>().SingleInstance();
+            builder.RegisterType<TimeWebAIControlViewModel>().As<ITimeWebAIControlViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TimeWebAIPageViewModel>().As<ITimeWebAIPageViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TitleBarTimeWebAIControlViewModel>().As<ITitleBarTimeWebAIControlViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
-            builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().SingleInstance(); 
-            builder.RegisterType<SystemItemName_Editor_ViewModel>().As<ISystemItemName_Editor_ViewModel>().SingleInstance();
+            builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
+            builder.RegisterType<SystemItemName_Editor_ViewModel>().As<ISystemItemName_Editor_ViewModel>().InstancePerLifetimeScope();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -93,7 +93,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf();
 
             //Windows
-            builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
+            builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindow>().SingleInstance();
 
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();

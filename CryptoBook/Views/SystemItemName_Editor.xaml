@@ -15,6 +15,31 @@
     <Window.DataContext>
         <marcup:ResolveViewModel ViewModelType="{x:Type interfaces:ISystemItemName_Editor_ViewModel}"/>
     </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style.Setters>
+        </Style>
+        <Style TargetType="TextBox">
+            <Style.Setters>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style.Setters>
+        </Style>
+        <Style TargetType="Label">
+            <Style.Setters>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="DemiBold"/>
+            </Style.Setters>
+        </Style>
+        
+    </Window.Resources>
 
     <Window.Width>
         <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
@@ -49,14 +74,22 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Content="Old Name:" Grid.Row="0" Grid.Column="1"/>
-        <Label Content="Old Extension:" Grid.Row="0" Grid.Column="3"/>
-        <TextBlock Text="{Binding OldName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1"/>
-        <TextBlock Text="{Binding OldExtension, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="3"/>
-        <Label Content="New Name:" Grid.Row="2" Grid.Column="1"/>
-        <Label Content="New Extension:" Grid.Row="2" Grid.Column="3"/>
-        <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1"/>
-        <TextBox Text="{Binding NewExtension, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="3"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" >
+            <Label Content="Old Name:" Margin="5,0,5,0"/>
+            <TextBlock Text="{Binding OldName, UpdateSourceTrigger=PropertyChanged}"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="3">
+            <Label Content="Old Extension:" Margin="5,0,5,0"/>
+            <TextBlock Text="{Binding OldExtension, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+            <Label Content="New Name:"  Margin="5,0,5,0"/>
+            <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3">
+            <Label Content="New Extension:"  Margin="5,0,5,0"/>
+            <TextBox Text="{Binding NewExtension, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

@@ -13,7 +13,8 @@ namespace CryptoBook.Models
     public class MainWindowModel: ViewModelBase ,IMainWindowModel
     {
         private readonly IWindowManager windowManager;
-        private bool isSideMenu { get; set; }
+        public bool IsMenuOpen { get => isMenuOpen; set => SetProperty(ref isMenuOpen, value); }
+        bool isMenuOpen;
 
         public double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
         double windowWidth;
@@ -44,18 +45,15 @@ namespace CryptoBook.Models
             //восстанавливаем состояние окна
             WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized :
                 WindowState.Minimized;
+            IsMenuOpen = false;
 
         }
 
-
-
-
-
-        public bool CanExecute_windowToMinimize(object? obj)
+        public bool CanExecute_WindowToMinimize(object? obj)
         {
             return WindowState != WindowState.Minimized;
         }
-        public void Execute_windowToMinimize(object? obj)
+        public void Execute_WindowToMinimize(object? obj)
         {
             WindowState = WindowState.Minimized;
         }
@@ -78,6 +76,23 @@ namespace CryptoBook.Models
             WindowState = WindowState.Normal;
         }
 
+        public bool CanExecute_ToggleMenuCommand(object? obj)
+        {
+            return true;
+        }
+        public void Execute_ToggleMenuCommand(object? obj)
+        {
+            IsMenuOpen = !IsMenuOpen;
+        }
+
+        public bool CanExecute_SideMenuClose(object? obj)
+        {
+            return IsMenuOpen;
+        }
+        public void Execute_SideMenuClose(object? obj)
+        {
+            IsMenuOpen = false;
+        }
 
         public bool CanExecute_Loaded(object? obj)
         {
@@ -94,7 +109,6 @@ namespace CryptoBook.Models
             }
         }
 
-
         public bool CanExecute_Close(object? obj)
         {
             return true;
@@ -103,8 +117,6 @@ namespace CryptoBook.Models
         {
             windowManager.CloseWindow(WindowId);
         }
-
-
 
         public bool CanExecute_Closing(object? obj)
         {
@@ -127,104 +139,14 @@ namespace CryptoBook.Models
             } catch(Exception e) { ErrorWindow(e); }
 
         }
+
         public bool CanExecute_Closed(object? obj)
         {
             return true;
         }
-
         public void Execute_Closed(object? obj)
         {
             ((IDisposable)windowManager)?.Dispose();
-        }
-
-        public bool CanExecute_WindowToMinimize(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Execute_WindowToMinimize(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        bool IMainWindowModel.CanExecute_WindowToMaximize(object? obj)
-        {
-            return CanExecute_WindowToMaximize(obj);
-        }
-
-        void IMainWindowModel.Execute_WindowToMaximize(object? obj)
-        {
-            Execute_WindowToMaximize(obj);
-        }
-
-        bool IMainWindowModel.CanExecute_WindowToNormal(object? obj)
-        {
-            return CanExecute_WindowToNormal(obj);
-        }
-
-        void IMainWindowModel.Execute_WindowToNormal(object? obj)
-        {
-            Execute_WindowToNormal(obj);
-        }
-
-        public bool CanExecute_ToggleMenuCommand(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Execute_ToggleMenuCommand(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CanExecute_SideMenuClose(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Execute_SideMenuClose(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        bool IModel.CanExecute_Close(object? obj)
-        {
-            return CanExecute_Close(obj);
-        }
-
-        void IModel.Execute_Loaded(object? obj)
-        {
-            Execute_Loaded(obj);
-        }
-
-        bool IModel.CanExecute_Loaded(object? obj)
-        {
-            return CanExecute_Loaded(obj);
-        }
-
-        void IModel.Execute_Close(object? obj)
-        {
-            Execute_Close(obj);
-        }
-
-        bool IModel.CanExecute_Closing(object? obj)
-        {
-            return CanExecute_Closing(obj);
-        }
-
-        void IModel.Execute_Closing(object? obj)
-        {
-            Execute_Closing(obj);
-        }
-
-        bool IModel.CanExecute_Closed(object? obj)
-        {
-            return CanExecute_Closed(obj);
-        }
-
-        void IModel.Execute_Closed(object? obj)
-        {
-            Execute_Closed(obj);
         }
 
     }

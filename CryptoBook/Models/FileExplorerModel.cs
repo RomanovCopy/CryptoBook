@@ -218,7 +218,11 @@ namespace CryptoBook.Models
         {
             if(obj is ISystemItem systemItem)
             {
-                var id = _windowManager.CreateWindow<SystemItemName_Editor>();
+                var parameters = new Dictionary<string, object?>
+                {
+                    { "SystemItem", systemItem }
+                };
+                var id = _windowManager.CreateWindow<SystemItemName_Editor>(parameters);
                 _windowManager.ShowWindow(id);
             } else
             {

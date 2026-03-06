@@ -1,5 +1,7 @@
 ﻿using Autofac;
 
+using CryptoBook.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,9 @@ namespace CryptoBook.Injections
         {
             var ambient = AmbientScope.TryGetCurrent();
             if(ambient is not null)
+            {
                 return ambient;
+            }
 
             // 2) TargetObject (важно для шаблонов/ресурсов)
             if(sp.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget pvt &&

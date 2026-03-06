@@ -35,11 +35,11 @@ namespace CryptoBook.Infrastructure
             _windowHosts = [];
         }
 
-        public Guid CreateWindow<T>( IReadOnlyDictionary<string, object?>? args = null) where T : Window
+        public Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window
         {
             var scope = _root.BeginLifetimeScope(b =>
             {
-                b.RegisterInstance<IWindowContext>( new WindowContext(args ?? new Dictionary<string, object?>()))
+                b.RegisterInstance<IWindowContext>(new WindowContext(args ?? new Dictionary<string, object?>()))
                  .As<IWindowContext>().SingleInstance();
             });
 
@@ -64,10 +64,11 @@ namespace CryptoBook.Infrastructure
 
             window.Closed += (_, __) =>
             {
-                UnregisterWindow(host); // если у вас есть такой метод
+                UnregisterWindow(host);
                 scope.Dispose();
+                window = null;
             };
-            
+
             return host.Key;
         }
 
@@ -102,11 +103,6 @@ namespace CryptoBook.Infrastructure
         public WindowHost? FindHostWindow(Guid windowId)
         {
             return _windowHosts.ContainsKey(windowId) ? _windowHosts[windowId] : null;
-        }
-
-        public IWindowContext? GetContext(Guid winId)
-        {
-            return FindHostWindow(winId)?.Scope?.Resolve<IWindowContext>();
         }
 
         private WindowHost? RegisterWindow<T>(ILifetimeScope scope, T window) where T : Window

@@ -8,6 +8,9 @@ namespace CryptoBook.Interfaces
 {
     public interface IMainWindowModel:IModel, IWindowOptions, IWindowWithId
     {
+
+
+        public bool IsMenuOpen { get; set; }
         /// <summary>
         /// скрыть окно в трее
         /// </summary>

@@ -6,6 +6,7 @@ using CryptoBook.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +14,12 @@ using System.Windows;
 
 namespace CryptoBook.Models
 {
-    public class SystemItemName_Editor_Model : ViewModelBase, ISystemItemName_Editor_Model
+    public class SystemItemName_Editor_Model: ViewModelBase, ISystemItemName_Editor_Model
     {
 
         private readonly IWindowManager windowManager;
 
+        private IWindowContext windowContext;
         public Guid WindowId { get => windowId; private set => windowId = value; }
         Guid windowId;
 
@@ -36,16 +38,26 @@ namespace CryptoBook.Models
         string oldName;
         public string OldExtension { get => oldExtension; private set => SetProperty(ref oldExtension, value); }
         string oldExtension;
-        public string NewName { get => newName; set => SetProperty(ref newName, value);}
+        public string NewName { get => newName; set => SetProperty(ref newName, value); }
         string newName;
-        public string NewExtension { get => newExtension; set => SetProperty(ref newExtension, value);}
+        public string NewExtension { get => newExtension; set => SetProperty(ref newExtension, value); }
         string newExtension;
 
 
 
-        public SystemItemName_Editor_Model(IWindowManager windowManager)
-        {              
+        public SystemItemName_Editor_Model(IWindowManager windowManager, IWindowContext windowContext)
+        {
+            WindowId = Guid.NewGuid();
             this.windowManager = windowManager;
+            this.windowContext = windowContext;
+            if(windowContext is IWindowContext context && context.Items["SystemItem"] is ISystemItem systemItem)
+            {
+                OldName = systemItem.Name;
+                NewName = systemItem.Name;
+                OldExtension = Path.GetExtension(systemItem.Name);
+                NewExtension = Path.GetExtension(systemItem.Name);
+            }
+
         }
 
 
@@ -71,8 +83,6 @@ namespace CryptoBook.Models
 
         public void Execute_Loaded(object? obj)
         {
-            var scope = windowManager.FindHostWindow(WindowId)?.Scope;
-            var args = scope.Resolve<IWindowContext>();
         }
         public bool CanExecute_Loaded(object? obj)
         {
