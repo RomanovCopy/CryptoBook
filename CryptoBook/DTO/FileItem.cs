@@ -26,6 +26,8 @@ namespace CryptoBook.DTO
         bool isHidden;
         public bool IsReadOnly { get => isReadOnly; set => SetProperty(ref isReadOnly, value); }
         bool isReadOnly;
+        public bool IsEditing { get => isEditing; set => SetProperty(ref isEditing, value); }
+        bool isEditing;
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
         public ISystemItem? Parent { get => parent; set => SetProperty(ref parent, value); }

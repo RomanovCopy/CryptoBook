@@ -42,6 +42,7 @@ namespace CryptoBook.ViewModels
             _fileExplorerModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
+
         public ICommand CutCommand => _cutCommand ??= new RelayCommand(_fileExplorerModel.Execute_CutCommand, _fileExplorerModel.CanExecute_CutCommand);
         RelayCommand _cutCommand;
 

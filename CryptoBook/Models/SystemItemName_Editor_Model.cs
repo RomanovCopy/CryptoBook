@@ -48,10 +48,10 @@ namespace CryptoBook.Models
         public SystemItemName_Editor_Model(IWindowManager windowManager, IWindowContext windowContext)
         {
             WindowId = Guid.NewGuid();
-            this.windowManager = windowManager;
-            this.windowContext = windowContext;
+            this.windowManager = windowManager??throw new ArgumentNullException(nameof(windowManager));
             if(windowContext is IWindowContext context && context.Items["SystemItem"] is ISystemItem systemItem)
             {
+                this.windowContext = context;
                 OldName = systemItem.Name;
                 NewName = systemItem.Name;
                 OldExtension = Path.GetExtension(systemItem.Name);

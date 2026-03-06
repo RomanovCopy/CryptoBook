@@ -27,6 +27,8 @@ namespace CryptoBook.DTO
 
         public ISystemItem? Parent { get => _parent; set => SetProperty(ref _parent, value); }
         ISystemItem? _parent;
+        public bool IsEditing { get => _isEditing; set => SetProperty(ref _isEditing, value); }
+        bool _isEditing;
 
         public SystemItem()
         {
@@ -36,5 +38,6 @@ namespace CryptoBook.DTO
         {
             return FullPath;
         }
+
     }
 }

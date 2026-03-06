@@ -56,6 +56,10 @@ namespace CryptoBook.DTO
         }
         bool isExpanded;
 
+        public bool IsEditing { get => isEditing; set => SetProperty(ref isEditing, value); }
+        bool isEditing;
+
+
         public bool IsSelected
         {
             get => isSelected;

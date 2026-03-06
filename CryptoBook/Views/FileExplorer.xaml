@@ -210,8 +210,43 @@
                                     <DockPanel LastChildFill="True">
                                         <Image Width="16" Height="16" Margin="0,0,6,0"
                                                Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
-                                        <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap"
-                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        <!--<TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap"
+                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>-->
+
+                                        <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}"
+                                             Value="True">
+                                                            <Setter Property="Visibility"
+                                            Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+
+                                            <TextBlock.InputBindings>
+                                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.RenameCommand,
+                                      RelativeSource={ RelativeSource AncestorType=ListView }}"
+                                      CommandParameter="{Binding}"/>
+                                            </TextBlock.InputBindings>
+                                        </TextBlock>
+
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+
                                     </DockPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
