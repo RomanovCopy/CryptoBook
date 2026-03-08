@@ -64,6 +64,9 @@ namespace CryptoBook.ViewModels
         public ICommand RenameCommand => _renameFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameCommand, _fileExplorerModel.CanExecute_RenameCommand);
         RelayCommand _renameFileCommand;
 
+        public ICommand CancelRenameCommand => _cancelRenameCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameCommand, _fileExplorerModel.CanExecute_RenameCommand);
+        RelayCommand _cancelRenameCommand;
+
         public ICommand MoveCommand => _moveCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveCommand, _fileExplorerModel.CanExecute_MoveCommand);
         RelayCommand _moveCommand;
 

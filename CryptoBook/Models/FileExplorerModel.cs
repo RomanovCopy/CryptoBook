@@ -218,16 +218,29 @@ namespace CryptoBook.Models
         {
             if(obj is ISystemItem systemItem)
             {
-                var parameters = new Dictionary<string, object?>
+                systemItem.IsEditing = !systemItem.IsEditing;
+                if(!systemItem.IsEditing)
                 {
-                    { "SystemItem", systemItem }
-                };
-                var id = _windowManager.CreateWindow<SystemItemName_Editor>(parameters);
-                _windowManager.ShowWindow(id);
+                    _fileManagerService.MoveAsync(systemItem.FullPath, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(systemItem.FullPath) ?? string.Empty, systemItem.Name), CancellationToken.None);
+                }
             } else
             {
                 throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
             }
+
+
+            //if(obj is ISystemItem systemItem)
+            //{
+            //    var parameters = new Dictionary<string, object?>
+            //    {
+            //        { "SystemItem", systemItem }
+            //    };
+            //    var id = _windowManager.CreateWindow<SystemItemName_Editor>(parameters);
+            //    _windowManager.ShowWindow(id);
+            //} else
+            //{
+            //    throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
+            //}
         }
 
         public void Execute_DeleteFile(object? obj)

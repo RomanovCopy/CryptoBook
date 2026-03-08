@@ -218,23 +218,14 @@
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsEditing}"
-                                             Value="True">
-                                                            <Setter Property="Visibility"
-                                            Value="Collapsed"/>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </TextBlock.Style>
-
-                                            <TextBlock.InputBindings>
-                                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.RenameCommand,
-                                      RelativeSource={ RelativeSource AncestorType=ListView }}"
-                                      CommandParameter="{Binding}"/>
-                                            </TextBlock.InputBindings>
                                         </TextBlock>
-
-                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" >
                                             <TextBox.Style>
                                                 <Style TargetType="TextBox">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -245,8 +236,11 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </TextBox.Style>
+                                            <TextBox.InputBindings>
+                                                <KeyBinding Key="Enter" Command="{Binding DataContext.RenameCommand,
+                                                    RelativeSource={ RelativeSource AncestorType=ListView }}" CommandParameter="{Binding}"/>
+                                            </TextBox.InputBindings>
                                         </TextBox>
-
                                     </DockPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
