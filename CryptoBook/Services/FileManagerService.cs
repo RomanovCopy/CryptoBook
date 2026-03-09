@@ -205,9 +205,7 @@ namespace CryptoBook.Services
         string sourceFull,
         string destFull)
         {
-            if(string.Equals(sourceFull,
-                             destFull,
-                             StringComparison.OrdinalIgnoreCase))
+            if(string.Equals(sourceFull, destFull))
                 return true;
 
             return destFull.StartsWith(

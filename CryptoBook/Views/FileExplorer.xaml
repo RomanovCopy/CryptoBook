@@ -112,7 +112,13 @@
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
         <ToolBar Grid.Row="0" Height="48" Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
-            <Button Content="New" Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
+            <Button Content="Back" Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="New File" Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="New Directory" Command="{Binding CreateDirectoryCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}"/>
             <Separator/>
             <Button Content="Cut" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
@@ -127,11 +133,12 @@
                     Style="{StaticResource PrimaryButtonStyle}" 
                     CommandParameter="{Binding ElementName=listview, Path=SelectedValue, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
-            <Button Content="Rename" Command="{Binding RenameCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Rename" Command="{Binding RenameClickCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}">
+            </Button>
             <Separator/>
             <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Sort" 
                     Style="{StaticResource PrimaryButtonStyle}"/>
@@ -210,9 +217,6 @@
                                     <DockPanel LastChildFill="True">
                                         <Image Width="16" Height="16" Margin="0,0,6,0"
                                                Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
-                                        <!--<TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap"
-                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>-->
-
                                         <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
@@ -236,10 +240,6 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </TextBox.Style>
-                                            <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding DataContext.RenameCommand,
-                                                    RelativeSource={ RelativeSource AncestorType=ListView }}" CommandParameter="{Binding}"/>
-                                            </TextBox.InputBindings>
                                         </TextBox>
                                     </DockPanel>
                                 </DataTemplate>
@@ -295,6 +295,13 @@
                         <Setter Property="FontSize" Value="16"/>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <ListView.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding RenameCommand}"
+                        CommandParameter="{Binding SelectedItem,
+                        RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                    <KeyBinding Key="Escape" Command="{Binding CancelRenameCommand}" CommandParameter="{Binding SelectedItem,
+                        RelativeSource={RelativeSource AncestorType=ListView}}" />
+                </ListView.InputBindings>
                 <i:Interaction.Behaviors>
                     <behaviors:GridViewColumnRatioBehavior
                         ViewId="FileExplorer.MainGrid"

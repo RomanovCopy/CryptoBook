@@ -25,9 +25,11 @@ namespace CryptoBook.Interfaces
         bool CanExecute_DeleteCommand(object? obj);
         bool CanExecute_CreateFileCommand(object? obj);
         bool CanExecute_CreateDirectoryCommand(object? obj);
+        bool CanExecute_RenameClickCommand(object? obj);
         bool CanExecute_RenameCommand(object? obj);
         bool CanExecute_MoveCommand(object? obj);
         bool CanExecure_RefreshCommand(object? obj);
+        bool CanExecute_CancelRenameCommand(object? obj);
         bool CanExecute_TreeViewItemSelectedCommand (object? obj);
         bool CanExecute_ListViewItemDoubleClickCommand(object? obj);
         bool CanExecute_ListViewSelectionChangedCommand(object? obj);
@@ -40,9 +42,11 @@ namespace CryptoBook.Interfaces
         void Execute_DeleteCommand(object? obj);
         void Execute_CreateFileCommand(object? obj);
         void Execute_CreateDirectoryCommand(object? obj);
+        void Execute_RenameClickCommand(object? obj);
         void Execute_RenameCommand(object? obj);
         void Execute_MoveCommand(object? obj);
         void Execute_RefreshCommand(object? obj);
+        void Execute_CancelRenameCommand(object? obj);
         void Execute_TreeViewItemSelectedCommand (object? obj);
         void Execute_ListViewItemDoubleClickCommand(object? obj);
         void Execute_ListViewSelectionChangedCommand(object? obj);

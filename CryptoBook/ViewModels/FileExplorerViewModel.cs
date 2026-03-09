@@ -61,17 +61,22 @@ namespace CryptoBook.ViewModels
         public ICommand CreateDirectoryCommand => _createDirectoryCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateDirectoryCommand, _fileExplorerModel.CanExecute_CreateDirectoryCommand);
         RelayCommand _createDirectoryCommand;
 
+        public ICommand RenameClickCommand => _renameClickCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameClickCommand, _fileExplorerModel.CanExecute_RenameClickCommand);
+        RelayCommand _renameClickCommand;
+
+
         public ICommand RenameCommand => _renameFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameCommand, _fileExplorerModel.CanExecute_RenameCommand);
         RelayCommand _renameFileCommand;
 
-        public ICommand CancelRenameCommand => _cancelRenameCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameCommand, _fileExplorerModel.CanExecute_RenameCommand);
-        RelayCommand _cancelRenameCommand;
 
         public ICommand MoveCommand => _moveCommand ??= new RelayCommand(_fileExplorerModel.Execute_MoveCommand, _fileExplorerModel.CanExecute_MoveCommand);
         RelayCommand _moveCommand;
 
         public ICommand RefreshCommand => _refreshCommand ??= new RelayCommand(_fileExplorerModel.Execute_RefreshCommand, _fileExplorerModel.CanExecure_RefreshCommand);
         RelayCommand _refreshCommand;
+
+        public ICommand CancelRenameCommand => _cancelRenameCommand ??= new RelayCommand(_fileExplorerModel.Execute_CancelRenameCommand, _fileExplorerModel.CanExecute_CancelRenameCommand);
+        RelayCommand _cancelRenameCommand;
 
         public ICommand TreeViewItemSelectedCommand => _treeViewItemSelectedCommand ??= new RelayCommand(_fileExplorerModel.Execute_TreeViewItemSelectedCommand, _fileExplorerModel.CanExecute_TreeViewItemSelectedCommand);
         RelayCommand _treeViewItemSelectedCommand;

@@ -22,9 +22,8 @@ namespace CryptoBook.Models
         private readonly IFileManagerService _fileManagerService;
         private readonly IWindowManager _windowManager;
         private readonly IDriveManagerService _driveManagerService;
-        private readonly IFileLauncherService _fileLauncherService;
-        private readonly IStockIconService _stockIconService;
         private readonly IFileClipboardService _fileClipboardService;
+        private readonly IFolderPickerService _folderPickerService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -44,6 +43,8 @@ namespace CryptoBook.Models
         public double RightColumnPercent { get => _rightColumnPercent; set => SetProperty(ref _rightColumnPercent, value); }
         private double _rightColumnPercent;
 
+        private string _lastItemName;
+
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         private Guid _windowId;
         public bool IsHiddenFilesVisible { get => _isHiddenFilesVisible; set => SetProperty(ref _isHiddenFilesVisible, value); }
@@ -58,16 +59,14 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileLauncherService? fileLauncherService, IStockIconService stockIconService,
-            IFileClipboardService fileClipboardService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
             _driveManagerService = driveManagerService ?? throw new ArgumentNullException(nameof(driveManagerService));
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
-            _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(fileLauncherService));
-            _stockIconService = stockIconService ?? throw new ArgumentNullException(nameof(stockIconService));
             _fileClipboardService = fileClipboardService ?? throw new ArgumentNullException(nameof(fileClipboardService));
+            _folderPickerService = folderPickerService ?? throw new ArgumentNullException(nameof(folderPickerService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -75,12 +74,10 @@ namespace CryptoBook.Models
         {
             return obj is IList { Count: > 0 };
         }
-
         public bool CanExecute_CopyCommand(object? obj)
         {
             return obj is IList { Count: > 0 };
         }
-
         public bool CanExecute_PasteCommand(object? obj)
         {
             if(!string.IsNullOrEmpty(CurrentPath))
@@ -89,51 +86,50 @@ namespace CryptoBook.Models
             }
             return false;
         }
-
         public bool CanExecute_DeleteCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return obj is ISystemItem;
         }
-
         public bool CanExecute_CreateFileCommand(object? obj)
         {
-            return false;
+            return true;
         }
-
         public bool CanExecute_CreateDirectoryCommand(object? obj)
         {
             return true;
+        }
+        public bool CanExecute_RenameClickCommand(object? obj)
+        {
+            return obj is ISystemItem item && !item.IsEditing;
         }
         public bool CanExecute_RenameCommand(object? obj)
         {
             return obj is not null;
         }
-
         public bool CanExecute_MoveCommand(object? obj)
         {
             throw new NotImplementedException();
         }
-
         public bool CanExecure_RefreshCommand(object? obj)
         {
             return obj is IContainerSystemItem;
         }
-
+        public bool CanExecute_CancelRenameCommand(object? obj)
+        {
+            return obj is ISystemItem item && item.IsEditing;
+        }
         public bool CanExecute_TreeViewItemSelectedCommand(object? obj)
         {
             return obj is not null;
         }
-
         public bool CanExecute_ListViewItemDoubleClickCommand(object? obj)
         {
             return obj is not null;
         }
-
         public bool CanExecute_ListViewSelectionChangedCommand(object? obj)
         {
             return obj is not null;
         }
-
         public bool CanExecute_WindowSizeChanged(object? obj)
         {
             return true;
@@ -159,7 +155,6 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for CutCommand", nameof(obj));
             }
         }
-
         public void Execute_CopyCommand(object? obj)
         {
             if(obj is IList list && list.Count > 0)
@@ -178,7 +173,6 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for CopyCommand", nameof(obj));
             }
         }
-
         public void Execute_PasteCommand(object? obj)
         {
             if(!string.IsNullOrEmpty(CurrentPath) && _fileClipboardService.GetData().SourcePaths.Count > 0)
@@ -198,21 +192,42 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for PasteCommand", nameof(obj));
             }
         }
-
         public void Execute_DeleteCommand(object? obj)
         {
-            throw new NotImplementedException();
+            if(obj is ISystemItem systemItem)
+            {
+                if(systemItem is IContainerSystemItem container)
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        await _fileManagerService.DeleteAsync(container.FullPath, CancellationToken.None);
+                    });
+                } else if(systemItem is IFileItem file)
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        await _fileManagerService.DeleteAsync(file.FullPath, CancellationToken.None);
+                    });
+                } else
+                    throw new ArgumentException("Invalid ISystemItem type for DeleteCommand", nameof(obj));
+            } else
+            {
+                throw new ArgumentException("Invalid argument for DeleteCommand", nameof(obj));
+            }
         }
-
         public void Execute_CreateFileCommand(object? obj)
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
             _windowManager.ShowWindow(id);
         }
-
         public void Execute_CreateDirectoryCommand(object? obj)
         {
             throw new NotImplementedException();
+        }
+        public void Execute_RenameClickCommand(object? obj)
+        {
+            if(obj is ISystemItem systemItem && CanExecute_RenameCommand(systemItem))
+                Execute_RenameCommand(systemItem);
         }
         public void Execute_RenameCommand(object? obj)
         {
@@ -220,39 +235,18 @@ namespace CryptoBook.Models
             {
                 systemItem.IsEditing = !systemItem.IsEditing;
                 if(!systemItem.IsEditing)
+                {     //выполняем переименование
+                    _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
+                } else
                 {
-                    _fileManagerService.MoveAsync(systemItem.FullPath, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(systemItem.FullPath) ?? string.Empty, systemItem.Name), CancellationToken.None);
+                    //запоминаем имя до переименования, чтобы при отмене вернуть его обратно
+                    _lastItemName = systemItem.Name;
                 }
             } else
             {
                 throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
             }
-
-
-            //if(obj is ISystemItem systemItem)
-            //{
-            //    var parameters = new Dictionary<string, object?>
-            //    {
-            //        { "SystemItem", systemItem }
-            //    };
-            //    var id = _windowManager.CreateWindow<SystemItemName_Editor>(parameters);
-            //    _windowManager.ShowWindow(id);
-            //} else
-            //{
-            //    throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
-            //}
         }
-
-        public void Execute_DeleteFile(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Execute_DeleteDirectory(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Execute_MoveCommand(object? obj)
         {
             throw new NotImplementedException();
@@ -268,8 +262,14 @@ namespace CryptoBook.Models
             {
             }
         }
-
-
+        public void Execute_CancelRenameCommand(object? obj)
+        {
+            if(obj is ISystemItem systemItem)
+            {
+                systemItem.Name = _lastItemName;
+                systemItem.IsEditing = false;
+            }
+        }
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -301,8 +301,6 @@ namespace CryptoBook.Models
             }
 
         }
-
-
         public async void Execute_ListViewItemDoubleClickCommand(object? obj)
         {
             if(obj is IContainerSystemItem container)
@@ -324,21 +322,13 @@ namespace CryptoBook.Models
                 }
             }
         }
-
-
         public void Execute_ListViewSelectionChangedCommand(object? obj)
         {
-            //if(obj is ISystemItem item)
-            //{
-            //    SelectedItem=item;
-            //}
         }
-
         public void Execute_WindowSizeChanged(object? obj)
         {
             OnPropertyChanged([nameof(LeftColumnPercent), nameof(RightColumnPercent)]);
         }
-
         public bool CanExecute_Close(object? obj)
         {
             throw new NotImplementedException();
@@ -363,14 +353,10 @@ namespace CryptoBook.Models
             LeftColumnPercent = Properties.Settings.Default.LeftColumnPercent_FileExplorer;
             IsHiddenFilesVisible = Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer;
         }
-
-
-
         public bool CanExecute_Closing(object? obj)
         {
             return true;
         }
-
         public void Execute_Closing(object? obj)
         {
             Properties.Settings.Default.WindowHeight_FileExplorer = WindowHeight;
@@ -383,12 +369,10 @@ namespace CryptoBook.Models
             Properties.Settings.Default.IsHiddenFilesVisible_FileExplorer = IsHiddenFilesVisible;
             Properties.Settings.Default.Save();
         }
-
         public bool CanExecute_Closed(object? obj)
         {
             return true;
         }
-
         public void Execute_Closed(object? obj)
         {
 
@@ -421,6 +405,7 @@ namespace CryptoBook.Models
                 }, token);
             }
         }
+
 
     }
 }
