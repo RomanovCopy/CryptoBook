@@ -229,14 +229,20 @@ namespace CryptoBook.Models
             if(obj is ISystemItem systemItem && CanExecute_RenameCommand(systemItem))
                 Execute_RenameCommand(systemItem);
         }
-        public void Execute_RenameCommand(object? obj)
+        public async void Execute_RenameCommand(object? obj)
         {
             if(obj is ISystemItem systemItem)
             {
                 systemItem.IsEditing = !systemItem.IsEditing;
-                if(!systemItem.IsEditing)
-                {     //выполняем переименование
-                    _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
+                if(!systemItem.IsEditing )
+                {   
+                    if(string.IsNullOrWhiteSpace(systemItem.Name)||systemItem.FullPath.Equals(System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name), StringComparison.OrdinalIgnoreCase))
+                    {
+                        systemItem.Name = _lastItemName;
+                        return;
+                    }
+                    //выполняем переименование
+                    await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
                 } else
                 {
                     //запоминаем имя до переименования, чтобы при отмене вернуть его обратно

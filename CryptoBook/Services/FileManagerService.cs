@@ -38,9 +38,18 @@ namespace CryptoBook.Services
 
         public Task<List<ISystemItem>> BrowseAsync(string path, CancellationToken ct, bool includeHidden = false)
         {
-            var desc = ParsePath(path); // как раньше
+            var desc = ParsePath(path); // как раньше                                           
             var provider = ResolveProvider(desc.Scheme);
-            return provider.GetContainerContentAsync(desc.NativePath, ct, includeHidden );
+
+            try
+            {
+                return provider.GetContainerContentAsync(desc.NativePath, ct, includeHidden);
+            }
+            catch(Exception ex)
+            {
+                throw new IOException($"Failed to browse path '{path}': {ex.Message}", ex);
+            }
+            
         }
 
         public async Task<FileOperationResult> CopyAsync(string sourcePath, string destinationPath, IProgressReporter? progress, CancellationToken cancellationToken)
@@ -64,7 +73,14 @@ namespace CryptoBook.Services
 
 
             var provider = ResolveProvider(src.Scheme);
-            return await provider.CopyAsync(src.NativePath, dst.NativePath, progress, cancellationToken);
+            try
+            {
+                return await provider.CopyAsync(src.NativePath, dst.NativePath, progress, cancellationToken);
+            }
+            catch(Exception ex)
+            {
+                return FileOperationResult.Fail($"Copy failed: {ex.Message}");
+            }
         }
 
         public async Task<FileOperationResult> MoveAsync(string sourcePath, string destinationPath, CancellationToken cancellationToken)
@@ -88,7 +104,14 @@ namespace CryptoBook.Services
             }
 
             var provider = ResolveProvider(src.Scheme);
-            return await provider.MoveAsync(src.NativePath, dst.NativePath, cancellationToken);
+            try
+            {
+                return await provider.MoveAsync(src.NativePath, dst.NativePath, cancellationToken);
+            }
+            catch(Exception ex)
+            {
+                return FileOperationResult.Fail($"Move failed: {ex.Message}");
+            }
         }
 
         public async Task<FileOperationResult> DeleteAsync(string path, CancellationToken cancellationToken)
@@ -96,15 +119,28 @@ namespace CryptoBook.Services
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
 
-            return await provider.DeleteAsync(desc.NativePath, cancellationToken);
+            try
+            {
+                return await provider.DeleteAsync(desc.NativePath, cancellationToken);
+            }
+            catch(Exception ex)
+            {
+                return FileOperationResult.Fail($"Delete failed: {ex.Message}");
+            }
         }
 
         public async Task<FileOperationResult> RenameAsync(string path, string newName, CancellationToken cancellationToken)
         {
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
-
-            return await provider.RenameAsync(desc.NativePath, newName, cancellationToken);
+            try
+            {
+                return await provider.RenameAsync(desc.NativePath, newName, cancellationToken);
+            }
+            catch(Exception ex)
+            {
+                return FileOperationResult.Fail($"Rename failed: {ex.Message}");
+            }
         }
 
         public async Task<FileOperationResult> CreateDirectoryAsync(string parentDirectory, string newDirectoryName, CancellationToken cancellationToken)
@@ -117,7 +153,14 @@ namespace CryptoBook.Services
 
             string combinedNativePath = CombinePath(provider, parentDesc.NativePath, newDirectoryName);
 
-            return await provider.CreateDirectoryAsync(combinedNativePath, cancellationToken);
+            try
+            {
+                return await provider.CreateDirectoryAsync(combinedNativePath, cancellationToken);
+            }
+            catch(Exception ex)
+            {
+                return FileOperationResult.Fail($"Create directory failed: {ex.Message}");
+            }
         }
 
         public async Task<bool> CanReadAsync(string path, CancellationToken cancellationToken)
@@ -125,7 +168,14 @@ namespace CryptoBook.Services
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
 
-            return await provider.CanReadAsync(desc.NativePath, cancellationToken);
+            try
+            {
+                return await provider.CanReadAsync(desc.NativePath, cancellationToken);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> CanWriteAsync(string path, CancellationToken cancellationToken)
@@ -133,7 +183,14 @@ namespace CryptoBook.Services
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
 
-            return await provider.CanWriteAsync(desc.NativePath, cancellationToken);
+            try
+            {
+                return await provider.CanWriteAsync(desc.NativePath, cancellationToken);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken)
@@ -141,7 +198,14 @@ namespace CryptoBook.Services
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
 
-            return await provider.OpenReadAsync(desc.NativePath, cancellationToken);
+            try
+            {
+                return await provider.OpenReadAsync(desc.NativePath, cancellationToken);
+            }
+            catch(Exception ex)
+            {
+                throw new IOException($"OpenRead failed for path '{path}': {ex.Message}", ex);
+            }
         }
 
         public async Task<Stream> OpenWriteAsync(string path, bool overwrite, CancellationToken cancellationToken)
@@ -149,7 +213,14 @@ namespace CryptoBook.Services
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
 
-            return await provider.OpenWriteAsync(desc.NativePath, overwrite, cancellationToken);
+            try
+            {
+                return await provider.OpenWriteAsync(desc.NativePath, overwrite, cancellationToken);
+            }
+            catch(Exception ex)
+            {
+                throw new IOException($"OpenWrite failed for path '{path}': {ex.Message}", ex);
+            }
         }
 
         /// <summary>
@@ -173,25 +244,53 @@ namespace CryptoBook.Services
         public Task<bool> IsHiddenAsync(string path, CancellationToken ct)
         {
             var desc = ParsePath(path);
-            return ResolveProvider(desc.Scheme).IsHiddenAsync(desc.NativePath, ct);
+            try
+            {
+                return ResolveProvider(desc.Scheme).IsHiddenAsync(desc.NativePath, ct);
+            }
+            catch(Exception)
+            {
+                return Task.FromResult(false);
+            }
         }
 
         public Task<FileOperationResult> SetHiddenAsync(string path, bool hidden, CancellationToken ct)
         {
             var desc = ParsePath(path);
-            return ResolveProvider(desc.Scheme).SetHiddenAsync(desc.NativePath, hidden, ct);
+            try
+            {
+                return ResolveProvider(desc.Scheme).SetHiddenAsync(desc.NativePath, hidden, ct);
+            }
+            catch(Exception ex)
+            {
+                return Task.FromResult(FileOperationResult.Fail($"SetHidden failed: {ex.Message}"));
+            }
         }
 
         public Task<bool> IsReadOnlyAsync(string path, CancellationToken cancellationToken)
         {
             var desc = ParsePath(path);
-            return ResolveProvider(desc.Scheme).IsReadOnlyAsync(desc.NativePath, cancellationToken);
+            try
+            {
+                return ResolveProvider(desc.Scheme).IsReadOnlyAsync(desc.NativePath, cancellationToken);
+            }
+            catch(Exception)
+            {
+                return Task.FromResult(false);
+            }
         }
 
         public Task<FileOperationResult> SetReadOnlyAsync(string path, bool isReadOnly, CancellationToken ct)
         {
             var desc = ParsePath(path);
-            return ResolveProvider(desc.Scheme).SetReadOnlyAsync(desc.NativePath, isReadOnly, ct);
+            try
+            {
+                return ResolveProvider(desc.Scheme).SetReadOnlyAsync(desc.NativePath, isReadOnly, ct);
+            }
+            catch(Exception ex)
+            {
+                return Task.FromResult(FileOperationResult.Fail($"SetReadOnly failed: {ex.Message}"));
+            }
         }
 
 

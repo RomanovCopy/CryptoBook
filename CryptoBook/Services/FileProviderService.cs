@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CryptoBook.Services
@@ -34,38 +35,57 @@ namespace CryptoBook.Services
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
         public async Task<List<ISystemItem>> GetContainerContentAsync(string path, CancellationToken cancellationToken, bool includeHidden = false)
         {
-            return await Task.Run(() =>
+            try
             {
-                lock(_lock)
+                return await Task.Run(() =>
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var directories = new List<ISystemItem>();
-                    var dirInfo = new DirectoryInfo(path);
-                    if(!dirInfo.Exists)
-                        throw new DirectoryNotFoundException(path);
-                    foreach(var d in dirInfo.EnumerateDirectories())
+                    lock(_lock)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        if(includeHidden || !IsFileSystemInfoHidden(d))
+                        var directories = new List<ISystemItem>();
+                        var dirInfo = new DirectoryInfo(path);
+                        if(!dirInfo.Exists)
+                            throw new DirectoryNotFoundException(path);
+                        foreach(var d in dirInfo.EnumerateDirectories())
                         {
-                            if(CanAccess(d.FullName))
-                                directories.Add(ToFileItem(d));
+                            cancellationToken.ThrowIfCancellationRequested();
+                            if(includeHidden || !IsFileSystemInfoHidden(d))
+                            {
+                                if(CanAccess(d.FullName))
+                                {
+                                    try
+                                    { directories.Add(ToFileItem(d)); } catch { /* skip items we cannot convert */ }
+                                }
+                            }
                         }
-                    }
 
-                    var files = new List<ISystemItem>();
-                    foreach(var f in dirInfo.EnumerateFiles())
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        if(includeHidden || !IsFileSystemInfoHidden(f))
+                        var files = new List<ISystemItem>();
+                        foreach(var f in dirInfo.EnumerateFiles())
                         {
-                            files.Add(ToFileItem(f));
+                            cancellationToken.ThrowIfCancellationRequested();
+                            if(includeHidden || !IsFileSystemInfoHidden(f))
+                            {
+                                try
+                                { files.Add(ToFileItem(f)); } catch { /* skip files we cannot convert */ }
+                            }
                         }
+                        var allItems = directories.Concat(files).ToList();
+                        return allItems;
                     }
-                    var allItems = directories.Concat(files).ToList();
-                    return allItems;
-                }
-            }, cancellationToken);
+                }, cancellationToken);
+            } catch(OperationCanceledException)
+            {
+                throw;
+            } catch(DirectoryNotFoundException)
+            {
+                throw;
+            } catch(UnauthorizedAccessException ex)
+            {
+                throw new IOException($"Access denied while enumerating '{path}'", ex);
+            } catch(Exception ex)
+            {
+                throw new IOException($"Failed to enumerate directory '{path}': {ex.Message}", ex);
+            }
         }
 
         /// <summary>
@@ -81,16 +101,22 @@ namespace CryptoBook.Services
             // Здесь можно сразу вернуть Task.FromResult, но мы аккуратны с отменой:
             cancellationToken.ThrowIfCancellationRequested();
 
-            // FileStream в async-режиме (useAsync: true) позволяет читать неблокирующе.
-            Stream stream = new FileStream(
-                path,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.Read,
-                bufferSize: 4096,
-                useAsync: true);
+            try
+            {
+                // FileStream в async-режиме (useAsync: true) позволяет читать неблокирующе.
+                Stream stream = new FileStream(
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    bufferSize: 4096,
+                    useAsync: true);
 
-            return Task.FromResult(stream);
+                return Task.FromResult(stream);
+            } catch(OperationCanceledException) { throw; } catch(Exception ex)
+            {
+                throw new IOException($"Cannot open file for reading: {path}", ex);
+            }
         }
 
         /// <summary>
@@ -110,15 +136,21 @@ namespace CryptoBook.Services
                 throw new IOException($"File already exists and overwrite=false: {path}");
             }
 
-            Stream stream = new FileStream(
-                path,
-                overwrite ? FileMode.Create : FileMode.CreateNew,
-                FileAccess.Write,
-                FileShare.None,
-                bufferSize: 4096,
-                useAsync: true);
+            try
+            {
+                Stream stream = new FileStream(
+                    path,
+                    overwrite ? FileMode.Create : FileMode.CreateNew,
+                    FileAccess.Write,
+                    FileShare.None,
+                    bufferSize: 4096,
+                    useAsync: true);
 
-            return Task.FromResult(stream);
+                return Task.FromResult(stream);
+            } catch(OperationCanceledException) { throw; } catch(Exception ex)
+            {
+                throw new IOException($"Cannot open file for writing: {path}", ex);
+            }
         }
 
         /// <summary>
@@ -185,7 +217,6 @@ namespace CryptoBook.Services
 
                 if(Directory.Exists(sourcePath))
                 {
-                    // Directory.Move поддерживает перемещение и переименование.
                     await Task.Run(() =>
                     {
                         cancellationToken.ThrowIfCancellationRequested();
@@ -210,6 +241,9 @@ namespace CryptoBook.Services
             } catch(OperationCanceledException)
             {
                 return FileOperationResult.Fail("Operation canceled.");
+            } catch(System.IO.IOException ex) when(ex.Message.Contains("already exists"))
+            {
+                return FileOperationResult.Fail("Destination already exists.");
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -580,6 +614,9 @@ namespace CryptoBook.Services
                 Directory.EnumerateFileSystemEntries(path).FirstOrDefault();
                 return true;
             } catch(UnauthorizedAccessException)
+            {
+                return false;
+            } catch(Exception)
             {
                 return false;
             }
