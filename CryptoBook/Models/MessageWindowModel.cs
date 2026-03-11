@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CryptoBook.Models
 {
@@ -15,6 +16,18 @@ namespace CryptoBook.Models
 
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         Guid _windowId;
+
+        public double WindowWidth { get => _windowWidth; set => SetProperty(ref _windowWidth, value); }
+        double _windowWidth;
+        public double WindowHeight { get => _windowHeight; set => SetProperty(ref _windowHeight, value); }
+        double _windowHeight;
+        public double WindowTop { get => _windowTop; set => SetProperty(ref _windowTop, value); }
+        double _windowTop;
+        public double WindowLeft { get => _windowLeft; set => SetProperty(ref _windowLeft, value); }
+        double _windowLeft;
+        public WindowState WindowState { get => _windowState; set => SetProperty(ref _windowState, value); }
+        WindowState _windowState;
+
 
         public string Title => throw new NotImplementedException();
 

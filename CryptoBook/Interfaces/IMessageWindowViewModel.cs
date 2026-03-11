@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMessageWindowViewModel:IViewModel,IWindowWithId
+    public interface IMessageWindowViewModel:IViewModel,IWindowWithId,IWindowOptions
     {
         string? Title { get; }
         string? Message {  get; }

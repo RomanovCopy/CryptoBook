@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -14,6 +15,13 @@ namespace CryptoBook.ViewModels
     {
         private readonly IMessageWindowModel _model;
         public Guid WindowId => _model.WindowId;
+
+        public double WindowWidth { get => _model.WindowWidth; set => _model.WindowWidth = value; }
+        public double WindowHeight { get => _model.WindowHeight; set => _model.WindowHeight = value; }
+        public double WindowTop { get => _model.WindowTop; set => _model.WindowTop = value; }
+        public double WindowLeft { get => _model.WindowLeft; set => _model.WindowLeft=value; }
+        public WindowState WindowState { get => _model.WindowState; set => _model.WindowState=value; }
+
         public string? Title => _model.Title;
         public string? Message => _model.Message;
 
@@ -36,6 +44,7 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => _closing??=new RelayCommand(_model.Execute_Closing, _model.CanExecute_Closing);
         RelayCommand _closing;
         public ICommand Closed => _closed??=new RelayCommand(_model.Execute_Closed, _model.CanExecute_Closed);
-        RelayCommand _closed;                                                                
+        RelayCommand _closed;
+
     }
 }
