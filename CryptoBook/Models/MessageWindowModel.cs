@@ -10,12 +10,16 @@ using System.Windows;
 
 namespace CryptoBook.Models
 {
-    public class MessageWindowModel:ViewModelBase,IMessageWindowModel
+    public class MessageWindowModel:ViewModelBase,IMessageWindowModel 
     {
         private readonly IMessageService _messageService;
-
+        private readonly IWindowContext _windowContext;
+        public bool Result { get=>_result; private set => SetProperty(ref _result, value); }
+        bool _result;
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         Guid _windowId;
+        public bool IsCanceled { get => _isCanceled; private set => SetProperty(ref _isCanceled, value); }
+        bool _isCanceled;
 
         public double WindowWidth { get => _windowWidth; set => SetProperty(ref _windowWidth, value); }
         double _windowWidth;
@@ -29,29 +33,57 @@ namespace CryptoBook.Models
         WindowState _windowState;
 
 
-        public string Title => throw new NotImplementedException();
+        public string Title { get=> _title; private set => SetProperty(ref _title, value); }
+        string _title;
+        public string Message { get => _message; private set => SetProperty(ref _message, value); }
+        string _message;
 
-        public string Message => throw new NotImplementedException();
 
-
+        public MessageWindowModel(IMessageService messageService, IWindowContext windowContext)
+        {
+            _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            _windowContext = windowContext ?? throw new ArgumentNullException(nameof(windowContext));
+            WindowId= Guid.NewGuid();
+            WindowWidth= 400;
+            WindowHeight= 200;
+            WindowLeft=100;
+            WindowTop=100;
+            if(windowContext is IWindowContext context)
+            {
+                Title = context.Get<string>("Title");
+                Message = context.Get<string>("Message");
+                IsCanceled = context.Get<bool>("IsCanceled");
+            }
+            Result = false;
+        }
 
 
         public bool CanExecute_OkCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
-
         public void Execute_OkCommand(object? obj)
         {
-            throw new NotImplementedException();
+            Result = true;  
+            _messageService.CloseDialog(WindowId);
         }
 
         public bool CanExecute_CancelCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
+        }
+        public void Execute_CancelCommand(object? obj)
+        {
+            Result = false;
+            _messageService.CloseDialog(WindowId);
         }
 
-        public void Execute_CancelCommand(object? obj)
+
+        public void Execute_Loaded(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+        public bool CanExecute_Loaded(object? obj)
         {
             throw new NotImplementedException();
         }
@@ -60,17 +92,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
-        public void Execute_Loaded(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CanExecute_Loaded(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Execute_Close(object? obj)
         {
             throw new NotImplementedException();
@@ -78,19 +99,16 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
-
         public void Execute_Closing(object? obj)
         {
-            throw new NotImplementedException();
         }
 
         public bool CanExecute_Closed(object? obj)
         {
             throw new NotImplementedException();
         }
-
         public void Execute_Closed(object? obj)
         {
             throw new NotImplementedException();

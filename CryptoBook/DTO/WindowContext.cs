@@ -14,9 +14,7 @@ namespace CryptoBook.DTO
         public WindowContext(IReadOnlyDictionary<string, object?> items) => _items = items;
         public IReadOnlyDictionary<string, object?> Items => _items;
 
-        public T Get<T>(string key)
-            => _items.TryGetValue(key, out var v) && v is T t
-                ? t
+        public T Get<T>(string key) => _items.TryGetValue(key, out var v) && v is T t ? t
                 : throw new KeyNotFoundException($"Key '{key}' not found or has different type.");
 
         public bool TryGet<T>(string key, out T value)

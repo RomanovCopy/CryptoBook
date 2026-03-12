@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMessageService
+    public interface IMessageService:IService
     {
-        void ShowMessage( string title, string message);
-        bool ShowConfirmation( string title, string message);
+        Task<Guid> ShowMessage(string title, string message, bool isCanceled=false);
+        void CloseDialog(Guid id);
+        bool ShowConfirmation( Guid id);
     }
 }

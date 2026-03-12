@@ -15,6 +15,8 @@ namespace CryptoBook.ViewModels
     {
         private readonly IMessageWindowModel _model;
         public Guid WindowId => _model.WindowId;
+        public bool Result => _model.Result;
+        public bool IsCanceled => _model.IsCanceled;
 
         public double WindowWidth { get => _model.WindowWidth; set => _model.WindowWidth = value; }
         public double WindowHeight { get => _model.WindowHeight; set => _model.WindowHeight = value; }
@@ -34,7 +36,7 @@ namespace CryptoBook.ViewModels
 
         public ICommand OkCommand => _okCommand??=new RelayCommand(_model.Execute_OkCommand,_model.CanExecute_OkCommand);
         RelayCommand _okCommand;
-        public ICommand CancelCommand => _cancelCommand??=new RelayCommand(_model.Execute_OkCommand, _model.CanExecute_CancelCommand);
+        public ICommand CancelCommand => _cancelCommand??=new RelayCommand(_model.Execute_CancelCommand, _model.CanExecute_CancelCommand);
         RelayCommand _cancelCommand;
 
         public ICommand Loaded => _loaded??=new RelayCommand(_model.Execute_Loaded, _model.CanExecute_Loaded);

@@ -1,6 +1,7 @@
 ﻿using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 using CryptoBook.Views;
 
 using System;
@@ -24,6 +25,7 @@ namespace CryptoBook.Models
         private readonly IDriveManagerService _driveManagerService;
         private readonly IFileClipboardService _fileClipboardService;
         private readonly IFolderPickerService _folderPickerService;
+        private readonly IMessageService _messageService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -59,12 +61,13 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
             _driveManagerService = driveManagerService ?? throw new ArgumentNullException(nameof(driveManagerService));
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+            _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
             _fileClipboardService = fileClipboardService ?? throw new ArgumentNullException(nameof(fileClipboardService));
             _folderPickerService = folderPickerService ?? throw new ArgumentNullException(nameof(folderPickerService));
             GetDrives = _driveManagerService.WritableDrives;
@@ -268,14 +271,16 @@ namespace CryptoBook.Models
             {
             }
         }
-        public void Execute_CancelRenameCommand(object? obj)
+        public async void Execute_CancelRenameCommand(object? obj)
         {
-            if(obj is ISystemItem systemItem)
+            var id = await _messageService.ShowMessage("Отмена операции", $"Переименование элемента отменено."+'\n'+"Вы уверены?", true);
+            if(obj is ISystemItem systemItem && _messageService.ShowConfirmation(id))
             {
                 systemItem.Name = _lastItemName;
                 systemItem.IsEditing = false;
             }
         }
+
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
             _cancellationTokenSource = new CancellationTokenSource();

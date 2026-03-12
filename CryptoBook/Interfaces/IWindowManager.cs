@@ -10,7 +10,9 @@ namespace CryptoBook.Interfaces
     {
 
         Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window;
+        bool GetResult(Guid windowId);
         void ShowWindow(Guid windowId);
+        void ShowWindowDialog(Guid windowId);
         void CloseWindow(Guid windowId);
         bool IsWindowOpen(Guid windowId);
 

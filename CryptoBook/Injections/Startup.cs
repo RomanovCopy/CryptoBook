@@ -50,6 +50,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TitleBarModel>().As<ITitleBarModel>().InstancePerLifetimeScope();
             builder.RegisterType<MyFrameModel>().As<IMyFrameModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindowModel>().As<IMainWindowModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MessageWindowModel>().As<IMessageWindowModel>().InstancePerLifetimeScope();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -73,6 +74,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<SystemItemName_Editor_ViewModel>().As<ISystemItemName_Editor_ViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -105,7 +107,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<NewFileDialog>().InstancePerDependency();
             builder.RegisterType<FileExplorer>().InstancePerDependency();
             builder.RegisterType<SystemItemName_Editor>().InstancePerDependency();
-
+            builder.RegisterType<MessageWindow>().InstancePerDependency();
+                                                                                                         
             //FileTemplate
             builder.RegisterType<TextFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<MarkdownFileTemplate>().As<IFileTemplate>().SingleInstance();
@@ -153,6 +156,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
             builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().SingleInstance();
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
+            builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();

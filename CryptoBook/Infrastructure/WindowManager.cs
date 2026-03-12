@@ -14,6 +14,7 @@ namespace CryptoBook.Infrastructure
     {
         private readonly ILifetimeScope _root;
         private readonly Dictionary<Guid, WindowHost> _windowHosts;
+        private readonly Dictionary<Guid, bool> _results;
 
         static Window? GetOwner()
         {
@@ -29,10 +30,22 @@ namespace CryptoBook.Infrastructure
             return null;
         }
 
+        public bool GetResult(Guid guid)
+        {
+            if(_results.ContainsKey(guid))
+            {
+                var res = _results[guid];
+                _results.Remove(guid);
+                return res;
+            }
+            return false;
+        }
+
         public WindowManager(ILifetimeScope scope)
         {
             _root = scope;
             _windowHosts = [];
+            _results = [];
         }
 
         public Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window
@@ -64,6 +77,10 @@ namespace CryptoBook.Infrastructure
 
             window.Closed += (_, __) =>
             {
+                if(window.DataContext is IDialogResult<bool> dialogResult)
+                {
+                    _results[host.Key]=dialogResult.Result;
+                }
                 UnregisterWindow(host);
                 scope.Dispose();
                 window = null;
@@ -80,6 +97,17 @@ namespace CryptoBook.Infrastructure
                 return;
             if(winHost is WindowHost host)
                 host.Window.Show();
+        }
+
+        public void ShowWindowDialog(Guid windowId)
+        {
+            var winHost = FindHostWindow(windowId);
+            if(winHost is null)
+                return;
+            if(winHost is WindowHost host)
+            {
+                host.Window.ShowDialog();
+            }
         }
 
         public void CloseWindow(Guid windowId)
