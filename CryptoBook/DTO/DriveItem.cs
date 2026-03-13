@@ -29,9 +29,8 @@ namespace CryptoBook.DTO
         public long TotalSize { get => _totalSize; set => SetProperty(ref _totalSize, value); }
         long _totalSize;
 
-        public DriveItem(IFileManagerService fileManagerService, IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService,ISystemItemCreateService systemItemCreateService) : base(fileManagerService, dispatcherService,directoryMonitoringService,systemItemCreateService)
+        public DriveItem( IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService,ISystemItemCreateService systemItemCreateService) : base( dispatcherService,directoryMonitoringService,systemItemCreateService)
         {
-            this.fileManagerService = fileManagerService;
             this.dispatcherService = dispatcherService;
             this.directoryMonitoringService = directoryMonitoringService;
             this.systemItemCreateService = systemItemCreateService;

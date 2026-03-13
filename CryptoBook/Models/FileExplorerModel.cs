@@ -186,7 +186,6 @@ namespace CryptoBook.Models
                     foreach(var sourcePath in sourcePaths)
                     {
                         var fileName = System.IO.Path.GetFileName(sourcePath);
-                        //var destinationPath = System.IO.Path.Combine(CurrentPath, fileName);
                         await _fileClipboardService.PasteAsync(CurrentPath, null, CancellationToken.None);
                     }
                 });
@@ -250,6 +249,8 @@ namespace CryptoBook.Models
                 {
                     //запоминаем имя до переименования, чтобы при отмене вернуть его обратно
                     _lastItemName = systemItem.Name;
+                }
+                if(systemItem.Parent is IContainerSystemItem container){
                 }
             } else
             {

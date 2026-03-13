@@ -17,7 +17,6 @@ namespace CryptoBook.DTO
         private readonly IDispatcherService _dispatcherService;
         private readonly IDirectoryMonitoringService _directoryMonitoringService;
         private readonly ISystemItemCreateService _systemItemCreateService;
-        private readonly IFileManagerService _fileFileManagerService;
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -97,11 +96,10 @@ namespace CryptoBook.DTO
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
 
-        protected ContainerSystemItem(IFileManagerService fileManagerService, IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService, ISystemItemCreateService systemItemCreateService)
+        protected ContainerSystemItem( IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService, ISystemItemCreateService systemItemCreateService)
         {
             _children = new ObservableCollection<ISystemItem>();
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
-            _fileFileManagerService = fileManagerService;
             _dispatcherService = dispatcherService;
             FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
             _directoryMonitoringService = directoryMonitoringService;
