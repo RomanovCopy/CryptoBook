@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Comparers
 {
-    public sealed class SystemItemNmeComparer:IComparer<ISystemItem>
+    public sealed class SystemItemNameComparer:IComparer<ISystemItem>
     {
         private readonly int _dir;
 
-        public SystemItemNmeComparer(int dir)
+        public SystemItemNameComparer(int dir)
         {
             _dir = dir > 0 ? 1 : -1;
         }

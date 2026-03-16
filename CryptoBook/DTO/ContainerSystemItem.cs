@@ -1,4 +1,5 @@
-﻿using CryptoBook.Infrastructure;
+﻿using CryptoBook.Comparers;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
 using System;
@@ -153,7 +154,6 @@ namespace CryptoBook.DTO
                     removed = existing is not null && _children.Remove(item);
                 }
             });
-
             return existing is null ? FileOperationResult.Fail("Item not found in the directory") : removed ? FileOperationResult.Ok() : FileOperationResult.Fail("Failed to remove item from the directory");
         }
 
@@ -225,6 +225,7 @@ namespace CryptoBook.DTO
                 foreach(var item in plan.toAdd)
                     _children.Add(item);
             }));
+
         }
 
         private void StartMonitoring()
