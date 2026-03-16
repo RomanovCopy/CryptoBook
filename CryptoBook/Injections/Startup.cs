@@ -157,6 +157,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().SingleInstance();
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
+            builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
+
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();

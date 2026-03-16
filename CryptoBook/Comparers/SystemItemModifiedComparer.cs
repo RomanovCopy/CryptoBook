@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Comparers
 {
-    public sealed class SystemItemModifiedComparer : IComparer<SystemItem>
+    public sealed class SystemItemModifiedComparer : IComparer<ISystemItem>
     {
         private readonly int _dir;
 
@@ -18,7 +18,7 @@ namespace CryptoBook.Comparers
             _dir = dir >= 0 ? 1 : -1;
         }
 
-        int IComparer<SystemItem>.Compare(SystemItem? x, SystemItem? y)
+        public int Compare(ISystemItem? x, ISystemItem? y)
         {
             if (ReferenceEquals(x, y))
                 return 0;

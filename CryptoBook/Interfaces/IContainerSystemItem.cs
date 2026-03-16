@@ -19,6 +19,7 @@ namespace CryptoBook.Interfaces
         ReadOnlyObservableCollection<IContainerSystemItem> FilteredChildren { get; }
         Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
         Task< FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
+        Task< FileOperationResult> SortingAsync(SystemItemSortType sortType, int dir=0, CancellationToken ct = default);
         Task< FileOperationResult> ClearChildrenAsync();
         /// <summary>
         /// Синхронизирует коллекцию дочерних элементов текущего контейнера с указанной коллекцией <paramref name="source"/>.

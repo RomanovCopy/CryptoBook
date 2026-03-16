@@ -18,6 +18,7 @@ namespace CryptoBook.DTO
         private readonly IDispatcherService _dispatcherService;
         private readonly IDirectoryMonitoringService _directoryMonitoringService;
         private readonly ISystemItemCreateService _systemItemCreateService;
+        private readonly ISystemItemSortService _systemItemSortService;
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -97,7 +98,7 @@ namespace CryptoBook.DTO
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
 
-        protected ContainerSystemItem( IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService, ISystemItemCreateService systemItemCreateService)
+        protected ContainerSystemItem( IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService, ISystemItemCreateService systemItemCreateService, ISystemItemSortService systemItemSortService)
         {
             _children = new ObservableCollection<ISystemItem>();
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
@@ -105,6 +106,7 @@ namespace CryptoBook.DTO
             FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
             _directoryMonitoringService = directoryMonitoringService;
             _systemItemCreateService = systemItemCreateService;
+            _systemItemSortService = systemItemSortService;
         }
 
         public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items,
@@ -167,6 +169,21 @@ namespace CryptoBook.DTO
             if(_children.Count == 0)
                 return FileOperationResult.Ok();
             return FileOperationResult.Fail("Failed to clear children");
+        }
+
+        public async virtual Task<FileOperationResult> SortingAsync( SystemItemSortType sortType, int dir=0, CancellationToken ct = default)
+        {
+            if(_children == null)
+                return FileOperationResult.Fail("Items collection is null.");
+
+            ct.ThrowIfCancellationRequested();
+
+            await _dispatcherService.InvokeAsync(() =>
+            {
+                _systemItemSortService.Sort(_children, sortType, dir);
+            });
+
+            return FileOperationResult.Ok();
         }
 
         public async Task SyncCollectionsAsync(IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector,
