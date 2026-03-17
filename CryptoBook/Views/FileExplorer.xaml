@@ -140,8 +140,8 @@
             <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
-            <Button Content="Sort" 
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Button Content="Sort" Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding SortedCommand, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="View" 
                     Style="{StaticResource PrimaryButtonStyle}"/>

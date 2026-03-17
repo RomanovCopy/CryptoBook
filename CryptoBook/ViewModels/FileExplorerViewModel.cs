@@ -55,6 +55,9 @@ namespace CryptoBook.ViewModels
         public ICommand DeleteCommand => _deleteCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteCommand, _fileExplorerModel.CanExecute_DeleteCommand);
         RelayCommand _deleteCommand;
 
+        public ICommand SortedCommand => _sortedCommand ??= new RelayCommand(_fileExplorerModel.Execute_SortedCommand, _fileExplorerModel.CanExecute_SortedCommand);
+        RelayCommand _sortedCommand;
+
         public ICommand CreateFileCommand => _createFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateFileCommand, _fileExplorerModel.CanExecute_CreateFileCommand);
         RelayCommand _createFileCommand;
 

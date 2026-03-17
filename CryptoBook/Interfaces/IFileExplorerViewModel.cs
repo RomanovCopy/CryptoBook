@@ -23,6 +23,7 @@ namespace CryptoBook.Interfaces
         ICommand CopyCommand { get; }
         ICommand PasteCommand { get; }
         ICommand DeleteCommand { get; }
+        ICommand SortedCommand{ get; }
         ICommand CreateFileCommand { get; }
         ICommand CreateDirectoryCommand { get; }
         ICommand RenameClickCommand {  get; }

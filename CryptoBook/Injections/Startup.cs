@@ -46,7 +46,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().InstancePerLifetimeScope();
             builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().InstancePerLifetimeScope();
             builder.RegisterType<FileExplorerModel>().As<IFileExplorerModel>().InstancePerLifetimeScope();
-            builder.RegisterType<SystemItemName_Editor_Model>().As<ISystemItemName_Editor_Model>().InstancePerLifetimeScope();
             builder.RegisterType<TitleBarModel>().As<ITitleBarModel>().InstancePerLifetimeScope();
             builder.RegisterType<MyFrameModel>().As<IMyFrameModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindowModel>().As<IMainWindowModel>().InstancePerLifetimeScope();
@@ -73,7 +72,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<TitleBarTimeWebAIControlViewModel>().As<ITitleBarTimeWebAIControlViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
-            builder.RegisterType<SystemItemName_Editor_ViewModel>().As<ISystemItemName_Editor_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope();
 
             //Converters
@@ -106,7 +104,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
             builder.RegisterType<NewFileDialog>().InstancePerDependency();
             builder.RegisterType<FileExplorer>().InstancePerDependency();
-            builder.RegisterType<SystemItemName_Editor>().InstancePerDependency();
             builder.RegisterType<MessageWindow>().InstancePerDependency();
                                                                                                          
             //FileTemplate

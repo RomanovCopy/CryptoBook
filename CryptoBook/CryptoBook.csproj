@@ -40,11 +40,14 @@
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
     <Compile Remove="Models\BookmarksBarModel.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
+    <Compile Remove="Models\SystemItemName_Editor_Model.cs" />
     <Compile Remove="Models\TitleBarRB_Model.cs" />
     <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
+    <Compile Remove="ViewModels\SystemItemName_Editor_ViewModel.cs" />
     <Compile Remove="ViewModels\TitleBarRB_ViewModel.cs" />
+    <Compile Remove="Views\SystemItemName_Editor.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -90,6 +93,7 @@
 
   <ItemGroup>
     <Page Remove="MyControls\TitleBarRB.xaml" />
+    <Page Remove="Views\SystemItemName_Editor.xaml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -93,6 +93,12 @@ namespace CryptoBook.Models
         {
             return obj is ISystemItem;
         }
+        public bool CanExecute_SortedCommand(object? obj)
+        {
+            return SelectedItem is ISystemItem systemItem &&
+            systemItem is IContainerSystemItem containerSystemItem &&
+            containerSystemItem.Children.Count > 1;
+        }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
             return true;
@@ -217,6 +223,18 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for DeleteCommand", nameof(obj));
             }
         }
+
+        public async void Execute_SortedCommand(object? obj)
+        {
+            if(SelectedItem is IContainerSystemItem container)
+            {
+                var result = await container.SortingAsync(SystemItemSortType.Name);
+                if(result.Success)
+                    return;
+                _ = await _messageService.ShowMessage("Sorting error", result.ErrorMessage);
+            }
+        }
+
         public void Execute_CreateFileCommand(object? obj)
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
@@ -236,9 +254,9 @@ namespace CryptoBook.Models
             if(obj is ISystemItem systemItem)
             {
                 systemItem.IsEditing = !systemItem.IsEditing;
-                if(!systemItem.IsEditing )
-                {   
-                    if(string.IsNullOrWhiteSpace(systemItem.Name)||systemItem.FullPath.Equals(System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name), StringComparison.OrdinalIgnoreCase))
+                if(!systemItem.IsEditing)
+                {
+                    if(string.IsNullOrWhiteSpace(systemItem.Name) || systemItem.FullPath.Equals(System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name), StringComparison.OrdinalIgnoreCase))
                     {
                         systemItem.Name = _lastItemName;
                         return;
@@ -250,7 +268,8 @@ namespace CryptoBook.Models
                     //запоминаем имя до переименования, чтобы при отмене вернуть его обратно
                     _lastItemName = systemItem.Name;
                 }
-                if(systemItem.Parent is IContainerSystemItem container){
+                if(systemItem.Parent is IContainerSystemItem container)
+                {
                 }
             } else
             {
@@ -274,7 +293,7 @@ namespace CryptoBook.Models
         }
         public async void Execute_CancelRenameCommand(object? obj)
         {
-            var id = await _messageService.ShowMessage("Отмена операции", $"Переименование элемента отменено."+'\n'+"Вы уверены?", true);
+            var id = await _messageService.ShowMessage("Отмена операции", $"Переименование элемента отменено." + '\n' + "Вы уверены?", true);
             if(obj is ISystemItem systemItem && _messageService.ShowConfirmation(id))
             {
                 systemItem.Name = _lastItemName;
@@ -417,7 +436,6 @@ namespace CryptoBook.Models
                 }, token);
             }
         }
-
 
     }
 }

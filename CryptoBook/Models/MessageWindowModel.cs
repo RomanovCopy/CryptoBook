@@ -44,10 +44,10 @@ namespace CryptoBook.Models
             _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
             _windowContext = windowContext ?? throw new ArgumentNullException(nameof(windowContext));
             WindowId= Guid.NewGuid();
-            WindowWidth= 400;
-            WindowHeight= 200;
-            WindowLeft=100;
-            WindowTop=100;
+            WindowWidth = Properties.Settings.Default.MessageWindowWidth;
+            WindowHeight= Properties.Settings.Default.MessageWindowHeight;
+            WindowLeft=Properties.Settings.Default.MessageWindowLeft;
+            WindowTop=Properties.Settings.Default.MessageWindowTop;
             if(windowContext is IWindowContext context)
             {
                 Title = context.Get<string>("Title");
@@ -103,6 +103,12 @@ namespace CryptoBook.Models
         }
         public void Execute_Closing(object? obj)
         {
+            var set=Properties.Settings.Default;
+            set.MessageWindowWidth=WindowWidth;
+            set.MessageWindowHeight=WindowHeight;
+            set.MessageWindowLeft=WindowLeft;
+            set.MessageWindowTop=WindowTop;
+            set.Save();
         }
 
         public bool CanExecute_Closed(object? obj)

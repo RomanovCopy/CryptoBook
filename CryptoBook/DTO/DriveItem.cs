@@ -17,6 +17,7 @@ namespace CryptoBook.DTO
         private readonly IDirectoryMonitoringService directoryMonitoringService;
         private readonly ISystemItemCreateService systemItemCreateService;
         private readonly IFileManagerService fileManagerService;
+        private readonly ISystemItemSortService sortService;
 
         public string VolumeLabel { get => _volumeLabel; set => SetProperty(ref _volumeLabel, value); }
         string _volumeLabel;
@@ -29,11 +30,12 @@ namespace CryptoBook.DTO
         public long TotalSize { get => _totalSize; set => SetProperty(ref _totalSize, value); }
         long _totalSize;
 
-        public DriveItem( IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService,ISystemItemCreateService systemItemCreateService) : base( dispatcherService,directoryMonitoringService,systemItemCreateService)
+        public DriveItem( IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService,ISystemItemCreateService systemItemCreateService, ISystemItemSortService systemItemSortService) : base( dispatcherService,directoryMonitoringService,systemItemCreateService,systemItemSortService)
         {
             this.dispatcherService = dispatcherService;
             this.directoryMonitoringService = directoryMonitoringService;
             this.systemItemCreateService = systemItemCreateService;
+            sortService=systemItemSortService;
         }
 
     }

@@ -14,7 +14,7 @@ namespace CryptoBook.Behaviors
 
     public sealed class GridViewColumnRatioBehavior: Behavior<System.Windows.Controls.ListView>
     {
-        public static readonly DependencyProperty ViewIdProperty = DependencyProperty.Register(nameof(ViewId), typeof(string), 
+        public static readonly DependencyProperty ViewIdProperty = DependencyProperty.Register(nameof(ViewId), typeof(string),
         typeof(GridViewColumnRatioBehavior), new PropertyMetadata("default"));
 
         public string ViewId
@@ -23,7 +23,7 @@ namespace CryptoBook.Behaviors
             set => SetValue(ViewIdProperty, value);
         }
 
-        public static readonly DependencyProperty StoreProperty = DependencyProperty.Register(nameof(Store), typeof(IColumnLayoutStore), 
+        public static readonly DependencyProperty StoreProperty = DependencyProperty.Register(nameof(Store), typeof(IColumnLayoutStore),
         typeof(GridViewColumnRatioBehavior), new PropertyMetadata(null));
 
         public IColumnLayoutStore? Store
@@ -32,7 +32,7 @@ namespace CryptoBook.Behaviors
             set => SetValue(StoreProperty, value);
         }
 
-        public static readonly DependencyProperty MinColumnWidthProperty = DependencyProperty.Register(nameof(MinColumnWidth), 
+        public static readonly DependencyProperty MinColumnWidthProperty = DependencyProperty.Register(nameof(MinColumnWidth),
         typeof(double), typeof(GridViewColumnRatioBehavior), new PropertyMetadata(40d));
 
         public double MinColumnWidth
@@ -41,7 +41,7 @@ namespace CryptoBook.Behaviors
             set => SetValue(MinColumnWidthProperty, value);
         }
 
-        public static readonly DependencyProperty ReflowOnSizeChangedProperty = DependencyProperty.Register(nameof(ReflowOnSizeChanged), 
+        public static readonly DependencyProperty ReflowOnSizeChangedProperty = DependencyProperty.Register(nameof(ReflowOnSizeChanged),
         typeof(bool), typeof(GridViewColumnRatioBehavior), new PropertyMetadata(true));
 
         public bool ReflowOnSizeChanged
@@ -97,7 +97,7 @@ namespace CryptoBook.Behaviors
             AssociatedObject.Unloaded += OnUnloaded;
 
             // drag-resize заголовков колонок
-            AssociatedObject.AddHandler(FrameworkElement.SizeChangedEvent, new SizeChangedEventHandler(OnAnySizeChanged), 
+            AssociatedObject.AddHandler(FrameworkElement.SizeChangedEvent, new SizeChangedEventHandler(OnAnySizeChanged),
             handledEventsToo: true);
 
             //по окончании изменения колонки
@@ -109,6 +109,25 @@ namespace CryptoBook.Behaviors
 
             if(ReflowOnSizeChanged)
                 AssociatedObject.SizeChanged += OnListViewSizeChanged;
+
+            AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnHeaderClick));
+        }
+
+        private void OnHeaderClick(object sender, RoutedEventArgs e)
+        {
+            if(e.OriginalSource is GridViewColumnHeader header && header.Column is not null)
+            {
+                if(AssociatedObject.DataContext is IFileExplorerViewModel fileExplorerViewModel)
+                {
+                    if(fileExplorerViewModel.SortedCommand.CanExecute(header.Column.Header))
+                    {
+                        fileExplorerViewModel.SortedCommand.Execute(header.Column.Header);
+                    }
+                }
+            } else
+            {
+                return;
+            }
         }
 
         protected override void OnDetaching()
@@ -132,6 +151,8 @@ namespace CryptoBook.Behaviors
 
             if(ReflowOnSizeChanged)
                 AssociatedObject.SizeChanged -= OnListViewSizeChanged;
+
+            AssociatedObject.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnHeaderClick));
 
             base.OnDetaching();
         }
