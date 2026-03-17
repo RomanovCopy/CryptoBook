@@ -95,9 +95,8 @@ namespace CryptoBook.Models
         }
         public bool CanExecute_SortedCommand(object? obj)
         {
-            return SelectedItem is ISystemItem systemItem &&
-            systemItem is IContainerSystemItem containerSystemItem &&
-            containerSystemItem.Children.Count > 1;
+            return obj is string name && !string.IsNullOrWhiteSpace(name) &&
+            SelectedItem is IContainerSystemItem item && item.Children.Count > 1;
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
@@ -226,12 +225,19 @@ namespace CryptoBook.Models
 
         public async void Execute_SortedCommand(object? obj)
         {
-            if(SelectedItem is IContainerSystemItem container)
+            if(obj is string name && !string.IsNullOrWhiteSpace(name) && SelectedItem is IContainerSystemItem container)
             {
-                var result = await container.SortingAsync(SystemItemSortType.Name);
-                if(result.Success)
-                    return;
-                _ = await _messageService.ShowMessage("Sorting error", result.ErrorMessage);
+                if(Enum.TryParse<SystemItemSortType>(name, ignoreCase: true, out SystemItemSortType result))
+                {
+                    var fileOperationResult = await container.SortingAsync(result);
+                    if(fileOperationResult.Success)
+                        return;
+                    _ = await _messageService.ShowMessage("Sorting error", fileOperationResult.ErrorMessage);
+                } else
+                {
+                    Console.WriteLine("Не удалось распознать");
+                    _ = await _messageService.ShowMessage("Sorting error", "Could not recognize column to sort");
+                }
             }
         }
 

@@ -27,7 +27,7 @@ namespace CryptoBook.Services
                 SystemItemSortType.Size =>
                     new SystemItemSizeComparer(dir),
 
-                SystemItemSortType.ModifiedDate =>
+                SystemItemSortType.Date =>
                     new SystemItemModifiedComparer(dir),
 
                 _ => throw new ArgumentOutOfRangeException(nameof(sortType))

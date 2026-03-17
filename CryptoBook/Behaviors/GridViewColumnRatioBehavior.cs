@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -113,21 +114,34 @@ namespace CryptoBook.Behaviors
             AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnHeaderClick));
         }
 
+
+        public static readonly DependencyProperty CommandProperty =
+        DependencyProperty.Register(
+            nameof(Command),
+            typeof(ICommand),
+            typeof(GridViewColumnRatioBehavior));
+
+        public ICommand? Command
+        {
+            get => (ICommand?)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
+        }
+
         private void OnHeaderClick(object sender, RoutedEventArgs e)
         {
             if(e.OriginalSource is GridViewColumnHeader header && header.Column is not null)
             {
                 if(AssociatedObject.DataContext is IFileExplorerViewModel fileExplorerViewModel)
                 {
-                    if(fileExplorerViewModel.SortedCommand.CanExecute(header.Column.Header))
+                    string name = header.Tag as string ?? string.Empty;
+                    if(fileExplorerViewModel.SortedCommand.CanExecute(name))
                     {
-                        fileExplorerViewModel.SortedCommand.Execute(header.Column.Header);
+                        if(Command != null && Command.CanExecute(name))
+                            Command.Execute(name);
                     }
                 }
             } else
-            {
-                return;
-            }
+            { return; }
         }
 
         protected override void OnDetaching()
