@@ -32,21 +32,9 @@ namespace CryptoBook.Comparers
             if (d != 0)
                 return d;
 
-            // если оба каталога — сортируем по имени
-            if (x is IContainerSystemItem xc && y is IContainerSystemItem yc)
-            {
-                int r = string.Compare(
-                    xc.Name,
-                    yc.Name,
-                    StringComparison.OrdinalIgnoreCase
-                );
-                return r * _dir;
-            }
-
-            // оба файла — сортируем по дате изменения
             int result = x.LastWriteTimeUtc.CompareTo(y.LastWriteTimeUtc);
-
-            if (result == 0)
+            // если даты совпали — сортируем по имени
+            if(result == 0)
             {
                 result = string.Compare(
                     x.Name,
