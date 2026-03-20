@@ -1,4 +1,5 @@
-﻿using CryptoBook.Interfaces;
+﻿using CryptoBook.DTO;
+using CryptoBook.Interfaces;
 
 using Microsoft.Xaml.Behaviors;
 
@@ -114,34 +115,21 @@ namespace CryptoBook.Behaviors
             AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnHeaderClick));
         }
 
-
-        public static readonly DependencyProperty CommandProperty =
-        DependencyProperty.Register(
-            nameof(Command),
-            typeof(ICommand),
-            typeof(GridViewColumnRatioBehavior));
-
-        public ICommand? Command
-        {
-            get => (ICommand?)GetValue(CommandProperty);
-            set => SetValue(CommandProperty, value);
-        }
-
+        /// <summary>
+        /// клик по заголовку колонки — прокидываем в Command имя колонки (из Tag) для сортировки
+        /// </summary>
         private void OnHeaderClick(object sender, RoutedEventArgs e)
         {
-            if(e.OriginalSource is GridViewColumnHeader header && header.Column is not null)
+            if(e.OriginalSource is GridViewColumnHeader header)
             {
-                if(AssociatedObject.DataContext is IFileExplorerViewModel fileExplorerViewModel)
+                if(AssociatedObject.DataContext is ISortedCommand sorted && header.Tag is string name)
                 {
-                    string name = header.Tag as string ?? string.Empty;
-                    if(fileExplorerViewModel.SortedCommand.CanExecute(name))
+                    if(sorted.SortedCommand.CanExecute(name))
                     {
-                        if(Command != null && Command.CanExecute(name))
-                            Command.Execute(name);
+                        sorted.SortedCommand.Execute(name);
                     }
                 }
-            } else
-            { return; }
+            }
         }
 
         protected override void OnDetaching()

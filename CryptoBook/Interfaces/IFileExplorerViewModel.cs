@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFileExplorerViewModel: IViewModel, IWindowOptions, IWindowWithId
+    public interface IFileExplorerViewModel: IViewModel, IWindowOptions, IWindowWithId , ISortedCommand
     {
         double LeftColumnPercent { get; set; }
         double RightColumnPercent { get; set; }
@@ -23,7 +23,6 @@ namespace CryptoBook.Interfaces
         ICommand CopyCommand { get; }
         ICommand PasteCommand { get; }
         ICommand DeleteCommand { get; }
-        ICommand SortedCommand{ get; }
         ICommand CreateFileCommand { get; }
         ICommand CreateDirectoryCommand { get; }
         ICommand RenameClickCommand {  get; }

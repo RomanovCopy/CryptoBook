@@ -323,7 +323,7 @@
                         ReflowOnSizeChanged="True"
                         ReflowOnScrollViewerChanged="True"
                         SaveDebounceMs="400"
-                        Command="{Binding SortedCommand, UpdateSourceTrigger=PropertyChanged}"
+                        
                         Store="{markup:ResolveService ServiceType={x:Type interfaces:IColumnLayoutStore}}" />
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
