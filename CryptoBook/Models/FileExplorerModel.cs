@@ -193,6 +193,7 @@ namespace CryptoBook.Models
                         var fileName = System.IO.Path.GetFileName(sourcePath);
                         await _fileClipboardService.PasteAsync(CurrentPath, null, CancellationToken.None);
                     }
+                    Execute_SortedCommand("Name");
                 });
             } else
             {
@@ -245,10 +246,11 @@ namespace CryptoBook.Models
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
             _windowManager.ShowWindow(id);
+            Execute_SortedCommand("Name");
         }
         public void Execute_CreateDirectoryCommand(object? obj)
         {
-            throw new NotImplementedException();
+
         }
         public void Execute_RenameClickCommand(object? obj)
         {
@@ -268,7 +270,7 @@ namespace CryptoBook.Models
                         return;
                     }
                     //выполняем переименование
-                    await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
+                    _ = await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
                 } else
                 {
                     //запоминаем имя до переименования, чтобы при отмене вернуть его обратно
