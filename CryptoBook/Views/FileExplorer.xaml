@@ -310,8 +310,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding RenameCommand}"
-                        CommandParameter="{Binding SelectedItem,
+                    <KeyBinding Key="Enter" Command="{Binding RenameCommand}" CommandParameter="{Binding SelectedItem,
                         RelativeSource={RelativeSource AncestorType=ListView}}"/>
                     <KeyBinding Key="Escape" Command="{Binding CancelRenameCommand}" CommandParameter="{Binding SelectedItem,
                         RelativeSource={RelativeSource AncestorType=ListView}}" />
@@ -323,7 +322,6 @@
                         ReflowOnSizeChanged="True"
                         ReflowOnScrollViewerChanged="True"
                         SaveDebounceMs="400"
-                        
                         Store="{markup:ResolveService ServiceType={x:Type interfaces:IColumnLayoutStore}}" />
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>

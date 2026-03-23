@@ -98,15 +98,15 @@ namespace CryptoBook.DTO
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
 
-        protected ContainerSystemItem( IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService, ISystemItemCreateService systemItemCreateService, ISystemItemSortService systemItemSortService)
+        protected ContainerSystemItem(IDispatcherService dispatcherService, IDirectoryMonitoringService directoryMonitoringService, ISystemItemCreateService systemItemCreateService, ISystemItemSortService systemItemSortService)
         {
-            _children = new ObservableCollection<ISystemItem>();
-            Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
             _dispatcherService = dispatcherService;
-            FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
             _directoryMonitoringService = directoryMonitoringService;
             _systemItemCreateService = systemItemCreateService;
             _systemItemSortService = systemItemSortService;
+            _children = new ObservableCollection<ISystemItem>();
+            Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
+            FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
         }
 
         public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items,
@@ -171,7 +171,7 @@ namespace CryptoBook.DTO
             return FileOperationResult.Fail("Failed to clear children");
         }
 
-        public async virtual Task<FileOperationResult> SortingAsync( SystemItemSortType sortType, int dir=0, CancellationToken ct = default)
+        public async virtual Task<FileOperationResult> SortingAsync(SystemItemSortType sortType, int dir = 0, CancellationToken ct = default)
         {
             if(_children == null)
                 return FileOperationResult.Fail("Items collection is null.");
@@ -182,7 +182,6 @@ namespace CryptoBook.DTO
             {
                 _systemItemSortService.Sort(_children, sortType, dir);
             });
-
             return FileOperationResult.Ok();
         }
 

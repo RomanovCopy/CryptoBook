@@ -270,14 +270,16 @@ namespace CryptoBook.Models
                         return;
                     }
                     //выполняем переименование
-                    _ = await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
+                    var res = await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
+                    //if(res.Success){
+                    //    systemItem.Name = systemItem.Name;
+                    //    systemItem.FullPath = System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name);
+                        
+                    //}
                 } else
                 {
                     //запоминаем имя до переименования, чтобы при отмене вернуть его обратно
                     _lastItemName = systemItem.Name;
-                }
-                if(systemItem.Parent is IContainerSystemItem container)
-                {
                 }
             } else
             {
