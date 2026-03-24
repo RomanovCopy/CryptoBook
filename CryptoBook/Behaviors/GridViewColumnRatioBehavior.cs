@@ -3,10 +3,13 @@ using CryptoBook.Interfaces;
 
 using Microsoft.Xaml.Behaviors;
 
+using System.ComponentModel;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -97,10 +100,12 @@ namespace CryptoBook.Behaviors
 
             AssociatedObject.Loaded += OnLoaded;
             AssociatedObject.Unloaded += OnUnloaded;
+            
 
             // drag-resize заголовков колонок
             AssociatedObject.AddHandler(FrameworkElement.SizeChangedEvent, new SizeChangedEventHandler(OnAnySizeChanged),
             handledEventsToo: true);
+            AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnHeaderClick));
 
             //по окончании изменения колонки
             //AssociatedObject.AddHandler(Thumb.DragCompletedEvent, new DragCompletedEventHandler(OnThumbDragCompleted), true);
@@ -112,7 +117,7 @@ namespace CryptoBook.Behaviors
             if(ReflowOnSizeChanged)
                 AssociatedObject.SizeChanged += OnListViewSizeChanged;
 
-            AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnHeaderClick));
+
         }
 
         /// <summary>

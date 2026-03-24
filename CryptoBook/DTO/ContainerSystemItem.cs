@@ -107,6 +107,11 @@ namespace CryptoBook.DTO
             _children = new ObservableCollection<ISystemItem>();
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
             FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
+            _children.CollectionChanged += _children_CollectionChanged;
+        }
+
+        private void _children_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
         }
 
         public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items,
@@ -133,6 +138,38 @@ namespace CryptoBook.DTO
                 }
             });
             return exists ? FileOperationResult.Fail("Item already exists") : FileOperationResult.Ok();
+        }
+
+        public async virtual Task<FileOperationResult> RenameChildAsync(ISystemItem item, string newName, CancellationToken ct = default)
+        {
+            if(item is null)
+                return FileOperationResult.Fail("Items is null");
+            ct.ThrowIfCancellationRequested();
+            bool renamed = false;
+            ISystemItem existing = _children.FirstOrDefault(c => ReferenceEquals(c, item));
+            existing ??= _children.FirstOrDefault(c => string.Equals(c.FullPath, item.FullPath, StringComparison.OrdinalIgnoreCase));
+            if(existing is not null)
+            {
+                await _dispatcherService.InvokeAsync(() =>
+                {
+                    existing.Name = newName;
+                    existing.FullPath = Path.Combine(Path.GetDirectoryName(existing.FullPath) ?? string.Empty, newName);
+                });
+                if(item is IContainerSystemItem container)
+                {
+                    if(container is IDirectoryItem directory)
+                    {
+                        directory.IsLoaded = false;
+                        directory.IsExpanded = false;
+                        _ = directory.ClearChildrenAsync();
+                    }
+                    renamed = Directory.Exists(existing.FullPath);
+                } else if(item is IFileItem file)
+                {
+                    renamed = File.Exists(file.FullPath);
+                }
+            }
+            return renamed ? FileOperationResult.Ok() : FileOperationResult.Fail("Item not found in the directory");
         }
 
         public async virtual Task<FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem> items, Func<ISystemItem, string> keySelector, CancellationToken ct = default)

@@ -232,7 +232,7 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
-                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" >
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
                                             <TextBox.Style>
                                                 <Style TargetType="TextBox">
                                                     <Setter Property="Visibility" Value="Collapsed"/>

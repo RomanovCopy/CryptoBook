@@ -53,7 +53,7 @@ namespace CryptoBook.Services
             var dirInfo = new DirectoryInfo(normalized);
             if(!dirInfo.Exists)
                 throw new DirectoryNotFoundException($"Directory '{normalized}' not found.");
-            var dir = _scope.Resolve<IDirectoryItem>(new NamedParameter("path", normalized), new NamedParameter("parent", parent));
+            var dir = _scope.Resolve<IDirectoryItem>();
             dir.Name = dirInfo.Name;
             dir.FullPath = dirInfo.FullName;
             dir.Parent = parent;

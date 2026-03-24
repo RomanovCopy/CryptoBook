@@ -32,6 +32,7 @@ namespace CryptoBook.DTO
 
         public SystemItem()
         {
+            FullPath = Parent != null ? System.IO.Path.Combine(Parent.FullPath, Name) : Name;
         }
 
         public override string ToString()
