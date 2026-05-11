@@ -193,6 +193,7 @@ namespace CryptoBook.DTO
                     removed = existing is not null && _children.Remove(item);
                 }
             });
+            _=await SortingAsync(SystemItemSortType.Name, 0, ct);
             return existing is null ? FileOperationResult.Fail("Item not found in the directory") : removed ? FileOperationResult.Ok() : FileOperationResult.Fail("Failed to remove item from the directory");
         }
 

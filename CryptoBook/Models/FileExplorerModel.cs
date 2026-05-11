@@ -254,36 +254,31 @@ namespace CryptoBook.Models
         }
         public void Execute_RenameClickCommand(object? obj)
         {
-            if(obj is ISystemItem systemItem && CanExecute_RenameCommand(systemItem))
-                Execute_RenameCommand(systemItem);
+            if(obj is ISystemItem systemItem)
+            {
+                systemItem.IsEditing = true;
+                _lastItemName = systemItem.Name;
+            }
         }
         public async void Execute_RenameCommand(object? obj)
         {
             if(obj is ISystemItem systemItem)
             {
-                systemItem.IsEditing = !systemItem.IsEditing;
                 if(!systemItem.IsEditing)
+                    return;
+                if(string.IsNullOrWhiteSpace(systemItem.Name) || systemItem.FullPath.Equals(System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name), StringComparison.OrdinalIgnoreCase))
                 {
-                    if(string.IsNullOrWhiteSpace(systemItem.Name) || systemItem.FullPath.Equals(System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name), StringComparison.OrdinalIgnoreCase))
-                    {
-                        systemItem.Name = _lastItemName;
-                        return;
-                    }
-                    //выполняем переименование
-                    var res = await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
-                    if(res.Success)
-                    {
-                        //systemItem.Name = systemItem.Name;
-                        //systemItem.FullPath = System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name);
-                        if(systemItem.Parent is IContainerSystemItem parentSystemItem)
-                        {
-                            _ = parentSystemItem.RenameChildAsync(systemItem, systemItem.Name, CancellationToken.None);
-                        }
-                    }
-                } else
+                    systemItem.Name = _lastItemName;
+                    return;
+                }
+                //выполняем переименование
+                var res = await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
+                if(res.Success)
                 {
-                    //запоминаем имя до переименования, чтобы при отмене вернуть его обратно
-                    _lastItemName = systemItem.Name;
+                    if(systemItem.Parent is IContainerSystemItem parentSystemItem)
+                    {
+                        _ = await parentSystemItem.RenameChildAsync(systemItem, systemItem.Name, CancellationToken.None);
+                    }
                 }
             } else
             {
