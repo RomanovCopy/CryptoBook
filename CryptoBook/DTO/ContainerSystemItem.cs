@@ -151,7 +151,7 @@ namespace CryptoBook.DTO
             if(existing is not null)
             {
                 await _dispatcherService.InvokeAsync(() =>
-                {
+                {                    
                     existing.Name = newName;
                     existing.FullPath = Path.Combine(Path.GetDirectoryName(existing.FullPath) ?? string.Empty, newName);
                 });
