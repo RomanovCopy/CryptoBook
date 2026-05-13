@@ -123,19 +123,38 @@ namespace CryptoBook.Behaviors
         /// <summary>
         /// клик по заголовку колонки — прокидываем в Command имя колонки (из Tag) для сортировки
         /// </summary>
+        //private void OnHeaderClick(object sender, RoutedEventArgs e)
+        //{
+        //    if(e.OriginalSource is GridViewColumnHeader header)
+        //    {
+        //        if(AssociatedObject.DataContext is ISortedCommand sorted && header.Tag is string name)
+        //        {
+        //            if(sorted.SortedCommand.CanExecute(name))
+        //            {
+        //                sorted.SortedCommand.Execute(name);
+        //            }
+        //        }
+        //    }
+        //}
+
         private void OnHeaderClick(object sender, RoutedEventArgs e)
         {
-            if(e.OriginalSource is GridViewColumnHeader header)
+            if(e.OriginalSource is GridViewColumnHeader header && header.Tag is string name)
             {
-                if(AssociatedObject.DataContext is ISortedCommand sorted && header.Tag is string name)
+                if(sender is System.Windows.Controls.ListView lv )
                 {
-                    if(sorted.SortedCommand.CanExecute(name))
-                    {
-                        sorted.SortedCommand.Execute(name);
-                    }
+                    var view = CollectionViewSource.GetDefaultView(lv.ItemsSource);
+                    view.SortDescriptions.Clear();
+                    view.SortDescriptions.Add(
+                        new SortDescription("Size", ListSortDirection.Ascending));
+                    view.SortDescriptions.Add(
+                        new SortDescription(name,ListSortDirection.Ascending));
                 }
             }
         }
+
+
+
 
         protected override void OnDetaching()
         {

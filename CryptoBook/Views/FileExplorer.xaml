@@ -273,7 +273,7 @@
                         </GridViewColumn>
                         <GridViewColumn >
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Date" Content="Date modified" />
+                                <GridViewColumnHeader Tag="LastWriteTimeUtc" Content="Date modified" />
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -285,7 +285,7 @@
                         </GridViewColumn>
                         <GridViewColumn >
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Type" Content="Type" />
+                                <GridViewColumnHeader Tag="Extension" Content="Type" />
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
