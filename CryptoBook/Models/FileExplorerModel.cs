@@ -277,7 +277,12 @@ namespace CryptoBook.Models
                 {
                     if(systemItem.Parent is IContainerSystemItem parentSystemItem)
                     {
-                        _ = await parentSystemItem.RenameChildAsync(systemItem, systemItem.Name, CancellationToken.None);
+                        res = await parentSystemItem.RenameChildAsync(systemItem, systemItem.Name, CancellationToken.None);
+                    }
+                    if(!res.Success)
+                    {
+                        _ = await _messageService.ShowMessage("Rename error", res.ErrorMessage);
+                        systemItem.Name = _lastItemName;
                     }
                 }
             } else
