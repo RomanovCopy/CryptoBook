@@ -11,10 +11,8 @@ namespace CryptoBook.Interfaces
     /// <summary>
     /// содержит имя и путь к файлу, а так же его родителей(диск и директория)
     /// </summary>
-    public interface ISystemItem :INotifyPropertyChanged
+    public interface ISystemItem :IFileSystemEntry
     {
-        string Name { get; set; }
-        string FullPath { get; set; }
         string RootDirectory { get; set; }
         long? Size { get; set; }
         bool IsEditing { get; set; }

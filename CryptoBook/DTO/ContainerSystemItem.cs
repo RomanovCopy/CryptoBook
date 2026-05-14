@@ -83,6 +83,8 @@ namespace CryptoBook.DTO
         public long? Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
         long? _size;
 
+        public bool IsDirectory { get => isDirectory; protected set => SetProperty(ref isDirectory,value); }
+        bool isDirectory;
 
         /// <summary>
         /// Возвращает доступную только для чтения наблюдаемую коллекцию дочерних элементов,

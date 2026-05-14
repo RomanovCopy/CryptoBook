@@ -100,7 +100,7 @@ namespace CryptoBook.Behaviors
 
             AssociatedObject.Loaded += OnLoaded;
             AssociatedObject.Unloaded += OnUnloaded;
-            
+
 
             // drag-resize заголовков колонок
             AssociatedObject.AddHandler(FrameworkElement.SizeChangedEvent, new SizeChangedEventHandler(OnAnySizeChanged),
@@ -141,14 +141,27 @@ namespace CryptoBook.Behaviors
         {
             if(e.OriginalSource is GridViewColumnHeader header && header.Tag is string name)
             {
-                if(sender is System.Windows.Controls.ListView lv )
+                if(sender is System.Windows.Controls.ListView lv)
                 {
                     var view = CollectionViewSource.GetDefaultView(lv.ItemsSource);
                     view.SortDescriptions.Clear();
-                    view.SortDescriptions.Add(
-                        new SortDescription("Size", ListSortDirection.Ascending));
-                    view.SortDescriptions.Add(
-                        new SortDescription(name,ListSortDirection.Ascending));
+                    switch(name)
+                    {
+                        case "Name":
+                        {
+                            view.SortDescriptions.Add(
+                                new SortDescription("Size", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(
+                                new SortDescription("Name", ListSortDirection.Ascending));
+                            break;
+                        }
+                        case "LastWriteTimeUtc":
+                        {
+                            view.SortDescriptions.Add(new SortDescription("LastWriteTimeUtc", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(new SortDescription("Size", ListSortDirection.Ascending));
+                            break;
+                        }
+                    }
                 }
             }
         }
