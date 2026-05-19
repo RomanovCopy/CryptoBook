@@ -46,7 +46,7 @@ namespace CryptoBook.Comparers
             }
 
             // оба файла — сортируем по размеру
-            int result = x.Size.GetValueOrDefault().CompareTo(y.Size.GetValueOrDefault());
+            int result = x.Size.CompareTo(y.Size);
 
             if(result == 0)
             {

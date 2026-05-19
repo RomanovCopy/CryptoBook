@@ -80,8 +80,8 @@ namespace CryptoBook.DTO
 
         private bool _monitor;// защита от двойной подписки
 
-        public long? Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
-        long? _size;
+        public long Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
+        long _size;
 
         public bool IsDirectory { get => isDirectory; protected set => SetProperty(ref isDirectory,value); }
         bool isDirectory;
@@ -95,8 +95,6 @@ namespace CryptoBook.DTO
         public ReadOnlyObservableCollection<ISystemItem> Children { get; private set; }
         protected ObservableCollection<ISystemItem> _children;
 
-        public ReadOnlyObservableCollection<IContainerSystemItem> FilteredChildren { get; private set; }
-
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
 
@@ -106,15 +104,10 @@ namespace CryptoBook.DTO
             _directoryMonitoringService = directoryMonitoringService;
             _systemItemCreateService = systemItemCreateService;
             _systemItemSortService = systemItemSortService;
-            _children = new ObservableCollection<ISystemItem>();
+            _children = [];
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
-            FilteredChildren = new FilteredReadOnlyObservableCollection<ISystemItem, IContainerSystemItem>(_children).View;
-            _children.CollectionChanged += _children_CollectionChanged;
         }
 
-        private void _children_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-        }
 
         public async virtual Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem> items,
         Func<ISystemItem, string> keySelector, CancellationToken ct = default)

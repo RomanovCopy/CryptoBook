@@ -18,8 +18,8 @@ namespace CryptoBook.DTO
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
-        public long? Size { get => size; set => SetProperty(ref size, value); }
-        long? size;
+        public long Size { get => size; set => SetProperty(ref size, value); }
+        long size;
         public string Extension { get => extension??"Folder"; set => SetProperty(ref extension, value); }
         string extension;
         public bool IsHidden { get => isHidden; set => SetProperty(ref isHidden, value); }

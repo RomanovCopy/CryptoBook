@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IDriveItem:IContainerSystemItem,IVolume
+    public interface IDriveItem:IContainerSystemItem
     {
         public string VolumeLabel { get; set; }
         public string DriveFormat { get; set; }

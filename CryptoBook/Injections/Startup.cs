@@ -87,6 +87,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<PathToIconConverter>().AsSelf();
             builder.RegisterType<PercentToGridLengthConverter>().AsSelf();
             builder.RegisterType<StockIconIdToImageSourceConverter>().AsSelf();
+            builder.RegisterType<TypeCheckConverter>().AsSelf();
 
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
