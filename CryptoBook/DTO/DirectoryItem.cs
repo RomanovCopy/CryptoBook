@@ -24,7 +24,7 @@ namespace CryptoBook.DTO
             this.directoryMonitoringService = directoryMonitoringService;
             this.systemItemCreateService = systemItemCreateService;
             this.systemItemSortService = systemItemSortService;
-            IsDirectory = true;
+            //IsDirectory = true;
         }
     }
 }

@@ -69,7 +69,7 @@
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </DockPanel>
         </HierarchicalDataTemplate>
-        
+
         <DataTemplate DataType="{x:Type dto:FileItem}">
             <DockPanel LastChildFill="True">
                 <Image Width="{StaticResource Tv_IconSize}"
@@ -198,10 +198,12 @@
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         <Setter Property="IsSelected" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ., Converter={markup:ResolveConverter ConverterType={x:Type converters:TypeCheckConverter}},
-                                ConverterParameter={x:Type interfaces:IFileItem}}" Value="True">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Kind}" Value="File" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </MultiDataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TreeView.ItemContainerStyle>

@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Xml.Linq;
 
 namespace CryptoBook.Behaviors
 {
@@ -108,34 +109,16 @@ namespace CryptoBook.Behaviors
             AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnHeaderClick));
 
             //по окончании изменения колонки
-            //AssociatedObject.AddHandler(Thumb.DragCompletedEvent, new DragCompletedEventHandler(OnThumbDragCompleted), true);
+            AssociatedObject.AddHandler(Thumb.DragCompletedEvent, new DragCompletedEventHandler(OnThumbDragCompleted), true);
 
             //  во время изменения колонки
-            AssociatedObject.AddHandler(Thumb.DragDeltaEvent,
-                new DragDeltaEventHandler(OnThumbDragDelta), true);
+            AssociatedObject.AddHandler(Thumb.DragDeltaEvent, new DragDeltaEventHandler(OnThumbDragDelta), true);
 
             if(ReflowOnSizeChanged)
                 AssociatedObject.SizeChanged += OnListViewSizeChanged;
 
 
         }
-
-        /// <summary>
-        /// клик по заголовку колонки — прокидываем в Command имя колонки (из Tag) для сортировки
-        /// </summary>
-        //private void OnHeaderClick(object sender, RoutedEventArgs e)
-        //{
-        //    if(e.OriginalSource is GridViewColumnHeader header)
-        //    {
-        //        if(AssociatedObject.DataContext is ISortedCommand sorted && header.Tag is string name)
-        //        {
-        //            if(sorted.SortedCommand.CanExecute(name))
-        //            {
-        //                sorted.SortedCommand.Execute(name);
-        //            }
-        //        }
-        //    }
-        //}
 
         private void OnHeaderClick(object sender, RoutedEventArgs e)
         {
@@ -149,16 +132,29 @@ namespace CryptoBook.Behaviors
                     {
                         case "Name":
                         {
-                            view.SortDescriptions.Add(
-                                new SortDescription("Size", ListSortDirection.Ascending));
-                            view.SortDescriptions.Add(
-                                new SortDescription("Name", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(new SortDescription("Kind", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add( new SortDescription("Name", ListSortDirection.Ascending));
                             break;
                         }
                         case "LastWriteTimeUtc":
                         {
+                            view.SortDescriptions.Add(new SortDescription("Kind", ListSortDirection.Ascending));
                             view.SortDescriptions.Add(new SortDescription("LastWriteTimeUtc", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                            break;
+                        }
+                        case "Extension":
+                        {
+                            view.SortDescriptions.Add(new SortDescription("Kind", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(new SortDescription("Extension", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                            break;
+                        }
+                        case "Size":
+                        {
+                            view.SortDescriptions.Add(new SortDescription("Kind", ListSortDirection.Ascending));
                             view.SortDescriptions.Add(new SortDescription("Size", ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                             break;
                         }
                     }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.DTO;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -21,5 +23,6 @@ namespace CryptoBook.Interfaces
         public DateTime LastWriteTimeUtc { get; set; }
         [JsonIgnore]
         ISystemItem? Parent { get; set; }
+        ItemKind Kind { get;}
     }
 }
