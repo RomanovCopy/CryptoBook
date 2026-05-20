@@ -23,6 +23,5 @@ namespace CryptoBook.Interfaces
         public DateTime LastWriteTimeUtc { get; set; }
         [JsonIgnore]
         ISystemItem? Parent { get; set; }
-        ItemKind Kind { get;}
     }
 }

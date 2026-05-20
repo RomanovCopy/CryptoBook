@@ -275,6 +275,7 @@ namespace CryptoBook.Models
                 var res = await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
                 if(res.Success)
                 {
+                    systemItem.Parent = SelectedItem;
                     if(systemItem.Parent is IContainerSystemItem parentSystemItem)
                     {
                         res = await parentSystemItem.RenameChildAsync(systemItem, systemItem.Name, CancellationToken.None);
@@ -285,6 +286,7 @@ namespace CryptoBook.Models
                         systemItem.Name = _lastItemName;
                     }
                 }
+                systemItem.IsEditing = false;
             } else
             {
                 throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
@@ -430,13 +432,13 @@ namespace CryptoBook.Models
             {
                 _ = Task.Run(async () =>
                 {
-                    await container.ClearChildrenAsync();
+                    _= await container.ClearChildrenAsync();
                     var children = await _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible);
                     if(children is not null)
                     {
-                        await container.AddChildAsync(children, (x) => x.FullPath, token);
+                        var result = await container.AddChildAsync(children, (x) => x.FullPath, token);
+                        container.IsLoaded = result.Success;
                     }
-                    container.IsLoaded = true;
                 }, token);
             } else
             {

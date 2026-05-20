@@ -83,7 +83,6 @@ namespace CryptoBook.DTO
         public long Size { get => _size; set => SetProperty(ref _size, _children.Sum(x => x.Size)); }
         long _size;
 
-        public ItemKind Kind => this is IDriveItem ? ItemKind.Drive : this is IDirectoryItem ? ItemKind.Directory : this is IFileItem ? ItemKind.File : ItemKind.None;
 
         /// <summary>
         /// Возвращает доступную только для чтения наблюдаемую коллекцию дочерних элементов,

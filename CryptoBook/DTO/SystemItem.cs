@@ -30,8 +30,6 @@ namespace CryptoBook.DTO
         public bool IsEditing { get => _isEditing; set => SetProperty(ref _isEditing, value); }
         bool _isEditing;
 
-        public ItemKind Kind => this is IDriveItem ? ItemKind.Drive : this is IDirectoryItem ? ItemKind.Directory : this is IFileItem ? ItemKind.File : ItemKind.None;
-
         public SystemItem()
         {
             FullPath = Parent != null ? System.IO.Path.Combine(Parent.FullPath, Name) : Name;

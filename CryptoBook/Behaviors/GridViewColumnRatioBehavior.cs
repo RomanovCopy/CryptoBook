@@ -102,7 +102,6 @@ namespace CryptoBook.Behaviors
             AssociatedObject.Loaded += OnLoaded;
             AssociatedObject.Unloaded += OnUnloaded;
 
-
             // drag-resize заголовков колонок
             AssociatedObject.AddHandler(FrameworkElement.SizeChangedEvent, new SizeChangedEventHandler(OnAnySizeChanged),
             handledEventsToo: true);

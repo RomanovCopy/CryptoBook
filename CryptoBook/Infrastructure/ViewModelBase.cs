@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CryptoBook.DTO;
+using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,6 +14,11 @@ namespace CryptoBook.Infrastructure
     [Serializable]
     public class ViewModelBase: INotifyPropertyChanged
     {
+        /// <summary>
+        /// автоматическое определение типа Item
+        /// </summary>
+        public ItemKind Kind => this is IDriveItem ? ItemKind.Drive : this is IDirectoryItem ? ItemKind.Directory : this is IFileItem ? ItemKind.File : ItemKind.None; 
+        
         protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "")
         {
             if(EqualityComparer<T>.Default.Equals(field, value))
