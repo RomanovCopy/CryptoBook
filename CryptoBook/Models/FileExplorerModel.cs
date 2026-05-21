@@ -39,25 +39,21 @@ namespace CryptoBook.Models
         private double _windowLeft;
         public WindowState WindowState { get => _windowState; set => SetProperty(ref _windowState, value); }
         private WindowState _windowState;
-
         public double LeftColumnPercent { get => _leftColumnPercent; set => SetProperty(ref _leftColumnPercent, value); }
         private double _leftColumnPercent;
         public double RightColumnPercent { get => _rightColumnPercent; set => SetProperty(ref _rightColumnPercent, value); }
         private double _rightColumnPercent;
-
-        private string _lastItemName;
-
         public Guid WindowId { get => _windowId; private set => SetProperty(ref _windowId, value); }
         private Guid _windowId;
         public bool IsHiddenFilesVisible { get => _isHiddenFilesVisible; set => SetProperty(ref _isHiddenFilesVisible, value); }
         private bool _isHiddenFilesVisible;
         public ISystemItem? SelectedItem { get => _selectedItem; set => SetProperty(ref _selectedItem, value); }
         private ISystemItem? _selectedItem;
-
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
         public ReadOnlyObservableCollection<IDriveItem> GetDrives { get; private set; }
         private ObservableCollection<IDriveItem> _drives;
+        private string _lastItemName;
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
@@ -73,6 +69,11 @@ namespace CryptoBook.Models
             GetDrives = _driveManagerService.WritableDrives;
         }
 
+
+        public bool CanExecute_BackCommand(object? obj)
+        {
+            return SelectedItem?.Parent is not null;
+        }
         public bool CanExecute_CutCommand(object? obj)
         {
             return obj is IList { Count: > 0 };
@@ -144,7 +145,18 @@ namespace CryptoBook.Models
         }
 
 
-
+        public void Execute_BackCommand(object? obj)
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+            if(SelectedItem is IContainerSystemItem item && item.Parent is IContainerSystemItem container)
+            {
+                ContainerLoad(container, _cancellationTokenSource.Token);
+                CurrentPath = container.FullPath;
+                container.IsExpanded = true;
+                item.IsExpanded = false;
+                SelectedItem = container;
+            }
+        }
         public void Execute_CutCommand(object? obj)
         {
             if(obj is IList list && list.Count > 0)
@@ -223,7 +235,6 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for DeleteCommand", nameof(obj));
             }
         }
-
         public async void Execute_SortedCommand(object? obj)
         {
             if(obj is string name && !string.IsNullOrWhiteSpace(name) && SelectedItem is IContainerSystemItem container)
@@ -241,7 +252,6 @@ namespace CryptoBook.Models
                 }
             }
         }
-
         public void Execute_CreateFileCommand(object? obj)
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
@@ -296,7 +306,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
         public void Execute_MoveDirectory(object? obj)
         {
             throw new NotImplementedException();
@@ -316,7 +325,6 @@ namespace CryptoBook.Models
                 systemItem.IsEditing = false;
             }
         }
-
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -359,7 +367,7 @@ namespace CryptoBook.Models
                     SelectedItem = container;
                     CurrentPath = container.FullPath;
                     ContainerLoad(container, _cancellationTokenSource.Token);
-                    container.IsExpanded = !container.IsExpanded || true;
+                    container.IsExpanded = true;
                 } catch
                 {
                     _cancellationTokenSource.Cancel();
@@ -384,6 +392,7 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
+
 
         public bool CanExecute_Loaded(object? obj)
         {
@@ -426,31 +435,26 @@ namespace CryptoBook.Models
         }
 
 
-        private void ContainerLoad(IContainerSystemItem container, CancellationToken token)
+        private async Task<FileOperationResult> ContainerLoad(IContainerSystemItem container, CancellationToken token)
         {
-            if(!container.IsLoaded)
+            return await Task.Run(async () =>
             {
-                _ = Task.Run(async () =>
+                FileOperationResult result = FileOperationResult.Fail($"Error reading directory {container.FullPath}");
+                _ = container.ClearChildrenAsync();
+                var children = _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible).Result;
+                if(children is not null)
                 {
-                    _= await container.ClearChildrenAsync();
-                    var children = await _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible);
-                    if(children is not null)
+                    if(!container.IsLoaded)
                     {
-                        var result = await container.AddChildAsync(children, (x) => x.FullPath, token);
-                        container.IsLoaded = result.Success;
-                    }
-                }, token);
-            } else
-            {
-                _ = Task.Run(async () =>
-                {
-                    var children = await _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible);
-                    if(children is not null)
+                        result = await container.AddChildAsync(children, (x) => x.FullPath, token);
+                    } else
                     {
                         await container.SyncCollectionsAsync(children, (x) => x.FullPath, null, token);
+                        result = FileOperationResult.Ok();
                     }
-                }, token);
-            }
+                }
+                return result;
+            }, token);
         }
 
     }

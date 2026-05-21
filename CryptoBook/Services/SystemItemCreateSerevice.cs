@@ -71,7 +71,7 @@ namespace CryptoBook.Services
             if(!fileInfo.Exists)
                 throw new FileNotFoundException($"File '{normalized}' not found.");
             var file = _scope.Resolve<IFileItem>(new NamedParameter("path", normalized), new NamedParameter("parent", parent));
-            file.Name = fileInfo.Name;
+            file.Name =Path.GetFileNameWithoutExtension(fileInfo.Name);
             file.Size = fileInfo.Length;
             file.Extension = fileInfo.Extension;
             file.IsHidden = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden;

@@ -43,6 +43,9 @@ namespace CryptoBook.ViewModels
         }
 
 
+        public ICommand BackCommand => _backCommand ??= new RelayCommand(_fileExplorerModel.Execute_BackCommand, _fileExplorerModel.CanExecute_BackCommand);
+        RelayCommand _backCommand;
+
         public ICommand CutCommand => _cutCommand ??= new RelayCommand(_fileExplorerModel.Execute_CutCommand, _fileExplorerModel.CanExecute_CutCommand);
         RelayCommand _cutCommand;
 

@@ -19,6 +19,7 @@ namespace CryptoBook.Interfaces
         ISystemItem? SelectedItem { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
 
+        bool CanExecute_BackCommand(object? obj);
         bool CanExecute_CutCommand(object? obj);
         bool CanExecute_CopyCommand(object? obj);
         bool CanExecute_PasteCommand(object? obj);
@@ -37,6 +38,7 @@ namespace CryptoBook.Interfaces
         bool CanExecute_WindowSizeChanged(object? obj);
 
 
+        void Execute_BackCommand(object? obj);
         void Execute_CutCommand(object? obj);
         void Execute_CopyCommand(object? obj);
         void Execute_PasteCommand(object? obj);

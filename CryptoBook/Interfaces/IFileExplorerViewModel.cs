@@ -18,7 +18,7 @@ namespace CryptoBook.Interfaces
         ISystemItem? SelectedItem { get; set; }
         ReadOnlyObservableCollection<IDriveItem> GetDrives { get; }
 
-
+        ICommand BackCommand{ get; }
         ICommand CutCommand { get; }
         ICommand CopyCommand { get; }
         ICommand PasteCommand { get; }
