@@ -339,6 +339,7 @@
                         ReflowOnScrollViewerChanged="True"
                         SaveDebounceMs="400"
                         Store="{markup:ResolveService ServiceType={x:Type interfaces:IColumnLayoutStore}}" />
+                    <behaviors:ListViewSortedBehavior/>
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDoubleClick">
