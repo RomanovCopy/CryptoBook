@@ -191,7 +191,7 @@
 
             <!-- Navigation Pane (левая панель) -->
             <TreeView x:Name="treeView" Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}"
-                      VirtualizingPanel.IsContainerVirtualizable="True" HorizontalAlignment="Stretch" >
+                      VirtualizingPanel.IsContainerVirtualizable="True" HorizontalAlignment="Stretch">
 
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem" >

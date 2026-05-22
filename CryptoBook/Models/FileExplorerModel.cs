@@ -155,10 +155,11 @@ namespace CryptoBook.Models
                 {
 
                     var res = await ContainerLoad(container, _cancellationTokenSource.Token);
+                    container.IsLoaded = res.Success;
                     CurrentPath = container.FullPath;
                     container.IsExpanded = true;
-                    item.IsExpanded = false;
                     SelectedItem = container;
+                    item.IsExpanded = false;
                 }
             } catch
             {
@@ -348,9 +349,12 @@ namespace CryptoBook.Models
                     {
                         SelectedItem = container;
                         CurrentPath = container.FullPath;
-                        var res = await ContainerLoad(container, _cancellationTokenSource.Token);
-                        container.IsExpanded = true;
-                        container.IsLoaded = res.Success;
+                        container.IsExpanded = !container.IsExpanded;
+                        if(container.IsExpanded)
+                        {
+                            var res = await ContainerLoad(container, _cancellationTokenSource.Token);
+                            container.IsLoaded = res.Success;
+                        }
                         break;
                     }
                     case IFileItem file:
