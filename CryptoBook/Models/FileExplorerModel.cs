@@ -145,16 +145,27 @@ namespace CryptoBook.Models
         }
 
 
-        public void Execute_BackCommand(object? obj)
+        public async void Execute_BackCommand(object? obj)
         {
             _cancellationTokenSource = new CancellationTokenSource();
-            if(SelectedItem is IContainerSystemItem item && item.Parent is IContainerSystemItem container)
+            await _gate.WaitAsync(_cancellationTokenSource.Token);
+            try
             {
-                ContainerLoad(container, _cancellationTokenSource.Token);
-                CurrentPath = container.FullPath;
-                container.IsExpanded = true;
-                item.IsExpanded = false;
-                SelectedItem = container;
+                if(SelectedItem is IContainerSystemItem item && item.Parent is IContainerSystemItem container)
+                {
+
+                    var res = await ContainerLoad(container, _cancellationTokenSource.Token);
+                    CurrentPath = container.FullPath;
+                    container.IsExpanded = true;
+                    item.IsExpanded = false;
+                    SelectedItem = container;
+                }
+            } catch
+            {
+                _cancellationTokenSource?.Cancel();
+            } finally
+            {
+                _gate.Release();
             }
         }
         public void Execute_CutCommand(object? obj)
@@ -337,7 +348,9 @@ namespace CryptoBook.Models
                     {
                         SelectedItem = container;
                         CurrentPath = container.FullPath;
-                        ContainerLoad(container, _cancellationTokenSource.Token);
+                        var res = await ContainerLoad(container, _cancellationTokenSource.Token);
+                        container.IsExpanded = true;
+                        container.IsLoaded = res.Success;
                         break;
                     }
                     case IFileItem file:
@@ -366,8 +379,9 @@ namespace CryptoBook.Models
                 {
                     SelectedItem = container;
                     CurrentPath = container.FullPath;
-                    ContainerLoad(container, _cancellationTokenSource.Token);
+                    var res = await ContainerLoad(container, _cancellationTokenSource.Token);
                     container.IsExpanded = true;
+                    container.IsLoaded = res.Success;
                 } catch
                 {
                     _cancellationTokenSource.Cancel();
