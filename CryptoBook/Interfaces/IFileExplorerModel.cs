@@ -24,7 +24,7 @@ namespace CryptoBook.Interfaces
         bool CanExecute_CopyCommand(object? obj);
         bool CanExecute_PasteCommand(object? obj);
         bool CanExecute_DeleteCommand(object? obj);
-        bool CanExecute_SortedCommand(object? obj);
+        bool CanExecute_EncryptCommand(object? obj);
         bool CanExecute_CreateFileCommand(object? obj);
         bool CanExecute_CreateDirectoryCommand(object? obj);
         bool CanExecute_RenameClickCommand(object? obj);
@@ -43,7 +43,7 @@ namespace CryptoBook.Interfaces
         void Execute_CopyCommand(object? obj);
         void Execute_PasteCommand(object? obj);
         void Execute_DeleteCommand(object? obj);  
-        void Execute_SortedCommand(object? obj);
+        void Execute_EncryptCommand(object? obj);
         void Execute_CreateFileCommand(object? obj);
         void Execute_CreateDirectoryCommand(object? obj);
         void Execute_RenameClickCommand(object? obj);

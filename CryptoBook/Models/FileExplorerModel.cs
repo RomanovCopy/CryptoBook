@@ -94,7 +94,7 @@ namespace CryptoBook.Models
         {
             return obj is ISystemItem;
         }
-        public bool CanExecute_SortedCommand(object? obj)
+        public bool CanExecute_EncryptCommand(object? obj)
         {
             return obj is string name && !string.IsNullOrWhiteSpace(name) &&
             SelectedItem is IContainerSystemItem item && item.Children.Count > 1;
@@ -217,7 +217,7 @@ namespace CryptoBook.Models
                         var fileName = System.IO.Path.GetFileName(sourcePath);
                         await _fileClipboardService.PasteAsync(CurrentPath, null, CancellationToken.None);
                     }
-                    Execute_SortedCommand("Name");
+                    Execute_EncryptCommand("Name");
                 });
             } else
             {
@@ -247,7 +247,7 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for DeleteCommand", nameof(obj));
             }
         }
-        public async void Execute_SortedCommand(object? obj)
+        public async void Execute_EncryptCommand(object? obj)
         {
             if(obj is string name && !string.IsNullOrWhiteSpace(name) && SelectedItem is IContainerSystemItem container)
             {
@@ -268,7 +268,7 @@ namespace CryptoBook.Models
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
             _windowManager.ShowWindow(id);
-            Execute_SortedCommand("Name");
+            Execute_EncryptCommand("Name");
         }
         public void Execute_CreateDirectoryCommand(object? obj)
         {

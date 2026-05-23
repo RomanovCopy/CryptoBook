@@ -118,9 +118,11 @@
         </Grid.RowDefinitions>
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
-        <ToolBar Grid.Row="0" Height="48" Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
-            <Button Content="Back" Command="{Binding BackCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+        <ToolBar Grid.Row="0"  Height="49"  Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+            <Button Content="&#xE110;" FontFamily="Segoe MDL2 Assets" FontSize="15"
+                    Command="{Binding BackCommand, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{StaticResource PrimaryButtonStyle}" >
+            </Button>
             <Separator/>
             <Button Content="New File" Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}"/>
@@ -147,8 +149,8 @@
             <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
-            <Button Content="Sort" Style="{StaticResource PrimaryButtonStyle}"
-                    Command="{Binding SortedCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Encrypt" Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="View" 
                     Style="{StaticResource PrimaryButtonStyle}"/>

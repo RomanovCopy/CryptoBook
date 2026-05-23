@@ -9,6 +9,6 @@ namespace CryptoBook.Interfaces
 {
     public interface ISortedCommand
     {
-        ICommand SortedCommand { get; }
+        ICommand EncryptCommand { get; }
     }
 }
