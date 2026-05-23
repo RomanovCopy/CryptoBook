@@ -375,9 +375,9 @@ namespace CryptoBook.Models
         }
         public async void Execute_ListViewItemDoubleClickCommand(object? obj)
         {
+            _cancellationTokenSource = new CancellationTokenSource();
             if(obj is IContainerSystemItem container)
             {
-                _cancellationTokenSource = new CancellationTokenSource();
                 await _gate.WaitAsync(_cancellationTokenSource.Token);
                 try
                 {
@@ -392,6 +392,20 @@ namespace CryptoBook.Models
                 } finally
                 {
                     _gate.Release();
+                }
+            } else if(obj is IFileItem file)
+            {
+                await _gate.WaitAsync(_cancellationTokenSource.Token);
+                try
+                {
+                    var stream=await _fileManagerService.OpenReadAsync(file.FullPath,_cancellationTokenSource.Token);
+
+                }catch
+                {
+                    _cancellationTokenSource.Cancel();
+                }finally
+                {
+                     _gate.Release();
                 }
             }
         }
