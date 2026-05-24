@@ -151,15 +151,15 @@ namespace CryptoBook.Models
             await _gate.WaitAsync(_cancellationTokenSource.Token);
             try
             {
-                if(SelectedItem is IContainerSystemItem item && item.Parent is IContainerSystemItem container)
+                if(SelectedItem is IContainerSystemItem currentItem && currentItem.Parent is IContainerSystemItem parentItem)
                 {
 
-                    var res = await ContainerLoad(container, _cancellationTokenSource.Token);
-                    container.IsLoaded = res.Success;
-                    CurrentPath = container.FullPath;
-                    container.IsExpanded = true;
-                    SelectedItem = container;
-                    item.IsExpanded = false;
+                    SelectedItem = parentItem;
+                    CurrentPath = parentItem.FullPath;
+                    var res = await ContainerLoad(parentItem, _cancellationTokenSource.Token);
+                    parentItem.IsLoaded = res.Success;
+                    parentItem.IsExpanded = true;
+                    //currentItem.IsExpanded = false;
                 }
             } catch
             {
@@ -398,14 +398,14 @@ namespace CryptoBook.Models
                 await _gate.WaitAsync(_cancellationTokenSource.Token);
                 try
                 {
-                    var stream=await _fileManagerService.OpenReadAsync(file.FullPath,_cancellationTokenSource.Token);
+                    var stream = await _fileManagerService.OpenReadAsync(file.FullPath, _cancellationTokenSource.Token);
 
-                }catch
+                } catch
                 {
                     _cancellationTokenSource.Cancel();
-                }finally
+                } finally
                 {
-                     _gate.Release();
+                    _gate.Release();
                 }
             }
         }
@@ -471,18 +471,16 @@ namespace CryptoBook.Models
         {
             return await Task.Run(async () =>
             {
-                FileOperationResult result = FileOperationResult.Fail($"Error reading directory {container.FullPath}");
-                _ = container.ClearChildrenAsync();
-                var children = _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible).Result;
-                if(children is not null)
+                FileOperationResult result = container.IsLoaded ? FileOperationResult.Ok() : FileOperationResult.Fail($"Error reading directory {container.FullPath}");
+                if(!result.Success)
                 {
-                    if(!container.IsLoaded)
+                    var children = _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible).Result;
+                    if(children is not null)
                     {
-                        result = await container.AddChildAsync(children, (x) => x.FullPath, token);
-                    } else
-                    {
-                        await container.SyncCollectionsAsync(children, (x) => x.FullPath, null, token);
-                        result = FileOperationResult.Ok();
+                        if(!container.IsLoaded)
+                        {
+                            result = await container.AddChildAsync(children, (x) => x.FullPath, token);
+                        }
                     }
                 }
                 return result;
