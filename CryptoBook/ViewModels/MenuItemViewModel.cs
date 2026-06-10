@@ -1,0 +1,50 @@
+﻿using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
+using CryptoBook.Models;
+
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+
+namespace CryptoBook.ViewModels
+{
+    public class MenuItemViewModel: ViewModelBase, IMenuItemViewModel
+    {
+
+        private readonly MenuItemModel menuItemModel;
+
+        public ObservableCollection<MenuItemViewModel> Children { get => menuItemModel.Children; }
+
+        public string Name { get => menuItemModel.Name; set => menuItemModel.Name = value; }
+
+        public string Icon { get => menuItemModel.Icon; set => menuItemModel.Icon = value; }
+
+        public bool IsParrent { get => menuItemModel.IsParrent; set => menuItemModel.IsParrent = value; }
+
+        public bool IsExpanded { get => menuItemModel.IsExpanded; set => menuItemModel.IsExpanded = value; }
+
+        public bool IsEnabled { get => menuItemModel.IsEnabled; set => menuItemModel.IsEnabled = value; }
+        public double FontSize { get => menuItemModel.FontSize; set => menuItemModel.FontSize = value; }
+
+
+        public MenuItemViewModel()
+        {
+            menuItemModel = new();
+            menuItemModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+        }
+
+
+
+        public ICommand SelectItem { get; set; }
+        RelayCommand selectItem;
+
+
+
+
+        public ICommand Loaded { get; }
+
+        public ICommand Close { get; }
+
+        public ICommand Closing { get; }
+
+    }
+}

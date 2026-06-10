@@ -1,0 +1,147 @@
+﻿<Window x:Class="CryptoBook.Views.BookmarksEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:control="clr-namespace:CryptoBook.MyControls"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+        xmlns:local="clr-namespace:CryptoBook.Views"
+        mc:Ignorable="d"
+        MinHeight="300" MinWidth="300"
+        HorizontalContentAlignment="Stretch"
+        Background="{DynamicResource CurrentWindowBackground}"
+        BorderBrush="{DynamicResource CurrentBorderColor}"
+        BorderThickness="1"
+        d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IBookmarksEditorViewModel}}"
+        Icon="Resources\Icons\icon002.ico"
+        Title="BookmarksEditor">
+    
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksEditorViewModel}"/>
+    </Window.DataContext>
+
+    <Window.Width>
+        <Binding Path="Width"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="Height"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left >
+        <Binding Path="WindowLeft"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.WindowState>
+        <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.WindowState>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" MinWidth="200"/>
+                <!-- Левая часть -->
+                <ColumnDefinition Width="5"/>
+                <!-- Вертикальный сплиттер -->
+                <ColumnDefinition Width="3*" MinWidth="250"/>
+                <!-- Правая часть -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Левая часть: список -->
+            <Border Grid.Column="0" Padding="2" BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="1">
+                <ListBox x:Name="list" ItemsSource="{Binding Bookmarks, UpdateSourceTrigger=PropertyChanged}"
+                         Background="{DynamicResource CurrentWindowBackground}">
+                    
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                                <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource bokmarksEditorNames}"/>
+                    </ListBox.ItemContainerStyle>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectionChangedBookmarks, UpdateSourceTrigger=PropertyChanged}"
+                                                   CommandParameter="{Binding ElementName=list, Path=SelectedItem}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+                    
+            </Border>
+
+            <!-- Вертикальный разделитель между левой и правой частью -->
+            <GridSplitter Grid.Column="1"
+                      Width="3"
+                      Background="#EEE"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeBehavior="PreviousAndNext"
+                      ResizeDirection="Columns"
+                      ShowsPreview="True"/>
+
+            <!-- Правая часть: собственная сетка с горизонтальным делением -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MinHeight="120"/>
+                    <!-- Верхняя панель -->
+                    <RowDefinition Height="5"/>
+                    <!-- Горизонтальный сплиттер -->
+                    <RowDefinition Height="*" MinHeight="120"/>
+                    <!-- Нижняя панель -->
+                </Grid.RowDefinitions>
+
+                <!-- Верхний многострочный текстовый блок -->
+                <Border Grid.Row="0" Padding="8" BorderBrush="#DDD" BorderThickness="0,0,0,1">
+                    <TextBox Text="{Binding ElementName=list, Path=SelectedItem.Note, UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         BorderThickness="0"
+                         />
+                </Border>
+
+                <!-- Горизонтальный разделитель между верхом и низом -->
+                <GridSplitter Grid.Row="1"
+                          Height="5"
+                          Background="#EEE"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeBehavior="PreviousAndNext"
+                          ResizeDirection="Rows"
+                          ShowsPreview="True"/>
+
+                <!-- Нижний многострочный текстовый блок -->
+                <Border Grid.Row="2" Padding="8">
+                    <TextBox Text="{Binding ElementName=list, Path=SelectedItem.BookmarkUriString, UpdateSourceTrigger=PropertyChanged , Mode=OneWay}"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         BorderThickness="0"
+                         />
+                </Border>
+            </Grid>
+        </Grid>
+
+
+    </Grid>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding Closed, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+</Window>

@@ -2,16 +2,166 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
+    <StartupObject>CryptoBook.App</StartupObject>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Converters\" />
-    <Folder Include="Infrastrucrure\" />
-    <Folder Include="Styles\" />
+    <Compile Remove="Infrastrucrure\**" />
+    <EmbeddedResource Remove="Infrastrucrure\**" />
+    <None Remove="Infrastrucrure\**" />
+    <Page Remove="Infrastrucrure\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Composition\ParagraphFormattingExtensions.cs" />
+    <Compile Remove="Converters\FlowDocumentConverter.cs" />
+    <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
+    <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
+    <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
+    <Compile Remove="Interfaces\IDownloadItem.cs" />
+    <Compile Remove="Interfaces\IEncoding.cs" />
+    <Compile Remove="Interfaces\ILastFileName.cs" />
+    <Compile Remove="Interfaces\ITitleBarRB_ViewModel.cs" />
+    <Compile Remove="Interfaces\IWindowViewModel.cs" />
+    <Compile Remove="Models\BookmarksBarModel.cs" />
+    <Compile Remove="Models\MediaPlayerModel.cs" />
+    <Compile Remove="Models\TitleBarRB_Model.cs" />
+    <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
+    <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
+    <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
+    <Compile Remove="ViewModels\TitleBarRB_ViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Icons\icon002.ico" />
+    <None Remove="Resources\Images\000_aligncenter.png" />
+    <None Remove="Resources\Images\001_alignjustify.png" />
+    <None Remove="Resources\Images\002_alignleft.PNG" />
+    <None Remove="Resources\Images\003_alignright.png" />
+    <None Remove="Resources\Images\004_back.png" />
+    <None Remove="Resources\Images\005_codeblock.png" />
+    <None Remove="Resources\Images\006_codeinline.png" />
+    <None Remove="Resources\Images\007_editcopy.png" />
+    <None Remove="Resources\Images\008_editcut.png" />
+    <None Remove="Resources\Images\009_editpaste.png" />
+    <None Remove="Resources\Images\010_editredo.png" />
+    <None Remove="Resources\Images\011_editundo.png" />
+    <None Remove="Resources\Images\012_filesave.png" />
+    <None Remove="Resources\Images\013_fontbold.png" />
+    <None Remove="Resources\Images\014_fontgrow.png" />
+    <None Remove="Resources\Images\015_fontitalic.png" />
+    <None Remove="Resources\Images\016_fontshrink.png" />
+    <None Remove="Resources\Images\017_fontunderline.png" />
+    <None Remove="Resources\Images\018_forward.png" />
+    <None Remove="Resources\Images\019_icon.png" />
+    <None Remove="Resources\Images\020_indentdecrease.png" />
+    <None Remove="Resources\Images\021_indentincrease.png" />
+    <None Remove="Resources\Images\022_listbullets.png" />
+    <None Remove="Resources\Images\023_listnumbers.png" />
+    <None Remove="Resources\Images\024_normaltext.png" />
+    <None Remove="Resources\Images\025_pause.png" />
+    <None Remove="Resources\Images\026_reload.png" />
+    <None Remove="Resources\Images\027_separator.png" />
+    <None Remove="Resources\Images\028_start.png" />
+    <None Remove="Resources\Images\029_stop.png" />
+    <None Remove="Resources\Images\030_reload_mini.png" />
+    <None Remove="Resources\Images\031linespacingdecrease.png" />
+    <None Remove="Resources\Images\032linespacingincrease .png" />
+    <None Remove="Resources\Images\033UpFileOverview.png" />
+    <None Remove="Resources\Images\034CatalogV001.png" />
+    <None Remove="Resources\Images\035FileV001.png" />
+    <None Remove="Resources\widget.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="MyControls\TitleBarRB.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\icon002.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\widget.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Injections\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.4.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3537.50" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\004_back.png" />
+    <Resource Include="Resources\Images\005_codeblock.png" />
+    <Resource Include="Resources\Images\006_codeinline.png" />
+    <Resource Include="Resources\Images\007_editcopy.png" />
+    <Resource Include="Resources\Images\008_editcut.png" />
+    <Resource Include="Resources\Images\009_editpaste.png" />
+    <Resource Include="Resources\Images\010_editredo.png" />
+    <Resource Include="Resources\Images\011_editundo.png" />
+    <Resource Include="Resources\Images\012_filesave.png" />
+    <Resource Include="Resources\Images\013_fontbold.png" />
+    <Resource Include="Resources\Images\014_fontgrow.png" />
+    <Resource Include="Resources\Images\015_fontitalic.png" />
+    <Resource Include="Resources\Images\016_fontshrink.png" />
+    <Resource Include="Resources\Images\017_fontunderline.png" />
+    <Resource Include="Resources\Images\018_forward.png" />
+    <Resource Include="Resources\Images\019_icon.png" />
+    <Resource Include="Resources\Images\020_indentdecrease.png" />
+    <Resource Include="Resources\Images\021_indentincrease.png" />
+    <Resource Include="Resources\Images\022_listbullets.png" />
+    <Resource Include="Resources\Images\023_listnumbers.png" />
+    <Resource Include="Resources\Images\024_normaltext.png" />
+    <Resource Include="Resources\Images\025_pause.png" />
+    <Resource Include="Resources\Images\026_reload.png" />
+    <Resource Include="Resources\Images\027_separator.png" />
+    <Resource Include="Resources\Images\028_start.png" />
+    <Resource Include="Resources\Images\029_stop.png" />
+    <Resource Include="Resources\Images\030_reload_mini.png" />
+    <Resource Include="Resources\Images\031linespacingdecrease.png" />
+    <Resource Include="Resources\Images\032linespacingincrease .png" />
+    <Resource Include="Resources\Images\033UpFileOverview.png" />
+    <Resource Include="Resources\Images\034CatalogV001.png" />
+    <Resource Include="Resources\Images\035FileV001.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

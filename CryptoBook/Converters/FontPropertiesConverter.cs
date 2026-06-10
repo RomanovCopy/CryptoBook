@@ -1,0 +1,50 @@
+﻿using System.Globalization;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Data;
+
+namespace CryptoBook.Converters
+{
+    public class FontPropertiesConverter: IValueConverter
+    {
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                object? result = DependencyProperty.UnsetValue;
+                if(value is PropertyInfo propertyInfo)
+                {
+                    result = propertyInfo.GetValue(null);
+                }
+                return result;
+            } catch(Exception e)
+            {
+                ErrorWindow(e);
+                return DependencyProperty.UnsetValue;
+            }
+        }
+
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                object? result = null;
+                result = DependencyProperty.UnsetValue;
+                return result;
+            } catch(Exception e)
+            {
+                ErrorWindow(e);
+                return DependencyProperty.UnsetValue;
+            }
+        }
+
+        private void ErrorWindow(Exception e, [CallerMemberName] string name = "")
+        {
+            var mytype = GetType().ToString().Split('.').LastOrDefault();
+            System.Windows.Application.Current.Dispatcher.Invoke((Action)(() =>
+            { System.Windows.MessageBox.Show(e.Message, $"{mytype}.{name}"); }));
+        }
+
+    }
+}

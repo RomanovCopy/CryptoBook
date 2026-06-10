@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="CryptoBook.MyControls.MyFrame"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:markup="clr-namespace:CryptoBook.Markup"
+             xmlns:local="clr-namespace:CryptoBook.MyControls"
+             mc:Ignorable="d"
+             d:DataContext="{x:Type interfaces:IMyFrameViewModel}">
+    <UserControl.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyFrameViewModel}"/>
+    </UserControl.DataContext>
+    <Grid Background="Gray">
+        <Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
+    </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded,UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+</UserControl>

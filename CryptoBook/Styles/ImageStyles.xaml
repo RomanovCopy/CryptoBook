@@ -1,0 +1,171 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <BitmapImage x:Key="iconimage" UriSource="\Resources\Icons\icon002.ico"/>
+    <BitmapImage x:Key="aligncenterimage" UriSource="\Resources\Images\001_align_center.png"/>
+    <BitmapImage x:Key="alignjustifyimage" UriSource="\Resources\Images\004_justify.png"/>
+    <BitmapImage x:Key="alignleftimage" UriSource="\Resources\Images\002_align_left.png"/>
+    <BitmapImage x:Key="alignrightimage" UriSource="\Resources\Images\003_align_right.png"/>
+    <BitmapImage x:Key="backimage" UriSource="\Resources\Images\004_back.png"/>
+    <BitmapImage x:Key="codeblockimage" UriSource="\Resources\Images\005_codeblock.png"/>
+    <BitmapImage x:Key="codeinlineimage" UriSource="\Resources\Images\006_codeinline.png"/>
+    <BitmapImage x:Key="editcopyimage" UriSource="\Resources\Images\007_editcopy.png"/>
+    <BitmapImage x:Key="editcutimage" UriSource="\Resources\Images\008_editcut.png"/>
+    <BitmapImage x:Key="editpasteimage" UriSource="\Resources\Images\009_editpaste.png"/>
+    <BitmapImage x:Key="editredoimage" UriSource="\Resources\Images\010_editredo.png"/>
+    <BitmapImage x:Key="editundoimage" UriSource="\Resources\Images\011_editundo.png"/>
+    <BitmapImage x:Key="filesaveimage" UriSource="\Resources\Images\012_filesave.png"/>
+    <BitmapImage x:Key="fontboldimage" UriSource="\Resources\Images\013_fontbold.png"/>
+    <BitmapImage x:Key="fontgrowimage" UriSource="\Resources\Images\014_fontgrow.png"/>
+    <BitmapImage x:Key="fontitalicimage" UriSource="\Resources\Images\015_fontitalic.png"/>
+    <BitmapImage x:Key="fontshrinkimage" UriSource="\Resources\Images\016_fontshrink.png"/>
+    <BitmapImage x:Key="fontunderlineimage" UriSource="\Resources\Images\017_fontunderline.png"/>
+    <BitmapImage x:Key="forwardimage" UriSource="\Resources\Images\018_forward.png"/>
+    <BitmapImage x:Key="indentdecreaseimage" UriSource="\Resources\Images\020_indentdecrease.png"/>
+    <BitmapImage x:Key="indentincreaseimage" UriSource="\Resources\Images\021_indentincrease.png"/>
+    <BitmapImage x:Key="listbulletsimage" UriSource="\Resources\Images\022_listbullets.png"/>
+    <BitmapImage x:Key="listnumbersimage" UriSource="\Resources\Images\023_listnumbers.png"/>
+    <BitmapImage x:Key="normaltextimage" UriSource="\Resources\Images\024_normaltext.png"/>
+    <BitmapImage x:Key="pauseimage" UriSource="\Resources\Images\025_pause.png"/>
+    <BitmapImage x:Key="reloadimage" UriSource="\Resources\Images\026_reload.png"/>
+    <BitmapImage x:Key="separatorimage" UriSource="\Resources\Images\027_separator.png"/>
+    <BitmapImage x:Key="startimage" UriSource="\Resources\Images\028_start.png"/>
+    <BitmapImage x:Key="stopimage" UriSource="\Resources\Images\029_stop.png"/>
+    <BitmapImage x:Key="reloadminiimage" UriSource="\Resources\Images\030_reload_mini.png"/>
+    <BitmapImage x:Key="linespacingdecrease" UriSource="\Resources\Images\031linespacingdecrease.png"/>
+    <BitmapImage x:Key="linespacingincrease" UriSource="\Resources\Images\032linespacingincrease .png"/>
+    <BitmapImage x:Key="fileOverviewUp" UriSource="\Resources\Images\033UpFileOverview.png"/>
+    <BitmapImage x:Key="catalogV001" UriSource="\Resources\Images\034CatalogV001.png"/>
+    <BitmapImage x:Key="fileV001" UriSource="\Resources\Images\035FileV001.png"/>
+    <BitmapImage x:Key="newParagraph" UriSource="\Resources\Images\005_new_paragraph.png"/>
+
+
+    <!-- Кисть иконки (можно заменить на любую) -->
+    <SolidColorBrush x:Key="IconBrush" Color="Black" />
+
+
+    <!-- УВЕЛИЧИТЬ LineHeight -->
+    <Canvas x:Key="Icon_IncreaseLineHeight" Width="24" Height="24"
+        SnapsToDevicePixels="True">
+        <!-- "строки текста" -->
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+
+        <!-- вертикальная шкала -->
+        <Path Stroke="{DynamicResource IconBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        Data="M20,7 L20,17"/>
+
+        <!-- стрелка вверх (увеличить) -->
+        <Path Fill="{DynamicResource IconBrush}" Data="M20,3 L17,7 L23,7 Z"/>
+        <!-- стрелка вниз (увеличить) -->
+        <Path Fill="{DynamicResource IconBrush}" Data="M20,21 L23,17 L17,17 Z"/>
+    </Canvas>
+
+    <!-- УМЕНЬШИТЬ LineHeight -->
+    <Canvas x:Key="Icon_DecreaseLineHeight" Width="24" Height="24"
+        SnapsToDevicePixels="True">
+        <!-- "строки текста" -->
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+
+        <!-- короткая вертикальная шкала (сжатие) -->
+        <Path Stroke="{DynamicResource IconBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        Data="M20,11 L20,13"/>
+
+        <!-- верхняя стрелка вниз (уменьшить) -->
+        <Path Fill="{DynamicResource IconBrush}" Data="M17,7 L23,7 L20,11 Z"/>
+        <!-- нижняя стрелка вверх (уменьшить) -->
+        <Path Fill="{DynamicResource IconBrush}" Data="M17,17 L23,17 L20,13 Z"/>
+    </Canvas>
+    
+    <!--Bullet List-->
+    <Canvas x:Key="Icon_BulletList" Width="24" Height="24">
+        <!-- Первая строка -->
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="5" />
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+
+        <!-- Вторая строка -->
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="11"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+
+        <!-- Третья строка -->
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="17"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+    </Canvas>
+
+    <!--Numbered List-->
+    <Canvas x:Key="Icon_NumberedList" Width="24" Height="24">
+        <!-- 1 -->
+        <TextBlock FontSize="8" FontWeight="Normal" Text="1" Canvas.Left="2" Canvas.Top="1"/>
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+
+        <!-- 2 -->
+        <TextBlock FontSize="8" FontWeight="Normal" Text="2" Canvas.Left="2" Canvas.Top="7"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+
+        <!-- 3 -->
+        <TextBlock FontSize="8" FontWeight="Normal" Text="3" Canvas.Left="2" Canvas.Top="13"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+    </Canvas>
+
+    <!--Clear List-->
+    <Canvas x:Key="Icon_ClearList" Width="24" Height="24">
+        <!-- bullets + lines -->
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="5"/>
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="11"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="17"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+
+        <!-- крест -->
+        <Line X1="4" Y1="4" X2="20" Y2="20" Stroke="Red" StrokeThickness="1"/>
+        <Line X1="20" Y1="4" X2="4" Y2="20" Stroke="Red" StrokeThickness="1"/>
+    </Canvas>
+
+
+    <!-- Insert Hyperlink 24x24 -->
+    <Canvas x:Key="Icon_InsertHyperlink" Width="24" Height="24"
+        SnapsToDevicePixels="True"
+        RenderTransformOrigin="0.5,0.5">
+        <!-- звено 1 -->
+        <Rectangle Width="12" Height="6" RadiusX="3" RadiusY="3"
+               Canvas.Left="3" Canvas.Top="6"
+               Fill="Transparent"
+               Stroke="{DynamicResource IconBrush}"
+               StrokeThickness="2"
+               StrokeLineJoin="Round">
+            <Rectangle.RenderTransform>
+                <RotateTransform Angle="-35" CenterX="6" CenterY="3"/>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+
+        <!-- звено 2 -->
+        <Rectangle Width="12" Height="6" RadiusX="3" RadiusY="3"
+               Canvas.Left="9" Canvas.Top="12"
+               Fill="Transparent"
+               Stroke="{DynamicResource IconBrush}"
+               StrokeThickness="2"
+               StrokeLineJoin="Round">
+            <Rectangle.RenderTransform>
+                <RotateTransform Angle="-35" CenterX="6" CenterY="3"/>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+
+        <!-- плюс (символ "вставить") -->
+        <Path Stroke="{DynamicResource IconBrush}"
+          StrokeThickness="2"
+          StrokeStartLineCap="Round"
+          StrokeEndLineCap="Round"
+          Data="M 18 4 L 18 10 M 15 7 L 21 7"/>
+    </Canvas>
+
+
+
+
+</ResourceDictionary>

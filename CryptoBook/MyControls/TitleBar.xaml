@@ -1,0 +1,141 @@
+﻿<UserControl x:Class="CryptoBook.MyControls.TitleBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+             xmlns:markup="clr-namespace:CryptoBook.Markup"
+             xmlns:convert="clr-namespace:CryptoBook.Converters"
+             xmlns:local="clr-namespace:CryptoBook.MyControls"
+             BorderBrush="{DynamicResource CurrentBorderColor}"
+             BorderThickness="0,0,0,1"
+             mc:Ignorable="d"
+             MinHeight="16"
+             d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:ITitleBarViewModel}}">
+    <UserControl.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:ITitleBarViewModel}"/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style x:Key="icon" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="{Binding Path=MyFontSize, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Foreground" Value="{DynamicResource CurrentTitleBarForeground}"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style x:Key="buttons" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CurrentTitleBarForeground}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Background="{DynamicResource CurrentTitleBarBackground}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="Auto" Grid.Column="0">
+
+            <Button x:Name="backBtn" Style="{StaticResource buttons}" 
+                Command="{Binding ButtonBack_Click, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Text="&#xE72B;" Style="{StaticResource icon}"/>
+            </Button>
+
+            <Button x:Name="fwdBtn" Style="{StaticResource buttons}" 
+                Command="{Binding ButtonForward_Click, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Text="&#xE72A;" Style="{StaticResource icon}"/>
+            </Button>
+
+            <Button x:Name="sideMenuBtn" Style="{StaticResource buttons}"
+                    Command="{Binding ToggleMenu_Click, UpdateSourceTrigger=PropertyChanged}" >
+                    <TextBlock Style="{StaticResource icon}" Text="&#xE700;"/>
+            </Button>
+            
+            <TextBlock x:Name="title" FontWeight="Medium" Text="CryptoBook" 
+                       Foreground="{DynamicResource CurrentTitleBarForeground}"
+                       FontSize="{Binding MyFontSize, UpdateSourceTrigger=PropertyChanged}" 
+                       VerticalAlignment="Center" Margin="3"/>
+            
+        </StackPanel>
+        
+        <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+
+            <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch"
+                       Text="{Binding MyText, UpdateSourceTrigger=PropertyChanged}" 
+                       Foreground="{Binding MyFontColor, Converter={markup:ResolveConverter ConverterType={x:Type convert:ColorToColorConverter}}, 
+                UpdateSourceTrigger=PropertyChanged}" 
+                       FontSize="{Binding MyFontSize, 
+                Converter={markup:ResolveConverter ConverterType={x:Type convert:FontSizeAdjustConverter}}, ConverterParameter=-2}" 
+                       FontWeight="Normal" FontStyle="Italic"
+                       VerticalAlignment="Center" TextAlignment="Center">
+                
+            </TextBlock>
+            <Grid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick"
+                      Command="{Binding TitleBarDoubleClick, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid.InputBindings>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonDown">
+                    <i:InvokeCommandAction Command="{Binding MouseLeftButtonDown, UpdateSourceTrigger=PropertyChanged}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Grid>
+        <StackPanel Orientation="Horizontal" Grid.Column="2">
+            
+            <Button x:Name="settings" Style="{StaticResource buttons}" 
+                    Command="{Binding ButtonSettingsClick, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource icon}" Text="&#xE713;"/>
+            </Button>
+
+            <Button x:Name="darkTheme" Style="{StaticResource buttons}" 
+                    Command="{Binding ButtonDarkThemeClick, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource icon}" Text="&#xE708;"/>
+            </Button>
+
+            <Button x:Name="lightTheme" Style="{StaticResource buttons}"
+                    Command="{Binding ButtonLightTheme_Click, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource icon}" Text="&#xE706;"/>
+            </Button>
+
+            <Button x:Name="minBtn" Style="{StaticResource buttons}"
+                    Command="{Binding MinButtonClick,UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource icon}" Text="&#xE745;"/>
+            </Button>
+
+            <Button x:Name="maxBtn" Style="{StaticResource buttons}"
+                    Command="{Binding MaxButtonClick, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource icon}" Text="&#xE740;"/>
+            </Button>
+
+            <Button x:Name="toWindow" Style="{StaticResource buttons}"
+                    Command="{Binding GoToWindow, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource icon}" Text="&#xE73F;"/>
+
+            </Button>
+
+            <Button x:Name="closeBtn" Style="{StaticResource buttons}"
+                    Command="{Binding CloseButtonClick, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Style="{StaticResource icon}" Text="&#xE894;" FontWeight="Bold"/>
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+
+</UserControl>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeweb Widget</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        agent-chat-widget {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        (function () {
+            const agentId = window.agentId || 'default-id';
+            const wsUrl = 'https://chat.timeweb.cloud';
+            const isCollapsed = false;
+
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.src = 'https://st.timeweb.com/cloud-static/cloud-ai/agent-widget/agent-chat-widget.js';
+
+            
+            script.onload = () => {
+                const widget = document.createElement('agent-chat-widget');
+                widget.setAttribute('agentid', agentId);
+                widget.setAttribute('wsurl', wsUrl);
+                widget.setAttribute('is-collapsed', isCollapsed);
+                document.body.appendChild(widget);
+                setTimeout(() => {
+                    // Разворачиваем на весь экран
+                    if (typeof widget._enterFullscreen === 'function') widget._enterFullscreen();
+
+                    const shadow = widget.shadowRoot;
+                    if (shadow) {
+                        // Разрешаем выделение текста
+                        const style = document.createElement('style');
+                        style.textContent = `
+                        * { user-select: text !important; }
+                        :host { display: flex !important; flex-direction: column !important; }
+                        .messages { flex: 1 !important; overflow-y: auto !important; box-sizing: border-box; }
+                    `;
+                        shadow.appendChild(style);
+
+                        // Скрываем кнопки
+                        const fullscreenBtn = shadow.querySelector('.fullscreen-btn');
+                        if (fullscreenBtn) fullscreenBtn.style.display = 'none';
+                        const closeBtn = shadow.querySelector('.close-btn');
+                        if (closeBtn) closeBtn.style.display = 'none';
+
+                        // MutationObserver для меню
+                        const observer = new MutationObserver(() => {
+                            const menuItems = shadow.querySelectorAll('.menu-popover .menu-item');
+                            menuItems.forEach(item => {
+                                const textSpan = item.querySelector('.menu-text');
+                                if (textSpan && textSpan.textContent.includes('Вернуть вид по умолчанию')) {
+                                    item.style.display = 'none';
+                                }
+                            });
+                        });
+                        observer.observe(shadow, { childList: true, subtree: true });
+                    }
+
+                    // Прокрутка внутри iframe (если есть)
+                    const iframes = widget.querySelectorAll('iframe');
+                    iframes.forEach(f => {
+                        try { f.contentDocument.body.style.userSelect = 'text'; }
+                        catch (e) { console.warn(e); }
+                    });
+
+                }, 500);
+            };
+
+            document.head.appendChild(script);
+        })();
+    </script>
+</body>
+</html>

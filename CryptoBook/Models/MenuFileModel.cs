@@ -1,0 +1,99 @@
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
+
+namespace CryptoBook.Models
+{
+    internal class MenuFileModel: ViewModelBase
+    {
+        private readonly IWindowManager windowManager;
+        private readonly ILifetimeScope scope;
+
+
+        internal MenuFileModel(ILifetimeScope scope)
+        {
+            this.scope = scope;
+            windowManager = scope.Resolve<IWindowManager>();
+        }
+
+        internal bool CanExecute_NewFile(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_NewFile(object? obj)
+        {
+
+        }
+
+        internal bool CanExecute_OpenFile(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_OpenFile(object? obj)
+        {
+
+        }
+
+        internal bool CanExecute_SaveFile(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_SaveFile(object? obj)
+        {
+
+        }
+
+        internal bool CanExecute_SaveAsFile(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_SaveAsFile(object? obj)
+        {
+        }
+
+
+        internal bool CanExecute_FileOverview(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_FileOverview(object? obj)
+        {
+        }
+
+        internal bool CanExecute_OpenDirectory(object? obj)
+        {
+            return true;
+        }
+
+        internal void Execute_OpenDirectory(object? obj)
+        {
+        }
+
+        internal bool CanExecute_WorkingDirectorySynchronization(object? obj)
+        {
+            return true;
+        }
+
+        internal void Execute_WorkingDirectorySynchronization(object? obj)
+        {
+        }
+
+        internal bool CanExecute_CloseFile(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_CloseFile(object? obj)
+        {
+        }
+
+        internal bool CanExecute_UpdateFile(object? obj)
+        {
+            return true;
+        }
+        internal void Execute_UpdateFile(object? obj)
+        {
+        }
+
+    }
+}

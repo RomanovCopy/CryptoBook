@@ -1,0 +1,88 @@
+﻿<Window x:Class="CryptoBook.Views.MyMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:converters="clr-namespace:CryptoBook.Converters"
+        xmlns:local="clr-namespace:CryptoBook.Views"
+        mc:Ignorable="d" SizeToContent="Height" 
+        MinHeight="100" Width="300"
+        d:DataContext="{x:Type interfaces:IMyMessageBox_ViewModel}">
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyMessageBox_ViewModel}"/>
+    </Window.DataContext>
+    <Window.Resources>
+        <Style x:Key="mybuttonL" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Content" Value="{Binding ButtonLeft_Content, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Background" Value="{Binding ButtonLeftBC, 
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Foreground" Value="{Binding ButtonLeftFC, 
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
+
+        </Style>
+        <Style x:Key="mybuttonR" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Background" Value="{Binding ButtonRightBC, 
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="Foreground" Value="{Binding ButtonRightFC, 
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}, UpdateSourceTrigger=PropertyChanged}"/>
+        </Style>
+    </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="20"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Top>
+        <Binding  Path="WindowTop" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
+             ConverterParameter="top" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left>
+        <Binding Path="WindowLeft" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" 
+             ConverterParameter="left" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.Background>
+        <Binding Path="BackColor" Converter="{markup:ResolveConverter ConverterType={x:Type converters:SizeLocationConverter}}" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Background>
+
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="blank_line01" Height="*"/>
+            <RowDefinition x:Name="for_message" Height="Auto"/>
+            <RowDefinition x:Name="blank_line02" Height="*"/>
+            <RowDefinition x:Name="for_buttons" Height="Auto"/>
+            <RowDefinition x:Name="blank_line03" Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="message"
+                    Grid.Row="1" TextAlignment="Center"
+                    Style="{StaticResource TextBlockWrap}" 
+                    Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <Grid x:Name="buttons" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="blank_column01" Width="*"/>
+                <ColumnDefinition x:Name="for_buttonleft" Width="Auto"/>
+                <ColumnDefinition x:Name="blank_column02" Width="*"/>
+                <ColumnDefinition  x:Name="for_buttonsright" Width="Auto"/>
+                <ColumnDefinition x:Name="blank_column03" Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="buttonleft" Grid.Column="1" HorizontalContentAlignment="Center"
+                    Style="{StaticResource mybuttonL}"
+                    Command="{Binding ButtonLeftClick, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button x:Name="buttonright" Grid.Column="3" HorizontalContentAlignment="Center"
+                    Content="{Binding ButtonRight_Content, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{StaticResource mybuttonR}"
+                    Command="{Binding ButtonRightClick, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+    </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+</Window>
