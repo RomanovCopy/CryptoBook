@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 using CryptoBook.MyControls;
 using CryptoBook.MyPages;
 using CryptoBook.Views;
@@ -10,132 +11,93 @@ using System.Windows.Controls;
 
 namespace CryptoBook.Models
 {
-    public class MyFrameModel: ViewModelBase
+    public class MyFrameModel: ViewModelBase, IMyFrameModel
     {
-        private readonly ILifetimeScope scope;
+
+        private readonly IPageNavigationService pageNavigationService;
+
+        public string? CurrentPageKey => pageNavigationService.CurrentKey;
+        public Page? CurrentPage => pageNavigationService.CurrentPage;
 
 
-
-        public ObservableCollection<Page> FrameList { get; internal set; }
-        public Page CurrentPage { get => currentPage; private set => SetProperty(ref currentPage, value); }
-        private Page currentPage;
-
-
-
-        public MyFrameModel(ILifetimeScope scope)
+        public MyFrameModel( IPageNavigationService pageNavigationService)
         {
-            this.scope = scope;
-
-            FrameList = new();
+            this.pageNavigationService = pageNavigationService ?? throw new ArgumentNullException(nameof(pageNavigationService));
+            pageNavigationService.Navigate("Home");
         }
 
-        internal bool CanExecute_FrameListAddPage(object? obj)
+        public bool CanExecute_Navigate(object? obj)
         {
-            return obj != null;
+            return pageNavigationService.Keys != null && obj is string key && !pageNavigationService.Keys.Contains(key);
         }
-        internal void Execute_FrameListAddPage(object? obj)
+        public void Execute_Navigate(object? obj)
         {
-            if(obj is Page page)
+            if(obj is string key)
             {
-                var existingPage = FrameList.FirstOrDefault(item => item.GetType() == page.GetType());
-
-                if(existingPage != null)
-                {
-                    CurrentPage = existingPage;
-                } else
-                {
-                    FrameList.Add(page);
-                    CurrentPage = page;
-                }
-            }
+                pageNavigationService.Navigate(key);
+            }   
         }
 
-        internal bool CanExecute_FramelistGoForward(object? obj)
+        public bool CanExecute_GoForward(object? obj)
         {
-            if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) < FrameList.Count - 1)
-                return true;
-            else
-                return false;
-
+            return pageNavigationService.CanGoForward;
         }
-        internal void Execute_FramelistGoForward(object? obj)
+        public void Execute_GoForward(object? obj)
         {
-            CurrentPage = FrameList[FrameList.IndexOf(CurrentPage) + 1];
+            pageNavigationService.GoForward();
         }
 
-        internal bool CanExecute_FramelistGoBack(object? obj)
+        public bool CanExecute_GoBack(object? obj)
         {
-            if(FrameList != null && FrameList.Count > 1 && FrameList.IndexOf(CurrentPage) > 0)
-                return true;
-            else
-                return false;
+            return pageNavigationService.CanGoBack;
         }
-        internal void Execute_FramelistGoBack(object? obj)
+        public void Execute_GoBack(object? obj)
         {
-            CurrentPage = FrameList[FrameList.IndexOf(CurrentPage) - 1];
+            pageNavigationService.GoBack();
         }
 
-        internal bool CanExecute_FrameListRemovePage(object? obj)
+        public bool CanExecute_RemovePage(object? obj)
         {
-            return FrameList.Count > 1;
-        }
-        internal void Execute_FrameListRemovePage(object? obj)
-        {
-            if(obj is Page page)
+            if(obj is string key)
             {
-                if(FrameList.Count > 1)
-                {
-                    int i = FrameList.IndexOf(page);//индекс удаляемой страницы
-                    if(CurrentPage.Equals(page))
-                    {//текущая страница подлежит удалению
-                        if(i == 0)
-                        {//первый в коллекции
-                            i = FrameList.Count > 1 ? i + 1 : i;//индекс новой текущей страницы
-                        } else
-                        {//последний или в середине коллекции
-                            i = FrameList.Count > 1 ? i - 1 : i;//индекс новой текущей страницы
-                        }
-                        CurrentPage = FrameList[i];
-                    }
-                    FrameList.Remove(page);
-                } else
-                {
-                    FrameList.Remove(page);
-                }
-            }
-            scope.Resolve<MainWindow>().Focus();
+                return pageNavigationService.Keys != null && pageNavigationService.Keys.Contains(key);
+            } 
+            return false;
+        }
+        public void Execute_RemovePage(object? obj)
+        {
+            pageNavigationService.Remove(obj as string);
         }
 
-        internal bool CanExecute_Loaded(object? obj)
+        public bool CanExecute_Loaded(object? obj)
         {
             return true;
         }
-        internal void Execute_Loaded(object? obj)
-        {
-            Execute_FrameListAddPage(scope.Resolve<Home>());
-        }
-
-        internal bool CanExecute_Closing(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_Closing(object? obj)
+        public void Execute_Loaded(object? obj)
         {
         }
 
-        internal bool CanExecute_Close(object? obj)
+        public bool CanExecute_Closing(object? obj)
         {
             return true;
         }
-        internal void Execute_Close(object? obj)
+        public void Execute_Closing(object? obj)
         {
         }
 
-        internal bool CanExecute_Closed(object? obj)
+        public bool CanExecute_Close(object? obj)
         {
             return true;
         }
-        internal void Execute_Closed(object? obj)
+        public void Execute_Close(object? obj)
+        {
+        }
+
+        public bool CanExecute_Closed(object? obj)
+        {
+            return true;
+        }
+        public void Execute_Closed(object? obj)
         {
         }
     }

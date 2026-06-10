@@ -36,7 +36,7 @@ namespace CryptoBook.Converters
             } catch(Exception e) { ErrorWindow(e); return -1; }
         }
 
-        private TextPointer GetTextPointer(Controls.RichTextBox textBox, int length)
+        private TextPointer? GetTextPointer(Controls.RichTextBox textBox, int length)
         {
             try
             {

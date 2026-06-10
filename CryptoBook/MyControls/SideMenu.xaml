@@ -69,9 +69,8 @@
                     <Grid.DataContext>
                         <marcup:ResolveViewModel ViewModelType="{x:Type interfaces:ISideMenuViewModel}"/>
                     </Grid.DataContext>
-                    <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}" 
-              Background="Transparent"  Width="250"
-              BorderThickness="0" VerticalAlignment="Stretch">
+                    <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
+              Background="Transparent"  Width="250" BorderThickness="0" VerticalAlignment="Stretch">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
                                 <ContentPresenter />

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:pages="clr-namespace:CryptoBook.MyPages"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d"
@@ -13,7 +14,7 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyFrameViewModel}"/>
     </UserControl.DataContext>
     <Grid Background="Gray">
-        <Frame Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
+        <Frame  Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

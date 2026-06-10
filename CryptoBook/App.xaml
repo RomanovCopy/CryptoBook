@@ -13,6 +13,8 @@
                 <ResourceDictionary Source="/Themes/DarkTheme.xaml"/>
                 <ResourceDictionary Source="/Styles/ListStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ImageStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/ButtonStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/TreeViewStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <SolidColorBrush x:Key="CurrentWindowBackground" Color="Gray" />
             <SolidColorBrush x:Key="CurrentWindowForeground" Color="Black" />
@@ -23,4 +25,5 @@
             <infra:ResourceWrapper x:Key="Res"/>
         </ResourceDictionary>
     </Application.Resources>
+
 </Application>

@@ -1,19 +1,23 @@
-﻿using System.Windows;
+﻿using CryptoBook.DTO;
 
-using Windows.AI.MachineLearning;
+using System.Windows;
+
+//using Windows.AI.MachineLearning;
 
 namespace CryptoBook.Interfaces
 {
     public interface IWindowManager
     {
 
-        T CreateWindow<T>(Guid? ownerId=null) where T : Window;
-        void ShowWindow<T>(Guid windowId) where T : Window;
-        void CloseWindow<T>(Guid windowId) where T : Window;
-        bool IsWindowOpen<T>(Guid windowId) where T : Window;
+        Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window;
+        bool GetResult(Guid windowId);
+        void ShowWindow(Guid windowId);
+        void ShowWindowDialog(Guid windowId);
+        void CloseWindow(Guid windowId);
+        bool IsWindowOpen(Guid windowId);
 
-        T? FindWindow<T>(Guid windowId) where T : Window;
-        IEnumerable<T> FindWindow<T>() where T : Window;
+
+        WindowHost? FindHostWindow(Guid windowId);
 
     }
 }

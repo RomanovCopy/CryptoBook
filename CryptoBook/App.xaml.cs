@@ -11,36 +11,51 @@ namespace CryptoBook
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App: System.Windows.Application, IContainerProvider
+    public partial class App: System.Windows.Application
     {
+        private IDriveManagerService? _driveManagerService;
+        IContainer? _container;
 
-        public IContainer Container { get; private set; }
         public App()
         {
             var startup = new Startup();
-            Container = startup.ConfigureServices(this);
+            _container = startup.ConfigureServices(this);
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
             try
             {
-                if(Container != null)
-                {
-                    // Разрешение и запуск главного окна
-                    var winmanager = Container.Resolve<IWindowManager>();
-                    var win = winmanager.CreateWindow<MainWindow>();
-                    winmanager.ShowWindow<MainWindow>(((IWindowWithId)win.DataContext).WindowId);
-                }
+                if(_container is null)
+                    throw new InvalidOperationException("Container is null.");
 
-            } catch(Exception ex)
+                _driveManagerService = _container.Resolve<IDriveManagerService>();
+                _driveManagerService.StartMonitoring();
+
+                var windowManager = _container.Resolve<IWindowManager>();
+
+                windowManager.ShowWindow(windowManager.CreateWindow<MainWindow>());
+
+            } catch
             {
-                Shutdown();
+                Shutdown(-1);
             }
-
-
         }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            try
+            {
+                _driveManagerService?.Dispose();
+                _container?.Dispose();
+            } finally
+            {
+                base.OnExit(e);
+            }
+        }
+
     }
 
 }

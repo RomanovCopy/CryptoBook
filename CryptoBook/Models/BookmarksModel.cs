@@ -39,11 +39,8 @@ namespace CryptoBook.Models
         }
         internal void Execute_AddAtCaret(object? obj)
         {
-            //Id родительского окна
-            var owner = ((windowManager.FindWindow<MainWindow>().FirstOrDefault())?.DataContext as IWindowWithId)?.WindowId;
-            //новое окно с передачей Id родителя
-            var win = windowManager.CreateWindow<Views.BookmarksEditor>(owner);
-            windowManager.ShowWindow<Views.BookmarksEditor>(((IBookmarksEditorViewModel)win.DataContext).WindowId);
+            var id = windowManager.CreateWindow<Views.BookmarksEditor>();
+            windowManager.ShowWindow(id);
         }
 
         internal bool CanExecute_PreviousBookmark(object? obj)

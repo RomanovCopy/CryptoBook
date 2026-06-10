@@ -13,32 +13,30 @@ namespace CryptoBook.ViewModels
     public class MyFrameViewModel: ViewModelBase, IMyFrameViewModel
     {
 
-        private readonly MyFrameModel myFrameModel;
+        private readonly IMyFrameModel myFrameModel;
 
-        public ObservableCollection<Page> FrameList => myFrameModel.FrameList;
-
-        public Page CurrentPage => myFrameModel.CurrentPage;
-
+        public string? CurrentPageKey => myFrameModel.CurrentPageKey;
+        public Page? CurrentPage => myFrameModel.CurrentPage;
 
 
-        public MyFrameViewModel(ILifetimeScope scope)
+        public MyFrameViewModel(IMyFrameModel myFrameModel)
         {
-            myFrameModel = new(scope);
+            this.myFrameModel=myFrameModel??throw new ArgumentNullException(nameof(myFrameModel));
             myFrameModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
 
-        public ICommand FrameListAddPage => frameListAddPage ??= new RelayCommand(myFrameModel.Execute_FrameListAddPage, myFrameModel.CanExecute_FrameListAddPage);
-        private RelayCommand frameListAddPage;
+        public ICommand Navigate => navigate ??= new RelayCommand(myFrameModel.Execute_Navigate, myFrameModel.CanExecute_Navigate);
+        private RelayCommand navigate;
 
-        public ICommand FrameListRemovePage => frameListRemovePage ??= new RelayCommand(myFrameModel.Execute_FrameListRemovePage, myFrameModel.CanExecute_FrameListRemovePage);
-        private RelayCommand frameListRemovePage;
+        public ICommand RemovePage => removePage ??= new RelayCommand(myFrameModel.Execute_RemovePage, myFrameModel.CanExecute_RemovePage);
+        private RelayCommand removePage;
 
-        public ICommand FramelistGoForward => framelistGoForward ??= new RelayCommand(myFrameModel.Execute_FramelistGoForward, myFrameModel.CanExecute_FramelistGoForward);
-        private RelayCommand framelistGoForward;
+        public ICommand GoForward => goForward ??= new RelayCommand(myFrameModel.Execute_GoForward, myFrameModel.CanExecute_GoForward);
+        private RelayCommand goForward;
 
-        public ICommand FramelistGoBack => framelistGoBack ??= new RelayCommand(myFrameModel.Execute_FramelistGoBack, myFrameModel.CanExecute_FramelistGoBack);
-        private RelayCommand framelistGoBack;
+        public ICommand GoBack => goBack ??= new RelayCommand(myFrameModel.Execute_GoBack, myFrameModel.CanExecute_GoBack);
+        private RelayCommand goBack ;
 
         public ICommand Loaded => loaded ??= new RelayCommand(myFrameModel.Execute_Loaded, myFrameModel.CanExecute_Loaded);
         private RelayCommand loaded;

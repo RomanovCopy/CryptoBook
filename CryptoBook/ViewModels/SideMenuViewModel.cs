@@ -3,8 +3,10 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
+using DTO = CryptoBook.DTO;
 
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -14,7 +16,7 @@ namespace CryptoBook.ViewModels
 
         private readonly SideMenuModel sideMenuModel;
 
-        public ObservableCollection<MenuItemViewModel> MenuItems { get => sideMenuModel.MenuItems; }
+        public ObservableCollection<MenuItemBase> MenuItems { get => sideMenuModel.MenuItems; }
         public double Width { get => sideMenuModel.Width; set => sideMenuModel.Width = value; }
         public bool IsMenuOpen { get; set; }
 

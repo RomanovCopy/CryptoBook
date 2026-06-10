@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using CryptoBook.Interfaces;
+
+using System.Windows;
 
 namespace CryptoBook.Views
 {

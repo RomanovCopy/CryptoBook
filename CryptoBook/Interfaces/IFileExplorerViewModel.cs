@@ -1,0 +1,38 @@
+﻿using CryptoBook.DTO;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+
+namespace CryptoBook.Interfaces
+{
+    public interface IFileExplorerViewModel: IViewModel, IWindowOptions, IWindowWithId , ISortedCommand
+    {
+        double LeftColumnPercent { get; set; }
+        double RightColumnPercent { get; set; }
+        bool IsHiddenFilesVisible { get; set; }
+        ISystemItem? SelectedItem { get; set; }
+        ReadOnlyObservableCollection<IDriveItem> GetDrives { get; }
+
+        ICommand BackCommand{ get; }
+        ICommand CutCommand { get; }
+        ICommand CopyCommand { get; }
+        ICommand PasteCommand { get; }
+        ICommand DeleteCommand { get; }
+        ICommand CreateFileCommand { get; }
+        ICommand CreateDirectoryCommand { get; }
+        ICommand RenameClickCommand {  get; }
+        ICommand RenameCommand { get; }
+        ICommand MoveCommand { get; }
+        ICommand RefreshCommand { get; }
+        ICommand CancelRenameCommand { get; }
+        ICommand TreeViewItemSelectedCommand { get; }
+        ICommand ListViewItemDoubleClickCommand { get; }
+        ICommand ListViewSelectionChangedCommand { get; }
+        ICommand WindowSizeChangedCommand { get; }
+    }
+}

@@ -11,7 +11,7 @@ namespace CryptoBook.ViewModels
     public class TitleBarViewModel: ViewModelBase, ITitleBarViewModel
     {
 
-        private readonly TitleBarModel titleBarModel;
+        private readonly ITitleBarModel titleBarModel;
 
         public double MyFontSize => titleBarModel.MyFontSize;
         public string MyText => titleBarModel.MyText;
@@ -19,9 +19,9 @@ namespace CryptoBook.ViewModels
 
 
 
-        public TitleBarViewModel(ILifetimeScope scope)
+        public TitleBarViewModel(ITitleBarModel titleBarModel)
         {
-            titleBarModel = new TitleBarModel(scope);
+            this.titleBarModel = titleBarModel;
             titleBarModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 

@@ -9,19 +9,15 @@ using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, IWindowWithId, ICloseable
+    public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, ICloseable
     {
-        private readonly MainWindowModel mainWindowModel;
-        private readonly ILifetimeScope scope;
-        private readonly IThemeManager themeManager;
-        private readonly IWindowManager windowManager;
+        private readonly IMainWindowModel mainWindowModel;
 
         public Guid WindowId => mainWindowModel.WindowId;
 
         public event EventHandler RequestClose;
 
-        public bool IsMenuOpen { get => isMenuOpen; set => SetProperty(ref isMenuOpen, value); }
-        bool isMenuOpen;
+        public bool IsMenuOpen { get => mainWindowModel.IsMenuOpen; set => mainWindowModel.IsMenuOpen = value; }
 
         public double WindowWidth { get => mainWindowModel.WindowWidth; set => mainWindowModel.WindowWidth = value; }
         public double WindowHeight { get => mainWindowModel.WindowHeight; set => mainWindowModel.WindowHeight = value; }
@@ -32,36 +28,22 @@ namespace CryptoBook.ViewModels
 
         public static Action Ready { get => MainWindowModel.Ready; set => MainWindowModel.Ready = value; }
 
-        public MainWindowViewModel(ILifetimeScope scope)
+        public MainWindowViewModel(IMainWindowModel mainWindowModel)
         {
-            IsMenuOpen = false;
-            this.scope = scope ?? throw new ArgumentNullException(nameof(scope));
-            themeManager = scope.Resolve<IThemeManager>();
-            windowManager = scope.Resolve<IWindowManager>();
-            mainWindowModel = new(windowManager);
-            mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            this.mainWindowModel = mainWindowModel ?? throw new ArgumentNullException(nameof(mainWindowModel));
+            this.mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-
-        public ICommand SideMenuClose => sideMenuClose ??= new RelayCommand(Execute_SideMenuClose, CanExecute_SideMenuClose);
-        private bool CanExecute_SideMenuClose(object? obj)
-        {
-            return IsMenuOpen;
-        }
-        private void Execute_SideMenuClose(object? obj)
-        {
-            IsMenuOpen = false;
-        }
+        public ICommand SideMenuClose => sideMenuClose ??= new RelayCommand(mainWindowModel.Execute_SideMenuClose, mainWindowModel.CanExecute_SideMenuClose);
         RelayCommand sideMenuClose;
-
-
-
-        public ICommand WindowToMinimize => windowToMinimize ??= new RelayCommand(mainWindowModel.Execute_windowToMinimize, mainWindowModel.CanExecute_windowToMinimize);
+        public ICommand WindowToMinimize => windowToMinimize ??= new RelayCommand(mainWindowModel.Execute_WindowToMinimize, mainWindowModel.CanExecute_WindowToMinimize);
         RelayCommand windowToMinimize;
         public ICommand WindowToMaximize => windowToMaximize ??= new RelayCommand(mainWindowModel.Execute_WindowToMaximize, mainWindowModel.CanExecute_WindowToMaximize);
         RelayCommand windowToMaximize;
         public ICommand WindowToNormal => windowToNormal ??= new RelayCommand(mainWindowModel.Execute_WindowToNormal, mainWindowModel.CanExecute_WindowToNormal);
         RelayCommand windowToNormal;
+        public ICommand ToggleMenuCommand => toggleMenuCommand ??= new RelayCommand(mainWindowModel.Execute_ToggleMenuCommand, mainWindowModel.CanExecute_ToggleMenuCommand);
+        private RelayCommand toggleMenuCommand;
 
 
         public ICommand Loaded => loaded ??= new RelayCommand(mainWindowModel.Execute_Loaded, mainWindowModel.CanExecute_Loaded);
@@ -77,15 +59,9 @@ namespace CryptoBook.ViewModels
         private RelayCommand closed;
 
 
-        public ICommand ToggleMenuCommand => toggleMenuCommand ??= new RelayCommand(Execute_ToggleMenuCommand);
-        private RelayCommand toggleMenuCommand;
-
-        private void Execute_ToggleMenuCommand(object? obj)
-        {
-            IsMenuOpen = !IsMenuOpen;
-        }
-
-
 
     }
+
+
+
 }

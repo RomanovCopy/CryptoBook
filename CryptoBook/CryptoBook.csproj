@@ -9,6 +9,8 @@
     <UseWindowsForms>True</UseWindowsForms>
     <StartupObject>CryptoBook.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,22 +22,35 @@
 
   <ItemGroup>
     <Compile Remove="Composition\ParagraphFormattingExtensions.cs" />
+    <Compile Remove="Converters\ColumnsWidthConverter.cs" />
+    <Compile Remove="Converters\FilePathToIconConverter.cs" />
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
+    <Compile Remove="DTO\TreeNodeDirectory.cs" />
+    <Compile Remove="DTO\TreeNodeFile.cs" />
     <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
     <Compile Remove="Interfaces\IDownloadItem.cs" />
     <Compile Remove="Interfaces\IEncoding.cs" />
+    <Compile Remove="Interfaces\IFileOperationResult.cs" />
+    <Compile Remove="Interfaces\IFileSystemEntry.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
+    <Compile Remove="Interfaces\INode.cs" />
+    <Compile Remove="Interfaces\IReadOnlyObservableCollection.cs" />
     <Compile Remove="Interfaces\ITitleBarRB_ViewModel.cs" />
+    <Compile Remove="Interfaces\ITreeNodeVm.cs" />
+    <Compile Remove="Interfaces\IVolume.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
     <Compile Remove="Models\BookmarksBarModel.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
+    <Compile Remove="Models\SystemItemName_Editor_Model.cs" />
     <Compile Remove="Models\TitleBarRB_Model.cs" />
     <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
+    <Compile Remove="ViewModels\SystemItemName_Editor_ViewModel.cs" />
     <Compile Remove="ViewModels\TitleBarRB_ViewModel.cs" />
+    <Compile Remove="Views\SystemItemName_Editor.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,6 +96,7 @@
 
   <ItemGroup>
     <Page Remove="MyControls\TitleBarRB.xaml" />
+    <Page Remove="Views\SystemItemName_Editor.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -91,15 +107,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Injections\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.4.0" />
+    <PackageReference Include="Autofac" Version="9.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3537.50" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.1-ci1190" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3712-prerelease" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-preview" />
+    <PackageReference Include="System.Management" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>

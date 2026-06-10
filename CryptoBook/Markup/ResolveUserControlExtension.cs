@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 
 using System.Collections.Concurrent;
@@ -10,7 +11,7 @@ namespace CryptoBook.Markup
     /// <summary>
     /// MarkupExtension для разрешения UserControl через DI-контейнер Autofac с кэшированием.
     /// </summary>
-    public class ResolveUserControlExtension: MarkupExtension
+    public class ResolveUserControlExtension: DiMarkupExtension
     {
         /// <summary>
         /// Тип UserControl, который требуется разрешить через DI.
@@ -19,12 +20,6 @@ namespace CryptoBook.Markup
 
         private static readonly ConcurrentDictionary<Type, object> _cache = new();
 
-        public ResolveUserControlExtension() { }
-
-        public ResolveUserControlExtension(Type type)
-        {
-            UserControlType = type ?? throw new ArgumentNullException(nameof(type));
-        }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
@@ -33,20 +28,20 @@ namespace CryptoBook.Markup
 
             return _cache.GetOrAdd(UserControlType, type =>
             {
-                var container = GetContainer();
-                return container.Resolve(type);
+                var scope = GetScope(serviceProvider);
+                return scope.Resolve(type);
             });
         }
 
-        private static IContainer GetContainer()
-        {
-            if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
-                containerProvider.Container is not IContainer container)
-            {
-                throw new InvalidOperationException("Autofac container not found in Application.Current. " +
-                    "Ensure your Application implements IContainerProvider and Container is properly initialized.");
-            }
-            return container;
-        }
+        //private static IContainer GetContainer()
+        //{
+        //    if(System.Windows.Application.Current is not IContainerProvider containerProvider ||
+        //        containerProvider.Container is not IContainer container)
+        //    {
+        //        throw new InvalidOperationException("Autofac container not found in Application.Current. " +
+        //            "Ensure your Application implements IContainerProvider and Container is properly initialized.");
+        //    }
+        //    return container;
+        //}
     }
 }

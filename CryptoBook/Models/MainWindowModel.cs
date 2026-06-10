@@ -1,4 +1,7 @@
-﻿using CryptoBook.Infrastructure;
+﻿using Autofac;
+
+using CryptoBook.Infrastructure;
+using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
@@ -7,30 +10,31 @@ using System.Windows;
 
 namespace CryptoBook.Models
 {
-    public class MainWindowModel: ViewModelBase
+    public class MainWindowModel: ViewModelBase ,IMainWindowModel
     {
         private readonly IWindowManager windowManager;
-        private bool isSideMenu { get; set; }
+        public bool IsMenuOpen { get => isMenuOpen; set => SetProperty(ref isMenuOpen, value); }
+        bool isMenuOpen;
 
-        internal double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
+        public double WindowWidth { get => windowWidth; set => SetProperty(ref windowWidth, value); }
         double windowWidth;
-        internal double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight, value); }
+        public double WindowHeight { get => windowHeight; set => SetProperty(ref windowHeight, value); }
         double windowHeight;
-        internal double WindowTop { get => windowTop; set => SetProperty(ref windowTop, value); }
+        public double WindowTop { get => windowTop; set => SetProperty(ref windowTop, value); }
         double windowTop;
-        internal double WindowLeft { get => windowLeft; set => SetProperty(ref windowLeft, value); }
+        public double WindowLeft { get => windowLeft; set => SetProperty(ref windowLeft, value); }
         double windowLeft;
-        internal WindowState WindowState { get => windowState; set => SetProperty(ref windowState, value); }
+        public WindowState WindowState { get => windowState; set => SetProperty(ref windowState, value); }
         WindowState windowState;
 
 
 
-        internal static Action Ready { get; set; }
+        public static Action Ready { get; set; }
         public Guid WindowId { get; private set; }
 
         public MainWindowModel(IWindowManager windowManager)
         {
-            this.windowManager = windowManager;
+            this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             WindowId = Guid.NewGuid();
 
             WindowHeight = Properties.Settings.Default.WindowHeight;
@@ -41,45 +45,60 @@ namespace CryptoBook.Models
             //восстанавливаем состояние окна
             WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized :
                 WindowState.Minimized;
+            IsMenuOpen = false;
+
         }
 
-
-
-
-
-        internal bool CanExecute_windowToMinimize(object? obj)
+        public bool CanExecute_WindowToMinimize(object? obj)
         {
             return WindowState != WindowState.Minimized;
         }
-        internal void Execute_windowToMinimize(object? obj)
+        public void Execute_WindowToMinimize(object? obj)
         {
             WindowState = WindowState.Minimized;
         }
 
-        internal bool CanExecute_WindowToMaximize(object? obj)
+        public bool CanExecute_WindowToMaximize(object? obj)
         {
             return WindowState != WindowState.Maximized;
         }
-        internal void Execute_WindowToMaximize(object? obj)
+        public void Execute_WindowToMaximize(object? obj)
         {
             WindowState = WindowState.Maximized;
         }
 
-        internal bool CanExecute_WindowToNormal(object? obj)
+        public bool CanExecute_WindowToNormal(object? obj)
         {
             return WindowState != WindowState.Normal;
         }
-        internal void Execute_WindowToNormal(object? obj)
+        public void Execute_WindowToNormal(object? obj)
         {
             WindowState = WindowState.Normal;
         }
 
-
-        internal bool CanExecute_Loaded(object? obj)
+        public bool CanExecute_ToggleMenuCommand(object? obj)
         {
             return true;
         }
-        internal void Execute_Loaded(object? obj)
+        public void Execute_ToggleMenuCommand(object? obj)
+        {
+            IsMenuOpen = !IsMenuOpen;
+        }
+
+        public bool CanExecute_SideMenuClose(object? obj)
+        {
+            return IsMenuOpen;
+        }
+        public void Execute_SideMenuClose(object? obj)
+        {
+            IsMenuOpen = false;
+        }
+
+        public bool CanExecute_Loaded(object? obj)
+        {
+            return true;
+        }
+        public void Execute_Loaded(object? obj)
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
@@ -90,23 +109,20 @@ namespace CryptoBook.Models
             }
         }
 
-
-        internal bool CanExecute_Close(object? obj)
+        public bool CanExecute_Close(object? obj)
         {
             return true;
         }
-        internal void Execute_Close(object? obj)
+        public void Execute_Close(object? obj)
         {
-            windowManager.CloseWindow<MainWindow>(WindowId);
+            windowManager.CloseWindow(WindowId);
         }
 
-
-
-        internal bool CanExecute_Closing(object? obj)
+        public bool CanExecute_Closing(object? obj)
         {
             return true;
         }
-        internal void Execute_Closing(object? obj)
+        public void Execute_Closing(object? obj)
         {
             try
             {
@@ -123,12 +139,12 @@ namespace CryptoBook.Models
             } catch(Exception e) { ErrorWindow(e); }
 
         }
-        internal bool CanExecute_Closed(object? obj)
+
+        public bool CanExecute_Closed(object? obj)
         {
             return true;
         }
-
-        internal void Execute_Closed(object? obj)
+        public void Execute_Closed(object? obj)
         {
             ((IDisposable)windowManager)?.Dispose();
         }

@@ -78,7 +78,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Close(object? obj)
         {
-            windowManager.CloseWindow<BookmarksEditor>(windowId);
+            windowManager.CloseWindow(windowId);
         }
 
 

@@ -71,7 +71,7 @@ namespace CryptoBook.Models
             {
                 var progress = new Progress<double>(value => Progress = value);
                 await operation.ExecuteAsync(progress, cancellationToken);
-                scope.Resolve<IWindowManager>().CloseWindow<ProgressWindow>(WindowId);
+                scope.Resolve<IWindowManager>().CloseWindow(WindowId);
             }
 
         }
@@ -127,7 +127,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Close(object? obj)
         {
-            scope.Resolve<IWindowManager>().CloseWindow<ProgressWindow>(WindowId);
+            scope.Resolve<IWindowManager>().CloseWindow(WindowId);
         }
 
 

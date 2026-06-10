@@ -12,7 +12,7 @@ namespace CryptoBook.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.4.0.0")]
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -332,6 +332,234 @@ namespace CryptoBook.Properties {
             }
             set {
                 this["AgentId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public double WindowHeight_FileExplorer {
+            get {
+                return ((double)(this["WindowHeight_FileExplorer"]));
+            }
+            set {
+                this["WindowHeight_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        public double WindowWidth_FileExplorer {
+            get {
+                return ((double)(this["WindowWidth_FileExplorer"]));
+            }
+            set {
+                this["WindowWidth_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowLeft_FileExplorer {
+            get {
+                return ((double)(this["WindowLeft_FileExplorer"]));
+            }
+            set {
+                this["WindowLeft_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowTop_FileExplorer {
+            get {
+                return ((double)(this["WindowTop_FileExplorer"]));
+            }
+            set {
+                this["WindowTop_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
+        public double RightColumnPercent_FileExplorer {
+            get {
+                return ((double)(this["RightColumnPercent_FileExplorer"]));
+            }
+            set {
+                this["RightColumnPercent_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
+        public double LeftColumnPercent_FileExplorer {
+            get {
+                return ((double)(this["LeftColumnPercent_FileExplorer"]));
+            }
+            set {
+                this["LeftColumnPercent_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState WindowState_FileExplorer {
+            get {
+                return ((global::System.Windows.WindowState)(this["WindowState_FileExplorer"]));
+            }
+            set {
+                this["WindowState_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsHiddenFilesVisible_FileExplorer {
+            get {
+                return ((bool)(this["IsHiddenFilesVisible_FileExplorer"]));
+            }
+            set {
+                this["IsHiddenFilesVisible_FileExplorer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GridViewColumnRatios {
+            get {
+                return ((string)(this["GridViewColumnRatios"]));
+            }
+            set {
+                this["GridViewColumnRatios"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        public double WindowWidth_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowWidth_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowWidth_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public double WindowHeight_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowHeight_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowHeight_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowTop_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowTop_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowTop_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double WindowLeft_SystemItemName_Editor {
+            get {
+                return ((double)(this["WindowLeft_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowLeft_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState WindowState_SystemItemName_Editor {
+            get {
+                return ((global::System.Windows.WindowState)(this["WindowState_SystemItemName_Editor"]));
+            }
+            set {
+                this["WindowState_SystemItemName_Editor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public double MessageWindowWidth {
+            get {
+                return ((double)(this["MessageWindowWidth"]));
+            }
+            set {
+                this["MessageWindowWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("150")]
+        public double MessageWindowHeight {
+            get {
+                return ((double)(this["MessageWindowHeight"]));
+            }
+            set {
+                this["MessageWindowHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double MessageWindowLeft {
+            get {
+                return ((double)(this["MessageWindowLeft"]));
+            }
+            set {
+                this["MessageWindowLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double MessageWindowTop {
+            get {
+                return ((double)(this["MessageWindowTop"]));
+            }
+            set {
+                this["MessageWindowTop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState MessageWindowState {
+            get {
+                return ((global::System.Windows.WindowState)(this["MessageWindowState"]));
+            }
+            set {
+                this["MessageWindowState"] = value;
             }
         }
     }

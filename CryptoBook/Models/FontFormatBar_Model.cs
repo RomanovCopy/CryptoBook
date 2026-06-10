@@ -30,22 +30,22 @@ namespace CryptoBook.Models
 
         public double FontSize { get=>fontSize; set=>SetProperty(ref fontSize, value); }
         double fontSize;
-        public System.Windows.FontStyle FontStyle { get=>fontStyle; set=>SetProperty(ref fontStyle, value); }
-        System.Windows.FontStyle fontStyle;
+        public System.Windows.FontStyle? FontStyle { get=>fontStyle; set=>SetProperty(ref fontStyle, value); }
+        System.Windows.FontStyle? fontStyle;
         public Media.FontFamily? FontFamily { get=>fontFamily; set=>SetProperty(ref fontFamily, value); }
-        Media.FontFamily fontFamily;
-        public Drawing.Color FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
-        Drawing.Color fontColor;
-        public Drawing.Color FontBackground { get => fontBackground; set => SetProperty(ref fontBackground, value); }
-        Drawing.Color fontBackground;
+        Media.FontFamily? fontFamily;
+        public Drawing.Color? FontColor { get=>fontColor; set=>SetProperty(ref fontColor, value); }
+        Drawing.Color? fontColor;
+        public Drawing.Color? FontBackground { get => fontBackground; set => SetProperty(ref fontBackground, value); }
+        Drawing.Color? fontBackground;
         public TextDecorationItem? TextDecoration 
         { get=>textDecoration; 
             set=>SetProperty(ref textDecoration, value); }
         TextDecorationItem? textDecoration;
-        public FontWeight FontWeight { get => fontWeight; set=>SetProperty(ref fontWeight, value); }
-        FontWeight fontWeight;
-        public FontStretch FontStretch { get=>fontStretch; set=>SetProperty(ref fontStretch, value); }
-        FontStretch fontStretch;
+        public FontWeight? FontWeight { get => fontWeight; set=>SetProperty(ref fontWeight, value); }
+        FontWeight? fontWeight;
+        public FontStretch? FontStretch { get=>fontStretch; set=>SetProperty(ref fontStretch, value); }
+        FontStretch? fontStretch;
 
 
         internal FontFormatBar_Model(IFontService service, IInlineService inlineService, IRichTextBoxService richService)

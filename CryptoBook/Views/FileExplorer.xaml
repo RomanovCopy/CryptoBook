@@ -1,0 +1,402 @@
+﻿<Window x:Class="CryptoBook.Views.FileExplorer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:converters="clr-namespace:CryptoBook.Converters"
+        xmlns:services="clr-namespace:CryptoBook.Services"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:dto="clr-namespace:CryptoBook.DTO"
+        xmlns:icons="System.Drawing.Icon.ExtractAssociatedIcon"
+        xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+        xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
+        xmlns:local="clr-namespace:CryptoBook.Views"
+        mc:Ignorable="d"
+        d:DataContext="{x:Type viewmodels:FileExplorerViewModel}"
+        MinHeight="400" MinWidth="600"
+        WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
+        Title="FileExplorer">
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}" />
+    </Window.DataContext>
+    <Window.Resources>
+
+
+        <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
+                                      ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
+            <StackPanel Orientation="Horizontal" Margin="2">
+                <Image Width="{StaticResource Tv_IconSize}"
+                       Height="{StaticResource Tv_IconSize}"
+                       Margin="0,0,6,0"
+                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+
+                <StackPanel>
+                    <TextBlock FontWeight="Bold">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} [{1}]">
+                                <Binding Path="RootDirectory"/>
+                                <Binding Path="VolumeLabel"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock FontSize="11" Foreground="Gray">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} • Свободно: {1:F1} ГБ из {2:F1} ГБ">
+                                <Binding Path="DriveFormat"/>
+                                <Binding Path="AvailableFreeSpace" Converter="{markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}"/>
+                                <Binding Path="TotalSize" Converter="{markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryItem}"
+                                      ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
+            <DockPanel LastChildFill="True">
+                <Image Width="{StaticResource Tv_IconSize}"
+                       Height="{StaticResource Tv_IconSize}"
+                       Margin="0,0,6,0"
+                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+                <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+        </HierarchicalDataTemplate>
+
+        <DataTemplate DataType="{x:Type dto:FileItem}">
+            <DockPanel LastChildFill="True">
+                <Image Width="{StaticResource Tv_IconSize}"
+                       Height="{StaticResource Tv_IconSize}"
+                       Margin="0,0,6,0"
+                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:ExtensionToIconConverter}}}"/>
+                <TextBlock Text="{Binding Name}" 
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+        </DataTemplate>
+
+
+    </Window.Resources>
+
+    <Window.Width>
+        <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="WindowHeight"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left >
+        <Binding Path="WindowLeft"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.WindowState>
+        <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.WindowState>
+
+
+    <Grid Background="{DynamicResource CurrentWindowBackground}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Command Bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Address Bar + Tabs -->
+            <RowDefinition Height="*"/>
+            <!-- Main Content: Nav Pane + File View -->
+            <RowDefinition Height="Auto"/>
+            <!--Selected File-->
+            <RowDefinition Height="Auto"/>
+            <!-- Status Bar -->
+        </Grid.RowDefinitions>
+
+        <!-- 1. Command Bar (упрощённая в Win11) -->
+        <ToolBar Grid.Row="0"  Height="49"  Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+            <Button Content="&#xE110;" FontFamily="Segoe MDL2 Assets" FontSize="15"
+                    Command="{Binding BackCommand, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{StaticResource PrimaryButtonStyle}" >
+            </Button>
+            <Separator/>
+            <Button Content="New File" Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="New Directory" Command="{Binding CreateDirectoryCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+            <Button Content="Cut" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}" 
+                    CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
+            <Separator/>
+            <Button Content="Copy" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
+            <Separator/>
+            <Button Content="Paste" Command="{Binding PasteCommand,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}" 
+                    CommandParameter="{Binding ElementName=listview, Path=SelectedValue, UpdateSourceTrigger=PropertyChanged}"/>
+            <Separator/>
+            <Button Content="Rename" Command="{Binding RenameClickCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}">
+            </Button>
+            <Separator/>
+            <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
+            <Separator/>
+            <Button Content="Encrypt" Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <Separator/>
+            <Button Content="Decrypt" 
+                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Separator/>
+        </ToolBar>
+
+        <!-- 2. Tabs + Address Bar -->
+        <TabControl Grid.Row="1" Margin="0,0,0,0" Background="Transparent" BorderThickness="0">
+            <TabItem Header="Home" IsSelected="True">
+                <Grid>
+                    <TextBox Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged}" Margin="10,5" Height="32" 
+                             VerticalAlignment="Center" Padding="10,0" FontSize="14"/>
+                    <!-- Breadcrumb можно реализовать через ItemsControl -->
+                </Grid>
+            </TabItem>
+            <TabItem Header="Documents"/>
+            <TabItem Header="+"/>
+            <!-- Кнопка новой вкладки -->
+        </TabControl>
+
+        <!-- 3. Основная область: Navigation Pane слева + File View справа -->
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="leftcolumn"  Width="{Binding LeftColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/>
+
+                <ColumnDefinition Width="3"/>
+                <!--Splitter-->
+
+                <ColumnDefinition Width="*"/>
+                <!-- File List -->
+
+                <ColumnDefinition Width="3"/>
+                <!--Splitter-->
+
+                <ColumnDefinition  Width="{Binding RightColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/>
+                <!-- Details Pane (опционально) -->
+
+            </Grid.ColumnDefinitions>
+
+            <!-- Navigation Pane (левая панель) -->
+            <TreeView x:Name="treeView" Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}"
+                      VirtualizingPanel.IsContainerVirtualizable="True" HorizontalAlignment="Stretch">
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem" >
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Kind}" Value="File" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                        <i:InvokeCommandAction Command="{Binding TreeViewItemSelectedCommand, UpdateSourceTrigger=PropertyChanged}"
+                                               CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}},Path=SelectedValue}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TreeView>
+
+            <GridSplitter Grid.Column="1"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Stretch"
+                  Width="3"
+                  ResizeBehavior="PreviousAndNext"
+                  ResizeDirection="Columns"/>
+
+            <!-- File List View (основная область файлов) -->
+            <ListView x:Name="listview" Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn >
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Name" Content="Name" />
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <Image Width="16" Height="16" Margin="0,0,6,0"
+                                               Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+                                        <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                            <Setter Property="BorderThickness" Value="0"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn >
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="LastWriteTimeUtc" Content="Date modified" />
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <TextBlock Text="{Binding LastWriteTimeUtc,StringFormat={}{0:dd.MM.yyyy HH:mm:ss}, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn >
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Extension" Content="Type" />
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <TextBlock Text="{Binding Extension, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn>
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Size" Content="Size" />
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <TextBlock Text="{Binding Size, UpdateSourceTrigger=PropertyChanged, 
+                                            Converter={markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}}" >
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ., Converter={markup:ResolveConverter 
+                                                            ConverterType={x:Type converters:TypeCheckConverter}},ConverterParameter={x:Type interfaces:IDirectoryItem}, UpdateSourceTrigger=PropertyChanged}"
+                                                                     Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="16"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding RenameCommand}" CommandParameter="{Binding SelectedItem,
+                        RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                    <KeyBinding Key="Escape" Command="{Binding CancelRenameCommand}" CommandParameter="{Binding SelectedItem,
+                        RelativeSource={RelativeSource AncestorType=ListView}}" />
+                </ListView.InputBindings>
+                <i:Interaction.Behaviors>
+                    <behaviors:GridViewColumnRatioBehavior
+                        ViewId="FileExplorer.MainGrid"
+                        MinColumnWidth="60"
+                        ReflowOnSizeChanged="True"
+                        ReflowOnScrollViewerChanged="True"
+                        SaveDebounceMs="400"
+                        Store="{markup:ResolveService ServiceType={x:Type interfaces:IColumnLayoutStore}}" />
+                    <behaviors:ListViewSortedBehavior/>
+                </i:Interaction.Behaviors>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding ListViewItemDoubleClickCommand, UpdateSourceTrigger=PropertyChanged}"
+                                               CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding ListViewSelectionChangedCommand, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding SelectedValue, ElementName=listview}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListView>
+
+            <GridSplitter Grid.Column="3"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Stretch"
+                  Width="3"
+                  ResizeBehavior="PreviousAndNext"
+                  ResizeDirection="Columns"/>
+
+            <!-- Details Pane (правая панель деталей) -->
+            <Border Grid.Column="4" Background="White" BorderBrush="#E0E0E0" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Details" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Name: Folder1"/>
+                    <TextBlock Text="Type: File folder"/>
+                    <TextBlock Text="Size: --"/>
+                    <Image Source="placeholder.png" Height="200" Margin="0,20,0,0"/>
+                </StackPanel>
+            </Border>
+
+
+        </Grid>
+        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="5">
+            <TextBlock Text="{Binding Path=SelectedItem.FullPath, StringFormat='Selected: {0}', 
+                UpdateSourceTrigger=PropertyChanged, ElementName=listview}" Foreground="White" FontSize="16"/>
+        </Border>
+
+        <!-- 4. Status Bar снизу -->
+        <StatusBar Grid.Row="4" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Margin="3">
+            <StatusBarItem Content="5 items | 1 selected"/>
+        </StatusBar>
+
+    </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="SizeChanged">
+            <i:InvokeCommandAction Command="{Binding WindowSizeChangedCommand, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding Closed, UpdateSourceTrigger=PropertyChanged}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+</Window>

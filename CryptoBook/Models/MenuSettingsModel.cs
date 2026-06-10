@@ -76,7 +76,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_Localization(object? obj)
         {
-            Properties.Settings.Default.CultureInfo = obj.ToString();
+            Properties.Settings.Default.CultureInfo = obj?.ToString();
             Properties.Settings.Default.Save();
             App.Current.MainWindow.Close();
         }
