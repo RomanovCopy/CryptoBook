@@ -34,6 +34,7 @@
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\IFileOperationResult.cs" />
     <Compile Remove="Interfaces\IFileSystemEntry.cs" />
+    <Compile Remove="Interfaces\IFlowDocumentService.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
     <Compile Remove="Interfaces\INode.cs" />
     <Compile Remove="Interfaces\IReadOnlyObservableCollection.cs" />
@@ -46,6 +47,7 @@
     <Compile Remove="Models\SystemItemName_Editor_Model.cs" />
     <Compile Remove="Models\TitleBarRB_Model.cs" />
     <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
+    <Compile Remove="Services\FlowDocumentService.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
     <Compile Remove="ViewModels\SystemItemName_Editor_ViewModel.cs" />
