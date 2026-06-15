@@ -25,9 +25,9 @@ namespace CryptoBook.Services
 {
     public class RichTextBoxService: Controls.RichTextBox, IRichTextBoxService
     {
-        private readonly ILifetimeScope scope;
 
         private TextRange last_Selection;
+        private IParagraphFactory paragraphFactory;
 
         FlowDocument IRichTextBoxService.Document => this.Document;
 
@@ -57,9 +57,9 @@ namespace CryptoBook.Services
         bool IRichTextBoxService.CanRedo => this.CanRedo;
 
 
-        public RichTextBoxService(ILifetimeScope scope)
+        public RichTextBoxService( IParagraphFactory paragraphFactory)
         {
-            this.scope = scope;
+            this.paragraphFactory = paragraphFactory;
             this.LostFocus += RichTextBoxService_LostFocus;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
             InitializeDocument();
@@ -185,7 +185,6 @@ namespace CryptoBook.Services
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
             document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
             document.LineHeight = 20;
-            var paragraphFactory = scope.Resolve<IParagraphFactory>();
             Run newRun = new("     ");
             newRun.Foreground = System.Windows.Media.Brushes.Black;
             newRun.Background= System.Windows.Media.Brushes.Transparent;

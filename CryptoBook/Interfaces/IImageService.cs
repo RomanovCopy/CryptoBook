@@ -14,10 +14,10 @@ namespace CryptoBook.Interfaces
     public interface IImageService: IService
     {
         /// <summary>Присоединить/отсоединить сервис к конкретному редактору.</summary>
-        void Attach(RichTextBox editor);
+        void Attach(IRichTextBoxService editor);
         void Detach();
         bool IsAttached { get; }
-        RichTextBox? Editor { get; }
+        IRichTextBoxService? Editor { get; }
 
         // --------- Загрузка (получение) источников изображения ---------
 
@@ -181,10 +181,10 @@ namespace CryptoBook.Interfaces
 
         public sealed class ImageInsertedEventArgs: EventArgs
         {
-            public Image Image { get; }
+            public System.Windows.Controls.Image Image { get; }
             public TextPointer Position { get; }
             public TextElement Container { get; } // InlineUIContainer | BlockUIContainer | Figure
-            public ImageInsertedEventArgs(Image image, TextPointer position, TextElement container)
+            public ImageInsertedEventArgs(System.Windows.Controls.Image image, TextPointer position, TextElement container)
             {
                 Image = image;
                 Position = position;
@@ -194,9 +194,9 @@ namespace CryptoBook.Interfaces
 
         public sealed class ImageChangedEventArgs: EventArgs
         {
-            public Image Image { get; }
+            public System.Windows.Controls.Image Image { get; }
             public ImageChangeKind Kind { get; }
-            public ImageChangedEventArgs(Image image, ImageChangeKind kind)
+            public ImageChangedEventArgs(System.Windows.Controls.Image image, ImageChangeKind kind)
             {
                 Image = image;
                 Kind = kind;
