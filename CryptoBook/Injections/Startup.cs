@@ -14,7 +14,6 @@ using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
-using TimeWebAI.ViewModels;
 
 namespace CryptoBook.Injections
 {
@@ -40,9 +39,6 @@ namespace CryptoBook.Injections
 
 
             //Models
-            builder.RegisterType<TimeWebAIControlModel>().As<ITimeWebAIControlModel>().InstancePerLifetimeScope();
-            builder.RegisterType<TimeWebAIPageModel>().As<ITimeWebAIPageModel>().InstancePerLifetimeScope();
-            builder.RegisterType<TitleBarTimeWebAIControlModel>().As<ITitleBarTimeWebAIControlModel>().InstancePerLifetimeScope();
             builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().InstancePerLifetimeScope();
             builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().InstancePerLifetimeScope();
             builder.RegisterType<FileExplorerModel>().As<IFileExplorerModel>().InstancePerLifetimeScope();
@@ -67,9 +63,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksViewModel>().As<IBookmarksViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarksEditorViewModel>().As<IBookmarksEditorViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarkEntryViewModel>().As<IBookmarkEntryViewModel>().AsSelf();
-            builder.RegisterType<TimeWebAIControlViewModel>().As<ITimeWebAIControlViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<TimeWebAIPageViewModel>().As<ITimeWebAIPageViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<TitleBarTimeWebAIControlViewModel>().As<ITitleBarTimeWebAIControlViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope();
@@ -168,7 +161,6 @@ namespace CryptoBook.Injections
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();
-            builder.RegisterType<TimeWebAIPage>().SingleInstance();
 
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 
@@ -181,8 +173,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<TextFormatBar>().SingleInstance();
             builder.RegisterType<ListFormatBar>().SingleInstance();
             builder.RegisterType<BookmarksBar>().SingleInstance();
-            builder.RegisterType<TimeWebAIControl>().SingleInstance();
-            builder.RegisterType<TitleBarTimeWebAIControl>().SingleInstance();
 
             //Contexts
 

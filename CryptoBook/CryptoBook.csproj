@@ -45,13 +45,22 @@
     <Compile Remove="Models\BookmarksBarModel.cs" />
     <Compile Remove="Models\MediaPlayerModel.cs" />
     <Compile Remove="Models\SystemItemName_Editor_Model.cs" />
+    <Compile Remove="Models\TimeWebAIControlModel.cs" />
+    <Compile Remove="Models\TimeWebAIPageModel.cs" />
     <Compile Remove="Models\TitleBarRB_Model.cs" />
+    <Compile Remove="Models\TitleBarTimeWebAIControlModel.cs" />
+    <Compile Remove="MyControls\TimeWebAIControl.xaml.cs" />
     <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
+    <Compile Remove="MyControls\TitleBarTimeWebAIControl.xaml.cs" />
+    <Compile Remove="MyPages\TimeWebAIPage.xaml.cs" />
     <Compile Remove="Services\FlowDocumentService.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
     <Compile Remove="ViewModels\SystemItemName_Editor_ViewModel.cs" />
+    <Compile Remove="ViewModels\TimeWebAIControlViewModel.cs" />
+    <Compile Remove="ViewModels\TimeWebAIPageViewModel.cs" />
     <Compile Remove="ViewModels\TitleBarRB_ViewModel.cs" />
+    <Compile Remove="ViewModels\TitleBarTimeWebAIControlViewModel.cs" />
     <Compile Remove="Views\SystemItemName_Editor.xaml.cs" />
   </ItemGroup>
 
@@ -97,7 +106,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="MyControls\TimeWebAIControl.xaml" />
     <Page Remove="MyControls\TitleBarRB.xaml" />
+    <Page Remove="MyControls\TitleBarTimeWebAIControl.xaml" />
+    <Page Remove="MyPages\TimeWebAIPage.xaml" />
     <Page Remove="Views\SystemItemName_Editor.xaml" />
   </ItemGroup>
 
