@@ -34,6 +34,7 @@
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\IFileOperationResult.cs" />
     <Compile Remove="Interfaces\IFileSystemEntry.cs" />
+    <Compile Remove="Interfaces\IFlowDocumentContentService.cs" />
     <Compile Remove="Interfaces\IFlowDocumentService.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
     <Compile Remove="Interfaces\INode.cs" />
@@ -53,6 +54,7 @@
     <Compile Remove="MyControls\TitleBarRB.xaml.cs" />
     <Compile Remove="MyControls\TitleBarTimeWebAIControl.xaml.cs" />
     <Compile Remove="MyPages\TimeWebAIPage.xaml.cs" />
+    <Compile Remove="Services\FlowDocumentContentService.cs" />
     <Compile Remove="Services\FlowDocumentService.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
