@@ -85,6 +85,8 @@ namespace CryptoBook.Injections
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf();
+            builder.RegisterType<FlowDocumentWalker>().As<IFlowDocumentWalker>().SingleInstance();
+
 
             //Windows
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().InstancePerLifetimeScope();
@@ -149,6 +151,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
+            builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
