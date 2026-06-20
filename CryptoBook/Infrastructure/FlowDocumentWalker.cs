@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
+using CryptoBook.Interfaces;
+
 
 namespace CryptoBook.Infrastructure
 {
-    using CryptoBook.Interfaces;
-
-    using System.Windows.Documents;
-
     public sealed class FlowDocumentWalker: IFlowDocumentWalker
     {
         public IEnumerable<TextElement> Traverse(
@@ -26,19 +25,19 @@ namespace CryptoBook.Infrastructure
             }
         }
 
-        public IEnumerable<T> Find<T>( FlowDocument document) where T : TextElement
+        public IEnumerable<T> Find<T>(FlowDocument document) where T : TextElement
         {
             return Traverse(document).OfType<T>();
         }
 
-        public TextElement? GetParent( TextElement element)
+        public TextElement? GetParent(TextElement element)
         {
             ArgumentNullException.ThrowIfNull(element);
 
             return element.Parent as TextElement;
         }
 
-        public bool Remove( TextElement element)
+        public bool Remove(TextElement element)
         {
             ArgumentNullException.ThrowIfNull(element);
 
@@ -54,7 +53,7 @@ namespace CryptoBook.Infrastructure
             };
         }
 
-        public bool InsertBefore( TextElement target, TextElement newElement)
+        public bool InsertBefore(TextElement target, TextElement newElement)
         {
             ArgumentNullException.ThrowIfNull(target);
             ArgumentNullException.ThrowIfNull(newElement);
@@ -62,7 +61,7 @@ namespace CryptoBook.Infrastructure
             return InsertNear(target, newElement, before: true);
         }
 
-        public bool InsertAfter( TextElement target, TextElement newElement)
+        public bool InsertAfter(TextElement target, TextElement newElement)
         {
             ArgumentNullException.ThrowIfNull(target);
             ArgumentNullException.ThrowIfNull(newElement);
@@ -70,7 +69,7 @@ namespace CryptoBook.Infrastructure
             return InsertNear(target, newElement, before: false);
         }
 
-        private static IEnumerable<TextElement> TraverseBlock( Block block)
+        private static IEnumerable<TextElement> TraverseBlock(Block block)
         {
             yield return block;
 
@@ -150,7 +149,7 @@ namespace CryptoBook.Infrastructure
             }
         }
 
-        private static IEnumerable<TextElement> TraverseInline( Inline inline)
+        private static IEnumerable<TextElement> TraverseInline(Inline inline)
         {
             yield return inline;
 
@@ -166,7 +165,7 @@ namespace CryptoBook.Infrastructure
             }
         }
 
-        private static bool RemoveBlock( Block block)
+        private static bool RemoveBlock(Block block)
         {
             switch(block.Parent)
             {
@@ -191,7 +190,7 @@ namespace CryptoBook.Infrastructure
             }
         }
 
-        private static bool RemoveInline( Inline inline)
+        private static bool RemoveInline(Inline inline)
         {
             switch(inline.Parent)
             {
@@ -208,7 +207,7 @@ namespace CryptoBook.Infrastructure
             }
         }
 
-        private static bool RemoveListItem( ListItem item)
+        private static bool RemoveListItem(ListItem item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -221,7 +220,7 @@ namespace CryptoBook.Infrastructure
             return true;
         }
 
-        private static bool RemoveTableRowGroup( TableRowGroup group)
+        private static bool RemoveTableRowGroup(TableRowGroup group)
         {
             if(group.Parent is not Table table)
             {
@@ -232,7 +231,7 @@ namespace CryptoBook.Infrastructure
             return true;
         }
 
-        private static bool RemoveTableRow( TableRow row)
+        private static bool RemoveTableRow(TableRow row)
         {
             if(row.Parent is not TableRowGroup group)
             {
@@ -243,7 +242,7 @@ namespace CryptoBook.Infrastructure
             return true;
         }
 
-        private static bool RemoveTableCell( TableCell cell)
+        private static bool RemoveTableCell(TableCell cell)
         {
             if(cell.Parent is not TableRow row)
             {
@@ -254,7 +253,7 @@ namespace CryptoBook.Infrastructure
             return true;
         }
 
-        private static bool InsertNear( TextElement target, TextElement newElement, bool before)
+        private static bool InsertNear(TextElement target, TextElement newElement, bool before)
         {
             return (target, newElement) switch
             {
@@ -280,7 +279,7 @@ namespace CryptoBook.Infrastructure
             };
         }
 
-        private static bool InsertBlockNear( Block target, Block newBlock, bool before)
+        private static bool InsertBlockNear(Block target, Block newBlock, bool before)
         {
             switch(target.Parent)
             {
@@ -333,7 +332,7 @@ namespace CryptoBook.Infrastructure
             }
         }
 
-        private static bool InsertInlineNear( Inline target, Inline newInline, bool before)
+        private static bool InsertInlineNear(Inline target, Inline newInline, bool before)
         {
             switch(target.Parent)
             {
@@ -364,7 +363,7 @@ namespace CryptoBook.Infrastructure
             }
         }
 
-        private static bool InsertListItemNear( ListItem target, ListItem newItem, bool before)
+        private static bool InsertListItemNear(ListItem target, ListItem newItem, bool before)
         {
             ArgumentNullException.ThrowIfNull(target);
             ArgumentNullException.ThrowIfNull(newItem);
