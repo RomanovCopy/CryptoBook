@@ -249,7 +249,8 @@ namespace CryptoBook.Services
             try
             {
                 return ResolveProvider(desc.Scheme).SetHiddenAsync(desc.NativePath, hidden, ct);
-            } catch(Exception ex)
+            } 
+            catch(Exception ex)
             {
                 return Task.FromResult(FileOperationResult.Fail($"SetHidden failed: {ex.Message}"));
             }
@@ -261,7 +262,8 @@ namespace CryptoBook.Services
             try
             {
                 return ResolveProvider(desc.Scheme).IsReadOnlyAsync(desc.NativePath, cancellationToken);
-            } catch(Exception)
+            } 
+            catch(Exception)
             {
                 return Task.FromResult(false);
             }
@@ -273,7 +275,8 @@ namespace CryptoBook.Services
             try
             {
                 return ResolveProvider(desc.Scheme).SetReadOnlyAsync(desc.NativePath, isReadOnly, ct);
-            } catch(Exception ex)
+            } 
+            catch(Exception ex)
             {
                 return Task.FromResult(FileOperationResult.Fail($"SetReadOnly failed: {ex.Message}"));
             }

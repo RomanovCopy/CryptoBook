@@ -108,6 +108,10 @@ namespace CryptoBook.Injections
             builder.RegisterType<JsonFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<RichTextFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<SourceCodeTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<JPEGFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<JPGFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<PNGFileTemplate>().As<IFileTemplate>().SingleInstance();
+
 
             // реестр собирает их автоматически
             builder.RegisterType<FileTemplateRegistry>().As<IFileTemplateRegistry>().SingleInstance();

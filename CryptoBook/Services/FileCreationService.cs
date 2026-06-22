@@ -64,14 +64,8 @@ namespace CryptoBook.Services
             return candidate;
         }
 
-        public async Task<FileOperationResult> CreateAsync(
-            string targetDirectory,
-            string fileNameWithOrWithoutExt,
-            IFileTemplate template,
-            IfExistsMode ifExists,
-            bool isHidden,
-            bool isReadOnly,
-            CancellationToken ct)
+        public async Task<FileOperationResult> CreateAsync( string targetDirectory, string fileNameWithOrWithoutExt, IFileTemplate template,
+            IfExistsMode ifExists, bool isHidden, bool isReadOnly, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -107,8 +101,7 @@ namespace CryptoBook.Services
             // 5) Создаем файл через фасад
             try
             {
-                await using var stream = await _fs.OpenWriteAsync(fullPath,
-                    overwrite: exists && ifExists == IfExistsMode.Overwrite,
+                await using var stream = await _fs.OpenWriteAsync(fullPath, overwrite: exists && ifExists == IfExistsMode.Overwrite,
                     cancellationToken: ct);
 
                 if(content.Length > 0)

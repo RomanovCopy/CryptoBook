@@ -18,12 +18,8 @@ namespace CryptoBook.FileTemplates
                 throw new ArgumentNullException(nameof(templates));
 
             // Гарантируем уникальность Id и делаем словарь единожды
-            _templates = templates
-                .GroupBy(t => t.Id, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.First(),
-                    StringComparer.OrdinalIgnoreCase);
+            _templates = templates.GroupBy(t => t.Id, StringComparer.OrdinalIgnoreCase).ToDictionary(
+                    g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
         }
 
         public IReadOnlyList<IFileTemplate> GetAll() => _templates.Values.ToList();
