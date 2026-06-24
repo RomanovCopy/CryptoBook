@@ -10,7 +10,7 @@ namespace CryptoBook.FileTemplates
 {
     public sealed class TextFileTemplate: IFileTemplate
     {
-        public string Id => "text";
+        public string Id => "Text";
         public string DisplayName => "Текстовый файл";
         public string DefaultExtension => ".txt";
         public string SuggestedBaseName => "New file";
@@ -18,5 +18,16 @@ namespace CryptoBook.FileTemplates
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct)
             => Task.FromResult(Array.Empty<byte>());
+
+        public IReadOnlyCollection<string> Extensions =>
+        [
+        ".txt",
+        ".log",
+        ".md",
+        ".cs",
+        ".xaml",
+        ".json",
+        ".xml"
+        ];
     }
 }

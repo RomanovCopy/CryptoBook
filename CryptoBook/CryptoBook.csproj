@@ -27,6 +27,13 @@
     <Compile Remove="Converters\FlowDocumentConverter.cs" />
     <Compile Remove="DTO\TreeNodeDirectory.cs" />
     <Compile Remove="DTO\TreeNodeFile.cs" />
+    <Compile Remove="FileTemplates\JPEGFileTemplate.cs" />
+    <Compile Remove="FileTemplates\JPGFileTemplate.cs" />
+    <Compile Remove="FileTemplates\JsonFileTemplate.cs" />
+    <Compile Remove="FileTemplates\MarkdownFileTemplate.cs" />
+    <Compile Remove="FileTemplates\PNGFileTemplate.cs" />
+    <Compile Remove="FileTemplates\RichTextFileTemplate.cs" />
+    <Compile Remove="FileTemplates\SourceCodeTemplate.cs" />
     <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
@@ -35,6 +42,7 @@
     <Compile Remove="Interfaces\IFileOperationResult.cs" />
     <Compile Remove="Interfaces\IFileSystemEntry.cs" />
     <Compile Remove="Interfaces\IFlowDocumentService.cs" />
+    <Compile Remove="Interfaces\IImageService.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
     <Compile Remove="Interfaces\INode.cs" />
     <Compile Remove="Interfaces\IReadOnlyObservableCollection.cs" />
@@ -54,6 +62,7 @@
     <Compile Remove="MyControls\TitleBarTimeWebAIControl.xaml.cs" />
     <Compile Remove="MyPages\TimeWebAIPage.xaml.cs" />
     <Compile Remove="Services\FlowDocumentService.cs" />
+    <Compile Remove="Services\ImageService.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
     <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
     <Compile Remove="ViewModels\SystemItemName_Editor_ViewModel.cs" />
