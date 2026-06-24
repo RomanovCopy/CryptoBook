@@ -79,9 +79,21 @@
         <!--Расширение файла-->
 
         <TextBlock Grid.Row="5" Text="Расширение файла:" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="5" Grid.Column="1" Margin="15,0,15,0" VerticalAlignment="Center"
+              ItemsSource="{Binding SelectedTemplate.Extensions, UpdateSourceTrigger=PropertyChanged}"
+              DisplayMemberPath="DefaultExtension" Grid.ColumnSpan="3"
+              SelectedItem="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectedNewTemplate, UpdateSourceTrigger=PropertyChanged}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
+
+        <!--<TextBlock Grid.Row="5" Text="Расширение файла:" VerticalAlignment="Center"/>
         <TextBlock Grid.Row="5" Grid.Column="1" 
                    Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}" VerticalAlignment="Center"
-                   Margin="15,0,0,0"/>
+                   Margin="15,0,0,0"/>-->
 
         <!-- Ошибка -->
         <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Foreground="Tomato" TextWrapping="Wrap"

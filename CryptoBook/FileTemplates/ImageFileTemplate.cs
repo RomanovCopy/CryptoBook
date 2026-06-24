@@ -16,12 +16,12 @@ namespace CryptoBook.FileTemplates
 
         public IReadOnlyCollection<string> Extensions => 
         [
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".bmp",
-        ".gif",
-        ".webp"
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".bmp",
+            ".gif",
+            ".webp"
         ];
 
         public string SuggestedBaseName => "New Image";

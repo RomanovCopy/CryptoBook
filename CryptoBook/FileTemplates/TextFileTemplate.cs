@@ -21,13 +21,13 @@ namespace CryptoBook.FileTemplates
 
         public IReadOnlyCollection<string> Extensions =>
         [
-        ".txt",
-        ".log",
-        ".md",
-        ".cs",
-        ".xaml",
-        ".json",
-        ".xml"
+            ".txt",
+            ".log",
+            ".md",
+            ".cs",
+            ".xaml",
+            ".json",
+            ".xml"
         ];
     }
 }
