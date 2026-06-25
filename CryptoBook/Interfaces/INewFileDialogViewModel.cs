@@ -3,6 +3,7 @@ using CryptoBook.Infrastructure;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -95,9 +96,13 @@ namespace CryptoBook.Interfaces
         /// </summary>
         public ICommand Create { get; }
         /// <summary>
+        /// команда определяющая действие при смене типа файла(SelectedTemplate)
+        /// </summary>
+        public ICommand SelectedNewTemplate {  get; }
+        /// <summary>
         /// команда определяющая действие при смене расширения файла(SelectedTemplate)
         /// </summary>
-        public ICommand SelectedNewTemplate {  get; }   
+        public ICommand SelectedNewExtension {  get; }
 
         /// <summary>
         /// Команда для отмены диалогового окна и отмены изменений.

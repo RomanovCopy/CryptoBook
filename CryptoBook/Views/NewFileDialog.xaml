@@ -62,7 +62,7 @@
         <TextBlock Grid.Row="3" Text="Тип файла:" VerticalAlignment="Center"/>
         <ComboBox Grid.Row="3" Grid.Column="1" Margin="15,0,15,0" VerticalAlignment="Center"
               ItemsSource="{Binding Templates, UpdateSourceTrigger=PropertyChanged}"
-              DisplayMemberPath="DisplayName" Grid.ColumnSpan="3"
+              DisplayMemberPath="DisplayName" Grid.ColumnSpan="3" MaxDropDownHeight="500"
               SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
@@ -79,13 +79,13 @@
         <!--Расширение файла-->
 
         <TextBlock Grid.Row="5" Text="Расширение файла:" VerticalAlignment="Center"/>
-        <ComboBox Grid.Row="5" Grid.Column="1" Margin="15,0,15,0" VerticalAlignment="Center"
-              ItemsSource="{Binding SelectedTemplate.Extensions, UpdateSourceTrigger=PropertyChanged}"
-              DisplayMemberPath="DefaultExtension" Grid.ColumnSpan="3"
-              SelectedItem="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+        <ComboBox Grid.Row="5" Grid.Column="1" Margin="15,0,15,0" VerticalAlignment="Center" 
+              ItemsSource="{Binding SelectedTemplate.Extensions, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Grid.ColumnSpan="3"
+              SelectedItem="{Binding SelectedTemplate.DefaultExtension, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding SelectedNewTemplate, UpdateSourceTrigger=PropertyChanged}"/>
+                    <i:InvokeCommandAction Command="{Binding SelectedNewExtension, UpdateSourceTrigger=PropertyChanged}"
+                                           CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}},Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </ComboBox>

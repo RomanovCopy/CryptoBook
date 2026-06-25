@@ -148,6 +148,7 @@ namespace CryptoBook.Models
             _windowManager = windowManager;
             Templates = _registry.GetAll();
             SelectedTemplate = Templates.FirstOrDefault();
+            FileName = SelectedTemplate?.SuggestedBaseName ?? "NewFile.txt";
         }
 
         /// <summary>
@@ -195,21 +196,38 @@ namespace CryptoBook.Models
         }
 
         /// <summary>
-        /// Проверяет возможность применения выбранного шаблона к текущему имени файла.
-        /// Требуется длина имени > 3 и выбранный шаблон.
+        /// Проверяет возможность применения выбранного шаблона
         /// </summary>
         public bool CanExecute_SelectedNewTemplate(object? obj)
         {
-            return FileName.Length > 3 && SelectedTemplate is not null;
+            return obj is null && SelectedTemplate is not null;
         }
         /// <summary>
-        /// Применяет расширение выбранного шаблона к текущему имени файла,
-        /// сохраняя базовую часть имени до точки.
+        /// Применяет тип выбранного шаблона к текущему файлу,
+        /// применяя расширение шаблона по умолчанию, если оно не указано в имени файла.
         /// </summary>
         public void Execute_SelectedNewTemplate(object? obj)
         {
-            FileName = FileName.Split('.')[0].Trim() + SelectedTemplate?.DefaultExtension;
+            FileName = SelectedTemplate?.SuggestedBaseName + SelectedTemplate?.DefaultExtension;
         }
+
+        /// <summary>
+        /// Применяет расширение выбранного шаблона к текущему файлу,
+        /// сохраняя базовую часть имени до точки.
+        /// </summary>
+        public bool CanExecute_SelectedNewExtension(object? obj)
+        {
+            return obj is string extension && SelectedTemplate is not null && !string.IsNullOrWhiteSpace(FileName);
+        }
+        public void Execute_SelectedNewExtension(object? obj)
+        {
+            if(obj is string extension && SelectedTemplate is not null)
+            {
+                var baseName = Path.GetFileNameWithoutExtension(FileName);
+                FileName = baseName + extension;
+            }
+        }
+
 
         /// <summary>
         /// Возвращает true — доступна команда создания директории (всегда).

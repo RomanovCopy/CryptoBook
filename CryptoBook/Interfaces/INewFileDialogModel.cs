@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,9 @@ namespace CryptoBook.Interfaces
         bool CanExecute_SelectedNewTemplate(object? obj);
         void Execute_SelectedNewTemplate(object? obj);
 
+        bool CanExecute_SelectedNewExtension(object? obj);
+        void Execute_SelectedNewExtension(object? obj);
+
         void Execute_CreateDirectory(object? obj);
         bool CanExecute_CreateDirectory(object? obj);
 
@@ -40,5 +44,7 @@ namespace CryptoBook.Interfaces
 
         public bool CanExecute_Cancel(object? obj);
         public void Execute_Cancel(object? obj);
+
+
     }
 }

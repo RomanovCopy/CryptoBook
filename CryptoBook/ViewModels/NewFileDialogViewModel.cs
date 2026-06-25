@@ -4,6 +4,7 @@ using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,6 +52,9 @@ namespace CryptoBook.ViewModels
 
         public ICommand SelectedNewTemplate=>selectedNewTemplate??=new RelayCommand(newFileDialogModel.Execute_SelectedNewTemplate, newFileDialogModel.CanExecute_SelectedNewTemplate);
         RelayCommand selectedNewTemplate;
+
+        public ICommand SelectedNewExtension => selectedNewExtension ??= new RelayCommand(newFileDialogModel.Execute_SelectedNewExtension, newFileDialogModel.CanExecute_SelectedNewExtension);
+        RelayCommand selectedNewExtension;
 
         public ICommand Browse => browse ??= new RelayCommand(newFileDialogModel.Execute_Browse, newFileDialogModel.CanExecute_Browse);
         RelayCommand? browse;
