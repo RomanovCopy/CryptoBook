@@ -702,11 +702,7 @@ namespace CryptoBook.Services
             progress?.Report(1.0, $"Done {Path.GetFileName(sourcePath)}");
         }
 
-        private async Task CopyDirectoryRecursiveAsync(
-            string sourceDir,
-            string destDir,
-            IProgressReporter? progress,
-            CancellationToken cancellationToken)
+        private async Task CopyDirectoryRecursiveAsync( string sourceDir, string destDir, IProgressReporter? progress, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

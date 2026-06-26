@@ -16,8 +16,7 @@ namespace CryptoBook.FileTemplates
         public string SuggestedBaseName => "New file";
         public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
 
-        public Task<byte[]> GetInitialContentAsync(CancellationToken ct)
-            => Task.FromResult(Array.Empty<byte>());
+        public Task<byte[]> GetInitialContentAsync(CancellationToken ct) => Task.FromResult(Array.Empty<byte>());
 
         public IReadOnlyCollection<string> Extensions =>
         [

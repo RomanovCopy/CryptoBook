@@ -162,7 +162,10 @@ namespace CryptoBook.Services
             {
                 using var s = await _fs.OpenReadAsync(fullPath, ct);
                 return true;
-            } catch(FileNotFoundException) { return false; } catch(DirectoryNotFoundException) { return false; } catch { return true; } // прочие ошибки трактуем как «занято»
+            } 
+            catch(FileNotFoundException) { return false; } 
+            catch(DirectoryNotFoundException) { return false; } 
+            catch { return true; } // прочие ошибки трактуем как «занято»
         }
 
         private static string InsertSuffix(string fileNameWithExt, string suffix)
