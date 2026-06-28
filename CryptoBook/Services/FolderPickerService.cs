@@ -36,6 +36,7 @@ namespace CryptoBook.Services
             var result = dlg.ShowDialog();
             if(result == DialogResult.OK && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
             {
+                //return Task.FromResult<string?>(dlg.SelectedPath);
                 return Task.FromResult<string?>(_fs.NormalizePath(dlg.SelectedPath));
             }
 

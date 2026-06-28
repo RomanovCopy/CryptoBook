@@ -193,7 +193,12 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.OpenReadAsync(desc.NativePath, cancellationToken);
-            } catch(Exception ex)
+            }
+            catch(FileNotFoundException)
+            {
+                throw; // пробрасываем дальше, чтобы можно было различать "файл не найден" и "другая ошибка"
+            } 
+            catch(Exception ex)
             {
                 throw new IOException($"OpenRead failed for path '{path}': {ex.Message}", ex);
             }

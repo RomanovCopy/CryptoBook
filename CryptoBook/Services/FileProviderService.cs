@@ -113,7 +113,11 @@ namespace CryptoBook.Services
                     useAsync: true);
 
                 return Task.FromResult(stream);
-            } catch(OperationCanceledException) { throw; } catch(Exception ex)
+            } catch(OperationCanceledException) { throw; } 
+            catch(FileNotFoundException)
+            {
+                throw; // пробрасываем дальше, чтобы можно было различать "файл не найден" и "другая ошибка"
+            } catch(Exception ex)
             {
                 throw new IOException($"Cannot open file for reading: {path}", ex);
             }
