@@ -1,166 +1,234 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace CryptoBook.Security
 {
     internal class SecureFileProcessor
     {
-        public static async Task EncryptFileAsync(string inputFile, string outputFile, string password, IProgress<double>? progress = null, CancellationToken cancellationToken = default)
+        public static async Task EncryptFileAsync( string inputFile, string outputFile, string password, IProgress<double>? progress = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                byte[] salt = RandomNumberGenerator.GetBytes(16);
-                byte[] key = KeyGenerator.GenerateKeyFromPassword(password, salt);
+                byte[] salt = RandomNumberGenerator.GetBytes(
+                    SecureFileFormat.SaltSize);
 
-                using(FileStream outputStream = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
+                byte[] key = KeyGenerator.GenerateKeyFromPassword(
+                    password,
+                    salt);
+
+                using FileStream outputStream = new FileStream(
+                    outputFile,
+                    FileMode.Create,
+                    FileAccess.ReadWrite,
+                    FileShare.None);
+
+                await outputStream.WriteAsync(
+                    SecureFileFormat.MagicHeader,
+                    cancellationToken);
+
+                await outputStream.WriteAsync(salt, cancellationToken);
+
+                using(Aes aes = Aes.Create())
                 {
-                    // Записываем соль
-                    await outputStream.WriteAsync(salt, 0, salt.Length, cancellationToken);
+                    aes.Key = key;
+                    aes.GenerateIV();
 
-                    using(Aes aes = Aes.Create())
+                    await outputStream.WriteAsync(aes.IV, cancellationToken);
+
+                    using(CryptoStream cryptoStream = new CryptoStream(
+                        outputStream,
+                        aes.CreateEncryptor(),
+                        CryptoStreamMode.Write,
+                        leaveOpen: true))
                     {
-                        aes.Key = key;
-                        aes.GenerateIV();
+                        string fileExtension = Path.GetExtension(inputFile);
+                        byte[] extensionBytes = Encoding.UTF8.GetBytes(
+                            fileExtension);
 
-                        // Записываем IV
-                        await outputStream.WriteAsync(aes.IV, 0, aes.IV.Length, cancellationToken);
+                        await cryptoStream.WriteAsync(
+                            BitConverter.GetBytes(extensionBytes.Length),
+                            cancellationToken);
 
-                        using(CryptoStream cryptoStream = new CryptoStream(outputStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                        await cryptoStream.WriteAsync(
+                            extensionBytes,
+                            cancellationToken);
+
+                        using FileStream inputStream = new FileStream(
+                            inputFile,
+                            FileMode.Open,
+                            FileAccess.Read,
+                            FileShare.Read);
+
+                        byte[] buffer = new byte[SecureFileFormat.BufferSize];
+                        long totalBytes = inputStream.Length;
+                        long processedBytes = 0;
+                        int bytesRead;
+
+                        while((bytesRead = await inputStream.ReadAsync(
+                            buffer,
+                            cancellationToken)) > 0)
                         {
-                            // Сохраняем и шифруем расширение файла
-                            string fileExtension = Path.GetExtension(inputFile);
-                            byte[] extensionBytes = System.Text.Encoding.UTF8.GetBytes(fileExtension);
-                            await cryptoStream.WriteAsync(BitConverter.GetBytes(extensionBytes.Length), 0, sizeof(int), cancellationToken);
-                            await cryptoStream.WriteAsync(extensionBytes, 0, extensionBytes.Length, cancellationToken);
+                            await cryptoStream.WriteAsync(
+                                buffer.AsMemory(0, bytesRead),
+                                cancellationToken);
 
-                            // Шифруем содержимое файла
-                            using(FileStream inputStream = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
+                            processedBytes += bytesRead;
+
+                            if(totalBytes > 0)
                             {
-                                byte[] buffer = new byte[8192];
-                                long totalBytes = inputStream.Length;
-                                long processedBytes = 0;
-                                int bytesRead;
-
-                                while((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
-                                {
-                                    await cryptoStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
-                                    processedBytes += bytesRead;
-                                    progress?.Report((double)processedBytes / totalBytes);
-                                    cancellationToken.ThrowIfCancellationRequested();
-                                }
+                                progress?.Report(
+                                    (double)processedBytes / totalBytes);
                             }
+
+                            cancellationToken.ThrowIfCancellationRequested();
                         }
                     }
-
-                    // Генерация HMAC для проверки целостности
-                    using(HMACSHA256 hmac = new HMACSHA256(key))
-                    {
-                        long contentLength = outputStream.Position;
-                        outputStream.Position = 0;
-                        byte[] content = new byte[contentLength];
-                        await outputStream.ReadAsync(content, 0, content.Length, cancellationToken);
-
-                        byte[] hmacHash = hmac.ComputeHash(content);
-                        await outputStream.WriteAsync(hmacHash, 0, hmacHash.Length, cancellationToken);
-                    }
                 }
+
+                using HMACSHA256 hmac = new HMACSHA256(key);
+
+                long contentLength = outputStream.Position;
+                outputStream.Position = 0;
+
+                byte[] content = new byte[contentLength];
+                await outputStream.ReadExactlyAsync(
+                    content,
+                    cancellationToken);
+
+                byte[] hmacHash = hmac.ComputeHash(content);
+
+                outputStream.Position = contentLength;
+                await outputStream.WriteAsync(hmacHash, cancellationToken);
             } catch(OperationCanceledException)
             {
-                Console.Error.WriteLine("Операция шифрования была отменена.");
+                Console.Error.WriteLine(
+                    "Операция шифрования была отменена.");
                 throw;
             } catch(Exception ex)
             {
-                Console.Error.WriteLine($"Ошибка при шифровании файла: {ex.Message}");
+                Console.Error.WriteLine(
+                    $"Ошибка при шифровании файла: {ex.Message}");
                 throw;
             }
         }
 
-        public static async Task DecryptFileAsync(string inputFile, string outputFile, string password, IProgress<double>? progress = null, CancellationToken cancellationToken = default)
+        public static async Task DecryptFileAsync( string inputFile, string outputFile, string password, IProgress<double>? progress = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                using(FileStream inputStream = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
+                using FileStream inputStream = new FileStream( inputFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+                await ValidateHeaderAsync(inputStream, cancellationToken);
+
+                byte[] salt = new byte[SecureFileFormat.SaltSize];
+                await inputStream.ReadExactlyAsync(salt, cancellationToken);
+
+                byte[] key = KeyGenerator.GenerateKeyFromPassword(
+                    password,
+                    salt);
+
+                using Aes aes = Aes.Create();
+
+                byte[] iv = new byte[aes.BlockSize / 8];
+                await inputStream.ReadExactlyAsync(iv, cancellationToken);
+
+                aes.Key = key;
+                aes.IV = iv;
+
+                long contentLength = inputStream.Length
+                    - SecureFileFormat.HmacSize;
+
+                await ValidateHmacAsync( inputStream, contentLength, key, cancellationToken);
+
+                inputStream.Position = SecureFileFormat.MagicHeader.Length + SecureFileFormat.SaltSize + iv.Length;
+
+                using CryptoStream cryptoStream = new CryptoStream( inputStream, aes.CreateDecryptor(), CryptoStreamMode.Read);
+
+                byte[] extensionLengthBytes = new byte[sizeof(int)];
+                await cryptoStream.ReadExactlyAsync( extensionLengthBytes, cancellationToken);
+
+                int extensionLength = BitConverter.ToInt32( extensionLengthBytes, 0);
+
+                if(extensionLength <= 0 || extensionLength > SecureFileFormat.MaxExtensionLength)
                 {
-                    byte[] salt = new byte[16];
-                    await inputStream.ReadAsync(salt, 0, salt.Length, cancellationToken);
+                    throw new CryptographicException( "Некорректная длина расширения файла.");
+                }
 
-                    byte[] key = KeyGenerator.GenerateKeyFromPassword(password, salt);
+                byte[] extensionBytes = new byte[extensionLength];
+                await cryptoStream.ReadExactlyAsync( extensionBytes, cancellationToken);
 
-                    using(Aes aes = Aes.Create())
+                string fileExtension = Encoding.UTF8.GetString( extensionBytes);
+
+                using FileStream outputStream = new FileStream( outputFile + fileExtension, FileMode.Create, FileAccess.Write, FileShare.None);
+
+                byte[] buffer = new byte[SecureFileFormat.BufferSize];
+                long totalBytes = contentLength - inputStream.Position;
+                long processedBytes = 0;
+                int bytesRead;
+
+                while((bytesRead = await cryptoStream.ReadAsync( buffer, cancellationToken)) > 0)
+                {
+                    await outputStream.WriteAsync( buffer.AsMemory(0, bytesRead), cancellationToken);
+
+                    processedBytes += bytesRead;
+
+                    if(totalBytes > 0)
                     {
-                        byte[] iv = new byte[aes.BlockSize / 8];
-                        await inputStream.ReadAsync(iv, 0, iv.Length, cancellationToken);
-                        aes.Key = key;
-                        aes.IV = iv;
-
-                        long contentLength = inputStream.Length - 32; // Длина без HMAC
-
-                        // Проверка HMAC
-                        inputStream.Position = 0;
-                        byte[] content = new byte[contentLength];
-                        await inputStream.ReadAsync(content, 0, content.Length, cancellationToken);
-
-                        using(HMACSHA256 hmac = new HMACSHA256(key))
-                        {
-                            byte[] computedHmac = hmac.ComputeHash(content);
-
-                            inputStream.Position = contentLength;
-                            byte[] storedHmac = new byte[32];
-                            await inputStream.ReadAsync(storedHmac, 0, storedHmac.Length, cancellationToken);
-
-                            if(!CryptographicOperations.FixedTimeEquals(computedHmac, storedHmac))
-                            {
-                                throw new CryptographicException("Ошибка проверки HMAC. Данные повреждены или пароль неверен.");
-                            }
-                        }
-
-                        inputStream.Position = salt.Length + iv.Length; // Пропускаем соль и IV
-
-                        using(CryptoStream cryptoStream = new CryptoStream(inputStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
-                        {
-                            // Расшифровка и чтение расширения файла
-                            byte[] extensionLengthBytes = new byte[sizeof(int)];
-                            await cryptoStream.ReadAsync(extensionLengthBytes, 0, sizeof(int), cancellationToken);
-                            int extensionLength = BitConverter.ToInt32(extensionLengthBytes, 0);
-
-                            byte[] extensionBytes = new byte[extensionLength];
-                            await cryptoStream.ReadAsync(extensionBytes, 0, extensionBytes.Length, cancellationToken);
-                            string fileExtension = System.Text.Encoding.UTF8.GetString(extensionBytes);
-
-                            // Расшифровка содержимого файла
-                            using(FileStream outputStream = new FileStream(outputFile + fileExtension, FileMode.Create, FileAccess.Write))
-                            {
-                                byte[] buffer = new byte[8192];
-                                long totalBytes = contentLength - (salt.Length + iv.Length + sizeof(int) + extensionLength);
-                                long processedBytes = 0;
-                                int bytesRead;
-
-                                while((bytesRead = await cryptoStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
-                                {
-                                    await outputStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
-                                    processedBytes += bytesRead;
-                                    progress?.Report((double)processedBytes / totalBytes);
-                                    cancellationToken.ThrowIfCancellationRequested();
-                                }
-                            }
-                        }
+                        progress?.Report((double)processedBytes / totalBytes);
                     }
+
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
             } catch(OperationCanceledException)
             {
-                Console.Error.WriteLine("Операция расшифровки была отменена.");
+                Console.Error.WriteLine( "Операция расшифровки была отменена.");
                 throw;
             } catch(CryptographicException ex)
             {
-                Console.Error.WriteLine($"Криптографическая ошибка при расшифровке файла: {ex.Message}");
+                Console.Error.WriteLine( $"Криптографическая ошибка при расшифровке файла: " + ex.Message);
                 throw;
             } catch(Exception ex)
             {
-                Console.Error.WriteLine($"Ошибка при расшифровке файла: {ex.Message}");
+                Console.Error.WriteLine( $"Ошибка при расшифровке файла: {ex.Message}");
                 throw;
             }
         }
-    }
 
+        private static async Task ValidateHeaderAsync( Stream stream, CancellationToken cancellationToken)
+        {
+            byte[] header = new byte[SecureFileFormat.MagicHeader.Length];
+            await stream.ReadExactlyAsync(header, cancellationToken);
+
+            if(!header.SequenceEqual(SecureFileFormat.MagicHeader))
+            {
+                throw new CryptographicException(
+                    "Файл не является зашифрованным файлом CryptoBook.");
+            }
+        }
+
+        private static async Task ValidateHmacAsync( Stream stream, long contentLength, byte[] key, CancellationToken cancellationToken)
+        {
+            stream.Position = 0;
+
+            byte[] content = new byte[contentLength];
+            await stream.ReadExactlyAsync(content, cancellationToken);
+
+            using HMACSHA256 hmac = new HMACSHA256(key);
+            byte[] computedHmac = hmac.ComputeHash(content);
+
+            stream.Position = contentLength;
+
+            byte[] storedHmac = new byte[SecureFileFormat.HmacSize];
+            await stream.ReadExactlyAsync(storedHmac, cancellationToken);
+
+            if(!CryptographicOperations.FixedTimeEquals( computedHmac, storedHmac))
+            {
+                throw new CryptographicException( "Ошибка проверки HMAC. Данные повреждены " + "или пароль неверен.");
+            }
+        }
+    }
 }
 

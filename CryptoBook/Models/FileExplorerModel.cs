@@ -398,6 +398,27 @@ namespace CryptoBook.Models
                 await _gate.WaitAsync(_cancellationTokenSource.Token);
                 try
                 {
+                    if(file.IsEditing)
+                        return;
+                    if(file.IsEncrypted)
+                    {
+                        var res = await _fileManagerService.DecryptAsync(file.FullPath, CancellationToken.None);
+                        if(res.Success)
+                        {
+                            file.IsEncrypted = false;
+                            return;
+                        }
+                        _ = await _messageService.ShowMessage("Decryption error", res.ErrorMessage);
+                    } else
+                    {
+                        var res = await _fileManagerService.EncryptAsync(file.FullPath, CancellationToken.None);
+                        if(res.Success)
+                        {
+                            file.IsEncrypted = true;
+                            return;
+                        }
+                        _ = await _messageService.ShowMessage("Encryption error", res.ErrorMessage);
+                    })
                     var stream = await _fileManagerService.OpenReadAsync(file.FullPath, _cancellationTokenSource.Token);
 
                 } catch
