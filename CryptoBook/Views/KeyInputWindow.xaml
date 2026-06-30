@@ -1,0 +1,81 @@
+﻿<Window x:Class="CryptoBook.Views.KeyInputWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:vm="clr-namespace:CryptoBook.ViewModels"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:local="clr-namespace:CryptoBook.Views"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Title="KeyInputWindow" 
+        MinWidth="420"
+        MinHeight="230">
+    
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IKeyInputViewModel}" />
+    </Window.DataContext>
+
+
+    <Window.Width>
+        <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="WindowHeight"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left >
+        <Binding Path="WindowLeft"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.WindowState>
+        <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.WindowState>
+
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{Binding Message}"
+                   TextWrapping="Wrap"/>
+
+        <PasswordBox x:Name="PasswordBox"
+                     Grid.Row="2"
+                     MinHeight="28"/>
+
+        <PasswordBox x:Name="RepeatPasswordBox"
+                     Grid.Row="4"
+                     MinHeight="28"/>
+
+        <TextBlock x:Name="ErrorText"
+                   Grid.Row="5"
+                   Foreground="Crimson"
+                   Margin="0,8,0,0"
+                   TextWrapping="Wrap"/>
+
+        <StackPanel Grid.Row="6"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="OK"
+                    Width="90"
+                    IsDefault="True"
+                    Margin="0,0,8,0"
+                    Click="Ok_Click"/>
+
+            <Button Content="Отмена"
+                    Width="90"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
