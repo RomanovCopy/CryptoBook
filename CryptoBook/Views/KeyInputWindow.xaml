@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:vm="clr-namespace:CryptoBook.ViewModels"
+        xmlns:security="clr-namespace:CryptoBook.Security"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
         xmlns:local="clr-namespace:CryptoBook.Views"
@@ -83,7 +84,9 @@
         </StackPanel>
     </Grid>
     <i:Interaction.Behaviors>
-        <behaviors:KeyInputBehavior />
+        <behaviors:KeyInputWindowBehavior
+            KeyProvider="{markup:ResolveService ServiceType={x:Type security:IKeyProvider}}"
+            Converter="{markup:ResolveConverter ConverterType={x:Type interfaces:ISecureStringConverter}}"/>
     </i:Interaction.Behaviors>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

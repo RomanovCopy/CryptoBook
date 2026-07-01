@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Security
 {
-    internal sealed class MemoryKeyProvider: IKeyProvider, IDisposable
+    internal sealed class MemoryKeyProvider: IService, IKeyProvider, IDisposable
     {
         private byte[]? _passwordBytes;
 
