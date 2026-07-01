@@ -6,27 +6,18 @@ namespace CryptoBook.Security
 {
     internal class SecureFileProcessor
     {
-        public static async Task EncryptFileAsync( string inputFile, string outputFile, string password, IProgress<double>? progress = null,
+        public static async Task EncryptFileAsync( string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                byte[] salt = RandomNumberGenerator.GetBytes(
-                    SecureFileFormat.SaltSize);
+                byte[] salt = RandomNumberGenerator.GetBytes( SecureFileFormat.SaltSize);
 
-                byte[] key = KeyGenerator.GenerateKeyFromPassword(
-                    password,
-                    salt);
+                byte[] key = KeyGenerator.GenerateKeyFromPassword( password, salt);
 
-                using FileStream outputStream = new FileStream(
-                    outputFile,
-                    FileMode.Create,
-                    FileAccess.ReadWrite,
-                    FileShare.None);
+                using FileStream outputStream = new ( outputFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
-                await outputStream.WriteAsync(
-                    SecureFileFormat.MagicHeader,
-                    cancellationToken);
+                await outputStream.WriteAsync( SecureFileFormat.MagicHeader, cancellationToken);
 
                 await outputStream.WriteAsync(salt, cancellationToken);
 
@@ -114,7 +105,7 @@ namespace CryptoBook.Security
             }
         }
 
-        public static async Task DecryptFileAsync( string inputFile, string outputFile, string password, IProgress<double>? progress = null,
+        public static async Task DecryptFileAsync( string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
             CancellationToken cancellationToken = default)
         {
             try
@@ -126,9 +117,7 @@ namespace CryptoBook.Security
                 byte[] salt = new byte[SecureFileFormat.SaltSize];
                 await inputStream.ReadExactlyAsync(salt, cancellationToken);
 
-                byte[] key = KeyGenerator.GenerateKeyFromPassword(
-                    password,
-                    salt);
+                byte[] key = KeyGenerator.GenerateKeyFromPassword( password, salt);
 
                 using Aes aes = Aes.Create();
 

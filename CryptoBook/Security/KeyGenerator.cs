@@ -1,21 +1,23 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace CryptoBook.Security
 {
     internal class KeyGenerator
     {
-        public static byte[] GenerateKeyFromPassword(string password, byte[] salt)
+        public static byte[] GenerateKeyFromPassword( ReadOnlySpan<char> password, byte[] salt)
         {
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password.ToArray());
+
             try
             {
-                using(var rfc2898 = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256))
-                {
-                    return rfc2898.GetBytes(32); // Генерация 256-битного ключа
-                }
-            } catch(Exception ex)
+                using Rfc2898DeriveBytes rfc2898 =new Rfc2898DeriveBytes( passwordBytes, salt, 100_000, HashAlgorithmName.SHA256);
+
+                return rfc2898.GetBytes(32);
+            } 
+            finally
             {
-                Console.Error.WriteLine($"Ошибка генерации ключа: {ex.Message}");
-                throw;
+                CryptographicOperations.ZeroMemory(passwordBytes);
             }
         }
     }

@@ -46,6 +46,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MyFrameModel>().As<IMyFrameModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindowModel>().As<IMainWindowModel>().InstancePerLifetimeScope();
             builder.RegisterType<MessageWindowModel>().As<IMessageWindowModel>().InstancePerLifetimeScope();
+            builder.RegisterType<KeyInputModel>().As<IKeyInputModel>().InstancePerLifetimeScope();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -65,7 +66,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarkEntryViewModel>().As<IBookmarkEntryViewModel>().AsSelf();
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
-            builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
+            builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope(); 
+            builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -95,22 +98,16 @@ namespace CryptoBook.Injections
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
             builder.RegisterType<ProgressWindow>().InstancePerDependency();
 
-            builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox>().InstancePerDependency();
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
             builder.RegisterType<NewFileDialog>().InstancePerDependency();
             builder.RegisterType<FileExplorer>().InstancePerDependency();
             builder.RegisterType<MessageWindow>().InstancePerDependency();
+            builder.RegisterType<KeyInputWindow>().InstancePerDependency();
                                                                                                          
             //FileTemplate
             builder.RegisterType<TextFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<ImageFileTemplate>().As<IFileTemplate>().SingleInstance();
-            //builder.RegisterType<JsonFileTemplate>().As<IFileTemplate>().SingleInstance();
-            //builder.RegisterType<RichTextFileTemplate>().As<IFileTemplate>().SingleInstance();
-            //builder.RegisterType<SourceCodeTemplate>().As<IFileTemplate>().SingleInstance();
-            //builder.RegisterType<JPEGFileTemplate>().As<IFileTemplate>().SingleInstance();
-            //builder.RegisterType<JPGFileTemplate>().As<IFileTemplate>().SingleInstance();
-            //builder.RegisterType<PNGFileTemplate>().As<IFileTemplate>().SingleInstance();
 
 
             // реестр собирает их автоматически

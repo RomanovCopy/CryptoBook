@@ -10,7 +10,7 @@ namespace CryptoBook.Interfaces
     {
         string Title { get; }
         string Message { get; }
-        bool ShowRepeatPassword { get; init; }
+        bool ShowRepeatPassword { get; }
 
     }
 }

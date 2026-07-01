@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.Security;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +21,52 @@ namespace CryptoBook.Views
     /// </summary>
     public partial class KeyInputWindow: Window
     {
-        public KeyInputWindow()
+
+        private readonly IKeyProvider _keyProvider;
+        public KeyInputWindow(IKeyProvider keyProvider)
         {
             InitializeComponent();
+            _keyProvider = keyProvider;
+            Loaded += (_, _) => PasswordBox.Focus();
         }
+
+        private void OkButton_Click(object sender, RoutedEventArgs e)
+        {
+            ErrorText.Text = string.Empty;
+
+            if(!PasswordsAreValid())
+                return;
+
+            char[]? password = null;
+
+            try
+            {
+                password = PasswordBox.SecurePassword.ToCharArray();
+
+                if(password.Length == 0)
+                {
+                    ErrorText.Text = "Ключ не может быть пустым.";
+                    return;
+                }
+
+                _keyProvider.SetKey(password);
+
+                DialogResult = true;
+                Close();
+            } finally
+            {
+                if(password != null)
+                    Array.Clear(password);
+
+                PasswordBox.Clear();
+                RepeatPasswordBox.Clear();
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

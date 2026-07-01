@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Security
 {
+    /// <summary>
+    /// Состояние защищённого файла.
+    /// </summary>
     internal enum SecureFileState
     {
         NotEncrypted,
