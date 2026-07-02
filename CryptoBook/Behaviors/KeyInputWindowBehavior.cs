@@ -146,6 +146,8 @@ namespace CryptoBook.Behaviors
             _cancelButton.Click += OnCancelClick;
             _passwordBox.PreviewTextInput += OnPasswordTextInput;
             _repeatPasswordBox.PreviewTextInput += OnPasswordTextInput;
+            _passwordBox.PreviewKeyDown += OnPasswordBoxPreviewKeyDown;
+            _repeatPasswordBox.PreviewKeyDown += OnPasswordBoxPreviewKeyDown;
 
             System.Windows.DataObject.AddPastingHandler( _passwordBox, OnPasswordPaste);
             System.Windows.DataObject.AddPastingHandler( _repeatPasswordBox, OnPasswordPaste);
@@ -158,9 +160,71 @@ namespace CryptoBook.Behaviors
         {
             ClearPasswordBoxes();
             DetachButton();
+            DetachPasswordBoxes();
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)
+        {
+            TryAccept();
+        }
+
+        private void OnCancelClick(object sender, RoutedEventArgs e)
+        {
+            ClearPasswordBoxes();
+            AssociatedObject.DialogResult = false;
+            AssociatedObject.Close();
+        }
+
+        private void OnPasswordTextInput( object sender, TextCompositionEventArgs e)
+        {
+            if(sender is not PasswordBox passwordBox)
+                return;
+
+            if(!CanInput(passwordBox, e.Text))
+                e.Handled = false;
+        }
+
+        private void OnPasswordPaste( object sender, DataObjectPastingEventArgs e)
+        {
+            if(sender is not PasswordBox passwordBox)
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            if(!e.DataObject.GetDataPresent(System.Windows.DataFormats.UnicodeText))
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            var text = e.DataObject.GetData(System.Windows.DataFormats.UnicodeText) as string;
+
+            if(string.IsNullOrEmpty(text) || !CanInput(passwordBox, text))
+                e.CancelCommand();
+        }
+
+        private void OnPasswordBoxPreviewKeyDown( object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key != Key.Enter && e.Key != Key.Return)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            if(ReferenceEquals(sender, _passwordBox))
+            {
+                _repeatPasswordBox?.Focus();
+                _repeatPasswordBox?.SelectAll();
+                return;
+            }
+
+            if(ReferenceEquals(sender, _repeatPasswordBox))
+                TryAccept();
+        }
+
+        private void TryAccept()
         {
             if(KeyProvider == null)
                 throw new InvalidOperationException("IKeyProvider не задан.");
@@ -194,47 +258,13 @@ namespace CryptoBook.Behaviors
             } finally
             {
                 if(password != null)
+                {
                     CryptographicOperations.ZeroMemory(
                         MemoryMarshal.AsBytes(password.AsSpan()));
+                }
 
                 ClearPasswordBoxes();
             }
-        }
-
-        private void OnCancelClick(object sender, RoutedEventArgs e)
-        {
-            ClearPasswordBoxes();
-            AssociatedObject.DialogResult = false;
-            AssociatedObject.Close();
-        }
-
-        private void OnPasswordTextInput( object sender, TextCompositionEventArgs e)
-        {
-            if(sender is not PasswordBox passwordBox)
-                return;
-
-            if(!CanInput(passwordBox, e.Text))
-                e.Handled = true;
-        }
-
-        private void OnPasswordPaste( object sender, DataObjectPastingEventArgs e)
-        {
-            if(sender is not PasswordBox passwordBox)
-            {
-                e.CancelCommand();
-                return;
-            }
-
-            if(!e.DataObject.GetDataPresent(System.Windows.DataFormats.UnicodeText))
-            {
-                e.CancelCommand();
-                return;
-            }
-
-            var text = e.DataObject.GetData(System.Windows.DataFormats.UnicodeText) as string;
-
-            if(string.IsNullOrEmpty(text) || !CanInput(passwordBox, text))
-                e.CancelCommand();
         }
 
         private bool CanInput( PasswordBox passwordBox, string text)
@@ -319,6 +349,25 @@ namespace CryptoBook.Behaviors
 
             _okButton = null;
             _cancelButton = null;
+        }
+
+        private void DetachPasswordBoxes()
+        {
+            if(_passwordBox != null)
+            {
+                _passwordBox.PreviewTextInput -= OnPasswordTextInput;
+                _passwordBox.PreviewKeyDown -= OnPasswordBoxPreviewKeyDown;
+
+                System.Windows.DataObject.RemovePastingHandler( _passwordBox, OnPasswordPaste);
+            }
+
+            if(_repeatPasswordBox != null)
+            {
+                _repeatPasswordBox.PreviewTextInput -= OnPasswordTextInput;
+                _repeatPasswordBox.PreviewKeyDown -= OnPasswordBoxPreviewKeyDown;
+
+                System.Windows.DataObject.RemovePastingHandler( _repeatPasswordBox, OnPasswordPaste);
+            }
         }
 
         private void ClearPasswordBoxes()

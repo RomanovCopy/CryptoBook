@@ -1,6 +1,7 @@
 ﻿using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Security;
 using CryptoBook.Services;
 using CryptoBook.Views;
 
@@ -26,6 +27,7 @@ namespace CryptoBook.Models
         private readonly IFileClipboardService _fileClipboardService;
         private readonly IFolderPickerService _folderPickerService;
         private readonly IMessageService _messageService;
+        private readonly IKeyProvider _keyProvider;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -57,7 +59,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -66,6 +68,7 @@ namespace CryptoBook.Models
             _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
             _fileClipboardService = fileClipboardService ?? throw new ArgumentNullException(nameof(fileClipboardService));
             _folderPickerService = folderPickerService ?? throw new ArgumentNullException(nameof(folderPickerService));
+            _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -109,12 +112,12 @@ namespace CryptoBook.Models
 
         public bool CanExecute_DecryptCommand(object? obj)
         {
-            return true;
+            return _keyProvider.HasKey;
         }
 
         public bool CanExecute_EncryptCommand(object? obj)
         {
-            return true;
+            return _keyProvider.HasKey;
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {

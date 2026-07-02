@@ -83,6 +83,7 @@ namespace CryptoBook.Infrastructure
                 }
                 UnregisterWindow(host);
                 scope.Dispose();
+                window.Owner?.Focus();
                 window = null;
             };
 
