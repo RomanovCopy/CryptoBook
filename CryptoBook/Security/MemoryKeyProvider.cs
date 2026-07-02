@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Security
 {
-    internal sealed class MemoryKeyProvider: IService, IKeyProvider, IDisposable
+    internal sealed class MemoryKeyProvider: IKeyProvider, IDisposable
     {
         private byte[]? _passwordBytes;
 

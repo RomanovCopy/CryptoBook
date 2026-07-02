@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IFileExplorerViewModel: IViewModel, IWindowOptions, IWindowWithId , ISortedCommand
+    public interface IFileExplorerViewModel: IViewModel, IWindowOptions, IWindowWithId , ISortedCommand,IEncrypted
     {
         double LeftColumnPercent { get; set; }
         double RightColumnPercent { get; set; }

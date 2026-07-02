@@ -94,7 +94,6 @@ namespace CryptoBook.Models
 
         public void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
         }
 
     }

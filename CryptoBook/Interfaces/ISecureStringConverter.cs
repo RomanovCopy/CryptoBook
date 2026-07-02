@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface ISecureStringConverter
+    public interface ISecureStringConverter:IService
     {
         char[] ToCharArray(SecureString secureString);
 

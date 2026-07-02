@@ -12,7 +12,6 @@
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" d:DataContext="{markup:ResolveViewModel ViewModelType='{x:Type interfaces:IKeyInputViewModel}'}"
         WindowStartupLocation="CenterOwner"
-        Title="KeyInputWindow" 
         MinWidth="420"
         MinHeight="230">
     
@@ -20,6 +19,9 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IKeyInputViewModel}" />
     </Window.DataContext>
 
+    <Window.Title>
+        <Binding Path="Title" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Title>
 
     <Window.Width>
         <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
@@ -73,20 +75,22 @@
                     Content="OK"
                     Width="90"
                     IsDefault="True"
-                    Margin="0,0,8,0"
-                    Click="OkButton_Click"/>
+                    Margin="0,0,8,0"/>
 
             <Button x:Name="CancelButton"
-                    Content="Отмена"
+                    Content="Cancel"
                     Width="90"
-                    IsCancel="True"
-                    Click="CancelButton_Click"/>
+                    IsCancel="True"/>
         </StackPanel>
     </Grid>
     <i:Interaction.Behaviors>
         <behaviors:KeyInputWindowBehavior
+            MinLength="12"
+            MaxLength="128"
+            AllowWhiteSpace="False"
             KeyProvider="{markup:ResolveService ServiceType={x:Type security:IKeyProvider}}"
-            Converter="{markup:ResolveConverter ConverterType={x:Type interfaces:ISecureStringConverter}}"/>
+            Converter="{markup:ResolveService ServiceType={x:Type interfaces:ISecureStringConverter}}">
+        </behaviors:KeyInputWindowBehavior>
     </i:Interaction.Behaviors>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

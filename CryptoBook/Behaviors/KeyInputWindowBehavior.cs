@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CryptoBook.Behaviors
 {
@@ -35,6 +36,18 @@ namespace CryptoBook.Behaviors
 
         public static readonly DependencyProperty OkButtonNameProperty = DependencyProperty.Register(
                 nameof(OkButtonName), typeof(string), typeof(KeyInputWindowBehavior), new PropertyMetadata("OkButton"));
+
+        public static readonly DependencyProperty CancelButtonNameProperty = DependencyProperty.Register(
+                nameof(CancelButtonName), typeof(string), typeof(KeyInputWindowBehavior), new PropertyMetadata("CancelButton"));
+
+        public static readonly DependencyProperty MinLengthProperty = DependencyProperty.Register(
+        nameof(MinLength), typeof(int), typeof(KeyInputWindowBehavior), new PropertyMetadata(8));
+
+        public static readonly DependencyProperty MaxLengthProperty = DependencyProperty.Register(
+                nameof(MaxLength), typeof(int), typeof(KeyInputWindowBehavior), new PropertyMetadata(128));
+
+        public static readonly DependencyProperty AllowWhiteSpaceProperty = DependencyProperty.Register(
+                nameof(AllowWhiteSpace), typeof(bool), typeof(KeyInputWindowBehavior), new PropertyMetadata(false));
 
         public IKeyProvider? KeyProvider
         {
@@ -72,10 +85,35 @@ namespace CryptoBook.Behaviors
             set => SetValue(OkButtonNameProperty, value);
         }
 
+        public string CancelButtonName
+        {
+            get => (string)GetValue(CancelButtonNameProperty);
+            set => SetValue(CancelButtonNameProperty, value);
+        }
+
+        public int MinLength
+        {
+            get => (int)GetValue(MinLengthProperty);
+            set => SetValue(MinLengthProperty, value);
+        }
+
+        public int MaxLength
+        {
+            get => (int)GetValue(MaxLengthProperty);
+            set => SetValue(MaxLengthProperty, value);
+        }
+
+        public bool AllowWhiteSpace
+        {
+            get => (bool)GetValue(AllowWhiteSpaceProperty);
+            set => SetValue(AllowWhiteSpaceProperty, value);
+        }
+
         private PasswordBox? _passwordBox;
         private PasswordBox? _repeatPasswordBox;
         private TextBlock? _errorText;
         private System.Windows.Controls.Button? _okButton;
+        private System.Windows.Controls.Button? _cancelButton;
 
         protected override void OnAttached()
         {
@@ -101,10 +139,20 @@ namespace CryptoBook.Behaviors
             _repeatPasswordBox = FindRequired<PasswordBox>(RepeatPasswordBoxName);
             _errorText = FindRequired<TextBlock>(ErrorTextBlockName);
             _okButton = FindRequired<System.Windows.Controls.Button>(OkButtonName);
+            _cancelButton = FindRequired<System.Windows.Controls.Button>(CancelButtonName);
+
 
             _okButton.Click += OnOkClick;
+            _cancelButton.Click += OnCancelClick;
+            _passwordBox.PreviewTextInput += OnPasswordTextInput;
+            _repeatPasswordBox.PreviewTextInput += OnPasswordTextInput;
+
+            System.Windows.DataObject.AddPastingHandler( _passwordBox, OnPasswordPaste);
+            System.Windows.DataObject.AddPastingHandler( _repeatPasswordBox, OnPasswordPaste);
+
             _passwordBox.Focus();
         }
+
 
         private void OnClosed(object? sender, EventArgs e)
         {
@@ -153,11 +201,72 @@ namespace CryptoBook.Behaviors
             }
         }
 
+        private void OnCancelClick(object sender, RoutedEventArgs e)
+        {
+            ClearPasswordBoxes();
+            AssociatedObject.DialogResult = false;
+            AssociatedObject.Close();
+        }
+
+        private void OnPasswordTextInput( object sender, TextCompositionEventArgs e)
+        {
+            if(sender is not PasswordBox passwordBox)
+                return;
+
+            if(!CanInput(passwordBox, e.Text))
+                e.Handled = true;
+        }
+
+        private void OnPasswordPaste( object sender, DataObjectPastingEventArgs e)
+        {
+            if(sender is not PasswordBox passwordBox)
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            if(!e.DataObject.GetDataPresent(System.Windows.DataFormats.UnicodeText))
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            var text = e.DataObject.GetData(System.Windows.DataFormats.UnicodeText) as string;
+
+            if(string.IsNullOrEmpty(text) || !CanInput(passwordBox, text))
+                e.CancelCommand();
+        }
+
+        private bool CanInput( PasswordBox passwordBox, string text)
+        {
+            if(passwordBox.SecurePassword.Length + text.Length > MaxLength)
+                return false;
+
+            foreach(char ch in text)
+            {
+                if(char.IsControl(ch))
+                    return false;
+
+                if(!AllowWhiteSpace && char.IsWhiteSpace(ch))
+                    return false;
+            }
+
+            return true;
+        }
+
         private bool ValidatePasswordBoxes()
         {
-            if(_passwordBox!.SecurePassword.Length == 0)
+            int length = _passwordBox!.SecurePassword.Length;
+
+            if(length == 0)
             {
                 _errorText!.Text = "Введите ключ.";
+                return false;
+            }
+
+            if(length < MinLength)
+            {
+                _errorText!.Text = $"Минимальная длина ключа: {MinLength}.";
                 return false;
             }
 
@@ -180,14 +289,12 @@ namespace CryptoBook.Behaviors
             return true;
         }
 
-        private T FindRequired<T>(string name)
-            where T : FrameworkElement
+        private T FindRequired<T>(string name) where T : FrameworkElement
         {
             var element = AssociatedObject.FindName(name) as T;
 
             if(element == null)
-                throw new InvalidOperationException(
-                    $"Элемент '{name}' типа {typeof(T).Name} не найден.");
+                throw new InvalidOperationException( $"Элемент '{name}' типа {typeof(T).Name} не найден.");
 
             return element;
         }
@@ -196,8 +303,22 @@ namespace CryptoBook.Behaviors
         {
             if(_okButton != null)
                 _okButton.Click -= OnOkClick;
+            if(_cancelButton != null)
+                _cancelButton.Click -= OnCancelClick;
+            if(_passwordBox != null)
+            {
+                _passwordBox.PreviewTextInput -= OnPasswordTextInput;
+                System.Windows.DataObject.RemovePastingHandler(_passwordBox, OnPasswordPaste);
+            }
+
+            if(_repeatPasswordBox != null)
+            {
+                _repeatPasswordBox.PreviewTextInput -= OnPasswordTextInput;
+                System.Windows.DataObject.RemovePastingHandler(_repeatPasswordBox, OnPasswordPaste);
+            }
 
             _okButton = null;
+            _cancelButton = null;
         }
 
         private void ClearPasswordBoxes()

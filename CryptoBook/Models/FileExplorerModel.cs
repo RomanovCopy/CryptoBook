@@ -94,10 +94,27 @@ namespace CryptoBook.Models
         {
             return obj is ISystemItem;
         }
-        public bool CanExecute_EncryptCommand(object? obj)
+
+        public bool CanExecute_SortedCommand(object? obj)
         {
             return obj is string name && !string.IsNullOrWhiteSpace(name) &&
             SelectedItem is IContainerSystemItem item && item.Children.Count > 1;
+        }
+
+
+        public bool CanExecute_EncryptingKeyCommand(object? obj)
+        {
+            return true;
+        }
+
+        public bool CanExecute_DecryptCommand(object? obj)
+        {
+            return true;
+        }
+
+        public bool CanExecute_EncryptCommand(object? obj)
+        {
+            return true;
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
@@ -247,7 +264,8 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for DeleteCommand", nameof(obj));
             }
         }
-        public async void Execute_EncryptCommand(object? obj)
+
+        public async void Execute_SortedCommand(object? obj)
         {
             if(obj is string name && !string.IsNullOrWhiteSpace(name) && SelectedItem is IContainerSystemItem container)
             {
@@ -264,11 +282,28 @@ namespace CryptoBook.Models
                 }
             }
         }
+
+        public void Execute_EncryptingKeyCommand(object? obj)
+        {
+            var id = _windowManager.CreateWindow<KeyInputWindow>();
+            _windowManager.ShowWindowDialog(id);
+        }
+
+        public void Execute_EncryptCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute_DecryptCommand(object? obj)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Execute_CreateFileCommand(object? obj)
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
             _windowManager.ShowWindow(id);
-            Execute_EncryptCommand("Name");
+            Execute_SortedCommand("Name");
         }
         public void Execute_CreateDirectoryCommand(object? obj)
         {

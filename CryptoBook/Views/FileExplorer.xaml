@@ -149,11 +149,14 @@
             <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
+            <Button Content="Encrypting key" Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding EncryptingKeyCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <Separator/>
             <Button Content="Encrypt" Style="{StaticResource PrimaryButtonStyle}"
                     Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
-            <Button Content="Decrypt" 
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+            <Button Content="Decrypt" Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
         </ToolBar>
 

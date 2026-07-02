@@ -29,10 +29,7 @@ namespace CryptoBook.Views
         public KeyInputWindow()
         {
             InitializeComponent();
-            Loaded += (_, _) => PasswordBox.Focus();
         }
-
-
     }
     
 }

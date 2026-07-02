@@ -58,8 +58,8 @@ namespace CryptoBook.ViewModels
         public ICommand DeleteCommand => _deleteCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteCommand, _fileExplorerModel.CanExecute_DeleteCommand);
         RelayCommand _deleteCommand;
 
-        public ICommand EncryptCommand => _encryptCommand ??= new RelayCommand(_fileExplorerModel.Execute_EncryptCommand, _fileExplorerModel.CanExecute_EncryptCommand);
-        RelayCommand _encryptCommand;
+        public ICommand SortedCommand => _sortedCommand ??= new RelayCommand(_fileExplorerModel.Execute_SortedCommand, _fileExplorerModel.CanExecute_SortedCommand);
+        RelayCommand _sortedCommand;
 
         public ICommand CreateFileCommand => _createFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_CreateFileCommand, _fileExplorerModel.CanExecute_CreateFileCommand);
         RelayCommand _createFileCommand;
@@ -110,5 +110,13 @@ namespace CryptoBook.ViewModels
         public ICommand Closed => _closedCommand ??= new RelayCommand(_fileExplorerModel.Execute_Closed, _fileExplorerModel.CanExecute_Closed);
         RelayCommand _closedCommand;
 
+        public ICommand EncryptingKeyCommand => _encryptingKeyCommand ??= new RelayCommand(_fileExplorerModel.Execute_EncryptingKeyCommand, _fileExplorerModel.CanExecute_EncryptingKeyCommand); 
+        RelayCommand _encryptingKeyCommand;
+
+        public ICommand DecryptCommand => _decryptCommand ??= new RelayCommand(_fileExplorerModel.Execute_DecryptCommand, _fileExplorerModel.CanExecute_DecryptCommand);
+        RelayCommand _decryptCommand;
+
+        public ICommand EncryptCommand => _encryptCommand ??= new RelayCommand(_fileExplorerModel.Execute_EncryptCommand, _fileExplorerModel.CanExecute_EncryptCommand);
+        RelayCommand _encryptCommand;
     }
 }

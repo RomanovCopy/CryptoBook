@@ -10,6 +10,7 @@ using CryptoBook.Interfaces;
 using CryptoBook.Models;
 using CryptoBook.MyControls;
 using CryptoBook.MyPages;
+using CryptoBook.Security;
 using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
@@ -84,6 +85,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<PercentToGridLengthConverter>().AsSelf();
             builder.RegisterType<StockIconIdToImageSourceConverter>().AsSelf();
             builder.RegisterType<TypeCheckConverter>().AsSelf();
+            builder.RegisterType<SecureStringConverter>().As<ISecureStringConverter>().SingleInstance();
+
 
             //Helpers
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
@@ -157,6 +160,8 @@ namespace CryptoBook.Injections
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
 
+            //Providers
+            builder.RegisterType<MemoryKeyProvider>().As<IKeyProvider>().SingleInstance();
 
             //Accessors
             builder.RegisterType<ReflectionPropertyAccessor>().As<IPropertyAccessor>().SingleInstance();
@@ -176,6 +181,18 @@ namespace CryptoBook.Injections
             builder.RegisterType<TextFormatBar>().SingleInstance();
             builder.RegisterType<ListFormatBar>().SingleInstance();
             builder.RegisterType<BookmarksBar>().SingleInstance();
+
+
+
+
+
+            builder.RegisterType<KeyInputViewModel>().InstancePerDependency();
+
+            builder.RegisterType<KeyInputWindow>()
+                .InstancePerDependency();
+
+
+
 
             //Contexts
 

@@ -7,8 +7,10 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface ISortedCommand
+    public interface IEncrypted
     {
-        ICommand SortedCommand { get; }
+        ICommand EncryptingKeyCommand{  get; }
+        ICommand DecryptCommand{ get; }
+        ICommand EncryptCommand { get; }
     }
 }
