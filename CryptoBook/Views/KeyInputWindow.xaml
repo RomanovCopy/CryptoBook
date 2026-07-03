@@ -47,6 +47,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -62,15 +63,20 @@
                      Grid.Row="4"
                      MinHeight="28"/>
 
+        <CheckBox x:Name="ViewPasswordCheckBox" Margin="0,8,0,0"
+                  Content="Просмотр"
+                  Grid.Row="5"/>
+
         <TextBlock x:Name="ErrorText"
-                   Grid.Row="5"
+                   Grid.Row="6"
                    Foreground="Crimson"
                    Margin="0,8,0,0"
                    TextWrapping="Wrap"/>
 
-        <StackPanel Grid.Row="6"
+        <StackPanel Grid.Row="7"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
+            
             <Button x:Name="OkButton"
                     Content="OK"
                     Width="90"
@@ -85,7 +91,7 @@
     </Grid>
     <i:Interaction.Behaviors>
         <behaviors:KeyInputWindowBehavior
-            MinLength="12"
+            MinLength="4"
             MaxLength="128"
             AllowWhiteSpace="False"
             KeyProvider="{markup:ResolveService ServiceType={x:Type security:IKeyProvider}}"
