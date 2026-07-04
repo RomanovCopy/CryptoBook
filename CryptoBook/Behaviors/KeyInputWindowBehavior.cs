@@ -19,90 +19,150 @@ namespace CryptoBook.Behaviors
 {
     public sealed class KeyInputWindowBehavior: Behavior<Window>
     {
+        /// <summary>
+        /// DependencyProperty для поставщика ключа (IKeyProvider).
+        /// </summary>
         public static readonly DependencyProperty KeyProviderProperty = DependencyProperty.Register(
-                nameof(KeyProvider), typeof(IKeyProvider),typeof(KeyInputWindowBehavior));
+                nameof(KeyProvider), typeof(IKeyProvider), typeof(KeyInputWindowBehavior));
 
+        /// <summary>
+        /// DependencyProperty для конвертера SecureString в массив символов.
+        /// </summary>
         public static readonly DependencyProperty ConverterProperty = DependencyProperty.Register(
                 nameof(Converter), typeof(ISecureStringConverter), typeof(KeyInputWindowBehavior));
 
+        /// <summary>
+        /// DependencyProperty для имени PasswordBox в окне.
+        /// </summary>
         public static readonly DependencyProperty PasswordBoxNameProperty = DependencyProperty.Register(
                 nameof(PasswordBoxName), typeof(string), typeof(KeyInputWindowBehavior), new PropertyMetadata("PasswordBox"));
 
+        /// <summary>
+        /// DependencyProperty для имени второго поля повтора пароля в окне.
+        /// </summary>
         public static readonly DependencyProperty RepeatPasswordBoxNameProperty = DependencyProperty.Register(
                 nameof(RepeatPasswordBoxName), typeof(string), typeof(KeyInputWindowBehavior), new PropertyMetadata("RepeatPasswordBox"));
 
+        /// <summary>
+        /// DependencyProperty для имени TextBlock, в который выводятся ошибки валидации.
+        /// </summary>
         public static readonly DependencyProperty ErrorTextBlockNameProperty = DependencyProperty.Register(
                 nameof(ErrorTextBlockName), typeof(string), typeof(KeyInputWindowBehavior), new PropertyMetadata("ErrorText"));
 
+        /// <summary>
+        /// DependencyProperty для имени кнопки подтверждения (Ok).
+        /// </summary>
         public static readonly DependencyProperty OkButtonNameProperty = DependencyProperty.Register(
                 nameof(OkButtonName), typeof(string), typeof(KeyInputWindowBehavior), new PropertyMetadata("OkButton"));
 
+        /// <summary>
+        /// DependencyProperty для имени кнопки отмены.
+        /// </summary>
         public static readonly DependencyProperty CancelButtonNameProperty = DependencyProperty.Register(
                 nameof(CancelButtonName), typeof(string), typeof(KeyInputWindowBehavior), new PropertyMetadata("CancelButton"));
 
+        /// <summary>
+        /// DependencyProperty для минимальной длины ключа.
+        /// </summary>
         public static readonly DependencyProperty MinLengthProperty = DependencyProperty.Register(
         nameof(MinLength), typeof(int), typeof(KeyInputWindowBehavior), new PropertyMetadata(8));
 
+        /// <summary>
+        /// DependencyProperty для максимальной длины ключа.
+        /// </summary>
         public static readonly DependencyProperty MaxLengthProperty = DependencyProperty.Register(
                 nameof(MaxLength), typeof(int), typeof(KeyInputWindowBehavior), new PropertyMetadata(128));
 
+        /// <summary>
+        /// DependencyProperty, указывающее, разрешать ли пробельные символы в ключе.
+        /// </summary>
         public static readonly DependencyProperty AllowWhiteSpaceProperty = DependencyProperty.Register(
                 nameof(AllowWhiteSpace), typeof(bool), typeof(KeyInputWindowBehavior), new PropertyMetadata(false));
 
+        /// <summary>
+        /// Поставщик ключа, реализующий IKeyProvider. Используется для передачи введённого ключа в приложение.
+        /// </summary>
         public IKeyProvider? KeyProvider
         {
             get => (IKeyProvider?)GetValue(KeyProviderProperty);
             set => SetValue(KeyProviderProperty, value);
         }
 
+        /// <summary>
+        /// Конвертер SecureString в массив символов и обратно.
+        /// </summary>
         public ISecureStringConverter? Converter
         {
             get => (ISecureStringConverter?)GetValue(ConverterProperty);
             set => SetValue(ConverterProperty, value);
         }
 
+        /// <summary>
+        /// Имя PasswordBox в окне, откуда берётся ключ.
+        /// </summary>
         public string PasswordBoxName
         {
             get => (string)GetValue(PasswordBoxNameProperty);
             set => SetValue(PasswordBoxNameProperty, value);
         }
 
+        /// <summary>
+        /// Имя поля повторного ввода ключа в окне.
+        /// </summary>
         public string RepeatPasswordBoxName
         {
             get => (string)GetValue(RepeatPasswordBoxNameProperty);
             set => SetValue(RepeatPasswordBoxNameProperty, value);
         }
 
+        /// <summary>
+        /// Имя TextBlock для отображения сообщений об ошибках валидации.
+        /// </summary>
         public string ErrorTextBlockName
         {
             get => (string)GetValue(ErrorTextBlockNameProperty);
             set => SetValue(ErrorTextBlockNameProperty, value);
         }
 
+        /// <summary>
+        /// Имя кнопки подтверждения (Ok) в окне.
+        /// </summary>
         public string OkButtonName
         {
             get => (string)GetValue(OkButtonNameProperty);
             set => SetValue(OkButtonNameProperty, value);
         }
 
+        /// <summary>
+        /// Имя кнопки отмены в окне.
+        /// </summary>
         public string CancelButtonName
         {
             get => (string)GetValue(CancelButtonNameProperty);
             set => SetValue(CancelButtonNameProperty, value);
         }
 
+        /// <summary>
+        /// Минимально допустимая длина ключа.
+        /// </summary>
         public int MinLength
         {
             get => (int)GetValue(MinLengthProperty);
             set => SetValue(MinLengthProperty, value);
         }
 
+        /// <summary>
+        /// Максимально допустимая длина ключа.
+        /// </summary>
         public int MaxLength
         {
             get => (int)GetValue(MaxLengthProperty);
             set => SetValue(MaxLengthProperty, value);
         }
 
+        /// <summary>
+        /// Указывает, разрешены ли пробельные символы в ключе.
+        /// </summary>
         public bool AllowWhiteSpace
         {
             get => (bool)GetValue(AllowWhiteSpaceProperty);
@@ -115,6 +175,9 @@ namespace CryptoBook.Behaviors
         private System.Windows.Controls.Button? _okButton;
         private System.Windows.Controls.Button? _cancelButton;
 
+        /// <summary>
+        /// Вызывается при присоединении поведения к окну. Подписывается на события окна.
+        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -123,6 +186,9 @@ namespace CryptoBook.Behaviors
             AssociatedObject.Closed += OnClosed;
         }
 
+        /// <summary>
+        /// Вызывается при отсоединении поведения от окна. Снимает подписки и очищает обработчики.
+        /// </summary>
         protected override void OnDetaching()
         {
             AssociatedObject.Loaded -= OnLoaded;
@@ -133,6 +199,9 @@ namespace CryptoBook.Behaviors
             base.OnDetaching();
         }
 
+        /// <summary>
+        /// Обработчик события Loaded окна. Находит элементы по именам и подписывается на их события.
+        /// </summary>
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _passwordBox = FindRequired<PasswordBox>(PasswordBoxName);
@@ -149,13 +218,16 @@ namespace CryptoBook.Behaviors
             _passwordBox.PreviewKeyDown += OnPasswordBoxPreviewKeyDown;
             _repeatPasswordBox.PreviewKeyDown += OnPasswordBoxPreviewKeyDown;
 
-            System.Windows.DataObject.AddPastingHandler( _passwordBox, OnPasswordPaste);
-            System.Windows.DataObject.AddPastingHandler( _repeatPasswordBox, OnPasswordPaste);
+            System.Windows.DataObject.AddPastingHandler(_passwordBox, OnPasswordPaste);
+            System.Windows.DataObject.AddPastingHandler(_repeatPasswordBox, OnPasswordPaste);
 
             _passwordBox.Focus();
         }
 
 
+        /// <summary>
+        /// Обработчик события Closed окна. Очищает поля и снимает обработчики.
+        /// </summary>
         private void OnClosed(object? sender, EventArgs e)
         {
             ClearPasswordBoxes();
@@ -163,11 +235,17 @@ namespace CryptoBook.Behaviors
             DetachPasswordBoxes();
         }
 
+        /// <summary>
+        /// Обработчик клика по кнопке Ok. Пытается принять введённый ключ.
+        /// </summary>
         private void OnOkClick(object sender, RoutedEventArgs e)
         {
             TryAccept();
         }
 
+        /// <summary>
+        /// Обработчик клика по кнопке отмены. Очищает поля и закрывает окно с результатом false.
+        /// </summary>
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
             ClearPasswordBoxes();
@@ -175,16 +253,24 @@ namespace CryptoBook.Behaviors
             AssociatedObject.Close();
         }
 
-        private void OnPasswordTextInput( object sender, TextCompositionEventArgs e)
+        /// <summary>
+        /// Обработчик ввода текста в PasswordBox. Проверяет допустимость вводимых символов.
+        /// </summary>
+        private void OnPasswordTextInput(object sender, TextCompositionEventArgs e)
         {
             if(sender is not PasswordBox passwordBox)
                 return;
 
             if(!CanInput(passwordBox, e.Text))
+                e.Handled = true;
+            else
                 e.Handled = false;
         }
 
-        private void OnPasswordPaste( object sender, DataObjectPastingEventArgs e)
+        /// <summary>
+        /// Обработчик вставки в PasswordBox. Проверяет вставляемый текст на допустимость.
+        /// </summary>
+        private void OnPasswordPaste(object sender, DataObjectPastingEventArgs e)
         {
             if(sender is not PasswordBox passwordBox)
             {
@@ -204,10 +290,17 @@ namespace CryptoBook.Behaviors
                 e.CancelCommand();
         }
 
-        private void OnPasswordBoxPreviewKeyDown( object sender, System.Windows.Input.KeyEventArgs e)
+        /// <summary>
+        /// Обработчик нажатия клавиш в PasswordBox. Обрабатывает Enter/Return для перехода или подтверждения.
+        /// </summary>
+        private void OnPasswordBoxPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if(e.Key != Key.Enter && e.Key != Key.Return)
             {
+                if(e.Key == Key.Space && !AllowWhiteSpace)
+                {
+                    e.Handled = true;
+                }
                 return;
             }
 
@@ -215,6 +308,12 @@ namespace CryptoBook.Behaviors
 
             if(ReferenceEquals(sender, _passwordBox))
             {
+                if(_passwordBox.Password.Length < MinLength)
+                {
+                    _errorText!.Text = $"Ключ должен быть не менее {MinLength} символов.";
+                    return;
+                }
+                _errorText!.Text = string.Empty;
                 _repeatPasswordBox?.Focus();
                 _repeatPasswordBox?.SelectAll();
                 return;
@@ -224,6 +323,10 @@ namespace CryptoBook.Behaviors
                 TryAccept();
         }
 
+        /// <summary>
+        /// Пытается принять введённый ключ: валидирует, конвертирует и передаёт в IKeyProvider.
+        /// В случае успеха закрывает окно с DialogResult = true.
+        /// </summary>
         private void TryAccept()
         {
             if(KeyProvider == null)
@@ -232,9 +335,7 @@ namespace CryptoBook.Behaviors
             if(Converter == null)
                 throw new InvalidOperationException("ISecureStringConverter не задан.");
 
-            if(_passwordBox == null ||
-                _repeatPasswordBox == null ||
-                _errorText == null)
+            if(_passwordBox == null || _repeatPasswordBox == null || _errorText == null)
             {
                 throw new InvalidOperationException("Окно не инициализировано.");
             }
@@ -248,8 +349,7 @@ namespace CryptoBook.Behaviors
 
             try
             {
-                password = Converter.ToCharArray(
-                    _passwordBox.SecurePassword);
+                password = Converter.ToCharArray(_passwordBox.SecurePassword);
 
                 KeyProvider.SetKey(password);
 
@@ -259,31 +359,37 @@ namespace CryptoBook.Behaviors
             {
                 if(password != null)
                 {
-                    CryptographicOperations.ZeroMemory(
-                        MemoryMarshal.AsBytes(password.AsSpan()));
+                    CryptographicOperations.ZeroMemory(MemoryMarshal.AsBytes(password.AsSpan()));
                 }
 
                 ClearPasswordBoxes();
             }
         }
 
-        private bool CanInput( PasswordBox passwordBox, string text)
+        /// <summary>
+        /// Проверяет, допустим ли вводимый текст в конкретный PasswordBox по длине и по запрещённым символам.
+        /// </summary>
+        private bool CanInput(PasswordBox passwordBox, string text)
         {
             if(passwordBox.SecurePassword.Length + text.Length > MaxLength)
                 return false;
 
             foreach(char ch in text)
             {
-                if(char.IsControl(ch))
+                if(char.IsControl(ch) || ch == ' ' && !AllowWhiteSpace)
+                {
+                    _errorText!.Text = "Недопустимые символы в ключе.";
                     return false;
-
-                if(!AllowWhiteSpace && char.IsWhiteSpace(ch))
-                    return false;
+                }
             }
-
+            _errorText!.Text =string.Empty;
             return true;
         }
 
+        /// <summary>
+        /// Выполняет валидацию полей пароля: длина, присутствие и совпадение двух полей.
+        /// Возвращает true, если валидация успешна, иначе выводит сообщение в _errorText и возвращает false.
+        /// </summary>
         private bool ValidatePasswordBoxes()
         {
             int length = _passwordBox!.SecurePassword.Length;
@@ -306,9 +412,7 @@ namespace CryptoBook.Behaviors
                 return false;
             }
 
-            bool equals = Converter!.ContentEquals(
-                _passwordBox.SecurePassword,
-                _repeatPasswordBox.SecurePassword);
+            bool equals = Converter!.ContentEquals(_passwordBox.SecurePassword, _repeatPasswordBox.SecurePassword);
 
             if(!equals)
             {
@@ -319,16 +423,22 @@ namespace CryptoBook.Behaviors
             return true;
         }
 
+        /// <summary>
+        /// Находит элемент в окне по имени и приводит его к типу T. Если элемент не найден, бросает InvalidOperationException.
+        /// </summary>
         private T FindRequired<T>(string name) where T : FrameworkElement
         {
             var element = AssociatedObject.FindName(name) as T;
 
             if(element == null)
-                throw new InvalidOperationException( $"Элемент '{name}' типа {typeof(T).Name} не найден.");
+                throw new InvalidOperationException($"Элемент '{name}' типа {typeof(T).Name} не найден.");
 
             return element;
         }
 
+        /// <summary>
+        /// Снимает обработчики событий с кнопок и связанных полей ввода. Освобождает ссылки на кнопки.
+        /// </summary>
         private void DetachButton()
         {
             if(_okButton != null)
@@ -351,6 +461,9 @@ namespace CryptoBook.Behaviors
             _cancelButton = null;
         }
 
+        /// <summary>
+        /// Снимает обработчики событий с полей ввода пароля (PasswordBox).
+        /// </summary>
         private void DetachPasswordBoxes()
         {
             if(_passwordBox != null)
@@ -358,7 +471,7 @@ namespace CryptoBook.Behaviors
                 _passwordBox.PreviewTextInput -= OnPasswordTextInput;
                 _passwordBox.PreviewKeyDown -= OnPasswordBoxPreviewKeyDown;
 
-                System.Windows.DataObject.RemovePastingHandler( _passwordBox, OnPasswordPaste);
+                System.Windows.DataObject.RemovePastingHandler(_passwordBox, OnPasswordPaste);
             }
 
             if(_repeatPasswordBox != null)
@@ -366,10 +479,13 @@ namespace CryptoBook.Behaviors
                 _repeatPasswordBox.PreviewTextInput -= OnPasswordTextInput;
                 _repeatPasswordBox.PreviewKeyDown -= OnPasswordBoxPreviewKeyDown;
 
-                System.Windows.DataObject.RemovePastingHandler( _repeatPasswordBox, OnPasswordPaste);
+                System.Windows.DataObject.RemovePastingHandler(_repeatPasswordBox, OnPasswordPaste);
             }
         }
 
+        /// <summary>
+        /// Очищает содержимое обоих полей ввода пароля.
+        /// </summary>
         private void ClearPasswordBoxes()
         {
             _passwordBox?.Clear();
