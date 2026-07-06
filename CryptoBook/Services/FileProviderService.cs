@@ -1,5 +1,6 @@
 ﻿using CryptoBook.DTO;
 using CryptoBook.Interfaces;
+using CryptoBook.Security;
 
 using Mono.Unix;
 
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,13 +19,19 @@ namespace CryptoBook.Services
     public class FileProviderService: IFileProviderService
     {
         private readonly ISystemItemCreateService _itemCreateService;
+        private readonly ISecureFileValidator _secureFileValidator;
+        private readonly IKeyProvider _keyProvider;
+        private readonly ISecureFileProcessor _secureFileProcessor;
 
         private object _lock = new object();
         public string Scheme => "local";
 
-        public FileProviderService(ISystemItemCreateService? itemCreateService)
+        public FileProviderService(ISystemItemCreateService? itemCreateService, ISecureFileValidator? secureFileValidator, IKeyProvider? keyProvider, ISecureFileProcessor? secureFileProcessor)
         {
             _itemCreateService = itemCreateService ?? throw new ArgumentNullException(nameof(itemCreateService));
+            _secureFileValidator = secureFileValidator ?? throw new ArgumentNullException(nameof(secureFileValidator));
+            _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
+            _secureFileProcessor = secureFileProcessor ?? throw new ArgumentNullException(nameof(secureFileProcessor));
         }
 
         /// <summary>
@@ -96,13 +104,45 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken)
+        public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken)
         {
-            // Здесь можно сразу вернуть Task.FromResult, но мы аккуратны с отменой:
             cancellationToken.ThrowIfCancellationRequested();
-
             try
             {
+                var encrypted = await _secureFileValidator.HasCryptoBookHeaderAsync(path, cancellationToken);
+                var progress = new Progress<double>(p =>
+                {
+                    // p ожидается в диапазоне [0..1]. Вычисляем проценты 0..100
+                    try
+                    {
+                        double percent = Math.Clamp(p * 100.0, 0.0, 100.0);
+                        int intPercent = (int)Math.Round(percent);
+                        // Здесь можно передать intPercent в UI/логирование при необходимости
+                    }
+                    catch
+                    {
+                        // игнорируем ошибки в обработчике прогресса
+                    }
+                });
+
+                if(encrypted)
+                {
+                    if(_keyProvider.HasKey)
+                    {
+                        // Если файл зашифрован и ключ есть, то открываем поток для чтения.
+                        var salt = RandomNumberGenerator.GetBytes(16);
+                        var derivedKey = Encoding.UTF8.GetChars( _keyProvider.DeriveKey(salt));
+                        return await _secureFileProcessor.DecryptFileAsyncToStream(path, derivedKey, progress, cancellationToken);
+                    }
+                    else
+                    {
+                        throw new IOException($"File is encrypted and cannot be opened for reading: {path}");
+                    }
+
+                }else
+                {
+                }
+
                 // FileStream в async-режиме (useAsync: true) позволяет читать неблокирующе.
                 Stream stream = new FileStream(
                     path,
@@ -113,8 +153,7 @@ namespace CryptoBook.Services
                     useAsync: true);
 
                 return Task.FromResult(stream);
-            } catch(OperationCanceledException) { throw; } 
-            catch(FileNotFoundException)
+            } catch(OperationCanceledException) { throw; } catch(FileNotFoundException)
             {
                 throw; // пробрасываем дальше, чтобы можно было различать "файл не найден" и "другая ошибка"
             } catch(Exception ex)
@@ -706,7 +745,7 @@ namespace CryptoBook.Services
             progress?.Report(1.0, $"Done {Path.GetFileName(sourcePath)}");
         }
 
-        private async Task CopyDirectoryRecursiveAsync( string sourceDir, string destDir, IProgressReporter? progress, CancellationToken cancellationToken)
+        private async Task CopyDirectoryRecursiveAsync(string sourceDir, string destDir, IProgressReporter? progress, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

@@ -68,7 +68,7 @@ namespace CryptoBook.Security
             }
         }
 
-        public async Task DecryptFileAsync( string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
+        public async Task DecryptFileAsyncToFile( string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
         {
             string? finalFile = null;
@@ -100,7 +100,7 @@ namespace CryptoBook.Security
             }
         }
 
-        public async Task<Stream> DecryptFileAsync( string inputFile, char[] password, IProgress<double>? progress = null, 
+        public async Task<Stream> DecryptFileAsyncToStream( string inputFile, char[] password, IProgress<double>? progress = null, 
         CancellationToken cancellationToken = default)
         {
             MemoryStream outputStream = new ();

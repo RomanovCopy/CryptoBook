@@ -12,10 +12,10 @@ namespace CryptoBook.Security
         public Task EncryptFileAsync(string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
         CancellationToken cancellationToken = default);
 
-        public Task DecryptFileAsync(string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
+        public Task DecryptFileAsyncToFile(string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
         CancellationToken cancellationToken = default);
 
-        public Task<Stream> DecryptFileAsync(string inputFile, char[] password, IProgress<double>? progress = null,
+        public Task<Stream> DecryptFileAsyncToStream(string inputFile, char[] password, IProgress<double>? progress = null,
         CancellationToken cancellationToken = default);
     }
 }
