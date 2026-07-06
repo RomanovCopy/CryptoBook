@@ -210,7 +210,8 @@ namespace CryptoBook.Behaviors
             _okButton = FindRequired<System.Windows.Controls.Button>(OkButtonName);
             _cancelButton = FindRequired<System.Windows.Controls.Button>(CancelButtonName);
 
-
+            _passwordBox.IsEnabled = true;
+            _repeatPasswordBox.IsEnabled= false;
             _okButton.Click += OnOkClick;
             _cancelButton.Click += OnCancelClick;
             _passwordBox.PreviewTextInput += OnPasswordTextInput;
@@ -314,6 +315,8 @@ namespace CryptoBook.Behaviors
                     return;
                 }
                 _errorText!.Text = string.Empty;
+                _passwordBox!.IsEnabled = false;
+                _repeatPasswordBox!.IsEnabled = true;
                 _repeatPasswordBox?.Focus();
                 _repeatPasswordBox?.SelectAll();
                 return;

@@ -9,7 +9,7 @@ namespace CryptoBook.Security
     /// <summary>
     /// Состояние защищённого файла.
     /// </summary>
-    internal enum SecureFileState
+    public enum SecureFileState
     {
         NotEncrypted,
         Encrypted,

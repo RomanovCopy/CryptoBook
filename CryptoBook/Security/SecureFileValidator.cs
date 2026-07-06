@@ -11,7 +11,7 @@ namespace CryptoBook.Security
     /// <summary>
     /// Класс для проверки целостности и подлинности зашифрованных файлов.
     /// </summary>
-    internal static class SecureFileValidator
+    public class SecureFileValidator:ISecureFileValidator
     {
         /// <summary>
         /// Определяет состояние защищённого файла: не зашифрован, зашифрован и корректен,
@@ -21,7 +21,7 @@ namespace CryptoBook.Security
         /// <param name="password">Пароль для генерации ключа и проверки HMAC.</param>
         /// <param name="cancellationToken">Токен отмены операции.</param>
         /// <returns>Состояние файла в виде SecureFileState.</returns>
-        public static async Task<SecureFileState> GetStateAsync( string filePath, string password, CancellationToken cancellationToken = default)
+        public async Task<SecureFileState> GetStateAsync( string filePath, string password, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -107,24 +107,21 @@ namespace CryptoBook.Security
             }
         }
 
-        public static async Task<bool> IsEncryptedAsync( string filePath, string password, CancellationToken cancellationToken = default)
+        public async Task<bool> IsEncryptedAsync( string filePath, string password, CancellationToken cancellationToken = default)
         {
-            SecureFileState state = await GetStateAsync(
-                filePath,
-                password,
-                cancellationToken);
+            SecureFileState state = await GetStateAsync( filePath, password, cancellationToken);
 
             return state == SecureFileState.Encrypted;
         }
 
-        public static async Task<bool> HasCryptoBookHeaderAsync( string filePath, CancellationToken cancellationToken = default)
+        public async Task<bool> HasCryptoBookHeaderAsync( string filePath, CancellationToken cancellationToken = default)
         {
             using FileStream stream = new FileStream( filePath, FileMode.Open,  FileAccess.Read, FileShare.Read);
 
             return await HasValidHeaderAsync(stream, cancellationToken);
         }
 
-        private static async Task<bool> HasValidHeaderAsync( Stream stream, CancellationToken cancellationToken)
+        private async Task<bool> HasValidHeaderAsync( Stream stream, CancellationToken cancellationToken)
         {
             stream.Position = 0;
 
@@ -137,7 +134,7 @@ namespace CryptoBook.Security
             return header.SequenceEqual(SecureFileFormat.MagicHeader);
         }
 
-        private static async Task<bool> IsHmacValidAsync( Stream stream, long contentLength, byte[] key, CancellationToken cancellationToken)
+        private async Task<bool> IsHmacValidAsync( Stream stream, long contentLength, byte[] key, CancellationToken cancellationToken)
         {
             if(contentLength <= 0)
                 return false;
@@ -160,7 +157,7 @@ namespace CryptoBook.Security
                 storedHmac);
         }
 
-        private static long GetMinimalFileLength()
+        private long GetMinimalFileLength()
         {
             using Aes aes = Aes.Create();
 

@@ -92,11 +92,13 @@ namespace CryptoBook.Injections
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf();
             builder.RegisterType<FlowDocumentWalker>().As<IFlowDocumentWalker>().SingleInstance();
-
+            builder.RegisterType<SecureFileValidator>().As<ISecureFileValidator>().SingleInstance();
+            builder.RegisterType<SecureFileProcessor>().As<ISecureFileProcessor>().SingleInstance();
 
             //Windows
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindow>().SingleInstance();
+            builder.RegisterType<KeyInputWindow>().InstancePerDependency();
 
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
             builder.RegisterType<ProgressWindow>().InstancePerDependency();
@@ -169,7 +171,6 @@ namespace CryptoBook.Injections
 
             //Pages
             builder.RegisterType<Home>().SingleInstance();
-
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 
             //Controls
@@ -186,10 +187,7 @@ namespace CryptoBook.Injections
 
 
 
-            builder.RegisterType<KeyInputViewModel>().InstancePerDependency();
 
-            builder.RegisterType<KeyInputWindow>()
-                .InstancePerDependency();
 
 
 

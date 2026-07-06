@@ -47,7 +47,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -55,7 +54,7 @@
         <TextBlock Text="{Binding Message,UpdateSourceTrigger=PropertyChanged}"
                    TextWrapping="Wrap"/>
 
-        <PasswordBox x:Name="PasswordBox"
+        <PasswordBox x:Name="PasswordBox" 
                      Grid.Row="2"
                      MinHeight="28"/>
 
@@ -63,17 +62,13 @@
                      Grid.Row="4"
                      MinHeight="28"/>
 
-        <CheckBox x:Name="ViewPasswordCheckBox" Margin="0,8,0,0"
-                  Content="Просмотр"
-                  Grid.Row="5"/>
-
         <TextBlock x:Name="ErrorText"
-                   Grid.Row="6"
+                   Grid.Row="5"
                    Foreground="Crimson"
                    Margin="0,8,0,0"
                    TextWrapping="Wrap"/>
 
-        <StackPanel Grid.Row="7"
+        <StackPanel Grid.Row="6"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
             
