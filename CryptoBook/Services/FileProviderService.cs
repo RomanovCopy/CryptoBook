@@ -41,7 +41,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        public async Task<List<ISystemItem>> GetContainerContentAsync(string path, CancellationToken cancellationToken, bool includeHidden = false)
+        public async Task<List<ISystemItem>> GetContainerContentAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken, bool includeHidden = false)
         {
             try
             {
@@ -104,26 +104,12 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken)
+        public async Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
                 var encrypted = await _secureFileValidator.HasCryptoBookHeaderAsync(path, cancellationToken);
-                var progress = new Progress<double>(p =>
-                {
-                    // p ожидается в диапазоне [0..1]. Вычисляем проценты 0..100
-                    try
-                    {
-                        double percent = Math.Clamp(p * 100.0, 0.0, 100.0);
-                        int intPercent = (int)Math.Round(percent);
-                        // Здесь можно передать intPercent в UI/логирование при необходимости
-                    }
-                    catch
-                    {
-                        // игнорируем ошибки в обработчике прогресса
-                    }
-                });
 
                 if(encrypted)
                 {
@@ -170,7 +156,8 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task<Stream> OpenWriteAsync(string path, bool overwrite, CancellationToken cancellationToken)
+        public Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null, 
+        CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -181,13 +168,8 @@ namespace CryptoBook.Services
 
             try
             {
-                Stream stream = new FileStream(
-                    path,
-                    overwrite ? FileMode.Create : FileMode.CreateNew,
-                    FileAccess.Write,
-                    FileShare.None,
-                    bufferSize: 4096,
-                    useAsync: true);
+                Stream stream = new FileStream( path, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None, 
+                bufferSize: 4096, useAsync: true);
 
                 return Task.FromResult(stream);
             } catch(OperationCanceledException) { throw; } catch(Exception ex)
@@ -212,11 +194,7 @@ namespace CryptoBook.Services
                 // Папка?
                 if(Directory.Exists(sourcePath))
                 {
-                    await CopyDirectoryRecursiveAsync(
-                        sourcePath,
-                        destinationPath,
-                        progress,
-                        cancellationToken);
+                    await CopyDirectoryRecursiveAsync( sourcePath, destinationPath, progress, cancellationToken);
 
                     return FileOperationResult.Ok();
                 }
@@ -224,20 +202,18 @@ namespace CryptoBook.Services
                 // Файл?
                 if(File.Exists(sourcePath))
                 {
-                    await CopyFileAsync(
-                        sourcePath,
-                        destinationPath,
-                        progress,
-                        cancellationToken);
+                    await CopyFileAsync( sourcePath, destinationPath, progress, cancellationToken);
 
                     return FileOperationResult.Ok();
                 }
 
                 return FileOperationResult.Fail("Source not found.");
-            } catch(OperationCanceledException)
+            } 
+            catch(OperationCanceledException)
             {
                 return FileOperationResult.Fail("Operation canceled.");
-            } catch(Exception ex)
+            } 
+            catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
             }
@@ -252,7 +228,7 @@ namespace CryptoBook.Services
         /// <param name="destinationPath"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<FileOperationResult> MoveAsync(string sourcePath, string destinationPath, CancellationToken cancellationToken)
+        public async Task<FileOperationResult> MoveAsync(string sourcePath, string destinationPath, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -281,13 +257,16 @@ namespace CryptoBook.Services
                 }
 
                 return FileOperationResult.Fail("Source not found.");
-            } catch(OperationCanceledException)
+            } 
+            catch(OperationCanceledException)
             {
                 return FileOperationResult.Fail("Operation canceled.");
-            } catch(System.IO.IOException ex) when(ex.Message.Contains("already exists"))
+            } 
+            catch(System.IO.IOException ex) when(ex.Message.Contains("already exists"))
             {
                 return FileOperationResult.Fail("Destination already exists.");
-            } catch(Exception ex)
+            } 
+            catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
             }

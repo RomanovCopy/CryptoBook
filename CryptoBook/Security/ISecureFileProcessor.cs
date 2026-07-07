@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,13 +11,13 @@ namespace CryptoBook.Security
 {
     public interface ISecureFileProcessor
     {
-        public Task EncryptFileAsync(string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
+        public Task EncryptFileAsync(string inputFile, string outputFile, char[] password, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default);
 
-        public Task DecryptFileAsyncToFile(string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
+        public Task DecryptFileAsyncToFile(string inputFile, string outputFile, char[] password, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default);
 
-        public Task<Stream> DecryptFileAsyncToStream(string inputFile, char[] password, IProgress<double>? progress = null,
+        public Task<Stream> DecryptFileAsyncToStream(string inputFile, char[] password, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default);
     }
 }

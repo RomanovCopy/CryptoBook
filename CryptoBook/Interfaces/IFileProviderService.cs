@@ -23,7 +23,7 @@ namespace CryptoBook.Interfaces
         /// <param name="cancellationToken">токен отмены</param>
         /// <param name="includeHidden">показывать скрытые файлы</param>
         /// <returns></returns>
-        Task<List<ISystemItem>> GetContainerContentAsync( string path, CancellationToken cancellationToken, bool includeHidden = false);
+        Task<List<ISystemItem>> GetContainerContentAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken, bool includeHidden = false);
 
         /// <summary>
         /// Создать поток для чтения файла
@@ -31,7 +31,7 @@ namespace CryptoBook.Interfaces
         /// <param name="path">путь к файлу</param>
         /// <param name="cancellationToken">токен отмены</param>
         /// <returns></returns>
-        Task<Stream> OpenReadAsync( string path, CancellationToken cancellationToken);
+        Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken);
 
         /// <summary>
         /// Создать поток для записи (перезапись файла)
@@ -40,7 +40,7 @@ namespace CryptoBook.Interfaces
         /// <param name="overwrite">перезаписать</param>
         /// <param name="cancellationToken">токен отмены</param>
         /// <returns></returns>
-        Task<Stream> OpenWriteAsync( string path, bool overwrite, CancellationToken cancellationToken);
+        Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null, CancellationToken cancellationToken);
 
         /// <summary>
         /// Копирование одного файла или директории (c прогрессом)
@@ -50,11 +50,8 @@ namespace CryptoBook.Interfaces
         /// <param name="progress">проресс выполнения операции</param>
         /// <param name="cancellationToken">токен отмены</param>
         /// <returns></returns>
-        Task<FileOperationResult> CopyAsync(
-            string sourcePath,
-            string destinationPath,
-            IProgressReporter? progress,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> CopyAsync( string sourcePath, string destinationPath, IProgressReporter? progress, 
+        CancellationToken cancellationToken);
 
         /// <summary>
         /// Перемещение (обычно rename/move)
@@ -63,10 +60,8 @@ namespace CryptoBook.Interfaces
         /// <param name="destinationPath">путь к месту назначения</param>
         /// <param name="cancellationToken">токен отмены</param>
         /// <returns></returns>
-        Task<FileOperationResult> MoveAsync(
-            string sourcePath,
-            string destinationPath,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> MoveAsync( string sourcePath, string destinationPath, IProgressReporter? progress = null, 
+        CancellationToken cancellationToken);
 
         /// <summary>
         /// Удаление файла или директории (рекурсивно для директорий)
@@ -74,9 +69,7 @@ namespace CryptoBook.Interfaces
         /// <param name="path">путь к файлу или директории</param>
         /// <param name="cancellationToken">токен отмены</param>
         /// <returns></returns>
-        Task<FileOperationResult> DeleteAsync(
-            string path,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> DeleteAsync( string path, CancellationToken cancellationToken);
 
         /// <summary>
         /// Переименование (в рамках одной папки)
@@ -85,10 +78,7 @@ namespace CryptoBook.Interfaces
         /// <param name="newName">новое имя</param>
         /// <param name="cancellationToken">токен отмены</param>
         /// <returns></returns>
-        Task<FileOperationResult> RenameAsync(
-            string path,
-            string newName,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> RenameAsync( string path, string newName, CancellationToken cancellationToken);
 
         /// <summary>
         /// проверка доступа для чтения
@@ -112,9 +102,7 @@ namespace CryptoBook.Interfaces
         /// <param name="directoryPath">путь к директории</param>
         /// <param name="cancellationToken">токен отмены</param>
         /// <returns></returns>
-        Task<FileOperationResult> CreateDirectoryAsync(
-            string directoryPath,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> CreateDirectoryAsync( string directoryPath, CancellationToken cancellationToken);
 
         /// <summary>
         /// файл только для чтения

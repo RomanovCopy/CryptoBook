@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using CryptoBook.Interfaces;
+
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,7 +9,7 @@ namespace CryptoBook.Security
     public class SecureFileProcessor:ISecureFileProcessor
     {
 
-        public async Task EncryptFileAsync( string inputFile, string outputFile, char[] password, IProgress<double>? progress = null, CancellationToken cancellationToken = default)
+        public async Task EncryptFileAsync( string inputFile, string outputFile, char[] password, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
             string tempFile = outputFile + "." + Guid.NewGuid().ToString("N") + ".tmp";
@@ -38,7 +40,7 @@ namespace CryptoBook.Security
                     CryptoStreamMode.Write,
                     leaveOpen: true);
 
-                await WriteFileExtensionAsync( cryptoStream, inputFile, cancellationToken);
+                await WriteFileExtensionAsync( cryptoStream, inputFile, progress, cancellationToken);
 
                 await EncryptFileContentAsync( inputFile, cryptoStream, progress, cancellationToken);
 
@@ -68,7 +70,7 @@ namespace CryptoBook.Security
             }
         }
 
-        public async Task DecryptFileAsyncToFile( string inputFile, string outputFile, char[] password, IProgress<double>? progress = null,
+        public async Task DecryptFileAsyncToFile( string inputFile, string outputFile, char[] password, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
             string? finalFile = null;
@@ -100,7 +102,7 @@ namespace CryptoBook.Security
             }
         }
 
-        public async Task<Stream> DecryptFileAsyncToStream( string inputFile, char[] password, IProgress<double>? progress = null, 
+        public async Task<Stream> DecryptFileAsyncToStream( string inputFile, char[] password, IProgressReporter? progress = null, 
         CancellationToken cancellationToken = default)
         {
             MemoryStream outputStream = new ();
@@ -119,7 +121,7 @@ namespace CryptoBook.Security
         }
 
 
-        private async Task WriteFileExtensionAsync( Stream cryptoStream, string inputFile, CancellationToken cancellationToken)
+        private async Task WriteFileExtensionAsync( Stream cryptoStream, string inputFile, IProgressReporter? progress = null, CancellationToken cancellationToken)
         {
             string fileExtension = Path.GetExtension(inputFile);
 
@@ -135,7 +137,7 @@ namespace CryptoBook.Security
 
             await cryptoStream.WriteAsync( extensionBytes, cancellationToken);
         }
-        private async Task EncryptFileContentAsync( string inputFile, Stream cryptoStream, IProgress<double>? progress,
+        private async Task EncryptFileContentAsync( string inputFile, Stream cryptoStream, IProgressReporter? progress = null,
         CancellationToken cancellationToken)
         {
             await using FileStream inputStream = new ( inputFile, FileMode.Open, FileAccess.Read, FileShare.Read, SecureFileFormat.BufferSize,
@@ -167,7 +169,7 @@ namespace CryptoBook.Security
             progress?.Report(1.0);
         }
         private async Task<string> DecryptFileCoreAsync( string inputFile, char[] password, Func<string, Stream> outputStreamFactory, 
-        bool leaveOutputOpen, IProgress<double>? progress, CancellationToken cancellationToken)
+        bool leaveOutputOpen, IProgressReporter? progress, CancellationToken cancellationToken)
         {
             byte[]? key = null;
             Stream? outputStream = null;
@@ -275,7 +277,7 @@ namespace CryptoBook.Security
             }
         }
         private async Task CopyDecryptedContentAsync( Stream cryptoStream, Stream outputStream, long approximateTotalBytes,
-        IProgress<double>? progress, CancellationToken cancellationToken)
+        IProgressReporter? progress, CancellationToken cancellationToken)
         {
             byte[] buffer = new byte[SecureFileFormat.BufferSize];
 

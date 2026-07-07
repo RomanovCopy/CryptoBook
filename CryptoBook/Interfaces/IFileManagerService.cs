@@ -24,7 +24,7 @@ namespace CryptoBook.Interfaces
         /// <returns>Объект <see cref="DirectoryContent"/>, содержащий элементы каталога и метаданные.</returns>
         /// <exception cref="DirectoryNotFoundException">Если каталог не найден.</exception>
         /// <exception cref="UnauthorizedAccessException">Если нет прав доступа к каталогу.</exception>
-        Task<List<ISystemItem>> BrowseAsync(string path,  CancellationToken ct, bool includeHidden=false);
+        Task<List<ISystemItem>> BrowseAsync(string path, IProgressReporter? progress = null, CancellationToken ct, bool includeHidden=false);
 
         /// <summary>
         /// Копирование одного файла или папки с поддержкой отчёта о прогрессе.
@@ -35,11 +35,8 @@ namespace CryptoBook.Interfaces
         /// <param name="cancellationToken">Токен отмены для прерывания операции.</param>
         /// <returns>Результат операции в виде <see cref="FileOperationResult"/>.</returns>
         /// <remarks>Операция должна корректно обрабатывать отмену и частичные результаты в случае ошибки.</remarks>
-        Task<FileOperationResult> CopyAsync(
-            string sourcePath,
-            string destinationPath,
-            IProgressReporter? progress,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> CopyAsync( string sourcePath, string destinationPath, IProgressReporter? progress, 
+        CancellationToken cancellationToken);
 
         /// <summary>
         /// Перемещение (перенос) файла или папки.
@@ -48,9 +45,7 @@ namespace CryptoBook.Interfaces
         /// <param name="destinationPath">Путь назначения.</param>
         /// <param name="cancellationToken">Токен отмены.</param>
         /// <returns>Результат операции в виде <see cref="FileOperationResult"/>.</returns>
-        Task<FileOperationResult> MoveAsync(
-            string sourcePath,
-            string destinationPath,
+        Task<FileOperationResult> MoveAsync( string sourcePath, string destinationPath, IProgressReporter? progress = null,
             CancellationToken cancellationToken);
 
         /// <summary>
@@ -59,9 +54,7 @@ namespace CryptoBook.Interfaces
         /// <param name="path">Путь к удаляемому объекту.</param>
         /// <param name="cancellationToken">Токен отмены.</param>
         /// <returns>Результат операции в виде <see cref="FileOperationResult"/>.</returns>
-        Task<FileOperationResult> DeleteAsync(
-            string path,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> DeleteAsync( string path, CancellationToken cancellationToken);
 
         /// <summary>
         /// Переименование файла или папки.
@@ -70,10 +63,7 @@ namespace CryptoBook.Interfaces
         /// <param name="newName">Новое имя (без пути).</param>
         /// <param name="cancellationToken">Токен отмены.</param>
         /// <returns>Результат операции в виде <see cref="FileOperationResult"/>.</returns>
-        Task<FileOperationResult> RenameAsync(
-            string path,
-            string newName,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> RenameAsync( string path, string newName, CancellationToken cancellationToken);
 
         /// <summary>
         /// Создаёт новую поддиректорию внутри указанного родительского каталога.
@@ -82,10 +72,7 @@ namespace CryptoBook.Interfaces
         /// <param name="newDirectoryName">Имя создаваемой директории.</param>
         /// <param name="cancellationToken">Токен отмены.</param>
         /// <returns>Результат операции в виде <see cref="FileOperationResult"/>.</returns>
-        Task<FileOperationResult> CreateDirectoryAsync(
-            string parentDirectory,
-            string newDirectoryName,
-            CancellationToken cancellationToken);
+        Task<FileOperationResult> CreateDirectoryAsync( string parentDirectory, string newDirectoryName, CancellationToken cancellationToken);
 
         // Проверки доступа
 
@@ -114,16 +101,17 @@ namespace CryptoBook.Interfaces
         /// <param name="cancellationToken">Токен отмены.</param>
         /// <returns>Асинхронно возвращает поток <see cref="Stream"/>. Владелец потока обязан его освободить.</returns>
         /// <exception cref="FileNotFoundException">Если файл не найден.</exception>
-        Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken);
+        Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken);
 
         /// <summary>
         /// Открывает поток для записи в файл.
         /// </summary>
         /// <param name="path">Путь к файлу для записи.</param>
         /// <param name="overwrite">Если true — перезаписывать существующий файл; иначе — генерировать ошибку при существовании.</param>
+        /// <param name="progress">Репортер прогресса.</param>
         /// <param name="cancellationToken">Токен отмены.</param>
         /// <returns>Асинхронно возвращает поток <see cref="Stream"/> для записи. Владелец потока обязан его освободить.</returns>
-        Task<Stream> OpenWriteAsync(string path, bool overwrite, CancellationToken cancellationToken);
+        Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null, CancellationToken cancellationToken);
 
         /// <summary>
         /// Проверяет, помечен ли файл или папка как скрытый.

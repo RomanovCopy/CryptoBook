@@ -36,15 +36,16 @@ namespace CryptoBook.Services
         }
 
 
-        public Task<List<ISystemItem>> BrowseAsync(string path, CancellationToken ct, bool includeHidden = false)
+        public Task<List<ISystemItem>> BrowseAsync(string path, IProgressReporter? progress = null, CancellationToken ct, bool includeHidden = false)
         {
             var desc = ParsePath(path); // как раньше                                           
             var provider = ResolveProvider(desc.Scheme);
 
             try
             {
-                return provider.GetContainerContentAsync(desc.NativePath, ct, includeHidden);
-            } catch(Exception ex)
+                return provider.GetContainerContentAsync(desc.NativePath, progress, ct, includeHidden);
+            } 
+            catch(Exception ex)
             {
                 throw new IOException($"Failed to browse path '{path}': {ex.Message}", ex);
             }
@@ -65,23 +66,21 @@ namespace CryptoBook.Services
 
             if(IsSameOrSubdirectory(sourcePath, destinationPath))
             {
-                throw new InvalidOperationException(
-                    "Нельзя копировать каталог в самого себя " +
-                    "или во вложенный подкаталог.");
+                throw new InvalidOperationException( "Нельзя копировать каталог в самого себя " + "или во вложенный подкаталог.");
             }
-
 
             var provider = ResolveProvider(src.Scheme);
             try
             {
                 return await provider.CopyAsync(src.NativePath, dst.NativePath, progress, cancellationToken);
-            } catch(Exception ex)
+            } 
+            catch(Exception ex)
             {
                 return FileOperationResult.Fail($"Copy failed: {ex.Message}");
             }
         }
 
-        public async Task<FileOperationResult> MoveAsync(string sourcePath, string destinationPath, CancellationToken cancellationToken)
+        public async Task<FileOperationResult> MoveAsync(string sourcePath, string destinationPath, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             var src = ParsePath(sourcePath);
             var dst = ParsePath(destinationPath);
@@ -96,16 +95,15 @@ namespace CryptoBook.Services
 
             if(IsSameOrSubdirectory(sourcePath, destinationPath))
             {
-                throw new InvalidOperationException(
-                    "Нельзя копировать каталог в самого себя " +
-                    "или во вложенный подкаталог.");
+                throw new InvalidOperationException( "Нельзя копировать каталог в самого себя или во вложенный подкаталог.");
             }
 
             var provider = ResolveProvider(src.Scheme);
             try
             {
-                return await provider.MoveAsync(src.NativePath, dst.NativePath, cancellationToken);
-            } catch(Exception ex)
+                return await provider.MoveAsync(src.NativePath, dst.NativePath, progress, cancellationToken);
+            } 
+            catch(Exception ex)
             {
                 return FileOperationResult.Fail($"Move failed: {ex.Message}");
             }
@@ -185,14 +183,14 @@ namespace CryptoBook.Services
             }
         }
 
-        public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken)
+        public async Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken)
         {
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
 
             try
             {
-                return await provider.OpenReadAsync(desc.NativePath, cancellationToken);
+                return await provider.OpenReadAsync(desc.NativePath, progress, cancellationToken);
             }
             catch(FileNotFoundException)
             {
@@ -204,15 +202,17 @@ namespace CryptoBook.Services
             }
         }
 
-        public async Task<Stream> OpenWriteAsync(string path, bool overwrite, CancellationToken cancellationToken)
+        public async Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null, 
+        CancellationToken cancellationToken = default)
         {
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
 
             try
             {
-                return await provider.OpenWriteAsync(desc.NativePath, overwrite, cancellationToken);
-            } catch(Exception ex)
+                return await provider.OpenWriteAsync(desc.NativePath, overwrite, progress, cancellationToken);
+            } 
+            catch(Exception ex)
             {
                 throw new IOException($"OpenWrite failed for path '{path}': {ex.Message}", ex);
             }
