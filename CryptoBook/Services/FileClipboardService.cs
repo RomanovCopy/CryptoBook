@@ -150,6 +150,7 @@ namespace CryptoBook.Services
                     result = await _fileManager.MoveAsync(
                         srcPath,
                         finalDestPath,
+                        progress,
                         cancellationToken);
                 }
 

@@ -41,7 +41,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException">токен отмены операции</exception>
-        public async Task<List<ISystemItem>> GetContainerContentAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken, bool includeHidden = false)
+        public async Task<List<ISystemItem>> GetContainerContentAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken = default, bool includeHidden = false)
         {
             try
             {
@@ -104,7 +104,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken)
+        public async Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             try
@@ -117,28 +117,21 @@ namespace CryptoBook.Services
                     {
                         // Если файл зашифрован и ключ есть, то открываем поток для чтения.
                         var salt = RandomNumberGenerator.GetBytes(16);
-                        var derivedKey = Encoding.UTF8.GetChars( _keyProvider.DeriveKey(salt));
+                        var derivedKey = Encoding.UTF8.GetChars(_keyProvider.DeriveKey(salt));
                         return await _secureFileProcessor.DecryptFileAsyncToStream(path, derivedKey, progress, cancellationToken);
-                    }
-                    else
+                    } else
                     {
-                        throw new IOException($"File is encrypted and cannot be opened for reading: {path}");
+                        throw new CryptographicException($"File is encrypted and cannot be opened for reading: {path}");
                     }
 
-                }else
+                } else
                 {
+                    // FileStream в async-режиме (useAsync: true) позволяет читать неблокирующе.
+                    Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
+
+                    return Task.FromResult(stream).Result;
                 }
 
-                // FileStream в async-режиме (useAsync: true) позволяет читать неблокирующе.
-                Stream stream = new FileStream(
-                    path,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.Read,
-                    bufferSize: 4096,
-                    useAsync: true);
-
-                return Task.FromResult(stream);
             } catch(OperationCanceledException) { throw; } catch(FileNotFoundException)
             {
                 throw; // пробрасываем дальше, чтобы можно было различать "файл не найден" и "другая ошибка"
@@ -156,7 +149,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null, 
+        public Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -168,7 +161,7 @@ namespace CryptoBook.Services
 
             try
             {
-                Stream stream = new FileStream( path, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None, 
+                Stream stream = new FileStream(path, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None,
                 bufferSize: 4096, useAsync: true);
 
                 return Task.FromResult(stream);
@@ -194,7 +187,7 @@ namespace CryptoBook.Services
                 // Папка?
                 if(Directory.Exists(sourcePath))
                 {
-                    await CopyDirectoryRecursiveAsync( sourcePath, destinationPath, progress, cancellationToken);
+                    await CopyDirectoryRecursiveAsync(sourcePath, destinationPath, progress, cancellationToken);
 
                     return FileOperationResult.Ok();
                 }
@@ -202,18 +195,16 @@ namespace CryptoBook.Services
                 // Файл?
                 if(File.Exists(sourcePath))
                 {
-                    await CopyFileAsync( sourcePath, destinationPath, progress, cancellationToken);
+                    await CopyFileAsync(sourcePath, destinationPath, progress, cancellationToken);
 
                     return FileOperationResult.Ok();
                 }
 
                 return FileOperationResult.Fail("Source not found.");
-            } 
-            catch(OperationCanceledException)
+            } catch(OperationCanceledException)
             {
                 return FileOperationResult.Fail("Operation canceled.");
-            } 
-            catch(Exception ex)
+            } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
             }
@@ -257,16 +248,13 @@ namespace CryptoBook.Services
                 }
 
                 return FileOperationResult.Fail("Source not found.");
-            } 
-            catch(OperationCanceledException)
+            } catch(OperationCanceledException)
             {
                 return FileOperationResult.Fail("Operation canceled.");
-            } 
-            catch(System.IO.IOException ex) when(ex.Message.Contains("already exists"))
+            } catch(System.IO.IOException ex) when(ex.Message.Contains("already exists"))
             {
                 return FileOperationResult.Fail("Destination already exists.");
-            } 
-            catch(Exception ex)
+            } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
             }
@@ -318,7 +306,7 @@ namespace CryptoBook.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<FileOperationResult> RenameAsync(string path, string newName, CancellationToken cancellationToken)
+        public async Task<FileOperationResult> RenameAsync(string path, string newName, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -330,7 +318,7 @@ namespace CryptoBook.Services
 
                 string newPath = Path.Combine(parentDir, newName);
 
-                return await MoveAsync(path, newPath, cancellationToken);
+                return await MoveAsync(path, newPath, null, cancellationToken);
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -369,7 +357,7 @@ namespace CryptoBook.Services
 
                 if(File.Exists(path))
                 {
-                    await using var _ = await OpenReadAsync(path, cancellationToken);
+                    await using var _ = await OpenReadAsync(path, null, cancellationToken);
                     return true;
                 }
 

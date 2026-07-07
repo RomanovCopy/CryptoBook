@@ -259,11 +259,11 @@ namespace CryptoBook.Models
         /// </summary>
         public void Execute_Create(object? obj)
         {
-                _cts?.Cancel();
-                _cts = new CancellationTokenSource();
-                var ct = _cts.Token;
-                _ = CreateAsync(TargetDirectory, ct);
-                _windowManager.CloseWindow(WindowId);
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            var ct = _cts.Token;
+            _ = CreateAsync(TargetDirectory, ct);
+            _windowManager.CloseWindow(WindowId);
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace CryptoBook.Models
         public void Execute_Cancel(object? obj)
         {
             _cts?.Cancel();
-            TargetDirectory=_lastTargetDirection;
+            TargetDirectory = _lastTargetDirection;
             _windowManager.CloseWindow(WindowId);
         }
 
@@ -439,7 +439,7 @@ namespace CryptoBook.Models
             try
             {
                 IsBusy = true;
-                ErrorMessage = null;                    
+                ErrorMessage = null;
                 CanWrite = false;
 
                 var normalized = Normalize(TargetDirectory);
@@ -462,12 +462,12 @@ namespace CryptoBook.Models
         /// <param name="normalizedPath">Нормализованный путь.</param>
         /// <param name="ct">Токен отмены.</param>
         /// <returns>true, если директория доступна для чтения.</returns>
-        private async Task<bool> DirectoryExistsAsync(string normalizedPath, CancellationToken ct)
+        private async Task<bool> DirectoryExistsAsync(string normalizedPath, CancellationToken ct = default)
         {
             // мягкая проверка: попытаться прочитать содержимое
             try
             {
-                _ = await _fileManager.BrowseAsync(normalizedPath, ct, ShowHiddenFiles);
+                _ = await _fileManager.BrowseAsync(normalizedPath, null, ct, ShowHiddenFiles);
                 return true;
             } catch(DirectoryNotFoundException) { return false; } catch(IOException io) when(io.Message.Contains("not found", StringComparison.OrdinalIgnoreCase)) { return false; } catch { return false; }
         }

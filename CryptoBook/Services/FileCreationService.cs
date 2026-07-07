@@ -41,7 +41,7 @@ namespace CryptoBook.Services
                 bool exists;
                 try
                 {
-                    using var s = await _fs.OpenReadAsync(fullPath, ct);
+                    using var s = await _fs.OpenReadAsync(fullPath, null, ct);
                     exists = true;
                 } catch(FileNotFoundException)
                 {
@@ -160,7 +160,7 @@ namespace CryptoBook.Services
         {
             try
             {
-                using var s = await _fs.OpenReadAsync(fullPath, ct);
+                using var s = await _fs.OpenReadAsync(fullPath, null, ct);
                 return true;
             } 
             catch(FileNotFoundException) { return false; } 

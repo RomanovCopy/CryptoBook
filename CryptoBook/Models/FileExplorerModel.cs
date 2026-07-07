@@ -438,26 +438,8 @@ namespace CryptoBook.Models
                 {
                     if(file.IsEditing)
                         return;
-                    //if(file.IsEncrypted)
-                    //{
-                    //    var res = await _fileManagerService.DecryptAsync(file.FullPath, CancellationToken.None);
-                    //    if(res.Success)
-                    //    {
-                    //        file.IsEncrypted = false;
-                    //        return;
-                    //    }
-                    //    _ = await _messageService.ShowMessage("Decryption error", res.ErrorMessage);
-                    //} else
-                    //{
-                    //    var res = await _fileManagerService.EncryptAsync(file.FullPath, CancellationToken.None);
-                    //    if(res.Success)
-                    //    {
-                    //        file.IsEncrypted = true;
-                    //        return;
-                    //    }
-                    //    _ = await _messageService.ShowMessage("Encryption error", res.ErrorMessage);
-                    //})
-                    var stream = await _fileManagerService.OpenReadAsync(file.FullPath, _cancellationTokenSource.Token);
+
+                    var stream = await _fileManagerService.OpenReadAsync(file.FullPath, null, _cancellationTokenSource.Token);
 
                 } catch
                 {
@@ -533,7 +515,7 @@ namespace CryptoBook.Models
                 FileOperationResult result = container.IsLoaded ? FileOperationResult.Ok() : FileOperationResult.Fail($"Error reading directory {container.FullPath}");
                 if(!result.Success)
                 {
-                    var children = _fileManagerService.BrowseAsync(container.FullPath, token, IsHiddenFilesVisible).Result;
+                    var children = _fileManagerService.BrowseAsync(container.FullPath, null, token, IsHiddenFilesVisible).Result;
                     if(children is not null)
                     {
                         if(!container.IsLoaded)

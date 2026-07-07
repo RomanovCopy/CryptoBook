@@ -36,7 +36,7 @@ namespace CryptoBook.Services
         }
 
 
-        public Task<List<ISystemItem>> BrowseAsync(string path, IProgressReporter? progress = null, CancellationToken ct, bool includeHidden = false)
+        public Task<List<ISystemItem>> BrowseAsync(string path, IProgressReporter? progress = null, CancellationToken ct = default, bool includeHidden = false)
         {
             var desc = ParsePath(path); // как раньше                                           
             var provider = ResolveProvider(desc.Scheme);
@@ -52,7 +52,7 @@ namespace CryptoBook.Services
 
         }
 
-        public async Task<FileOperationResult> CopyAsync(string sourcePath, string destinationPath, IProgressReporter? progress, CancellationToken cancellationToken)
+        public async Task<FileOperationResult> CopyAsync(string sourcePath, string destinationPath, IProgressReporter? progress, CancellationToken cancellationToken = default)
         {
             var src = ParsePath(sourcePath);
             var dst = ParsePath(destinationPath);
@@ -183,7 +183,7 @@ namespace CryptoBook.Services
             }
         }
 
-        public async Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken)
+        public async Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
