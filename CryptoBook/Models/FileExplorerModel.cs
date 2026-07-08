@@ -28,6 +28,7 @@ namespace CryptoBook.Models
         private readonly IFolderPickerService _folderPickerService;
         private readonly IMessageService _messageService;
         private readonly IKeyProvider _keyProvider;
+        private readonly IFileTemplateRegistry _fileTemplateRegistry;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -59,7 +60,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -69,6 +70,7 @@ namespace CryptoBook.Models
             _fileClipboardService = fileClipboardService ?? throw new ArgumentNullException(nameof(fileClipboardService));
             _folderPickerService = folderPickerService ?? throw new ArgumentNullException(nameof(folderPickerService));
             _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
+            _fileTemplateRegistry = fileTemplateRegistry ?? throw new ArgumentNullException(nameof(fileTemplateRegistry));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -193,14 +195,10 @@ namespace CryptoBook.Models
         {
             if(obj is IList list && list.Count > 0)
             {
-                var systemItems = new List<string>();
-                foreach(var item in list)
-                {
-                    if(item is ISystemItem systemItem && systemItem.FullPath is not null)
-                    {
-                        systemItems.Add(systemItem.FullPath);
-                    }
-                }
+                var systemItems = list.OfType<ISystemItem>()
+                                      .Where(si => si.FullPath is not null)
+                                      .Select(si => si.FullPath!)
+                                      .ToList();
                 _fileClipboardService.SetMove(systemItems);
             } else
             {
@@ -211,14 +209,10 @@ namespace CryptoBook.Models
         {
             if(obj is IList list && list.Count > 0)
             {
-                var systemItems = new List<string>();
-                foreach(var item in list)
-                {
-                    if(item is ISystemItem systemItem && systemItem.FullPath is not null)
-                    {
-                        systemItems.Add(systemItem.FullPath);
-                    }
-                }
+                var systemItems = list.OfType<ISystemItem>()
+                                      .Where(si => si.FullPath is not null)
+                                      .Select(si => si.FullPath!)
+                                      .ToList();
                 _fileClipboardService.SetCopy(systemItems);
             } else
             {
@@ -438,13 +432,24 @@ namespace CryptoBook.Models
                 {
                     if(file.IsEditing)
                         return;
+                    var templates = _fileTemplateRegistry.GetAll();
+                    IFileTemplate? template = templates.FirstOrDefault(t => t.Extensions.Any(ext => ext == file.Extension));
+                    if(template != null)
+                    {
+                        var stream = await _fileManagerService.OpenReadAsync(file.FullPath, null, _cancellationTokenSource.Token);
 
-                    var stream = await _fileManagerService.OpenReadAsync(file.FullPath, null, _cancellationTokenSource.Token);
 
-                } catch
+                    } else
+                    {
+                        _ = await _messageService.ShowMessage("File open error", $"No template found for file {file.Name}");
+                    }
+
+                }
+                catch
                 {
                     _cancellationTokenSource.Cancel();
-                } finally
+                }
+                finally
                 {
                     _gate.Release();
                 }

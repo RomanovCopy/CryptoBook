@@ -113,6 +113,7 @@ namespace CryptoBook.Injections
             //FileTemplate
             builder.RegisterType<TextFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<ImageFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<SecureFileTemplate>().As<IFileTemplate>().SingleInstance();
 
 
             // реестр собирает их автоматически
