@@ -26,7 +26,7 @@ namespace CryptoBook.Security
             try
             {
                 // Открываем поток для чтения файла
-                using FileStream stream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using FileStream stream = new ( filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                 // Проверяем «магическую» шапку формата — если нет, файл не зашифрован нашим форматом
                 if(!await HasValidHeaderAsync(stream, cancellationToken))

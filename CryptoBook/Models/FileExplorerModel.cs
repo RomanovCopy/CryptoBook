@@ -436,6 +436,8 @@ namespace CryptoBook.Models
                     IFileTemplate? template = templates.FirstOrDefault(t => t.Extensions.Any(ext => ext == file.Extension));
                     if(template != null)
                     {
+
+
                         var stream = await _fileManagerService.OpenReadAsync(file.FullPath, null, _cancellationTokenSource.Token);
 
 
@@ -444,12 +446,10 @@ namespace CryptoBook.Models
                         _ = await _messageService.ShowMessage("File open error", $"No template found for file {file.Name}");
                     }
 
-                }
-                catch
+                } catch
                 {
                     _cancellationTokenSource.Cancel();
-                }
-                finally
+                } finally
                 {
                     _gate.Release();
                 }

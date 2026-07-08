@@ -135,6 +135,7 @@ namespace CryptoBook.Security
 
             await cryptoStream.WriteAsync( extensionBytes, cancellationToken);
         }
+
         private async Task EncryptFileContentAsync( string inputFile, Stream cryptoStream, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
