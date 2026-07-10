@@ -8,47 +8,114 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Media.Imaging;
 
 namespace CryptoBook.Services
 {
-    public class FlowDocumentLoadService:IFlowDocumentLoadService
+    public class FlowDocumentLoadService: IFlowDocumentLoadService
     {
         private readonly IDispatcherService _dispatcherService;
 
+        /// <summary>
+        /// Сервис загрузки содержимого в FlowDocument (текст, RTF, изображения и т.д.).
+        /// Выполняет чтение потока и обновление документа через диспетчер для UI-потока.
+        /// </summary>
         public FlowDocumentLoadService(IDispatcherService dispatcherService)
         {
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         }
 
-        public async Task LoadAsync(IRichTextBoxService richTextBoxService, Stream source, IFileTemplate template, 
-        CancellationToken cancellationToken = default)
+
+        /// <summary>
+        /// Асинхронно загружает данные из <paramref name="source"/> в документ, связанный с <paramref name="richTextBoxService"/>.
+        /// Выбор формата загрузки зависит от переданного <paramref name="template"/>.
+        /// Операция читает весь поток в память, затем выполняет обновление FlowDocument в контексте диспетчера.
+        /// </summary>
+        /// <param name="richTextBoxService">Сервис, предоставляющий FlowDocument для загрузки.</param>
+        /// <param name="source">Исходный поток с данными файла.</param>
+        /// <param name="template">Шаблон файла, определяющий формат загрузки.</param>
+        /// <param name="cancellationToken">Токен отмены операции.</param>
+        /// <returns>Задача, представляющая асинхронную операцию загрузки.</returns>
+        public async Task LoadAsync( IRichTextBoxService richTextBoxService, Stream source, IFileTemplate template, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(richTextBoxService);
             ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(template);
 
-            var document = richTextBoxService.Document;
+            byte[] buffer = await ReadAllBytesAsync(source, cancellationToken).ConfigureAwait(false);
 
-            byte[] buffer;
-
-            using(var memory = new MemoryStream())
+            if(buffer == null || buffer.Length == 0)
             {
-                await source.CopyToAsync(memory, cancellationToken);
-                buffer = memory.ToArray();
+                return;
             }
 
             await _dispatcherService.InvokeAsync(() =>
             {
-                using var stream = new MemoryStream(buffer, writable: false);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                FlowDocument document = richTextBoxService.Document;
 
                 document.Blocks.Clear();
 
-                TextRange range = new TextRange( document.ContentStart, document.ContentEnd);
+                if(template is ImageFileTemplate)
+                {
+                    LoadImage(document, buffer);
+                    return;
+                }
 
-                range.Load(stream, ToDataFormat(template));
+                LoadDocument(document, buffer, template);
             });
         }
 
+        /// <summary>
+        /// Загружает текстовое содержимое (RTF/XAML/PlainText) в переданный FlowDocument.
+        /// </summary>
+        /// <param name="document">Целевой FlowDocument.</param>
+        /// <param name="buffer">Буфер с данными файла.</param>
+        /// <param name="template">Шаблон файла, используемый для определения формата данных.</param>
+        private static void LoadDocument( FlowDocument document, byte[] buffer, IFileTemplate template)
+        {
+            using var stream = new MemoryStream( buffer, writable: false);
 
+            var range = new TextRange( document.ContentStart, document.ContentEnd);
+
+            range.Load( stream, ToDataFormat(template));
+        }
+
+
+        /// <summary>
+        /// Создаёт BitmapImage из байтового массива и добавляет его в документ как BlockUIContainer.
+        /// Использует BitmapCacheOption.OnLoad и Freeze() для безопасного использования в UI-потоке.
+        /// </summary>
+        /// <param name="document">Целевой FlowDocument.</param>
+        /// <param name="buffer">Байтовый массив с изображением.</param>
+        private static void LoadImage( FlowDocument document, byte[] buffer)
+        {
+            using var stream = new MemoryStream( buffer, writable: false);
+
+            var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = stream;
+            bitmap.EndInit();
+            bitmap.Freeze();
+
+            var image = new System.Windows.Controls.Image
+            {
+                Source = bitmap,
+                Stretch = System.Windows.Media.Stretch.Uniform
+            };
+
+            document.Blocks.Add( new BlockUIContainer(image));
+        }
+
+        /// <summary>
+        /// Преобразует тип шаблона файла в строковый идентификатор формата данных, используемый TextRange.Load.
+        /// Бросает NotSupportedException для неподдерживаемых шаблонов.
+        /// </summary>
+        /// <param name="template">Шаблон файла.</param>
+        /// <returns>Строка с форматом данных (DataFormats.* или DataFormats.XamlPackage).</returns>
         private static string ToDataFormat(IFileTemplate template)
         {
 
@@ -63,6 +130,28 @@ namespace CryptoBook.Services
                 _ => throw new NotSupportedException($"The template type '{template.GetType().Name}' is not supported."),
             };
 
+        }
+
+        /// <summary>
+        /// Асинхронно читает все байты из потока. Если источник уже является MemoryStream с доступным буфером и позиция в начале,
+        /// возвращает внутренний массив без копирования для эффективности.
+        /// </summary>
+        /// <param name="source">Исходный поток.</param>
+        /// <param name="cancellationToken">Токен отмены.</param>
+        /// <returns>Байтовый массив, содержащий все данные из потока.</returns>
+        private static async Task<byte[]> ReadAllBytesAsync( Stream source, CancellationToken cancellationToken)
+        {
+            if(source is MemoryStream memoryStream && memoryStream.TryGetBuffer(out ArraySegment<byte> segment) &&
+               memoryStream.Position == 0 && segment.Offset == 0 && segment.Count == segment.Array!.Length)
+            {
+                return segment.Array;
+            }
+
+            using var buffer = new MemoryStream();
+
+            await source.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
+
+            return buffer.ToArray();
         }
 
     }
