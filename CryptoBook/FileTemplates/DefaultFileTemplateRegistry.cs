@@ -17,11 +17,11 @@ namespace CryptoBook.FileTemplates
 
         public DefaultFileTemplateRegistry()
         {
-            _items =
-            [
-                new TextFileTemplate(),
-                new ImageFileTemplate()
-            ];
+            //_items =
+            //[
+            //    new Text(),
+            //    new ImageFileTemplate()
+            //];
         }
 
         public IReadOnlyList<IFileTemplate> GetAll() => _items;

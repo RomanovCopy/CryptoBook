@@ -8,26 +8,19 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.FileTemplates
 {
-    public sealed class TextFileTemplate: IFileTemplate
+    public class XamlPackageFileTemplate:IFileTemplate
     {
-        public string Id => "Text";
-        public string DisplayName => "Текстовый файл";
-        public string DefaultExtension => ".txt";
-        public string SuggestedBaseName => "New file";
+        public string Id => "XamlPackage";
+        public string DisplayName => "Xaml Package файл";
+        public string DefaultExtension => ".XamlPackage";
+        public string SuggestedBaseName => "New XamlPackage";
         public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct) => Task.FromResult(Array.Empty<byte>());
 
         public IReadOnlyCollection<string> Extensions =>
         [
-            ".txt",
-            ".log",
-            ".md",
-            ".cs",
-            ".json",
-            ".xml",
-            ".HTML",
-            ".js"
+            ".XamlPackage"
         ];
     }
 }

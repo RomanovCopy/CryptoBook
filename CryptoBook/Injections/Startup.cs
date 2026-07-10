@@ -111,9 +111,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
                                                                                                          
             //FileTemplate
-            builder.RegisterType<TextFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<PlainTextTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<ImageFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<SecureFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<XamlPackageFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<RichTextFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<XamlFileTemplate>().As<IFileTemplate>().SingleInstance();
 
 
             // реестр собирает их автоматически
@@ -159,6 +162,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
+            builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
+
 
             //Factory
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();

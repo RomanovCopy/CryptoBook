@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.FileTemplates
 {
-    public sealed class TextFileTemplate: IFileTemplate
+    public class PlainTextTemplate:IFileTemplate
     {
         public string Id => "Text";
         public string DisplayName => "Текстовый файл";
@@ -24,10 +24,9 @@ namespace CryptoBook.FileTemplates
             ".log",
             ".md",
             ".cs",
+            ".xaml",
             ".json",
-            ".xml",
-            ".HTML",
-            ".js"
+            ".xml"
         ];
     }
 }

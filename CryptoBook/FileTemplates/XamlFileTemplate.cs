@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.FileTemplates
 {
-    public sealed class TextFileTemplate: IFileTemplate
+    public class XamlFileTemplate:IFileTemplate
     {
-        public string Id => "Text";
-        public string DisplayName => "Текстовый файл";
-        public string DefaultExtension => ".txt";
+        public string Id => "Xaml";
+        public string DisplayName => "Xaml файл";
+        public string DefaultExtension => ".xaml";
         public string SuggestedBaseName => "New file";
         public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
 
@@ -20,14 +20,7 @@ namespace CryptoBook.FileTemplates
 
         public IReadOnlyCollection<string> Extensions =>
         [
-            ".txt",
-            ".log",
-            ".md",
-            ".cs",
-            ".json",
-            ".xml",
-            ".HTML",
-            ".js"
+            ".xaml",
         ];
     }
 }

@@ -29,6 +29,8 @@ namespace CryptoBook.Models
         private readonly IMessageService _messageService;
         private readonly IKeyProvider _keyProvider;
         private readonly IFileTemplateRegistry _fileTemplateRegistry;
+        private readonly IFlowDocumentLoadService _flowDocumentLoadService;
+        private readonly IRichTextBoxService _richTextBoxService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -60,7 +62,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -71,6 +73,8 @@ namespace CryptoBook.Models
             _folderPickerService = folderPickerService ?? throw new ArgumentNullException(nameof(folderPickerService));
             _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
             _fileTemplateRegistry = fileTemplateRegistry ?? throw new ArgumentNullException(nameof(fileTemplateRegistry));
+            _flowDocumentLoadService = flowDocumentLoadService ?? throw new ArgumentNullException(nameof(flowDocumentLoadService));
+            _richTextBoxService = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -436,10 +440,9 @@ namespace CryptoBook.Models
                     IFileTemplate? template = templates.FirstOrDefault(t => t.Extensions.Any(ext => ext == file.Extension));
                     if(template != null)
                     {
-
-
                         var stream = await _fileManagerService.OpenReadAsync(file.FullPath, null, _cancellationTokenSource.Token);
-
+                        await _flowDocumentLoadService.LoadAsync(_richTextBoxService, stream, template, _cancellationTokenSource.Token);
+                        _windowManager.CloseWindow(WindowId);
 
                     } else
                     {

@@ -11,13 +11,13 @@ namespace CryptoBook.Security
 {
     public interface ISecureFileProcessor
     {
-        public Task EncryptFileAsync(string inputFile, string outputFile, char[] password, IProgressReporter? progress = null,
+        public Task EncryptFileAsync(string inputFile, string outputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default);
 
-        public Task DecryptFileAsyncToFile(string inputFile, string outputFile, char[] password, IProgressReporter? progress = null,
+        public Task DecryptFileAsyncToFile(string inputFile, string outputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default);
 
-        public Task<Stream> DecryptFileAsyncToStream(string inputFile, char[] password, IProgressReporter? progress = null,
+        public Task<Stream> DecryptFileAsyncToStream(string inputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default);
     }
 }

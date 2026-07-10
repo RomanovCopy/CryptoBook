@@ -14,11 +14,11 @@ namespace CryptoBook.FileTemplates
 
         public string DisplayName => "Зашифрованный файл";
 
-        public string DefaultExtension => "";
+        public string DefaultExtension => ".cbox";
 
         public IReadOnlyCollection<string> Extensions =>
         [
-            "",
+            ".cbox",
         ];
 
 

@@ -9,7 +9,16 @@ namespace CryptoBook.Security
     public class SecureFileProcessor:ISecureFileProcessor
     {
 
-        public async Task EncryptFileAsync( string inputFile, string outputFile, char[] password, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
+        private readonly IKeyProvider _keyProvider;
+
+
+        public SecureFileProcessor(IKeyProvider keyProvider)
+        {
+            _keyProvider = keyProvider;
+        }
+
+
+        public async Task EncryptFileAsync( string inputFile, string outputFile, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
             string tempFile = outputFile + "." + Guid.NewGuid().ToString("N") + ".tmp";
@@ -18,7 +27,7 @@ namespace CryptoBook.Security
             {
                 byte[] salt = RandomNumberGenerator.GetBytes( SecureFileFormat.SaltSize);
 
-                key = KeyGenerator.GenerateKeyFromPassword(password, salt);
+                key = _keyProvider.DeriveKey(salt);
 
                 await using FileStream outputStream = new ( tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None,
                 SecureFileFormat.BufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
@@ -69,7 +78,7 @@ namespace CryptoBook.Security
                 }
             }
         }
-        public async Task DecryptFileAsyncToFile( string inputFile, string outputFile, char[] password, IProgressReporter? progress = null,
+        public async Task DecryptFileAsyncToFile( string inputFile, string outputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
             string? finalFile = null;
@@ -77,10 +86,7 @@ namespace CryptoBook.Security
 
             try
             {
-                await DecryptFileCoreAsync(
-                    inputFile,
-                    password,
-                    fileExtension =>
+                await DecryptFileCoreAsync( inputFile, fileExtension =>
                     {
                         finalFile = outputFile + fileExtension;
 
@@ -100,14 +106,14 @@ namespace CryptoBook.Security
                 throw;
             }
         }
-        public async Task<Stream> DecryptFileAsyncToStream( string inputFile, char[] password, IProgressReporter? progress = null, 
+        public async Task<Stream> DecryptFileAsyncToStream( string inputFile, IProgressReporter? progress = null, 
         CancellationToken cancellationToken = default)
         {
             MemoryStream outputStream = new ();
 
             try
             {
-                await DecryptFileCoreAsync( inputFile, password, _ => outputStream, leaveOutputOpen: true, progress, cancellationToken);
+                await DecryptFileCoreAsync( inputFile, _ => outputStream, leaveOutputOpen: true, progress, cancellationToken);
 
                 outputStream.Position = 0;
                 return outputStream;
@@ -167,7 +173,7 @@ namespace CryptoBook.Security
 
             progress?.Report(1.0);
         }
-        private async Task<string> DecryptFileCoreAsync( string inputFile, char[] password, Func<string, Stream> outputStreamFactory, 
+        private async Task<string> DecryptFileCoreAsync( string inputFile, Func<string, Stream> outputStreamFactory, 
         bool leaveOutputOpen, IProgressReporter? progress, CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
@@ -182,7 +188,7 @@ namespace CryptoBook.Security
                 byte[] salt = new byte[SecureFileFormat.SaltSize];
                 await inputStream.ReadExactlyAsync(salt, cancellationToken);
 
-                key = KeyGenerator.GenerateKeyFromPassword(password, salt);
+                key = _keyProvider.DeriveKey(salt);
 
                 using Aes aes = Aes.Create();
 

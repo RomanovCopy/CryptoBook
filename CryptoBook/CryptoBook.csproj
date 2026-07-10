@@ -32,11 +32,12 @@
     <Compile Remove="FileTemplates\JsonFileTemplate.cs" />
     <Compile Remove="FileTemplates\MarkdownFileTemplate.cs" />
     <Compile Remove="FileTemplates\PNGFileTemplate.cs" />
-    <Compile Remove="FileTemplates\RichTextFileTemplate.cs" />
     <Compile Remove="FileTemplates\SourceCodeTemplate.cs" />
+    <Compile Remove="FileTemplates\TextFileTemplate.cs" />
     <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
+    <Compile Remove="Interfaces\IDocument.cs" />
     <Compile Remove="Interfaces\IDownloadItem.cs" />
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\IFileOperationResult.cs" />

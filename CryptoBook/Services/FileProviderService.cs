@@ -115,10 +115,7 @@ namespace CryptoBook.Services
                 {
                     if(_keyProvider.HasKey)
                     {
-                        // Если файл зашифрован и ключ есть, то открываем поток для чтения.
-                        var salt = RandomNumberGenerator.GetBytes(16);
-                        var derivedKey = Encoding.UTF8.GetChars(_keyProvider.DeriveKey(salt));
-                        return await _secureFileProcessor.DecryptFileAsyncToStream(path, derivedKey, progress, cancellationToken);
+                        return await _secureFileProcessor.DecryptFileAsyncToStream(path, progress, cancellationToken);
                     } else
                     {
                         throw new CryptographicException($"File is encrypted and cannot be opened for reading: {path}");
@@ -163,6 +160,7 @@ namespace CryptoBook.Services
             {
                 Stream stream = new FileStream(path, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None,
                 bufferSize: 4096, useAsync: true);
+
 
                 return Task.FromResult(stream);
             } catch(OperationCanceledException) { throw; } catch(Exception ex)
