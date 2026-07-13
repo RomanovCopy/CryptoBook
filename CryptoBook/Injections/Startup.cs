@@ -99,6 +99,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindow>().SingleInstance();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
+            builder.RegisterType<EncryptionModeWindow>().InstancePerDependency();
 
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
             builder.RegisterType<ProgressWindow>().InstancePerDependency();

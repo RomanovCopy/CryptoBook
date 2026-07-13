@@ -292,7 +292,8 @@ namespace CryptoBook.Models
 
         public void Execute_EncryptCommand(object? obj)
         {
-            throw new NotImplementedException();
+            var id = _windowManager.CreateWindow<EncryptionModeWindow>();
+            _windowManager.ShowWindowDialog(id);
         }
 
         public void Execute_DecryptCommand(object? obj)
