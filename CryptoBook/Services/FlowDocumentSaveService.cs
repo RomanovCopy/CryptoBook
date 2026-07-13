@@ -1,0 +1,145 @@
+﻿using CryptoBook.FileTemplates;
+using CryptoBook.Interfaces;
+using CryptoBook.Security;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Documents;
+using System.Windows.Threading;
+
+namespace CryptoBook.Services
+{
+    public sealed class FlowDocumentSaveService: IFlowDocumentSaveService
+    {
+        private readonly IDispatcherService _dispatcherService;
+        private readonly IKeyProvider _keyProvider;
+        private readonly IFileManagerService _fileManagerService;
+
+        public FlowDocumentSaveService(IDispatcherService dispatcherService, IKeyProvider keyProvider, IFileManagerService fileManagerService)
+        {
+            _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+            _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
+            _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
+        }
+
+        public async Task  SaveToFileAsync(IRichTextBoxService richTextBoxService, string filePath, IFileTemplate template, 
+        CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(richTextBoxService);
+            ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+            ArgumentNullException.ThrowIfNull(template);
+
+            string fullPath = Path.GetFullPath(filePath);
+            string? directory = Path.GetDirectoryName(fullPath);
+
+            if(!string.IsNullOrWhiteSpace(directory))
+                Directory.CreateDirectory(directory);
+
+            string temporaryPath = CreateTemporaryPath(fullPath);
+
+            try
+            {
+                await using(FileStream stream = new( temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 81920,
+                useAsync: true))
+                {
+                    await SaveToStreamAsync( richTextBoxService, stream, template, cancellationToken);
+
+                    await stream.FlushAsync(cancellationToken);
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                
+
+                File.Move( temporaryPath, fullPath, overwrite: true);
+            } 
+            catch
+            {
+                TryDeleteFile(temporaryPath);
+                throw;
+            }
+        }
+
+        public async Task SaveToStreamAsync(IRichTextBoxService richTextBoxService, Stream destination, IFileTemplate template, 
+        CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(richTextBoxService);
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(template);
+            var document = richTextBoxService.Document;
+
+
+            if(!destination.CanWrite)
+            {
+                throw new ArgumentException(
+                    "Поток не поддерживает запись.",
+                    nameof(destination));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            byte[] buffer = await SerializeAsync( document, template, cancellationToken);
+
+            await destination.WriteAsync( buffer, cancellationToken);
+        }
+
+
+        private async Task<byte[]> SerializeAsync( FlowDocument document, IFileTemplate template, CancellationToken cancellationToken)
+        {
+            return await _dispatcherService.InvokeAsync( () =>
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    using MemoryStream memory = new();
+
+                    TextRange range = new( document.ContentStart, document.ContentEnd);
+
+                    range.Save( memory, GetDataFormat(template), preserveTextElements: true);
+
+                    return memory.ToArray();
+
+                });
+        }
+
+        private static string GetDataFormat( IFileTemplate template)
+        {
+            return template switch
+            {
+                XamlFileTemplate => DataFormats.Text,
+                RichTextFileTemplate => DataFormats.Rtf,
+                PlainTextTemplate => DataFormats.Text,
+                ImageFileTemplate => DataFormats.Bitmap,
+                SecureFileTemplate => System.Windows.DataFormats.XamlPackage,
+                XamlPackageFileTemplate => System.Windows.DataFormats.XamlPackage,
+
+                _ => throw new NotSupportedException(
+                    $"Шаблон '{template.GetType().Name}' не поддерживается.")
+            };
+        }
+
+        private static string CreateTemporaryPath( string targetPath)
+        {
+            string directory = Path.GetDirectoryName(targetPath) ?? Directory.GetCurrentDirectory();
+
+            string fileName = Path.GetFileName(targetPath);
+
+            return Path.Combine( directory, $".{fileName}.{Guid.NewGuid():N}.tmp");
+        }
+
+        private static void TryDeleteFile( string filePath)
+        {
+            try
+            {
+                if(File.Exists(filePath))
+                    File.Delete(filePath);
+            } catch
+            {
+                // Ошибка очистки не должна скрывать исходное исключение.
+            }
+        }
+    }
+}

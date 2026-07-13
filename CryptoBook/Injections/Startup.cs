@@ -163,6 +163,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
+            builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
 
 
             //Factory

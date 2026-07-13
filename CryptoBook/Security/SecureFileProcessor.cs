@@ -18,7 +18,8 @@ namespace CryptoBook.Security
         }
 
 
-        public async Task EncryptFileAsync( string inputFile, string outputFile, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
+        public async Task EncryptFileAsync( string inputFile, string outputFile, IProgressReporter? progress = null, 
+        CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
             string tempFile = outputFile + "." + Guid.NewGuid().ToString("N") + ".tmp";
