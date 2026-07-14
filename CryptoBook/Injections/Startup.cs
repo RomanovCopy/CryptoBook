@@ -48,6 +48,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MainWindowModel>().As<IMainWindowModel>().InstancePerLifetimeScope();
             builder.RegisterType<MessageWindowModel>().As<IMessageWindowModel>().InstancePerLifetimeScope();
             builder.RegisterType<KeyInputModel>().As<IKeyInputModel>().InstancePerLifetimeScope();
+            builder.RegisterType<EncryptionMode_Model>().As<IEncryptionMode_Model>().InstancePerLifetimeScope();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -70,6 +71,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
             builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<EncryptionMode_ViewModel>().As<IEncryptionMode_ViewModel>().InstancePerLifetimeScope();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IEncryptionMode_ViewModel:IViewModel, IWindowOptions, IWindowWithId
+    public interface IEncryptionMode_Model: IModel,IWindowOptions, IWindowWithId
     {
         public string Title { get; }
         public string MessageMode { get; }

@@ -3,10 +3,42 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:vm="clr-namespace:CryptoBook.ViewModels"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
-        Title="EncryptionModeWindow" Height="450" Width="800">
+        d:DataContext="{x:Type interfaces:IEncryptionMode_ViewModel}"
+        MinHeight="230" MinWidth="420">
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IEncryptionMode_ViewModel}" />
+    </Window.DataContext>
+
+    <Window.Title>
+        <Binding Path="Title" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Title>
+
+    <Window.Width>
+        <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="WindowHeight"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left >
+        <Binding Path="WindowLeft"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.WindowState>
+        <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.WindowState>
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>     
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
     </Grid>
 </Window>
