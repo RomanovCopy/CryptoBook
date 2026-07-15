@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CryptoBook.Security;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +16,6 @@ namespace CryptoBook.Interfaces
         public string MessageModeBottom { get; }
         public string Path { get; }
         public string WarningMessage { get; }
+        public EncryptionTargetMode SelectedMode { get; set; }
     }
 }

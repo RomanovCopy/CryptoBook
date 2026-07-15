@@ -12,7 +12,7 @@ namespace CryptoBook.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.8.0.0")]
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -620,6 +620,66 @@ namespace CryptoBook.Properties {
             }
             set {
                 this["KeyInputState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("450")]
+        public double EncryptionModeWidth {
+            get {
+                return ((double)(this["EncryptionModeWidth"]));
+            }
+            set {
+                this["EncryptionModeWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public double EncryptionModeHeight {
+            get {
+                return ((double)(this["EncryptionModeHeight"]));
+            }
+            set {
+                this["EncryptionModeHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double EncryptionModeLeft {
+            get {
+                return ((double)(this["EncryptionModeLeft"]));
+            }
+            set {
+                this["EncryptionModeLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double EncryptionModeTop {
+            get {
+                return ((double)(this["EncryptionModeTop"]));
+            }
+            set {
+                this["EncryptionModeTop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState EncryptionModeState {
+            get {
+                return ((global::System.Windows.WindowState)(this["EncryptionModeState"]));
+            }
+            set {
+                this["EncryptionModeState"] = value;
             }
         }
     }

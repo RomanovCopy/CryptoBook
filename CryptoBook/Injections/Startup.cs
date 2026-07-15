@@ -88,6 +88,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<StockIconIdToImageSourceConverter>().AsSelf();
             builder.RegisterType<TypeCheckConverter>().AsSelf();
             builder.RegisterType<SecureStringConverter>().As<ISecureStringConverter>().SingleInstance();
+            builder.RegisterType<EnumToBoolConverter>().AsSelf();
 
 
             //Helpers

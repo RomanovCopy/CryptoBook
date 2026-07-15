@@ -1,5 +1,7 @@
 ﻿using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Properties;
+using CryptoBook.Security;
 
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,9 @@ namespace CryptoBook.Models
         public WindowState WindowState { get => _windowState; set => SetProperty(ref _windowState, value); }
         WindowState _windowState;
 
+        public EncryptionTargetMode SelectedMode { get => selectedMode; set => SetProperty(ref selectedMode, value); }
+        EncryptionTargetMode selectedMode;
+
 
         public string Title { get => _title; private set => SetProperty(ref _title, value); }
         string _title;
@@ -52,8 +57,7 @@ namespace CryptoBook.Models
         public EncryptionMode_Model()
         {
             WindowId = Guid.NewGuid();
-            WindowWidth = 420;
-            WindowHeight = 230;
+            Initialize();
         }
 
 
@@ -64,7 +68,6 @@ namespace CryptoBook.Models
         }
         public void Execute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
         }
 
 
@@ -74,7 +77,11 @@ namespace CryptoBook.Models
         }
         public void Execute_Closing(object? obj)
         {
-            throw new NotImplementedException();
+            Settings.Default.EncryptionModeWidth = WindowWidth;
+            Settings.Default.EncryptionModeHeight = WindowHeight;
+            Settings.Default.EncryptionModeLeft = WindowLeft;
+            Settings.Default.EncryptionModeTop = WindowTop;
+            Settings.Default.Save();
         }
 
 
@@ -97,7 +104,19 @@ namespace CryptoBook.Models
 
         public void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+        }
+
+        private void Initialize()
+        {
+            WindowWidth = Settings.Default.EncryptionModeWidth;
+            WindowHeight = Settings.Default.EncryptionModeHeight;
+            WindowLeft = Settings.Default.EncryptionModeLeft;
+            WindowTop = Settings.Default.EncryptionModeTop;
+            Title = "Режим сохранения файла";
+            MessageMode = "Выберите способ сохранения файла:";
+            MessageModeTop = "Создать новый файл";
+            MessageModeBottom = "Заменить исходный файл";
+            SelectedMode = EncryptionTargetMode.CreateNewFile;
         }
 
     }
