@@ -32,6 +32,9 @@ namespace CryptoBook.Models
         public EncryptionTargetMode SelectedMode { get => selectedMode; set => SetProperty(ref selectedMode, value); }
         EncryptionTargetMode selectedMode;
 
+        public ISystemItem ProcessedItem { get => _processedItem; private set=>SetProperty(ref _processedItem, value); }
+        ISystemItem _processedItem;
+
 
         public string Title { get => _title; private set => SetProperty(ref _title, value); }
         string _title;
@@ -54,10 +57,10 @@ namespace CryptoBook.Models
 
 
 
-        public EncryptionMode_Model()
+        public EncryptionMode_Model( IWindowContext context)
         {
             WindowId = Guid.NewGuid();
-            Initialize();
+            Initialize(context);
         }
 
 
@@ -106,7 +109,7 @@ namespace CryptoBook.Models
         {
         }
 
-        private void Initialize()
+        private void Initialize(IWindowContext context)
         {
             WindowWidth = Settings.Default.EncryptionModeWidth;
             WindowHeight = Settings.Default.EncryptionModeHeight;
@@ -117,6 +120,16 @@ namespace CryptoBook.Models
             MessageModeTop = "Создать новый файл";
             MessageModeBottom = "Заменить исходный файл";
             SelectedMode = EncryptionTargetMode.CreateNewFile;
+            ProcessedItem = GetProcessedItem(context)??throw new NotImplementedException();
+        }
+
+        private ISystemItem? GetProcessedItem(IWindowContext context)
+        {
+            if(context.Items is IReadOnlyDictionary<string,object> dict && dict["path"] is ISystemItem item )
+            {
+                return item;
+            }
+            return null;
         }
 
     }

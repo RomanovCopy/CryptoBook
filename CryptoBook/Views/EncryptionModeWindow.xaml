@@ -12,7 +12,7 @@
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         d:DataContext="{x:Type interfaces:IEncryptionMode_ViewModel}"
-        MinHeight="250" MinWidth="450">
+        MinHeight="280" MinWidth="450">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IEncryptionMode_ViewModel}" />
     </Window.DataContext>
@@ -43,6 +43,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="{Binding MessageMode, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="DemiBold"/>
         <StackPanel Margin="10" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -62,7 +63,11 @@
                 ConverterParameter={x:Static security:EncryptionTargetMode.ReplaceSource}}" />
 
         </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <TextBlock Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="NoWrap" 
+                   Text="{Binding ProcessedItem.FullPath, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" 
+                   FontSize="16" FontWeight="DemiBold" FontStyle="Italic" Margin="20,10,20,10"/>
+        
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                 
                 <Button x:Name="btnOk" Content="Ok" Style="{StaticResource PrimaryButtonStyle}" Background="Green"
                         Grid.Column="0" HorizontalAlignment="Center" Margin="20"/>

@@ -156,7 +156,7 @@
       <Value Profile="(Default)">450</Value>
     </Setting>
     <Setting Name="EncryptionModeHeight" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">250</Value>
+      <Value Profile="(Default)">280</Value>
     </Setting>
     <Setting Name="EncryptionModeLeft" Type="System.Double" Scope="User">
       <Value Profile="(Default)">100</Value>

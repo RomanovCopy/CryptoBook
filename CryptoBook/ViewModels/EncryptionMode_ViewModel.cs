@@ -26,6 +26,8 @@ namespace CryptoBook.ViewModels
         public double WindowLeft { get => _model.WindowLeft; set => _model.WindowLeft = value; }
         public WindowState WindowState { get => _model.WindowState; set => _model.WindowState = value; }
         public EncryptionTargetMode SelectedMode { get => _model.SelectedMode; set => _model.SelectedMode = value; }
+        public ISystemItem ProcessedItem => _model.ProcessedItem;
+
         public string Title { get => _model.Title; }
         public string MessageMode { get => _model.MessageMode; }
         public string MessageModeTop { get => _model.MessageModeTop; }

@@ -153,10 +153,12 @@
                     Command="{Binding EncryptingKeyCommand, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
             <Button Content="Encrypt" Style="{StaticResource PrimaryButtonStyle}"
-                    Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                    Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"
+                    CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
             <Separator/>
             <Button Content="Decrypt" Style="{StaticResource PrimaryButtonStyle}"
-                    Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                    Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"
+                    CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
             <Separator/>
         </ToolBar>
 

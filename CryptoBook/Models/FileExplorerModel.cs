@@ -292,7 +292,16 @@ namespace CryptoBook.Models
 
         public void Execute_EncryptCommand(object? obj)
         {
-            var id = _windowManager.CreateWindow<EncryptionModeWindow>();
+            
+            var dict = new Dictionary<string, object?>
+            {
+                ["path"] = obj
+            };
+
+            // Явное создание безопасной read-only обертки
+            var readOnlyDict = new ReadOnlyDictionary<string, object?>(dict);
+
+            var id = _windowManager.CreateWindow<EncryptionModeWindow>(readOnlyDict);
             _windowManager.ShowWindowDialog(id);
         }
 

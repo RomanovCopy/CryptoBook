@@ -17,5 +17,12 @@ namespace CryptoBook.Interfaces
         public string Path { get; }
         public string WarningMessage { get; }
         public EncryptionTargetMode SelectedMode{ get; set;}
+        public ISystemItem ProcessedItem {  get; }
+
+        public bool CanExecute_ButtonOk(object? obj);
+        public void Execute_ButtonOk(object? obj);
+
+        public bool CanExecute_ButtonCancel(object? obj);
+        public void Execute_ButtonCancel(object? obj);
     }
 }

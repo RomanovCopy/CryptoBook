@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
@@ -17,5 +18,9 @@ namespace CryptoBook.Interfaces
         public string Path { get; }
         public string WarningMessage { get; }
         public EncryptionTargetMode SelectedMode { get; set; }
+        public ISystemItem ProcessedItem { get; }
+
+        public ICommand ButtonOk{ get; }
+        public ICommand ButtonCancel{ get; }
     }
 }
