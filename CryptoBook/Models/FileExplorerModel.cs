@@ -295,10 +295,10 @@ namespace CryptoBook.Models
             
             var dict = new Dictionary<string, object?>
             {
-                ["path"] = obj
+                ["path"] = obj,
+                ["result"]= null
             };
 
-            // Явное создание безопасной read-only обертки
             var readOnlyDict = new ReadOnlyDictionary<string, object?>(dict);
 
             var id = _windowManager.CreateWindow<EncryptionModeWindow>(readOnlyDict);

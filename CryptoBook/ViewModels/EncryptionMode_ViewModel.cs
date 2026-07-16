@@ -41,6 +41,11 @@ namespace CryptoBook.ViewModels
             _model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
+        public ICommand ButtonOk => _buttonOk ??= new RelayCommand(_model.Execute_ButtonOk, _model.CanExecute_ButtonOk);
+        RelayCommand _buttonOk;
+
+        public ICommand ButtonCancel => _buttonCancel??=new RelayCommand(_model.Execute_ButtonCancel, _model.CanExecute_ButtonCancel);
+        RelayCommand _buttonCancel;
 
 
 

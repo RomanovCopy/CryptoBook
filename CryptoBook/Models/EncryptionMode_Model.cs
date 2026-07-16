@@ -57,10 +57,31 @@ namespace CryptoBook.Models
 
 
 
+
         public EncryptionMode_Model( IWindowContext context)
         {
             WindowId = Guid.NewGuid();
             Initialize(context);
+        }
+
+
+
+        public bool CanExecute_ButtonOk(object? obj)
+        {
+            return true;
+        }
+
+        public void Execute_ButtonOk(object? obj)
+        {
+        }
+
+        public bool CanExecute_ButtonCancel(object? obj)
+        {
+            return true;
+        }
+
+        public void Execute_ButtonCancel(object? obj)
+        {
         }
 
 

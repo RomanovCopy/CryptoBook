@@ -70,7 +70,8 @@
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                 
                 <Button x:Name="btnOk" Content="Ok" Style="{StaticResource PrimaryButtonStyle}" Background="Green"
-                        Grid.Column="0" HorizontalAlignment="Center" Margin="20"/>
+                        Grid.Column="0" HorizontalAlignment="Center" Margin="20"
+                        />
                 <Button x:Name="btnCancel" Content="Cancel" Style="{StaticResource PrimaryButtonStyle}" Background="Red"
                         Grid.Column="1" HorizontalAlignment="Center" Margin="20"/>
 
