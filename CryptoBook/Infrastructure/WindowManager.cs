@@ -72,8 +72,7 @@ namespace CryptoBook.Infrastructure
             }
 
 
-            var host = RegisterWindow(scope, window)
-                ?? throw new InvalidOperationException("Failed to register window");
+            var host = RegisterWindow(scope, window) ?? throw new InvalidOperationException("Failed to register window");
 
             window.Closed += (_, __) =>
             {
