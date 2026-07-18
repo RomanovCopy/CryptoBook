@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -292,7 +293,10 @@ namespace CryptoBook.Models
 
         public void Execute_EncryptCommand(object? obj)
         {
-            
+            var sourcePath = obj is ISystemItem systemItem ? systemItem.FullPath : null;
+            if(sourcePath is null || !Path.Exists(sourcePath))
+                return;
+
             var dict = new Dictionary<string, object?>
             {
                 ["path"] = obj,
@@ -302,28 +306,41 @@ namespace CryptoBook.Models
 
             var id = _windowManager.CreateWindow<EncryptionModeWindow>(readOnlyDict);
             _windowManager.ShowWindowDialog(id);
-            var mode=_windowManager.GetResult<EncryptionTargetMode>(id);
-            switch(mode)
+            var mode = _windowManager.GetResult<EncryptionTargetMode>(id);
+            string? targetPath = mode switch
             {
-                case EncryptionTargetMode.CreateNewFile:
-                {
-                    break;
-                }
-                case EncryptionTargetMode.ReplaceSource:
-                {
-                    break;
-                }
-                case EncryptionTargetMode.Cancels:
-                {
-                    break;
-                }
-                default:
-                {
-                break;
-                }
-            }
+                EncryptionTargetMode.SaveAs => GetNewFilePath(sourcePath),
+
+                EncryptionTargetMode.ReplaceSource => sourcePath + "_Encrypted.cbook",
+
+                EncryptionTargetMode.Cancels => null,
+
+                _ => null
+            };
+
+            if(targetPath is null)
+                return;
         }
-                                                                                                            
+
+        private string? GetNewFilePath(string sourcePath)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                InitialDirectory = Path.GetDirectoryName(sourcePath),
+                FileName = Path.GetFileNameWithoutExtension(sourcePath)+"_Encrypted",
+                DefaultExt = ".cbook",
+                AddExtension = true,
+                Filter = "Файлы CryptoBook (*.cbook)|*.cbook",
+                FilterIndex = 1,
+                OverwritePrompt = true,
+                CheckPathExists = true,
+                ValidateNames = true,
+                Title = "Сохранить зашифрованный файл"
+            };
+
+            return dialog.ShowDialog() == true ? dialog.FileName : null;
+        }
+
         public void Execute_DecryptCommand(object? obj)
         {
             throw new NotImplementedException();

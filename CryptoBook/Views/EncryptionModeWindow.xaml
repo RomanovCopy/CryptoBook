@@ -53,7 +53,7 @@
                          VerticalContentAlignment="Center"
                      IsChecked="{Binding SelectedMode,UpdateSourceTrigger=PropertyChanged,
                 Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
-                ConverterParameter={x:Static security:EncryptionTargetMode.CreateNewFile}}" />
+                ConverterParameter={x:Static security:EncryptionTargetMode.SaveAs}}" />
 
             <RadioButton Content="{Binding MessageModeBottom, UpdateSourceTrigger=PropertyChanged }" 
                      GroupName="EncriptedMode" Margin="10,5,10,20" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"

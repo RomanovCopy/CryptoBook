@@ -69,6 +69,7 @@ namespace CryptoBook.Models
         {
             WindowId = Guid.NewGuid();
             _windowManager = windowManager;
+            if(context is null){ _windowManager.CloseWindow(WindowId); }
             _seslected = false;
             Initialize(context);
         }
@@ -152,9 +153,9 @@ namespace CryptoBook.Models
             WindowTop = Settings.Default.EncryptionModeTop;
             Title = "Режим сохранения файла";
             MessageMode = "Выберите способ сохранения файла:";
-            MessageModeTop = "Создать новый файл";
+            MessageModeTop = "Сохранить файл как ...";
             MessageModeBottom = "Заменить исходный файл";
-            SelectedMode = EncryptionTargetMode.CreateNewFile;
+            SelectedMode = EncryptionTargetMode.SaveAs;
             ProcessedItem = GetProcessedItem(context) ?? throw new NotImplementedException();
         }
 

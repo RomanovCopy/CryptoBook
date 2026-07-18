@@ -141,9 +141,9 @@ namespace CryptoBook.Services
         /// <summary>
         /// Открыть поток для записи.    
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="overwrite"></param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="path">путь к существующему или новому файлу</param>
+        /// <param name="overwrite">следует-ли осуществлять перезапись файла</param>
+        /// <param name="cancellationToken">токен отменя операции</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         public Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null,
