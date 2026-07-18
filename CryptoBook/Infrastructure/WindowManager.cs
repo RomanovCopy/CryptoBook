@@ -14,7 +14,7 @@ namespace CryptoBook.Infrastructure
     {
         private readonly ILifetimeScope _root;
         private readonly Dictionary<Guid, WindowHost> _windowHosts;
-        private readonly Dictionary<Guid, bool> _results;
+        private readonly Dictionary<Guid, IDialogResult> _results;
 
         static Window? GetOwner()
         {
@@ -30,15 +30,17 @@ namespace CryptoBook.Infrastructure
             return null;
         }
 
-        public bool GetResult(Guid guid)
+        public TResult? GetResult<TResult>(Guid guid)
         {
             if(_results.ContainsKey(guid))
             {
-                var res = _results[guid];
-                _results.Remove(guid);
-                return res;
+                if(_results.TryGetValue(guid, out var tresult) && tresult is IDialogResult<TResult> result)
+                {
+                    _results.Remove(guid);
+                    return result.Result;
+                }
             }
-            return false;
+            return default;
         }
 
         public WindowManager(ILifetimeScope scope)
@@ -76,9 +78,9 @@ namespace CryptoBook.Infrastructure
 
             window.Closed += (_, __) =>
             {
-                if(window.DataContext is IDialogResult<bool> dialogResult)
+                if(window.DataContext is IDialogResult dialogResult)
                 {
-                    _results[host.Key]=dialogResult.Result;
+                    _results[host.Key] = dialogResult;
                 }
                 UnregisterWindow(host);
                 scope.Dispose();

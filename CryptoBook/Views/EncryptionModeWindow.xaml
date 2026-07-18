@@ -51,7 +51,7 @@
             <RadioButton Content="{Binding MessageModeTop, UpdateSourceTrigger=PropertyChanged}"
                 GroupName="EncriptedMode" Margin="10,10,10,5" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
                          VerticalContentAlignment="Center"
-                     IsChecked="{Binding SelectedMode,
+                     IsChecked="{Binding SelectedMode,UpdateSourceTrigger=PropertyChanged,
                 Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
                 ConverterParameter={x:Static security:EncryptionTargetMode.CreateNewFile}}" />
 
@@ -71,9 +71,10 @@
                 
                 <Button x:Name="btnOk" Content="Ok" Style="{StaticResource PrimaryButtonStyle}" Background="Green"
                         Grid.Column="0" HorizontalAlignment="Center" Margin="20"
-                        />
+                        Command="{Binding ButtonOk,UpdateSourceTrigger=PropertyChanged}" />
                 <Button x:Name="btnCancel" Content="Cancel" Style="{StaticResource PrimaryButtonStyle}" Background="Red"
-                        Grid.Column="1" HorizontalAlignment="Center" Margin="20"/>
+                        Grid.Column="1" HorizontalAlignment="Center" Margin="20"
+                        Command="{Binding ButtonCancel, UpdateSourceTrigger=PropertyChanged}"/>
 
         </StackPanel>
     </Grid>

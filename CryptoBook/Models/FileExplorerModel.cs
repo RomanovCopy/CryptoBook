@@ -296,15 +296,34 @@ namespace CryptoBook.Models
             var dict = new Dictionary<string, object?>
             {
                 ["path"] = obj,
-                ["result"]= null
             };
 
             var readOnlyDict = new ReadOnlyDictionary<string, object?>(dict);
 
             var id = _windowManager.CreateWindow<EncryptionModeWindow>(readOnlyDict);
             _windowManager.ShowWindowDialog(id);
+            var mode=_windowManager.GetResult<EncryptionTargetMode>(id);
+            switch(mode)
+            {
+                case EncryptionTargetMode.CreateNewFile:
+                {
+                    break;
+                }
+                case EncryptionTargetMode.ReplaceSource:
+                {
+                    break;
+                }
+                case EncryptionTargetMode.Cancels:
+                {
+                    break;
+                }
+                default:
+                {
+                break;
+                }
+            }
         }
-
+                                                                                                            
         public void Execute_DecryptCommand(object? obj)
         {
             throw new NotImplementedException();

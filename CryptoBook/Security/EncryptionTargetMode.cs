@@ -9,6 +9,7 @@ namespace CryptoBook.Security
     public enum EncryptionTargetMode
     {
         CreateNewFile,
-        ReplaceSource
+        ReplaceSource,
+        Cancels
     }
 }

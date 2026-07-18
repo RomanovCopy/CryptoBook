@@ -43,7 +43,7 @@ namespace CryptoBook.Services
 
         public bool ShowConfirmation(Guid id)
         {
-            return _windowManager.GetResult(id);
+            return _windowManager.GetResult<bool>(id);
         }
     }
 }

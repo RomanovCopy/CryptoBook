@@ -15,7 +15,12 @@ namespace CryptoBook.Models
     public class EncryptionMode_Model: ViewModelBase, IEncryptionMode_Model
     {
 
+        private readonly IWindowManager _windowManager;
+
+        private bool _seslected;
+
         public Guid WindowId { get; private set; }
+
 
 
         public double WindowWidth { get => _windowWidth; set => SetProperty(ref _windowWidth, value); }
@@ -32,7 +37,9 @@ namespace CryptoBook.Models
         public EncryptionTargetMode SelectedMode { get => selectedMode; set => SetProperty(ref selectedMode, value); }
         EncryptionTargetMode selectedMode;
 
-        public ISystemItem ProcessedItem { get => _processedItem; private set=>SetProperty(ref _processedItem, value); }
+
+
+        public ISystemItem ProcessedItem { get => _processedItem; private set => SetProperty(ref _processedItem, value); }
         ISystemItem _processedItem;
 
 
@@ -58,9 +65,11 @@ namespace CryptoBook.Models
 
 
 
-        public EncryptionMode_Model( IWindowContext context)
+        public EncryptionMode_Model(IWindowContext context, IWindowManager windowManager)
         {
             WindowId = Guid.NewGuid();
+            _windowManager = windowManager;
+            _seslected = false;
             Initialize(context);
         }
 
@@ -73,6 +82,8 @@ namespace CryptoBook.Models
 
         public void Execute_ButtonOk(object? obj)
         {
+            _seslected = true;
+            _windowManager.CloseWindow(WindowId);
         }
 
         public bool CanExecute_ButtonCancel(object? obj)
@@ -82,6 +93,8 @@ namespace CryptoBook.Models
 
         public void Execute_ButtonCancel(object? obj)
         {
+            _seslected = false;
+            _windowManager.CloseWindow(WindowId);
         }
 
 
@@ -101,6 +114,7 @@ namespace CryptoBook.Models
         }
         public void Execute_Closing(object? obj)
         {
+            SelectedMode = _seslected ? SelectedMode : EncryptionTargetMode.Cancels;
             Settings.Default.EncryptionModeWidth = WindowWidth;
             Settings.Default.EncryptionModeHeight = WindowHeight;
             Settings.Default.EncryptionModeLeft = WindowLeft;
@@ -116,7 +130,7 @@ namespace CryptoBook.Models
         }
         public void Execute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            _windowManager.CloseWindow(WindowId);
         }
 
 
@@ -141,12 +155,12 @@ namespace CryptoBook.Models
             MessageModeTop = "Создать новый файл";
             MessageModeBottom = "Заменить исходный файл";
             SelectedMode = EncryptionTargetMode.CreateNewFile;
-            ProcessedItem = GetProcessedItem(context)??throw new NotImplementedException();
+            ProcessedItem = GetProcessedItem(context) ?? throw new NotImplementedException();
         }
 
         private ISystemItem? GetProcessedItem(IWindowContext context)
         {
-            if(context.Items is IReadOnlyDictionary<string,object> dict && dict["path"] is ISystemItem item )
+            if(context.Items is IReadOnlyDictionary<string, object> dict && dict["path"] is ISystemItem item)
             {
                 return item;
             }
