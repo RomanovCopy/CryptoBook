@@ -291,7 +291,7 @@ namespace CryptoBook.Models
             _windowManager.ShowWindowDialog(id);
         }
 
-        public void Execute_EncryptCommand(object? obj)
+        public async void Execute_EncryptCommand(object? obj)
         {
             var sourcePath = obj is ISystemItem systemItem ? systemItem.FullPath : null;
             if(sourcePath is null || !Path.Exists(sourcePath))
@@ -320,26 +320,16 @@ namespace CryptoBook.Models
 
             if(targetPath is null)
                 return;
-        }
-
-        private string? GetNewFilePath(string sourcePath)
-        {
-            var dialog = new Microsoft.Win32.SaveFileDialog
+            if(mode is EncryptionTargetMode.ReplaceSource)
             {
-                InitialDirectory = Path.GetDirectoryName(sourcePath),
-                FileName = Path.GetFileNameWithoutExtension(sourcePath)+"_Encrypted",
-                DefaultExt = ".cbook",
-                AddExtension = true,
-                Filter = "Файлы CryptoBook (*.cbook)|*.cbook",
-                FilterIndex = 1,
-                OverwritePrompt = true,
-                CheckPathExists = true,
-                ValidateNames = true,
-                Title = "Сохранить зашифрованный файл"
-            };
-
-            return dialog.ShowDialog() == true ? dialog.FileName : null;
+                id = await _messageService.ShowMessage("Перезапись файла", "Заменить исходный файл?\r\n\r\n" +
+                "Исходный файл будет удалён после успешного создания\r\nзашифрованного файла.\n\n"+ sourcePath, true);
+                if(!_messageService.ShowConfirmation(id))
+                    { return; }
+            }
+            //_ = await _fileManagerService.OpenWriteAsync(sourcePath, targetPath, mode);
         }
+
 
         public void Execute_DecryptCommand(object? obj)
         {
@@ -581,6 +571,27 @@ namespace CryptoBook.Models
                 return result;
             }, token);
         }
+
+
+        private string? GetNewFilePath(string sourcePath)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                InitialDirectory = Path.GetDirectoryName(sourcePath),
+                FileName = Path.GetFileNameWithoutExtension(sourcePath) + "_Encrypted",
+                DefaultExt = ".cbook",
+                AddExtension = true,
+                Filter = "Файлы CryptoBook (*.cbook)|*.cbook",
+                FilterIndex = 1,
+                OverwritePrompt = true,
+                CheckPathExists = true,
+                ValidateNames = true,
+                Title = "Сохранить зашифрованный файл"
+            };
+
+            return dialog.ShowDialog() == true ? dialog.FileName : null;
+        }
+
 
     }
 }
