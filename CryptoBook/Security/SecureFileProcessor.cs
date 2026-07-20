@@ -46,9 +46,7 @@ namespace CryptoBook.Security
 
                 await hmacStream.WriteAsync(aes.IV, cancellationToken);
 
-                using CryptoStream cryptoStream = new CryptoStream( hmacStream, aes.CreateEncryptor(),
-                    CryptoStreamMode.Write,
-                    leaveOpen: true);
+                using CryptoStream cryptoStream = new ( hmacStream, aes.CreateEncryptor(), CryptoStreamMode.Write, leaveOpen: true);
 
                 await WriteFileExtensionAsync( cryptoStream, inputFile, progress, cancellationToken);
 

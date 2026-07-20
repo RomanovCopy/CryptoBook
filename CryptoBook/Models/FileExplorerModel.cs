@@ -327,7 +327,6 @@ namespace CryptoBook.Models
                 if(!_messageService.ShowConfirmation(id))
                     { return; }
             }
-            //_ = await _fileManagerService.OpenWriteAsync(sourcePath, targetPath, mode);
         }
 
 
