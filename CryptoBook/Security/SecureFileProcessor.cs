@@ -22,7 +22,12 @@ namespace CryptoBook.Security
         CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
-            string tempFile = outputFile + "." + Guid.NewGuid().ToString("N") + ".tmp";
+
+            string directory = Path.GetDirectoryName(outputFile);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputFile);
+
+            string tempFile =Path.Combine(directory, fileNameWithoutExtension+ Guid.NewGuid().ToString("N") +".tmp");
+
 
             try
             {
@@ -59,6 +64,7 @@ namespace CryptoBook.Security
                 await outputStream.WriteAsync( hmacHash, cancellationToken);
 
                 await outputStream.FlushAsync(cancellationToken);
+                outputStream.Close();
 
                 File.Move(tempFile, outputFile, overwrite: true);
             } catch
