@@ -126,7 +126,7 @@ namespace CryptoBook.Models
 
         public bool CanExecute_EncryptCommand(object? obj)
         {
-            return  _keyProvider.HasKey && obj is ISystemItem systemItem;
+            return _keyProvider.HasKey && obj is ISystemItem systemItem;
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
@@ -292,7 +292,10 @@ namespace CryptoBook.Models
 
         public async void Execute_EncryptCommand(object? obj)
         {
-            var sourcePath = obj is ISystemItem systemItem ? systemItem.FullPath : null;
+            var systemItem = obj as ISystemItem;
+            if(systemItem is null)
+                return;
+            var sourcePath = systemItem.FullPath;
             if(sourcePath is null || !Path.Exists(sourcePath))
                 return;
 

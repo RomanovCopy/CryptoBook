@@ -6,41 +6,43 @@ using System.Text;
 
 namespace CryptoBook.Security
 {
-    public class SecureFileProcessor:ISecureFileProcessor
+    public class SecureFileProcessor: ISecureFileProcessor
     {
 
         private readonly IKeyProvider _keyProvider;
+        private readonly string _tempDirectory = "temp";
 
 
         public SecureFileProcessor(IKeyProvider keyProvider)
         {
-            _keyProvider = keyProvider;
+            _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
+            if(!Directory.Exists(_tempDirectory))
+                Directory.CreateDirectory(_tempDirectory);
         }
 
 
-        public async Task EncryptFileAsync( string inputFile, string outputFile, IProgressReporter? progress = null, 
+        public async Task EncryptFileAsync(string inputFile, string outputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
 
-            string directory = Path.GetDirectoryName(outputFile);
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputFile);
 
-            string tempFile =Path.Combine(directory, fileNameWithoutExtension+ Guid.NewGuid().ToString("N") +".tmp");
+            string tempFile = Path.Combine(_tempDirectory, fileNameWithoutExtension + Guid.NewGuid().ToString("N") + ".tmp");
 
 
             try
             {
-                byte[] salt = RandomNumberGenerator.GetBytes( SecureFileFormat.SaltSize);
+                byte[] salt = RandomNumberGenerator.GetBytes(SecureFileFormat.SaltSize);
 
                 key = _keyProvider.DeriveKey(salt);
 
-                await using FileStream outputStream = new ( tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None,
+                await using FileStream outputStream = new(tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None,
                 SecureFileFormat.BufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
-                using HmacWriteStream hmacStream = new HmacWriteStream( outputStream, key, leaveOpen: true);
+                using HmacWriteStream hmacStream = new HmacWriteStream(outputStream, key, leaveOpen: true);
 
-                await hmacStream.WriteAsync( SecureFileFormat.MagicHeader, cancellationToken);
+                await hmacStream.WriteAsync(SecureFileFormat.MagicHeader, cancellationToken);
 
                 await hmacStream.WriteAsync(salt, cancellationToken);
 
@@ -51,17 +53,17 @@ namespace CryptoBook.Security
 
                 await hmacStream.WriteAsync(aes.IV, cancellationToken);
 
-                using CryptoStream cryptoStream = new ( hmacStream, aes.CreateEncryptor(), CryptoStreamMode.Write, leaveOpen: true);
+                using CryptoStream cryptoStream = new(hmacStream, aes.CreateEncryptor(), CryptoStreamMode.Write, leaveOpen: true);
 
-                await WriteFileExtensionAsync( cryptoStream, inputFile, progress, cancellationToken);
+                await WriteFileExtensionAsync(cryptoStream, inputFile, progress, cancellationToken);
 
-                await EncryptFileContentAsync( inputFile, cryptoStream, progress, cancellationToken);
+                await EncryptFileContentAsync(inputFile, cryptoStream, progress, cancellationToken);
 
                 await cryptoStream.FlushFinalBlockAsync(cancellationToken);
 
                 byte[] hmacHash = hmacStream.GetHashAndReset();
 
-                await outputStream.WriteAsync( hmacHash, cancellationToken);
+                await outputStream.WriteAsync(hmacHash, cancellationToken);
 
                 await outputStream.FlushAsync(cancellationToken);
                 outputStream.Close();
@@ -83,7 +85,7 @@ namespace CryptoBook.Security
                 }
             }
         }
-        public async Task DecryptFileAsyncToFile( string inputFile, string outputFile, IProgressReporter? progress = null,
+        public async Task DecryptFileAsyncToFile(string inputFile, string outputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
             string? finalFile = null;
@@ -91,13 +93,13 @@ namespace CryptoBook.Security
 
             try
             {
-                await DecryptFileCoreAsync( inputFile, fileExtension =>
+                await DecryptFileCoreAsync(inputFile, fileExtension =>
                     {
                         finalFile = outputFile + fileExtension;
 
                         tempFile = finalFile + "." + Guid.NewGuid().ToString("N") + ".tmp";
 
-                        return new FileStream( tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+                        return new FileStream(tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None);
                     }, leaveOutputOpen: false, progress, cancellationToken);
 
                 File.Move(tempFile!, finalFile!, overwrite: true);
@@ -111,14 +113,14 @@ namespace CryptoBook.Security
                 throw;
             }
         }
-        public async Task<Stream> DecryptFileAsyncToStream( string inputFile, IProgressReporter? progress = null, 
+        public async Task<Stream> DecryptFileAsyncToStream(string inputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
-            MemoryStream outputStream = new ();
+            MemoryStream outputStream = new();
 
             try
             {
-                await DecryptFileCoreAsync( inputFile, _ => outputStream, leaveOutputOpen: true, progress, cancellationToken);
+                await DecryptFileCoreAsync(inputFile, _ => outputStream, leaveOutputOpen: true, progress, cancellationToken);
 
                 outputStream.Position = 0;
                 return outputStream;
@@ -130,7 +132,7 @@ namespace CryptoBook.Security
         }
 
 
-        private async Task WriteFileExtensionAsync( Stream cryptoStream, string inputFile, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
+        private async Task WriteFileExtensionAsync(Stream cryptoStream, string inputFile, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             string fileExtension = Path.GetExtension(inputFile);
 
@@ -139,18 +141,18 @@ namespace CryptoBook.Security
             if(extensionBytes.Length <= 0 ||
                extensionBytes.Length > SecureFileFormat.MaxExtensionLength)
             {
-                throw new CryptographicException( "Некорректная длина расширения файла.");
+                throw new CryptographicException("Некорректная длина расширения файла.");
             }
 
-            await cryptoStream.WriteAsync( BitConverter.GetBytes(extensionBytes.Length), cancellationToken);
+            await cryptoStream.WriteAsync(BitConverter.GetBytes(extensionBytes.Length), cancellationToken);
 
-            await cryptoStream.WriteAsync( extensionBytes, cancellationToken);
+            await cryptoStream.WriteAsync(extensionBytes, cancellationToken);
         }
 
-        private async Task EncryptFileContentAsync( string inputFile, Stream cryptoStream, IProgressReporter? progress = null,
+        private async Task EncryptFileContentAsync(string inputFile, Stream cryptoStream, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
-            await using FileStream inputStream = new ( inputFile, FileMode.Open, FileAccess.Read, FileShare.Read, SecureFileFormat.BufferSize,
+            await using FileStream inputStream = new(inputFile, FileMode.Open, FileAccess.Read, FileShare.Read, SecureFileFormat.BufferSize,
             FileOptions.Asynchronous | FileOptions.SequentialScan);
 
             byte[] buffer = new byte[SecureFileFormat.BufferSize];
@@ -160,7 +162,7 @@ namespace CryptoBook.Security
 
             int bytesRead;
 
-            while((bytesRead = await inputStream.ReadAsync( buffer, cancellationToken)) > 0)
+            while((bytesRead = await inputStream.ReadAsync(buffer, cancellationToken)) > 0)
             {
                 await cryptoStream.WriteAsync(
                     buffer.AsMemory(0, bytesRead),
@@ -178,7 +180,7 @@ namespace CryptoBook.Security
 
             progress?.Report(1.0);
         }
-        private async Task<string> DecryptFileCoreAsync( string inputFile, Func<string, Stream> outputStreamFactory, 
+        private async Task<string> DecryptFileCoreAsync(string inputFile, Func<string, Stream> outputStreamFactory,
         bool leaveOutputOpen, IProgressReporter? progress, CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
@@ -186,7 +188,7 @@ namespace CryptoBook.Security
 
             try
             {
-                using FileStream inputStream = new( inputFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using FileStream inputStream = new(inputFile, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                 await ValidateHeaderAsync(inputStream, cancellationToken);
 
@@ -207,22 +209,22 @@ namespace CryptoBook.Security
 
                 if(contentLength <= inputStream.Position)
                 {
-                    throw new CryptographicException( "Некорректная структура зашифрованного файла.");
+                    throw new CryptographicException("Некорректная структура зашифрованного файла.");
                 }
 
-                await ValidateHmacAsync( inputStream, contentLength, key, cancellationToken);
+                await ValidateHmacAsync(inputStream, contentLength, key, cancellationToken);
 
                 long encryptedContentStart = SecureFileFormat.MagicHeader.Length + SecureFileFormat.SaltSize + iv.Length;
 
                 inputStream.Position = encryptedContentStart;
 
-                using CryptoStream cryptoStream = new ( inputStream, aes.CreateDecryptor(), CryptoStreamMode.Read);
+                using CryptoStream cryptoStream = new(inputStream, aes.CreateDecryptor(), CryptoStreamMode.Read);
 
-                string fileExtension = await ReadFileExtensionAsync( cryptoStream, cancellationToken);
+                string fileExtension = await ReadFileExtensionAsync(cryptoStream, cancellationToken);
 
                 outputStream = outputStreamFactory(fileExtension);
 
-                await CopyDecryptedContentAsync( cryptoStream, outputStream, contentLength - encryptedContentStart, progress, cancellationToken);
+                await CopyDecryptedContentAsync(cryptoStream, outputStream, contentLength - encryptedContentStart, progress, cancellationToken);
 
                 return fileExtension;
             } finally
@@ -238,7 +240,7 @@ namespace CryptoBook.Security
                 }
             }
         }
-        private async Task ValidateHeaderAsync( Stream stream, CancellationToken cancellationToken = default)
+        private async Task ValidateHeaderAsync(Stream stream, CancellationToken cancellationToken = default)
         {
             byte[] header = new byte[SecureFileFormat.MagicHeader.Length];
             await stream.ReadExactlyAsync(header, cancellationToken);
@@ -249,11 +251,11 @@ namespace CryptoBook.Security
                     "Файл не является зашифрованным файлом CryptoBook.");
             }
         }
-        private async Task ValidateHmacAsync( Stream stream, long contentLength, byte[] key, CancellationToken cancellationToken = default)
+        private async Task ValidateHmacAsync(Stream stream, long contentLength, byte[] key, CancellationToken cancellationToken = default)
         {
             stream.Position = 0;
 
-            using IncrementalHash hmac = IncrementalHash.CreateHMAC( HashAlgorithmName.SHA256, key);
+            using IncrementalHash hmac = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, key);
 
             byte[] buffer = new byte[SecureFileFormat.BufferSize];
             long remainingBytes = contentLength;
@@ -268,7 +270,7 @@ namespace CryptoBook.Security
 
                 if(bytesRead == 0)
                 {
-                    throw new EndOfStreamException( "Неожиданный конец файла при проверке HMAC.");
+                    throw new EndOfStreamException("Неожиданный конец файла при проверке HMAC.");
                 }
 
                 hmac.AppendData(buffer, 0, bytesRead);
@@ -279,14 +281,14 @@ namespace CryptoBook.Security
 
             byte[] storedHmac = new byte[SecureFileFormat.HmacSize];
 
-            await stream.ReadExactlyAsync( storedHmac, cancellationToken);
+            await stream.ReadExactlyAsync(storedHmac, cancellationToken);
 
             if(!CryptographicOperations.FixedTimeEquals(computedHmac, storedHmac))
             {
-                throw new CryptographicException( "Ошибка проверки HMAC. Данные повреждены или пароль неверен.");
+                throw new CryptographicException("Ошибка проверки HMAC. Данные повреждены или пароль неверен.");
             }
         }
-        private async Task CopyDecryptedContentAsync( Stream cryptoStream, Stream outputStream, long approximateTotalBytes,
+        private async Task CopyDecryptedContentAsync(Stream cryptoStream, Stream outputStream, long approximateTotalBytes,
         IProgressReporter? progress, CancellationToken cancellationToken = default)
         {
             byte[] buffer = new byte[SecureFileFormat.BufferSize];
@@ -298,13 +300,13 @@ namespace CryptoBook.Security
                       buffer,
                       cancellationToken)) > 0)
             {
-                await outputStream.WriteAsync( buffer.AsMemory(0, bytesRead), cancellationToken);
+                await outputStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
 
                 processedBytes += bytesRead;
 
                 if(approximateTotalBytes > 0)
                 {
-                    progress?.Report( Math.Min(1.0, (double)processedBytes / approximateTotalBytes));
+                    progress?.Report(Math.Min(1.0, (double)processedBytes / approximateTotalBytes));
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -312,23 +314,23 @@ namespace CryptoBook.Security
 
             progress?.Report(1.0);
         }
-        private async Task<string> ReadFileExtensionAsync( Stream cryptoStream, CancellationToken cancellationToken = default)
+        private async Task<string> ReadFileExtensionAsync(Stream cryptoStream, CancellationToken cancellationToken = default)
         {
             byte[] extensionLengthBytes = new byte[sizeof(int)];
 
-            await cryptoStream.ReadExactlyAsync( extensionLengthBytes, cancellationToken);
+            await cryptoStream.ReadExactlyAsync(extensionLengthBytes, cancellationToken);
 
             int extensionLength = BitConverter.ToInt32(extensionLengthBytes, 0);
 
             if(extensionLength <= 0 ||
                extensionLength > SecureFileFormat.MaxExtensionLength)
             {
-                throw new CryptographicException( "Некорректная длина расширения файла.");
+                throw new CryptographicException("Некорректная длина расширения файла.");
             }
 
             byte[] extensionBytes = new byte[extensionLength];
 
-            await cryptoStream.ReadExactlyAsync( extensionBytes, cancellationToken);
+            await cryptoStream.ReadExactlyAsync(extensionBytes, cancellationToken);
 
             return Encoding.UTF8.GetString(extensionBytes);
         }
