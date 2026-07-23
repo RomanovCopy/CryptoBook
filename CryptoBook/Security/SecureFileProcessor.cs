@@ -30,7 +30,6 @@ namespace CryptoBook.Security
 
             string tempFile = Path.Combine(_tempDirectory, fileNameWithoutExtension + Guid.NewGuid().ToString("N") + ".tmp");
 
-
             try
             {
                 byte[] salt = RandomNumberGenerator.GetBytes(SecureFileFormat.SaltSize);
@@ -49,6 +48,7 @@ namespace CryptoBook.Security
                 using Aes aes = Aes.Create();
 
                 aes.Key = key;
+
                 aes.GenerateIV();
 
                 await hmacStream.WriteAsync(aes.IV, cancellationToken);
@@ -66,9 +66,11 @@ namespace CryptoBook.Security
                 await outputStream.WriteAsync(hmacHash, cancellationToken);
 
                 await outputStream.FlushAsync(cancellationToken);
+
                 outputStream.Close();
 
                 File.Move(tempFile, outputFile, overwrite: true);
+
             } catch
             {
                 if(File.Exists(tempFile))
