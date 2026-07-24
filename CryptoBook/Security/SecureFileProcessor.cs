@@ -8,7 +8,6 @@ namespace CryptoBook.Security
 {
     public class SecureFileProcessor: ISecureFileProcessor
     {
-
         private readonly IKeyProvider _keyProvider;
         private readonly string _tempDirectory = "temp";
 
@@ -68,6 +67,8 @@ namespace CryptoBook.Security
                 await outputStream.FlushAsync(cancellationToken);
 
                 outputStream.Close();
+
+                //await _fileManagerService.MoveAsync(tempFile, outputFile);
 
                 File.Move(tempFile, outputFile, overwrite: true);
 

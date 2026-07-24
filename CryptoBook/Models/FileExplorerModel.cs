@@ -213,12 +213,10 @@ namespace CryptoBook.Models
         {
             if(obj is IList list && list.Count > 0)
             {
-                var systemItems = list.OfType<ISystemItem>()
-                                      .Where(si => si.FullPath is not null)
-                                      .Select(si => si.FullPath!)
-                                      .ToList();
+                var systemItems = list.OfType<ISystemItem>().Where(si => si.FullPath is not null).Select(si => si.FullPath!).ToList();
                 _fileClipboardService.SetCopy(systemItems);
-            } else
+            } 
+            else
             {
                 throw new ArgumentException("Invalid argument for CopyCommand", nameof(obj));
             }
@@ -235,7 +233,7 @@ namespace CryptoBook.Models
                         var fileName = System.IO.Path.GetFileName(sourcePath);
                         await _fileClipboardService.PasteAsync(CurrentPath, null, CancellationToken.None);
                     }
-                    Execute_EncryptCommand("Name");
+                    Execute_SortedCommand("Name");
                 });
             } else
             {
