@@ -32,6 +32,7 @@ namespace CryptoBook.Models
         private readonly IFileTemplateRegistry _fileTemplateRegistry;
         private readonly IFlowDocumentLoadService _flowDocumentLoadService;
         private readonly IRichTextBoxService _richTextBoxService;
+        private readonly ISecureFileProcessor _secureFileProcessor;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -63,7 +64,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, ISecureFileProcessor secureFileProcessor)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -76,6 +77,7 @@ namespace CryptoBook.Models
             _fileTemplateRegistry = fileTemplateRegistry ?? throw new ArgumentNullException(nameof(fileTemplateRegistry));
             _flowDocumentLoadService = flowDocumentLoadService ?? throw new ArgumentNullException(nameof(flowDocumentLoadService));
             _richTextBoxService = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
+            _secureFileProcessor = secureFileProcessor ?? throw new ArgumentNullException(nameof(secureFileProcessor));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -119,12 +121,12 @@ namespace CryptoBook.Models
 
         public bool CanExecute_DecryptCommand(object? obj)
         {
-            return _keyProvider.HasKey;
+            return _keyProvider.HasKey && obj is ISystemItem systemItem;
         }
 
         public bool CanExecute_EncryptCommand(object? obj)
         {
-            return _keyProvider.HasKey;
+            return _keyProvider.HasKey && obj is ISystemItem systemItem;
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
@@ -200,10 +202,7 @@ namespace CryptoBook.Models
         {
             if(obj is IList list && list.Count > 0)
             {
-                var systemItems = list.OfType<ISystemItem>()
-                                      .Where(si => si.FullPath is not null)
-                                      .Select(si => si.FullPath!)
-                                      .ToList();
+                var systemItems = list.OfType<ISystemItem>().Where(si => si.FullPath is not null).Select(si => si.FullPath!).ToList();
                 _fileClipboardService.SetMove(systemItems);
             } else
             {
@@ -214,12 +213,10 @@ namespace CryptoBook.Models
         {
             if(obj is IList list && list.Count > 0)
             {
-                var systemItems = list.OfType<ISystemItem>()
-                                      .Where(si => si.FullPath is not null)
-                                      .Select(si => si.FullPath!)
-                                      .ToList();
+                var systemItems = list.OfType<ISystemItem>().Where(si => si.FullPath is not null).Select(si => si.FullPath!).ToList();
                 _fileClipboardService.SetCopy(systemItems);
-            } else
+            } 
+            else
             {
                 throw new ArgumentException("Invalid argument for CopyCommand", nameof(obj));
             }
@@ -236,7 +233,7 @@ namespace CryptoBook.Models
                         var fileName = System.IO.Path.GetFileName(sourcePath);
                         await _fileClipboardService.PasteAsync(CurrentPath, null, CancellationToken.None);
                     }
-                    Execute_EncryptCommand("Name");
+                    Execute_SortedCommand("Name");
                 });
             } else
             {
@@ -293,7 +290,10 @@ namespace CryptoBook.Models
 
         public async void Execute_EncryptCommand(object? obj)
         {
-            var sourcePath = obj is ISystemItem systemItem ? systemItem.FullPath : null;
+            var systemItem = obj as ISystemItem;
+            if(systemItem is null)
+                return;
+            var sourcePath = systemItem.FullPath;
             if(sourcePath is null || !Path.Exists(sourcePath))
                 return;
 
@@ -311,7 +311,7 @@ namespace CryptoBook.Models
             {
                 EncryptionTargetMode.SaveAs => GetNewFilePath(sourcePath),
 
-                EncryptionTargetMode.ReplaceSource => sourcePath + "_Encrypted.cbook",
+                EncryptionTargetMode.ReplaceSource => sourcePath,
 
                 EncryptionTargetMode.Cancels => null,
 
@@ -323,9 +323,10 @@ namespace CryptoBook.Models
             if(mode is EncryptionTargetMode.ReplaceSource)
             {
                 id = await _messageService.ShowMessage("Перезапись файла", "Заменить исходный файл?\r\n\r\n" +
-                "Исходный файл будет удалён после успешного создания\r\nзашифрованного файла.\n\n"+ sourcePath, true);
+                "Исходный файл будет удалён после успешного создания\r\nзашифрованного файла.\n\n" + sourcePath, true);
                 if(!_messageService.ShowConfirmation(id))
-                    { return; }
+                { return; }
+                await _secureFileProcessor.EncryptFileAsync(sourcePath, targetPath);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using CryptoBook.DTO;
+using CryptoBook.Security;
 
 using System;
 using System.Collections.Generic;
