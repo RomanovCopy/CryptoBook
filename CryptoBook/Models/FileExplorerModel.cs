@@ -32,7 +32,7 @@ namespace CryptoBook.Models
         private readonly IFileTemplateRegistry _fileTemplateRegistry;
         private readonly IFlowDocumentLoadService _flowDocumentLoadService;
         private readonly IRichTextBoxService _richTextBoxService;
-        private readonly ISecureFileProcessor _secureFileProcessor;
+        private readonly IFileSecurityService _fileSecurityService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -64,7 +64,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, ISecureFileProcessor secureFileProcessor)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -77,7 +77,7 @@ namespace CryptoBook.Models
             _fileTemplateRegistry = fileTemplateRegistry ?? throw new ArgumentNullException(nameof(fileTemplateRegistry));
             _flowDocumentLoadService = flowDocumentLoadService ?? throw new ArgumentNullException(nameof(flowDocumentLoadService));
             _richTextBoxService = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
-            _secureFileProcessor = secureFileProcessor ?? throw new ArgumentNullException(nameof(secureFileProcessor));
+            _fileSecurityService = fileSecurityService ?? throw new ArgumentNullException(nameof(fileSecurityService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -290,50 +290,13 @@ namespace CryptoBook.Models
 
         public async void Execute_EncryptCommand(object? obj)
         {
-            var systemItem = obj as ISystemItem;
-            if(systemItem is null)
-                return;
-            var sourcePath = systemItem.FullPath;
-            if(sourcePath is null || !Path.Exists(sourcePath))
-                return;
-
-            var dict = new Dictionary<string, object?>
-            {
-                ["path"] = obj,
-            };
-
-            var readOnlyDict = new ReadOnlyDictionary<string, object?>(dict);
-
-            var id = _windowManager.CreateWindow<EncryptionModeWindow>(readOnlyDict);
-            _windowManager.ShowWindowDialog(id);
-            var mode = _windowManager.GetResult<EncryptionTargetMode>(id);
-            string? targetPath = mode switch
-            {
-                EncryptionTargetMode.SaveAs => GetNewFilePath(sourcePath),
-
-                EncryptionTargetMode.ReplaceSource => sourcePath,
-
-                EncryptionTargetMode.Cancels => null,
-
-                _ => null
-            };
-
-            if(targetPath is null)
-                return;
-            if(mode is EncryptionTargetMode.ReplaceSource)
-            {
-                id = await _messageService.ShowMessage("Перезапись файла", "Заменить исходный файл?\r\n\r\n" +
-                "Исходный файл будет удалён после успешного создания\r\nзашифрованного файла.\n\n" + sourcePath, true);
-                if(!_messageService.ShowConfirmation(id))
-                { return; }
-                await _secureFileProcessor.EncryptFileAsync(sourcePath, targetPath);
-            }
+            await ExecuteFileSecurityCommandAsync(obj, decrypt: false);
         }
 
 
-        public void Execute_DecryptCommand(object? obj)
+        public async void Execute_DecryptCommand(object? obj)
         {
-            throw new NotImplementedException();
+            await ExecuteFileSecurityCommandAsync(obj, decrypt: true);
         }
 
         public void Execute_CreateFileCommand(object? obj)
@@ -587,6 +550,103 @@ namespace CryptoBook.Models
                 CheckPathExists = true,
                 ValidateNames = true,
                 Title = "Сохранить зашифрованный файл"
+            };
+
+            return dialog.ShowDialog() == true ? dialog.FileName : null;
+        }
+
+        private async Task ExecuteFileSecurityCommandAsync(object? obj, bool decrypt)
+        {
+            if(obj is IDriveItem)
+            {
+                _ = await _messageService.ShowMessage(
+                    decrypt ? "Ошибка расшифрования" : "Ошибка шифрования",
+                    "Нельзя зашифровать или расшифровать весь диск. Выберите файл или директорию.");
+                return;
+            }
+
+            if(obj is not IFileItem && obj is not IDirectoryItem)
+                return;
+
+            var systemItem = (ISystemItem)obj;
+            string sourcePath = systemItem.FullPath;
+            if(string.IsNullOrWhiteSpace(sourcePath) || !Path.Exists(sourcePath))
+            {
+                _ = await _messageService.ShowMessage(
+                    decrypt ? "Ошибка расшифрования" : "Ошибка шифрования",
+                    "Выбранный файл или директория не существует.");
+                return;
+            }
+
+            var context = new ReadOnlyDictionary<string, object?>(
+                new Dictionary<string, object?>
+                {
+                    ["path"] = systemItem
+                });
+
+            Guid id = _windowManager.CreateWindow<EncryptionModeWindow>(context);
+            _windowManager.ShowWindowDialog(id);
+
+            EncryptionTargetMode mode = _windowManager.GetResult<EncryptionTargetMode>(id);
+            if(mode == EncryptionTargetMode.Cancels)
+                return;
+
+            string? targetPath = mode switch
+            {
+                EncryptionTargetMode.ReplaceSource => sourcePath,
+                EncryptionTargetMode.SaveAs when systemItem is IDirectoryItem =>
+                    await _folderPickerService.PickFolderAsync(
+                        Path.GetDirectoryName(sourcePath),
+                        CancellationToken.None),
+                EncryptionTargetMode.SaveAs when decrypt =>
+                    GetNewDecryptedFilePath(sourcePath),
+                EncryptionTargetMode.SaveAs =>
+                    GetNewFilePath(sourcePath),
+                _ => null
+            };
+
+            if(string.IsNullOrWhiteSpace(targetPath))
+                return;
+
+            if(mode == EncryptionTargetMode.ReplaceSource)
+            {
+                string operationName = decrypt ? "расшифрованным" : "зашифрованным";
+                id = await _messageService.ShowMessage(
+                    "Перезапись исходного элемента",
+                    $"Заменить исходный файл или директорию?\r\n\r\n" +
+                    $"Исходные данные будут удалены после успешного создания {operationName} элемента.\r\n\r\n" +
+                    sourcePath,
+                    true);
+
+                if(!_messageService.ShowConfirmation(id))
+                    return;
+            }
+
+            FileOperationResult result = decrypt
+                ? await _fileSecurityService.DecryptAsync(systemItem, targetPath, mode)
+                : await _fileSecurityService.EncryptAsync(systemItem, targetPath, mode);
+
+            if(!result.Success)
+            {
+                _ = await _messageService.ShowMessage(
+                    decrypt ? "Ошибка расшифрования" : "Ошибка шифрования",
+                    result.ErrorMessage);
+            }
+        }
+
+        private string? GetNewDecryptedFilePath(string sourcePath)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                InitialDirectory = Path.GetDirectoryName(sourcePath),
+                FileName = Path.GetFileNameWithoutExtension(sourcePath) + "_Decrypted",
+                AddExtension = false,
+                Filter = "Все файлы (*.*)|*.*",
+                FilterIndex = 1,
+                OverwritePrompt = true,
+                CheckPathExists = true,
+                ValidateNames = true,
+                Title = "Сохранить расшифрованный файл"
             };
 
             return dialog.ShowDialog() == true ? dialog.FileName : null;

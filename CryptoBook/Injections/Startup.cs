@@ -159,6 +159,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<SystemIconService>().As<ISystemIconService>().SingleInstance();
             builder.RegisterType<ColumnLayoutStoreService>().As<IColumnLayoutStore>().SingleInstance();
             builder.RegisterType<FileLauncherService>().As<IFileLauncherService>().SingleInstance();
+            builder.RegisterType<FileSecurityService>().As<IFileSecurityService>().SingleInstance();
             builder.RegisterType<DirectoryMonitoringService>().As<IDirectoryMonitoringService>().SingleInstance();
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
             builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().SingleInstance();

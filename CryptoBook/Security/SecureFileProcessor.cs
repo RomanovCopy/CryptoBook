@@ -218,16 +218,29 @@ namespace CryptoBook.Security
                 await ValidateHmacAsync(inputStream, contentLength, key, cancellationToken);
 
                 long encryptedContentStart = SecureFileFormat.MagicHeader.Length + SecureFileFormat.SaltSize + iv.Length;
+                long encryptedContentLength = contentLength - encryptedContentStart;
 
                 inputStream.Position = encryptedContentStart;
 
-                using CryptoStream cryptoStream = new(inputStream, aes.CreateDecryptor(), CryptoStreamMode.Read);
+                using LimitedReadStream encryptedStream = new(
+                    inputStream,
+                    encryptedContentLength,
+                    leaveOpen: true);
+                using CryptoStream cryptoStream = new(
+                    encryptedStream,
+                    aes.CreateDecryptor(),
+                    CryptoStreamMode.Read);
 
                 string fileExtension = await ReadFileExtensionAsync(cryptoStream, cancellationToken);
 
                 outputStream = outputStreamFactory(fileExtension);
 
-                await CopyDecryptedContentAsync(cryptoStream, outputStream, contentLength - encryptedContentStart, progress, cancellationToken);
+                await CopyDecryptedContentAsync(
+                    cryptoStream,
+                    outputStream,
+                    encryptedContentLength,
+                    progress,
+                    cancellationToken);
 
                 return fileExtension;
             } finally
@@ -336,6 +349,104 @@ namespace CryptoBook.Security
             await cryptoStream.ReadExactlyAsync(extensionBytes, cancellationToken);
 
             return Encoding.UTF8.GetString(extensionBytes);
+        }
+
+        private sealed class LimitedReadStream: Stream
+        {
+            private readonly Stream _innerStream;
+            private readonly bool _leaveOpen;
+            private long _remainingBytes;
+
+            public LimitedReadStream(
+                Stream innerStream,
+                long length,
+                bool leaveOpen)
+            {
+                if(length < 0)
+                    throw new ArgumentOutOfRangeException(nameof(length));
+
+                _innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
+                _remainingBytes = length;
+                _leaveOpen = leaveOpen;
+            }
+
+            public override bool CanRead => _innerStream.CanRead;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => _remainingBytes;
+
+            public override long Position
+            {
+                get => throw new NotSupportedException();
+                set => throw new NotSupportedException();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                if(_remainingBytes == 0)
+                    return 0;
+
+                int bytesToRead = (int)Math.Min(count, _remainingBytes);
+                int bytesRead = _innerStream.Read(buffer, offset, bytesToRead);
+                _remainingBytes -= bytesRead;
+                return bytesRead;
+            }
+
+            public override async ValueTask<int> ReadAsync(
+                Memory<byte> buffer,
+                CancellationToken cancellationToken = default)
+            {
+                if(_remainingBytes == 0)
+                    return 0;
+
+                int bytesToRead = (int)Math.Min(buffer.Length, _remainingBytes);
+                int bytesRead = await _innerStream.ReadAsync(
+                    buffer[..bytesToRead],
+                    cancellationToken);
+                _remainingBytes -= bytesRead;
+                return bytesRead;
+            }
+
+            public override int ReadByte()
+            {
+                if(_remainingBytes == 0)
+                    return -1;
+
+                int value = _innerStream.ReadByte();
+                if(value >= 0)
+                    _remainingBytes--;
+
+                return value;
+            }
+
+            public override void Flush()
+            {
+            }
+
+            public override long Seek(long offset, SeekOrigin origin) =>
+                throw new NotSupportedException();
+
+            public override void SetLength(long value) =>
+                throw new NotSupportedException();
+
+            public override void Write(byte[] buffer, int offset, int count) =>
+                throw new NotSupportedException();
+
+            protected override void Dispose(bool disposing)
+            {
+                if(disposing && !_leaveOpen)
+                    _innerStream.Dispose();
+
+                base.Dispose(disposing);
+            }
+
+            public override async ValueTask DisposeAsync()
+            {
+                if(!_leaveOpen)
+                    await _innerStream.DisposeAsync();
+
+                GC.SuppressFinalize(this);
+            }
         }
     }
 }
