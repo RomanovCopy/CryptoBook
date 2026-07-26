@@ -1,6 +1,7 @@
 ﻿using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Properties;
 using CryptoBook.Security;
 using CryptoBook.Services;
 using CryptoBook.Views;
@@ -35,6 +36,7 @@ namespace CryptoBook.Models
         private readonly IFileSecurityService _fileSecurityService;
         private readonly ISecureFileValidator _secureFileValidator;
         private readonly ISystemItemCreateService _systemItemCreateService;
+        private readonly IProgressDialogService _progressDialogService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -66,7 +68,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -82,6 +84,7 @@ namespace CryptoBook.Models
             _fileSecurityService = fileSecurityService ?? throw new ArgumentNullException(nameof(fileSecurityService));
             _secureFileValidator = secureFileValidator ?? throw new ArgumentNullException(nameof(secureFileValidator));
             _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
+            _progressDialogService = progressDialogService ?? throw new ArgumentNullException(nameof(progressDialogService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -219,20 +222,33 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for CopyCommand", nameof(obj));
             }
         }
-        public void Execute_PasteCommand(object? obj)
+        public async void Execute_PasteCommand(object? obj)
         {
             if(!string.IsNullOrEmpty(CurrentPath) && _fileClipboardService.GetData().SourcePaths.Count > 0)
             {
-                var sourcePaths = _fileClipboardService.GetData().SourcePaths;
-                _ = Task.Run(async () =>
+                try
                 {
-                    foreach(var sourcePath in sourcePaths)
+                    IReadOnlyList<FileOperationResult> results =
+                        await _progressDialogService.RunAsync(
+                            "Копирование файлов",
+                            (progress, token) =>
+                                _fileClipboardService.PasteAsync(CurrentPath, progress, token));
+
+                    FileOperationResult? failure = results.FirstOrDefault(result => !result.Success);
+                    if(failure is not null)
                     {
-                        var fileName = System.IO.Path.GetFileName(sourcePath);
-                        await _fileClipboardService.PasteAsync(CurrentPath, null, CancellationToken.None);
+                        _ = await _messageService.ShowMessage("Ошибка копирования", failure.ErrorMessage);
+                        return;
                     }
+
                     Execute_SortedCommand("Name");
-                });
+                } catch(OperationCanceledException)
+                {
+                    // Отмена пользователем не является ошибкой копирования.
+                } catch(Exception ex)
+                {
+                    _ = await _messageService.ShowMessage("Ошибка копирования", ex.Message);
+                }
             } else
             {
                 throw new ArgumentException("Invalid argument for PasteCommand", nameof(obj));
@@ -485,16 +501,23 @@ namespace CryptoBook.Models
 
                     if(template != null)
                     {
-                        await using var stream = await _fileManagerService.OpenReadAsync(
-                            file.FullPath,
-                            null,
-                            cancellationTokenSource.Token);
+                        await _progressDialogService.RunAsync(
+                            "Открытие файла",
+                            async (progress, token) =>
+                            {
+                                await using var stream = await _fileManagerService.OpenReadAsync(
+                                    file.FullPath,
+                                    progress,
+                                    token);
 
-                        await _flowDocumentLoadService.LoadAsync(
-                            _richTextBoxService,
-                            stream,
-                            template,
-                            cancellationTokenSource.Token);
+                                await _flowDocumentLoadService.LoadAsync(
+                                    _richTextBoxService,
+                                    stream,
+                                    template,
+                                    token,
+                                    progress);
+                                return true;
+                            });
 
                         _windowManager.CloseWindow(WindowId);
                     } else
@@ -651,102 +674,135 @@ namespace CryptoBook.Models
 
         private async Task ExecuteFileSecurityCommandAsync(object? obj, bool decrypt)
         {
-            if(obj is IDriveItem)
-            {
-                _ = await _messageService.ShowMessage(
-                    decrypt ? "Ошибка расшифрования" : "Ошибка шифрования",
-                    "Нельзя зашифровать или расшифровать весь диск. Выберите файл или директорию.");
-                return;
-            }
+            string errorTitle = decrypt ? "Ошибка дешифрования" : "Ошибка шифрования";
 
-            if(obj is not IFileItem && obj is not IDirectoryItem)
-                return;
-
-            var systemItem = (ISystemItem)obj;
-            string sourcePath = systemItem.FullPath;
-            if(string.IsNullOrWhiteSpace(sourcePath) || !Path.Exists(sourcePath))
+            try
             {
-                _ = await _messageService.ShowMessage(
-                    decrypt ? "Ошибка расшифрования" : "Ошибка шифрования",
-                    "Выбранный файл или директория не существует.");
-                return;
+                if(obj is IDriveItem)
+                {
+                    await _messageService.ShowMessage(
+                        errorTitle,
+                        "Нельзя зашифровать или расшифровать весь диск. Выберите файл или директорию.");
+                    return;
+                }
+
+                if(obj is not IFileItem && obj is not IDirectoryItem)
+                    return;
+
+                var systemItem = (ISystemItem)obj;
+                string sourcePath = systemItem.FullPath;
+                if(string.IsNullOrWhiteSpace(sourcePath) || !Path.Exists(sourcePath))
+                {
+                    await _messageService.ShowMessage(
+                        errorTitle,
+                        "Выбранный файл или директория не существует.");
+                    return;
+                }
+
+                (EncryptionTargetMode mode, string? targetPath) =
+                    ResolveFileSecurityTarget(systemItem, sourcePath, decrypt);
+
+                if(mode == EncryptionTargetMode.Cancels ||
+                   string.IsNullOrWhiteSpace(targetPath))
+                {
+                    return;
+                }
+
+                if(mode == EncryptionTargetMode.ReplaceSource &&
+                   !await ConfirmSourceReplacementAsync(systemItem, sourcePath, decrypt))
+                {
+                    return;
+                }
+
+                FileOperationResult result = await _progressDialogService.RunAsync(
+                    decrypt ? "Дешифрование" : "Шифрование",
+                    (progress, token) => decrypt
+                        ? _fileSecurityService.DecryptAsync(systemItem, targetPath, mode, progress, token)
+                        : _fileSecurityService.EncryptAsync(systemItem, targetPath, mode, progress, token));
+
+                if(!result.Success)
+                {
+                    await _messageService.ShowMessage(errorTitle, result.ErrorMessage);
+                    return;
+                }
+
+                try
+                {
+                    // Синхронизация нужна, если FileSystemWatcher пропустил быструю замену.
+                    await RefreshAffectedContainersAsync( systemItem, targetPath, CancellationToken.None);
+                } catch(Exception ex)
+                {
+                    await _messageService.ShowMessage( "Ошибка обновления проводника",
+                        $"Операция завершена успешно, но не удалось обновить представление файлов:\r\n{ex.Message}");
+                }
+            } catch(OperationCanceledException)
+            {
+                // Отмена пользователем является штатным завершением операции.
+            } catch(Exception ex)
+            {
+                await _messageService.ShowMessage(errorTitle, ex.Message);
             }
+        }
+
+        private (EncryptionTargetMode Mode, string? TargetPath) ResolveFileSecurityTarget( ISystemItem systemItem, string sourcePath, bool decrypt)
+        {
+            // Для каталога текущий интерфейс поддерживает только замену файлов на месте.
+            if(systemItem is IDirectoryItem)
+                return (EncryptionTargetMode.ReplaceSource, sourcePath);
 
             var context = new ReadOnlyDictionary<string, object?>(
-                new Dictionary<string, object?>
-                {
-                    ["path"] = systemItem
-                });
+                new Dictionary<string, object?> { ["path"] = systemItem });
 
-            Guid id = _windowManager.CreateWindow<EncryptionModeWindow>(context);
-            _windowManager.ShowWindowDialog(id);
+            Guid windowId = _windowManager.CreateWindow<EncryptionModeWindow>(context);
+            _windowManager.ShowWindowDialog(windowId);
 
-            EncryptionTargetMode mode = _windowManager.GetResult<EncryptionTargetMode>(id);
+            EncryptionTargetMode mode =
+                _windowManager.GetResult<EncryptionTargetMode>(windowId);
             if(mode == EncryptionTargetMode.Cancels)
-                return;
+                return (mode, null);
 
             string? targetPath = mode switch
             {
                 EncryptionTargetMode.ReplaceSource => sourcePath,
-                EncryptionTargetMode.SaveAs when systemItem is IDirectoryItem =>
-                    await _folderPickerService.PickFolderAsync(
-                        Path.GetDirectoryName(sourcePath),
-                        CancellationToken.None),
-                EncryptionTargetMode.SaveAs when decrypt =>
-                    GetNewDecryptedFilePath(sourcePath),
-                EncryptionTargetMode.SaveAs =>
-                    GetNewFilePath(sourcePath),
+                EncryptionTargetMode.SaveAs when decrypt => GetNewDecryptedFilePath(sourcePath),
+                EncryptionTargetMode.SaveAs => GetNewFilePath(sourcePath),
                 _ => null
             };
 
-            if(string.IsNullOrWhiteSpace(targetPath))
-                return;
-
-            if(mode == EncryptionTargetMode.ReplaceSource)
+            if(!string.IsNullOrWhiteSpace(targetPath))
             {
-                string operationName = decrypt ? "расшифрованным" : "зашифрованным";
-                id = await _messageService.ShowMessage(
-                    "Перезапись исходного элемента",
-                    $"Заменить исходный файл или директорию?\r\n\r\n" +
-                    $"Исходные данные будут удалены после успешного создания {operationName} элемента.\r\n\r\n" +
-                    sourcePath,
-                    true);
-
-                if(!_messageService.ShowConfirmation(id))
-                    return;
+                Settings.Default.EncryptionTargetMode = mode;
+                Settings.Default.Save();
             }
 
-            FileOperationResult result = decrypt
-                ? await _fileSecurityService.DecryptAsync(systemItem, targetPath, mode)
-                : await _fileSecurityService.EncryptAsync(systemItem, targetPath, mode);
-
-            if(!result.Success)
-            {
-                _ = await _messageService.ShowMessage(
-                    decrypt ? "Ошибка расшифрования" : "Ошибка шифрования",
-                    result.ErrorMessage);
-                return;
-            }
-
-            try
-            {
-                // После криптооперации явно синхронизируем представление с диском.
-                await RefreshAffectedContainersAsync(
-                    systemItem,
-                    targetPath,
-                    CancellationToken.None);
-            } catch(Exception ex)
-            {
-                _ = await _messageService.ShowMessage(
-                    "Ошибка обновления проводника",
-                    $"Операция завершена успешно, но не удалось обновить представление файлов:\r\n{ex.Message}");
-            }
+            return (mode, targetPath);
         }
 
-        private async Task RefreshAffectedContainersAsync(
-            ISystemItem source,
-            string targetPath,
-            CancellationToken token)
+        private async Task<bool> ConfirmSourceReplacementAsync( ISystemItem systemItem, string sourcePath, bool decrypt)
+        {
+            bool isDirectory = systemItem is IDirectoryItem;
+            string subject = isDirectory ? "исходные файлы" : "исходный файл";
+            string verb = isDirectory ? "будут заменены" : "будет заменён";
+            string replacement = decrypt
+                ? isDirectory ? "дешифрованными копиями" : "дешифрованной копией"
+                : isDirectory ? "зашифрованными копиями" : "зашифрованной копией";
+            string keyWarning = decrypt
+                ? string.Empty
+                : "\r\n\r\nОткрытие без ключа станет невозможным.";
+
+            string warning =
+                $"Заменить {subject}?\r\n\r\n" +
+                $"{char.ToUpperInvariant(subject[0])}{subject[1..]} {verb} {replacement}.\r\n" +
+                $"{sourcePath}{keyWarning}";
+
+            Guid messageId = await _messageService.ShowMessage(
+                "Перезапись исходного элемента",
+                warning,
+                true);
+            return _messageService.ShowConfirmation(messageId);
+        }
+
+        private async Task RefreshAffectedContainersAsync( ISystemItem source, string targetPath, CancellationToken token)
         {
             var affectedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -765,9 +821,7 @@ namespace CryptoBook.Models
             }
         }
 
-        private async Task RefreshContainerAsync(
-            IContainerSystemItem container,
-            CancellationToken token)
+        private async Task RefreshContainerAsync( IContainerSystemItem container, CancellationToken token)
         {
             // Полный снимок устраняет пропущенные события FileSystemWatcher.
             var children = await _fileManagerService.BrowseAsync(

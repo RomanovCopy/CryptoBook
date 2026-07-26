@@ -211,7 +211,7 @@ namespace CryptoBook.Services
                 return FileOperationResult.Fail("Source not found.");
             } catch(OperationCanceledException)
             {
-                return FileOperationResult.Fail("Operation canceled.");
+                throw;
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -258,7 +258,7 @@ namespace CryptoBook.Services
                 return FileOperationResult.Fail("Source not found.");
             } catch(OperationCanceledException)
             {
-                return FileOperationResult.Fail("Operation canceled.");
+                throw;
             } catch(System.IO.IOException ex) when(ex.Message.Contains("already exists"))
             {
                 return FileOperationResult.Fail("Destination already exists.");
@@ -298,7 +298,7 @@ namespace CryptoBook.Services
                 return FileOperationResult.Ok();
             } catch(OperationCanceledException)
             {
-                return FileOperationResult.Fail("Operation canceled.");
+                throw;
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -356,6 +356,9 @@ namespace CryptoBook.Services
                         {
                             _ = Directory.EnumerateFileSystemEntries(path).FirstOrDefault();
                             return true;
+                        } catch(OperationCanceledException)
+                        {
+                            throw;
                         } catch
                         {
                             return false;
@@ -370,6 +373,9 @@ namespace CryptoBook.Services
                 }
 
                 return false;
+            } catch(OperationCanceledException)
+            {
+                throw;
             } catch
             {
                 return false;
@@ -426,6 +432,9 @@ namespace CryptoBook.Services
                 File.WriteAllText(tmp, "test");
                 File.Delete(tmp);
                 return true;
+            } catch(OperationCanceledException)
+            {
+                throw;
             } catch
             {
                 return false;
@@ -452,7 +461,7 @@ namespace CryptoBook.Services
                 return FileOperationResult.Ok();
             } catch(OperationCanceledException)
             {
-                return FileOperationResult.Fail("Operation canceled.");
+                throw;
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -557,7 +566,7 @@ namespace CryptoBook.Services
 
                     return FileOperationResult.Ok();
                 }
-            } catch(OperationCanceledException) { return FileOperationResult.Fail("Operation canceled."); } catch(Exception ex) { return FileOperationResult.Fail(ex.Message); }
+            } catch(OperationCanceledException) { throw; } catch(Exception ex) { return FileOperationResult.Fail(ex.Message); }
         }
 
         public async Task<FileOperationResult> SetReadOnlyAsync(string path, bool isReadOnly, CancellationToken cancellationToken)
@@ -610,7 +619,7 @@ namespace CryptoBook.Services
                 }
             } catch(OperationCanceledException)
             {
-                return FileOperationResult.Fail("Operation canceled.");
+                throw;
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -724,32 +733,84 @@ namespace CryptoBook.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Создаем корневую директорию назначения
-            Directory.CreateDirectory(destDir);
+            var options = new EnumerationOptions
+            {
+                RecurseSubdirectories = true,
+                IgnoreInaccessible = false,
+                AttributesToSkip = FileAttributes.ReparsePoint,
+                ReturnSpecialDirectories = false
+            };
+            string[] files = Directory.GetFiles(sourceDir, "*", options);
+            string[] directories = Directory.GetDirectories(sourceDir, "*", options);
+            long totalBytes = files.Sum(path => new FileInfo(path).Length);
+            long completedBytes = 0;
 
-            // Копируем все файлы в этой директории
-            foreach(string filePath in Directory.EnumerateFiles(sourceDir))
+            Directory.CreateDirectory(destDir);
+            foreach(string directory in directories)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
-                string fileName = Path.GetFileName(filePath);
-                string destFilePath = Path.Combine(destDir, fileName);
-
-                // Для директорий прогресс "недетерминированный" — мы честно репортим null
-                progress?.Report(null, $"Copying {fileName}");
-
-                await CopyFileAsync(filePath, destFilePath, progress, cancellationToken);
+                Directory.CreateDirectory(Path.Combine(
+                    destDir,
+                    Path.GetRelativePath(sourceDir, directory)));
             }
 
-            // Рекурсивно в подкаталоги
-            foreach(string subDir in Directory.EnumerateDirectories(sourceDir))
+            foreach(string filePath in files)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                string dirName = Path.GetFileName(subDir);
-                string destSubDir = Path.Combine(destDir, dirName);
+                long fileSize = new FileInfo(filePath).Length;
+                string destination = Path.Combine(
+                    destDir,
+                    Path.GetRelativePath(sourceDir, filePath));
 
-                await CopyDirectoryRecursiveAsync(subDir, destSubDir, progress, cancellationToken);
+                IProgressReporter? fileProgress = progress is null
+                    ? null
+                    : new CopyProgressReporter(
+                        progress,
+                        completedBytes,
+                        fileSize,
+                        totalBytes,
+                        Path.GetFileName(filePath));
+
+                await CopyFileAsync(filePath, destination, fileProgress, cancellationToken);
+                completedBytes += fileSize;
+            }
+
+            progress?.Report(1.0, "Копирование завершено");
+        }
+
+        private sealed class CopyProgressReporter: IProgressReporter
+        {
+            private readonly IProgressReporter _outer;
+            private readonly long _completedBytes;
+            private readonly long _fileSize;
+            private readonly long _totalBytes;
+            private readonly string _fileName;
+
+            public CopyProgressReporter(
+                IProgressReporter outer,
+                long completedBytes,
+                long fileSize,
+                long totalBytes,
+                string fileName)
+            {
+                _outer = outer;
+                _completedBytes = completedBytes;
+                _fileSize = fileSize;
+                _totalBytes = totalBytes;
+                _fileName = fileName;
+            }
+
+            public void Report(double? value, string? currentInfo = null)
+            {
+                if(value is null || _totalBytes == 0)
+                {
+                    _outer.Report(value, currentInfo ?? _fileName);
+                    return;
+                }
+
+                double overall = (_completedBytes + _fileSize * value.Value) / _totalBytes;
+                _outer.Report(Math.Clamp(overall, 0.0, 1.0), currentInfo ?? _fileName);
             }
         }
 

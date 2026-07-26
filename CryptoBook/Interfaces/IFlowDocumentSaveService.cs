@@ -10,9 +10,11 @@ namespace CryptoBook.Interfaces
     public interface IFlowDocumentSaveService: IService
     {
         Task SaveToFileAsync( IRichTextBoxService richTextBoxService, string filePath, IFileTemplate template, 
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        IProgressReporter? progress = null);
 
         Task SaveToStreamAsync( IRichTextBoxService richTextBoxService, Stream destination, IFileTemplate template, 
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        IProgressReporter? progress = null);
     }
 }

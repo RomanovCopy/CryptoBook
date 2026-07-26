@@ -9,6 +9,11 @@ namespace CryptoBook.Interfaces
 {
     public interface IFlowDocumentLoadService
     {
-        Task LoadAsync(IRichTextBoxService richTextBoxService, Stream source, IFileTemplate template, CancellationToken cancellationToken = default);
+        Task LoadAsync(
+            IRichTextBoxService richTextBoxService,
+            Stream source,
+            IFileTemplate template,
+            CancellationToken cancellationToken = default,
+            IProgressReporter? progress = null);
     }
 }

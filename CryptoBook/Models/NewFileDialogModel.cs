@@ -20,6 +20,7 @@ namespace CryptoBook.Models
         private readonly IFolderPickerService _folderPicker;
         private readonly ICommandService _commandService;
         private readonly IWindowManager _windowManager;
+        private readonly IProgressDialogService _progressDialogService;
 
         private CancellationTokenSource? _cts;
 
@@ -137,7 +138,7 @@ namespace CryptoBook.Models
         /// Инициализирует модель диалога создания нового файла.
         /// Загружает доступные шаблоны и выбирает первый по умолчанию.
         /// </summary>
-        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService, IWindowManager windowManager)
+        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService, IWindowManager windowManager, IProgressDialogService progressDialogService)
         {
             WindowId = Guid.NewGuid();
             _registry = registry;
@@ -147,6 +148,7 @@ namespace CryptoBook.Models
             _fileManager = fileManager;
             _commandService = commandService;
             _windowManager = windowManager;
+            _progressDialogService = progressDialogService;
             Templates = _registry.GetAll();
             SelectedTemplate = Templates.FirstOrDefault();
             FileName = SelectedTemplate?.SuggestedBaseName ?? "NewFile.txt";
@@ -173,7 +175,7 @@ namespace CryptoBook.Models
                 _cts?.Cancel();
                 _cts = new CancellationTokenSource();
                 var ct = _cts.Token;
-                _ = InitSuggestedAsync(targetDirectory, ct);
+                _ = IgnoreCancellationAsync(InitSuggestedAsync(targetDirectory, ct));
             }
         }
 
@@ -193,7 +195,7 @@ namespace CryptoBook.Models
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             var ct = _cts.Token;
-            _ = BrowseAsync(ct);
+            _ = IgnoreCancellationAsync(BrowseAsync(ct));
         }
 
         /// <summary>
@@ -257,13 +259,22 @@ namespace CryptoBook.Models
         /// Запускает асинхронное создание файла и закрывает окно диалога.
         /// Отменяет предыдущие операции и использует новый токен отмены.
         /// </summary>
-        public void Execute_Create(object? obj)
+        public async void Execute_Create(object? obj)
         {
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             var ct = _cts.Token;
-            _ = CreateAsync(TargetDirectory, ct);
-            _windowManager.CloseWindow(WindowId);
+            try
+            {
+                FileOperationResult result = await CreateAsync(TargetDirectory, ct);
+                if(result.Success)
+                    _windowManager.CloseWindow(WindowId);
+                else
+                    ErrorMessage = result.ErrorMessage;
+            } catch(OperationCanceledException)
+            {
+                // Отмена записи оставляет диалог открытым для повторной попытки.
+            }
         }
 
         /// <summary>
@@ -378,7 +389,22 @@ namespace CryptoBook.Models
             if(SelectedTemplate is null)
                 return FileOperationResult.Fail("Не выбран тип файла.");
 
-            return await _creator.CreateAsync(targetDirectory, FileName, SelectedTemplate, IfExists, IsHidden, IsReadOnly, ct);
+            return await _progressDialogService.RunAsync(
+                "Создание файла",
+                async (progress, token) =>
+                {
+                    using var linkedTokenSource =
+                        CancellationTokenSource.CreateLinkedTokenSource(ct, token);
+                    return await _creator.CreateAsync(
+                        targetDirectory,
+                        FileName,
+                        SelectedTemplate,
+                        IfExists,
+                        IsHidden,
+                        IsReadOnly,
+                        linkedTokenSource.Token,
+                        progress);
+                });
         }
 
         // Инициализация из панели (перед показом диалога)
@@ -446,6 +472,9 @@ namespace CryptoBook.Models
                 // если директории ещё нет — CanWrite=false, но можно создать при OK
                 bool exists = await DirectoryExistsAsync(normalized, ct);
                 CanWrite = exists && await _fileManager.CanWriteAsync(normalized, ct);
+            } catch(OperationCanceledException)
+            {
+                throw;
             } catch(Exception ex)
             {
                 ErrorMessage = ex.Message;
@@ -469,7 +498,7 @@ namespace CryptoBook.Models
             {
                 _ = await _fileManager.BrowseAsync(normalizedPath, null, ct, ShowHiddenFiles);
                 return true;
-            } catch(DirectoryNotFoundException) { return false; } catch(IOException io) when(io.Message.Contains("not found", StringComparison.OrdinalIgnoreCase)) { return false; } catch { return false; }
+            } catch(OperationCanceledException) { throw; } catch(DirectoryNotFoundException) { return false; } catch(IOException io) when(io.Message.Contains("not found", StringComparison.OrdinalIgnoreCase)) { return false; } catch { return false; }
         }
 
         /// <summary>
@@ -485,9 +514,23 @@ namespace CryptoBook.Models
             try
             {
                 return await _fileManager.CreateDirectoryAsync(normalizedPath, string.Empty, ct);
+            } catch(OperationCanceledException)
+            {
+                throw;
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
+            }
+        }
+
+        private static async Task IgnoreCancellationAsync(Task task)
+        {
+            try
+            {
+                await task;
+            } catch(OperationCanceledException)
+            {
+                // Отмена предыдущей UI-операции ожидаема.
             }
         }
 

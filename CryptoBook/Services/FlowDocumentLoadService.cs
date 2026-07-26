@@ -36,13 +36,18 @@ namespace CryptoBook.Services
         /// <param name="template">Шаблон файла, определяющий формат загрузки.</param>
         /// <param name="cancellationToken">Токен отмены операции.</param>
         /// <returns>Задача, представляющая асинхронную операцию загрузки.</returns>
-        public async Task LoadAsync( IRichTextBoxService richTextBoxService, Stream source, IFileTemplate template, CancellationToken cancellationToken = default)
+        public async Task LoadAsync(
+            IRichTextBoxService richTextBoxService,
+            Stream source,
+            IFileTemplate template,
+            CancellationToken cancellationToken = default,
+            IProgressReporter? progress = null)
         {
             ArgumentNullException.ThrowIfNull(richTextBoxService);
             ArgumentNullException.ThrowIfNull(source);
             ArgumentNullException.ThrowIfNull(template);
 
-            byte[] buffer = await ReadAllBytesAsync(source, cancellationToken).ConfigureAwait(false);
+            byte[] buffer = await ReadAllBytesAsync(source, cancellationToken, progress).ConfigureAwait(false);
 
             if(buffer == null || buffer.Length == 0)
             {
@@ -65,6 +70,7 @@ namespace CryptoBook.Services
 
                 LoadDocument(document, buffer, template);
             });
+            progress?.Report(1.0, "Файл загружен");
         }
 
         /// <summary>
@@ -139,17 +145,35 @@ namespace CryptoBook.Services
         /// <param name="source">Исходный поток.</param>
         /// <param name="cancellationToken">Токен отмены.</param>
         /// <returns>Байтовый массив, содержащий все данные из потока.</returns>
-        private static async Task<byte[]> ReadAllBytesAsync( Stream source, CancellationToken cancellationToken)
+        private static async Task<byte[]> ReadAllBytesAsync(
+            Stream source,
+            CancellationToken cancellationToken,
+            IProgressReporter? progress)
         {
             if(source is MemoryStream memoryStream && memoryStream.TryGetBuffer(out ArraySegment<byte> segment) &&
                memoryStream.Position == 0 && segment.Offset == 0 && segment.Count == segment.Array!.Length)
             {
+                progress?.Report(1.0, "Чтение завершено");
                 return segment.Array;
             }
 
             using var buffer = new MemoryStream();
+            byte[] chunk = new byte[81920];
+            long totalBytes = source.CanSeek ? Math.Max(0, source.Length - source.Position) : 0;
+            long readBytes = 0;
 
-            await source.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
+            while(true)
+            {
+                int read = await source.ReadAsync(chunk, cancellationToken).ConfigureAwait(false);
+                if(read == 0)
+                    break;
+
+                await buffer.WriteAsync(chunk.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
+                readBytes += read;
+                progress?.Report(
+                    totalBytes > 0 ? Math.Min(1.0, (double)readBytes / totalBytes) : null,
+                    "Чтение файла");
+            }
 
             return buffer.ToArray();
         }

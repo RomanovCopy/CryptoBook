@@ -40,6 +40,7 @@ namespace CryptoBook.Interfaces
             IfExistsMode ifExists,
             bool isHidden,
             bool isReadOnly,
-            CancellationToken ct);
+            CancellationToken ct,
+            IProgressReporter? progress = null);
     }
 }

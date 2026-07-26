@@ -167,5 +167,8 @@
     <Setting Name="EncryptionModeState" Type="System.Windows.WindowState" Scope="User">
       <Value Profile="(Default)">Normal</Value>
     </Setting>
+    <Setting Name="EncryptionTargetMode" Type="CryptoBook.Security.EncryptionTargetMode" Scope="User">
+      <Value Profile="(Default)">SaveAs</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -28,6 +28,8 @@ namespace CryptoBook.ViewModels
         public double Progress { get => progressModel.Progress; set => progressModel.Progress = value; }
         public string StatusMessage { get => progressModel.StatusMessage; set => progressModel.StatusMessage = value; }
         public bool IsOperationRunning { get => progressModel.IsOperationRunning; set => progressModel.IsOperationRunning = value; }
+        public bool IsIndeterminate { get => progressModel.IsIndeterminate; set => progressModel.IsIndeterminate = value; }
+        public CancellationToken CancellationToken => progressModel.CancellationToken;
 
 
 
@@ -55,6 +57,11 @@ namespace CryptoBook.ViewModels
 
         public ICommand Close => close ??= new RelayCommand(progressModel.Execute_Close, progressModel.CanExecute_Close);
         RelayCommand close;
+
+        public void Prepare(string operationName) => progressModel.Prepare(operationName);
+
+        public void Report(double? value, string? currentInfo = null) =>
+            progressModel.Report(value, currentInfo);
 
     }
 }

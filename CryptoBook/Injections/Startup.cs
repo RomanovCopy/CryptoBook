@@ -166,6 +166,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().SingleInstance();
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
+            builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();

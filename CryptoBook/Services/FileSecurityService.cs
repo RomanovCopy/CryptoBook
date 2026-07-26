@@ -108,6 +108,9 @@ namespace CryptoBook.Services
 
                 progress?.Report(1.0, sourcePath);
                 return FileOperationResult.Ok();
+            } catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
+            {
+                throw;
             } catch(OperationCanceledException)
             {
                 return FileOperationResult.Fail("Операция отменена.");

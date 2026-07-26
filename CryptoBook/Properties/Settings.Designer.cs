@@ -682,5 +682,17 @@ namespace CryptoBook.Properties {
                 this["EncryptionModeState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SaveAs")]
+        public global::CryptoBook.Security.EncryptionTargetMode EncryptionTargetMode {
+            get {
+                return ((global::CryptoBook.Security.EncryptionTargetMode)(this["EncryptionTargetMode"]));
+            }
+            set {
+                this["EncryptionTargetMode"] = value;
+            }
+        }
     }
 }

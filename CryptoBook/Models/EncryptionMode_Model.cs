@@ -155,7 +155,9 @@ namespace CryptoBook.Models
             MessageMode = "Выберите способ сохранения файла:";
             MessageModeTop = "Сохранить файл как ...";
             MessageModeBottom = "Заменить исходный файл";
-            SelectedMode = EncryptionTargetMode.SaveAs;
+            SelectedMode = Settings.Default.EncryptionTargetMode is EncryptionTargetMode.SaveAs or EncryptionTargetMode.ReplaceSource
+                ? Settings.Default.EncryptionTargetMode
+                : EncryptionTargetMode.SaveAs;
             ProcessedItem = GetProcessedItem(context) ?? throw new NotImplementedException();
         }
 

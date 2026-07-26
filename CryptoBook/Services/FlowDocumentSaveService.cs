@@ -27,7 +27,7 @@ namespace CryptoBook.Services
         }
 
         public async Task  SaveToFileAsync(IRichTextBoxService richTextBoxService, string filePath, IFileTemplate template, 
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, IProgressReporter? progress = null)
         {
             ArgumentNullException.ThrowIfNull(richTextBoxService);
             ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
@@ -46,7 +46,7 @@ namespace CryptoBook.Services
                 await using(FileStream stream = new( temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 81920,
                 useAsync: true))
                 {
-                    await SaveToStreamAsync( richTextBoxService, stream, template, cancellationToken);
+                    await SaveToStreamAsync( richTextBoxService, stream, template, cancellationToken, progress);
 
                     await stream.FlushAsync(cancellationToken);
                 }
@@ -56,6 +56,7 @@ namespace CryptoBook.Services
                 
 
                 File.Move( temporaryPath, fullPath, overwrite: true);
+                progress?.Report(1.0, "Файл сохранён");
             } 
             catch
             {
@@ -65,7 +66,7 @@ namespace CryptoBook.Services
         }
 
         public async Task SaveToStreamAsync(IRichTextBoxService richTextBoxService, Stream destination, IFileTemplate template, 
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, IProgressReporter? progress = null)
         {
             ArgumentNullException.ThrowIfNull(richTextBoxService);
             ArgumentNullException.ThrowIfNull(destination);
@@ -83,8 +84,16 @@ namespace CryptoBook.Services
             cancellationToken.ThrowIfCancellationRequested();
 
             byte[] buffer = await SerializeAsync( document, template, cancellationToken);
-
-            await destination.WriteAsync( buffer, cancellationToken);
+            const int chunkSize = 81920;
+            for(int offset = 0; offset < buffer.Length; offset += chunkSize)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                int count = Math.Min(chunkSize, buffer.Length - offset);
+                await destination.WriteAsync(buffer.AsMemory(offset, count), cancellationToken);
+                progress?.Report(
+                    buffer.Length == 0 ? 1.0 : (double)(offset + count) / buffer.Length,
+                    "Запись файла");
+            }
         }
 
 

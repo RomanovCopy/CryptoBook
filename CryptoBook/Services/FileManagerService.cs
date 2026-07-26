@@ -44,7 +44,11 @@ namespace CryptoBook.Services
             try
             {
                 return provider.GetContainerContentAsync(desc.NativePath, progress, ct, includeHidden);
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 throw new IOException($"Failed to browse path '{path}': {ex.Message}", ex);
@@ -73,7 +77,11 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.CopyAsync(src.NativePath, dst.NativePath, progress, cancellationToken);
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 return FileOperationResult.Fail($"Copy failed: {ex.Message}");
@@ -102,7 +110,11 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.MoveAsync(src.NativePath, dst.NativePath, progress, cancellationToken);
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 return FileOperationResult.Fail($"Move failed: {ex.Message}");
@@ -117,7 +129,12 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.DeleteAsync(desc.NativePath, cancellationToken);
-            } catch(Exception ex)
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception ex)
             {
                 return FileOperationResult.Fail($"Delete failed: {ex.Message}");
             }
@@ -130,7 +147,12 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.RenameAsync(desc.NativePath, newName, cancellationToken);
-            } catch(Exception ex)
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception ex)
             {
                 return FileOperationResult.Fail($"Rename failed: {ex.Message}");
             }
@@ -149,7 +171,12 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.CreateDirectoryAsync(combinedNativePath, cancellationToken);
-            } catch(Exception ex)
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception ex)
             {
                 return FileOperationResult.Fail($"Create directory failed: {ex.Message}");
             }
@@ -163,7 +190,12 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.CanReadAsync(desc.NativePath, cancellationToken);
-            } catch(Exception)
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception)
             {
                 return false;
             }
@@ -177,7 +209,12 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.CanWriteAsync(desc.NativePath, cancellationToken);
-            } catch(Exception)
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception)
             {
                 return false;
             }
@@ -195,7 +232,11 @@ namespace CryptoBook.Services
             catch(FileNotFoundException)
             {
                 throw; // пробрасываем дальше, чтобы можно было различать "файл не найден" и "другая ошибка"
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 throw new IOException($"OpenRead failed for path '{path}': {ex.Message}", ex);
@@ -211,7 +252,11 @@ namespace CryptoBook.Services
             try
             {
                 return await provider.OpenWriteAsync(desc.NativePath, overwrite, progress, cancellationToken);
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 throw new IOException($"OpenWrite failed for path '{path}': {ex.Message}", ex);
@@ -242,7 +287,12 @@ namespace CryptoBook.Services
             try
             {
                 return ResolveProvider(desc.Scheme).IsHiddenAsync(desc.NativePath, ct);
-            } catch(Exception)
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception)
             {
                 return Task.FromResult(false);
             }
@@ -254,7 +304,11 @@ namespace CryptoBook.Services
             try
             {
                 return ResolveProvider(desc.Scheme).SetHiddenAsync(desc.NativePath, hidden, ct);
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 return Task.FromResult(FileOperationResult.Fail($"SetHidden failed: {ex.Message}"));
@@ -267,7 +321,11 @@ namespace CryptoBook.Services
             try
             {
                 return ResolveProvider(desc.Scheme).IsReadOnlyAsync(desc.NativePath, cancellationToken);
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception)
             {
                 return Task.FromResult(false);
@@ -280,7 +338,11 @@ namespace CryptoBook.Services
             try
             {
                 return ResolveProvider(desc.Scheme).SetReadOnlyAsync(desc.NativePath, isReadOnly, ct);
-            } 
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 return Task.FromResult(FileOperationResult.Fail($"SetReadOnly failed: {ex.Message}"));
