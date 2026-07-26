@@ -34,6 +34,7 @@ namespace CryptoBook.Models
         private readonly IRichTextBoxService _richTextBoxService;
         private readonly IFileSecurityService _fileSecurityService;
         private readonly ISecureFileValidator _secureFileValidator;
+        private readonly ISystemItemCreateService _systemItemCreateService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -65,7 +66,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -80,6 +81,7 @@ namespace CryptoBook.Models
             _richTextBoxService = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
             _fileSecurityService = fileSecurityService ?? throw new ArgumentNullException(nameof(fileSecurityService));
             _secureFileValidator = secureFileValidator ?? throw new ArgumentNullException(nameof(secureFileValidator));
+            _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -108,35 +110,30 @@ namespace CryptoBook.Models
         {
             return obj is ISystemItem;
         }
-
         public bool CanExecute_SortedCommand(object? obj)
         {
             return obj is string name && !string.IsNullOrWhiteSpace(name) &&
             SelectedItem is IContainerSystemItem item && item.Children.Count > 1;
         }
-
-
         public bool CanExecute_EncryptingKeyCommand(object? obj)
         {
             return true;
         }
-
         public bool CanExecute_DecryptCommand(object? obj)
         {
             return _keyProvider.HasKey && obj is ISystemItem systemItem;
         }
-
         public bool CanExecute_EncryptCommand(object? obj)
         {
             return _keyProvider.HasKey && obj is ISystemItem systemItem;
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
-            return true;
+            return SelectedItem is IContainerSystemItem;
         }
         public bool CanExecute_CreateDirectoryCommand(object? obj)
         {
-            return true;
+            return SelectedItem is IContainerSystemItem;
         }
         public bool CanExecute_RenameClickCommand(object? obj)
         {
@@ -217,8 +214,7 @@ namespace CryptoBook.Models
             {
                 var systemItems = list.OfType<ISystemItem>().Where(si => si.FullPath is not null).Select(si => si.FullPath!).ToList();
                 _fileClipboardService.SetCopy(systemItems);
-            } 
-            else
+            } else
             {
                 throw new ArgumentException("Invalid argument for CopyCommand", nameof(obj));
             }
@@ -265,7 +261,6 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for DeleteCommand", nameof(obj));
             }
         }
-
         public async void Execute_SortedCommand(object? obj)
         {
             if(obj is string name && !string.IsNullOrWhiteSpace(name) && SelectedItem is IContainerSystemItem container)
@@ -283,34 +278,63 @@ namespace CryptoBook.Models
                 }
             }
         }
-
         public void Execute_EncryptingKeyCommand(object? obj)
         {
             var id = _windowManager.CreateWindow<KeyInputWindow>();
             _windowManager.ShowWindowDialog(id);
         }
-
         public async void Execute_EncryptCommand(object? obj)
         {
             await ExecuteFileSecurityCommandAsync(obj, decrypt: false);
 
         }
-
-
         public async void Execute_DecryptCommand(object? obj)
         {
             await ExecuteFileSecurityCommandAsync(obj, decrypt: true);
         }
-
         public void Execute_CreateFileCommand(object? obj)
         {
             var id = _windowManager.CreateWindow<NewFileDialog>();
             _windowManager.ShowWindow(id);
             Execute_SortedCommand("Name");
         }
-        public void Execute_CreateDirectoryCommand(object? obj)
+        public async void Execute_CreateDirectoryCommand(object? obj)
         {
+            if(SelectedItem is not IContainerSystemItem container)
+                return;
 
+            var dialogId = _windowManager.CreateWindow<DirectoryNameDialog>();
+            _windowManager.ShowWindowDialog(dialogId);
+
+            string? directoryName = _windowManager.GetResult<string?>(dialogId)?.Trim();
+            if(directoryName is null)
+                return;
+
+            if(!TryValidateDirectoryName(directoryName, out string validationError))
+            {
+                _ = await _messageService.ShowMessage("Ошибка создания директории", validationError);
+                return;
+            }
+
+            string directoryPath = Path.Combine(container.FullPath, directoryName);
+            if(Path.Exists(directoryPath))
+            {
+                _ = await _messageService.ShowMessage("Ошибка создания директории", $"Элемент с именем «{directoryName}» уже существует.");
+                return;
+            }
+
+            FileOperationResult result = await _fileManagerService.CreateDirectoryAsync(container.FullPath, directoryName, CancellationToken.None);
+
+            if(!result.Success)
+            {
+                _ = await _messageService.ShowMessage("Ошибка создания директории", result.ErrorMessage);
+                return;
+            }
+
+            // После успешного создания на диске добавляем представление в текущий контейнер.
+            var directoryItem = _systemItemCreateService.CreateDirectory(directoryPath, container);
+            await container.AddChildAsync( [directoryItem], item => item.FullPath, CancellationToken.None);
+            await container.SortingAsync( SystemItemSortType.Name, 0, CancellationToken.None);
         }
         public void Execute_RenameClickCommand(object? obj)
         {
@@ -395,12 +419,10 @@ namespace CryptoBook.Models
 
                 var result = await ContainerLoad(container, cancellationTokenSource.Token);
                 container.IsLoaded = result.Success;
-            }
-            catch(OperationCanceledException)
+            } catch(OperationCanceledException)
             {
                 // Отмена выбора не является ошибкой для UI.
-            }
-            finally
+            } finally
             {
                 if(lockTaken)
                     _gate.Release();
@@ -425,11 +447,9 @@ namespace CryptoBook.Models
                     var res = await ContainerLoad(container, cancellationTokenSource.Token);
                     container.IsExpanded = true;
                     container.IsLoaded = res.Success;
-                }
-                catch(OperationCanceledException)
+                } catch(OperationCanceledException)
                 {
-                }
-                finally
+                } finally
                 {
                     if(lockTaken)
                         _gate.Release();
@@ -481,17 +501,14 @@ namespace CryptoBook.Models
                     {
                         _ = await _messageService.ShowMessage("File open error", $"No template found for file {file.Name}");
                     }
-                }
-                catch(OperationCanceledException)
+                } catch(OperationCanceledException)
                 {
-                }
-                catch(Exception ex)
+                } catch(Exception ex)
                 {
                     _ = await _messageService.ShowMessage(
                         "File open error",
                         $"Failed to open file {file.Name}:\r\n{ex.Message}");
-                }
-                finally
+                } finally
                 {
                     if(lockTaken)
                         _gate.Release();
@@ -513,8 +530,6 @@ namespace CryptoBook.Models
         {
             throw new NotImplementedException();
         }
-
-
         public bool CanExecute_Loaded(object? obj)
         {
             return true;
@@ -577,6 +592,43 @@ namespace CryptoBook.Models
             return await container.AddChildAsync(children, x => x.FullPath, token);
         }
 
+        private static bool TryValidateDirectoryName(string name, out string error)
+        {
+            error = string.Empty;
+
+            if(string.IsNullOrWhiteSpace(name))
+            {
+                error = "Имя директории не может быть пустым.";
+                return false;
+            }
+
+            if(name is "." or ".." ||
+               name.EndsWith(' ') ||
+               name.EndsWith('.') ||
+               name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+               name.Contains(Path.DirectorySeparatorChar) ||
+               name.Contains(Path.AltDirectorySeparatorChar))
+            {
+                error = "Имя директории содержит недопустимые символы или имеет недопустимый формат.";
+                return false;
+            }
+
+            string baseName = name.Split('.')[0];
+            string[] reservedNames =
+            [
+                "CON", "PRN", "AUX", "NUL",
+                "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+                "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+            ];
+
+            if(reservedNames.Contains(baseName, StringComparer.OrdinalIgnoreCase))
+            {
+                error = $"Имя «{name}» зарезервировано операционной системой.";
+                return false;
+            }
+
+            return true;
+        }
 
         private string? GetNewFilePath(string sourcePath)
         {
@@ -683,8 +735,7 @@ namespace CryptoBook.Models
                     systemItem,
                     targetPath,
                     CancellationToken.None);
-            }
-            catch(Exception ex)
+            } catch(Exception ex)
             {
                 _ = await _messageService.ShowMessage(
                     "Ошибка обновления проводника",

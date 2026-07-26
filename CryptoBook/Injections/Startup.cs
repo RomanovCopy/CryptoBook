@@ -113,6 +113,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileExplorer>().InstancePerDependency();
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
+            builder.RegisterType<DirectoryNameDialog>().InstancePerDependency();
                                                                                                          
             //FileTemplate
             builder.RegisterType<PlainTextTemplate>().As<IFileTemplate>().SingleInstance();
