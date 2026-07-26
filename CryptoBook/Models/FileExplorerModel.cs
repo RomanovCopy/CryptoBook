@@ -33,6 +33,7 @@ namespace CryptoBook.Models
         private readonly IFlowDocumentLoadService _flowDocumentLoadService;
         private readonly IRichTextBoxService _richTextBoxService;
         private readonly IFileSecurityService _fileSecurityService;
+        private readonly ISecureFileValidator _secureFileValidator;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -64,7 +65,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -78,6 +79,7 @@ namespace CryptoBook.Models
             _flowDocumentLoadService = flowDocumentLoadService ?? throw new ArgumentNullException(nameof(flowDocumentLoadService));
             _richTextBoxService = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
             _fileSecurityService = fileSecurityService ?? throw new ArgumentNullException(nameof(fileSecurityService));
+            _secureFileValidator = secureFileValidator ?? throw new ArgumentNullException(nameof(secureFileValidator));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -291,6 +293,7 @@ namespace CryptoBook.Models
         public async void Execute_EncryptCommand(object? obj)
         {
             await ExecuteFileSecurityCommandAsync(obj, decrypt: false);
+
         }
 
 
@@ -374,86 +377,124 @@ namespace CryptoBook.Models
         }
         public async void Execute_TreeViewItemSelectedCommand(object? obj)
         {
-            _cancellationTokenSource = new CancellationTokenSource();
-            await _gate.WaitAsync(_cancellationTokenSource.Token);
+            if(obj is not IContainerSystemItem container)
+                return;
+
+            // Выбор узла не меняет IsExpanded: раскрытием управляет сам TreeView.
+            var cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = cancellationTokenSource;
+            var lockTaken = false;
+
             try
             {
-                switch(obj)
-                {
-                    case IContainerSystemItem container:
-                    {
-                        SelectedItem = container;
-                        CurrentPath = container.FullPath;
-                        container.IsExpanded = !container.IsExpanded;
-                        if(container.IsExpanded)
-                        {
-                            var res = await ContainerLoad(container, _cancellationTokenSource.Token);
-                            container.IsLoaded = res.Success;
-                        }
-                        break;
-                    }
-                    case IFileItem file:
-                    {
-                        break;
-                    }
-                    default:
-                    return;
-                }
-            } catch
+                await _gate.WaitAsync(cancellationTokenSource.Token);
+                lockTaken = true;
+
+                SelectedItem = container;
+                CurrentPath = container.FullPath;
+
+                var result = await ContainerLoad(container, cancellationTokenSource.Token);
+                container.IsLoaded = result.Success;
+            }
+            catch(OperationCanceledException)
             {
-                _cancellationTokenSource.Cancel();
-            } finally
+                // Отмена выбора не является ошибкой для UI.
+            }
+            finally
             {
-                _gate.Release();
+                if(lockTaken)
+                    _gate.Release();
             }
 
         }
         public async void Execute_ListViewItemDoubleClickCommand(object? obj)
         {
-            _cancellationTokenSource = new CancellationTokenSource();
+            var cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = cancellationTokenSource;
+            var lockTaken = false;
+
             if(obj is IContainerSystemItem container)
             {
-                await _gate.WaitAsync(_cancellationTokenSource.Token);
                 try
                 {
+                    await _gate.WaitAsync(cancellationTokenSource.Token);
+                    lockTaken = true;
+
                     SelectedItem = container;
                     CurrentPath = container.FullPath;
-                    var res = await ContainerLoad(container, _cancellationTokenSource.Token);
+                    var res = await ContainerLoad(container, cancellationTokenSource.Token);
                     container.IsExpanded = true;
                     container.IsLoaded = res.Success;
-                } catch
+                }
+                catch(OperationCanceledException)
                 {
-                    _cancellationTokenSource.Cancel();
-                } finally
+                }
+                finally
                 {
-                    _gate.Release();
+                    if(lockTaken)
+                        _gate.Release();
                 }
             } else if(obj is IFileItem file)
             {
-                await _gate.WaitAsync(_cancellationTokenSource.Token);
                 try
                 {
+                    await _gate.WaitAsync(cancellationTokenSource.Token);
+                    lockTaken = true;
+
                     if(file.IsEditing)
                         return;
+
+                    bool isEncrypted = await _secureFileValidator.HasCryptoBookHeaderAsync(
+                        file.FullPath,
+                        cancellationTokenSource.Token);
+
+                    // Для защищённого файла запрашиваем ключ до открытия потока.
+                    if(isEncrypted && !_keyProvider.HasKey)
+                    {
+                        var keyWindowId = _windowManager.CreateWindow<KeyInputWindow>();
+                        _windowManager.ShowWindowDialog(keyWindowId);
+
+                        if(!_keyProvider.HasKey)
+                            return;
+                    }
+
                     var templates = _fileTemplateRegistry.GetAll();
-                    IFileTemplate? template = templates.FirstOrDefault(t => t.Extensions.Any(ext => ext == file.Extension));
+                    IFileTemplate? template = templates.FirstOrDefault(t =>
+                        t.Extensions.Any(ext =>
+                            string.Equals(ext, file.Extension, StringComparison.OrdinalIgnoreCase)));
+
                     if(template != null)
                     {
-                        var stream = await _fileManagerService.OpenReadAsync(file.FullPath, null, _cancellationTokenSource.Token);
-                        await _flowDocumentLoadService.LoadAsync(_richTextBoxService, stream, template, _cancellationTokenSource.Token);
-                        _windowManager.CloseWindow(WindowId);
+                        await using var stream = await _fileManagerService.OpenReadAsync(
+                            file.FullPath,
+                            null,
+                            cancellationTokenSource.Token);
 
+                        await _flowDocumentLoadService.LoadAsync(
+                            _richTextBoxService,
+                            stream,
+                            template,
+                            cancellationTokenSource.Token);
+
+                        _windowManager.CloseWindow(WindowId);
                     } else
                     {
                         _ = await _messageService.ShowMessage("File open error", $"No template found for file {file.Name}");
                     }
-
-                } catch
+                }
+                catch(OperationCanceledException)
                 {
-                    _cancellationTokenSource.Cancel();
-                } finally
+                }
+                catch(Exception ex)
                 {
-                    _gate.Release();
+                    _ = await _messageService.ShowMessage(
+                        "File open error",
+                        $"Failed to open file {file.Name}:\r\n{ex.Message}");
+                }
+                finally
+                {
+                    if(lockTaken)
+                        _gate.Release();
                 }
             }
         }
@@ -517,22 +558,23 @@ namespace CryptoBook.Models
 
         private async Task<FileOperationResult> ContainerLoad(IContainerSystemItem container, CancellationToken token)
         {
-            return await Task.Run(async () =>
+            if(container.IsLoaded)
+                return FileOperationResult.Ok();
+
+            var children = await _fileManagerService.BrowseAsync(
+                container.FullPath,
+                null,
+                token,
+                IsHiddenFilesVisible);
+
+            token.ThrowIfCancellationRequested();
+            foreach(var child in children)
             {
-                FileOperationResult result = container.IsLoaded ? FileOperationResult.Ok() : FileOperationResult.Fail($"Error reading directory {container.FullPath}");
-                if(!result.Success)
-                {
-                    var children = _fileManagerService.BrowseAsync(container.FullPath, null, token, IsHiddenFilesVisible).Result;
-                    if(children is not null)
-                    {
-                        if(!container.IsLoaded)
-                        {
-                            result = await container.AddChildAsync(children, (x) => x.FullPath, token);
-                        }
-                    }
-                }
-                return result;
-            }, token);
+                // Связываем элементы с фактическим узлом дерева, а не с временным представлением провайдера.
+                child.Parent = container;
+            }
+
+            return await container.AddChildAsync(children, x => x.FullPath, token);
         }
 
 
@@ -631,6 +673,129 @@ namespace CryptoBook.Models
                 _ = await _messageService.ShowMessage(
                     decrypt ? "Ошибка расшифрования" : "Ошибка шифрования",
                     result.ErrorMessage);
+                return;
+            }
+
+            try
+            {
+                // После криптооперации явно синхронизируем представление с диском.
+                await RefreshAffectedContainersAsync(
+                    systemItem,
+                    targetPath,
+                    CancellationToken.None);
+            }
+            catch(Exception ex)
+            {
+                _ = await _messageService.ShowMessage(
+                    "Ошибка обновления проводника",
+                    $"Операция завершена успешно, но не удалось обновить представление файлов:\r\n{ex.Message}");
+            }
+        }
+
+        private async Task RefreshAffectedContainersAsync(
+            ISystemItem source,
+            string targetPath,
+            CancellationToken token)
+        {
+            var affectedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            AddAffectedContainerPaths(affectedPaths, source.FullPath, source is IDirectoryItem);
+            AddAffectedContainerPaths(affectedPaths, targetPath, source is IDirectoryItem);
+
+            var containers = EnumerateLoadedContainers()
+                .Where(container => affectedPaths.Contains(NormalizePath(container.FullPath)))
+                .Distinct()
+                .ToList();
+
+            foreach(var container in containers)
+            {
+                token.ThrowIfCancellationRequested();
+                await RefreshContainerAsync(container, token);
+            }
+        }
+
+        private async Task RefreshContainerAsync(
+            IContainerSystemItem container,
+            CancellationToken token)
+        {
+            // Полный снимок устраняет пропущенные события FileSystemWatcher.
+            var children = await _fileManagerService.BrowseAsync(
+                container.FullPath,
+                null,
+                token,
+                IsHiddenFilesVisible);
+
+            foreach(var child in children)
+            {
+                child.Parent = container;
+            }
+
+            await container.SyncCollectionsAsync(
+                children,
+                item => item.FullPath,
+                UpdateSystemItem,
+                token);
+
+            container.IsLoaded = true;
+        }
+
+        private IEnumerable<IContainerSystemItem> EnumerateLoadedContainers()
+        {
+            var pending = new Stack<IContainerSystemItem>(
+                GetDrives.OfType<IContainerSystemItem>().Reverse());
+            var visited = new HashSet<IContainerSystemItem>();
+
+            while(pending.Count > 0)
+            {
+                var container = pending.Pop();
+                if(!visited.Add(container))
+                    continue;
+
+                if(container.IsLoaded)
+                    yield return container;
+
+                foreach(var child in container.Children.OfType<IContainerSystemItem>().Reverse())
+                {
+                    pending.Push(child);
+                }
+            }
+        }
+
+        private static void AddAffectedContainerPaths(
+            ISet<string> paths,
+            string itemPath,
+            bool isDirectory)
+        {
+            if(string.IsNullOrWhiteSpace(itemPath))
+                return;
+
+            if(isDirectory)
+                paths.Add(NormalizePath(itemPath));
+
+            string? parentPath = Path.GetDirectoryName(itemPath);
+            if(!string.IsNullOrWhiteSpace(parentPath))
+                paths.Add(NormalizePath(parentPath));
+        }
+
+        private static string NormalizePath(string path)
+        {
+            return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+        }
+
+        private static void UpdateSystemItem(ISystemItem existing, ISystemItem incoming)
+        {
+            existing.Name = incoming.Name;
+            existing.FullPath = incoming.FullPath;
+            existing.RootDirectory = incoming.RootDirectory;
+            existing.Size = incoming.Size;
+            existing.LastWriteTimeUtc = incoming.LastWriteTimeUtc;
+            existing.Parent = incoming.Parent;
+
+            if(existing is IFileItem existingFile && incoming is IFileItem incomingFile)
+            {
+                existingFile.Extension = incomingFile.Extension;
+                existingFile.IsHidden = incomingFile.IsHidden;
+                existingFile.IsReadOnly = incomingFile.IsReadOnly;
             }
         }
 

@@ -54,16 +54,17 @@ namespace CryptoBook.Services
                         var dirInfo = new DirectoryInfo(path);
                         if(!dirInfo.Exists)
                             throw new DirectoryNotFoundException(path);
+
+                        // Все найденные элементы получают одно представление текущего каталога как родителя.
+                        var parentItem = ToFileItem(dirInfo);
+
                         foreach(var d in dirInfo.EnumerateDirectories())
                         {
                             cancellationToken.ThrowIfCancellationRequested();
                             if(includeHidden || !IsFileSystemInfoHidden(d))
                             {
                                 if(CanAccess(d.FullName))
-                                {
-                                    try
-                                    { directories.Add(ToFileItem(d)); } catch { /* skip items we cannot convert */ }
-                                }
+                                    directories.Add(_itemCreateService.CreateDirectory(d.FullName, parentItem));
                             }
                         }
 
@@ -72,10 +73,7 @@ namespace CryptoBook.Services
                         {
                             cancellationToken.ThrowIfCancellationRequested();
                             if(includeHidden || !IsFileSystemInfoHidden(f))
-                            {
-                                try
-                                { files.Add(ToFileItem(f)); } catch { /* skip files we cannot convert */ }
-                            }
+                                files.Add(_itemCreateService.CreateFile(f.FullName, parentItem));
                         }
                         var allItems = directories.Concat(files).ToList();
                         return allItems;

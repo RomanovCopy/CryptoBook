@@ -19,6 +19,7 @@ namespace CryptoBook.DTO
         private readonly IDirectoryMonitoringService _directoryMonitoringService;
         private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly ISystemItemSortService _systemItemSortService;
+        private readonly SemaphoreSlim _monitorEventGate = new(1, 1);
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -178,12 +179,12 @@ namespace CryptoBook.DTO
                 foreach(var item in items)
                 {
                     // передали тот же объект, что хранится в _children
-                    existing = _children.FirstOrDefault(c => ReferenceEquals(c, items));
+                    existing = _children.FirstOrDefault(c => ReferenceEquals(c, item));
                     //Если объект другой инстанс, но описывает тот же элемент — пробуем по имени
                     // (в пределах одной директории имя уникально в Windows)
                     existing ??= _children.FirstOrDefault(c =>
                         string.Equals(c.FullPath, item.FullPath, StringComparison.OrdinalIgnoreCase));
-                    removed = existing is not null && _children.Remove(item);
+                    removed = existing is not null && _children.Remove(existing);
                 }
             });
             _=await SortingAsync(SystemItemSortType.Name, 0, ct);
@@ -270,7 +271,18 @@ namespace CryptoBook.DTO
                     updateExisting?.Invoke(existing, incoming);
 
                 foreach(var item in plan.toAdd)
-                    _children.Add(item);
+                {
+                    var itemKey = keySelector(item);
+                    // FileSystemWatcher мог добавить элемент после построения плана синхронизации.
+                    if(!_children.Any(existing =>
+                        string.Equals(
+                            keySelector(existing),
+                            itemKey,
+                            StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _children.Add(item);
+                    }
+                }
             }));
 
         }
@@ -281,13 +293,9 @@ namespace CryptoBook.DTO
                 return;
 
             _monitor = _directoryMonitoringService.StartMonitoring(FullPath,
-                onCreated: async (e) => await AddChildAsync(SystemItemCreate("Created", e.FullPath), x => x.FullPath),
-                onDeleted: async (e) => await RemoveChildAsync(SystemItemCreate("Deleted", e.FullPath), x => x.FullPath),
-                onRenamed: async (e) =>
-                {
-                    await RemoveChildAsync(SystemItemCreate("Deleted", e.OldFullPath), x => x.FullPath);
-                    await AddChildAsync(SystemItemCreate("Created", e.FullPath), x => x.FullPath);
-                },
+                onCreated: e => _ = HandleCreatedAsync(e.FullPath),
+                onDeleted: e => _ = HandleDeletedAsync(e.FullPath),
+                onRenamed: e => _ = HandleRenamedAsync(e.OldFullPath, e.FullPath),
                  onChanged: async (e) =>
                  {
                      await _dispatcherService.InvokeAsync(new Action(() =>
@@ -304,6 +312,60 @@ namespace CryptoBook.DTO
                          }
                      }));
                  });
+        }
+
+        private async Task HandleCreatedAsync(string fullPath)
+        {
+            // Сериализация событий не позволяет временным файлам обогнать их удаление.
+            await _monitorEventGate.WaitAsync();
+            try
+            {
+                // Атомарная запись создаёт краткоживущий *.tmp. Даём операции
+                // завершить Move/Delete и добавляем только существующий результат.
+                await Task.Delay(75);
+                var items = SystemItemCreate("Created", fullPath);
+                if(items.Count > 0)
+                    await AddChildAsync(items, item => item.FullPath);
+            }
+            finally
+            {
+                _monitorEventGate.Release();
+            }
+        }
+
+        private async Task HandleDeletedAsync(string fullPath)
+        {
+            await _monitorEventGate.WaitAsync();
+            try
+            {
+                var items = SystemItemCreate("Deleted", fullPath);
+                if(items.Count > 0)
+                    await RemoveChildAsync(items, item => item.FullPath);
+            }
+            finally
+            {
+                _monitorEventGate.Release();
+            }
+        }
+
+        private async Task HandleRenamedAsync(string oldFullPath, string newFullPath)
+        {
+            await _monitorEventGate.WaitAsync();
+            try
+            {
+                var removedItems = SystemItemCreate("Deleted", oldFullPath);
+                if(removedItems.Count > 0)
+                    await RemoveChildAsync(removedItems, item => item.FullPath);
+
+                await Task.Delay(75);
+                var addedItems = SystemItemCreate("Created", newFullPath);
+                if(addedItems.Count > 0)
+                    await AddChildAsync(addedItems, item => item.FullPath);
+            }
+            finally
+            {
+                _monitorEventGate.Release();
+            }
         }
 
         private void StopMonitoring()
