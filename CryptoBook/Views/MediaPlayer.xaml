@@ -1,0 +1,64 @@
+﻿<Window x:Class="CryptoBook.Views.MediaPlayer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fl="clr-namespace:FlyleafLib.Controls.WPF;assembly=FlyleafLib"
+        mc:Ignorable="d"
+        Title="MediaPlayer"
+        Height="450"
+        Width="800"
+        MinHeight="360"
+        MinWidth="640"
+        WindowStartupLocation="CenterOwner">
+    <Grid Background="#111111">
+        <!-- Область отображения -->
+        <Grid  Visibility="{Binding VideoVisibility}">
+
+            <!-- Современный хост для рендеринга видео (DirectX 11) -->
+            <fl:FlyleafHost Player="{Binding Player}" />
+
+            <!-- Кнопки управления -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="15">
+                <Button Content="Открыть" Command="{Binding OpenFileCommand}" Padding="15,7" Margin="5"/>
+                <Button Content="Плей / Пауза" Command="{Binding TogglePlayCommand}" Padding="15,7" Margin="5"/>
+            </StackPanel>
+
+        </Grid>
+
+        <!-- Слой отображения изображений -->
+        <Grid Visibility="{Binding ImageVisibility}">
+
+            <!-- Контейнер-перехватчик событий мыши -->
+            <Border x:Name="ImageControlHost" 
+            Background="Transparent"
+            ClipToBounds="True"
+            MouseWheel="ImageHost_MouseWheel"
+            MouseDown="ImageHost_MouseDown"
+            MouseUp="ImageHost_MouseUp"
+            MouseMove="ImageHost_MouseMove">
+
+                <!-- Сама картинка. Изменения матрицы применяются силами GPU -->
+                <Image Source="{Binding ImageService.ImageSource}" 
+               Stretch="Uniform"
+               RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <!-- Поворот картинки -->
+                            <RotateTransform Angle="{Binding ImageService.RotationAngle}"/>
+                            <!-- Масштаб и Смещение через матрицу из нашего сервиса -->
+                            <MatrixTransform Matrix="{Binding ImageService.TransformMatrix}"/>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
+            </Border>
+
+            <!-- Панель быстрых кнопок поверх фото (Сброс, Поворот) -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                <Button Content="🔄 Повернуть" Click="Rotate_Click" Margin="5" Padding="8,4"/>
+                <Button Content="🔍 1:1" Click="ResetZoom_Click" Margin="5" Padding="8,4"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</Window>

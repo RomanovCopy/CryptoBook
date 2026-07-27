@@ -89,18 +89,9 @@ namespace CryptoBook.Models
         }
 
 
-        public bool CanExecute_BackCommand(object? obj)
-        {
-            return SelectedItem?.Parent is not null;
-        }
-        public bool CanExecute_CutCommand(object? obj)
-        {
-            return obj is IList { Count: > 0 };
-        }
-        public bool CanExecute_CopyCommand(object? obj)
-        {
-            return obj is IList { Count: > 0 };
-        }
+        public bool CanExecute_BackCommand(object? obj) => SelectedItem?.Parent is not null;
+        public bool CanExecute_CutCommand(object? obj) => obj is IList { Count: > 0 };
+        public bool CanExecute_CopyCommand(object? obj) => obj is IList { Count: > 0 };
         public bool CanExecute_PasteCommand(object? obj)
         {
             if(!string.IsNullOrEmpty(CurrentPath))
@@ -109,10 +100,7 @@ namespace CryptoBook.Models
             }
             return false;
         }
-        public bool CanExecute_DeleteCommand(object? obj)
-        {
-            return obj is ISystemItem;
-        }
+        public bool CanExecute_DeleteCommand(object? obj) => obj is ISystemItem;
         public bool CanExecute_SortedCommand(object? obj)
         {
             return obj is string name && !string.IsNullOrWhiteSpace(name) &&
