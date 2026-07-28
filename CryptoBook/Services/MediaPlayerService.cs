@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -159,7 +160,6 @@ namespace CryptoBook.Services
             player.PlaybackStopped -= OnPlaybackStopped;
             player.PropertyChanged -= OnPlayerPropertyChanged;
             player.Audio.PropertyChanged -= OnAudioPropertyChanged;
-            player.PropertyChanged -= OnPlayerPropertyChanged;
             player.Dispose();
             GC.SuppressFinalize(this);
         }
@@ -167,7 +167,19 @@ namespace CryptoBook.Services
         private static FlyleafPlayer CreatePlayer()
         {
             if(!Engine.IsLoaded)
-                Engine.Start(new EngineConfig());
+            {
+                // Нативные FFmpeg DLL поставляются NuGet-пакетом в каталог приложения.
+                var ffmpegPath = Path.Combine(
+                    AppContext.BaseDirectory,
+                    "runtimes",
+                    "win-x64",
+                    "native");
+                var engineConfig = new EngineConfig
+                {
+                    FFmpegPath = ffmpegPath
+                };
+                Engine.Start(engineConfig);
+            }
 
             return new FlyleafPlayer(new Config());
         }
@@ -250,6 +262,12 @@ namespace CryptoBook.Services
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void OnPropertyChanged(params string[] names)
+        {
+            foreach(var name in names)
+                OnPropertyChanged(name);
+        }
 
     }
 }

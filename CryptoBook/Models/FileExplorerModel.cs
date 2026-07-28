@@ -439,92 +439,130 @@ namespace CryptoBook.Models
             _cancellationTokenSource = cancellationTokenSource;
             var lockTaken = false;
 
-            if(obj is IContainerSystemItem container)
+            try
             {
-                try
+                await _gate.WaitAsync(cancellationTokenSource.Token);
+                lockTaken = true;
+
+                switch(obj)
                 {
-                    await _gate.WaitAsync(cancellationTokenSource.Token);
-                    lockTaken = true;
-
-                    SelectedItem = container;
-                    CurrentPath = container.FullPath;
-                    var res = await ContainerLoad(container, cancellationTokenSource.Token);
-                    container.IsExpanded = true;
-                    container.IsLoaded = res.Success;
-                } catch(OperationCanceledException)
-                {
-                } finally
-                {
-                    if(lockTaken)
-                        _gate.Release();
-                }
-            } else if(obj is IFileItem file)
-            {
-                try
-                {
-                    await _gate.WaitAsync(cancellationTokenSource.Token);
-                    lockTaken = true;
-
-                    if(file.IsEditing)
-                        return;
-
-                    bool isEncrypted = await _secureFileValidator.HasCryptoBookHeaderAsync(
-                        file.FullPath,
-                        cancellationTokenSource.Token);
-
-                    // Для защищённого файла запрашиваем ключ до открытия потока.
-                    if(isEncrypted && !_keyProvider.HasKey)
-                    {
-                        var keyWindowId = _windowManager.CreateWindow<KeyInputWindow>();
-                        _windowManager.ShowWindowDialog(keyWindowId);
-
-                        if(!_keyProvider.HasKey)
-                            return;
-                    }
-
-                    var templates = _fileTemplateRegistry.GetAll();
-                    IFileTemplate? template = templates.FirstOrDefault(t =>
-                        t.Extensions.Any(ext =>
-                            string.Equals(ext, file.Extension, StringComparison.OrdinalIgnoreCase)));
-
-                    if(template != null)
-                    {
-                        await _progressDialogService.RunAsync(
-                            "Открытие файла",
-                            async (progress, token) =>
-                            {
-                                await using var stream = await _fileManagerService.OpenReadAsync(
-                                    file.FullPath,
-                                    progress,
-                                    token);
-
-                                await _flowDocumentLoadService.LoadAsync(
-                                    _richTextBoxService,
-                                    stream,
-                                    template,
-                                    token,
-                                    progress);
-                                return true;
-                            });
-
-                        _windowManager.CloseWindow(WindowId);
-                    } else
-                    {
-                        _ = await _messageService.ShowMessage("File open error", $"No template found for file {file.Name}");
-                    }
-                } catch(OperationCanceledException)
-                {
-                } catch(Exception ex)
-                {
-                    _ = await _messageService.ShowMessage(
-                        "File open error",
-                        $"Failed to open file {file.Name}:\r\n{ex.Message}");
-                } finally
-                {
-                    if(lockTaken)
-                        _gate.Release();
+                    case IContainerSystemItem container:
+                        await OpenContainerAsync(container, cancellationTokenSource.Token);
+                        break;
+                    case IFileItem file when !file.IsEditing:
+                        await OpenFileAsync(file, cancellationTokenSource.Token);
+                        break;
                 }
             }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception ex)
+            {
+                var itemName = obj is ISystemItem item ? item.Name : "item";
+                _ = await _messageService.ShowMessage(
+                    "File open error",
+                    $"Failed to open {itemName}:\r\n{ex.Message}");
+            }
+            finally
+            {
+                if(lockTaken)
+                    _gate.Release();
+            }
+        }
+
+        private async Task OpenContainerAsync(
+            IContainerSystemItem container,
+            CancellationToken cancellationToken)
+        {
+            SelectedItem = container;
+            CurrentPath = container.FullPath;
+
+            var result = await ContainerLoad(container, cancellationToken);
+            container.IsExpanded = true;
+            container.IsLoaded = result.Success;
+        }
+
+        private async Task OpenFileAsync(IFileItem file, CancellationToken cancellationToken)
+        {
+            var isEncrypted = await _secureFileValidator.HasCryptoBookHeaderAsync(
+                file.FullPath,
+                cancellationToken);
+
+            if(isEncrypted && !EnsureEncryptionKey())
+                return;
+
+            var template = FindTemplate(file.Extension);
+            if(template is null)
+            {
+                _ = await _messageService.ShowMessage(
+                    "File open error",
+                    $"No template found for file {file.Name}");
+                return;
+            }
+
+            if(!isEncrypted && IsMediaTemplate(template))
+                OpenMediaPlayer(file.FullPath);
+            else
+                await OpenDocumentAsync(file.FullPath, template);
+        }
+
+        private bool EnsureEncryptionKey()
+        {
+            if(_keyProvider.HasKey)
+                return true;
+
+            // Для защищённого файла запрашиваем ключ до открытия потока.
+            var keyWindowId = _windowManager.CreateWindow<KeyInputWindow>();
+            _windowManager.ShowWindowDialog(keyWindowId);
+            return _keyProvider.HasKey;
+        }
+
+        private IFileTemplate? FindTemplate(string extension)
+        {
+            return _fileTemplateRegistry.GetAll().FirstOrDefault(
+                template => template.CanHandleExtension(extension));
+        }
+
+        private static bool IsMediaTemplate(IFileTemplate template)
+        {
+            return template.Id is "Image" or "Video";
+        }
+
+        private void OpenMediaPlayer(string filePath)
+        {
+            // Медиафайл получает путь через собственный оконный scope.
+            var context = new Dictionary<string, object?>
+            {
+                ["path"] = filePath
+            };
+            var mediaPlayerId = _windowManager.CreateWindow<MediaPlayer>(context);
+            _windowManager.ShowWindow(mediaPlayerId);
+        }
+
+        private async Task OpenDocumentAsync(
+            string filePath,
+            IFileTemplate template)
+        {
+            await _progressDialogService.RunAsync(
+                "Открытие файла",
+                async (progress, token) =>
+                {
+                    await using var stream = await _fileManagerService.OpenReadAsync(
+                        filePath,
+                        progress,
+                        token);
+
+                    await _flowDocumentLoadService.LoadAsync(
+                        _richTextBoxService,
+                        stream,
+                        template,
+                        token,
+                        progress);
+                    return true;
+                });
+
+            _windowManager.CloseWindow(WindowId);
         }
         public void Execute_ListViewSelectionChangedCommand(object? obj)
         {

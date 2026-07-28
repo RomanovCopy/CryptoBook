@@ -55,7 +55,7 @@ namespace CryptoBook.Services
         public async Task LoadImageAsync(string filePath, CancellationToken cancellationToken = default)
         {
             if(!File.Exists(filePath))
-                return;
+                throw new FileNotFoundException("Файл изображения не найден.", filePath);
 
             IsLoading = true;
             CurrentImagePath = filePath;
@@ -73,9 +73,14 @@ namespace CryptoBook.Services
                     bitmap.Freeze(); // Замораживаем для межпоточного доступа
                     return bitmap;
                 }, cancellationToken);
+            } catch(OperationCanceledException)
+            {
+                Clear();
+                throw;
             } catch
             {
                 Clear();
+                throw;
             } finally
             {
                 IsLoading = false;

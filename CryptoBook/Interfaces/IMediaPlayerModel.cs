@@ -1,12 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CryptoBook.Interfaces
 {
-    public interface IMediaPlayerModel:IModel,IWindowWithId
+    public interface IMediaPlayerModel: IModel, IWindowWithId, IDisposable
     {
+        IMediaPlayerService VideoService { get; }
+        IImageService ImageService { get; }
+        bool IsVideoVisible { get; }
+        bool IsImageVisible { get; }
+        bool IsEmptyVisible { get; }
+        string StatusText { get; }
+        string MediaTitle { get; }
+
+        bool CanExecute_OpenFile(object? obj);
+        void Execute_OpenFile(object? obj);
+        bool CanExecute_RotateImage(object? obj);
+        void Execute_RotateImage(object? obj);
+        bool CanExecute_ResetImageTransform(object? obj);
+        void Execute_ResetImageTransform(object? obj);
+        bool CanExecute_PreviousImage(object? obj);
+        void Execute_PreviousImage(object? obj);
+        bool CanExecute_NextImage(object? obj);
+        void Execute_NextImage(object? obj);
+        bool CanExecute_DeleteCurrentImage(object? obj);
+        void Execute_DeleteCurrentImage(object? obj);
     }
 }

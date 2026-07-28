@@ -18,7 +18,7 @@ namespace CryptoBook.MyControls
     /// <summary>
     /// Логика взаимодействия для ImageViewer.xaml
     /// </summary>
-    public partial class ImageViewer: UserControl
+    public partial class ImageViewer: System.Windows.Controls.UserControl
     {
         public ImageViewer()
         {

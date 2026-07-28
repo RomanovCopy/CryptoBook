@@ -60,6 +60,7 @@ namespace CryptoBook.Models
             var menuItems = new ObservableCollection<MenuItemBase>
             {
                 new MenuFileItem(scope.Resolve<ICommandService>()),
+                new MenuContentItem(scope.Resolve<ICommandService>()),
             };
             return menuItems;
         }

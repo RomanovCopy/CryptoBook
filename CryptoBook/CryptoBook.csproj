@@ -51,7 +51,6 @@
     <Compile Remove="Interfaces\IVolume.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
     <Compile Remove="Models\BookmarksBarModel.cs" />
-    <Compile Remove="Models\MediaPlayerModel.cs" />
     <Compile Remove="Models\SystemItemName_Editor_Model.cs" />
     <Compile Remove="Models\TimeWebAIControlModel.cs" />
     <Compile Remove="Models\TimeWebAIPageModel.cs" />
@@ -63,7 +62,6 @@
     <Compile Remove="MyPages\TimeWebAIPage.xaml.cs" />
     <Compile Remove="Services\FlowDocumentService.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
-    <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
     <Compile Remove="ViewModels\SystemItemName_Editor_ViewModel.cs" />
     <Compile Remove="ViewModels\TimeWebAIControlViewModel.cs" />
     <Compile Remove="ViewModels\TimeWebAIPageViewModel.cs" />
@@ -138,6 +136,7 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-preview" />
     <PackageReference Include="System.Management" Version="10.0.1" />
+    <PackageReference Include="Sdcb.FFmpeg.runtime.windows-x64" Version="7.1.0" />
   </ItemGroup>
 
   <ItemGroup>

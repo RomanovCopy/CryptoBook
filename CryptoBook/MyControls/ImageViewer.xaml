@@ -14,19 +14,22 @@
         <!-- Контейнер для мышиных событий -->
         <Border Background="Transparent" ClipToBounds="True">
             <i:Interaction.Behaviors>
-                <behaviors:ImageInteractionBehavior ImageService = "{markup:ResolveService ServiceType={x:Type interfaces:IImageService}}" />
+                <behaviors:ImageInteractionBehavior ImageService="{Binding ImageService}" />
             </i:Interaction.Behaviors>
 
-            <Image Source="{Binding {markup:ResolveService ServiceType={x:Type interfaces:IImageService.ImageSource}}}" 
-                   Stretch="Uniform"
-                   RenderOptions.BitmapScalingMode="HighQuality">
-                <Image.RenderTransform>
-                    <TransformGroup>
+            <Grid>
+                <Grid.RenderTransform>
+                    <MatrixTransform Matrix="{Binding ImageService.TransformMatrix}"/>
+                </Grid.RenderTransform>
+                <Image Source="{Binding ImageService.ImageSource}"
+                       Stretch="Uniform"
+                       RenderTransformOrigin="0.5,0.5"
+                       RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.RenderTransform>
                         <RotateTransform Angle="{Binding ImageService.RotationAngle}"/>
-                        <MatrixTransform Matrix="{Binding ImageService.TransformMatrix}"/>
-                    </TransformGroup>
-                </Image.RenderTransform>
-            </Image>
+                    </Image.RenderTransform>
+                </Image>
+            </Grid>
         </Border>
 
         <!-- Индикатор загрузки тяжелых фото -->

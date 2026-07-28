@@ -49,6 +49,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MessageWindowModel>().As<IMessageWindowModel>().InstancePerLifetimeScope();
             builder.RegisterType<KeyInputModel>().As<IKeyInputModel>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionMode_Model>().As<IEncryptionMode_Model>().InstancePerLifetimeScope();
+            builder.RegisterType<MediaPlayerModel>().As<IMediaPlayerModel>().InstancePerLifetimeScope();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -72,6 +73,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionMode_ViewModel>().As<IEncryptionMode_ViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MediaPlayerViewModel>().As<IMediaPlayerViewModel>().InstancePerLifetimeScope();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -114,10 +116,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
             builder.RegisterType<DirectoryNameDialog>().InstancePerDependency();
+            builder.RegisterType<MediaPlayer>().InstancePerDependency();
                                                                                                          
             //FileTemplate
             builder.RegisterType<PlainTextTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<ImageFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<VideoFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<SecureFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<XamlPackageFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<RichTextFileTemplate>().As<IFileTemplate>().SingleInstance();
@@ -172,6 +176,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
             builder.RegisterType<ImageService>().As<IImageService>().InstancePerDependency();
+            builder.RegisterType<MediaPlayerService>().As<IMediaPlayerService>().InstancePerDependency();
 
 
             //Factory

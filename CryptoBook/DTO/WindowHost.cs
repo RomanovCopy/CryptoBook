@@ -1,11 +1,15 @@
 ﻿using Autofac;
 
+using CryptoBook.Injections;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
+using System.ComponentModel;
 
 namespace CryptoBook.DTO
 {
@@ -17,6 +21,7 @@ namespace CryptoBook.DTO
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             Window = window ?? throw new ArgumentNullException(nameof(window));
 
+            Window.Closing += OnClosing;
             Window.Closed += OnClosed;
         }
 
@@ -24,32 +29,42 @@ namespace CryptoBook.DTO
         public ILifetimeScope Scope { get; }
         public Window Window { get; }
 
+        public bool IsClosing { get; private set; }
         public bool IsClosed { get; private set; }
+
+        private void OnClosing(object? sender, CancelEventArgs e)
+        {
+            IsClosing = true;
+        }
 
         private void OnClosed(object? sender, EventArgs e)
         {
-            // Закрытие пользователем (крестик), Alt+F4, Close() и т.п.
-            Dispose();
+            IsClosing = true;
+            IsClosed = true;
+            Window.Closing -= OnClosing;
+            Window.Closed -= OnClosed;
+
+            // Сначала завершается внутренняя фаза закрытия WPF. Затем разрываются
+            // привязки к модели и Flyleaf, и только после этого уничтожается scope.
+            Window.Dispatcher.BeginInvoke(
+                DispatcherPriority.ContextIdle,
+                new Action(() =>
+                {
+                    Window.DataContext = null;
+                    DiScope.SetScope(Window, null);
+                    Dispose();
+                }));
         }
 
         public void Dispose()
         {
-            if(IsClosed)
+            if(ScopeDisposing)
                 return;
-            IsClosed = true;
 
-
-            // Важно: сначала освобождаем окно, потом scope
-            // (scope может держать VM, сервисы и т.п.)
-            try
-            {
-                Window.Closed -= OnClosed;
-            } catch
-            {
-                // ignore: окно уже может быть в teardown
-            }
-
+            ScopeDisposing = true;
             Scope.Dispose();
         }
+
+        private bool ScopeDisposing { get; set; }
     }
 }

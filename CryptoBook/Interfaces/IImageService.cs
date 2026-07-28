@@ -19,6 +19,7 @@ namespace CryptoBook.Interfaces
         double Scale { get; }
         System.Windows.Point Offset { get; }
         double RotationAngle { get; } // Поворот на 90, 180, 270 градусов
+        Matrix TransformMatrix { get; }
 
         // Управление файлом
         Task LoadImageAsync(string filePath, CancellationToken cancellationToken = default);
