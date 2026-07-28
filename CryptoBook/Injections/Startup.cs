@@ -171,6 +171,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
+            builder.RegisterType<ImageService>().As<IImageService>().InstancePerDependency();
 
 
             //Factory
@@ -196,6 +197,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TextFormatBar>().SingleInstance();
             builder.RegisterType<ListFormatBar>().SingleInstance();
             builder.RegisterType<BookmarksBar>().SingleInstance();
+            builder.RegisterType<ImageViewer>().InstancePerDependency();
 
 
 

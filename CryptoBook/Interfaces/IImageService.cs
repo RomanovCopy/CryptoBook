@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IImageService: INotifyPropertyChanged
+    public interface IImageService: INotifyPropertyChanged,IService
     {
         ImageSource? ImageSource { get; }
         bool IsLoading { get; }
