@@ -121,6 +121,103 @@ public sealed class FontTypingTests
         AssertCharacterBrush(service, 1, TextElement.ForegroundProperty, Colors.Red);
     }
 
+    [WpfFact]
+    public void EveryFontProperty_IsAppliedExactlyToMixedSelection()
+    {
+        var (service, fonts) = CreateServices(
+            new Run("a") { FontWeight = FontWeights.Bold, Foreground = Brushes.Blue },
+            new Run("b") { FontWeight = FontWeights.Light, Foreground = Brushes.Green });
+        var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+        service.Selection.Select(paragraph.ContentStart, paragraph.ContentEnd);
+
+        fonts.SetFontWeight(FontWeights.SemiBold);
+        fonts.SetFontStyle(FontStyles.Italic);
+        fonts.SetFontStretch(FontStretches.Expanded);
+        fonts.SetFontFamily(new FontFamily("Arial"));
+        fonts.SetFontSize(22);
+        fonts.SetFontColor(DrawingColor.Red);
+        fonts.SetFontBackground(DrawingColor.Yellow);
+        fonts.SetTextDecoration(TextDecorations.Strikethrough);
+
+        for(var offset = 0; offset < 2; offset++)
+        {
+            AssertCharacterProperty(service, offset, TextElement.FontWeightProperty, FontWeights.SemiBold);
+            AssertCharacterProperty(service, offset, TextElement.FontStyleProperty, FontStyles.Italic);
+            AssertCharacterProperty(service, offset, TextElement.FontStretchProperty, FontStretches.Expanded);
+            AssertCharacterProperty(service, offset, TextElement.FontFamilyProperty, new FontFamily("Arial"));
+            AssertCharacterProperty(service, offset, TextElement.FontSizeProperty, 22d);
+            AssertCharacterBrush(service, offset, TextElement.ForegroundProperty, Colors.Red);
+            AssertCharacterBrush(service, offset, TextElement.BackgroundProperty, Colors.Yellow);
+            Assert.Contains(
+                TextDecorations.Strikethrough[0],
+                Assert.IsType<TextDecorationCollection>(
+                    GetCharacterRange(service, offset).GetPropertyValue(Inline.TextDecorationsProperty)));
+        }
+    }
+
+    [WpfFact]
+    public void ClearFormatting_WithEmptySelection_AppliesDefaultsToFollowingText()
+    {
+        var (service, fonts) = CreateServices(new Run("ab"));
+        var run = GetOnlyRun(service);
+        service.CaretPosition = run.ContentStart.GetPositionAtOffset(1)!;
+
+        fonts.SetFontWeight(FontWeights.Bold);
+        fonts.SetFontColor(DrawingColor.Red);
+        fonts.ClearFormatting();
+        service.InsertTextAtCaret("X");
+
+        Assert.Equal("aXb", GetText(service));
+        AssertCharacterProperty(service, 1, TextElement.FontWeightProperty, fonts.DefaultFontWeight);
+        AssertCharacterProperty(service, 1, TextElement.FontSizeProperty, fonts.DefaultFontSize);
+        AssertCharacterBrush(service, 1, TextElement.ForegroundProperty, Colors.Black);
+    }
+
+    [WpfFact]
+    public void GetFontSizeInSelection_ReturnsSizeOrZeroForMixedSelection()
+    {
+        var (service, _) = CreateServices(
+            new Run("a") { FontSize = 18 },
+            new Run("b") { FontSize = 18 });
+        var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+        service.Selection.Select(paragraph.ContentStart, paragraph.ContentEnd);
+
+        Assert.Equal(18, service.GetFontSizeInSelection());
+
+        paragraph.Inlines.LastInline!.FontSize = 24;
+        Assert.Equal(0, service.GetFontSizeInSelection());
+    }
+
+    [WpfFact]
+    public void ClearFormatting_ResetsEveryPropertyOnlyInsideSelection()
+    {
+        var formatted = new Run("ab")
+        {
+            FontWeight = FontWeights.Bold,
+            FontStyle = FontStyles.Italic,
+            FontStretch = FontStretches.Expanded,
+            FontFamily = new FontFamily("Arial"),
+            FontSize = 28,
+            Foreground = Brushes.Red,
+            Background = Brushes.Yellow,
+            TextDecorations = TextDecorations.Underline
+        };
+        var (service, fonts) = CreateServices(formatted);
+        var run = GetOnlyRun(service);
+        service.Selection.Select(run.ContentStart, run.ContentStart.GetPositionAtOffset(1)!);
+
+        fonts.ClearFormatting();
+
+        AssertCharacterProperty(service, 0, TextElement.FontWeightProperty, fonts.DefaultFontWeight);
+        AssertCharacterProperty(service, 0, TextElement.FontStyleProperty, fonts.DefaultFontStyle);
+        AssertCharacterProperty(service, 0, TextElement.FontStretchProperty, fonts.DefaultFontStretch);
+        AssertCharacterProperty(service, 0, TextElement.FontFamilyProperty, fonts.DefaultFontFamily);
+        AssertCharacterProperty(service, 0, TextElement.FontSizeProperty, fonts.DefaultFontSize);
+        AssertCharacterBrush(service, 0, TextElement.ForegroundProperty, Colors.Black);
+        AssertCharacterProperty(service, 1, TextElement.FontWeightProperty, FontWeights.Bold);
+        AssertCharacterBrush(service, 1, TextElement.ForegroundProperty, Colors.Red);
+    }
+
     private static (IRichTextBoxService Service, FontService Fonts) CreateServices(params Run[] runs)
     {
         IRichTextBoxService service = new RichTextBoxService(new TestParagraphFactory());

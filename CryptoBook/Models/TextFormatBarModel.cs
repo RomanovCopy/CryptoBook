@@ -2,12 +2,8 @@
 using CryptoBook.Interfaces;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace CryptoBook.Models
 {
@@ -25,8 +21,7 @@ namespace CryptoBook.Models
         //форматирование выделеного текста
         internal bool CanExecute_SetTextAlignment(object? obj)
         {
-            if(obj is not TextAlignment)return false;
-            return !service.Selection.IsEmpty;
+            return obj is TextAlignment;
         }
         internal void Execute_SetTextAlignment(object? obj)
         {
@@ -36,27 +31,15 @@ namespace CryptoBook.Models
             }
         }
 
-        //вставка ссылки
-        internal bool CanExecute_InsertHyperlink(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_InsertHyperlink(object? obj)
-        {
-
-        }
-
         //создание нового параграфа с заданным отступом от начала строки
         internal bool CanExecute_SetParagraphIndent(object? obj)
         {
-            return true;
+            return TryGetDouble(obj, out var indent) && indent >= 0;
         }
        internal void Execute_SetParagraphIndent(object? obj)
         {
-            if(obj is string str && double.Parse(str)>0)
-            {
-                textFormatService.SetParagraphIndent(double.Parse(str));
-            }
+            if(TryGetDouble(obj, out var indent) && indent >= 0)
+                textFormatService.SetParagraphIndent(indent);
         }
 
         internal bool CanExecute_SetLineHeight(object? obj) => obj is double;
@@ -64,6 +47,21 @@ namespace CryptoBook.Models
         {
             if(obj is double d)
                 textFormatService.SetLineHeight(d);
+        }
+
+        private static bool TryGetDouble(object? value, out double result)
+        {
+            if(value is double number)
+            {
+                result = number;
+                return !double.IsNaN(result) && !double.IsInfinity(result);
+            }
+
+            return double.TryParse(
+                value as string,
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out result);
         }
 
     }

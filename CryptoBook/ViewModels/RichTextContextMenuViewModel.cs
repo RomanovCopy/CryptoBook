@@ -26,11 +26,8 @@ namespace CryptoBook.ViewModels
             new RelayCommand(ExecuteClearDocument, CanExecuteClearDocument);
         private RelayCommand? clearDocument;
 
-        public RichTextContextMenuViewModel(
-            IRichTextBoxService richTextBox,
-            IFontFormatBar_ViewModel fontFormatting,
-            ITextFormatBarViewModel textFormatting,
-            IListFormatBarViewModel listFormatting)
+        public RichTextContextMenuViewModel( IRichTextBoxService richTextBox, IFontFormatBar_ViewModel fontFormatting,
+            ITextFormatBarViewModel textFormatting, IListFormatBarViewModel listFormatting)
         {
             this.richTextBox = richTextBox ?? throw new ArgumentNullException(nameof(richTextBox));
             FontFormatting = fontFormatting ?? throw new ArgumentNullException(nameof(fontFormatting));

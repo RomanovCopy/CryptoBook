@@ -84,25 +84,16 @@ namespace CryptoBook.Services
         }
 
 
-        //перенос строки без создания нового параграфа
+        // Shift+Enter — перенос строки внутри текущего абзаца. Обычный Enter
+        // не перехватываем: WPF сам создаёт новый Paragraph или ListItem.
         private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
-            {
-                e.Handled = true; // отменяем стандартный Enter
+            var isEnter = e.Key == Key.Enter || e.Key == Key.Return;
+            if(!isEnter || !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                return;
 
-                var caret = this.CaretPosition;
-
-                // Вставляем перенос строки
-                caret.InsertLineBreak();
-
-                // Вставляем пустой Run, чтобы была точка для курсора
-                var emptyRun = new Run("");
-                caret.Paragraph.Inlines.Add(emptyRun);
-
-                // Ставим курсор в этот Run
-                this.CaretPosition = emptyRun.ContentStart;
-            }
+            e.Handled = true;
+            EditingCommands.EnterLineBreak.Execute(null, this);
         }
 
         void IRichTextBoxService.Focus() => this.Focus();
@@ -211,33 +202,14 @@ namespace CryptoBook.Services
 
         public double GetFontSizeInSelection()
         {
-            if(Selection.IsEmpty)
-                return (double)(Selection.GetPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty) ?? 12.0);
+            var value = Selection.GetPropertyValue(TextElement.FontSizeProperty);
+            if(value is double size)
+                return size;
 
-            TextPointer start = Selection.Start;
-            TextPointer end = Selection.End;
-
-            var sizes = new List<double>();
-            var position = start;
-
-            while(position != null && position.CompareTo(end) < 0)
-            {
-                if(position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text ||
-                    position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.ElementStart)
-                {
-                    var element = position.Parent as System.Windows.Documents.TextElement;
-                    if(element != null)
-                    {
-                        var sizeObj = element.GetValue(System.Windows.Documents.TextElement.FontSizeProperty);
-                        if(sizeObj is double size)
-                            sizes.Add(size);
-                    }
-                }
-                position = position.GetNextContextPosition(LogicalDirection.Forward);
-            }
-            if(sizes.Count == 0)
-                return 12.0;
-            return sizes.Count > 1 ? 0 : sizes[0];
+            // Ноль обозначает смешанные размеры в выделении.
+            return ReferenceEquals(value, DependencyProperty.UnsetValue)
+                ? 0
+                : Document.FontSize;
         }
         private object GetTextPropertiesInCaretPosition(DependencyProperty property)
         {
@@ -297,22 +269,22 @@ namespace CryptoBook.Services
             var forward = position.GetAdjacentElement(LogicalDirection.Forward) as TextElement;
             return forward?.GetValue(property) ?? this.Document.GetValue(property);
         }
-        double IRichTextBoxService.GetFontSizeInSelection()
-        {
-            throw new NotImplementedException();
-        }
+        double IRichTextBoxService.GetFontSizeInSelection() => GetFontSizeInSelection();
         private void InitializeDocument()
         {
             var document = this.Document;
             document.Background=System.Windows.Media.Brushes.Transparent;
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
-            document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
-            document.LineHeight = 20;
+            // Автоматическая высота учитывает реальные метрики выбранного шрифта.
+            // MaxHeight не позволяет глифам и маркерам списка перекрывать соседнюю строку.
+            document.LineStackingStrategy = LineStackingStrategy.MaxHeight;
+            document.LineHeight = double.NaN;
             Run newRun = new("     ");
             newRun.Foreground = System.Windows.Media.Brushes.Black;
             newRun.Background= System.Windows.Media.Brushes.Transparent;
             var newParagraph = paragraphFactory.Create();
+            newParagraph.Margin = new Thickness(0);
 
             document.PagePadding = new Thickness(10, 20, 10, 20);
             document.Blocks.Clear();

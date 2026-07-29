@@ -145,7 +145,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
             builder.RegisterType<FontService>().As<IFontService>().SingleInstance();
             builder.RegisterType<TextFormatService>().As<ITextFormatService>().SingleInstance();
-            builder.RegisterType<ParagraphService>().As<IParagraphService>().SingleInstance();
+            builder.RegisterType<ParagraphService>().As<IParagraphService>().InstancePerDependency();
             builder.RegisterType<InlineService>().As<IInlineService>().SingleInstance();
             builder.RegisterType<ListService>().As<IListService>().SingleInstance();
             builder.RegisterType<BookmarksService>().As<IBookmarkService>().SingleInstance();

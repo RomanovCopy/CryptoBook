@@ -2,31 +2,13 @@
 using CryptoBook.Infrastructure;
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Windows.Media.Core;
-using Media = System.Windows.Media;
-using Drawing = System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
-using System.Windows.Controls;
 
-
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Automation.Text;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using Drawing = System.Drawing;
+using Media = System.Windows.Media;
 
 namespace CryptoBook.Services
 {
@@ -73,82 +55,37 @@ namespace CryptoBook.Services
         public void SetFontStyle(System.Windows.FontStyle? fontStyle)
         {
             if(fontStyle is System.Windows.FontStyle style)
-            {
-                if(Service.Selection.IsEmpty)
-                {
-                    SetTypingProperty(System.Windows.Documents.TextElement.FontStyleProperty, style);
-                } else
-                {
-                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontStyleProperty, style);
-                }
-
-            }
+                ApplyCharacterProperty(System.Windows.Documents.TextElement.FontStyleProperty, style);
 
         }
         public void SetFontWeight(FontWeight? fontWeight)
         {
             if(fontWeight is System.Windows.FontWeight weight)
-            {
-                if(Service.Selection.IsEmpty)
-                {
-                    SetTypingProperty(System.Windows.Documents.TextElement.FontWeightProperty, weight);
-                } else
-                {
-                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontWeightProperty, weight);
-                }
-            }
+                ApplyCharacterProperty(System.Windows.Documents.TextElement.FontWeightProperty, weight);
         }
         public void SetFontStretch(FontStretch? fontStretch)
         {
             if(fontStretch is System.Windows.FontStretch stretch)
-            {
-                if(Service.Selection.IsEmpty)
-                {
-                    SetTypingProperty(System.Windows.Documents.TextElement.FontStretchProperty, stretch);
-                } else
-                {
-                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontStretchProperty, stretch);
-                }
-            }
+                ApplyCharacterProperty(System.Windows.Documents.TextElement.FontStretchProperty, stretch);
         }
         public void SetFontFamily(Media.FontFamily? fontFamily)
         {
             if(fontFamily is Media.FontFamily family)
-            {
-                if(Service.Selection.IsEmpty)
-                {
-                    SetTypingProperty(System.Windows.Documents.TextElement.FontFamilyProperty, family);
-                } else
-                {
-                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontFamilyProperty, family);
-                }
-            }
+                ApplyCharacterProperty(System.Windows.Documents.TextElement.FontFamilyProperty, family);
 
         }
         public void SetTextDecoration(TextDecorationCollection fontDecoration)
         {
-            if(Service.Selection.IsEmpty)
-            {
-                SetTypingProperty(Inline.TextDecorationsProperty, fontDecoration);
-            } else
-            {
-                // Если выделение не пустое, применяем форматирование к выделенному тексту
-                ToggleOrClearFormatting(Service.Selection, Inline.TextDecorationsProperty, fontDecoration);
-            }
+            ApplyCharacterProperty(Inline.TextDecorationsProperty, fontDecoration);
         }
         public void SetFontColor(Drawing.Color? fontColor)
         {
             if(fontColor is Drawing.Color color)
             {
                 var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+                ApplyCharacterProperty(System.Windows.Documents.TextElement.ForegroundProperty, brush);
                 if(Service.Selection.IsEmpty)
-                {
-                    SetTypingProperty(System.Windows.Documents.TextElement.ForegroundProperty, brush);
                     Service.CaretBrush = brush;
-                } else
-                {
-                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.ForegroundProperty, brush);
-                }
             }
         }
         public void SetFontBackground(Drawing.Color? fontBackground)
@@ -156,55 +93,31 @@ namespace CryptoBook.Services
             if(fontBackground is Drawing.Color color)
             {
                 var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
-                if(Service.Selection.IsEmpty)
-                {
-                    SetTypingProperty(System.Windows.Documents.TextElement.BackgroundProperty, brush);
-                } else
-                {
-                    ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.BackgroundProperty, brush);
-
-                }
-
-
+                ApplyCharacterProperty(System.Windows.Documents.TextElement.BackgroundProperty, brush);
             }
         }
         public void SetFontSize(double fontSize)
         {
-            if(fontSize is double size)
-            {
-                if(Service.Selection.IsEmpty)
-                {
-                    SetTypingProperty(System.Windows.Documents.TextElement.FontSizeProperty, size);
+            if(double.IsNaN(fontSize) || double.IsInfinity(fontSize) || fontSize <= 0)
+                return;
 
-                } else
-                {
-                    ApplyFontSize(Service.Selection, size);
-
-                }
-            }
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
         }
         public void ClearFormatting()
         {
-            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontStyleProperty, DefaultFontStyle);
-            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontWeightProperty, DefaultFontWeight);
-            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontStretchProperty, DefaultFontStretch);
-            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontFamilyProperty, DefaultFontFamily);
-            Service.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, DefaultTextDecoration.Decorations);
-            Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, DefaultFontSize);
-            Service.Selection.ApplyPropertyValue(
-                System.Windows.Documents.TextElement.ForegroundProperty,
-                new Media.SolidColorBrush(Media.Color.FromArgb(
-                    DefaultFontColor.A,
-                    DefaultFontColor.R,
-                    DefaultFontColor.G,
-                    DefaultFontColor.B)));
-            Service.Selection.ApplyPropertyValue(
-                System.Windows.Documents.TextElement.BackgroundProperty,
-                new Media.SolidColorBrush(Media.Color.FromArgb(
-                    DefaultFontBackground.A,
-                    DefaultFontBackground.R,
-                    DefaultFontBackground.G,
-                    DefaultFontBackground.B)));
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.FontStyleProperty, DefaultFontStyle);
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.FontWeightProperty, DefaultFontWeight);
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.FontStretchProperty, DefaultFontStretch);
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.FontFamilyProperty, DefaultFontFamily);
+            ApplyCharacterProperty(Inline.TextDecorationsProperty, DefaultTextDecoration.Decorations);
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.FontSizeProperty, DefaultFontSize);
+
+            var foreground = CreateBrush(DefaultFontColor);
+            var background = CreateBrush(DefaultFontBackground);
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.ForegroundProperty, foreground);
+            ApplyCharacterProperty(System.Windows.Documents.TextElement.BackgroundProperty, background);
+            if(Service.Selection.IsEmpty)
+                Service.CaretBrush = foreground;
         }
 
 
@@ -324,81 +237,20 @@ namespace CryptoBook.Services
                 System.Windows.FontStretches.UltraExpanded
             };
         }
-        private void ToggleOrClearFormatting(TextRange range, DependencyProperty property, object targetValue)
+        private void ApplyCharacterProperty(DependencyProperty property, object? value)
         {
-            object current = range.GetPropertyValue(property);
-
-            if(current == null)
-                return;
-
-            bool shouldRemove = current != DependencyProperty.UnsetValue && current.Equals(targetValue);
-
-            if(property == Inline.TextDecorationsProperty)
-            {
-                range.ApplyPropertyValue(property, shouldRemove ? DefaultTextDecoration : targetValue);
-
-            } else if(property == System.Windows.Documents.TextElement.FontWeightProperty)
-            {
-                range.ApplyPropertyValue(property, shouldRemove ? DefaultFontWeight : targetValue);
-            } else if(property == System.Windows.Documents.TextElement.FontStyleProperty)
-            {
-                range.ApplyPropertyValue(property, shouldRemove ? DefaultFontStyle : targetValue);
-            } else if(property == System.Windows.Documents.TextElement.FontStretchProperty)
-            {
-                range.ApplyPropertyValue(property, shouldRemove ? DefaultFontStretch : targetValue);
-            } else if(property == System.Windows.Documents.TextElement.FontFamilyProperty)
-            {
-                range.ApplyPropertyValue(property, shouldRemove ? DefaultFontFamily : targetValue);
-            } else
-            {
-                // Общий случай
-                range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
-            }
+            if(Service.Selection.IsEmpty)
+                SetTypingProperty(property, value);
+            else
+                Service.Selection.ApplyPropertyValue(property, value);
         }
+
+        private static Media.SolidColorBrush CreateBrush(Drawing.Color color) =>
+            new(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
         private void SetTypingProperty(DependencyProperty property, object? value)
         {
             Service.Focus();
             Service.SetTypingProperty(property, value);
-        }
-        private void ApplyFontSize(TextSelection selection, double fontSize)
-        {
-            if(selection == null)
-                return;
-
-            if(selection.IsEmpty)
-            {
-                TextPointer caret = Service.CaretPosition;
-                TextPointer start = null;
-                TextPointer end = null;
-                FlowDocument document = Service.Document;
-
-                if(document == null)
-                    return;
-                // Предпочитаем символ перед курсором, если он есть, иначе — за ним
-
-                if(caret.CompareTo(document.ContentStart) == 0)
-                {
-                    start = caret;
-                    end = caret.GetPositionAtOffset(1, LogicalDirection.Forward);
-
-                } else
-                {
-                    start = caret.GetPositionAtOffset(-1, LogicalDirection.Backward);
-                    end = caret.GetPositionAtOffset(0, LogicalDirection.Forward);
-                }
-                // Применим, только если есть что форматировать
-                if(start != null && end != null && !start.Equals(end))
-                {
-                    var range = new TextRange(start, end);
-                    range.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
-                    Service.CaretPosition = start;
-                }
-                Service.Focus();
-            } else
-            {
-                var range = new TextRange(selection.Start, selection.End);
-                range.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
-            }
         }
     }
 }

@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="/Styles/ListStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ImageStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ButtonStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/EditorToolbarIcons.xaml"/>
                 <ResourceDictionary Source="/Styles/TreeViewStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ComboBoxStyles.xaml"/>
 
