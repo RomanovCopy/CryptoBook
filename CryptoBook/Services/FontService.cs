@@ -32,8 +32,6 @@ namespace CryptoBook.Services
 {
     public class FontService: IFontService
     {
-        private readonly IInlineService inline;
-
         public IRichTextBoxService Service { get; set; }
 
         public double DefaultFontSize { get => defaultFontSize; set => defaultFontSize = value; }
@@ -67,54 +65,18 @@ namespace CryptoBook.Services
         public FontService(IRichTextBoxService service,IInlineService inlineService)
         {
             Service = service;
-            inline = inlineService;
+            _ = inlineService ?? throw new ArgumentNullException(nameof(inlineService));
             InitializeCollections();
             InitializeDefaultValues();
             SetDefaultValues();
         }
-        private TextPointer EnsureInsertionPosition(TextPointer caret)
-        {
-            if(caret == null)
-                throw new ArgumentNullException(nameof(caret));
-
-            return caret.IsAtInsertionPosition
-                ? caret
-                : caret.GetInsertionPosition(LogicalDirection.Forward);
-        }
-
-
         public void SetFontStyle(System.Windows.FontStyle? fontStyle)
         {
             if(fontStyle is System.Windows.FontStyle style)
             {
                 if(Service.Selection.IsEmpty)
                 {
-                    TextPointer caret = Service.CaretPosition;
-                    caret = EnsureInsertionPosition(caret);
-                    var oldrun = caret.Parent as Run;
-                    // Попробуем найти Inline, к которому привязан курсор
-                    Inline currentInline = caret.Parent as Inline;
-                    // Создаем новый Run
-                    Run newRun = new("");
-                    newRun.FontStyle = style;
-                    // Если нашли Inline — вставляем до или после него
-                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                    {
-                        paragraph.Inlines.InsertAfter(currentInline, newRun);
-                        // Переместим курсор за вставленным Run
-                        Service.CaretPosition = newRun.ElementEnd;
-                    } else if(caret.Paragraph != null)
-                    {
-                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                        caret.Paragraph.Inlines.Add(newRun);
-                        Service.CaretPosition = newRun.ElementEnd;
-                    }
-                    if(oldrun != null)
-                    {
-                        // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontStyleProperty, style);
-                    }
-                    Service.Focus();
+                    SetTypingProperty(System.Windows.Documents.TextElement.FontStyleProperty, style);
                 } else
                 {
                     ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontStyleProperty, style);
@@ -129,31 +91,7 @@ namespace CryptoBook.Services
             {
                 if(Service.Selection.IsEmpty)
                 {
-                    TextPointer caret = Service.CaretPosition;
-                    var oldrun = caret.Parent as Run;
-                    // Попробуем найти Inline, к которому привязан курсор
-                    Inline currentInline = caret.Parent as Inline;
-                    // Создаем новый Run
-                    Run newRun = new("");
-                    newRun.FontWeight = weight;
-                    // Если нашли Inline — вставляем до или после него
-                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                    {
-                        paragraph.Inlines.InsertAfter(currentInline, newRun);
-                        // Переместим курсор за вставленным Run
-                        Service.CaretPosition = newRun.ElementEnd;
-                    } else if(caret.Paragraph != null)
-                    {
-                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                        caret.Paragraph.Inlines.Add(newRun);
-                        Service.CaretPosition = newRun.ElementEnd;
-                    }
-                    if(oldrun != null)
-                    {
-                        // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontWeightProperty, weight);
-                    }
-                    Service.Focus();
+                    SetTypingProperty(System.Windows.Documents.TextElement.FontWeightProperty, weight);
                 } else
                 {
                     ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontWeightProperty, weight);
@@ -166,31 +104,7 @@ namespace CryptoBook.Services
             {
                 if(Service.Selection.IsEmpty)
                 {
-                    TextPointer caret = Service.CaretPosition;
-                    var oldrun = caret.Parent as Run;
-                    // Попробуем найти Inline, к которому привязан курсор
-                    Inline currentInline = caret.Parent as Inline;
-                    // Создаем новый Run
-                    Run newRun = new("");
-                    newRun.FontStretch = stretch;
-                    // Если нашли Inline — вставляем до или после него
-                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                    {
-                        paragraph.Inlines.InsertAfter(currentInline, newRun);
-                        // Переместим курсор за вставленным Run
-                        Service.CaretPosition = newRun.ElementEnd;
-                    } else if(caret.Paragraph != null)
-                    {
-                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                        caret.Paragraph.Inlines.Add(newRun);
-                        Service.CaretPosition = newRun.ElementEnd;
-                    }
-                    if(oldrun != null)
-                    {
-                        // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontStretchProperty, stretch);
-                    }
-                    Service.Focus();
+                    SetTypingProperty(System.Windows.Documents.TextElement.FontStretchProperty, stretch);
                 } else
                 {
                     ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontStretchProperty, stretch);
@@ -203,31 +117,7 @@ namespace CryptoBook.Services
             {
                 if(Service.Selection.IsEmpty)
                 {
-                    TextPointer caret = Service.CaretPosition;
-                    var oldrun = caret.Parent as Run;
-                    // Попробуем найти Inline, к которому привязан курсор
-                    Inline currentInline = caret.Parent as Inline;
-                    // Создаем новый Run
-                    Run newRun = new("");
-                    newRun.FontFamily = family;
-                    // Если нашли Inline — вставляем до или после него
-                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                    {
-                        paragraph.Inlines.InsertAfter(currentInline, newRun);
-                        // Переместим курсор за вставленным Run
-                        Service.CaretPosition = newRun.ElementEnd;
-                    } else if(caret.Paragraph != null)
-                    {
-                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                        caret.Paragraph.Inlines.Add(newRun);
-                        Service.CaretPosition = newRun.ElementEnd;
-                    }
-                    if(oldrun != null)
-                    {
-                        // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontFamilyProperty, family);
-                    }
-                    Service.Focus();
+                    SetTypingProperty(System.Windows.Documents.TextElement.FontFamilyProperty, family);
                 } else
                 {
                     ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.FontFamilyProperty, family);
@@ -239,32 +129,7 @@ namespace CryptoBook.Services
         {
             if(Service.Selection.IsEmpty)
             {
-                TextPointer caret = Service.CaretPosition;
-                // Попробуем найти Inline, к которому привязан курсор
-                Inline currentInline = caret.Parent as Inline;
-                //находим родительский Run, если есть
-                var oldrun = caret.Parent as Run;
-                // Создаем новый Run
-                Run newRun = new Run("");
-                newRun.TextDecorations = fontDecoration;
-                // Если нашли Inline — вставляем до или после него
-                if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                {
-                    paragraph.Inlines.InsertAfter(currentInline, newRun);
-                    // Переместим курсор за вставленным Run
-                    Service.CaretPosition = newRun.ElementEnd;
-                } else if(caret.Paragraph != null)
-                {
-                    // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                    caret.Paragraph.Inlines.Add(newRun);
-                    Service.CaretPosition = newRun.ElementEnd;
-                }
-                if(oldrun != null)
-                {
-                    // Копируем форматирование из родительского Run
-                    CopyFormattingExcept(oldrun, newRun, Inline.TextDecorationsProperty, fontDecoration);
-                }
-                Service.Focus();
+                SetTypingProperty(Inline.TextDecorationsProperty, fontDecoration);
             } else
             {
                 // Если выделение не пустое, применяем форматирование к выделенному тексту
@@ -278,37 +143,8 @@ namespace CryptoBook.Services
                 var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
                 if(Service.Selection.IsEmpty)
                 {
-                    TextPointer caret = Service.CaretPosition;
-                    var oldrun = caret.Parent as Run;
-
-                    // Попробуем найти Inline, к которому привязан курсор
-                    Inline currentInline = caret.Parent as Inline;
-
-                    // Создаем новый Run
-                    Run newRun = new Run("");
-                    newRun.Foreground = brush;
-                    Service.CaretBrush = newRun.Foreground;
-
-                    // Если нашли Inline — вставляем до или после него
-                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                    {
-                        paragraph.Inlines.InsertAfter(currentInline, newRun);
-
-                        // Переместим курсор за вставленным Run
-                        Service.CaretPosition = newRun.ElementEnd;
-                    } else if(caret.Paragraph != null)
-                    {
-                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                        caret.Paragraph.Inlines.Add(newRun);
-                        Service.CaretPosition = newRun.ElementEnd;
-                    }
-                    if(oldrun != null)
-                    {
-                        // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.ForegroundProperty, brush);
-                    }
-
-                    Service.Focus();
+                    SetTypingProperty(System.Windows.Documents.TextElement.ForegroundProperty, brush);
+                    Service.CaretBrush = brush;
                 } else
                 {
                     ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.ForegroundProperty, brush);
@@ -322,35 +158,7 @@ namespace CryptoBook.Services
                 var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
                 if(Service.Selection.IsEmpty)
                 {
-                    TextPointer caret = Service.CaretPosition;
-
-                    // Попробуем найти Inline, к которому привязан курсор
-                    Inline currentInline = caret.Parent as Inline;
-                    var oldrun = caret.Parent as Run;
-
-                    // Создаем новый Run
-                    Run newRun = new Run("");
-                    newRun.Background = brush;
-
-                    // Если нашли Inline — вставляем до или после него
-                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                    {
-                        paragraph.Inlines.InsertAfter(currentInline, newRun);
-
-                        // Переместим курсор за вставленным Run
-                        Service.CaretPosition = newRun.ElementEnd;
-                    } else if(caret.Paragraph != null)
-                    {
-                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                        caret.Paragraph.Inlines.Add(newRun);
-                        Service.CaretPosition = newRun.ElementEnd;
-                    }
-                    if(oldrun != null)
-                    {
-                        // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.BackgroundProperty, brush);
-                    }
-                    Service.Focus();
+                    SetTypingProperty(System.Windows.Documents.TextElement.BackgroundProperty, brush);
                 } else
                 {
                     ToggleOrClearFormatting(Service.Selection, System.Windows.Documents.TextElement.BackgroundProperty, brush);
@@ -366,36 +174,7 @@ namespace CryptoBook.Services
             {
                 if(Service.Selection.IsEmpty)
                 {
-                    TextPointer caret = Service.CaretPosition;
-                    var oldrun = caret.Parent as Run;
-
-                    // Попробуем найти Inline, к которому привязан курсор
-                    Inline currentInline = caret.Parent as Inline;
-
-                    // Создаем новый Run
-                    Run newRun = new Run("");
-                    newRun.FontSize = size;
-
-                    // Если нашли Inline — вставляем до или после него
-                    if(currentInline != null && currentInline.Parent is Paragraph paragraph)
-                    {
-                        paragraph.Inlines.InsertAfter(currentInline, newRun);
-
-                        // Переместим курсор за вставленным Run
-                        Service.CaretPosition = newRun.ElementEnd;
-                    } else if(caret.Paragraph != null)
-                    {
-                        // Курсор не в Inline, но есть Paragraph — просто добавим Run в конец
-                        caret.Paragraph.Inlines.Add(newRun);
-                        Service.CaretPosition = newRun.ElementEnd;
-                    }
-                    if(oldrun != null)
-                    {
-                        // Копируем форматирование из старого Run
-                        CopyFormattingExcept(oldrun, newRun, System.Windows.Documents.TextElement.FontSizeProperty, size);
-                    }
-
-                    Service.Focus();
+                    SetTypingProperty(System.Windows.Documents.TextElement.FontSizeProperty, size);
 
                 } else
                 {
@@ -410,8 +189,22 @@ namespace CryptoBook.Services
             Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontWeightProperty, DefaultFontWeight);
             Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontStretchProperty, DefaultFontStretch);
             Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontFamilyProperty, DefaultFontFamily);
-            Service.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, DefaultTextDecoration);
+            Service.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, DefaultTextDecoration.Decorations);
             Service.Selection.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, DefaultFontSize);
+            Service.Selection.ApplyPropertyValue(
+                System.Windows.Documents.TextElement.ForegroundProperty,
+                new Media.SolidColorBrush(Media.Color.FromArgb(
+                    DefaultFontColor.A,
+                    DefaultFontColor.R,
+                    DefaultFontColor.G,
+                    DefaultFontColor.B)));
+            Service.Selection.ApplyPropertyValue(
+                System.Windows.Documents.TextElement.BackgroundProperty,
+                new Media.SolidColorBrush(Media.Color.FromArgb(
+                    DefaultFontBackground.A,
+                    DefaultFontBackground.R,
+                    DefaultFontBackground.G,
+                    DefaultFontBackground.B)));
         }
 
 
@@ -562,6 +355,11 @@ namespace CryptoBook.Services
                 range.ApplyPropertyValue(property, shouldRemove ? null : targetValue);
             }
         }
+        private void SetTypingProperty(DependencyProperty property, object? value)
+        {
+            Service.Focus();
+            Service.SetTypingProperty(property, value);
+        }
         private void ApplyFontSize(TextSelection selection, double fontSize)
         {
             if(selection == null)
@@ -601,16 +399,6 @@ namespace CryptoBook.Services
                 var range = new TextRange(selection.Start, selection.End);
                 range.ApplyPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty, fontSize);
             }
-        }
-        private void CopyFormattingExcept(Run source, Run target, DependencyProperty exceptProperty, object newValue)
-        {
-            target.FontSize = exceptProperty == System.Windows.Documents.TextElement.FontSizeProperty ? (double)newValue : source.FontSize;
-            target.FontFamily = exceptProperty == System.Windows.Documents.TextElement.FontFamilyProperty ? (Media.FontFamily)newValue : source.FontFamily;
-            target.FontWeight = exceptProperty == System.Windows.Documents.TextElement.FontWeightProperty ? (FontWeight)newValue : source.FontWeight;
-            target.FontStyle = exceptProperty == System.Windows.Documents.TextElement.FontStyleProperty ? (System.Windows.FontStyle)newValue : source.FontStyle;
-            target.Foreground = exceptProperty == System.Windows.Documents.TextElement.ForegroundProperty ? (Media.Brush)newValue : source.Foreground;
-            target.Background = exceptProperty == System.Windows.Documents.TextElement.BackgroundProperty ? (Media.Brush)newValue : source.Background;
-            target.TextDecorations = exceptProperty == Inline.TextDecorationsProperty ? (TextDecorationCollection)newValue : source.TextDecorations;
         }
     }
 }

@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Runtime.CompilerServices;
 using System.CodeDom;
+using System.Collections.Generic;
 
 namespace CryptoBook.Services
 {
@@ -28,6 +29,21 @@ namespace CryptoBook.Services
 
         private TextRange last_Selection;
         private IParagraphFactory paragraphFactory;
+        private readonly Dictionary<DependencyProperty, object?> typingProperties = new();
+        private Paragraph? typingAnchorParagraph;
+        private int typingAnchorTextOffset;
+        private static readonly DependencyProperty[] inheritedTypingProperties =
+        [
+            TextElement.FontFamilyProperty,
+            TextElement.FontSizeProperty,
+            TextElement.FontWeightProperty,
+            TextElement.FontStyleProperty,
+            TextElement.FontStretchProperty,
+            TextElement.ForegroundProperty,
+            TextElement.BackgroundProperty,
+            Inline.TextDecorationsProperty,
+            Inline.BaselineAlignmentProperty
+        ];
 
         FlowDocument IRichTextBoxService.Document => this.Document;
 
@@ -62,6 +78,7 @@ namespace CryptoBook.Services
             this.paragraphFactory = paragraphFactory;
             this.LostFocus += RichTextBoxService_LostFocus;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
+            this.PreviewTextInput += RichTextBoxService_PreviewTextInput;
             InitializeDocument();
             this.AcceptsTab = true; // Разрешаем табы
         }
@@ -111,7 +128,70 @@ namespace CryptoBook.Services
             }
             this.Focus();
         }
-        void IRichTextBoxService.InsertTextAtCaret(string text) => this.CaretPosition.InsertTextInRun(text);
+        void IRichTextBoxService.SetTypingProperty(DependencyProperty property, object? value)
+        {
+            if(property == null)
+                throw new ArgumentNullException(nameof(property));
+
+            if(!IsTypingAnchorAtCaret())
+                typingProperties.Clear();
+
+            RememberTypingAnchor();
+            typingProperties[property] = value;
+        }
+        void IRichTextBoxService.InsertTextAtCaret(string text)
+        {
+            if(string.IsNullOrEmpty(text))
+                return;
+
+            var start = this.CaretPosition;
+            bool applyTypingProperties = typingProperties.Count > 0 && IsTypingAnchorAtCaret();
+
+            if(applyTypingProperties)
+            {
+                var inheritedValues = inheritedTypingProperties.ToDictionary(
+                    property => property,
+                    property => GetEffectiveValue(start, property));
+
+                var run = new Run(text, start);
+                foreach(var (property, value) in inheritedValues)
+                {
+                    if(!ReferenceEquals(value, DependencyProperty.UnsetValue))
+                        run.SetValue(property, value);
+                }
+                foreach(var (property, value) in typingProperties)
+                    run.SetValue(property, value);
+
+                this.CaretPosition = run.ContentEnd;
+            } else
+            {
+                typingProperties.Clear();
+                start.InsertTextInRun(text);
+                this.CaretPosition = start.GetPositionAtOffset(text.Length, LogicalDirection.Forward) ?? start;
+            }
+
+            this.Selection.Select(this.CaretPosition, this.CaretPosition);
+            RememberTypingAnchor();
+        }
+        void IRichTextBoxService.ClearDocument()
+        {
+            this.BeginChange();
+            try
+            {
+                this.SelectAll();
+                this.Selection.Text = string.Empty;
+
+                var caret = this.Document.ContentStart.GetInsertionPosition(LogicalDirection.Forward);
+                this.CaretPosition = caret;
+                this.Selection.Select(caret, caret);
+
+                typingProperties.Clear();
+                RememberTypingAnchor();
+            } finally
+            {
+                this.EndChange();
+            }
+        }
         void IRichTextBoxService.Undo() => this.Undo();
         void IRichTextBoxService.Redo() => this.Redo();
         void IRichTextBoxService.ApplyVerticalScrollBarVisibility(ScrollBarVisibility visibility)
@@ -172,6 +252,50 @@ namespace CryptoBook.Services
         private void RichTextBoxService_LostFocus(object sender, RoutedEventArgs e)
         {
             last_Selection = new TextRange(Selection?.Start, Selection?.End);
+        }
+        private void RichTextBoxService_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if(string.IsNullOrEmpty(e.Text) || typingProperties.Count == 0 || !IsTypingAnchorAtCaret())
+                return;
+
+            e.Handled = true;
+            ((IRichTextBoxService)this).InsertTextAtCaret(e.Text);
+        }
+        private bool IsTypingAnchorAtCaret()
+        {
+            var paragraph = this.CaretPosition.Paragraph;
+            if(typingAnchorParagraph == null || !ReferenceEquals(typingAnchorParagraph, paragraph))
+                return false;
+
+            return GetTextOffset(paragraph, this.CaretPosition) == typingAnchorTextOffset;
+        }
+        private void RememberTypingAnchor()
+        {
+            typingAnchorParagraph = this.CaretPosition.Paragraph;
+            typingAnchorTextOffset = GetTextOffset(typingAnchorParagraph, this.CaretPosition);
+        }
+        private static int GetTextOffset(Paragraph? paragraph, TextPointer position)
+        {
+            if(paragraph == null)
+                return 0;
+
+            return new TextRange(paragraph.ContentStart, position).Text.Length;
+        }
+        private object GetEffectiveValue(TextPointer position, DependencyProperty property)
+        {
+            var value = new TextRange(position, position).GetPropertyValue(property);
+            if(!ReferenceEquals(value, DependencyProperty.UnsetValue))
+                return value;
+
+            if(position.Parent is TextElement parent)
+                return parent.GetValue(property);
+
+            var backward = position.GetAdjacentElement(LogicalDirection.Backward) as TextElement;
+            if(backward != null)
+                return backward.GetValue(property);
+
+            var forward = position.GetAdjacentElement(LogicalDirection.Forward) as TextElement;
+            return forward?.GetValue(property) ?? this.Document.GetValue(property);
         }
         double IRichTextBoxService.GetFontSizeInSelection()
         {

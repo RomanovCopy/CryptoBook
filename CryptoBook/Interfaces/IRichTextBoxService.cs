@@ -50,7 +50,9 @@ namespace CryptoBook.Interfaces
         void RestoreSelection();
 
         // Ввод текста
+        void SetTypingProperty(DependencyProperty property, object? value);
         void InsertTextAtCaret(string text);
+        void ClearDocument();
 
         // История изменений
         void Undo();

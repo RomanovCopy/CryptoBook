@@ -61,6 +61,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MenuEncryptionViewModel>().As<IMenuEncryptionViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MenuContentViewModel>().As<IMenuContentViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<RichtextboxViewModel>().As<IRichtextboxViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<RichTextContextMenuViewModel>().As<IRichTextContextMenuViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<ListFormatBarViewModel>().As<IListFormatBarViewModel>().InstancePerLifetimeScope();
@@ -198,6 +199,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MyFrame>().SingleInstance();
             builder.RegisterType<SideMenu>().SingleInstance();
             builder.RegisterType<Richtextbox>().SingleInstance();
+            builder.RegisterType<RichTextEditorContextMenu>().AsSelf().SingleInstance();
             builder.RegisterType<FontFormatBar>().SingleInstance();
             builder.RegisterType<TextFormatBar>().SingleInstance();
             builder.RegisterType<ListFormatBar>().SingleInstance();
