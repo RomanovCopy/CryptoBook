@@ -25,6 +25,7 @@ namespace CryptoBook.FileTemplates
         ];
 
         public string SuggestedBaseName => "New Image";
+        public FileOpenMode OpenMode => FileOpenMode.Media;
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct)
         {

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
              d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IBookmarksViewModel}}">
     <UserControl.DataContext>
@@ -29,49 +30,122 @@
                AllowsTransparency="True"
                PopupAnimation="Fade"
                StaysOpen="False">
-            <Border Style="{StaticResource EditorToolbarPopupBorderStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource EditorToolButtonStyle}"
-                            Command="{Binding AddAtCaret}"
-                            ToolTip="Добавить закладку">
-                        <Path Data="{StaticResource Icon.BookmarkAdd}"
-                              Style="{StaticResource EditorToolbarIconStyle}"/>
-                    </Button>
-                    <Button Style="{StaticResource EditorToolButtonStyle}"
-                            Command="{Binding PreviousBookmark}"
-                            ToolTip="Предыдущая закладка">
-                        <Path Data="{StaticResource Icon.BookmarkPrevious}"
-                              Style="{StaticResource EditorToolbarIconStyle}"/>
-                    </Button>
-                    <Button Style="{StaticResource EditorToolButtonStyle}"
-                            Command="{Binding NextBookmark}"
-                            ToolTip="Следующая закладка">
-                        <Path Data="{StaticResource Icon.BookmarkNext}"
-                              Style="{StaticResource EditorToolbarIconStyle}"/>
-                    </Button>
-                    <Border Width="1" Height="22"
-                            Margin="4,5"
-                            Background="#557CA0CC"/>
-                    <Button Style="{StaticResource EditorToolButtonStyle}"
-                            Command="{Binding Remove}"
-                            ToolTip="Удалить закладку">
-                        <Path Data="{StaticResource Icon.BookmarkRemove}"
-                              Style="{StaticResource EditorToolbarIconStyle}"/>
-                    </Button>
-                    <Button Style="{StaticResource EditorToolButtonStyle}"
-                            Command="{Binding Rename}"
-                            ToolTip="Переименовать закладку">
-                        <Path Data="{StaticResource Icon.BookmarkRename}"
-                              Style="{StaticResource EditorToolbarIconStyle}"/>
-                    </Button>
-                    <Button Style="{StaticResource EditorToolButtonStyle}"
-                            Command="{Binding NavigateTo}"
-                            ToolTip="Все закладки">
-                        <Path Data="{StaticResource Icon.BookmarkAll}"
-                              Style="{StaticResource EditorToolbarIconStyle}"/>
-                    </Button>
+            <Border Style="{StaticResource EditorToolbarPopupBorderStyle}"
+                    MinWidth="390">
+                <StackPanel>
+                    <TextBlock Text="Новая закладка"
+                               FontWeight="SemiBold"
+                               Margin="4,2,4,4"/>
+                    <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right"
+                                Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding AddAtCaret}"
+                                ToolTip="Добавить в позиции каретки">
+                            <Path Data="{StaticResource Icon.BookmarkAdd}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <TextBox Text="{Binding NewBookmarkName, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="3"
+                                 Padding="7,5"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Имя новой закладки"/>
+                    </DockPanel>
+
+                    <Border Height="1" Background="#557CA0CC" Margin="4,7"/>
+
+                    <TextBlock Text="Выбранная закладка"
+                               FontWeight="SemiBold"
+                               Margin="4,0,4,4"/>
+                    <ComboBox ItemsSource="{Binding Bookmarks}"
+                              SelectedItem="{Binding SelectedBookmark, Mode=TwoWay}"
+                              DisplayMemberPath="Name"
+                              Margin="3"
+                              Padding="5"
+                              MinHeight="30"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding PreviousBookmark}"
+                                ToolTip="Предыдущая закладка">
+                            <Path Data="{StaticResource Icon.BookmarkPrevious}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <Button Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding NavigateTo}"
+                                ToolTip="Перейти к выбранной закладке">
+                            <Path Data="{StaticResource Icon.Bookmark}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <Button Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding NextBookmark}"
+                                ToolTip="Следующая закладка">
+                            <Path Data="{StaticResource Icon.BookmarkNext}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <Button Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding OpenManager}"
+                                ToolTip="Открыть диспетчер закладок">
+                            <Path Data="{StaticResource Icon.BookmarkAll}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <Button Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding RebuildIndexFromDocument}"
+                                ToolTip="Обновить индекс из документа">
+                            <Path Data="{StaticResource Icon.Refresh}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                    </StackPanel>
+
+                    <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right"
+                                Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding Remove}"
+                                ToolTip="Удалить выбранную закладку">
+                            <Path Data="{StaticResource Icon.BookmarkRemove}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <Button DockPanel.Dock="Right"
+                                Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding Rename}"
+                                ToolTip="Переименовать выбранную закладку">
+                            <Path Data="{StaticResource Icon.BookmarkRename}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <TextBox Text="{Binding RenameTo, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="3"
+                                 Padding="7,5"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Новое имя выбранной закладки"/>
+                    </DockPanel>
+
+                    <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right"
+                                Style="{StaticResource EditorToolButtonStyle}"
+                                Command="{Binding InsertHyperlinkTo}"
+                                ToolTip="Вставить ссылку на выбранную закладку">
+                            <Path Data="{StaticResource Icon.Link}"
+                                  Style="{StaticResource EditorToolbarIconStyle}"/>
+                        </Button>
+                        <TextBox Text="{Binding LinkText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="3"
+                                 Padding="7,5"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Текст ссылки; можно предварительно выделить текст в документе"/>
+                    </DockPanel>
+
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Margin="5,4,5,2"
+                               Foreground="{DynamicResource CurrentWindowForeground}"
+                               Opacity="0.8"
+                               TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
         </Popup>
     </Grid>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 </UserControl>

@@ -18,10 +18,10 @@ using Controls = System.Windows.Controls;
 using FontStyle = System.Windows.FontStyle;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Windows.Navigation;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.CodeDom;
-using System.Collections.Generic;
-
 namespace CryptoBook.Services
 {
     public class RichTextBoxService: Controls.RichTextBox, IRichTextBoxService
@@ -79,6 +79,9 @@ namespace CryptoBook.Services
             this.LostFocus += RichTextBoxService_LostFocus;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
             this.PreviewTextInput += RichTextBoxService_PreviewTextInput;
+            this.AddHandler(
+                Hyperlink.RequestNavigateEvent,
+                new RequestNavigateEventHandler(RichTextBoxService_RequestNavigate));
             InitializeDocument();
             this.AcceptsTab = true; // Разрешаем табы
         }
@@ -232,6 +235,53 @@ namespace CryptoBook.Services
 
             e.Handled = true;
             ((IRichTextBoxService)this).InsertTextAtCaret(e.Text);
+        }
+        private void RichTextBoxService_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            if(e.Uri == null)
+                return;
+
+            if(!e.Uri.IsAbsoluteUri)
+            {
+                var anchorName = Uri.UnescapeDataString(
+                    e.Uri.OriginalString.TrimStart('#'));
+                var target = FindNamedTextElement(anchorName);
+                if(target != null)
+                {
+                    var position = target.ContentStart.GetInsertionPosition(LogicalDirection.Forward);
+                    this.Selection.Select(position, position);
+                    this.CaretPosition = position;
+                    target.BringIntoView();
+                    this.Focus();
+                    e.Handled = true;
+                }
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri)
+            {
+                UseShellExecute = true
+            });
+            e.Handled = true;
+        }
+
+        private TextElement? FindNamedTextElement(string name)
+        {
+            var seen = new HashSet<TextElement>();
+            for(var position = this.Document.ContentStart;
+                position != null && position.CompareTo(this.Document.ContentEnd) < 0;
+                position = position.GetNextContextPosition(LogicalDirection.Forward))
+            {
+                if(position.GetAdjacentElement(LogicalDirection.Forward) is TextElement element &&
+                   !string.IsNullOrWhiteSpace(element.Name) &&
+                   string.Equals(element.Name, name, StringComparison.Ordinal) &&
+                   seen.Add(element))
+                {
+                    return element;
+                }
+            }
+
+            return null;
         }
         private bool IsTypingAnchorAtCaret()
         {

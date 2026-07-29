@@ -1,149 +1,230 @@
-﻿using CryptoBook.Infrastructure;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.ViewModels;
-using CryptoBook.Views;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace CryptoBook.Models
 {
-    internal class BookmarksModel:ViewModelBase
+    /// <summary>
+    /// Координирует бизнес-сценарии закладок: проверку, изменение документа
+    /// и состояние текущей операции. WPF-команды создаёт ViewModel.
+    /// </summary>
+    public sealed class BookmarksModel: ViewModelBase, IBookmarksModel
     {
-        private readonly IRichTextBoxService service;
+        private readonly IRichTextBoxService richTextBox;
         private readonly IBookmarkService bookmarkService;
-        private readonly IBookmarkValidationService bookmarkValidationService;
-        private readonly IWindowManager windowManager;
+        private readonly IBookmarkValidationService validation;
 
+        private IBookmarkEntryViewModel? selectedBookmark;
+        private string newBookmarkName = string.Empty;
+        private string renameTo = string.Empty;
+        private string linkText = string.Empty;
+        private string statusMessage = string.Empty;
 
+        public ObservableCollection<IBookmarkEntryViewModel> Bookmarks =>
+            bookmarkService.Bookmarks;
 
-        public BookmarksModel(IRichTextBoxService service, IBookmarkService bookmarkService, 
-            IBookmarkValidationService bookmarkValidationService, IWindowManager windowManager)
+        public IBookmarkEntryViewModel? SelectedBookmark
         {
-            this.service = service;
-            this.bookmarkValidationService = bookmarkValidationService;
-            this.bookmarkService = bookmarkService;
-            this.windowManager = windowManager;
+            get => selectedBookmark;
+            set
+            {
+                if(!SetProperty(ref selectedBookmark, value))
+                    return;
+
+                RenameTo = value?.Name ?? string.Empty;
+                StatusMessage = string.Empty;
+            }
         }
 
-
-
-        internal bool CanExecute_AddAtCaret(object? obj)
+        public string NewBookmarkName
         {
-            return true;
-        }
-        internal void Execute_AddAtCaret(object? obj)
-        {
-            var id = windowManager.CreateWindow<Views.BookmarksEditor>();
-            windowManager.ShowWindow(id);
+            get => newBookmarkName;
+            set => SetProperty(ref newBookmarkName, value ?? string.Empty);
         }
 
-        internal bool CanExecute_PreviousBookmark(object? obj)
+        public string RenameTo
         {
-            return true;
-        }
-        internal void Execute_PreviousBookmark(object? obj)
-        {
-
+            get => renameTo;
+            set => SetProperty(ref renameTo, value ?? string.Empty);
         }
 
-
-        internal bool CanExecute_NextBookmark(object? obj)
+        public string LinkText
         {
-            return true;
-        }
-        internal void Execute_NextBookmark(object? obj)
-        {
+            get => linkText;
+            set => SetProperty(ref linkText, value ?? string.Empty);
         }
 
-
-
-        internal bool CanExecute_Remove(object? obj)
+        public string StatusMessage
         {
-            return true;
-        }
-        internal void Execute_Remove(object? obj)
-        {
+            get => statusMessage;
+            private set => SetProperty(ref statusMessage, value);
         }
 
+        public BookmarksModel(
+            IRichTextBoxService richTextBox,
+            IBookmarkService bookmarkService,
+            IBookmarkValidationService validation)
+        {
+            this.richTextBox = richTextBox ??
+                throw new ArgumentNullException(nameof(richTextBox));
+            this.bookmarkService = bookmarkService ??
+                throw new ArgumentNullException(nameof(bookmarkService));
+            this.validation = validation ??
+                throw new ArgumentNullException(nameof(validation));
 
-        internal bool CanExecute_Rename(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_Rename(object? obj)
-        {
-        }
-
-
-        internal bool CanExecute_NavigateTo(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_NavigateTo(object? obj)
-        {
+            bookmarkService.PropertyChanged += (_, _) =>
+                OnPropertyChanged(nameof(Bookmarks));
         }
 
+        public bool CanAddAtCaret() =>
+            validation.CanInsertBookmark(
+                richTextBox,
+                NewBookmarkName,
+                bookmarkService.Exists).Ok;
 
-        internal bool CanExecute_InsertHyperlinkTo(object? obj)
+        public void AddAtCaret() =>
+            Execute(() =>
+            {
+                var name = NewBookmarkName.Trim();
+                bookmarkService.AddAtCaret(richTextBox, name);
+                SelectedBookmark = bookmarkService.Bookmarks[^1];
+                NewBookmarkName = string.Empty;
+                StatusMessage = $"Закладка «{name}» добавлена.";
+                return true;
+            });
+
+        public bool CanNavigateNext() => Bookmarks.Count > 0;
+
+        public void NavigateNext() =>
+            Execute(() => bookmarkService.NavigateNext(richTextBox));
+
+        public bool CanNavigatePrevious() => Bookmarks.Count > 0;
+
+        public void NavigatePrevious() =>
+            Execute(() => bookmarkService.NavigatePrevious(richTextBox));
+
+        public bool CanRemove(IBookmarkEntryViewModel? bookmark)
         {
-            return true;
-        }
-        internal void Execute_InsertHyperlinkTo(object? obj)
-        {
-        }
-
-
-
-        internal bool CanExecute_RebuildIndexFromDocument(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_RebuildIndexFromDocument(object? obj)
-        {
-        }
-
-
-
-        internal bool CanExecute_Loaded(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_Loaded(object? obj)
-        {
-        }
-
-
-        internal bool CanExecute_Close(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_Close(object? obj)
-        {
+            bookmark = ResolveBookmark(bookmark);
+            return bookmark != null &&
+                validation.CanRemoveBookmark(richTextBox, bookmark.Name).Ok;
         }
 
-
-        internal bool CanExecute_Closing(object? obj)
+        public void Remove(IBookmarkEntryViewModel? bookmark)
         {
-            return true;
-        }
-        internal void Execute_Closing(object? obj)
-        {
+            bookmark = ResolveBookmark(bookmark);
+            if(bookmark == null)
+                return;
+
+            Execute(() =>
+            {
+                var name = bookmark.Name;
+                var removed = bookmarkService.Remove(richTextBox, name);
+                if(removed)
+                {
+                    SelectedBookmark = null;
+                    StatusMessage = $"Закладка «{name}» удалена.";
+                }
+                return removed;
+            });
         }
 
-
-        internal bool CanExecute_Closed(object? obj)
+        public bool CanRename(IBookmarkEntryViewModel? bookmark)
         {
-            return true;
-        }
-        internal void Execute_Closed(object? obj)
-        {
+            bookmark = ResolveBookmark(bookmark);
+            return bookmark != null &&
+                validation.CanRenameBookmark(
+                    richTextBox,
+                    bookmark.Name,
+                    RenameTo,
+                    bookmarkService.Exists).Ok;
         }
 
+        public void Rename(IBookmarkEntryViewModel? bookmark)
+        {
+            bookmark = ResolveBookmark(bookmark);
+            if(bookmark == null)
+                return;
+
+            Execute(() =>
+            {
+                var oldName = bookmark.Name;
+                var newName = RenameTo.Trim();
+                bookmarkService.Rename(richTextBox, oldName, newName);
+                StatusMessage = $"«{oldName}» переименована в «{newName}».";
+                return true;
+            });
+        }
+
+        public bool CanNavigateTo(IBookmarkEntryViewModel? bookmark)
+        {
+            bookmark = ResolveBookmark(bookmark);
+            return bookmark != null &&
+                validation.CanNavigateTo(richTextBox, bookmark.Name).Ok;
+        }
+
+        public void NavigateTo(IBookmarkEntryViewModel? bookmark)
+        {
+            bookmark = ResolveBookmark(bookmark);
+            if(bookmark != null)
+                Execute(() => bookmarkService.NavigateTo(richTextBox, bookmark.Name));
+        }
+
+        public bool CanInsertHyperlink(IBookmarkEntryViewModel? bookmark)
+        {
+            bookmark = ResolveBookmark(bookmark);
+            return bookmark != null &&
+                validation.CanNavigateTo(richTextBox, bookmark.Name).Ok &&
+                validation.CanInsertHyperlink(richTextBox, LinkText).Ok;
+        }
+
+        public void InsertHyperlink(IBookmarkEntryViewModel? bookmark)
+        {
+            bookmark = ResolveBookmark(bookmark);
+            if(bookmark == null)
+                return;
+
+            Execute(() =>
+            {
+                bookmarkService.InsertHyperlinkTo(
+                    richTextBox,
+                    bookmark.Name,
+                    LinkText);
+                LinkText = string.Empty;
+                StatusMessage = $"Ссылка на «{bookmark.Name}» вставлена.";
+                return true;
+            });
+        }
+
+        public bool CanRebuildIndex() =>
+            validation.CanRebuildIndexFromDocument(richTextBox).Ok;
+
+        public void RebuildIndex() =>
+            Execute(() =>
+            {
+                bookmarkService.RebuildIndexFromDocument(richTextBox);
+                SelectedBookmark = null;
+                StatusMessage = $"Индекс обновлён. Закладок: {Bookmarks.Count}.";
+                return true;
+            });
+
+        private IBookmarkEntryViewModel? ResolveBookmark(
+            IBookmarkEntryViewModel? bookmark) =>
+            bookmark ?? SelectedBookmark;
+
+        private void Execute(Func<bool> action)
+        {
+            try
+            {
+                if(!action() && string.IsNullOrEmpty(StatusMessage))
+                    StatusMessage = "Операцию выполнить не удалось.";
+            }
+            catch(Exception exception)
+            {
+                StatusMessage = exception.Message;
+            }
+        }
     }
 }

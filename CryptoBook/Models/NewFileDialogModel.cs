@@ -149,7 +149,9 @@ namespace CryptoBook.Models
             _commandService = commandService;
             _windowManager = windowManager;
             _progressDialogService = progressDialogService;
-            Templates = _registry.GetAll();
+            Templates = _registry.GetAll()
+                .Where(template => template.CanCreate)
+                .ToArray();
             SelectedTemplate = Templates.FirstOrDefault();
             FileName = SelectedTemplate?.SuggestedBaseName ?? "NewFile.txt";
         }

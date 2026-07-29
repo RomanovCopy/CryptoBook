@@ -15,14 +15,18 @@ namespace CryptoBook.Services
     public class FlowDocumentLoadService: IFlowDocumentLoadService
     {
         private readonly IDispatcherService _dispatcherService;
+        private readonly IBookmarkService _bookmarkService;
 
         /// <summary>
         /// Сервис загрузки содержимого в FlowDocument (текст, RTF, изображения и т.д.).
         /// Выполняет чтение потока и обновление документа через диспетчер для UI-потока.
         /// </summary>
-        public FlowDocumentLoadService(IDispatcherService dispatcherService)
+        public FlowDocumentLoadService(
+            IDispatcherService dispatcherService,
+            IBookmarkService bookmarkService)
         {
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+            _bookmarkService = bookmarkService ?? throw new ArgumentNullException(nameof(bookmarkService));
         }
 
 
@@ -65,10 +69,12 @@ namespace CryptoBook.Services
                 if(template is ImageFileTemplate)
                 {
                     LoadImage(document, buffer);
+                    _bookmarkService.RebuildIndexFromDocument(richTextBoxService);
                     return;
                 }
 
                 LoadDocument(document, buffer, template);
+                _bookmarkService.RebuildIndexFromDocument(richTextBoxService);
             });
             progress?.Report(1.0, "Файл загружен");
         }

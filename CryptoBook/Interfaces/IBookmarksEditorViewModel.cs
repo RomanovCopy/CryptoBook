@@ -25,11 +25,15 @@ namespace CryptoBook.Interfaces
         /// <summary>
         /// выбранная закладка (для привязки в UI)
         /// </summary>
-        IBookmarkEntryViewModel? SelctedBookmark { get; set; }
+        IBookmarkEntryViewModel? SelectedBookmark { get; set; }
+        string RenameTo { get; set; }
+        string LinkText { get; set; }
+        string StatusMessage { get; }
 
-        /// <summary>
-        /// обработка изменения выделения в списке закладок
-        /// </summary>
-        ICommand SelectionChangedBookmarks { get; }
+        ICommand NavigateTo { get; }
+        ICommand Remove { get; }
+        ICommand Rename { get; }
+        ICommand InsertHyperlinkTo { get; }
+        ICommand RebuildIndexFromDocument { get; }
     }
 }

@@ -37,6 +37,7 @@ namespace CryptoBook.Models
         private readonly ISecureFileValidator _secureFileValidator;
         private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly IProgressDialogService _progressDialogService;
+        private readonly IFileLauncherService _fileLauncherService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -68,7 +69,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IFileLauncherService fileLauncherService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -85,6 +86,7 @@ namespace CryptoBook.Models
             _secureFileValidator = secureFileValidator ?? throw new ArgumentNullException(nameof(secureFileValidator));
             _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
             _progressDialogService = progressDialogService ?? throw new ArgumentNullException(nameof(progressDialogService));
+            _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(fileLauncherService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -501,10 +503,20 @@ namespace CryptoBook.Models
                 return;
             }
 
-            if(!isEncrypted && IsMediaTemplate(template))
-                OpenMediaPlayer(file.FullPath);
-            else
-                await OpenDocumentAsync(file.FullPath, template);
+            if(!isEncrypted)
+            {
+                switch(template.OpenMode)
+                {
+                    case FileOpenMode.Media:
+                        OpenMediaPlayer(file.FullPath);
+                        return;
+                    case FileOpenMode.External:
+                        await OpenExternalFileAsync(file.FullPath);
+                        return;
+                }
+            }
+
+            await OpenDocumentAsync(file.FullPath, template);
         }
 
         private bool EnsureEncryptionKey()
@@ -524,11 +536,6 @@ namespace CryptoBook.Models
                 template => template.CanHandleExtension(extension));
         }
 
-        private static bool IsMediaTemplate(IFileTemplate template)
-        {
-            return template.Id is "Image" or "Video";
-        }
-
         private void OpenMediaPlayer(string filePath)
         {
             // Медиафайл получает путь через собственный оконный scope.
@@ -538,6 +545,21 @@ namespace CryptoBook.Models
             };
             var mediaPlayerId = _windowManager.CreateWindow<MediaPlayer>(context);
             _windowManager.ShowWindow(mediaPlayerId);
+        }
+
+        private async Task OpenExternalFileAsync(string filePath)
+        {
+            var result = _fileLauncherService.Open(filePath);
+            if(result.Success)
+            {
+                _windowManager.CloseWindow(WindowId);
+                return;
+            }
+
+            _ = await _messageService.ShowMessage(
+                "File open error",
+                result.Error ??
+                $"Не удалось открыть {Path.GetFileName(filePath)} приложением по умолчанию.");
         }
 
         private async Task OpenDocumentAsync(

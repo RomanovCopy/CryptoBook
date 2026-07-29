@@ -50,6 +50,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<KeyInputModel>().As<IKeyInputModel>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionMode_Model>().As<IEncryptionMode_Model>().InstancePerLifetimeScope();
             builder.RegisterType<MediaPlayerModel>().As<IMediaPlayerModel>().InstancePerLifetimeScope();
+            builder.RegisterType<BookmarksModel>().As<IBookmarksModel>().InstancePerLifetimeScope();
+            builder.RegisterType<BookmarksEditorModel>().As<IBookmarksEditorModel>().InstancePerLifetimeScope();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -123,6 +125,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<PlainTextTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<ImageFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<VideoFileTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<PdfFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<SecureFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<XamlPackageFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<RichTextFileTemplate>().As<IFileTemplate>().SingleInstance();
@@ -150,7 +153,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<ListService>().As<IListService>().SingleInstance();
             builder.RegisterType<BookmarksService>().As<IBookmarkService>().SingleInstance();
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
-            builder.RegisterType<WebViewService>().As<IWebViewService>().SingleInstance();
             builder.RegisterType<FileClipboardService>().As<IFileClipboardService>().SingleInstance();
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();

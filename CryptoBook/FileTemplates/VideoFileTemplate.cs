@@ -12,6 +12,7 @@ namespace CryptoBook.FileTemplates
         public string DisplayName => "Видео";
         public string DefaultExtension => ".mp4";
         public string SuggestedBaseName => "New Video";
+        public FileOpenMode OpenMode => FileOpenMode.Media;
 
         public IReadOnlyCollection<string> Extensions =>
         [

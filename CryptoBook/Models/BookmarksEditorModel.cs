@@ -1,126 +1,157 @@
-﻿using CryptoBook.Infrastructure;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.Views;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace CryptoBook.Models
 {
-    internal class BookmarksEditorModel: ViewModelBase
+    /// <summary>
+    /// Управляет состоянием окна диспетчера и делегирует операции общей
+    /// модели закладок. Представление и ICommand здесь отсутствуют.
+    /// </summary>
+    public sealed class BookmarksEditorModel:
+        ViewModelBase,
+        IBookmarksEditorModel
     {
+        private const double MinimumWidth = 560;
+        private const double MinimumHeight = 360;
+
+        private readonly IBookmarksModel bookmarks;
         private readonly IWindowManager windowManager;
-        private readonly IBookmarkService bookmarkService;
 
-        internal double Width { get => width; set => SetProperty(ref width,value); }
-        double width;
-        internal double Height { get => height; set => SetProperty(ref height,value); }
-        double height;
-        internal double WindowTop { get => windowTop; set => SetProperty(ref windowTop, value); }
-        double windowTop;
-        internal double WindowLeft { get => windowLeft; set => SetProperty(ref windowLeft,value); }
-        double windowLeft;
-        internal WindowState WindowState { get => windowState; set => SetProperty(ref windowState, value); }
-        WindowState windowState;
-        internal Guid WindowId { get=>windowId; private set=>windowId=value; }
-        Guid windowId;
+        private double width;
+        private double height;
+        private double windowTop;
+        private double windowLeft;
+        private WindowState windowState;
 
-        internal ObservableCollection<IBookmarkEntryViewModel> Bookmarks => bookmarkService.Bookmarks;
+        public Guid WindowId { get; } = Guid.NewGuid();
 
-        public IBookmarkEntryViewModel? SelctedBookmark { get => selectedBookmark; set => SetProperty(ref selectedBookmark, value); }
-        private IBookmarkEntryViewModel? selectedBookmark;
-
-
-        internal BookmarksEditorModel(IWindowManager manager, IBookmarkService service)
+        public double Width { get => width; set => SetProperty(ref width, value); }
+        public double Height { get => height; set => SetProperty(ref height, value); }
+        public double WindowTop
         {
-            windowManager= manager;
-            bookmarkService= service;
-            bookmarkService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
-            WindowId = Guid.NewGuid();
+            get => windowTop;
+            set => SetProperty(ref windowTop, value);
+        }
+        public double WindowLeft
+        {
+            get => windowLeft;
+            set => SetProperty(ref windowLeft, value);
+        }
+        public WindowState WindowState
+        {
+            get => windowState;
+            set => SetProperty(ref windowState, value);
+        }
+
+        public ObservableCollection<IBookmarkEntryViewModel> Bookmarks =>
+            bookmarks.Bookmarks;
+
+        public IBookmarkEntryViewModel? SelectedBookmark
+        {
+            get => bookmarks.SelectedBookmark;
+            set => bookmarks.SelectedBookmark = value;
+        }
+
+        public string RenameTo
+        {
+            get => bookmarks.RenameTo;
+            set => bookmarks.RenameTo = value;
+        }
+
+        public string LinkText
+        {
+            get => bookmarks.LinkText;
+            set => bookmarks.LinkText = value;
+        }
+
+        public string StatusMessage => bookmarks.StatusMessage;
+
+        public BookmarksEditorModel(
+            IBookmarksModel bookmarks,
+            IWindowManager windowManager)
+        {
+            this.bookmarks = bookmarks ??
+                throw new ArgumentNullException(nameof(bookmarks));
+            this.windowManager = windowManager ??
+                throw new ArgumentNullException(nameof(windowManager));
+
+            bookmarks.PropertyChanged += (_, args) =>
+                OnPropertyChanged(args.PropertyName ?? string.Empty);
             RestoreWindowSettings();
         }
 
+        public bool CanNavigateTo(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.CanNavigateTo(bookmark);
 
+        public void NavigateTo(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.NavigateTo(bookmark);
 
+        public bool CanRemove(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.CanRemove(bookmark);
 
-        internal bool CanExecute_SelectionChangedBookmarks(object? obj)
+        public void Remove(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.Remove(bookmark);
+
+        public bool CanRename(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.CanRename(bookmark);
+
+        public void Rename(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.Rename(bookmark);
+
+        public bool CanInsertHyperlink(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.CanInsertHyperlink(bookmark);
+
+        public void InsertHyperlink(IBookmarkEntryViewModel? bookmark) =>
+            bookmarks.InsertHyperlink(bookmark);
+
+        public bool CanRebuildIndex() => bookmarks.CanRebuildIndex();
+
+        public void RebuildIndex() => bookmarks.RebuildIndex();
+
+        public void Load() => RebuildIndex();
+
+        public void Close() => windowManager.CloseWindow(WindowId);
+
+        public void Closing() => SaveWindowSettings();
+
+        public void Closed()
         {
-            return obj is not null;
         }
-        internal void Execute_SelectionChangedBookmarks(object? obj)
+
+        private void RestoreWindowSettings()
         {
-            if(obj is IBookmarkEntryViewModel vm)
-            {
-                SelctedBookmark = vm;
-            }
+            Width = Math.Max(
+                MinimumWidth,
+                Properties.Settings.Default.BookmarksEditor_Width);
+            Height = Math.Max(
+                MinimumHeight,
+                Properties.Settings.Default.BookmarksEditor_Height);
+            WindowTop = Properties.Settings.Default.BookmarksEditor_Top;
+            WindowLeft = Properties.Settings.Default.BookmarksEditor_Left;
+            WindowState = Enum.TryParse<WindowState>(
+                Properties.Settings.Default.BookmarksEditor_State,
+                out var state)
+                ? state
+                : WindowState.Normal;
         }
 
-
-
-        internal bool CanExecute_Loaded(object? obj)
+        private void SaveWindowSettings()
         {
-            return true;
-        }
-        internal void Execute_Loaded(object? obj)
-        {
-        }
-
-
-
-        internal bool CanExecute_Close(object? obj)
-        {
-            return windowManager is not null && WindowId != Guid.Empty;
-        }
-        internal void Execute_Close(object? obj)
-        {
-            windowManager.CloseWindow(windowId);
-        }
-
-
-        internal bool CanExecute_Closing(object? obj)
-        {
-            return windowManager is not null && WindowId != Guid.Empty;
-        }
-        internal void Execute_Closing(object? obj)
-        {
-            //размеры и положение окна
-            if(WindowState.ToString() == "Normal")
+            if(WindowState == WindowState.Normal)
             {
                 Properties.Settings.Default.BookmarksEditor_Width = Width;
                 Properties.Settings.Default.BookmarksEditor_Height = Height;
                 Properties.Settings.Default.BookmarksEditor_Left = WindowLeft;
                 Properties.Settings.Default.BookmarksEditor_Top = WindowTop;
             }
-            Properties.Settings.Default.WindowState = WindowState.ToString();
+
+            Properties.Settings.Default.BookmarksEditor_State =
+                WindowState.ToString();
             Properties.Settings.Default.Save();
         }
-
-
-        internal bool CanExecute_Closed(object? obj)
-        {
-            return true;
-        }
-        internal void Execute_Closed(object? obj)
-        {
-        }
-
-
-        private void RestoreWindowSettings()
-        {
-            //восстанавливаем размеры и позицию окна
-            Width = Properties.Settings.Default.BookmarksEditor_Width;
-            Height = Properties.Settings.Default.BookmarksEditor_Height;
-            WindowTop = Properties.Settings.Default.BookmarksEditor_Top;
-            WindowLeft = Properties.Settings.Default.BookmarksEditor_Left;
-            //восстанавливаем состояние окна
-            var state = Properties.Settings.Default.BookmarksEditor_State;
-            WindowState = state == "Normal" ? WindowState.Normal : state == "Minimized" ? WindowState.Minimized : state == "Maximized" ? WindowState.Maximized : WindowState.Minimized;
-        }
-
     }
 }
