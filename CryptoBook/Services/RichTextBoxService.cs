@@ -19,7 +19,6 @@ using FontStyle = System.Windows.FontStyle;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.CodeDom;
 namespace CryptoBook.Services
@@ -29,6 +28,7 @@ namespace CryptoBook.Services
 
         private TextRange last_Selection;
         private IParagraphFactory paragraphFactory;
+        private readonly IUriNavigationService uriNavigationService;
         private readonly Dictionary<DependencyProperty, object?> typingProperties = new();
         private Paragraph? typingAnchorParagraph;
         private int typingAnchorTextOffset;
@@ -73,16 +73,28 @@ namespace CryptoBook.Services
         bool IRichTextBoxService.CanRedo => this.CanRedo;
 
 
-        public RichTextBoxService( IParagraphFactory paragraphFactory)
+        public RichTextBoxService(
+            IParagraphFactory paragraphFactory,
+            IUriNavigationService uriNavigationService)
         {
-            this.paragraphFactory = paragraphFactory;
+            this.paragraphFactory = paragraphFactory ??
+                throw new ArgumentNullException(nameof(paragraphFactory));
+            this.uriNavigationService = uriNavigationService ??
+                throw new ArgumentNullException(nameof(uriNavigationService));
+            var hyperlinkStyle = new Style(typeof(Hyperlink));
+            hyperlinkStyle.Setters.Add(
+                new Setter(Hyperlink.CursorProperty, System.Windows.Input.Cursors.Hand));
+            this.Resources[typeof(Hyperlink)] = hyperlinkStyle;
+
             this.LostFocus += RichTextBoxService_LostFocus;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
             this.PreviewTextInput += RichTextBoxService_PreviewTextInput;
+            this.PreviewMouseLeftButtonDown += RichTextBoxService_PreviewMouseLeftButtonDown;
             this.AddHandler(
                 Hyperlink.RequestNavigateEvent,
                 new RequestNavigateEventHandler(RichTextBoxService_RequestNavigate));
             InitializeDocument();
+            this.IsDocumentEnabled = true;
             this.AcceptsTab = true; // Разрешаем табы
         }
 
@@ -236,15 +248,31 @@ namespace CryptoBook.Services
             e.Handled = true;
             ((IRichTextBoxService)this).InsertTextAtCaret(e.Text);
         }
-        private void RichTextBoxService_RequestNavigate(object sender, RequestNavigateEventArgs e)
+
+        private void RichTextBoxService_PreviewMouseLeftButtonDown(
+            object sender,
+            MouseButtonEventArgs e)
         {
-            if(e.Uri == null)
+            var position = GetPositionFromPoint(e.GetPosition(this), snapToText: true);
+            var hyperlink = FindHyperlink(position);
+            if(hyperlink?.NavigateUri == null)
                 return;
 
-            if(!e.Uri.IsAbsoluteUri)
+            e.Handled = TryNavigate(hyperlink.NavigateUri);
+        }
+
+        private void RichTextBoxService_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            if(e.Uri != null)
+                e.Handled = TryNavigate(e.Uri);
+        }
+
+        private bool TryNavigate(Uri uri)
+        {
+            if(!uri.IsAbsoluteUri)
             {
                 var anchorName = Uri.UnescapeDataString(
-                    e.Uri.OriginalString.TrimStart('#'));
+                    uri.OriginalString.TrimStart('#'));
                 var target = FindNamedTextElement(anchorName);
                 if(target != null)
                 {
@@ -253,16 +281,40 @@ namespace CryptoBook.Services
                     this.CaretPosition = position;
                     target.BringIntoView();
                     this.Focus();
-                    e.Handled = true;
+                    return true;
                 }
-                return;
+                return false;
             }
 
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri)
+            uriNavigationService.TryOpen(uri);
+            return true;
+        }
+
+        private static Hyperlink? FindHyperlink(TextPointer? position)
+        {
+            if(position == null)
+                return null;
+
+            return FindAncestorHyperlink(position.Parent) ??
+                   FindAncestorHyperlink(
+                       position.GetAdjacentElement(LogicalDirection.Forward) as DependencyObject) ??
+                   FindAncestorHyperlink(
+                       position.GetAdjacentElement(LogicalDirection.Backward) as DependencyObject);
+        }
+
+        private static Hyperlink? FindAncestorHyperlink(DependencyObject? current)
+        {
+            while(current != null)
             {
-                UseShellExecute = true
-            });
-            e.Handled = true;
+                if(current is Hyperlink hyperlink)
+                    return hyperlink;
+
+                current = current is FrameworkContentElement element
+                    ? element.Parent
+                    : null;
+            }
+
+            return null;
         }
 
         private TextElement? FindNamedTextElement(string name)

@@ -88,10 +88,19 @@ namespace CryptoBook.Services
 
         public void InsertHyperlink(string url, string displayText)
         {
-            if(!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            if(service.IsReadOnly ||
+               !Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+               (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
                 return;
 
             var selection = service.Selection;
+            if(IsInsideHyperlink(selection.Start) ||
+               IsInsideHyperlink(selection.End) ||
+               SelectionContainsHyperlink(selection))
+            {
+                return;
+            }
+
             service.BeginChange();
             try
             {
@@ -119,6 +128,43 @@ namespace CryptoBook.Services
             {
                 service.EndChange();
             }
+        }
+
+        private static bool IsInsideHyperlink(TextPointer position)
+        {
+            return IsHyperlinkOrDescendant(position.Parent) ||
+                   IsHyperlinkOrDescendant(
+                       position.GetAdjacentElement(LogicalDirection.Forward) as DependencyObject) ||
+                   IsHyperlinkOrDescendant(
+                       position.GetAdjacentElement(LogicalDirection.Backward) as DependencyObject);
+        }
+
+        private static bool IsHyperlinkOrDescendant(DependencyObject? current)
+        {
+            while(current != null)
+            {
+                if(current is Hyperlink)
+                    return true;
+
+                current = current is FrameworkContentElement element
+                    ? element.Parent
+                    : null;
+            }
+
+            return false;
+        }
+
+        private static bool SelectionContainsHyperlink(TextSelection selection)
+        {
+            for(TextPointer? position = selection.Start;
+                position != null && position.CompareTo(selection.End) < 0;
+                position = position.GetNextContextPosition(LogicalDirection.Forward))
+            {
+                if(position.GetAdjacentElement(LogicalDirection.Forward) is Hyperlink)
+                    return true;
+            }
+
+            return false;
         }
 
         public void ClearAllFormatting()

@@ -220,7 +220,9 @@ public sealed class FontTypingTests
 
     private static (IRichTextBoxService Service, FontService Fonts) CreateServices(params Run[] runs)
     {
-        IRichTextBoxService service = new RichTextBoxService(new TestParagraphFactory());
+        IRichTextBoxService service = new RichTextBoxService(
+            new TestParagraphFactory(),
+            new TestUriNavigationService());
         var paragraph = new Paragraph();
         foreach(var run in runs)
             paragraph.Inlines.Add(run);

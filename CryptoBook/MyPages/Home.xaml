@@ -28,11 +28,58 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:FontFormatBar}}"  HorizontalAlignment="Stretch" Grid.Column="0"  Margin="{StaticResource CurrentMargin}"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:TextFormatBar}}"  HorizontalAlignment="Stretch" Grid.Column="1"  Margin="{StaticResource CurrentMargin}"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:ListFormatBar}}" HorizontalAlignment="Stretch" Grid.Column="2" Margin="{StaticResource CurrentMargin}"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:BookmarksBar}}" HorizontalAlignment="Stretch" Grid.Column="3" Margin="{StaticResource CurrentMargin}"/>
+
+            <ToggleButton Grid.Column="4"
+                          Margin="{StaticResource CurrentMargin}"
+                          Style="{StaticResource EditorPanelToggleStyle}"
+                          IsChecked="{Binding DocumentView.IsPreviewMode, Mode=OneWay}"
+                          Command="{Binding DocumentView.ToggleView}"
+                          ToolTip="Переключить режим документа">
+                <StackPanel Orientation="Horizontal">
+                    <Grid Width="16" Height="16" Margin="0,0,6,0">
+                        <Path Data="{StaticResource Icon.ViewMode}"
+                              Width="16"
+                              Height="16">
+                            <Path.Style>
+                                <Style TargetType="{x:Type Path}"
+                                       BasedOn="{StaticResource EditorToolbarIconStyle}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DocumentView.IsPreviewMode}"
+                                                     Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                        <Path Data="{StaticResource Icon.EditMode}"
+                              Width="16"
+                              Height="16">
+                            <Path.Style>
+                                <Style TargetType="{x:Type Path}"
+                                       BasedOn="{StaticResource EditorToolbarIconStyle}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DocumentView.IsPreviewMode}"
+                                                     Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                    </Grid>
+                    <TextBlock Text="{Binding DocumentView.ToggleViewText}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </ToggleButton>
         </Grid>
         <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:Richtextbox}}"
                             Grid.Row="1" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"

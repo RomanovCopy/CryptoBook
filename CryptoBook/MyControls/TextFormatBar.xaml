@@ -90,6 +90,18 @@
                         <Path Data="{StaticResource Icon.LineHeightDecrease}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
+
+                    <Border Width="1" Height="22"
+                            Margin="4,5"
+                            Background="#557CA0CC"/>
+
+                    <Button Style="{StaticResource EditorToolButtonStyle}"
+                            Command="{Binding InsertHyperlink}"
+                            ToolTip="Вставить гиперссылку">
+                        <ContentControl Content="{StaticResource Icon_InsertHyperlink}"
+                                        Width="24"
+                                        Height="24"/>
+                    </Button>
                 </StackPanel>
             </Border>
         </Popup>

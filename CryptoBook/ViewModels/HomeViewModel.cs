@@ -12,13 +12,17 @@ namespace CryptoBook.ViewModels
     {
         private readonly HomeModel homeModel;
         private readonly ILifetimeScope scope;
+        public IRichtextboxViewModel DocumentView { get; }
 
         public Action<object> BehaviorReady { get => behaviorReady; set => behaviorReady = value; }
         Action<object> behaviorReady;
 
-        public HomeViewModel(ILifetimeScope scope)
+        public HomeViewModel(
+            ILifetimeScope scope,
+            IRichtextboxViewModel documentView)
         {
             this.scope = scope;
+            DocumentView = documentView ?? throw new ArgumentNullException(nameof(documentView));
             homeModel = new(scope);
             homeModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }

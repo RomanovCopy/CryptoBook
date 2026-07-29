@@ -12,5 +12,6 @@ namespace CryptoBook.Interfaces
         public ICommand SetTextAlignment { get; }
         public ICommand SetParagraphIndent { get; }
         public ICommand SetLineHeight { get; }
+        public ICommand InsertHyperlink { get; }
     }
 }

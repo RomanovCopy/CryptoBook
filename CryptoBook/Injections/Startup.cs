@@ -52,6 +52,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MediaPlayerModel>().As<IMediaPlayerModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarksModel>().As<IBookmarksModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarksEditorModel>().As<IBookmarksEditorModel>().InstancePerLifetimeScope();
+            builder.RegisterType<RichtextboxModel>().As<IRichtextboxModel>().InstancePerLifetimeScope();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -119,6 +120,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
             builder.RegisterType<DirectoryNameDialog>().InstancePerDependency();
+            builder.RegisterType<HyperlinkDialog>().InstancePerDependency();
             builder.RegisterType<MediaPlayer>().InstancePerDependency();
                                                                                                          
             //FileTemplate
@@ -177,6 +179,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
+            builder.RegisterType<DocumentPreviewService>().As<IDocumentPreviewService>().InstancePerDependency();
+            builder.RegisterType<UriNavigationService>().As<IUriNavigationService>().SingleInstance();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
             builder.RegisterType<ImageService>().As<IImageService>().InstancePerDependency();
             builder.RegisterType<MediaPlayerService>().As<IMediaPlayerService>().InstancePerDependency();

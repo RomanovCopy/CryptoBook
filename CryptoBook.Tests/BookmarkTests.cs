@@ -223,7 +223,9 @@ public sealed class BookmarkTests
     private static IRichTextBoxService CreateRichText(params string[] texts)
     {
         IRichTextBoxService richText =
-            new RichTextBoxService(new TestParagraphFactory());
+            new RichTextBoxService(
+                new TestParagraphFactory(),
+                new TestUriNavigationService());
         richText.Document.Blocks.Clear();
         foreach(var text in texts)
             richText.Document.Blocks.Add(new Paragraph(new Run(text)));

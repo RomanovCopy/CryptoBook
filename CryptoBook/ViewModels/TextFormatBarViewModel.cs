@@ -10,9 +10,12 @@ namespace CryptoBook.ViewModels
     {
         private readonly TextFormatBarModel model;
 
-        public TextFormatBarViewModel(IRichTextBoxService richTextBoxService, ITextFormatService formatService)
+        public TextFormatBarViewModel(
+            IRichTextBoxService richTextBoxService,
+            ITextFormatService formatService,
+            IWindowManager? windowManager = null)
         {
-            model= new TextFormatBarModel(richTextBoxService, formatService );
+            model= new TextFormatBarModel(richTextBoxService, formatService, windowManager);
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -26,6 +29,10 @@ namespace CryptoBook.ViewModels
 
         public ICommand SetLineHeight => setLineHeight ??= new RelayCommand(model.Execute_SetLineHeight, model.CanExecute_SetLineHeight);
         RelayCommand? setLineHeight;
+
+        public ICommand InsertHyperlink => insertHyperlink ??=
+            new RelayCommand(model.Execute_InsertHyperlink, model.CanExecute_InsertHyperlink);
+        RelayCommand? insertHyperlink;
 
 
         // IViewModel implementation

@@ -1,20 +1,70 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.Models;
 
 using System.Windows.Input;
+using System.Windows.Documents;
 
 namespace CryptoBook.ViewModels
 {
     public class RichtextboxViewModel: ViewModelBase, IRichtextboxViewModel
     {
-        private readonly RichtextboxModel richtextboxModel;
+        private readonly IRichtextboxModel richtextboxModel;
+        private readonly IRichTextBoxService richTextBox;
+        private readonly IDocumentPreviewService previewService;
+        private readonly IUriNavigationService uriNavigationService;
+        private bool isPreviewMode;
+        private FlowDocument? previewDocument;
 
-        public RichtextboxViewModel()
+        public RichtextboxViewModel(
+            IRichtextboxModel richtextboxModel,
+            IRichTextBoxService richTextBox,
+            IDocumentPreviewService previewService,
+            IUriNavigationService uriNavigationService)
         {
-            richtextboxModel = new();
+            this.richtextboxModel = richtextboxModel ??
+                throw new ArgumentNullException(nameof(richtextboxModel));
+            this.richTextBox = richTextBox ?? throw new ArgumentNullException(nameof(richTextBox));
+            this.previewService = previewService ?? throw new ArgumentNullException(nameof(previewService));
+            this.uriNavigationService = uriNavigationService ??
+                throw new ArgumentNullException(nameof(uriNavigationService));
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
+
+        public bool IsPreviewMode
+        {
+            get => isPreviewMode;
+            private set
+            {
+                if(SetProperty(ref isPreviewMode, value))
+                    OnPropertyChanged(nameof(ModeLabel), nameof(ToggleViewText));
+            }
+        }
+
+        public string ModeLabel =>
+            IsPreviewMode ? "Постраничный просмотр" : "Редактирование";
+
+        public string ToggleViewText =>
+            IsPreviewMode ? "Редактор" : "Просмотр";
+
+        public FlowDocument? PreviewDocument
+        {
+            get => previewDocument;
+            private set => SetProperty(ref previewDocument, value);
+        }
+
+        public ICommand ToggleView => toggleView ??=
+            new RelayCommand(_ => SetPreviewMode(!IsPreviewMode));
+        private RelayCommand? toggleView;
+
+        public ICommand OpenHyperlink => openHyperlink ??=
+            new RelayCommand(
+                parameter =>
+                {
+                    if(parameter is Uri uri)
+                        uriNavigationService.TryOpen(uri);
+                },
+                parameter => parameter is Uri);
+        private RelayCommand? openHyperlink;
 
         public ICommand Loaded => loaded ??=
             new RelayCommand(richtextboxModel.Execute_Loaded, richtextboxModel.CanExecute_Loaded);
@@ -31,5 +81,22 @@ namespace CryptoBook.ViewModels
         public ICommand Closed => closed ??=
             new RelayCommand(richtextboxModel.Execute_Closed, richtextboxModel.CanExecute_Closed);
         private RelayCommand? closed;
+
+        private void SetPreviewMode(bool previewMode)
+        {
+            if(previewMode == IsPreviewMode)
+                return;
+
+            if(!previewMode)
+            {
+                PreviewDocument = null;
+                IsPreviewMode = false;
+                richTextBox.Focus();
+                return;
+            }
+
+            PreviewDocument = previewService.CreatePreview(richTextBox.Document);
+            IsPreviewMode = true;
+        }
     }
 }

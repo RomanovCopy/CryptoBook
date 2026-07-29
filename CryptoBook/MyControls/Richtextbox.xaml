@@ -7,22 +7,52 @@
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
              xmlns:services="clr-namespace:CryptoBook.Services"
+             xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d"
              d:DataContext="{x:Type interfaces:IRichtextboxViewModel}">
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IRichtextboxViewModel}"/>
     </UserControl.DataContext>
-
     <Border BorderBrush="Black" BorderThickness="1,1,1,0">
-        <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
-            <ContentControl.Resources>
-                <Style TargetType="{x:Type services:RichTextBoxService}">
-                    <Setter Property="ContextMenu"
-                            Value="{markup:ResolveService ServiceType={x:Type local:RichTextEditorContextMenu}}"/>
-                </Style>
-            </ContentControl.Resources>
-        </ContentControl>
+        <Grid>
+            <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+                <ContentControl.Resources>
+                    <Style TargetType="{x:Type services:RichTextBoxService}">
+                        <Setter Property="ContextMenu"
+                                Value="{markup:ResolveService ServiceType={x:Type local:RichTextEditorContextMenu}}"/>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
+
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <FlowDocumentPageViewer x:Name="PageViewer"
+                                        Document="{Binding PreviewDocument}"
+                                        behaviors:HyperlinkCommandBehavior.Command="{Binding OpenHyperlink}"
+                                        behaviors:DocumentPageKeyboardNavigationBehavior.IsEnabled="True"
+                                        Zoom="100"/>
+            </Grid>
+        </Grid>
     </Border>
 
     <i:Interaction.Triggers>

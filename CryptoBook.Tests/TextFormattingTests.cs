@@ -1,7 +1,12 @@
 using CryptoBook.Composition;
+using CryptoBook.Behaviors;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Models;
 using CryptoBook.Services;
+using CryptoBook.ViewModels;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using Xunit;
@@ -322,12 +327,105 @@ public sealed class TextFormattingTests
         Assert.Equal("aXb", new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text);
         var link = Assert.Single(paragraph.Inlines.OfType<Hyperlink>());
         Assert.Equal(new Uri("https://example.com"), link.NavigateUri);
+        Assert.Equal(System.Windows.Input.Cursors.Hand, link.Cursor);
+        Assert.True(richText.Service.IsDocumentEnabled);
+    }
+
+    [WpfFact]
+    public void HyperlinkInsertion_RejectsNonHttpSchemes()
+    {
+        var (richText, formatting) = CreateDocument("text");
+
+        formatting.InsertHyperlink("file:///C:/secret.txt", "local");
+
+        var paragraph = (Paragraph)richText.Document.Blocks.FirstBlock!;
+        Assert.Empty(paragraph.Inlines.OfType<Hyperlink>());
+    }
+
+    [WpfFact]
+    public void HyperlinkInsertion_DoesNotCreateNestedHyperlink()
+    {
+        var (richText, formatting) = CreateDocument("ab");
+        var paragraph = (Paragraph)richText.Document.Blocks.FirstBlock!;
+        var run = (Run)paragraph.Inlines.FirstInline!;
+        richText.CaretPosition = run.ContentStart.GetPositionAtOffset(1)!;
+        richText.ClearSelection();
+        formatting.InsertHyperlink("https://example.com", "XY");
+        var original = Assert.Single(paragraph.Inlines.OfType<Hyperlink>());
+        var linkedRun = Assert.IsType<Run>(original.Inlines.FirstInline);
+        richText.CaretPosition = linkedRun.ContentStart.GetPositionAtOffset(1)!;
+        richText.ClearSelection();
+
+        formatting.InsertHyperlink("https://openai.com", "nested");
+
+        Assert.Single(paragraph.Inlines.OfType<Hyperlink>());
+        Assert.Equal("aXYb", new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text);
+    }
+
+    [WpfFact]
+    public void PreviewMode_UsesIndependentDocumentAndReturnsToEditing()
+    {
+        var (richText, _) = CreateDocument("preview text");
+        var navigator = new StubUriNavigationService();
+        var viewModel = new RichtextboxViewModel(
+            new RichtextboxModel(),
+            richText,
+            new DocumentPreviewService(),
+            navigator);
+
+        viewModel.ToggleView.Execute(null);
+
+        Assert.True(viewModel.IsPreviewMode);
+        Assert.NotNull(viewModel.PreviewDocument);
+        Assert.NotSame(richText.Document, viewModel.PreviewDocument);
+        Assert.Contains(
+            "preview text",
+            new TextRange(
+                viewModel.PreviewDocument!.ContentStart,
+                viewModel.PreviewDocument.ContentEnd).Text);
+
+        viewModel.ToggleView.Execute(null);
+
+        Assert.False(viewModel.IsPreviewMode);
+        Assert.Null(viewModel.PreviewDocument);
+    }
+
+    [WpfFact]
+    public void PreviewHyperlinkCommand_DelegatesToNavigationService()
+    {
+        var (richText, _) = CreateDocument("text");
+        var navigator = new StubUriNavigationService();
+        var viewModel = new RichtextboxViewModel(
+            new RichtextboxModel(),
+            richText,
+            new DocumentPreviewService(),
+            navigator);
+        var uri = new Uri("https://example.com");
+
+        viewModel.OpenHyperlink.Execute(uri);
+
+        Assert.Equal(uri, navigator.LastOpenedUri);
+    }
+
+    [WpfFact]
+    public void HyperlinkCommandBehavior_RegistersCompatibleRoutedEventHandler()
+    {
+        var viewer = new FlowDocumentPageViewer();
+        var command = new RelayCommand(_ => { });
+
+        HyperlinkCommandBehavior.SetCommand(viewer, command);
+        DocumentPageKeyboardNavigationBehavior.SetIsEnabled(viewer, true);
+        Assert.True(DocumentPageKeyboardNavigationBehavior.GetIsEnabled(viewer));
+        DocumentPageKeyboardNavigationBehavior.SetIsEnabled(viewer, false);
+        HyperlinkCommandBehavior.SetCommand(viewer, null);
     }
 
     private static (IRichTextBoxService RichText, TextFormatService Formatting) CreateDocument(
         params string[] paragraphs)
     {
-        IRichTextBoxService richText = new RichTextBoxService(new TestParagraphFactory());
+        IRichTextBoxService richText = new RichTextBoxService(
+            new TestParagraphFactory(),
+            new TestUriNavigationService());
         richText.Document.Blocks.Clear();
         foreach(var text in paragraphs)
             richText.Document.Blocks.Add(new Paragraph(new Run(text)));
@@ -346,6 +444,17 @@ public sealed class TextFormattingTests
             if(inline != null)
                 paragraph.Inlines.Add(inline);
             return paragraph;
+        }
+    }
+
+    private sealed class StubUriNavigationService: IUriNavigationService
+    {
+        public Uri? LastOpenedUri { get; private set; }
+
+        public bool TryOpen(Uri uri)
+        {
+            LastOpenedUri = uri;
+            return true;
         }
     }
 }

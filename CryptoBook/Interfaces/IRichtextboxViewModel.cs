@@ -6,5 +6,11 @@ namespace CryptoBook.Interfaces
     /// </summary>
     public interface IRichtextboxViewModel: IViewModel
     {
+        bool IsPreviewMode { get; }
+        string ModeLabel { get; }
+        string ToggleViewText { get; }
+        System.Windows.Documents.FlowDocument? PreviewDocument { get; }
+        System.Windows.Input.ICommand ToggleView { get; }
+        System.Windows.Input.ICommand OpenHyperlink { get; }
     }
 }

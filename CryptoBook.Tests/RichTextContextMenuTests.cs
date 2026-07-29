@@ -74,7 +74,9 @@ public sealed class RichTextContextMenuTests
     private static TestContext CreateContext(string text)
     {
         var paragraphFactory = new TestParagraphFactory();
-        IRichTextBoxService service = new RichTextBoxService(paragraphFactory);
+        IRichTextBoxService service = new RichTextBoxService(
+            paragraphFactory,
+            new TestUriNavigationService());
         var inline = new InlineService(service, new ReflectionPropertyAccessor(), paragraphFactory);
         var fonts = new FontService(service, inline);
         var textFormatService = new RecordingTextFormatService();
