@@ -10,6 +10,7 @@ namespace CryptoBook.Services
     public sealed class DocumentSession: IDocumentSession
     {
         private string? filePath;
+        private string displayName = string.Empty;
         private IFileTemplate? template;
         private bool isDirty;
 
@@ -33,6 +34,19 @@ namespace CryptoBook.Services
                 }
 
                 filePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string DisplayName
+        {
+            get => displayName;
+            private set
+            {
+                if(string.Equals(displayName, value, StringComparison.Ordinal))
+                    return;
+
+                displayName = value;
                 OnPropertyChanged();
             }
         }
@@ -83,8 +97,22 @@ namespace CryptoBook.Services
             ArgumentNullException.ThrowIfNull(template);
 
             FilePath = Path.GetFullPath(filePath);
+            DisplayName = Path.GetFileName(FilePath);
             Template = template;
             IsDirty = false;
+        }
+
+        public void Rename(string filePath)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+            FilePath = Path.GetFullPath(filePath);
+            DisplayName = Path.GetFileName(FilePath);
+        }
+
+        public void SetDisplayName(string displayName)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
+            DisplayName = Path.GetFileName(displayName.Trim());
         }
 
         private void OnDocumentChanged(

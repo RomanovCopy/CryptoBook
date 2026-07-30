@@ -38,11 +38,11 @@
             <StackPanel x:Name="panel" Orientation="Horizontal">
                 <Rectangle x:Name="ColorRectangle" Width="16" Height="16" Margin="2"
                    Fill="{Binding Converter={markup:ResolveConverter ConverterType={x:Type converters:ColorToColorConverter}}}"
-                   Stroke="Black" StrokeThickness="1" 
+                   Stroke="{DynamicResource CurrentBorderColor}" StrokeThickness="1"
                            Visibility="Collapsed"/>
                 <TextBlock x:Name="textblock" Text="{Binding}" Margin="4,0,0,0"
                            TextDecorations="None"
-                           Foreground="Black"
+                           Foreground="{DynamicResource CurrentInputForeground}"
                            Background="Transparent" 
                            FontWeight="Medium"
                            FontStretch="Normal"/>
@@ -85,6 +85,9 @@
             <Grid>
                 <ToggleButton x:Name="ToggleButton" Style="{StaticResource RoundedToggleButtonStyle}"
                      Focusable="false" Margin="3,0,3,0"
+                     Background="{DynamicResource CurrentInputBackground}"
+                     Foreground="{DynamicResource CurrentInputForeground}"
+                     BorderBrush="{DynamicResource CurrentBorderColor}"
                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, 
                      RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
                     <StackPanel Orientation="Horizontal">
@@ -99,7 +102,10 @@
                     Focusable="False" PopupAnimation="Slide">
                     <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}"
                         MinWidth="{TemplateBinding ActualWidth}">
-                        <Border BorderThickness="1" Background="White" BorderBrush="Gray" CornerRadius="5">
+                        <Border BorderThickness="1"
+                                Background="{DynamicResource CurrentInputBackground}"
+                                BorderBrush="{DynamicResource CurrentBorderColor}"
+                                CornerRadius="5">
                             <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                 <StackPanel IsItemsHost="True" />
                             </ScrollViewer>
@@ -297,6 +303,28 @@
                                     <i:InvokeCommandAction 
                                     Command="{Binding SetFontBackgroundCommand,UpdateSourceTrigger=PropertyChanged}" 
                                     CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" x:Name="panelDocumentBackColor">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
+                            <Path Data="{StaticResource Icon.DocumentBackground}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
+                            <TextBlock Text="Бумага" Style="{StaticResource textBlockHeader}"/>
+                        </StackPanel>
+                        <ComboBox ItemsSource="{Binding FontColors}"
+                                  ToolTip="Фоновый цвет документа"
+                                  SelectedItem="{Binding DocumentBackground, Mode=TwoWay}"
+                                  Width="100"
+                                  Height="24"
+                                  ItemTemplate="{StaticResource ComboBoxItemTemplate}"
+                                  Tag="isColor"
+                                  Template="{StaticResource ComboBoxTemplate}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction
+                                        Command="{Binding SetDocumentBackgroundCommand, UpdateSourceTrigger=PropertyChanged}"
+                                        CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ComboBox>

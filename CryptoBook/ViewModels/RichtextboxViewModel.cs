@@ -14,6 +14,7 @@ namespace CryptoBook.ViewModels
         private readonly IUriNavigationService uriNavigationService;
         private readonly IMenuFileViewModel menuFile;
         private bool isPreviewMode;
+        private bool isFitToWindow = true;
         private FlowDocument? previewDocument;
 
         public RichtextboxViewModel(
@@ -56,9 +57,33 @@ namespace CryptoBook.ViewModels
             private set => SetProperty(ref previewDocument, value);
         }
 
+        public bool IsFitToWindow
+        {
+            get => isFitToWindow;
+            private set
+            {
+                if(SetProperty(ref isFitToWindow, value))
+                    OnPropertyChanged(
+                        nameof(FitToWindowText),
+                        nameof(FitToWindowGlyph));
+            }
+        }
+
+        public string FitToWindowText =>
+            IsFitToWindow ? "Масштаб 100%" : "Вписать в окно";
+
+        public string FitToWindowGlyph =>
+            IsFitToWindow ? "\uE73F" : "\uE740";
+
         public ICommand ToggleView => toggleView ??=
             new RelayCommand(_ => SetPreviewMode(!IsPreviewMode));
         private RelayCommand? toggleView;
+
+        public ICommand ToggleFitToWindow => toggleFitToWindow ??=
+            new RelayCommand(
+                _ => IsFitToWindow = !IsFitToWindow,
+                _ => IsPreviewMode);
+        private RelayCommand? toggleFitToWindow;
 
         public ICommand OpenHyperlink => openHyperlink ??=
             new RelayCommand(

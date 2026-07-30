@@ -8,7 +8,7 @@
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d" Background="{StaticResource CurrentWindowBackground}"
+        mc:Ignorable="d" Background="{DynamicResource CurrentWindowBackground}"
         d:DataContext="{x:Type interfaces:INewFileDialogViewModel}"
         WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight" MinWidth="520" MinHeight="300"
@@ -96,7 +96,10 @@
                    Margin="15,0,0,0"/>-->
 
         <!-- Ошибка -->
-        <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Foreground="Tomato" TextWrapping="Wrap"
+        <TextBlock Grid.Row="6"
+                   Grid.ColumnSpan="2"
+                   Foreground="{DynamicResource CurrentErrorForeground}"
+                   TextWrapping="Wrap"
                Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
 
         <!-- Кнопки -->

@@ -58,6 +58,12 @@ public sealed class RichTextContextMenuTests
     public void ClearDocument_RemainsASeparateDocumentLevelCommand()
     {
         var context = CreateContext("document content");
+        var oldParagraph =
+            (Paragraph)context.Service.Document.Blocks.FirstBlock!;
+        oldParagraph.LineHeight = 96;
+        oldParagraph.LineStackingStrategy =
+            LineStackingStrategy.BlockLineHeight;
+        context.Service.Document.LineHeight = 96;
 
         Assert.True(context.ViewModel.ClearDocument.CanExecute(null));
 
@@ -68,7 +74,71 @@ public sealed class RichTextContextMenuTests
             new TextRange(
                 context.Service.Document.ContentStart,
                 context.Service.Document.ContentEnd).Text.TrimEnd('\r', '\n'));
+        var clearedParagraph =
+            Assert.IsAssignableFrom<Paragraph>(
+                context.Service.Document.Blocks.FirstBlock);
+        Assert.NotSame(oldParagraph, clearedParagraph);
+        Assert.True(double.IsNaN(clearedParagraph.LineHeight));
+        Assert.Equal(
+            LineStackingStrategy.MaxHeight,
+            clearedParagraph.LineStackingStrategy);
+        Assert.True(double.IsNaN(context.Service.Document.LineHeight));
         Assert.False(context.ViewModel.ClearDocument.CanExecute(null));
+    }
+
+    [WpfFact]
+    public void RemoveEmptyParagraphs_PreservesContentAndImages()
+    {
+        var context = CreateContext("content");
+        var document = context.Service.Document;
+        var contentParagraph =
+            (Paragraph)document.Blocks.FirstBlock!;
+        var empty = new Paragraph();
+        var whitespace = new Paragraph(
+            new Run(" \t\u200B "));
+        var imageParagraph = new Paragraph(
+            new InlineUIContainer(new System.Windows.Controls.Image()));
+        var namedAnchor = new Paragraph
+        {
+            Name = "bookmark_target"
+        };
+        document.Blocks.InsertBefore(contentParagraph, empty);
+        document.Blocks.InsertAfter(empty, whitespace);
+        document.Blocks.InsertAfter(
+            contentParagraph,
+            imageParagraph);
+        document.Blocks.InsertAfter(imageParagraph, namedAnchor);
+        context.Service.CaretPosition = whitespace.ContentStart;
+
+        Assert.True(
+            context.ViewModel.RemoveEmptyParagraphs.CanExecute(null));
+
+        context.ViewModel.RemoveEmptyParagraphs.Execute(null);
+
+        Assert.Equal(3, document.Blocks.Count);
+        Assert.Contains(contentParagraph, document.Blocks);
+        Assert.Contains(imageParagraph, document.Blocks);
+        Assert.Contains(namedAnchor, document.Blocks);
+        Assert.NotNull(context.Service.CaretPosition.Paragraph);
+        Assert.False(
+            context.ViewModel.RemoveEmptyParagraphs.CanExecute(null));
+    }
+
+    [WpfFact]
+    public void RemoveEmptyParagraphs_LeavesOneEditableParagraph()
+    {
+        var context = CreateContext(string.Empty);
+        context.Service.Document.Blocks.Add(new Paragraph());
+        context.Service.Document.Blocks.Add(
+            new Paragraph(new Run("\u200B")));
+
+        int removed = context.Service.RemoveEmptyParagraphs();
+
+        Assert.Equal(2, removed);
+        Assert.Single(context.Service.Document.Blocks);
+        Assert.IsAssignableFrom<Paragraph>(
+            context.Service.Document.Blocks.FirstBlock);
+        Assert.NotNull(context.Service.CaretPosition.Paragraph);
     }
 
     private static TestContext CreateContext(string text)
@@ -78,7 +148,10 @@ public sealed class RichTextContextMenuTests
             paragraphFactory,
             new TestUriNavigationService());
         var inline = new InlineService(service, new ReflectionPropertyAccessor(), paragraphFactory);
-        var fonts = new FontService(service, inline);
+        var fonts = new FontService(
+            service,
+            inline,
+            new DocumentBackgroundPreferenceStoreStub());
         var textFormatService = new RecordingTextFormatService();
         var listService = new RecordingListService();
 
@@ -169,6 +242,16 @@ public sealed class RichTextContextMenuTests
         public void ToggleBulleted() => BulletedCalls++;
         public void ToggleNumbered(int startIndex = 1) => NumberedCalls++;
         public void ClearLists() => ClearCalls++;
+    }
+
+    private sealed class DocumentBackgroundPreferenceStoreStub:
+        IDocumentBackgroundPreferenceStore
+    {
+        public System.Drawing.Color? Load() => null;
+
+        public void Save(System.Drawing.Color color)
+        {
+        }
     }
 
     private sealed class RecordingTextFormatService: ITextFormatService

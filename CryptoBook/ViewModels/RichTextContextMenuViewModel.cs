@@ -26,6 +26,14 @@ namespace CryptoBook.ViewModels
             new RelayCommand(ExecuteClearDocument, CanExecuteClearDocument);
         private RelayCommand? clearDocument;
 
+        public ICommand RemoveEmptyParagraphs =>
+            removeEmptyParagraphs ??=
+                new RelayCommand(
+                    _ => richTextBox.RemoveEmptyParagraphs(),
+                    _ => !richTextBox.IsReadOnly &&
+                         richTextBox.HasEmptyParagraphs());
+        private RelayCommand? removeEmptyParagraphs;
+
         public RichTextContextMenuViewModel( IRichTextBoxService richTextBox, IFontFormatBar_ViewModel fontFormatting,
             ITextFormatBarViewModel textFormatting, IListFormatBarViewModel listFormatting)
         {

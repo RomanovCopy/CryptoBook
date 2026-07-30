@@ -68,6 +68,8 @@
             <Image Source="{DynamicResource normaltextimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
     </MenuItem>
+    <MenuItem Header="Удалить _пустые абзацы"
+              Command="{Binding RemoveEmptyParagraphs}"/>
 
     <Separator/>
 

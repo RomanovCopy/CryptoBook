@@ -34,6 +34,7 @@ namespace CryptoBook
                 _driveManagerService = _container.Resolve<IDriveManagerService>();
                 _driveManagerService.StartMonitoring();
 
+                _container.Resolve<IThemeManager>().Initialize();
                 var windowManager = _container.Resolve<IWindowManager>();
 
                 windowManager.ShowWindow(windowManager.CreateWindow<MainWindow>());

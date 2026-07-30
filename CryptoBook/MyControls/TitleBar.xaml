@@ -68,7 +68,7 @@
         <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
             <TextBlock x:Name="otherContent" HorizontalAlignment="Stretch"
-                       Text="{Binding MyText, UpdateSourceTrigger=PropertyChanged}" 
+                       Text="{Binding DocumentTitle, Mode=OneWay}"
                        Foreground="{Binding MyFontColor, Converter={markup:ResolveConverter ConverterType={x:Type convert:ColorToColorConverter}}, 
                 UpdateSourceTrigger=PropertyChanged}" 
                        FontSize="{Binding MyFontSize, 
@@ -90,18 +90,10 @@
         <StackPanel Orientation="Horizontal" Grid.Column="2">
             
             <Button x:Name="settings" Style="{StaticResource buttons}" 
-                    Command="{Binding ButtonSettingsClick, UpdateSourceTrigger=PropertyChanged}">
+                    Command="{Binding ButtonSettingsClick, UpdateSourceTrigger=PropertyChanged}"
+                    AutomationProperties.Name="Настройки"
+                    ToolTip="Настройки">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE713;"/>
-            </Button>
-
-            <Button x:Name="darkTheme" Style="{StaticResource buttons}" 
-                    Command="{Binding ButtonDarkThemeClick, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock Style="{StaticResource icon}" Text="&#xE708;"/>
-            </Button>
-
-            <Button x:Name="lightTheme" Style="{StaticResource buttons}"
-                    Command="{Binding ButtonLightTheme_Click, UpdateSourceTrigger=PropertyChanged}">
-                <TextBlock Style="{StaticResource icon}" Text="&#xE706;"/>
             </Button>
 
             <Button x:Name="minBtn" Style="{StaticResource buttons}"

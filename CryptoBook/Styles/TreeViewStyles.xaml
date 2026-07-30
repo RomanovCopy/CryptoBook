@@ -231,7 +231,8 @@
                     </TextBlock.Text>
                 </TextBlock>
 
-                <TextBlock FontSize="11" Foreground="Gray">
+                <TextBlock FontSize="11"
+                           Foreground="{DynamicResource CurrentMutedForeground}">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} • Свободно: {1:F1} ГБ из {2:F1} ГБ">
                             <Binding Path="DriveFormat"/>

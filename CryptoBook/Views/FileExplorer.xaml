@@ -61,7 +61,8 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock FontSize="11" Foreground="Gray">
+                    <TextBlock FontSize="11"
+                               Foreground="{DynamicResource CurrentMutedForeground}">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="{}{0} • Свободно: {1:F1} ГБ из {2:F1} ГБ">
                                 <Binding Path="DriveFormat"/>
@@ -81,7 +82,9 @@
                        Height="{StaticResource Tv_IconSize}"
                        Margin="0,0,6,0"
                        Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
-                <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14"
+                <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           FontSize="14"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </DockPanel>
         </HierarchicalDataTemplate>
@@ -308,7 +311,7 @@
 
                 <TextBlock Margin="9,0"
                            VerticalAlignment="Center"
-                           Foreground="Gray"
+                           Foreground="{DynamicResource CurrentMutedForeground}"
                            FontSize="11"
                            IsHitTestVisible="False"
                            Text="Добавьте текущую папку кнопкой ★">
@@ -384,7 +387,12 @@
                   ResizeDirection="Columns"/>
 
             <!-- File List View (основная область файлов) -->
-            <ListView x:Name="listview" Grid.Column="2" Background="White" ItemsSource="{Binding Path=SelectedItem.Children, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsContainerVirtualizable="True" >
+            <ListView x:Name="listview"
+                      Grid.Column="2"
+                      Background="{DynamicResource CurrentInputBackground}"
+                      Foreground="{DynamicResource CurrentInputForeground}"
+                      ItemsSource="{Binding Path=SelectedItem.Children, UpdateSourceTrigger=PropertyChanged}"
+                      VirtualizingPanel.IsContainerVirtualizable="True">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn >
@@ -522,8 +530,8 @@
 
             <!-- Details Pane: сведения и предварительный просмотр -->
             <Border Grid.Column="4"
-                    Background="White"
-                    BorderBrush="#E0E0E0"
+                    Background="{DynamicResource CurrentControlBackground}"
+                    BorderBrush="{DynamicResource CurrentBorderColor}"
                     BorderThickness="1,0,0,0"
                     HorizontalAlignment="Stretch">
                 <Grid Margin="12">
@@ -541,7 +549,7 @@
                                ToolTip="{Binding Preview.FileName}"/>
                     <TextBlock Grid.Row="1"
                                Margin="0,4,0,0"
-                               Foreground="Gray"
+                               Foreground="{DynamicResource CurrentMutedForeground}"
                                FontSize="11"
                                Text="{Binding Preview.FileDetails}"
                                TextWrapping="Wrap"/>
@@ -606,7 +614,7 @@
 
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Foreground="Gray"
+                                   Foreground="{DynamicResource CurrentMutedForeground}"
                                    Text="{Binding Preview.Message}"
                                    TextAlignment="Center"
                                    TextWrapping="Wrap">
@@ -631,9 +639,15 @@
             </Border>
 
         </Grid>
-        <Border Grid.Row="4" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="5">
+        <Border Grid.Row="4"
+                BorderBrush="{DynamicResource CurrentBorderColor}"
+                BorderThickness="1"
+                CornerRadius="5"
+                Padding="5">
             <TextBlock Text="{Binding Path=SelectedItem.FullPath, StringFormat='Selected: {0}', 
-                UpdateSourceTrigger=PropertyChanged, ElementName=listview}" Foreground="White" FontSize="16"/>
+                UpdateSourceTrigger=PropertyChanged, ElementName=listview}"
+                       Foreground="{DynamicResource CurrentWindowForeground}"
+                       FontSize="16"/>
         </Border>
 
     </Grid>

@@ -1,4 +1,6 @@
+using CryptoBook.Accessors;
 using CryptoBook.DTO;
+using CryptoBook.Interfaces;
 using CryptoBook.Services;
 
 using System.Windows;
@@ -15,7 +17,11 @@ namespace CryptoBook.Tests
         public void SetLayout_ChangesAllModesWithoutMovingNeighboringText()
         {
             var service = new EmbeddedImageLayoutService();
-            var image = new Image();
+            var image = new Image
+            {
+                Width = 120,
+                Height = 80
+            };
             var before = new Run("до");
             var after = new Run("после");
             var paragraph = new Paragraph();
@@ -31,6 +37,7 @@ namespace CryptoBook.Tests
             Figure figure = Assert.IsType<Figure>(imageBlock.Parent);
             Assert.Same(before, figure.PreviousInline);
             Assert.Same(after, figure.NextInline);
+            Assert.Equal(120, figure.Width.Value);
             Assert.Equal(
                 FigureHorizontalAnchor.ContentLeft,
                 figure.HorizontalAnchor);
@@ -76,7 +83,11 @@ namespace CryptoBook.Tests
         {
             var service = new EmbeddedImageLayoutService();
             var inlineImage = new Image();
-            var floatingImage = new Image();
+            var floatingImage = new Image
+            {
+                Width = 120,
+                Height = 80
+            };
             var paragraph = new Paragraph();
             paragraph.Inlines.Add(new InlineUIContainer(inlineImage));
             paragraph.Inlines.Add(new Run("текст"));
@@ -97,6 +108,270 @@ namespace CryptoBook.Tests
                 Assert.IsType<Figure>(detachedBlock.Parent);
             Assert.Null(detachedFigure.Parent);
             Assert.Single(paragraph.Inlines);
+        }
+
+        [WpfTheory]
+        [InlineData(ImageLayoutMode.FloatLeft)]
+        [InlineData(ImageLayoutMode.FloatRight)]
+        public void FloatingLayout_PlacesTextBesideImage(
+            ImageLayoutMode mode)
+        {
+            var service = new EmbeddedImageLayoutService();
+            var image = new Image
+            {
+                Width = 120,
+                Height = 120,
+                Source = new System.Windows.Media.Imaging.WriteableBitmap(
+                    1,
+                    1,
+                    96,
+                    96,
+                    System.Windows.Media.PixelFormats.Bgra32,
+                    null)
+            };
+            var text = new Run(
+                "Текст рядом с изображением должен занимать свободную сторону.");
+            var paragraph = new Paragraph();
+            paragraph.Inlines.Add(new InlineUIContainer(image));
+            paragraph.Inlines.Add(text);
+            var document = new FlowDocument(paragraph)
+            {
+                PagePadding = new Thickness(0),
+                ColumnWidth = double.PositiveInfinity
+            };
+            var editor = new RichTextBox
+            {
+                Width = 500,
+                Height = 300,
+                Document = document
+            };
+
+            service.SetLayout(image, mode);
+            editor.Measure(new Size(500, 300));
+            editor.Arrange(new Rect(0, 0, 500, 300));
+            editor.UpdateLayout();
+
+            Rect imageBounds = image.TransformToAncestor(editor)
+                .TransformBounds(new Rect(image.RenderSize));
+            Rect textBounds = text.ContentStart.GetCharacterRect(
+                LogicalDirection.Forward);
+
+            Assert.True(imageBounds.Width > 0);
+            Assert.True(textBounds.Top < imageBounds.Bottom);
+            if(mode == ImageLayoutMode.FloatLeft)
+                Assert.True(textBounds.Left >= imageBounds.Right);
+            else
+                Assert.True(textBounds.Left <= imageBounds.Left);
+        }
+
+        [WpfFact]
+        public void FloatLeft_CreatesCaretTargetToTheRightOfImage()
+        {
+            var service = new EmbeddedImageLayoutService();
+            var image = new Image
+            {
+                Width = 120,
+                Height = 120,
+                Source = new System.Windows.Media.Imaging.WriteableBitmap(
+                    1,
+                    1,
+                    96,
+                    96,
+                    System.Windows.Media.PixelFormats.Bgra32,
+                    null)
+            };
+            var paragraph = new Paragraph();
+            paragraph.Inlines.Add(new InlineUIContainer(image));
+            var document = new FlowDocument(paragraph)
+            {
+                PagePadding = new Thickness(0),
+                ColumnWidth = double.PositiveInfinity
+            };
+            var editor = new RichTextBox
+            {
+                Width = 500,
+                Height = 300,
+                Document = document
+            };
+
+            service.SetLayout(image, ImageLayoutMode.FloatLeft);
+            editor.Measure(new Size(500, 300));
+            editor.Arrange(new Rect(0, 0, 500, 300));
+            editor.UpdateLayout();
+
+            Rect imageBounds = image.TransformToAncestor(editor)
+                .TransformBounds(new Rect(image.RenderSize));
+            TextPointer position =
+                service.GetTextInsertionPosition(
+                    image,
+                    ImageLayoutMode.FloatLeft);
+
+            Rect caretBounds = position.GetCharacterRect(
+                LogicalDirection.Forward);
+            Assert.True(caretBounds.Top < imageBounds.Bottom);
+            Assert.True(caretBounds.Left >= imageBounds.Right);
+            Assert.InRange(
+                caretBounds.Top,
+                imageBounds.Top - 8,
+                imageBounds.Top + 30);
+        }
+
+        [WpfTheory]
+        [InlineData(ImageLayoutMode.Inline, true, true)]
+        [InlineData(ImageLayoutMode.CenteredBlock, true, true)]
+        [InlineData(ImageLayoutMode.FloatLeft, false, true)]
+        [InlineData(ImageLayoutMode.FloatRight, true, false)]
+        public void IsolatedImage_CreatesCaretTargetsForLayout(
+            ImageLayoutMode mode,
+            bool expectsBefore,
+            bool expectsAfter)
+        {
+            var service = new EmbeddedImageLayoutService();
+            var image = new Image
+            {
+                Width = 120,
+                Height = 80
+            };
+            var container = new InlineUIContainer(image);
+            var paragraph = new Paragraph(container);
+            _ = new FlowDocument(paragraph);
+
+            service.SetLayout(image, mode);
+
+            Inline imageInline = mode == ImageLayoutMode.Inline
+                ? Assert.IsType<InlineUIContainer>(image.Parent)
+                : Assert.IsType<Figure>(
+                    Assert.IsType<BlockUIContainer>(image.Parent).Parent);
+            Assert.Equal(
+                expectsBefore,
+                imageInline.PreviousInline is Run { Text: "\u200B" });
+            Assert.Equal(
+                expectsAfter,
+                imageInline.NextInline is Run { Text: "\u200B" });
+        }
+
+        [WpfTheory]
+        [InlineData(ImageLayoutMode.Inline)]
+        [InlineData(ImageLayoutMode.CenteredBlock)]
+        [InlineData(ImageLayoutMode.FloatLeft)]
+        [InlineData(ImageLayoutMode.FloatRight)]
+        public void Move_PreservesLayoutAndInsertsAtTextPosition(
+            ImageLayoutMode mode)
+        {
+            var paragraphFactory = new TestParagraphFactory();
+            IRichTextBoxService richTextBox = new RichTextBoxService(
+                paragraphFactory,
+                new TestUriNavigationService());
+            var inlineService = new InlineService(
+                richTextBox,
+                new ReflectionPropertyAccessor(),
+                paragraphFactory);
+            var service = new EmbeddedImageLayoutService(
+                inlineService: inlineService);
+            var image = new Image
+            {
+                Width = 120,
+                Height = 80
+            };
+            var sourceParagraph = new Paragraph();
+            sourceParagraph.Inlines.Add(new InlineUIContainer(image));
+            sourceParagraph.Inlines.Add(new Run("исходный текст"));
+            var destinationRun = new Run("слева справа");
+            var destinationParagraph = new Paragraph(destinationRun);
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(sourceParagraph);
+            richTextBox.Document.Blocks.Add(destinationParagraph);
+            service.SetLayout(image, mode);
+            TextPointer destination =
+                destinationRun.ContentStart.GetPositionAtOffset(6)!;
+
+            bool moved = service.Move(image, destination);
+
+            Assert.True(moved);
+            Assert.Equal(mode, service.GetLayout(image));
+            Assert.DoesNotContain(
+                sourceParagraph.Inlines,
+                inline => ContainsImage(inline, image));
+            Assert.Contains(
+                destinationParagraph.Inlines,
+                inline => ContainsImage(inline, image));
+            string destinationText = string.Concat(
+                destinationParagraph.Inlines
+                    .OfType<Run>()
+                    .Select(run => run.Text));
+            Assert.Equal(
+                "слева справа",
+                destinationText.Replace("\u200B", string.Empty));
+        }
+
+        [WpfFact]
+        public void Move_WithinSameParagraph_KeepsAllText()
+        {
+            var paragraphFactory = new TestParagraphFactory();
+            IRichTextBoxService richTextBox = new RichTextBoxService(
+                paragraphFactory,
+                new TestUriNavigationService());
+            var inlineService = new InlineService(
+                richTextBox,
+                new ReflectionPropertyAccessor(),
+                paragraphFactory);
+            var service = new EmbeddedImageLayoutService(
+                inlineService: inlineService);
+            var image = new Image
+            {
+                Width = 120,
+                Height = 80
+            };
+            var destinationRun = new Run("середина конец");
+            var paragraph = new Paragraph();
+            paragraph.Inlines.Add(new Run("начало "));
+            paragraph.Inlines.Add(new InlineUIContainer(image));
+            paragraph.Inlines.Add(destinationRun);
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(paragraph);
+            service.SetLayout(image, ImageLayoutMode.FloatLeft);
+            TextPointer destination =
+                destinationRun.ContentStart.GetPositionAtOffset(8)!;
+
+            Assert.True(service.Move(image, destination));
+
+            Assert.Equal(
+                "начало середина конец",
+                string.Concat(
+                    paragraph.Inlines
+                        .OfType<Run>()
+                        .Select(run => run.Text))
+                    .Replace("\u200B", string.Empty));
+            Figure figure = Assert.IsType<Figure>(
+                Assert.IsType<BlockUIContainer>(image.Parent).Parent);
+            Assert.Equal("середина", Assert.IsType<Run>(
+                figure.PreviousInline).Text);
+        }
+
+        private static bool ContainsImage(
+            Inline inline,
+            Image image) =>
+            inline switch
+            {
+                InlineUIContainer container =>
+                    ReferenceEquals(container.Child, image),
+                Figure
+                {
+                    Blocks.FirstBlock:
+                        BlockUIContainer blockContainer
+                } => ReferenceEquals(blockContainer.Child, image),
+                _ => false
+            };
+
+        private sealed class TestParagraphFactory: IParagraphFactory
+        {
+            public IParagraphService Create(Inline? inline = null)
+            {
+                var paragraph = new ParagraphService();
+                if(inline is not null)
+                    paragraph.Inlines.Add(inline);
+                return paragraph;
+            }
         }
     }
 }

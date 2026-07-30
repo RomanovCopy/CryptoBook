@@ -254,6 +254,7 @@ public sealed class BookmarkTests
         public TResult? GetResult<TResult>(Guid guid) => default;
         public void ShowWindow(Guid windowId) { }
         public void ShowWindowDialog(Guid windowId) { }
+        public void ActivateWindow(Guid windowId) { }
         public void CloseWindow(Guid windowId) { }
         public bool IsWindowOpen(Guid windowId) => false;
         public CryptoBook.DTO.WindowHost? FindHostWindow(Guid windowId) => null;

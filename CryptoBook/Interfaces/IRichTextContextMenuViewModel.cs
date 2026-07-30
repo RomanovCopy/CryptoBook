@@ -18,5 +18,6 @@ namespace CryptoBook.Interfaces
         ITextDecorationItem? Underline { get; }
 
         ICommand ClearDocument { get; }
+        ICommand RemoveEmptyParagraphs { get; }
     }
 }

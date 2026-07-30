@@ -12,7 +12,11 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface INewFileDialogViewModel:IViewModel,IWindowWithId
+    public interface INewFileDialogViewModel:
+        IViewModel,
+        IWindowWithId,
+        IWindowCaptionProvider,
+        IDisposable
     {
         /// <summary>
         /// Коллекция доступных шаблонов файлов.

@@ -153,7 +153,7 @@ namespace CryptoBook.Models
             }
 
             return saveTargetPicker.Pick(
-                documentSession.FilePath,
+                documentSession.FilePath ?? documentSession.DisplayName,
                 documentSession.Template);
         }
 

@@ -377,6 +377,8 @@ public sealed class TextFormattingTests
         viewModel.ToggleView.Execute(null);
 
         Assert.True(viewModel.IsPreviewMode);
+        Assert.True(viewModel.IsFitToWindow);
+        Assert.True(viewModel.ToggleFitToWindow.CanExecute(null));
         Assert.NotNull(viewModel.PreviewDocument);
         Assert.NotSame(richText.Document, viewModel.PreviewDocument);
         Assert.Contains(
@@ -384,6 +386,12 @@ public sealed class TextFormattingTests
             new TextRange(
                 viewModel.PreviewDocument!.ContentStart,
                 viewModel.PreviewDocument.ContentEnd).Text);
+
+        viewModel.ToggleFitToWindow.Execute(null);
+
+        Assert.False(viewModel.IsFitToWindow);
+        Assert.Equal("Вписать в окно", viewModel.FitToWindowText);
+        Assert.Equal("\uE740", viewModel.FitToWindowGlyph);
 
         viewModel.ToggleView.Execute(null);
 

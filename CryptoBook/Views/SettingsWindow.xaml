@@ -1,0 +1,419 @@
+<Window x:Class="CryptoBook.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        mc:Ignorable="d"
+        Title="Настройки CryptoBook"
+        Width="760"
+        Height="520"
+        MinWidth="640"
+        MinHeight="440"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}"
+        BorderBrush="{DynamicResource CurrentBorderColor}"
+        Icon="/CryptoBook;component/Resources/Icons/icon002.ico"
+        d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:ISettingsViewModel}}">
+
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:ISettingsViewModel}"/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <Style x:Key="SettingsNavigationItemStyle"
+               TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Padding" Value="12,9"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Foreground"
+                    Value="{DynamicResource CurrentWindowForeground}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background"
+                            Value="{DynamicResource CurrentControlHoverBackground}"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ThemeCardStyle" TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="AutomationProperties.Name"
+                    Value="{Binding DisplayName}"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Card"
+                                Padding="14"
+                                CornerRadius="8"
+                                Background="{DynamicResource CurrentControlBackground}"
+                                BorderBrush="{DynamicResource CurrentBorderColor}"
+                                BorderThickness="1">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Card"
+                                        Property="Background"
+                                        Value="{DynamicResource CurrentControlHoverBackground}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Card"
+                                        Property="BorderBrush"
+                                        Value="{DynamicResource CurrentAccent}"/>
+                                <Setter TargetName="Card"
+                                        Property="BorderThickness"
+                                        Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding NavigationPaneWidth,
+                                              Mode=TwoWay,
+                                              UpdateSourceTrigger=PropertyChanged}"
+                              MinWidth="150"
+                              MaxWidth="340"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.RowSpan="2"
+                Background="{DynamicResource CurrentTitleBarBackground}"
+                BorderBrush="{DynamicResource CurrentBorderColor}"
+                BorderThickness="0,0,1,0"
+                Padding="14">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Margin="8,6,8,18">
+                    <TextBlock Text="Настройки"
+                               FontSize="21"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="CryptoBook"
+                               Foreground="{DynamicResource CurrentMutedForeground}"
+                               Margin="0,3,0,0"/>
+                </StackPanel>
+                <ListBox SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ItemContainerStyle="{StaticResource SettingsNavigationItemStyle}">
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE790;"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"/>
+                            <TextBlock Text="Оформление"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE838;"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"/>
+                            <TextBlock Text="Рабочее пространство"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <GridSplitter Grid.RowSpan="2"
+                      Grid.Column="1"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Columns"
+                      ResizeBehavior="PreviousAndNext"
+                      ShowsPreview="True"
+                      Focusable="False"
+                      Cursor="SizeWE"
+                      Background="{DynamicResource CurrentBorderColor}"/>
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Style>
+                <Style TargetType="ScrollViewer">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSectionIndex}"
+                                     Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Style>
+            <StackPanel Margin="28,24">
+                <TextBlock Text="Оформление"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="Тема применяется сразу и сохраняется для следующего запуска."
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           Margin="0,5,0,22"/>
+
+                <TextBlock Text="Тема приложения"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+                <ListBox ItemsSource="{Binding Themes}"
+                         SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ItemContainerStyle="{StaticResource ThemeCardStyle}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Width="46" Height="34" Margin="0,0,14,0">
+                                    <Border Background="{Binding BackgroundPreview}"
+                                            BorderBrush="{DynamicResource CurrentBorderColor}"
+                                            BorderThickness="1"
+                                            CornerRadius="5"/>
+                                    <Ellipse Width="13"
+                                             Height="13"
+                                             HorizontalAlignment="Right"
+                                             VerticalAlignment="Bottom"
+                                             Margin="0,0,4,4"
+                                             Fill="{Binding AccentPreview}"/>
+                                </Grid>
+
+                                <StackPanel Grid.Column="1"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Description}"
+                                               Foreground="{DynamicResource CurrentMutedForeground}"
+                                               TextWrapping="Wrap"
+                                               Margin="0,3,0,0"/>
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="2"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           Text="&#xE73E;"
+                                           Foreground="{DynamicResource CurrentAccent}"
+                                           FontSize="18"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected,
+                                                    RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                             Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Border Margin="0,12,0,0"
+                        Padding="12"
+                        CornerRadius="7"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <TextBlock Text="Оформление интерфейса не изменяет цвета и форматирование, сохранённые внутри документа."
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource CurrentMutedForeground}"/>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Style>
+                <Style TargetType="ScrollViewer">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSectionIndex}"
+                                     Value="1">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Style>
+
+            <StackPanel Margin="28,24">
+                <TextBlock Text="Рабочее пространство"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="Выберите корневую папку, в которой CryptoBook будет искать файлы по имени."
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           TextWrapping="Wrap"
+                           Margin="0,5,0,22"/>
+
+                <TextBlock Text="Рабочая директория"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding WorkspaceDirectory, Mode=OneWay}"
+                             IsReadOnly="True"
+                             MinHeight="34"
+                             Padding="9,6"
+                             VerticalContentAlignment="Center"
+                             ToolTip="{Binding WorkspaceDirectory}"/>
+                    <Button Grid.Column="1"
+                            Content="Выбрать..."
+                            Command="{Binding ChooseWorkspace}"
+                            MinWidth="105"
+                            Height="34"
+                            Margin="8,0,0,0"/>
+                </Grid>
+
+                <TextBlock Text="Поиск файла по имени"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,24,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding SearchQuery,
+                                            Mode=TwoWay,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                             MinHeight="34"
+                             Padding="9,6"
+                             VerticalContentAlignment="Center"
+                             ToolTip="Введите имя файла или его часть">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter"
+                                        Command="{Binding Search}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <Button Grid.Column="1"
+                            Content="Найти"
+                            Command="{Binding Search}"
+                            MinWidth="90"
+                            Height="34"
+                            Margin="8,0,0,0"/>
+                </Grid>
+
+                <Grid Margin="0,12,0,8">
+                    <TextBlock Text="{Binding SearchStatus}"
+                               Foreground="{DynamicResource CurrentMutedForeground}"
+                               TextWrapping="Wrap"/>
+                    <ProgressBar IsIndeterminate="True"
+                                 Height="3"
+                                 VerticalAlignment="Bottom">
+                        <ProgressBar.Style>
+                            <Style TargetType="ProgressBar">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSearching}"
+                                                 Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ProgressBar.Style>
+                    </ProgressBar>
+                </Grid>
+
+                <ListBox ItemsSource="{Binding SearchResults}"
+                         BorderBrush="{DynamicResource CurrentBorderColor}"
+                         BorderThickness="1"
+                         MinHeight="190"
+                         MaxHeight="280"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="6,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}"
+                                               FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding RelativePath}"
+                                               Foreground="{DynamicResource CurrentMutedForeground}"
+                                               FontSize="11"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding FullPath}"/>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Content="Открыть"
+                                        Command="{Binding DataContext.OpenSearchResult,
+                                            RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Margin="10,0,0,0"
+                                        Padding="10,4"/>
+                                <Button Grid.Column="2"
+                                        Content="Показать"
+                                        Command="{Binding DataContext.RevealSearchResult,
+                                            RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Margin="6,0,0,0"
+                                        Padding="10,4"
+                                        ToolTip="Показать файл в Проводнике"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="1"
+                Grid.Column="2"
+                BorderBrush="{DynamicResource CurrentBorderColor}"
+                BorderThickness="0,1,0,0"
+                Padding="12">
+            <Button Content="Закрыть"
+                    Command="{Binding Close}"
+                    Width="96"
+                    Height="32"
+                    HorizontalAlignment="Right"/>
+        </Border>
+    </Grid>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding Closed}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+</Window>

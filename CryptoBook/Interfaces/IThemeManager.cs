@@ -1,7 +1,13 @@
-﻿namespace CryptoBook.Interfaces
+using CryptoBook.DTO;
+
+namespace CryptoBook.Interfaces
 {
-    public interface IThemeManager
+    public interface IThemeManager: IService
     {
-        public void ApplyTheme(string themeName);
+        IReadOnlyList<ApplicationThemeOption> AvailableThemes { get; }
+        ApplicationTheme CurrentTheme { get; }
+
+        void Initialize();
+        void ApplyTheme(ApplicationTheme theme);
     }
 }

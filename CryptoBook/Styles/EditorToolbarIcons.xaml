@@ -42,4 +42,5 @@
     <StreamGeometry x:Key="Icon.FontSize">M4,20 L10,5 L16,20 M6,15 L14,15 M19,5 L19,20 M17,7 L19,5 L21,7 M17,18 L19,20 L21,18</StreamGeometry>
     <StreamGeometry x:Key="Icon.FontColor">M4,18 L10,4 L16,18 M6,13 L14,13 M3,21 L17,21</StreamGeometry>
     <StreamGeometry x:Key="Icon.Highlight">M5,16 L14,7 L19,12 L10,21 L5,21 Z M14,7 L17,4 L22,9 L19,12 M3,21 L12,21</StreamGeometry>
+    <StreamGeometry x:Key="Icon.DocumentBackground">M5,2 L16,2 L21,7 L21,22 L5,22 Z M16,2 L16,7 L21,7 M8,17 L18,17 M8,20 L18,20</StreamGeometry>
 </ResourceDictionary>

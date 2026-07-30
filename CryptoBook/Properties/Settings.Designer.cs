@@ -241,7 +241,7 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SystemTheme")]
+        [global::System.Configuration.DefaultSettingValueAttribute("System")]
         public string CurrentTheme {
             get {
                 return ((string)(this["CurrentTheme"]));
@@ -692,6 +692,42 @@ namespace CryptoBook.Properties {
             }
             set {
                 this["EncryptionTargetMode"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WorkspaceDirectory {
+            get {
+                return ((string)(this["WorkspaceDirectory"]));
+            }
+            set {
+                this["WorkspaceDirectory"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("190")]
+        public double SettingsNavigationPaneWidth {
+            get {
+                return ((double)(this["SettingsNavigationPaneWidth"]));
+            }
+            set {
+                this["SettingsNavigationPaneWidth"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DocumentBackgroundColor {
+            get {
+                return ((string)(this["DocumentBackgroundColor"]));
+            }
+            set {
+                this["DocumentBackgroundColor"] = value;
             }
         }
     }

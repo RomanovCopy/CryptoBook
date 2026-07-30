@@ -11,7 +11,6 @@ namespace CryptoBook.Interfaces
     {
 
         public double MyFontSize { get; set; }
-        public string MyText { get; set; }
 
 
 
@@ -33,16 +32,8 @@ namespace CryptoBook.Interfaces
         public bool CanExecute_ToggleMenu_Click(object? obj);
         public void Execute_ToggleMenu_Click(object? obj);
 
-        public bool CanExecute_ButtonDarkThemeClick(object? obj);
-        public void Execute_ButtonDarkThemeClick(object? obj);
-
-
         public bool CanExecute_ButtonSettingsClick(object? obj);
         public void Execute_ButtonSettingsClick(object? obj);
-
-        public bool CanExecute_ButtonLightTheme_Click(object? obj);
-        public void Execute_ButtonLightTheme_Click(object? obj);
-
 
         public bool CanExecute_MinButtonClick(object? obj);
         public void Execute_MinButtonClick(object? obj);

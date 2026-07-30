@@ -13,6 +13,7 @@ namespace CryptoBook.Services
         private readonly IRichTextBoxService richTextBox;
         private readonly IInlineService inlineService;
         private readonly IEmbeddedImageEditor imageEditor;
+        private readonly IEmbeddedImageLayoutService imageLayoutService;
         private readonly IDocumentLayoutMetrics layoutMetrics;
         private readonly IDispatcherService dispatcher;
 
@@ -20,6 +21,7 @@ namespace CryptoBook.Services
             IRichTextBoxService richTextBox,
             IInlineService inlineService,
             IEmbeddedImageEditor imageEditor,
+            IEmbeddedImageLayoutService imageLayoutService,
             IDocumentLayoutMetrics layoutMetrics,
             IDispatcherService dispatcher)
         {
@@ -29,6 +31,9 @@ namespace CryptoBook.Services
                 ?? throw new ArgumentNullException(nameof(inlineService));
             this.imageEditor = imageEditor
                 ?? throw new ArgumentNullException(nameof(imageEditor));
+            this.imageLayoutService = imageLayoutService
+                ?? throw new ArgumentNullException(
+                    nameof(imageLayoutService));
             this.layoutMetrics = layoutMetrics
                 ?? throw new ArgumentNullException(nameof(layoutMetrics));
             this.dispatcher = dispatcher
@@ -54,14 +59,22 @@ namespace CryptoBook.Services
                     SnapsToDevicePixels = true
                 };
 
-                imageEditor.FitToWidth(
+                imageEditor.FitWithin(
                     image,
-                    layoutMetrics.AvailableWidth);
+                    layoutMetrics.AvailableWidth,
+                    layoutMetrics.AvailableHeight);
                 inlineService.InsertInlineUIElementAtCaret(
                     image,
                     container =>
                         container.BaselineAlignment =
                             System.Windows.BaselineAlignment.Center);
+                imageLayoutService.SetLayout(
+                    image,
+                    DTO.ImageLayoutMode.Inline);
+                richTextBox.CaretPosition =
+                    imageLayoutService.GetTextInsertionPosition(
+                        image,
+                        DTO.ImageLayoutMode.Inline);
 
                 richTextBox.Focus();
                 return image;

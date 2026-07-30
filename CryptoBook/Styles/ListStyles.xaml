@@ -25,14 +25,23 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#DDD"/>
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="#AAA"/>
+                            <Setter TargetName="Bd"
+                                    Property="Background"
+                                    Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource CurrentAccent}"/>
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentSelectionForeground}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#EEE"/>
+                            <Setter TargetName="Bd"
+                                    Property="Background"
+                                    Value="{DynamicResource CurrentControlHoverBackground}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="#888"/>
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentDisabledForeground}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

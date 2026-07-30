@@ -11,7 +11,7 @@
       mc:Ignorable="d" 
       d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IHomeViewModel}}"
       Title="Home"
-      Background="Gray">
+      Background="{DynamicResource CurrentWindowBackground}">
     <Page.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IHomeViewModel}"/>
     </Page.DataContext>

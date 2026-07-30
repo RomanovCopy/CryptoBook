@@ -13,6 +13,7 @@ namespace CryptoBook.Interfaces
         public TResult? GetResult<TResult>(Guid guid);
         void ShowWindow(Guid windowId);
         void ShowWindowDialog(Guid windowId);
+        void ActivateWindow(Guid windowId);
         void CloseWindow(Guid windowId);
         bool IsWindowOpen(Guid windowId);
 

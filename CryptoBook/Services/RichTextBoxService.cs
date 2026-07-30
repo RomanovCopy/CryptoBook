@@ -184,10 +184,20 @@ namespace CryptoBook.Services
             this.BeginChange();
             try
             {
-                this.SelectAll();
-                this.Selection.Text = string.Empty;
+                var paragraph = paragraphFactory.Create();
+                paragraph.Margin = new Thickness(0);
+                paragraph.Element.ClearValue(Paragraph.LineHeightProperty);
+                paragraph.LineStackingStrategy =
+                    LineStackingStrategy.MaxHeight;
 
-                var caret = this.Document.ContentStart.GetInsertionPosition(LogicalDirection.Forward);
+                this.Document.LineHeight = double.NaN;
+                this.Document.LineStackingStrategy =
+                    LineStackingStrategy.MaxHeight;
+                this.Document.Blocks.Clear();
+                this.Document.Blocks.Add(paragraph.Element);
+
+                var caret = paragraph.Element.ContentStart
+                    .GetInsertionPosition(LogicalDirection.Forward);
                 this.CaretPosition = caret;
                 this.Selection.Select(caret, caret);
 
@@ -197,6 +207,41 @@ namespace CryptoBook.Services
             {
                 this.EndChange();
             }
+        }
+
+        bool IRichTextBoxService.HasEmptyParagraphs() =>
+            HasRemovableEmptyParagraphs(this.Document.Blocks);
+
+        int IRichTextBoxService.RemoveEmptyParagraphs()
+        {
+            int removed;
+            this.BeginChange();
+            try
+            {
+                removed = RemoveEmptyParagraphs(this.Document.Blocks);
+                if(this.Document.Blocks.Count == 0)
+                {
+                    var paragraph = paragraphFactory.Create();
+                    paragraph.Margin = new Thickness(0);
+                    this.Document.Blocks.Add(paragraph.Element);
+                }
+
+                if(this.CaretPosition.Paragraph is null)
+                {
+                    TextPointer caret = this.Document.ContentStart
+                        .GetInsertionPosition(LogicalDirection.Forward);
+                    this.CaretPosition = caret;
+                    this.Selection.Select(caret, caret);
+                }
+
+                typingProperties.Clear();
+                RememberTypingAnchor();
+            } finally
+            {
+                this.EndChange();
+            }
+
+            return removed;
         }
         void IRichTextBoxService.Undo() => this.Undo();
         void IRichTextBoxService.Redo() => this.Redo();
@@ -234,6 +279,97 @@ namespace CryptoBook.Services
 
             TextRange range = new TextRange(caret, caret);
             return range.GetPropertyValue(property);
+        }
+
+        private static bool HasRemovableEmptyParagraphs(
+            BlockCollection blocks)
+        {
+            Block[] items = blocks.ToList().ToArray();
+            if(items.Length > 1 &&
+               items.Any(block =>
+                   block is Paragraph paragraph &&
+                   IsEmptyParagraph(paragraph)))
+            {
+                return true;
+            }
+
+            return items.Any(block => block switch
+            {
+                Section section =>
+                    HasRemovableEmptyParagraphs(section.Blocks),
+                System.Windows.Documents.List list =>
+                    list.ListItems.Any(item =>
+                        HasRemovableEmptyParagraphs(item.Blocks)),
+                _ => false
+            });
+        }
+
+        private static int RemoveEmptyParagraphs(
+            BlockCollection blocks)
+        {
+            int removed = 0;
+
+            foreach(Block block in blocks.ToList())
+            {
+                if(block is Section section)
+                {
+                    removed += RemoveEmptyParagraphs(section.Blocks);
+                }
+                else if(block is System.Windows.Documents.List list)
+                {
+                    foreach(ListItem item in list.ListItems)
+                        removed += RemoveEmptyParagraphs(item.Blocks);
+                }
+            }
+
+            if(blocks.Count <= 1)
+                return removed;
+
+            foreach(Paragraph paragraph in blocks
+                .OfType<Paragraph>()
+                .Where(IsEmptyParagraph)
+                .ToList())
+            {
+                if(blocks.Count <= 1)
+                    break;
+
+                blocks.Remove(paragraph);
+                removed++;
+            }
+
+            return removed;
+        }
+
+        private static bool IsEmptyParagraph(Paragraph paragraph)
+        {
+            if(!string.IsNullOrWhiteSpace(paragraph.Name) ||
+               paragraph.Tag is not null)
+            {
+                return false;
+            }
+
+            return paragraph.Inlines.All(IsEmptyInline);
+        }
+
+        private static bool IsEmptyInline(Inline inline)
+        {
+            if(!string.IsNullOrWhiteSpace(inline.Name) ||
+               inline.Tag is not null)
+            {
+                return false;
+            }
+
+            return inline switch
+            {
+                Run run => string.IsNullOrWhiteSpace(
+                    (run.Text ?? string.Empty)
+                    .Replace("\u200B", string.Empty)
+                    .Replace("\u2060", string.Empty)),
+                LineBreak => true,
+                Hyperlink => false,
+                Span span => span.Inlines.All(IsEmptyInline),
+                _ => false
+            };
         }
 
         private void RichTextBoxService_LostFocus(object sender, RoutedEventArgs e)
@@ -375,9 +511,14 @@ namespace CryptoBook.Services
         private void InitializeDocument()
         {
             var document = this.Document;
-            document.Background=System.Windows.Media.Brushes.Transparent;
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
+            document.SetResourceReference(
+                FlowDocument.BackgroundProperty,
+                "CurrentDocumentBackground");
+            this.SetResourceReference(
+                BackgroundProperty,
+                "CurrentDocumentBackground");
             // Автоматическая высота учитывает реальные метрики выбранного шрифта.
             // MaxHeight не позволяет глифам и маркерам списка перекрывать соседнюю строку.
             document.LineStackingStrategy = LineStackingStrategy.MaxHeight;
@@ -388,7 +529,7 @@ namespace CryptoBook.Services
             var newParagraph = paragraphFactory.Create();
             newParagraph.Margin = new Thickness(0);
 
-            document.PagePadding = new Thickness(10, 20, 10, 20);
+            DocumentPageLayout.Apply(document);
             document.Blocks.Clear();
             document.Blocks.Add((Paragraph)newParagraph);
 

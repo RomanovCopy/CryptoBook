@@ -9,21 +9,16 @@
                 <ResourceDictionary Source="/Styles/WindowStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ControlStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ImageStyles.xaml"/>
-                <ResourceDictionary Source="/Themes/LightTheme.xaml"/>
-                <ResourceDictionary Source="/Themes/DarkTheme.xaml"/>
+                <ResourceDictionary Source="/Themes/SystemTheme.xaml"/>
                 <ResourceDictionary Source="/Styles/ListStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ImageStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ButtonStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/EditorToolbarIcons.xaml"/>
                 <ResourceDictionary Source="/Styles/TreeViewStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ComboBoxStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/ThemedControls.xaml"/>
 
             </ResourceDictionary.MergedDictionaries>
-            <SolidColorBrush x:Key="CurrentWindowBackground" Color="Gray" />
-            <SolidColorBrush x:Key="CurrentWindowForeground" Color="Black" />
-            <SolidColorBrush x:Key="CurrentTitleBarBackground" Color="Gray" />
-            <SolidColorBrush x:Key="CurrentTitleBarForeground" Color="Black" />
-            <SolidColorBrush x:Key="CurrentBorderColor" Color="Black" />
             <Thickness x:Key="CurrentMargin">10,2,10,2</Thickness>
             <infra:ResourceWrapper x:Key="Res"/>
         </ResourceDictionary>

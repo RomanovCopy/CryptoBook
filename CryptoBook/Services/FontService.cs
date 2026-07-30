@@ -14,6 +14,9 @@ namespace CryptoBook.Services
 {
     public class FontService: IFontService
     {
+        private readonly IDocumentBackgroundPreferenceStore documentBackgroundPreferenceStore;
+        private Drawing.Color? storedDocumentBackground;
+
         public IRichTextBoxService Service { get; set; }
 
         public double DefaultFontSize { get => defaultFontSize; set => defaultFontSize = value; }
@@ -26,6 +29,7 @@ namespace CryptoBook.Services
         Drawing.Color defaultFontColor;
         public Drawing.Color DefaultFontBackground { get => defaultFontBackground; set => defaultFontBackground = value; }
         Drawing.Color defaultFontBackground;
+        public Drawing.Color DocumentBackground { get; private set; }
         public TextDecorationItem DefaultTextDecoration { get => defaultTextDecoration; set => defaultTextDecoration = value; }
         TextDecorationItem defaultTextDecoration;
         public FontWeight DefaultFontWeight { get => defaultFontWeight; set => defaultFontWeight = value; }
@@ -44,10 +48,17 @@ namespace CryptoBook.Services
 
 
 
-        public FontService(IRichTextBoxService service,IInlineService inlineService)
+        public FontService(
+            IRichTextBoxService service,
+            IInlineService inlineService,
+            IDocumentBackgroundPreferenceStore documentBackgroundPreferenceStore)
         {
-            Service = service;
+            Service = service ?? throw new ArgumentNullException(nameof(service));
             _ = inlineService ?? throw new ArgumentNullException(nameof(inlineService));
+            this.documentBackgroundPreferenceStore =
+                documentBackgroundPreferenceStore ??
+                throw new ArgumentNullException(
+                    nameof(documentBackgroundPreferenceStore));
             InitializeCollections();
             InitializeDefaultValues();
             SetDefaultValues();
@@ -96,6 +107,14 @@ namespace CryptoBook.Services
                 ApplyCharacterProperty(System.Windows.Documents.TextElement.BackgroundProperty, brush);
             }
         }
+        public void SetDocumentBackground(Drawing.Color? documentBackground)
+        {
+            if(documentBackground is not Drawing.Color color)
+                return;
+
+            ApplyDocumentBackground(color);
+            documentBackgroundPreferenceStore.Save(color);
+        }
         public void SetFontSize(double fontSize)
         {
             if(double.IsNaN(fontSize) || double.IsInfinity(fontSize) || fontSize <= 0)
@@ -137,6 +156,8 @@ namespace CryptoBook.Services
             SetTextDecoration(DefaultTextDecoration.Decorations);
             SetFontBackground(DefaultFontBackground);
             SetFontFamily(DefaultFontFamily);
+            if(storedDocumentBackground is Drawing.Color documentBackground)
+                ApplyDocumentBackground(documentBackground);
         }
         private void InitializeDefaultValues()
         {
@@ -145,6 +166,12 @@ namespace CryptoBook.Services
             DefaultFontFamily = FontFamilyes.FirstOrDefault(f => f != null && f.Source == "Consolas") ?? FontFamilyes[0];
             DefaultFontColor = FontColors.FirstOrDefault(c => c.Name == "Black");
             DefaultFontBackground = FontColors.FirstOrDefault(c => c.Name == "Transparent");
+            storedDocumentBackground =
+                documentBackgroundPreferenceStore.Load();
+            DocumentBackground =
+                storedDocumentBackground ??
+                GetDrawingColor(Service.Document.Background) ??
+                Drawing.Color.White;
             DefaultTextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "None") ?? new TextDecorationItem { Name = "None", Decorations = null };
             DefaultFontWeight = FontWeights.FirstOrDefault(f => f == System.Windows.FontWeights.Normal);
             DefaultFontStretch = FontStretches.FirstOrDefault(s => s == System.Windows.FontStretches.Normal);
@@ -247,6 +274,22 @@ namespace CryptoBook.Services
 
         private static Media.SolidColorBrush CreateBrush(Drawing.Color color) =>
             new(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+        private void ApplyDocumentBackground(Drawing.Color color)
+        {
+            var brush = CreateBrush(color);
+            Service.Document.Background = brush;
+            Service.BackGround = brush;
+            DocumentBackground = color;
+        }
+
+        private static Drawing.Color? GetDrawingColor(Media.Brush? brush) =>
+            brush is Media.SolidColorBrush solid
+                ? Drawing.Color.FromArgb(
+                    solid.Color.A,
+                    solid.Color.R,
+                    solid.Color.G,
+                    solid.Color.B)
+                : null;
         private void SetTypingProperty(DependencyProperty property, object? value)
         {
             Service.Focus();

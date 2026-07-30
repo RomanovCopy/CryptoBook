@@ -6,8 +6,6 @@ using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
-
-
 namespace CryptoBook.Models
 {
     public class TitleBarModel: ViewModelBase, ITitleBarModel
@@ -17,12 +15,12 @@ namespace CryptoBook.Models
         /// </summary>
         private bool _isDragging;
 
-        private readonly ILifetimeScope scope;
         private readonly Guid _winId;
 
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IWindowManager _windowManager;
-        private readonly IMainWindowViewModel _mainWindowViewModel;
+        private readonly IMainWindowModel _mainWindowModel;
+        private readonly ISettingsWindowService settingsWindowService;
 
         /// <summary>
         /// высота TitleBar
@@ -30,24 +28,19 @@ namespace CryptoBook.Models
         public double MyFontSize { get => height; set => SetProperty(ref height, value); }
         double height;
 
-        /// <summary>
-        /// текст внутри TitleBar
-        /// </summary>
-        public string MyText { get => myText; set => SetProperty(ref myText, value); }
-        string myText;
-
-        public TitleBarModel(IMainWindowViewModel mainWindowViewModel, IPageNavigationService pageNavigationService, IWindowManager windowManager)
+        public TitleBarModel(
+            IMainWindowModel mainWindowModel,
+            IPageNavigationService pageNavigationService,
+            IWindowManager windowManager,
+            ISettingsWindowService settingsWindowService)
         {
             this._pageNavigationService = pageNavigationService ?? throw new ArgumentNullException(nameof(pageNavigationService));
             this._windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));  
-            this._mainWindowViewModel = mainWindowViewModel;
-            if(mainWindowViewModel is IWindowWithId windowWithId)
-            {
-                _winId = windowWithId.WindowId;
-            } else
-            {
-                throw new ArgumentException("mainWindowViewModel must implement IWindowWithId to resolve the correct scope.");
-            }
+            this._mainWindowModel = mainWindowModel ??
+                throw new ArgumentNullException(nameof(mainWindowModel));
+            this.settingsWindowService = settingsWindowService ??
+                throw new ArgumentNullException(nameof(settingsWindowService));
+            _winId = mainWindowModel.WindowId;
         }
 
         public bool CanExecute_Loaded(object? obj)
@@ -57,7 +50,6 @@ namespace CryptoBook.Models
         public void Execute_Loaded(object? obj)
         {
             MyFontSize = Properties.Settings.Default.TitleBarMyFontSize;
-            MyText = "Encrypto";
         }
 
         public bool CanExecute_TitleBarDoubleClick(object? obj)
@@ -117,17 +109,8 @@ namespace CryptoBook.Models
         }
         public void Execute_ToggleMenu_Click(object? obj)
         {
-            _mainWindowViewModel.ToggleMenuCommand.Execute(null);
+            _mainWindowModel.Execute_ToggleMenuCommand(null);
         }
-
-        public bool CanExecute_ButtonDarkThemeClick(object? obj)
-        {
-            return false;
-        }
-        public void Execute_ButtonDarkThemeClick(object? obj)
-        {
-        }
-
 
         public bool CanExecute_ButtonSettingsClick(object? obj)
         {
@@ -135,14 +118,7 @@ namespace CryptoBook.Models
         }
         public void Execute_ButtonSettingsClick(object? obj)
         {
-        }
-
-        public bool CanExecute_ButtonLightTheme_Click(object? obj)
-        {
-            return true;
-        }
-        public void Execute_ButtonLightTheme_Click(object? obj)
-        {
+            settingsWindowService.Open();
         }
 
 
@@ -152,21 +128,21 @@ namespace CryptoBook.Models
         }
         public void Execute_MinButtonClick(object? obj)
         {
-            _mainWindowViewModel.WindowState = System.Windows.WindowState.Minimized;
+            _mainWindowModel.WindowState = System.Windows.WindowState.Minimized;
         }
 
         public bool CanExecute_MaxButtonClick(object? obj)
         {
-            return _mainWindowViewModel.WindowState != System.Windows.WindowState.Maximized;
+            return _mainWindowModel.WindowState != System.Windows.WindowState.Maximized;
         }
         public void Execute_MaxButtonClick(object? obj)
         {
-            _mainWindowViewModel.WindowState = System.Windows.WindowState.Maximized;
+            _mainWindowModel.WindowState = System.Windows.WindowState.Maximized;
         }
 
         public bool CanExecute_CloseButtonClick(object? obj)
         {
-            return _mainWindowViewModel.Close.CanExecute(null);
+            return _mainWindowModel.CanExecute_Close(null);
         }
         public void Execute_CloseButtonClick(object? obj)
         {
@@ -181,16 +157,16 @@ namespace CryptoBook.Models
         {
             Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
             Properties.Settings.Default.Save();
-            _mainWindowViewModel.Close.Execute(null);
+            _mainWindowModel.Execute_Close(null);
         }
 
         public bool CanExecute_GoToWindow(object? obj)
         {
-            return _mainWindowViewModel.WindowState != System.Windows.WindowState.Normal;
+            return _mainWindowModel.WindowState != System.Windows.WindowState.Normal;
         }
         public void Execute_GoToWindow(object? obj)
         {
-            _mainWindowViewModel.WindowState = System.Windows.WindowState.Normal;
+            _mainWindowModel.WindowState = System.Windows.WindowState.Normal;
         }
 
         public bool CanExecute_Closing(object? obj)
@@ -201,7 +177,7 @@ namespace CryptoBook.Models
         {
             Properties.Settings.Default.TitleBarMyFontSize = MyFontSize;
             Properties.Settings.Default.Save();
-            _mainWindowViewModel.Close.Execute(null);
+            _mainWindowModel.Execute_Close(null);
 
         }
 

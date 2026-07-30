@@ -64,7 +64,51 @@
                                         Document="{Binding PreviewDocument}"
                                         behaviors:HyperlinkCommandBehavior.Command="{Binding OpenHyperlink}"
                                         behaviors:DocumentPageKeyboardNavigationBehavior.IsEnabled="True"
+                                        behaviors:DocumentPageFitBehavior.IsEnabled="{Binding IsFitToWindow}"
                                         Zoom="100"/>
+                <Button HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="12,56,12,12"
+                        Width="36"
+                        Height="36"
+                        Panel.ZIndex="10"
+                        Command="{Binding ToggleFitToWindow}"
+                        ToolTip="{Binding FitToWindowText}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Transparent"
+                                    Padding="8">
+                                <TextBlock x:Name="Icon"
+                                           Text="{Binding FitToWindowGlyph}"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           FontSize="18"
+                                           Foreground="{DynamicResource CurrentWindowForeground}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="False">
+                                    <Setter TargetName="Icon"
+                                            Property="Opacity"
+                                            Value="0.68"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Icon"
+                                            Property="Opacity"
+                                            Value="0.42"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Icon"
+                                            Property="Opacity"
+                                            Value="0.28"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </Grid>
         </Grid>
     </Border>

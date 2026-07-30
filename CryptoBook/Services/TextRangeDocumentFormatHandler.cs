@@ -1,6 +1,7 @@
 using CryptoBook.Interfaces;
 
 using System.IO;
+using System.Linq;
 using System.Windows.Documents;
 
 namespace CryptoBook.Services
@@ -19,6 +20,12 @@ namespace CryptoBook.Services
         }
 
         protected abstract string DataFormat { get; }
+        protected virtual bool PreserveTextElements => true;
+        protected virtual string ResolveLoadDataFormat(
+            ReadOnlySpan<byte> content) => DataFormat;
+        protected virtual byte[] PrepareLoadContent(byte[] content) =>
+            content;
+
         public bool CanHandle(IFileTemplate template) => template is TTemplate;
 
         public Task LoadAsync(
@@ -28,24 +35,37 @@ namespace CryptoBook.Services
         {
             ArgumentNullException.ThrowIfNull(document);
 
-            byte[] buffer = content.ToArray();
+            byte[] buffer = PrepareLoadContent(content.ToArray());
 
             return dispatcher.InvokeAsync(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                document.Blocks.Clear();
 
                 if(buffer.Length == 0)
                 {
+                    document.Blocks.Clear();
                     document.Blocks.Add(new Paragraph());
                     return;
                 }
 
                 using var stream = new MemoryStream(buffer, writable: false);
+                var loadedDocument = new FlowDocument();
                 var range = new TextRange(
-                    document.ContentStart,
-                    document.ContentEnd);
-                range.Load(stream, DataFormat);
+                    loadedDocument.ContentStart,
+                    loadedDocument.ContentEnd);
+                range.Load(
+                    stream,
+                    ResolveLoadDataFormat(buffer));
+
+                document.Blocks.Clear();
+                foreach(Block block in loadedDocument.Blocks.ToList())
+                {
+                    loadedDocument.Blocks.Remove(block);
+                    document.Blocks.Add(block);
+                }
+
+                if(document.Blocks.Count == 0)
+                    document.Blocks.Add(new Paragraph());
             });
         }
 
@@ -68,7 +88,10 @@ namespace CryptoBook.Services
             var range = new TextRange(
                 document.ContentStart,
                 document.ContentEnd);
-            range.Save(stream, DataFormat, preserveTextElements: true);
+            range.Save(
+                stream,
+                DataFormat,
+                preserveTextElements: PreserveTextElements);
             return stream.ToArray();
         }
     }

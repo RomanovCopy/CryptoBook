@@ -10,5 +10,10 @@ namespace CryptoBook.Interfaces
             double maximumWidth);
 
         void FitToWidth(WpfImage image, double maximumWidth);
+
+        void FitWithin(
+            WpfImage image,
+            double maximumWidth,
+            double maximumHeight);
     }
 }

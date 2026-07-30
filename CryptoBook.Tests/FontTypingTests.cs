@@ -189,6 +189,30 @@ public sealed class FontTypingTests
     }
 
     [WpfFact]
+    public void DocumentBackground_ColorsPaperWithoutChangingCharacterBackground()
+    {
+        var (service, fonts) = CreateServices(new Run("text"));
+        var run = GetOnlyRun(service);
+        service.Selection.Select(run.ContentStart, run.ContentEnd);
+
+        fonts.SetDocumentBackground(DrawingColor.Yellow);
+
+        var documentBrush =
+            Assert.IsType<SolidColorBrush>(service.Document.Background);
+        var editorBrush =
+            Assert.IsType<SolidColorBrush>(service.BackGround);
+        Assert.Equal(Colors.Yellow, documentBrush.Color);
+        Assert.Equal(Colors.Yellow, editorBrush.Color);
+        object characterBackground = new TextRange(
+            run.ContentStart,
+            run.ContentEnd)
+            .GetPropertyValue(TextElement.BackgroundProperty);
+        Assert.True(
+            characterBackground is not SolidColorBrush brush ||
+            brush.Color != Colors.Yellow);
+    }
+
+    [WpfFact]
     public void ClearFormatting_ResetsEveryPropertyOnlyInsideSelection()
     {
         var formatted = new Run("ab")
@@ -232,7 +256,10 @@ public sealed class FontTypingTests
         service.CaretPosition = paragraph.ContentStart;
 
         var inline = new InlineService(service, new ReflectionPropertyAccessor(), new TestParagraphFactory());
-        var fonts = new FontService(service, inline);
+        var fonts = new FontService(
+            service,
+            inline,
+            new DocumentBackgroundPreferenceStoreStub());
 
         // FontService initializes defaults by changing the current caret. Restore the
         // exact document used by each test so initialization cannot mask a regression.
@@ -321,6 +348,16 @@ public sealed class FontTypingTests
             if(inline != null)
                 paragraph.Inlines.Add(inline);
             return paragraph;
+        }
+    }
+
+    private sealed class DocumentBackgroundPreferenceStoreStub:
+        IDocumentBackgroundPreferenceStore
+    {
+        public DrawingColor? Load() => null;
+
+        public void Save(DrawingColor color)
+        {
         }
     }
 

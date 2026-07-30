@@ -53,6 +53,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksModel>().As<IBookmarksModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarksEditorModel>().As<IBookmarksEditorModel>().InstancePerLifetimeScope();
             builder.RegisterType<RichtextboxModel>().As<IRichtextboxModel>().InstancePerLifetimeScope();
+            builder.RegisterType<SettingsModel>().As<ISettingsModel>().InstancePerLifetimeScope();
 
             //ViewModels
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -81,6 +82,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionMode_ViewModel>().As<IEncryptionMode_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MediaPlayerViewModel>().As<IMediaPlayerViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
 
             //Converters
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -126,6 +128,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TextInputDialog>().InstancePerDependency();
             builder.RegisterType<HyperlinkDialog>().InstancePerDependency();
             builder.RegisterType<MediaPlayer>().InstancePerDependency();
+            builder.RegisterType<SettingsWindow>().InstancePerDependency();
                                                                                                          
             //FileTemplate
             builder.RegisterType<PlainTextTemplate>().As<IFileTemplate>().SingleInstance();
@@ -168,6 +171,13 @@ namespace CryptoBook.Injections
             //Services
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
+            builder.RegisterType<UserThemePreferenceStore>().As<IThemePreferenceStore>().SingleInstance();
+            builder.RegisterType<UserDocumentBackgroundPreferenceStore>()
+                .As<IDocumentBackgroundPreferenceStore>()
+                .SingleInstance();
+            builder.RegisterType<WindowsThemeProvider>().As<IWindowsThemeProvider>().SingleInstance();
+            builder.RegisterType<SettingsWindowService>().As<ISettingsWindowService>().SingleInstance();
+            builder.RegisterType<WorkspaceService>().As<IWorkspaceService>().SingleInstance();
             builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
             builder.RegisterType<FontService>().As<IFontService>().SingleInstance();
             builder.RegisterType<TextFormatService>().As<ITextFormatService>().SingleInstance();
@@ -208,6 +218,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentPreviewService>().As<IDocumentPreviewService>().InstancePerDependency();
             builder.RegisterType<UriNavigationService>().As<IUriNavigationService>().SingleInstance();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
+            builder.RegisterType<FileDisplayNameService>()
+                .As<IFileDisplayNameService>()
+                .SingleInstance();
+            builder.RegisterType<DocumentTitleProvider>()
+                .As<IDocumentTitleProvider>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<DocumentSession>()
                 .As<IDocumentSession>()
                 .SingleInstance();

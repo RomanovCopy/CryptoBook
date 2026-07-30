@@ -53,6 +53,8 @@ namespace CryptoBook.Interfaces
         void SetTypingProperty(DependencyProperty property, object? value);
         void InsertTextAtCaret(string text);
         void ClearDocument();
+        bool HasEmptyParagraphs();
+        int RemoveEmptyParagraphs();
 
         // История изменений
         void Undo();

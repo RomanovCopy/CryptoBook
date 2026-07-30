@@ -1,6 +1,7 @@
 using CryptoBook.Adorners;
 using CryptoBook.DTO;
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 
 using System.Windows;
 using System.Windows.Controls;
@@ -10,7 +11,11 @@ using System.Windows.Media;
 using System.Windows.Threading;
 
 using WpfImage = System.Windows.Controls.Image;
+using WpfCursor = System.Windows.Input.Cursor;
+using WpfCursors = System.Windows.Input.Cursors;
 using WpfKeyEventArgs = System.Windows.Input.KeyEventArgs;
+using WpfMouseEventArgs = System.Windows.Input.MouseEventArgs;
+using WpfPoint = System.Windows.Point;
 using WpfRichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace CryptoBook.Behaviors
@@ -113,6 +118,12 @@ namespace CryptoBook.Behaviors
             private ImageResizeAdorner? adorner;
             private AdornerLayer? adornerLayer;
             private WpfImage? selectedImage;
+            private WpfImage? dragImage;
+            private WpfPoint dragStartPoint;
+            private TextPointer? dropPosition;
+            private WpfCursor? originalCursor;
+            private double originalImageOpacity;
+            private bool isDraggingImage;
             private readonly CommandBinding setLayoutCommandBinding;
             private bool disposed;
 
@@ -123,6 +134,10 @@ namespace CryptoBook.Behaviors
                     OnPreviewMouseLeftButtonDown;
                 richTextBox.PreviewMouseRightButtonDown +=
                     OnPreviewMouseRightButtonDown;
+                richTextBox.PreviewMouseMove += OnPreviewMouseMove;
+                richTextBox.PreviewMouseLeftButtonUp +=
+                    OnPreviewMouseLeftButtonUp;
+                richTextBox.LostMouseCapture += OnLostMouseCapture;
                 richTextBox.PreviewKeyDown += OnPreviewKeyDown;
                 richTextBox.TextChanged += OnTextChanged;
                 richTextBox.Unloaded += OnUnloaded;
@@ -145,6 +160,10 @@ namespace CryptoBook.Behaviors
                     OnPreviewMouseLeftButtonDown;
                 richTextBox.PreviewMouseRightButtonDown -=
                     OnPreviewMouseRightButtonDown;
+                richTextBox.PreviewMouseMove -= OnPreviewMouseMove;
+                richTextBox.PreviewMouseLeftButtonUp -=
+                    OnPreviewMouseLeftButtonUp;
+                richTextBox.LostMouseCapture -= OnLostMouseCapture;
                 richTextBox.PreviewKeyDown -= OnPreviewKeyDown;
                 richTextBox.TextChanged -= OnTextChanged;
                 richTextBox.Unloaded -= OnUnloaded;
@@ -156,10 +175,17 @@ namespace CryptoBook.Behaviors
                 object sender,
                 MouseButtonEventArgs args)
             {
-                if(IsInsideActiveAdorner(args.OriginalSource))
+                bool insideAdorner =
+                    IsInsideActiveAdorner(args.OriginalSource);
+                if(insideAdorner &&
+                   IsInsideResizeThumb(args.OriginalSource))
+                {
                     return;
+                }
 
-                WpfImage? image = FindImage(args.OriginalSource);
+                WpfImage? image =
+                    FindImage(args.OriginalSource) ??
+                    (insideAdorner ? selectedImage : null);
                 if(image is null)
                 {
                     ClearSelection();
@@ -167,6 +193,12 @@ namespace CryptoBook.Behaviors
                 }
 
                 Select(image);
+                if(!richTextBox.IsReadOnly)
+                {
+                    dragImage = image;
+                    dragStartPoint = args.GetPosition(richTextBox);
+                    dropPosition = null;
+                }
             }
 
             private void OnPreviewMouseRightButtonDown(
@@ -183,6 +215,58 @@ namespace CryptoBook.Behaviors
                 Select(image);
             }
 
+            private void OnPreviewMouseMove(
+                object sender,
+                WpfMouseEventArgs args)
+            {
+                if(dragImage is null ||
+                   args.LeftButton != MouseButtonState.Pressed)
+                {
+                    return;
+                }
+
+                WpfPoint point = args.GetPosition(richTextBox);
+                if(!isDraggingImage)
+                {
+                    Vector distance = point - dragStartPoint;
+                    if(Math.Abs(distance.X) <
+                           SystemParameters.MinimumHorizontalDragDistance &&
+                       Math.Abs(distance.Y) <
+                           SystemParameters.MinimumVerticalDragDistance)
+                    {
+                        return;
+                    }
+
+                    BeginImageDrag();
+                }
+
+                UpdateDropPosition(point);
+                args.Handled = true;
+            }
+
+            private void OnPreviewMouseLeftButtonUp(
+                object sender,
+                MouseButtonEventArgs args)
+            {
+                if(!isDraggingImage)
+                {
+                    dragImage = null;
+                    return;
+                }
+
+                UpdateDropPosition(args.GetPosition(richTextBox));
+                CompleteImageDrag();
+                args.Handled = true;
+            }
+
+            private void OnLostMouseCapture(
+                object sender,
+                WpfMouseEventArgs args)
+            {
+                if(isDraggingImage)
+                    CancelImageDrag();
+            }
+
             private void OnPreviewKeyDown(
                 object sender,
                 WpfKeyEventArgs args)
@@ -192,7 +276,10 @@ namespace CryptoBook.Behaviors
 
                 if(args.Key == Key.Escape)
                 {
-                    ClearSelection();
+                    if(isDraggingImage)
+                        CancelImageDrag();
+                    else
+                        ClearSelection();
                     args.Handled = true;
                     return;
                 }
@@ -235,11 +322,16 @@ namespace CryptoBook.Behaviors
                 try
                 {
                     layoutService.SetLayout(image, mode);
+                    richTextBox.CaretPosition =
+                        layoutService.GetTextInsertionPosition(
+                            image,
+                            mode);
                 } finally
                 {
                     richTextBox.EndChange();
                 }
                 args.Handled = true;
+                richTextBox.Focus();
 
                 richTextBox.Dispatcher.BeginInvoke(
                     () =>
@@ -263,8 +355,107 @@ namespace CryptoBook.Behaviors
 
             private void OnUnloaded(
                 object sender,
-                RoutedEventArgs args) =>
+                RoutedEventArgs args)
+            {
+                CancelImageDrag();
                 ClearSelection();
+            }
+
+            private void BeginImageDrag()
+            {
+                if(dragImage is null)
+                    return;
+
+                isDraggingImage = true;
+                originalImageOpacity = dragImage.Opacity;
+                dragImage.Opacity = 0.65;
+                originalCursor = richTextBox.Cursor;
+                richTextBox.Cursor = WpfCursors.SizeAll;
+                richTextBox.CaptureMouse();
+            }
+
+            private void UpdateDropPosition(WpfPoint point)
+            {
+                TextPointer? position = richTextBox.GetPositionFromPoint(
+                    point,
+                    snapToText: true);
+                if(position?.Paragraph is null)
+                    return;
+
+                dropPosition = position;
+                richTextBox.CaretPosition = position;
+                richTextBox.Selection.Select(position, position);
+            }
+
+            private void CompleteImageDrag()
+            {
+                WpfImage? image = dragImage;
+                TextPointer? destination = dropPosition;
+                EndImageDragVisuals();
+
+                if(image is null ||
+                   destination is null ||
+                   GetImageLayoutService(richTextBox) is not
+                       { } layoutService)
+                {
+                    return;
+                }
+
+                ImageLayoutMode mode = layoutService.GetLayout(image);
+                ClearSelection();
+                bool moved;
+                richTextBox.BeginChange();
+                try
+                {
+                    moved = layoutService.Move(image, destination);
+                    if(moved)
+                    {
+                        richTextBox.CaretPosition =
+                            layoutService.GetTextInsertionPosition(
+                                image,
+                                mode);
+                    }
+                } finally
+                {
+                    richTextBox.EndChange();
+                }
+
+                richTextBox.Focus();
+                if(!moved)
+                {
+                    Select(image);
+                    return;
+                }
+
+                richTextBox.Dispatcher.BeginInvoke(
+                    () =>
+                    {
+                        if(IsInDocument(image, richTextBox.Document))
+                            Select(image);
+                    },
+                    DispatcherPriority.Loaded);
+            }
+
+            private void CancelImageDrag()
+            {
+                EndImageDragVisuals();
+            }
+
+            private void EndImageDragVisuals()
+            {
+                WpfImage? image = dragImage;
+                isDraggingImage = false;
+                dragImage = null;
+                dropPosition = null;
+
+                if(image is not null)
+                    image.Opacity = originalImageOpacity;
+                richTextBox.Cursor = originalCursor;
+                originalCursor = null;
+
+                if(richTextBox.IsMouseCaptured)
+                    richTextBox.ReleaseMouseCapture();
+            }
 
             private void Select(WpfImage image)
             {
@@ -287,7 +478,7 @@ namespace CryptoBook.Behaviors
                 adorner = new ImageResizeAdorner(
                     image,
                     imageEditor,
-                    () => GetAvailableWidth(richTextBox));
+                    () => GetAvailableWidth(richTextBox, image));
                 adornerLayer.Add(adorner);
             }
 
@@ -310,6 +501,20 @@ namespace CryptoBook.Behaviors
                 while(current is not null)
                 {
                     if(ReferenceEquals(current, adorner))
+                        return true;
+
+                    current = GetParent(current);
+                }
+
+                return false;
+            }
+
+            private static bool IsInsideResizeThumb(object? source)
+            {
+                DependencyObject? current = source as DependencyObject;
+                while(current is not null)
+                {
+                    if(current is System.Windows.Controls.Primitives.Thumb)
                         return true;
 
                     current = GetParent(current);
@@ -372,16 +577,11 @@ namespace CryptoBook.Behaviors
             }
 
             private static double GetAvailableWidth(
-                WpfRichTextBox richTextBox)
+                WpfRichTextBox richTextBox,
+                WpfImage image)
             {
-                const double reserve = 32;
-                double width = richTextBox.ActualWidth
-                    - richTextBox.Document.PagePadding.Left
-                    - richTextBox.Document.PagePadding.Right
-                    - reserve;
-                return double.IsFinite(width) && width > 0
-                    ? Math.Max(64, width)
-                    : 720;
+                DocumentPageLayout.Apply(richTextBox.Document);
+                return double.PositiveInfinity;
             }
         }
     }

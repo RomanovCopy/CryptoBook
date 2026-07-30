@@ -112,10 +112,12 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Margin="18,18,18,14">
-                    <TextBlock Text="CryptoBook"
+                    <TextBlock Text="{Binding BookTitle}"
                                Foreground="{DynamicResource CurrentWindowForeground}"
                                FontSize="21"
-                               FontWeight="SemiBold"/>
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding BookTitle}"/>
                     <TextBlock Margin="0,3,0,0"
                                Text="Книга и рабочее пространство"
                                Foreground="{DynamicResource CurrentWindowForeground}"

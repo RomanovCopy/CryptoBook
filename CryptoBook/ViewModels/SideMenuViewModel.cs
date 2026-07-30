@@ -15,7 +15,9 @@ namespace CryptoBook.ViewModels
     {
 
         private readonly SideMenuModel sideMenuModel;
+        private readonly IDocumentTitleProvider documentTitleProvider;
 
+        public string BookTitle => documentTitleProvider.Title;
         public ObservableCollection<MenuItemBase> MenuItems { get => sideMenuModel.MenuItems; }
         public ObservableCollection<DTO.MenuItem> QuickActions { get => sideMenuModel.QuickActions; }
         public double Width { get => sideMenuModel.Width; set => sideMenuModel.Width = value; }
@@ -26,7 +28,13 @@ namespace CryptoBook.ViewModels
         public SideMenuViewModel(ILifetimeScope scope)
         {
             sideMenuModel = new(scope);
+            documentTitleProvider = scope.Resolve<IDocumentTitleProvider>();
             sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            documentTitleProvider.PropertyChanged += (_, args) =>
+            {
+                if(args.PropertyName == nameof(IDocumentTitleProvider.Title))
+                    OnPropertyChanged(nameof(BookTitle));
+            };
         }
 
         public ICommand Loaded => loaded ??=

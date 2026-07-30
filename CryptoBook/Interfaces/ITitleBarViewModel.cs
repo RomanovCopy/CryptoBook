@@ -2,8 +2,13 @@
 
 namespace CryptoBook.Interfaces
 {
-    public interface ITitleBarViewModel: IViewModel
+    public interface ITitleBarViewModel:
+        IViewModel,
+        IDisposable
     {
+        public string DocumentTitle { get; }
+        public string? DocumentPath { get; }
+
         /// <summary>
         /// двойной клик по TitleBar
         /// </summary>
@@ -30,14 +35,6 @@ namespace CryptoBook.Interfaces
         public ICommand ToggleMenu_Click { get; }
 
 
-        /// <summary>
-        /// переключение на светлую тему
-        /// </summary>
-        public ICommand ButtonLightTheme_Click { get; }
-        /// <summary>
-        /// переключение на темную тему
-        /// </summary>
-        public ICommand ButtonDarkThemeClick { get; }
         /// <summary>
         /// вызов настроек
         /// </summary>

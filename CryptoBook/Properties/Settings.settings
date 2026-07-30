@@ -57,7 +57,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="CurrentTheme" Type="System.String" Scope="User">
-      <Value Profile="(Default)">SystemTheme</Value>
+      <Value Profile="(Default)">System</Value>
     </Setting>
     <Setting Name="FontSizeDefault" Type="System.Double" Scope="User">
       <Value Profile="(Default)">16</Value>
@@ -169,6 +169,15 @@
     </Setting>
     <Setting Name="EncryptionTargetMode" Type="CryptoBook.Security.EncryptionTargetMode" Scope="User">
       <Value Profile="(Default)">SaveAs</Value>
+    </Setting>
+    <Setting Name="WorkspaceDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SettingsNavigationPaneWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">190</Value>
+    </Setting>
+    <Setting Name="DocumentBackgroundColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

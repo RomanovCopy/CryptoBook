@@ -37,7 +37,7 @@
         <TextBlock x:Name="ValidationMessage"
                    Grid.Row="5"
                    Margin="0,7,0,0"
-                   Foreground="Firebrick"
+                   Foreground="{DynamicResource CurrentErrorForeground}"
                    TextWrapping="Wrap"/>
 
         <StackPanel Grid.Row="6"

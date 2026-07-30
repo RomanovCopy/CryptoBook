@@ -64,7 +64,7 @@
 
         <TextBlock x:Name="ErrorText"
                    Grid.Row="5"
-                   Foreground="Crimson"
+                   Foreground="{DynamicResource CurrentErrorForeground}"
                    Margin="0,8,0,0"
                    TextWrapping="Wrap"/>
 

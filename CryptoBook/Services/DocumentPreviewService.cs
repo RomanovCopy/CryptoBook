@@ -17,15 +17,13 @@ namespace CryptoBook.Services
             sourceRange.Save(stream, System.Windows.DataFormats.XamlPackage);
             stream.Position = 0;
 
-            var preview = new FlowDocument
-            {
-                PagePadding = new Thickness(48),
-                ColumnWidth = double.PositiveInfinity
-            };
+            var preview = new FlowDocument();
+            DocumentPageLayout.Apply(preview);
 
             var previewRange = new TextRange(preview.ContentStart, preview.ContentEnd);
             previewRange.Load(stream, System.Windows.DataFormats.XamlPackage);
-            preview.ColumnWidth = double.PositiveInfinity;
+            DocumentPageLayout.Apply(preview);
+            preview.Background = source.Background;
             return preview;
         }
     }

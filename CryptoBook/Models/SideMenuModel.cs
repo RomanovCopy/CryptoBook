@@ -7,6 +7,7 @@ using CryptoBook.ViewModels;
 using DTO=CryptoBook.DTO;
 
 using System.Collections.ObjectModel;
+using System.IO;
 using CryptoBook.DTO;
 
 namespace CryptoBook.Models
@@ -43,6 +44,11 @@ namespace CryptoBook.Models
         private readonly IMenuEncryptionViewModel menuEncryptionViewModel;
         private readonly IMenuContentViewModel menuContentViewModel;
         private readonly IBookmarksViewModel bookmarksViewModel;
+        private readonly IDocumentSession documentSession;
+        private readonly IFileManagerService fileManagerService;
+        private readonly ITextInputService textInputService;
+        private readonly IMessageService messageService;
+        private readonly AsyncRelayCommand renameBookCommand;
 
         public SideMenuModel(ILifetimeScope _scope)
         {
@@ -52,6 +58,11 @@ namespace CryptoBook.Models
             menuEncryptionViewModel = _scope.Resolve<IMenuEncryptionViewModel>();
             menuContentViewModel = _scope.Resolve<IMenuContentViewModel>();
             bookmarksViewModel = _scope.Resolve<IBookmarksViewModel>();
+            documentSession = _scope.Resolve<IDocumentSession>();
+            fileManagerService = _scope.Resolve<IFileManagerService>();
+            textInputService = _scope.Resolve<ITextInputService>();
+            messageService = _scope.Resolve<IMessageService>();
+            renameBookCommand = new AsyncRelayCommand(RenameBookAsync);
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
             FontSize = Properties.Settings.Default.SideMenuFontSize;
@@ -107,6 +118,14 @@ namespace CryptoBook.Models
                 "\uE792",
                 "Выбрать имя, папку и формат",
                 CommandKey.menuFile_SaveAsFile));
+            file.Children.Add(new MenuItem(commandService)
+            {
+                Name = "Переименовать книгу",
+                Glyph = "\uE8AC",
+                Description = "Изменить имя текущей книги",
+                IsEnabled = true,
+                Command = renameBookCommand
+            });
 
             var content = new MenuItemBase(commandService)
             {
@@ -137,6 +156,82 @@ namespace CryptoBook.Models
                 CommandKey.menuContent_MediaPlayer));
 
             return [file, content];
+        }
+
+        private async Task RenameBookAsync(
+            object? parameter,
+            CancellationToken cancellationToken)
+        {
+            string? oldPath = documentSession.FilePath;
+            string oldFileName = string.IsNullOrWhiteSpace(oldPath)
+                ? documentSession.DisplayName
+                : Path.GetFileName(oldPath);
+            string extension = Path.GetExtension(oldFileName);
+            if(string.IsNullOrWhiteSpace(extension))
+                extension = documentSession.Template?.DefaultExtension ?? string.Empty;
+            string initialName = Path.GetFileNameWithoutExtension(oldFileName);
+            string? requestedName = textInputService.Request(
+                "Переименование книги",
+                "Введите новое имя книги:",
+                initialName,
+                "Переименовать");
+
+            if(requestedName is null)
+                return;
+
+            string newName = requestedName.Trim();
+            if(string.IsNullOrWhiteSpace(newName))
+            {
+                await messageService.ShowMessage(
+                    "Переименование книги",
+                    "Имя книги не может быть пустым.");
+                return;
+            }
+
+            if(newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+               newName is "." or "..")
+            {
+                await messageService.ShowMessage(
+                    "Переименование книги",
+                    "Имя книги содержит недопустимые символы.");
+                return;
+            }
+
+            if(newName.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+                newName = Path.GetFileNameWithoutExtension(newName);
+
+            string newFileName = newName + extension;
+            if(string.Equals(
+                oldFileName,
+                newFileName,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            if(string.IsNullOrWhiteSpace(oldPath))
+            {
+                documentSession.SetDisplayName(newFileName);
+                return;
+            }
+
+            FileOperationResult result = await fileManagerService.RenameAsync(
+                oldPath,
+                newFileName,
+                cancellationToken);
+            if(!result.Success)
+            {
+                await messageService.ShowMessage(
+                    "Ошибка переименования",
+                    result.ErrorMessage ?? "Не удалось переименовать книгу.");
+                return;
+            }
+
+            string? directory = Path.GetDirectoryName(oldPath);
+            if(string.IsNullOrWhiteSpace(directory))
+                return;
+
+            documentSession.Rename(Path.Combine(directory, newFileName));
         }
 
         private static MenuItem CreateItem(

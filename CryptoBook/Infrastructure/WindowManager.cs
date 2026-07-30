@@ -111,6 +111,21 @@ namespace CryptoBook.Infrastructure
                 winHost.Window.ShowDialog();
         }
 
+        public void ActivateWindow(Guid windowId)
+        {
+            var winHost = FindHostWindow(windowId);
+            if(winHost is null || winHost.IsClosing || winHost.IsClosed)
+                return;
+
+            if(!winHost.Window.IsVisible)
+                winHost.Window.Show();
+            if(winHost.Window.WindowState == WindowState.Minimized)
+                winHost.Window.WindowState = WindowState.Normal;
+
+            winHost.Window.Activate();
+            winHost.Window.Focus();
+        }
+
         public void CloseWindow(Guid windowId)
         {
             var winHost = FindHostWindow(windowId);
