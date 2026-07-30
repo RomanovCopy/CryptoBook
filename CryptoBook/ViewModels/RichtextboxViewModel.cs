@@ -12,6 +12,7 @@ namespace CryptoBook.ViewModels
         private readonly IRichTextBoxService richTextBox;
         private readonly IDocumentPreviewService previewService;
         private readonly IUriNavigationService uriNavigationService;
+        private readonly IMenuFileViewModel menuFile;
         private bool isPreviewMode;
         private FlowDocument? previewDocument;
 
@@ -19,7 +20,8 @@ namespace CryptoBook.ViewModels
             IRichtextboxModel richtextboxModel,
             IRichTextBoxService richTextBox,
             IDocumentPreviewService previewService,
-            IUriNavigationService uriNavigationService)
+            IUriNavigationService uriNavigationService,
+            IMenuFileViewModel menuFile)
         {
             this.richtextboxModel = richtextboxModel ??
                 throw new ArgumentNullException(nameof(richtextboxModel));
@@ -27,6 +29,8 @@ namespace CryptoBook.ViewModels
             this.previewService = previewService ?? throw new ArgumentNullException(nameof(previewService));
             this.uriNavigationService = uriNavigationService ??
                 throw new ArgumentNullException(nameof(uriNavigationService));
+            this.menuFile = menuFile
+                ?? throw new ArgumentNullException(nameof(menuFile));
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -65,6 +69,9 @@ namespace CryptoBook.ViewModels
                 },
                 parameter => parameter is Uri);
         private RelayCommand? openHyperlink;
+
+        public ICommand SaveDocument => menuFile.SaveFile;
+        public ICommand SaveDocumentAs => menuFile.SaveAsFile;
 
         public ICommand Loaded => loaded ??=
             new RelayCommand(richtextboxModel.Execute_Loaded, richtextboxModel.CanExecute_Loaded);

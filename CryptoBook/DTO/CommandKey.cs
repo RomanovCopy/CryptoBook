@@ -17,6 +17,7 @@ namespace CryptoBook.DTO
         menuFile_UpdateFile,
         menuFile_CloseFile,
         menuFile_WorkingDirectorySynchronization,
+        menuContent_InsertImage,
         menuContent_MediaPlayer,
         NewFileDialog_Create,
 

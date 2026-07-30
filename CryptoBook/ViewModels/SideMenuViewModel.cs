@@ -17,8 +17,8 @@ namespace CryptoBook.ViewModels
         private readonly SideMenuModel sideMenuModel;
 
         public ObservableCollection<MenuItemBase> MenuItems { get => sideMenuModel.MenuItems; }
+        public ObservableCollection<DTO.MenuItem> QuickActions { get => sideMenuModel.QuickActions; }
         public double Width { get => sideMenuModel.Width; set => sideMenuModel.Width = value; }
-        public bool IsMenuOpen { get; set; }
 
         public double FontSizeHeader { get => sideMenuModel.FontSizeHeader; set => sideMenuModel.FontSizeHeader = value; }
         public double FontSize { get => sideMenuModel.FontSize; set => sideMenuModel.FontSize = value; }

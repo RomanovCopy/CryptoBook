@@ -17,6 +17,8 @@ namespace CryptoBook.Interfaces
         bool IsHiddenFilesVisible { get; set; }
         ISystemItem? SelectedItem { get; set; }
         ReadOnlyObservableCollection<IDriveItem> GetDrives { get; }
+        IFavoriteDirectoriesViewModel Favorites { get; }
+        IFilePreviewViewModel Preview { get; }
 
         ICommand BackCommand{ get; }
         ICommand CutCommand { get; }

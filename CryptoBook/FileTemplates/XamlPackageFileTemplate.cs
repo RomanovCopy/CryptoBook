@@ -2,9 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace CryptoBook.FileTemplates
 {
@@ -14,9 +16,21 @@ namespace CryptoBook.FileTemplates
         public string DisplayName => "Xaml Package файл";
         public string DefaultExtension => ".XamlPackage";
         public string SuggestedBaseName => "New XamlPackage";
-        public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
+        public Task<byte[]> GetInitialContentAsync(CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
 
-        public Task<byte[]> GetInitialContentAsync(CancellationToken ct) => Task.FromResult(Array.Empty<byte>());
+            var document = new FlowDocument(new Paragraph());
+            using var stream = new MemoryStream();
+            var range = new TextRange(
+                document.ContentStart,
+                document.ContentEnd);
+            range.Save(
+                stream,
+                System.Windows.DataFormats.XamlPackage,
+                preserveTextElements: true);
+            return Task.FromResult(stream.ToArray());
+        }
 
         public IReadOnlyCollection<string> Extensions =>
         [

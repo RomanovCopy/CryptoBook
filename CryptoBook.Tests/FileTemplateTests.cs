@@ -48,4 +48,13 @@ public sealed class FileTemplateTests
             registry.GetAll(),
             template => template.CanHandleExtension(".PDF"));
     }
+
+    [Fact]
+    public async Task XamlPackageTemplate_CreatesNonEmptyContent()
+    {
+        byte[] content = await new XamlPackageFileTemplate()
+            .GetInitialContentAsync(CancellationToken.None);
+
+        Assert.NotEmpty(content);
+    }
 }

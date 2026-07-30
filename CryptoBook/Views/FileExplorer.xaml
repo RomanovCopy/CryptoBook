@@ -124,6 +124,8 @@
             <RowDefinition Height="Auto"/>
             <!-- Command Bar -->
             <RowDefinition Height="Auto"/>
+            <!-- Favorites Bar -->
+            <RowDefinition Height="Auto"/>
             <!-- Address Bar + Tabs -->
             <RowDefinition Height="*"/>
             <!-- Main Content: Nav Pane + File View -->
@@ -151,6 +153,12 @@
                     ToolTip="Создать папку"
                     AutomationProperties.Name="Создать папку"
                     Command="{Binding CreateDirectoryCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE734;"
+                    ToolTip="Добавить текущую директорию в избранное"
+                    AutomationProperties.Name="Добавить текущую директорию в избранное"
+                    Command="{Binding Favorites.AddCurrentDirectoryCommand}"
+                    CommandParameter="{Binding CurrentPath}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
 
@@ -215,22 +223,115 @@
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
         </ToolBar>
 
-        <!-- 2. Tabs + Address Bar -->
-        <TabControl Grid.Row="1" Margin="0,0,0,0" Background="Transparent" BorderThickness="0">
-            <TabItem Header="Home" IsSelected="True">
-                <Grid>
-                    <TextBox Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged}" Margin="10,5" Height="32" 
-                             VerticalAlignment="Center" Padding="10,0" FontSize="14"/>
-                    <!-- Breadcrumb можно реализовать через ItemsControl -->
-                </Grid>
-            </TabItem>
-            <TabItem Header="Documents"/>
-            <TabItem Header="+"/>
-            <!-- Кнопка новой вкладки -->
-        </TabControl>
+        <!-- 2. Favorites Bar -->
+        <Grid Grid.Row="1"
+              MinHeight="34"
+              Background="{DynamicResource CurrentWindowBackground}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- 3. Основная область: Navigation Pane слева + File View справа -->
-        <Grid Grid.Row="2">
+            <Border Grid.Column="0"
+                    Padding="10,0,8,0"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="0,0,1,1">
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <TextBlock Margin="0,0,5,0"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="14"
+                               Text="&#xE734;"/>
+                    <TextBlock VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Text="Избранное"/>
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <ToolBar ItemsSource="{Binding Favorites.Items}"
+                         Background="Transparent"
+                         BorderBrush="#E0E0E0"
+                         BorderThickness="0,0,0,1"
+                         ToolBarTray.IsLocked="True">
+                    <ToolBar.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="1"
+                                    Tag="{Binding DataContext.Favorites, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                    ToolTip="{Binding AvailabilityText}">
+                                <Border.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Открыть"
+                                                  Command="{Binding PlacementTarget.Tag.OpenCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                        <Separator/>
+                                        <MenuItem Header="Переименовать"
+                                                  Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                        <MenuItem Header="Удалить из избранного"
+                                                  Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                    </ContextMenu>
+                                </Border.ContextMenu>
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                                <Setter Property="Opacity" Value="0.48"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Button Padding="8,3"
+                                        MinWidth="72"
+                                        MaxWidth="190"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        HorizontalContentAlignment="Left"
+                                        Command="{Binding DataContext.Favorites.OpenCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                        CommandParameter="{Binding}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Margin="0,0,6,0"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="14"
+                                                   Text="&#xE8B7;"/>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Text="{Binding DisplayName}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </Button>
+                            </Border>
+                        </DataTemplate>
+                    </ToolBar.ItemTemplate>
+                </ToolBar>
+
+                <TextBlock Margin="9,0"
+                           VerticalAlignment="Center"
+                           Foreground="Gray"
+                           FontSize="11"
+                           IsHitTestVisible="False"
+                           Text="Добавьте текущую папку кнопкой ★">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Favorites.Items.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Grid>
+
+        <!-- 3. Address Bar -->
+        <TextBox Grid.Row="2" Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged}" Margin="10,5" Height="22"
+                             VerticalAlignment="Center" Padding="10,0" FontSize="14" Background="Transparent"/>
+
+        <!-- 4. Основная область: Navigation Pane слева + File View справа -->
+        <Grid Grid.Row="3">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="leftcolumn"  Width="{Binding LeftColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/>
@@ -419,28 +520,121 @@
                   ResizeBehavior="PreviousAndNext"
                   ResizeDirection="Columns"/>
 
-            <!-- Details Pane (правая панель деталей) -->
-            <Border Grid.Column="4" Background="White" BorderBrush="#E0E0E0" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch">
-                <StackPanel Margin="10">
-                    <TextBlock Text="Details" FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="Name: Folder1"/>
-                    <TextBlock Text="Type: File folder"/>
-                    <TextBlock Text="Size: --"/>
-                    <Image Source="placeholder.png" Height="200" Margin="0,20,0,0"/>
-                </StackPanel>
+            <!-- Details Pane: сведения и предварительный просмотр -->
+            <Border Grid.Column="4"
+                    Background="White"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="1,0,0,0"
+                    HorizontalAlignment="Stretch">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock FontWeight="SemiBold"
+                               FontSize="16"
+                               Text="{Binding Preview.FileName}"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding Preview.FileName}"/>
+                    <TextBlock Grid.Row="1"
+                               Margin="0,4,0,0"
+                               Foreground="Gray"
+                               FontSize="11"
+                               Text="{Binding Preview.FileDetails}"
+                               TextWrapping="Wrap"/>
+
+                    <Grid Grid.Row="3">
+                        <ProgressBar Height="3"
+                                     VerticalAlignment="Top"
+                                     IsIndeterminate="True">
+                            <ProgressBar.Style>
+                                <Style TargetType="ProgressBar">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Preview.PreviewKind}"
+                                                     Value="{x:Static dto:FilePreviewKind.Loading}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ProgressBar.Style>
+                        </ProgressBar>
+
+                        <Image Source="{Binding Preview.Image}"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Preview.PreviewKind}"
+                                                     Value="{x:Static dto:FilePreviewKind.Image}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+
+                        <TextBox Text="{Binding Preview.Text, Mode=OneWay}"
+                                 IsReadOnly="True"
+                                 AcceptsReturn="True"
+                                 AcceptsTab="True"
+                                 TextWrapping="NoWrap"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Auto">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Preview.PreviewKind}"
+                                                     Value="{x:Static dto:FilePreviewKind.Text}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="Gray"
+                                   Text="{Binding Preview.Message}"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Preview.PreviewKind}"
+                                                     Value="{x:Static dto:FilePreviewKind.Text}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Preview.PreviewKind}"
+                                                     Value="{x:Static dto:FilePreviewKind.Image}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Grid>
             </Border>
 
-
         </Grid>
-        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="5">
+        <Border Grid.Row="4" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="5">
             <TextBlock Text="{Binding Path=SelectedItem.FullPath, StringFormat='Selected: {0}', 
                 UpdateSourceTrigger=PropertyChanged, ElementName=listview}" Foreground="White" FontSize="16"/>
         </Border>
-
-        <!-- 4. Status Bar снизу -->
-        <StatusBar Grid.Row="4" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Margin="3">
-            <StatusBarItem Content="5 items | 1 selected"/>
-        </StatusBar>
 
     </Grid>
     <i:Interaction.Triggers>

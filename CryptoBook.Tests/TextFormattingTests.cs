@@ -371,7 +371,8 @@ public sealed class TextFormattingTests
             new RichtextboxModel(),
             richText,
             new DocumentPreviewService(),
-            navigator);
+            navigator,
+            new StubMenuFileViewModel());
 
         viewModel.ToggleView.Execute(null);
 
@@ -399,7 +400,8 @@ public sealed class TextFormattingTests
             new RichtextboxModel(),
             richText,
             new DocumentPreviewService(),
-            navigator);
+            navigator,
+            new StubMenuFileViewModel());
         var uri = new Uri("https://example.com");
 
         viewModel.OpenHyperlink.Execute(uri);
@@ -456,5 +458,21 @@ public sealed class TextFormattingTests
             LastOpenedUri = uri;
             return true;
         }
+    }
+
+    private sealed class StubMenuFileViewModel: IMenuFileViewModel
+    {
+        private static ICommand Command { get; } =
+            new RelayCommand(_ => { });
+
+        public ICommand NewFile => Command;
+        public ICommand OpenFile => Command;
+        public ICommand SaveFile => Command;
+        public ICommand SaveAsFile => Command;
+        public ICommand FileOverview => Command;
+        public ICommand OpenDirectory => Command;
+        public ICommand UpdateFile => Command;
+        public ICommand CloseFile => Command;
+        public ICommand WorkingDirectorySynchronization => Command;
     }
 }

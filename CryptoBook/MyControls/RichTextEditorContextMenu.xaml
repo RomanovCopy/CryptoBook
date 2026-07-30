@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
+             xmlns:dto="clr-namespace:CryptoBook.DTO"
              DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IRichTextContextMenuViewModel}}"
              Background="{DynamicResource CurrentWindowBackground}"
              Foreground="{DynamicResource CurrentWindowForeground}"
@@ -135,6 +137,22 @@
                 <Image Source="{DynamicResource alignjustifyimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
+    </MenuItem>
+
+    <MenuItem Header="_Изображение">
+        <MenuItem Header="В _строке"
+                  Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
+                  CommandParameter="{x:Static dto:ImageLayoutMode.Inline}"/>
+        <MenuItem Header="_Отдельный блок по центру"
+                  Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
+                  CommandParameter="{x:Static dto:ImageLayoutMode.CenteredBlock}"/>
+        <Separator/>
+        <MenuItem Header="Обтекание: изображение _слева"
+                  Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
+                  CommandParameter="{x:Static dto:ImageLayoutMode.FloatLeft}"/>
+        <MenuItem Header="Обтекание: изображение с_права"
+                  Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
+                  CommandParameter="{x:Static dto:ImageLayoutMode.FloatRight}"/>
     </MenuItem>
 
     <MenuItem Header="_Списки">

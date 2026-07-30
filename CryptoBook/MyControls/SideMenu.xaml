@@ -1,42 +1,84 @@
-﻿<UserControl x:Class="CryptoBook.MyControls.SideMenu"
-         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns:marcup="clr-namespace:CryptoBook.Markup"
-         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
-         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-         xmlns:local="clr-namespace:CryptoBook.MyControls"
-         mc:Ignorable="d"
-         d:DataContext="{x:Type interfaces:IMainWindowViewModel}">
-    <UserControl.DataContext>
-        <marcup:ResolveViewModel ViewModelType="{x:Type interfaces:IMainWindowViewModel}"/>
-    </UserControl.DataContext>
+<UserControl x:Class="CryptoBook.MyControls.SideMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DataContext="{x:Type interfaces:ISideMenuViewModel}">
+    <UserControl.Resources>
+        <Style x:Key="QuickActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.72"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NavigationButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource QuickActionButtonStyle}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,9"/>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Border x:Name="sidemenu"
-            Background="{DynamicResource CurrentWindowBackground}"
-            HorizontalAlignment="Left">
+                Width="0"
+                Opacity="0"
+                HorizontalAlignment="Left"
+                ClipToBounds="True"
+                Background="{DynamicResource CurrentWindowBackground}"
+                BorderBrush="{DynamicResource CurrentBorderColor}"
+                BorderThickness="0,0,1,0">
             <Border.Style>
                 <Style TargetType="Border">
-                    <Setter Property="Opacity" Value="0"/>
-                    <Setter Property="Width" Value="0"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMenuOpen, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Setter Property="Visibility" Value="Visible"/>
+                        <DataTrigger Binding="{Binding DataContext.IsMenuOpen,
+                                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                                     Value="True">
                             <DataTrigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="Width"
-                                                     From="0" To="250" Duration="0:0:0.5">
+                                                         To="280"
+                                                         Duration="0:0:0.24">
                                             <DoubleAnimation.EasingFunction>
-                                                <QuadraticEase EasingMode="EaseInOut"/>
+                                                <QuadraticEase EasingMode="EaseOut"/>
                                             </DoubleAnimation.EasingFunction>
                                         </DoubleAnimation>
                                         <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                             From="0.3" To="1" Duration="0:0:0.5">
-                                            <DoubleAnimation.EasingFunction>
-                                                <QuadraticEase EasingMode="EaseInOut"/>
-                                            </DoubleAnimation.EasingFunction>
-                                        </DoubleAnimation>
+                                                         To="1"
+                                                         Duration="0:0:0.18"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.EnterActions>
@@ -44,17 +86,15 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="Width"
-                                                     From="250" To="0" Duration="0:0:0.5">
+                                                         To="0"
+                                                         Duration="0:0:0.2">
                                             <DoubleAnimation.EasingFunction>
-                                                <QuadraticEase EasingMode="EaseInOut"/>
+                                                <QuadraticEase EasingMode="EaseIn"/>
                                             </DoubleAnimation.EasingFunction>
                                         </DoubleAnimation>
                                         <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                             From="1" To="0.3" Duration="0:0:0.5">
-                                            <DoubleAnimation.EasingFunction>
-                                                <QuadraticEase EasingMode="EaseInOut"/>
-                                            </DoubleAnimation.EasingFunction>
-                                        </DoubleAnimation>
+                                                         To="0"
+                                                         Duration="0:0:0.14"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.ExitActions>
@@ -62,26 +102,122 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <!-- Контент меню -->
-            <StackPanel>
-                <Grid d:DataContext="{x:Type interfaces:ISideMenuViewModel}"
-                    Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Grid.DataContext>
-                        <marcup:ResolveViewModel ViewModelType="{x:Type interfaces:ISideMenuViewModel}"/>
-                    </Grid.DataContext>
-                    <TreeView ItemsSource="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
-              Background="Transparent"  Width="250" BorderThickness="0" VerticalAlignment="Stretch">
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
-                                <ContentPresenter />
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                        <TreeView.ItemContainerStyle>
-                            <StaticResource ResourceKey="TreeViewItemStyle"/>
-                        </TreeView.ItemContainerStyle>
-                    </TreeView>
-                </Grid>
-            </StackPanel>
+
+            <Grid Width="280">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Margin="18,18,18,14">
+                    <TextBlock Text="CryptoBook"
+                               Foreground="{DynamicResource CurrentWindowForeground}"
+                               FontSize="21"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Margin="0,3,0,0"
+                               Text="Книга и рабочее пространство"
+                               Foreground="{DynamicResource CurrentWindowForeground}"
+                               FontSize="12"
+                               Opacity="0.62"/>
+                </StackPanel>
+
+                <ItemsControl Grid.Row="1"
+                              Margin="12,0,12,15"
+                              ItemsSource="{Binding QuickActions}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Margin" Value="3"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource QuickActionButtonStyle}"
+                                    Command="{Binding Command}"
+                                    IsEnabled="{Binding IsEnabled}"
+                                    ToolTip="{Binding Description}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Glyph}"
+                                               FontFamily="Segoe MDL2 Assets"
+                                               FontSize="16"
+                                               Margin="0,0,8,0"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Name}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ScrollViewer Grid.Row="2"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl Margin="12,0,12,12"
+                                  ItemsSource="{Binding MenuItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,14">
+                                    <TextBlock Margin="9,0,9,5"
+                                               Text="{Binding Name}"
+                                               Foreground="{DynamicResource CurrentWindowForeground}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Opacity="0.58"/>
+                                    <ItemsControl ItemsSource="{Binding Children}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{StaticResource NavigationButtonStyle}"
+                                                        Command="{Binding Command}"
+                                                        IsEnabled="{Binding IsEnabled}"
+                                                        ToolTip="{Binding Description}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Glyph}"
+                                                                   FontFamily="Segoe MDL2 Assets"
+                                                                   FontSize="17"
+                                                                   VerticalAlignment="Center"/>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Text="{Binding Name}"
+                                                                       FontSize="14"/>
+                                                            <TextBlock Text="{Binding Description}"
+                                                                       Margin="0,2,0,0"
+                                                                       FontSize="11"
+                                                                       Opacity="0.58"
+                                                                       TextTrimming="CharacterEllipsis"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="3"
+                        Margin="18,10,18,16"
+                        Padding="0,11,0,0"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="0,1,0,0"
+                        Opacity="0.55">
+                    <TextBlock Text="Другие разделы появятся по мере готовности"
+                               Foreground="{DynamicResource CurrentWindowForeground}"
+                               FontSize="11"
+                               TextWrapping="Wrap"/>
+                </Border>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

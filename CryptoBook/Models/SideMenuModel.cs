@@ -17,6 +17,8 @@ namespace CryptoBook.Models
         private readonly ILifetimeScope scope;
         internal ObservableCollection<MenuItemBase> MenuItems { get => menuItems; private set => SetProperty(ref menuItems, value); }
         ObservableCollection<MenuItemBase> menuItems;
+        internal ObservableCollection<MenuItem> QuickActions { get => quickActions; private set => SetProperty(ref quickActions, value); }
+        ObservableCollection<MenuItem> quickActions;
 
         /// <summary>
         /// ширина бокового меню в процентах от ширины окна
@@ -40,6 +42,7 @@ namespace CryptoBook.Models
         private readonly IMenuSettingsViewModel menuSettingsViewModel;
         private readonly IMenuEncryptionViewModel menuEncryptionViewModel;
         private readonly IMenuContentViewModel menuContentViewModel;
+        private readonly IBookmarksViewModel bookmarksViewModel;
 
         public SideMenuModel(ILifetimeScope _scope)
         {
@@ -48,21 +51,111 @@ namespace CryptoBook.Models
             menuSettingsViewModel = _scope.Resolve<IMenuSettingsViewModel>();
             menuEncryptionViewModel = _scope.Resolve<IMenuEncryptionViewModel>();
             menuContentViewModel = _scope.Resolve<IMenuContentViewModel>();
+            bookmarksViewModel = _scope.Resolve<IBookmarksViewModel>();
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
             FontSize = Properties.Settings.Default.SideMenuFontSize;
+            QuickActions = InitializeQuickActions();
             MenuItems = InitializeMenu();
         }
 
+        private ObservableCollection<MenuItem> InitializeQuickActions()
+        {
+            var commandService = scope.Resolve<ICommandService>();
+
+            return
+            [
+                CreateItem(
+                    commandService,
+                    "Создать",
+                    "\uE710",
+                    "Создать новую книгу",
+                    CommandKey.menuFile_NewFile),
+                CreateItem(
+                    commandService,
+                    "Открыть",
+                    "\uE8E5",
+                    "Открыть книгу или рабочую директорию",
+                    CommandKey.menuFile_OpenFile),
+                CreateItem(
+                    commandService,
+                    "Сохранить",
+                    "\uE74E",
+                    "Сохранить текущий документ",
+                    CommandKey.menuFile_SaveFile)
+            ];
+        }
 
         private ObservableCollection<MenuItemBase> InitializeMenu()
         {
-            var menuItems = new ObservableCollection<MenuItemBase>
+            var commandService = scope.Resolve<ICommandService>();
+            var file = new MenuItemBase(commandService)
             {
-                new MenuFileItem(scope.Resolve<ICommandService>()),
-                new MenuContentItem(scope.Resolve<ICommandService>()),
+                Name = "Файл",
+                IsEnabled = true,
+                HasChildren = true
             };
-            return menuItems;
+            file.Children.Add(CreateItem(
+                commandService,
+                "Сохранить",
+                "\uE74E",
+                "Сохранить изменения в текущем файле",
+                CommandKey.menuFile_SaveFile));
+            file.Children.Add(CreateItem(
+                commandService,
+                "Сохранить как",
+                "\uE792",
+                "Выбрать имя, папку и формат",
+                CommandKey.menuFile_SaveAsFile));
+
+            var content = new MenuItemBase(commandService)
+            {
+                Name = "Содержимое",
+                IsEnabled = true,
+                HasChildren = true
+            };
+
+            content.Children.Add(new MenuItem(commandService)
+            {
+                Name = "Закладки",
+                Glyph = "\uE8A4",
+                Description = "Переходы, заметки и ссылки внутри книги",
+                IsEnabled = true,
+                Command = bookmarksViewModel.OpenManager
+            });
+            content.Children.Add(CreateItem(
+                commandService,
+                "Вставить изображение",
+                "\uE91B",
+                "Добавить изображение в позицию курсора",
+                CommandKey.menuContent_InsertImage));
+            content.Children.Add(CreateItem(
+                commandService,
+                "Фото и видео",
+                "\uE714",
+                "Просмотр медиафайлов рабочей директории",
+                CommandKey.menuContent_MediaPlayer));
+
+            return [file, content];
+        }
+
+        private static MenuItem CreateItem(
+            ICommandService commandService,
+            string name,
+            string glyph,
+            string description,
+            CommandKey commandKey)
+        {
+            return new MenuItem(commandService)
+            {
+                Name = name,
+                Glyph = glyph,
+                Description = description,
+                IsEnabled = true,
+                Command = commandService.GetCommand(commandKey)
+                    ?? throw new InvalidOperationException(
+                        $"Команда {commandKey} не зарегистрирована.")
+            };
         }
 
         internal bool CanExecute_Lifecycle(object? obj) => true;

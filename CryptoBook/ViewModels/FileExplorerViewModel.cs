@@ -17,6 +17,8 @@ namespace CryptoBook.ViewModels
     public class FileExplorerViewModel: ViewModelBase, IFileExplorerViewModel
     {
         private readonly IFileExplorerModel _fileExplorerModel;
+        private readonly IMessageService _messageService;
+        private ISystemItem? _previewSelection;
 
         public double WindowWidth { get =>_fileExplorerModel.WindowWidth; set => _fileExplorerModel.WindowWidth=value; }
         public double WindowHeight { get => _fileExplorerModel.WindowHeight; set => _fileExplorerModel.WindowHeight=value; }
@@ -33,13 +35,36 @@ namespace CryptoBook.ViewModels
         public ReadOnlyObservableCollection<IDriveItem> GetDrives => _fileExplorerModel.GetDrives;
         public string CurrentPath { get => _fileExplorerModel.CurrentPath; set => _fileExplorerModel.CurrentPath=value; }
         public Guid WindowId => _fileExplorerModel.WindowId;
+        public IFavoriteDirectoriesViewModel Favorites { get; }
+        public IFilePreviewViewModel Preview { get; }
 
 
 
-        public FileExplorerViewModel( IFileExplorerModel fileExplorerModel )
+        public FileExplorerViewModel(
+            IFileExplorerModel fileExplorerModel,
+            IFavoriteDirectoriesViewModel favorites,
+            IFilePreviewViewModel preview,
+            IMessageService messageService)
         {
             _fileExplorerModel = fileExplorerModel ?? throw new ArgumentNullException(nameof(fileExplorerModel));
+            Favorites = favorites ?? throw new ArgumentNullException(nameof(favorites));
+            Preview = preview ?? throw new ArgumentNullException(nameof(preview));
+            _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
             _fileExplorerModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            Favorites.OpenRequested += Favorites_OpenRequested;
+        }
+
+        private async void Favorites_OpenRequested(
+            object? sender,
+            FavoriteDirectoryOpenRequestedEventArgs e)
+        {
+            try
+            {
+                await _fileExplorerModel.OpenDirectoryAsync(e.Path);
+            }
+            catch(OperationCanceledException)
+            {
+            }
         }
 
 
@@ -90,16 +115,41 @@ namespace CryptoBook.ViewModels
         public ICommand ListViewItemDoubleClickCommand => _listViewItemDoubleClickCommand??= new RelayCommand(_fileExplorerModel.Execute_ListViewItemDoubleClickCommand, _fileExplorerModel.CanExecute_ListViewItemDoubleClickCommand);
         RelayCommand _listViewItemDoubleClickCommand;
 
-        public ICommand ListViewSelectionChangedCommand => _listViewSelectionChangedCommand ??= new RelayCommand(_fileExplorerModel.Execute_ListViewSelectionChangedCommand, _fileExplorerModel.CanExecute_ListViewSelectionChangedCommand);
+        public ICommand ListViewSelectionChangedCommand => _listViewSelectionChangedCommand
+            ??= new RelayCommand(
+                ExecuteListViewSelectionChanged,
+                _ => true);
         RelayCommand _listViewSelectionChangedCommand;
+
+        private async void ExecuteListViewSelectionChanged(object? parameter)
+        {
+            _fileExplorerModel.Execute_ListViewSelectionChangedCommand(parameter);
+            _previewSelection = parameter as ISystemItem;
+            await Preview.SelectAsync(_previewSelection);
+        }
 
 
         public ICommand WindowSizeChangedCommand => _windowSizeChangedCommand ??= new RelayCommand(_fileExplorerModel.Execute_WindowSizeChanged, _fileExplorerModel.CanExecute_WindowSizeChanged);
         RelayCommand _windowSizeChangedCommand;
 
 
-        public ICommand Loaded => _loadedCommand ??= new RelayCommand(_fileExplorerModel.Execute_Loaded, _fileExplorerModel.CanExecute_Loaded);
+        public ICommand Loaded => _loadedCommand ??= new RelayCommand(ExecuteLoaded, _fileExplorerModel.CanExecute_Loaded);
         RelayCommand _loadedCommand;
+
+        private async void ExecuteLoaded(object? parameter)
+        {
+            _fileExplorerModel.Execute_Loaded(parameter);
+            try
+            {
+                await Favorites.InitializeAsync();
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    "Ошибка избранного",
+                    $"Не удалось загрузить список избранного:\r\n{ex.Message}");
+            }
+        }
 
         public ICommand Close => _closeCommand ??= new RelayCommand(_fileExplorerModel.Execute_Close, _fileExplorerModel.CanExecute_Close);
         RelayCommand _closeCommand;
@@ -110,8 +160,18 @@ namespace CryptoBook.ViewModels
         public ICommand Closed => _closedCommand ??= new RelayCommand(_fileExplorerModel.Execute_Closed, _fileExplorerModel.CanExecute_Closed);
         RelayCommand _closedCommand;
 
-        public ICommand EncryptingKeyCommand => _encryptingKeyCommand ??= new RelayCommand(_fileExplorerModel.Execute_EncryptingKeyCommand, _fileExplorerModel.CanExecute_EncryptingKeyCommand); 
+        public ICommand EncryptingKeyCommand => _encryptingKeyCommand
+            ??= new RelayCommand(
+                ExecuteEncryptingKeyCommand,
+                _fileExplorerModel.CanExecute_EncryptingKeyCommand);
         RelayCommand _encryptingKeyCommand;
+
+        private async void ExecuteEncryptingKeyCommand(object? parameter)
+        {
+            _fileExplorerModel.Execute_EncryptingKeyCommand(parameter);
+            if(_previewSelection is not null)
+                await Preview.SelectAsync(_previewSelection);
+        }
 
         public ICommand DecryptCommand => _decryptCommand ??= new RelayCommand(_fileExplorerModel.Execute_DecryptCommand, _fileExplorerModel.CanExecute_DecryptCommand);
         RelayCommand _decryptCommand;

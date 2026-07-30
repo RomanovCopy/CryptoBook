@@ -18,6 +18,9 @@ namespace CryptoBook.Interfaces
         string CurrentPath { get; set; }
         ISystemItem? SelectedItem { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
+        Task OpenDirectoryAsync(
+            string path,
+            CancellationToken cancellationToken = default);
 
         bool CanExecute_BackCommand(object? obj);
         bool CanExecute_CutCommand(object? obj);

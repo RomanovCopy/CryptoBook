@@ -3,7 +3,6 @@
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 
-using System.Collections.Concurrent;
 using System.Windows.Markup;
 
 namespace CryptoBook.Markup
@@ -18,19 +17,13 @@ namespace CryptoBook.Markup
         /// </summary>
         public Type UserControlType { get; set; }
 
-        private static readonly ConcurrentDictionary<Type, object> _cache = new();
-
-
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             if(UserControlType == null)
                 throw new InvalidOperationException("UserControlType must be set.");
 
-            return _cache.GetOrAdd(UserControlType, type =>
-            {
-                var scope = GetScope(serviceProvider);
-                return scope.Resolve(type);
-            });
+            var scope = GetScope(serviceProvider);
+            return scope.Resolve(UserControlType);
         }
 
         //private static IContainer GetContainer()

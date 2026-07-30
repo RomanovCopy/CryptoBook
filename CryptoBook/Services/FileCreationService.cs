@@ -16,7 +16,7 @@ namespace CryptoBook.Services
 
         public FileCreationService(IFileManagerService fs)
         {
-            _fs = fs;
+            _fs = fs ?? throw new ArgumentNullException(nameof(fs));
         }
 
         public async Task<string> SuggestUniqueNameAsync(

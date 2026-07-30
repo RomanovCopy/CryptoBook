@@ -16,6 +16,7 @@ namespace CryptoBook.Services
     {
         private readonly IDispatcherService _dispatcherService;
         private readonly IBookmarkService _bookmarkService;
+        private readonly IDocumentFormatHandlerRegistry _formatHandlers;
 
         /// <summary>
         /// Сервис загрузки содержимого в FlowDocument (текст, RTF, изображения и т.д.).
@@ -23,10 +24,12 @@ namespace CryptoBook.Services
         /// </summary>
         public FlowDocumentLoadService(
             IDispatcherService dispatcherService,
-            IBookmarkService bookmarkService)
+            IBookmarkService bookmarkService,
+            IDocumentFormatHandlerRegistry formatHandlers)
         {
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
             _bookmarkService = bookmarkService ?? throw new ArgumentNullException(nameof(bookmarkService));
+            _formatHandlers = formatHandlers ?? throw new ArgumentNullException(nameof(formatHandlers));
         }
 
 
@@ -53,8 +56,18 @@ namespace CryptoBook.Services
 
             byte[] buffer = await ReadAllBytesAsync(source, cancellationToken, progress).ConfigureAwait(false);
 
-            if(buffer == null || buffer.Length == 0)
+            IDocumentFormatHandler? formatHandler =
+                _formatHandlers.Find(template);
+            if(formatHandler is not null)
             {
+                await formatHandler.LoadAsync(
+                    richTextBoxService.Document,
+                    buffer,
+                    cancellationToken);
+                await _dispatcherService.InvokeAsync(() =>
+                    _bookmarkService.RebuildIndexFromDocument(
+                        richTextBoxService));
+                progress?.Report(1.0, "Файл загружен");
                 return;
             }
 
@@ -65,6 +78,13 @@ namespace CryptoBook.Services
                 FlowDocument document = richTextBoxService.Document;
 
                 document.Blocks.Clear();
+
+                if(buffer.Length == 0)
+                {
+                    document.Blocks.Add(new Paragraph());
+                    _bookmarkService.RebuildIndexFromDocument(richTextBoxService);
+                    return;
+                }
 
                 if(template is ImageFileTemplate)
                 {
@@ -133,12 +153,8 @@ namespace CryptoBook.Services
 
             return template switch
             {
-                XamlFileTemplate => DataFormats.Text,
-                RichTextFileTemplate => DataFormats.Rtf,
-                PlainTextTemplate => DataFormats.Text,
                 ImageFileTemplate => DataFormats.Bitmap,
                 SecureFileTemplate => System.Windows.DataFormats.XamlPackage,
-                XamlPackageFileTemplate => System.Windows.DataFormats.XamlPackage,
                 _ => throw new NotSupportedException($"The template type '{template.GetType().Name}' is not supported."),
             };
 

@@ -16,14 +16,14 @@ namespace CryptoBook.Services
     public sealed class FlowDocumentSaveService: IFlowDocumentSaveService
     {
         private readonly IDispatcherService _dispatcherService;
-        private readonly IKeyProvider _keyProvider;
-        private readonly IFileManagerService _fileManagerService;
+        private readonly IDocumentFormatHandlerRegistry _formatHandlers;
 
-        public FlowDocumentSaveService(IDispatcherService dispatcherService, IKeyProvider keyProvider, IFileManagerService fileManagerService)
+        public FlowDocumentSaveService(
+            IDispatcherService dispatcherService,
+            IDocumentFormatHandlerRegistry formatHandlers)
         {
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-            _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
-            _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
+            _formatHandlers = formatHandlers ?? throw new ArgumentNullException(nameof(formatHandlers));
         }
 
         public async Task  SaveToFileAsync(IRichTextBoxService richTextBoxService, string filePath, IFileTemplate template, 
@@ -99,6 +99,15 @@ namespace CryptoBook.Services
 
         private async Task<byte[]> SerializeAsync( FlowDocument document, IFileTemplate template, CancellationToken cancellationToken)
         {
+            IDocumentFormatHandler? formatHandler =
+                _formatHandlers.Find(template);
+            if(formatHandler is not null)
+            {
+                return await formatHandler.SerializeAsync(
+                    document,
+                    cancellationToken);
+            }
+
             return await _dispatcherService.InvokeAsync( () =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -118,13 +127,8 @@ namespace CryptoBook.Services
         {
             return template switch
             {
-                XamlFileTemplate => DataFormats.Text,
-                RichTextFileTemplate => DataFormats.Rtf,
-                PlainTextTemplate => DataFormats.Text,
                 ImageFileTemplate => DataFormats.Bitmap,
                 SecureFileTemplate => System.Windows.DataFormats.XamlPackage,
-                XamlPackageFileTemplate => System.Windows.DataFormats.XamlPackage,
-
                 _ => throw new NotSupportedException(
                     $"Шаблон '{template.GetType().Name}' не поддерживается.")
             };

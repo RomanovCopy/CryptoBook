@@ -14,6 +14,14 @@
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IRichtextboxViewModel}"/>
     </UserControl.DataContext>
+    <UserControl.InputBindings>
+        <KeyBinding Key="S"
+                    Modifiers="Control"
+                    Command="{Binding SaveDocument}"/>
+        <KeyBinding Key="S"
+                    Modifiers="Control+Shift"
+                    Command="{Binding SaveDocumentAs}"/>
+    </UserControl.InputBindings>
     <Border BorderBrush="Black" BorderThickness="1,1,1,0">
         <Grid>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
@@ -31,6 +39,12 @@
                     <Style TargetType="{x:Type services:RichTextBoxService}">
                         <Setter Property="ContextMenu"
                                 Value="{markup:ResolveService ServiceType={x:Type local:RichTextEditorContextMenu}}"/>
+                        <Setter Property="behaviors:DocumentImageResizeBehavior.ImageEditor"
+                                Value="{markup:ResolveService ServiceType={x:Type interfaces:IEmbeddedImageEditor}}"/>
+                        <Setter Property="behaviors:DocumentImageResizeBehavior.ImageLayoutService"
+                                Value="{markup:ResolveService ServiceType={x:Type interfaces:IEmbeddedImageLayoutService}}"/>
+                        <Setter Property="behaviors:DocumentImageResizeBehavior.IsEnabled"
+                                Value="True"/>
                     </Style>
                 </ContentControl.Resources>
             </ContentControl>

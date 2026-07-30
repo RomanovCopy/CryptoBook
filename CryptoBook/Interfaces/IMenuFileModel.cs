@@ -20,10 +20,14 @@ namespace CryptoBook.Interfaces
         public void Execute_OpenFile(object? obj);
 
         public bool CanExecute_SaveFile(object? obj);
-        public void Execute_SaveFile(object? obj);
+        public Task Execute_SaveFileAsync(
+            object? obj,
+            CancellationToken cancellationToken);
 
         public bool CanExecute_SaveAsFile(object? obj);
-        public void Execute_SaveAsFile(object? obj);
+        public Task Execute_SaveAsFileAsync(
+            object? obj,
+            CancellationToken cancellationToken);
 
 
         public bool CanExecute_FileOverview(object? obj);

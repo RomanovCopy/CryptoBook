@@ -12,5 +12,7 @@ namespace CryptoBook.Interfaces
         System.Windows.Documents.FlowDocument? PreviewDocument { get; }
         System.Windows.Input.ICommand ToggleView { get; }
         System.Windows.Input.ICommand OpenHyperlink { get; }
+        System.Windows.Input.ICommand SaveDocument { get; }
+        System.Windows.Input.ICommand SaveDocumentAs { get; }
     }
 }

@@ -38,6 +38,7 @@ namespace CryptoBook.Models
         private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly IProgressDialogService _progressDialogService;
         private readonly IFileLauncherService _fileLauncherService;
+        private readonly IDocumentSession _documentSession;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -69,7 +70,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IFileLauncherService fileLauncherService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IFileLauncherService fileLauncherService, IDocumentSession documentSession)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -87,6 +88,7 @@ namespace CryptoBook.Models
             _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
             _progressDialogService = progressDialogService ?? throw new ArgumentNullException(nameof(progressDialogService));
             _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(fileLauncherService));
+            _documentSession = documentSession ?? throw new ArgumentNullException(nameof(documentSession));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -545,6 +547,89 @@ namespace CryptoBook.Models
             container.IsLoaded = result.Success;
         }
 
+        public async Task OpenDirectoryAsync(
+            string path,
+            CancellationToken cancellationToken = default)
+        {
+            if(string.IsNullOrWhiteSpace(path))
+                throw new ArgumentException("Путь к директории не задан.", nameof(path));
+
+            string nativePath = GetNativePath(path);
+            var lockTaken = false;
+            try
+            {
+                await _gate.WaitAsync(cancellationToken);
+                lockTaken = true;
+
+                string targetPath = NormalizePath(nativePath);
+                IContainerSystemItem? container = EnumerateAllContainers()
+                    .FirstOrDefault(item =>
+                        string.Equals(
+                            NormalizePath(item.FullPath),
+                            targetPath,
+                            StringComparison.OrdinalIgnoreCase));
+                container ??= ResolveDirectoryContainer(nativePath);
+                await OpenContainerAsync(container, cancellationToken);
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    "Ошибка открытия директории",
+                    $"Не удалось открыть «{nativePath}»:\r\n{ex.Message}");
+            }
+            finally
+            {
+                if(lockTaken)
+                    _gate.Release();
+            }
+        }
+
+        private IContainerSystemItem ResolveDirectoryContainer(string path)
+        {
+            string fullPath = Path.GetFullPath(path);
+            string rootPath = Path.GetPathRoot(fullPath)
+                ?? throw new DirectoryNotFoundException(
+                    $"Не удалось определить корень пути «{path}».");
+
+            IContainerSystemItem root = GetDrives
+                .OfType<IContainerSystemItem>()
+                .FirstOrDefault(item =>
+                    string.Equals(
+                        NormalizePath(item.FullPath),
+                        NormalizePath(rootPath),
+                        StringComparison.OrdinalIgnoreCase))
+                ?? _systemItemCreateService.CreateRoot(rootPath);
+
+            string relativePath = Path.GetRelativePath(rootPath, fullPath);
+            if(relativePath == ".")
+                return root;
+
+            IContainerSystemItem current = root;
+            string currentPath = rootPath;
+            foreach(string segment in relativePath.Split(
+                [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+                StringSplitOptions.RemoveEmptyEntries))
+            {
+                currentPath = Path.Combine(currentPath, segment);
+                IContainerSystemItem? existing = current.Children
+                    .OfType<IContainerSystemItem>()
+                    .FirstOrDefault(item =>
+                        string.Equals(
+                            NormalizePath(item.FullPath),
+                            NormalizePath(currentPath),
+                            StringComparison.OrdinalIgnoreCase));
+
+                current = existing
+                    ?? _systemItemCreateService.CreateDirectory(currentPath, current);
+            }
+
+            return current;
+        }
+
         private async Task OpenFileAsync(IFileItem file, CancellationToken cancellationToken)
         {
             var isEncrypted = await _secureFileValidator.HasCryptoBookHeaderAsync(
@@ -644,6 +729,7 @@ namespace CryptoBook.Models
                     return true;
                 });
 
+            _documentSession.Open(filePath, template);
             _windowManager.CloseWindow(WindowId);
         }
         public void Execute_ListViewSelectionChangedCommand(object? obj)
@@ -973,6 +1059,24 @@ namespace CryptoBook.Models
                 {
                     pending.Push(child);
                 }
+            }
+        }
+
+        private IEnumerable<IContainerSystemItem> EnumerateAllContainers()
+        {
+            var pending = new Stack<IContainerSystemItem>(
+                GetDrives.OfType<IContainerSystemItem>().Reverse());
+            var visited = new HashSet<IContainerSystemItem>();
+
+            while(pending.Count > 0)
+            {
+                var container = pending.Pop();
+                if(!visited.Add(container))
+                    continue;
+
+                yield return container;
+                foreach(var child in container.Children.OfType<IContainerSystemItem>().Reverse())
+                    pending.Push(child);
             }
         }
 

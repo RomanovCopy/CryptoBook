@@ -19,6 +19,10 @@ namespace CryptoBook.Infrastructure
         protected readonly ICommandService commandService;
         public string Name { get=>_name; set=>SetProperty(ref _name, value); }
         string _name;
+        public string Glyph { get => glyph; set => SetProperty(ref glyph, value); }
+        string glyph = string.Empty;
+        public string Description { get => description; set => SetProperty(ref description, value); }
+        string description = string.Empty;
         public bool IsEnabled { get=>_enabled; set=>SetProperty(ref _enabled, value); }
         bool _enabled;
         public ICommand Command { get=>_command; set=>SetProperty(ref _command, value); }

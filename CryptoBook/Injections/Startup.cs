@@ -73,6 +73,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarkEntryViewModel>().As<IBookmarkEntryViewModel>().AsSelf();
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
+            builder.RegisterType<FavoriteDirectoriesViewModel>().As<IFavoriteDirectoriesViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<FilePreviewViewModel>().As<IFilePreviewViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TextInputDialogViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
             builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
@@ -120,6 +123,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
             builder.RegisterType<DirectoryNameDialog>().InstancePerDependency();
+            builder.RegisterType<TextInputDialog>().InstancePerDependency();
             builder.RegisterType<HyperlinkDialog>().InstancePerDependency();
             builder.RegisterType<MediaPlayer>().InstancePerDependency();
                                                                                                          
@@ -136,6 +140,23 @@ namespace CryptoBook.Injections
 
             // реестр собирает их автоматически
             builder.RegisterType<FileTemplateRegistry>().As<IFileTemplateRegistry>().SingleInstance();
+
+            // Форматы FlowDocument
+            builder.RegisterType<RtfDocumentFormatHandler>()
+                .As<IDocumentFormatHandler>()
+                .SingleInstance();
+            builder.RegisterType<XamlPackageDocumentFormatHandler>()
+                .As<IDocumentFormatHandler>()
+                .SingleInstance();
+            builder.RegisterType<PlainTextDocumentFormatHandler>()
+                .As<IDocumentFormatHandler>()
+                .SingleInstance();
+            builder.RegisterType<XamlTextDocumentFormatHandler>()
+                .As<IDocumentFormatHandler>()
+                .SingleInstance();
+            builder.RegisterType<DocumentFormatHandlerRegistry>()
+                .As<IDocumentFormatHandlerRegistry>()
+                .SingleInstance();
 
 
             //DTOs
@@ -157,6 +178,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
             builder.RegisterType<FileClipboardService>().As<IFileClipboardService>().SingleInstance();
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
+            builder.RegisterType<FilePreviewService>().As<IFilePreviewService>().SingleInstance();
+            builder.RegisterType<FilePreviewContentSource>().As<IFilePreviewContentSource>().SingleInstance();
+            builder.RegisterType<JsonFavoriteDirectoryStore>().As<IFavoriteDirectoryStore>().SingleInstance();
+            builder.RegisterType<FavoriteDirectoryPathPolicy>().As<IFavoriteDirectoryPathPolicy>().SingleInstance();
+            builder.RegisterType<FavoriteDirectoryService>().As<IFavoriteDirectoryService>().SingleInstance();
+            builder.RegisterType<TextInputService>().As<ITextInputService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();
             builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
             builder.RegisterType<FileCreationService>().As<IFileCreationService>().SingleInstance();
@@ -181,6 +208,20 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentPreviewService>().As<IDocumentPreviewService>().InstancePerDependency();
             builder.RegisterType<UriNavigationService>().As<IUriNavigationService>().SingleInstance();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
+            builder.RegisterType<DocumentSession>()
+                .As<IDocumentSession>()
+                .SingleInstance();
+            builder.RegisterType<DocumentSaveTargetPicker>()
+                .As<IDocumentSaveTargetPicker>()
+                .SingleInstance();
+            builder.RegisterType<ImageFilePickerService>().As<IImageFilePicker>().SingleInstance();
+            builder.RegisterType<ImageContentLoader>().As<IImageContentLoader>().SingleInstance();
+            builder.RegisterType<EmbeddedImageEditor>().As<IEmbeddedImageEditor>().SingleInstance();
+            builder.RegisterType<EmbeddedImageLayoutService>()
+                .As<IEmbeddedImageLayoutService>()
+                .SingleInstance();
+            builder.RegisterType<RichTextBoxDocumentLayoutMetrics>().As<IDocumentLayoutMetrics>().SingleInstance();
+            builder.RegisterType<DocumentImageInserter>().As<IDocumentImageInserter>().SingleInstance();
             builder.RegisterType<ImageService>().As<IImageService>().InstancePerDependency();
             builder.RegisterType<MediaPlayerService>().As<IMediaPlayerService>().InstancePerDependency();
 
