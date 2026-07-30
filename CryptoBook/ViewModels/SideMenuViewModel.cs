@@ -29,12 +29,20 @@ namespace CryptoBook.ViewModels
             sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-        public ICommand Loaded { get; }
+        public ICommand Loaded => loaded ??=
+            new RelayCommand(sideMenuModel.Execute_Loaded, sideMenuModel.CanExecute_Lifecycle);
+        RelayCommand loaded;
 
-        public ICommand Close { get; }
+        public ICommand Close => close ??=
+            new RelayCommand(sideMenuModel.Execute_Close, sideMenuModel.CanExecute_Lifecycle);
+        RelayCommand close;
 
-        public ICommand Closing { get; }
+        public ICommand Closing => closing ??=
+            new RelayCommand(sideMenuModel.Execute_Closing, sideMenuModel.CanExecute_Lifecycle);
+        RelayCommand closing;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closed => closed ??=
+            new RelayCommand(sideMenuModel.Execute_Closed, sideMenuModel.CanExecute_Lifecycle);
+        RelayCommand closed;
     }
 }

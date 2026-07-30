@@ -26,6 +26,18 @@ public sealed class FileTemplateTests
     }
 
     [Fact]
+    public async Task ImageTemplate_CreatesValidPngHeader()
+    {
+        byte[] content = await new ImageFileTemplate()
+            .GetInitialContentAsync(CancellationToken.None);
+
+        Assert.True(content.Length > 8);
+        Assert.Equal(
+            new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 },
+            content[..8]);
+    }
+
+    [Fact]
     public void Registry_FindsPdfTemplate()
     {
         var pdf = new PdfFileTemplate();

@@ -24,7 +24,7 @@ namespace CryptoBook.Injections
         {
 
             ContainerBuilder builder = new();
-            var dispatcher = System.Windows.Application.Current.Dispatcher;
+            var dispatcher = app.Dispatcher;
 
             //App
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
@@ -35,8 +35,8 @@ namespace CryptoBook.Injections
             //Composition
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
             builder.RegisterType<ParagraphSession>().As<IParagraphSession>().SingleInstance();
-            builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().SingleInstance();
-            builder.RegisterType<EditTransaction>().As<IEditTransaction>().SingleInstance();
+            builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf().SingleInstance();
+            builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf().SingleInstance();
 
 
             //Models
@@ -98,16 +98,16 @@ namespace CryptoBook.Injections
 
 
             //Helpers
-            builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf();
-            builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf();
             builder.RegisterType<FlowDocumentWalker>().As<IFlowDocumentWalker>().SingleInstance();
             builder.RegisterType<SecureFileValidator>().As<ISecureFileValidator>().SingleInstance();
             builder.RegisterType<SecureFileProcessor>().As<ISecureFileProcessor>().SingleInstance();
+            builder.RegisterType<Argon2idKeyDeriver>().As<IPasswordKeyDeriver>().SingleInstance();
+            builder.RegisterType<SecureFileV2Codec>().As<ISecureFileV2Codec>().SingleInstance();
+            builder.RegisterType<LegacySecureFileCodec>().As<ILegacySecureFileCodec>().SingleInstance();
 
             //Windows
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<MainWindow>().SingleInstance();
-            builder.RegisterType<KeyInputWindow>().InstancePerDependency();
+            builder.RegisterType<MainWindow>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionModeWindow>().InstancePerDependency();
 
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
@@ -159,7 +159,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();
             builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
-            builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
             builder.RegisterType<FileCreationService>().As<IFileCreationService>().SingleInstance();
             builder.RegisterType<FolderPickerService>().As<IFolderPickerService>().SingleInstance();
             builder.RegisterType<FilePickerService>().As<IFilePickerService>().SingleInstance();
@@ -172,7 +171,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileSecurityService>().As<IFileSecurityService>().SingleInstance();
             builder.RegisterType<DirectoryMonitoringService>().As<IDirectoryMonitoringService>().SingleInstance();
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
-            builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().SingleInstance();
+            builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().InstancePerLifetimeScope();
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
             builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
@@ -186,10 +185,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<MediaPlayerService>().As<IMediaPlayerService>().InstancePerDependency();
 
 
-            //Factory
-            builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
-
             //Providers
+            builder.RegisterInstance(new SecureFileV2Options()).SingleInstance();
             builder.RegisterType<MemoryKeyProvider>().As<IKeyProvider>().SingleInstance();
 
             //Accessors
@@ -197,19 +194,19 @@ namespace CryptoBook.Injections
 
 
             //Pages
-            builder.RegisterType<Home>().SingleInstance();
+            builder.RegisterType<Home>().InstancePerLifetimeScope();
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 
             //Controls
-            builder.RegisterType<TitleBar>().SingleInstance();
-            builder.RegisterType<MyFrame>().SingleInstance();
-            builder.RegisterType<SideMenu>().SingleInstance();
-            builder.RegisterType<Richtextbox>().SingleInstance();
-            builder.RegisterType<RichTextEditorContextMenu>().AsSelf().SingleInstance();
-            builder.RegisterType<FontFormatBar>().SingleInstance();
-            builder.RegisterType<TextFormatBar>().SingleInstance();
-            builder.RegisterType<ListFormatBar>().SingleInstance();
-            builder.RegisterType<BookmarksBar>().SingleInstance();
+            builder.RegisterType<TitleBar>().InstancePerLifetimeScope();
+            builder.RegisterType<MyFrame>().InstancePerLifetimeScope();
+            builder.RegisterType<SideMenu>().InstancePerLifetimeScope();
+            builder.RegisterType<Richtextbox>().InstancePerLifetimeScope();
+            builder.RegisterType<RichTextEditorContextMenu>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<FontFormatBar>().InstancePerLifetimeScope();
+            builder.RegisterType<TextFormatBar>().InstancePerLifetimeScope();
+            builder.RegisterType<ListFormatBar>().InstancePerLifetimeScope();
+            builder.RegisterType<BookmarksBar>().InstancePerLifetimeScope();
             builder.RegisterType<ImageViewer>().InstancePerDependency();
 
 

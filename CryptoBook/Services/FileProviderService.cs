@@ -40,7 +40,6 @@ namespace CryptoBook.Services
         /// <param name="path"></param>
         /// <param name="cancellationToken">адрес директории</param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException">токен отмены операции</exception>
         public async Task<List<ISystemItem>> GetContainerContentAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken = default, bool includeHidden = false)
         {
             try
@@ -101,7 +100,6 @@ namespace CryptoBook.Services
         /// <param name="path"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<Stream> OpenReadAsync(string path, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -143,7 +141,6 @@ namespace CryptoBook.Services
         /// <param name="overwrite">следует-ли осуществлять перезапись файла</param>
         /// <param name="cancellationToken">токен отменя операции</param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public Task<Stream> OpenWriteAsync(string path, bool overwrite, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
@@ -187,7 +184,6 @@ namespace CryptoBook.Services
         /// <param name="progress"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<FileOperationResult> CopyAsync(string sourcePath, string destinationPath, IProgressReporter? progress, CancellationToken cancellationToken)
         {
             try
@@ -274,7 +270,6 @@ namespace CryptoBook.Services
         /// <param name="path"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<FileOperationResult> DeleteAsync(string path, CancellationToken cancellationToken)
         {
             try
@@ -313,7 +308,6 @@ namespace CryptoBook.Services
         /// <param name="newName"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<FileOperationResult> RenameAsync(string path, string newName, CancellationToken cancellationToken = default)
         {
             try
@@ -339,7 +333,6 @@ namespace CryptoBook.Services
         /// <param name="path"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<bool> CanReadAsync(string path, CancellationToken cancellationToken)
         {
             try
@@ -390,7 +383,6 @@ namespace CryptoBook.Services
         /// <param name="path"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<bool> CanWriteAsync(string path, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -447,7 +439,6 @@ namespace CryptoBook.Services
         /// <param name="directoryPath"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<FileOperationResult> CreateDirectoryAsync(string directoryPath, CancellationToken cancellationToken)
         {
             try

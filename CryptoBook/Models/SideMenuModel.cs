@@ -65,6 +65,28 @@ namespace CryptoBook.Models
             return menuItems;
         }
 
+        internal bool CanExecute_Lifecycle(object? obj) => true;
+
+        internal void Execute_Loaded(object? obj)
+        {
+        }
+
+        internal void Execute_Close(object? obj)
+        {
+        }
+
+        internal void Execute_Closing(object? obj)
+        {
+            Settings.Default.SideMenuWidth = Width;
+            Settings.Default.SideMenuFontSizeHeader = FontSizeHeader;
+            Settings.Default.SideMenuFontSize = FontSize;
+            Settings.Default.Save();
+        }
+
+        internal void Execute_Closed(object? obj)
+        {
+        }
+
     }
 
 

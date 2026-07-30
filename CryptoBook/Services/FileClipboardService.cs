@@ -92,7 +92,6 @@ namespace CryptoBook.Services
         /// <param name="progress"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<IReadOnlyList<FileOperationResult>> PasteAsync(string destinationDirectory, IProgressReporter? progress, CancellationToken cancellationToken)
         {
             ClipboardData data;

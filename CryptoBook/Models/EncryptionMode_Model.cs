@@ -158,12 +158,15 @@ namespace CryptoBook.Models
             SelectedMode = Settings.Default.EncryptionTargetMode is EncryptionTargetMode.SaveAs or EncryptionTargetMode.ReplaceSource
                 ? Settings.Default.EncryptionTargetMode
                 : EncryptionTargetMode.SaveAs;
-            ProcessedItem = GetProcessedItem(context) ?? throw new NotImplementedException();
+            ProcessedItem = GetProcessedItem(context) ??
+                throw new InvalidOperationException(
+                    "Контекст окна не содержит обрабатываемый элемент 'path'.");
         }
 
         private ISystemItem? GetProcessedItem(IWindowContext context)
         {
-            if(context.Items is IReadOnlyDictionary<string, object> dict && dict["path"] is ISystemItem item)
+            if(context.Items.TryGetValue("path", out object? value) &&
+               value is ISystemItem item)
             {
                 return item;
             }

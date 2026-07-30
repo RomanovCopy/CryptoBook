@@ -35,12 +35,20 @@ namespace CryptoBook.ViewModels
         public ICommand PageClear => pageClear ??= new RelayCommand(homeModel.Execute_PageClear, homeModel.CanExecute_PageClear);
         RelayCommand pageClear;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand Loaded => loaded ??=
+            new RelayCommand(homeModel.Execute_PageLoaded, homeModel.CanExecute_PageLoded);
+        RelayCommand loaded;
 
-        public ICommand Close => throw new NotImplementedException();
+        public ICommand Close => close ??=
+            new RelayCommand(homeModel.Execute_PageClose, homeModel.CanExecute_PageClose);
+        RelayCommand close;
 
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand Closing => closing ??=
+            new RelayCommand(_ => { });
+        RelayCommand closing;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closed => closed ??=
+            new RelayCommand(_ => { });
+        RelayCommand closed;
     }
 }

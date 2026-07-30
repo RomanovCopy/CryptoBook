@@ -48,7 +48,6 @@ namespace CryptoBook
         {
             try
             {
-                _driveManagerService?.Dispose();
                 _container?.Dispose();
             } finally
             {

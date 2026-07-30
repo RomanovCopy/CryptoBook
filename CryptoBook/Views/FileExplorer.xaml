@@ -27,6 +27,22 @@
     </Window.DataContext>
     <Window.Resources>
 
+        <Style x:Key="FileExplorerToolBarButtonStyle"
+               TargetType="{x:Type Button}"
+               BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="1,0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="ToolTipService.InitialShowDelay" Value="300"/>
+            <Setter Property="ToolTipService.BetweenShowDelay" Value="100"/>
+            <Setter Property="ToolTipService.ShowDuration" Value="10000"/>
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
+        </Style>
 
         <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
                                       ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
@@ -119,47 +135,84 @@
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
         <ToolBar Grid.Row="0"  Height="49"  Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
-            <Button Content="&#xE110;" FontFamily="Segoe MDL2 Assets" FontSize="15"
-                    Command="{Binding BackCommand, UpdateSourceTrigger=PropertyChanged}" 
-                    Style="{StaticResource PrimaryButtonStyle}" >
-            </Button>
+            <Button Content="&#xE72B;"
+                    ToolTip="Назад"
+                    AutomationProperties.Name="Назад"
+                    Command="{Binding BackCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
-            <Button Content="New File" Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+
+            <Button Content="&#xE7C3;"
+                    ToolTip="Создать файл"
+                    AutomationProperties.Name="Создать файл"
+                    Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE8F4;"
+                    ToolTip="Создать папку"
+                    AutomationProperties.Name="Создать папку"
+                    Command="{Binding CreateDirectoryCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
-            <Button Content="New Directory" Command="{Binding CreateDirectoryCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"/>
+
+            <Button Content="&#xE72C;"
+                    ToolTip="Обновить содержимое"
+                    AutomationProperties.Name="Обновить содержимое"
+                    Command="{Binding RefreshCommand, UpdateSourceTrigger=PropertyChanged}"
+                    CommandParameter="{Binding SelectedItem}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
-            <Button Content="Cut" Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}" 
+
+            <Button Content="&#xE8C6;"
+                    ToolTip="Вырезать"
+                    AutomationProperties.Name="Вырезать"
+                    Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"
                     CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
-            <Separator/>
-            <Button Content="Copy" Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}"
+            <Button Content="&#xE8C8;"
+                    ToolTip="Копировать"
+                    AutomationProperties.Name="Копировать"
+                    Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"
                     CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
-            <Separator/>
-            <Button Content="Paste" Command="{Binding PasteCommand,UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}" 
+            <Button Content="&#xE77F;"
+                    ToolTip="Вставить"
+                    AutomationProperties.Name="Вставить"
+                    Command="{Binding PasteCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"
                     CommandParameter="{Binding ElementName=listview, Path=SelectedValue, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
-            <Button Content="Rename" Command="{Binding RenameClickCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}">
-            </Button>
+
+            <Button Content="&#xE8AC;"
+                    ToolTip="Переименовать"
+                    AutomationProperties.Name="Переименовать"
+                    Command="{Binding RenameClickCommand, UpdateSourceTrigger=PropertyChanged}"
+                    CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE74D;"
+                    ToolTip="Удалить"
+                    AutomationProperties.Name="Удалить"
+                    Command="{Binding DeleteCommand, UpdateSourceTrigger=PropertyChanged}"
+                    CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
-            <Button Content="Delete" Command="{Binding DeleteCommand,UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource PrimaryButtonStyle}" CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"/>
-            <Separator/>
-            <Button Content="Encrypting key" Style="{StaticResource PrimaryButtonStyle}"
-                    Command="{Binding EncryptingKeyCommand, UpdateSourceTrigger=PropertyChanged}"/>
-            <Separator/>
-            <Button Content="Encrypt" Style="{StaticResource PrimaryButtonStyle}"
+
+            <Button Content="&#xE8D7;"
+                    ToolTip="Задать ключ шифрования"
+                    AutomationProperties.Name="Задать ключ шифрования"
+                    Command="{Binding EncryptingKeyCommand, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE72E;"
+                    ToolTip="Зашифровать выбранный элемент"
+                    AutomationProperties.Name="Зашифровать выбранный элемент"
                     Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"
-                    CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
-            <Separator/>
-            <Button Content="Decrypt" Style="{StaticResource PrimaryButtonStyle}"
+                    CommandParameter="{Binding SelectedItem, ElementName=listview}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE785;"
+                    ToolTip="Расшифровать выбранный элемент"
+                    AutomationProperties.Name="Расшифровать выбранный элемент"
                     Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"
-                    CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
-            <Separator/>
+                    CommandParameter="{Binding SelectedItem, ElementName=listview}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
         </ToolBar>
 
         <!-- 2. Tabs + Address Bar -->

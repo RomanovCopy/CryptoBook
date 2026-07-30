@@ -138,7 +138,9 @@ namespace CryptoBook.Models
         }
         public bool CanExecute_MoveCommand(object? obj)
         {
-            throw new NotImplementedException();
+            return obj is ISystemItem item &&
+                   item.Parent is not null &&
+                   !string.IsNullOrWhiteSpace(item.FullPath);
         }
         public bool CanExecure_RefreshCommand(object? obj)
         {
@@ -382,18 +384,76 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
             }
         }
-        public void Execute_MoveCommand(object? obj)
+        public async void Execute_MoveCommand(object? obj)
         {
-            throw new NotImplementedException();
-        }
-        public void Execute_MoveDirectory(object? obj)
-        {
-            throw new NotImplementedException();
-        }
-        public void Execute_RefreshCommand(object? obj)
-        {
-            if(obj is IContainerSystemItem container)
+            if(obj is not ISystemItem item || !CanExecute_MoveCommand(item))
+                return;
+
+            try
             {
+                string? destinationDirectory = await _folderPickerService.PickFolderAsync(
+                    item.Parent?.FullPath ?? Path.GetDirectoryName(item.FullPath),
+                    CancellationToken.None);
+                if(string.IsNullOrWhiteSpace(destinationDirectory))
+                    return;
+
+                string destinationPath = CombineManagerPath(
+                    destinationDirectory,
+                    item.Name);
+
+                FileOperationResult result = await _progressDialogService.RunAsync(
+                    "Перемещение",
+                    (progress, token) => _fileManagerService.MoveAsync(
+                        item.FullPath,
+                        destinationPath,
+                        progress,
+                        token));
+
+                if(!result.Success)
+                {
+                    await _messageService.ShowMessage(
+                        "Ошибка перемещения",
+                        result.ErrorMessage);
+                    return;
+                }
+
+                if(item.Parent is IContainerSystemItem sourceContainer)
+                    await RefreshContainerAsync(sourceContainer, CancellationToken.None);
+
+                string destinationNativePath = GetNativePath(destinationDirectory);
+                IContainerSystemItem? destinationContainer = EnumerateLoadedContainers()
+                    .FirstOrDefault(container =>
+                        string.Equals(
+                            NormalizePath(container.FullPath),
+                            NormalizePath(destinationNativePath),
+                            StringComparison.OrdinalIgnoreCase));
+                if(destinationContainer is not null &&
+                   !ReferenceEquals(destinationContainer, item.Parent))
+                {
+                    await RefreshContainerAsync(destinationContainer, CancellationToken.None);
+                }
+            } catch(OperationCanceledException)
+            {
+            } catch(Exception ex)
+            {
+                await _messageService.ShowMessage("Ошибка перемещения", ex.Message);
+            }
+        }
+        public async void Execute_RefreshCommand(object? obj)
+        {
+            if(obj is not IContainerSystemItem container)
+                return;
+
+            try
+            {
+                await RefreshContainerAsync(container, CancellationToken.None);
+            } catch(OperationCanceledException)
+            {
+            } catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    "Ошибка обновления",
+                    ex.Message);
             }
         }
         public async void Execute_CancelRenameCommand(object? obj)
@@ -595,11 +655,12 @@ namespace CryptoBook.Models
         }
         public bool CanExecute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            return _windowManager.IsWindowOpen(WindowId);
         }
         public void Execute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            _cancellationTokenSource.Cancel();
+            _windowManager.CloseWindow(WindowId);
         }
         public bool CanExecute_Loaded(object? obj)
         {
@@ -638,7 +699,8 @@ namespace CryptoBook.Models
         }
         public void Execute_Closed(object? obj)
         {
-
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
         }
 
 
@@ -933,6 +995,27 @@ namespace CryptoBook.Models
         private static string NormalizePath(string path)
         {
             return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+        }
+
+        private string CombineManagerPath(string directoryPath, string itemName)
+        {
+            string normalized = _fileManagerService.NormalizePath(directoryPath);
+            int separatorIndex = normalized.IndexOf("://", StringComparison.Ordinal);
+            if(separatorIndex <= 0)
+                return Path.Combine(normalized, itemName);
+
+            string scheme = normalized[..separatorIndex];
+            string nativePath = normalized[(separatorIndex + 3)..];
+            string combined = scheme.Equals("local", StringComparison.OrdinalIgnoreCase)
+                ? Path.Combine(nativePath, itemName)
+                : nativePath.TrimEnd('/', '\\') + "/" + itemName;
+            return $"{scheme}://{combined}";
+        }
+
+        private static string GetNativePath(string path)
+        {
+            int separatorIndex = path.IndexOf("://", StringComparison.Ordinal);
+            return separatorIndex > 0 ? path[(separatorIndex + 3)..] : path;
         }
 
         private static void UpdateSystemItem(ISystemItem existing, ISystemItem incoming)

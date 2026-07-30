@@ -71,6 +71,16 @@ namespace CryptoBook.Models
             windowManager.CloseWindow(WindowId);
         }
 
+        internal bool CanExecute_Close(object? obj)
+        {
+            return true;
+        }
+
+        internal void Execute_Close(object? obj)
+        {
+            windowManager.CloseWindow(WindowId);
+        }
+
 
 
         internal bool CanExecute_Loaded(object? obj)

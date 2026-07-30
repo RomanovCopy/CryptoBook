@@ -16,6 +16,11 @@ namespace CryptoBook.Security
 
         byte[] DeriveKey(byte[] salt);
 
+        Task<byte[]> DeriveKeyAsync(
+            ReadOnlyMemory<byte> salt,
+            KeyDerivationParameters parameters,
+            CancellationToken cancellationToken = default);
+
         void Clear();
     }
 }

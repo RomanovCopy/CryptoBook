@@ -270,7 +270,6 @@ namespace CryptoBook.Services
         /// </summary>
         /// <param name="rawPath"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public string NormalizePath(string rawPath)
         {
             var desc = ParsePath(rawPath);
