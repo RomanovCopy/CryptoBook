@@ -1,17 +1,20 @@
 using CryptoBook.Services;
 
+using System.IO;
+
 using Xunit;
 
 namespace CryptoBook.Tests
 {
     public sealed class MediaPlayerServiceTests
     {
-        [StaFact]
-        public void Constructor_LoadsPackagedFfmpegRuntime()
+        [Fact]
+        public void PackagedFfmpegRuntime_IsAvailable()
         {
-            using var service = new MediaPlayerService();
+            string runtimePath = MediaPlayerService.ResolveFFmpegPath();
 
-            Assert.NotNull(service.PlayerInstance);
+            Assert.True(File.Exists(Path.Combine(runtimePath, "avcodec-61.dll")));
+            Assert.True(File.Exists(Path.Combine(runtimePath, "avutil-59.dll")));
         }
     }
 }

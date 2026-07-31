@@ -1,7 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Markup;
 using System.Windows.Media;
+using System.IO;
 
 using Xunit;
 
@@ -12,12 +14,8 @@ public sealed class ComboBoxLocalizationTests
     [WpfFact]
     public void DropUpTemplate_DisplaysSelectedLanguageWithThemeColors()
     {
-        ResourceDictionary styles = new()
-        {
-            Source = new Uri(
-                "/CryptoBook;component/Styles/ComboBoxStyles.xaml",
-                UriKind.Relative)
-        };
+        ResourceDictionary styles = LoadCompiledDictionary(
+            "ComboBoxStyles.xaml");
         var foreground = new SolidColorBrush(Color.FromRgb(241, 243, 245));
         var background = new SolidColorBrush(Color.FromRgb(43, 45, 49));
         var border = new SolidColorBrush(Color.FromRgb(75, 85, 99));
@@ -70,4 +68,15 @@ public sealed class ComboBoxLocalizationTests
 
     private static Color GetColor(Brush brush) =>
         Assert.IsType<SolidColorBrush>(brush).Color;
+
+    private static ResourceDictionary LoadCompiledDictionary(string resourceName)
+    {
+        string resourcePath = Path.Combine(
+            AppContext.BaseDirectory,
+            "TestAssets",
+            resourceName);
+        using Stream stream = File.OpenRead(resourcePath);
+
+        return Assert.IsType<ResourceDictionary>(XamlReader.Load(stream));
+    }
 }

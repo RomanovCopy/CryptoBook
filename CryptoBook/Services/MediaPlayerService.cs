@@ -178,7 +178,7 @@ namespace CryptoBook.Services
             return new FlyleafPlayer(new Config());
         }
 
-        private static string ResolveFFmpegPath()
+        internal static string ResolveFFmpegPath()
         {
             // При RID-сборке/publish native assets копируются рядом с exe.
             // В обычном NuGet layout они могут оставаться в runtimes/<rid>/native.
