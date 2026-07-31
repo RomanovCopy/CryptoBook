@@ -12,10 +12,83 @@
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d"
         d:DataContext="{x:Type interfaces:IEncryptionMode_ViewModel}"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}"
+        WindowStartupLocation="CenterOwner"
         MinHeight="280" MinWidth="450">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IEncryptionMode_ViewModel}" />
     </Window.DataContext>
+
+    <Window.Resources>
+        <Style x:Key="EncryptionModeRadioButtonStyle"
+               TargetType="{x:Type RadioButton}">
+            <Setter Property="Foreground"
+                    Value="{DynamicResource CurrentWindowForeground}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Grid Background="{TemplateBinding Background}"
+                              SnapsToDevicePixels="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Width="18"
+                                  Height="18"
+                                  VerticalAlignment="Center">
+                                <Ellipse x:Name="OuterCircle"
+                                         Fill="{DynamicResource CurrentInputBackground}"
+                                         Stroke="{DynamicResource CurrentBorderColor}"
+                                         StrokeThickness="2"/>
+                                <Ellipse x:Name="InnerCircle"
+                                         Width="8"
+                                         Height="8"
+                                         Fill="{DynamicResource CurrentAccent}"
+                                         Visibility="Collapsed"/>
+                            </Grid>
+
+                            <ContentPresenter Grid.Column="1"
+                                              Margin="8,0,0,0"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="InnerCircle"
+                                        Property="Visibility"
+                                        Value="Visible"/>
+                                <Setter TargetName="OuterCircle"
+                                        Property="Stroke"
+                                        Value="{DynamicResource CurrentAccent}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="OuterCircle"
+                                        Property="Stroke"
+                                        Value="{DynamicResource CurrentAccent}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="OuterCircle"
+                                        Property="StrokeThickness"
+                                        Value="3"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource CurrentDisabledForeground}"/>
+                                <Setter Property="Opacity" Value="0.72"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
 
     <Window.Title>
@@ -45,34 +118,45 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="{Binding MessageMode, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="DemiBold"/>
+        <TextBlock Grid.Row="0"
+                   Text="{Binding MessageMode, UpdateSourceTrigger=PropertyChanged}"
+                   Foreground="{DynamicResource CurrentWindowForeground}"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   FontSize="16"
+                   FontWeight="DemiBold"/>
         <StackPanel Margin="10" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <!-- Свойство GroupName объединяет кнопки в один переключатель -->
-            <RadioButton Content="{Binding MessageModeTop, UpdateSourceTrigger=PropertyChanged}"
-                GroupName="EncriptedMode" Margin="10,10,10,5" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
+            <RadioButton x:Name="SaveAsRadioButton"
+                         Content="{Binding MessageModeTop, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource EncryptionModeRadioButtonStyle}"
+                         GroupName="EncriptedMode" Margin="10,10,10,5" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
                          VerticalContentAlignment="Center"
-                     IsChecked="{Binding SelectedMode,UpdateSourceTrigger=PropertyChanged,
+                         IsChecked="{Binding SelectedMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                 Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
                 ConverterParameter={x:Static security:EncryptionTargetMode.SaveAs}}" />
 
-            <RadioButton Content="{Binding MessageModeBottom, UpdateSourceTrigger=PropertyChanged }" 
-                     GroupName="EncriptedMode" Margin="10,5,10,20" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
-                          VerticalContentAlignment="Center"
-                     IsChecked="{Binding SelectedMode, 
+            <RadioButton x:Name="ReplaceSourceRadioButton"
+                         Content="{Binding MessageModeBottom, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource EncryptionModeRadioButtonStyle}"
+                         GroupName="EncriptedMode" Margin="10,5,10,20" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
+                         VerticalContentAlignment="Center"
+                         IsChecked="{Binding SelectedMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                 Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
                 ConverterParameter={x:Static security:EncryptionTargetMode.ReplaceSource}}" />
 
         </StackPanel>
         <TextBlock Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="NoWrap" 
                    Text="{Binding ProcessedItem.FullPath, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" 
+                   Foreground="{DynamicResource CurrentMutedForeground}"
                    FontSize="16" FontWeight="DemiBold" FontStyle="Italic" Margin="20,10,20,10"/>
         
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                 
-                <Button x:Name="btnOk" Content="Ok" Style="{StaticResource PrimaryButtonStyle}" Background="Green"
+                <Button x:Name="btnOk" Content="Ok"
                         Grid.Column="0" HorizontalAlignment="Center" Margin="20"
                         Command="{Binding ButtonOk,UpdateSourceTrigger=PropertyChanged}" />
-                <Button x:Name="btnCancel" Content="Cancel" Style="{StaticResource PrimaryButtonStyle}" Background="Red"
+                <Button x:Name="btnCancel" Content="Cancel"
                         Grid.Column="1" HorizontalAlignment="Center" Margin="20"
                         Command="{Binding ButtonCancel, UpdateSourceTrigger=PropertyChanged}"/>
 

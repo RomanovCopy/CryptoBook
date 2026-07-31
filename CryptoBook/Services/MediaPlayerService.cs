@@ -168,20 +168,42 @@ namespace CryptoBook.Services
         {
             if(!Engine.IsLoaded)
             {
-                // Нативные FFmpeg DLL поставляются NuGet-пакетом в каталог приложения.
-                var ffmpegPath = Path.Combine(
-                    AppContext.BaseDirectory,
-                    "runtimes",
-                    "win-x64",
-                    "native");
                 var engineConfig = new EngineConfig
                 {
-                    FFmpegPath = ffmpegPath
+                    FFmpegPath = ResolveFFmpegPath()
                 };
                 Engine.Start(engineConfig);
             }
 
             return new FlyleafPlayer(new Config());
+        }
+
+        internal static string ResolveFFmpegPath()
+        {
+            // При RID-сборке/publish native assets копируются рядом с exe.
+            // В обычном NuGet layout они могут оставаться в runtimes/<rid>/native.
+            var candidates = new[]
+            {
+                AppContext.BaseDirectory,
+                Path.Combine(
+                    AppContext.BaseDirectory,
+                    "runtimes",
+                    "win-x64",
+                    "native")
+            };
+
+            foreach(var candidate in candidates)
+            {
+                if(File.Exists(Path.Combine(candidate, "avcodec-61.dll")) &&
+                   File.Exists(Path.Combine(candidate, "avutil-59.dll")))
+                {
+                    return candidate;
+                }
+            }
+
+            throw new DirectoryNotFoundException(
+                "Не найдены нативные библиотеки FFmpeg. Ожидался полный " +
+                $"FFmpeg 7.1 runtime в '{string.Join("' или '", candidates)}'.");
         }
 
         private void OnOpenCompleted( object? sender, FlyleafLib.MediaPlayer.OpenCompletedArgs e)

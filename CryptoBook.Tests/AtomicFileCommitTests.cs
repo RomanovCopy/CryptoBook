@@ -63,6 +63,22 @@ namespace CryptoBook.Tests
                 Directory.EnumerateFiles(_directory).Order());
         }
 
+        [Fact]
+        public void SuccessfulReplaceWithoutBackup_LeavesOnlyTarget()
+        {
+            string target = Path.Combine(_directory, "document.test");
+            string temporary = Path.Combine(_directory, "document.tmp");
+            File.WriteAllText(target, "current");
+            File.WriteAllText(temporary, "new");
+
+            AtomicFileCommit.CommitWithoutBackup(temporary, target);
+
+            Assert.Equal("new", File.ReadAllText(target));
+            Assert.Equal(
+                [target],
+                Directory.EnumerateFiles(_directory));
+        }
+
         public void Dispose()
         {
             if(Directory.Exists(_directory))

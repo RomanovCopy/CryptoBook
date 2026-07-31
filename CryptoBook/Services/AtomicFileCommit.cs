@@ -53,6 +53,23 @@ namespace CryptoBook.Services
                 TryDelete(preservedBackupPath);
         }
 
+        internal static void CommitWithoutBackup(
+            string temporaryPath,
+            string targetPath)
+        {
+            if(!File.Exists(targetPath))
+            {
+                File.Move(temporaryPath, targetPath);
+                return;
+            }
+
+            File.Replace(
+                temporaryPath,
+                targetPath,
+                destinationBackupFileName: null,
+                ignoreMetadataErrors: true);
+        }
+
         private static void TryDelete(string path)
         {
             try

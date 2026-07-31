@@ -250,6 +250,7 @@
   <data name="SideMenu.Save.Description" xml:space="preserve"><value>Сохранить текущий документ</value></data>
   <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Сохранить изменения в текущем файле</value></data>
   <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Выбрать имя, папку и формат</value></data>
+  <data name="SideMenu.CloseDocument.Description" xml:space="preserve"><value>Закрыть текущий документ</value></data>
   <data name="SideMenu.RenameBook" xml:space="preserve"><value>Переименовать книгу</value></data>
   <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Изменить имя текущей книги</value></data>
   <data name="SideMenu.Content" xml:space="preserve"><value>Содержимое</value></data>

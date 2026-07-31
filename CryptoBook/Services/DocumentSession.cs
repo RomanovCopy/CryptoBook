@@ -9,15 +9,18 @@ namespace CryptoBook.Services
 {
     public sealed class DocumentSession: IDocumentSession
     {
+        private readonly IRichTextBoxService richTextBox;
         private string? filePath;
         private string displayName = string.Empty;
         private IFileTemplate? template;
         private long revision;
         private long savedRevision;
+        private bool suppressDocumentChanges;
 
         public DocumentSession(IRichTextBoxService richTextBox)
         {
-            ArgumentNullException.ThrowIfNull(richTextBox);
+            this.richTextBox = richTextBox
+                ?? throw new ArgumentNullException(nameof(richTextBox));
             richTextBox.Service.TextChanged += OnDocumentChanged;
         }
 
@@ -36,6 +39,7 @@ namespace CryptoBook.Services
 
                 filePath = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasDocument));
             }
         }
 
@@ -49,6 +53,7 @@ namespace CryptoBook.Services
 
                 displayName = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasDocument));
             }
         }
 
@@ -62,10 +67,17 @@ namespace CryptoBook.Services
 
                 template = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasDocument));
             }
         }
 
         public bool IsDirty => Revision != SavedRevision;
+
+        public bool HasDocument =>
+            IsDirty ||
+            !string.IsNullOrWhiteSpace(FilePath) ||
+            !string.IsNullOrWhiteSpace(DisplayName) ||
+            Template is not null;
 
         public long Revision
         {
@@ -79,7 +91,10 @@ namespace CryptoBook.Services
                 revision = value;
                 OnPropertyChanged();
                 if(wasDirty != IsDirty)
+                {
                     OnPropertyChanged(nameof(IsDirty));
+                    OnPropertyChanged(nameof(HasDocument));
+                }
             }
         }
 
@@ -95,7 +110,10 @@ namespace CryptoBook.Services
                 savedRevision = value;
                 OnPropertyChanged();
                 if(wasDirty != IsDirty)
+                {
                     OnPropertyChanged(nameof(IsDirty));
+                    OnPropertyChanged(nameof(HasDocument));
+                }
             }
         }
 
@@ -104,6 +122,32 @@ namespace CryptoBook.Services
         public void Open(string filePath, IFileTemplate template)
         {
             MarkSaved(filePath, template);
+        }
+
+        public void Close()
+        {
+            suppressDocumentChanges = true;
+            try
+            {
+                richTextBox.ClearDocument();
+            }
+            finally
+            {
+                suppressDocumentChanges = false;
+            }
+
+            filePath = null;
+            displayName = string.Empty;
+            template = null;
+            revision = 0;
+            savedRevision = 0;
+            OnPropertyChanged(nameof(FilePath));
+            OnPropertyChanged(nameof(DisplayName));
+            OnPropertyChanged(nameof(Template));
+            OnPropertyChanged(nameof(Revision));
+            OnPropertyChanged(nameof(SavedRevision));
+            OnPropertyChanged(nameof(IsDirty));
+            OnPropertyChanged(nameof(HasDocument));
         }
 
         public void MarkDirty()
@@ -149,8 +193,11 @@ namespace CryptoBook.Services
 
         private void OnDocumentChanged(
             object sender,
-            TextChangedEventArgs args) =>
-            MarkDirty();
+            TextChangedEventArgs args)
+        {
+            if(!suppressDocumentChanges)
+                MarkDirty();
+        }
 
         private void OnPropertyChanged(
             [CallerMemberName] string? propertyName = null) =>

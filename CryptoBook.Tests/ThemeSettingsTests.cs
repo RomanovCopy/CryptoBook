@@ -1,5 +1,8 @@
+using Autofac;
+
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
+using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 using CryptoBook.Services;
@@ -175,6 +178,43 @@ public sealed class ThemeSettingsTests
     }
 
     [Fact]
+    public async Task SettingsModel_OpenSearchResult_UsesWorkspaceOpener()
+    {
+        var windowManager = new WindowManagerStub();
+        var fileOpenService = new WorkspaceFileOpenServiceStub(
+            WorkspaceFileOpenResult.InternalSuccess());
+        var model = new SettingsModel(
+            new ThemeManagerStub(ApplicationTheme.Light),
+            windowManager,
+            null,
+            null,
+            null,
+            fileOpenService);
+        var result = new WorkspaceSearchResult(
+            "secret.cbook",
+            @"C:\Workspace\secret.cbook",
+            "secret.cbook");
+
+        await model.OpenSearchResultAsync(result);
+
+        Assert.Equal(result.FullPath, fileOpenService.OpenedPath);
+        Assert.Equal(model.WindowId, windowManager.ClosedWindowId);
+    }
+
+    [WpfFact]
+    public void Startup_ResolvesSettingsModelWithWorkspaceFileOpener()
+    {
+        var app = Application.Current ?? new Application();
+        using IContainer container = new Startup().ConfigureServices(app);
+        using ILifetimeScope scope = container.BeginLifetimeScope();
+
+        ISettingsModel model = scope.Resolve<ISettingsModel>();
+
+        Assert.NotNull(model);
+        Assert.NotNull(scope.Resolve<IWorkspaceFileOpenService>());
+    }
+
+    [Fact]
     public void SettingsWindowService_ReusesOpenWindow()
     {
         var windowManager = new WindowManagerStub();
@@ -317,6 +357,27 @@ public sealed class ThemeSettingsTests
         {
             UsesLightTheme = usesLightTheme;
             ThemeChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private sealed class WorkspaceFileOpenServiceStub:
+        IWorkspaceFileOpenService
+    {
+        private readonly WorkspaceFileOpenResult result;
+
+        public WorkspaceFileOpenServiceStub(WorkspaceFileOpenResult result)
+        {
+            this.result = result;
+        }
+
+        public string? OpenedPath { get; private set; }
+
+        public Task<WorkspaceFileOpenResult> OpenAsync(
+            string filePath,
+            CancellationToken cancellationToken = default)
+        {
+            OpenedPath = filePath;
+            return Task.FromResult(result);
         }
     }
 

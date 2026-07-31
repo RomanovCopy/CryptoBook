@@ -15,6 +15,7 @@ namespace CryptoBook.Models
         private readonly IWorkspaceService? workspaceService;
         private readonly IFolderPickerService? folderPickerService;
         private readonly IFileLauncherService? fileLauncherService;
+        private readonly IWorkspaceFileOpenService? workspaceFileOpenService;
         private ApplicationThemeOption selectedTheme;
         private ApplicationLanguageOption selectedLanguage;
         private GridLength navigationPaneWidth;
@@ -34,6 +35,7 @@ namespace CryptoBook.Models
                 windowManager,
                 null,
                 null,
+                null,
                 null)
         {
         }
@@ -43,7 +45,8 @@ namespace CryptoBook.Models
             IWindowManager windowManager,
             IWorkspaceService? workspaceService,
             IFolderPickerService? folderPickerService,
-            IFileLauncherService? fileLauncherService)
+            IFileLauncherService? fileLauncherService,
+            IWorkspaceFileOpenService? workspaceFileOpenService = null)
         {
             this.themeManager = themeManager ??
                 throw new ArgumentNullException(nameof(themeManager));
@@ -52,6 +55,7 @@ namespace CryptoBook.Models
             this.workspaceService = workspaceService;
             this.folderPickerService = folderPickerService;
             this.fileLauncherService = fileLauncherService;
+            this.workspaceFileOpenService = workspaceFileOpenService;
 
             selectedTheme = Themes.First(
                 option => option.Theme == themeManager.CurrentTheme);
@@ -286,11 +290,50 @@ namespace CryptoBook.Models
             }
         }
 
-        public void OpenSearchResult(WorkspaceSearchResult? result) =>
-            ExecuteLaunch(
-                result,
-                item => fileLauncherService?.Open(item.FullPath),
-                LocalizationManager.GetString("Settings.Search.OpenFailed"));
+        public async Task OpenSearchResultAsync(
+            WorkspaceSearchResult? result,
+            CancellationToken cancellationToken = default)
+        {
+            if(result is null)
+                return;
+
+            string failureMessage = LocalizationManager.GetString(
+                "Settings.Search.OpenFailed");
+
+            try
+            {
+                if(workspaceFileOpenService is null)
+                {
+                    ExecuteLaunch(
+                        result,
+                        item => fileLauncherService?.Open(item.FullPath),
+                        failureMessage);
+                    return;
+                }
+
+                WorkspaceFileOpenResult openResult =
+                    await workspaceFileOpenService.OpenAsync(
+                        result.FullPath,
+                        cancellationToken);
+                if(openResult.Cancelled)
+                    return;
+                if(!openResult.Success)
+                {
+                    SearchStatus = $"{failureMessage}: {openResult.Error}";
+                    return;
+                }
+
+                if(openResult.OpenedInternally)
+                    windowManager.CloseWindow(WindowId);
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception ex)
+            {
+                SearchStatus = $"{failureMessage}: {ex.Message}";
+            }
+        }
 
         public void RevealSearchResult(WorkspaceSearchResult? result) =>
             ExecuteLaunch(

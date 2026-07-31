@@ -8,7 +8,12 @@
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d" MinHeight="235" MinWidth="400">
+        mc:Ignorable="d"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}"
+        WindowStartupLocation="CenterOwner"
+        MinHeight="235"
+        MinWidth="400">
 
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMessageWindowViewModel}"/>
@@ -38,19 +43,21 @@
         </Grid.RowDefinitions>
          <StackPanel Margin="20" Grid.Row="0">
             <TextBlock Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
-                   TextWrapping="Wrap"
-                   Margin="0,0,0,20"/>
+                       Foreground="{DynamicResource CurrentWindowForeground}"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,20"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="OK" Style="{StaticResource PrimaryButtonStyle}" Background="Green"
-                    Command="{Binding OkCommand,UpdateSourceTrigger=PropertyChanged}"
-                    Width="80"/>
+                <Button Content="OK"
+                        Command="{Binding OkCommand,UpdateSourceTrigger=PropertyChanged}"
+                        Width="80"/>
 
-                <Button Content="Cancel" Style="{StaticResource PrimaryButtonStyle}" Background="Red"
+                <Button Content="Cancel"
                         Visibility="{Binding IsCanceled, 
                     Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}},UpdateSourceTrigger=PropertyChanged}"
-                    Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Width="80" Margin="10,0,0,0"/>
+                        Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}"
+                        Width="80"
+                        Margin="10,0,0,0"/>
             </StackPanel>
         </StackPanel>
    </Grid>

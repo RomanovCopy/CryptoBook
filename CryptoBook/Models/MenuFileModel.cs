@@ -23,6 +23,7 @@ namespace CryptoBook.Models
         private readonly IProgressDialogService progressDialogService;
         private readonly IMessageService messageService;
         private readonly IDocumentRecoveryService recoveryService;
+        private readonly IDocumentDialogService documentDialogService;
         private readonly ISecureFileProcessor secureFileProcessor;
 
         public MenuFileModel(
@@ -34,6 +35,7 @@ namespace CryptoBook.Models
             IProgressDialogService progressDialogService,
             IMessageService messageService,
             IDocumentRecoveryService recoveryService,
+            IDocumentDialogService documentDialogService,
             ISecureFileProcessor secureFileProcessor)
         {
             this.windowManager = windowManager
@@ -53,6 +55,9 @@ namespace CryptoBook.Models
                 ?? throw new ArgumentNullException(nameof(messageService));
             this.recoveryService = recoveryService
                 ?? throw new ArgumentNullException(nameof(recoveryService));
+            this.documentDialogService = documentDialogService
+                ?? throw new ArgumentNullException(
+                    nameof(documentDialogService));
             this.secureFileProcessor = secureFileProcessor
                 ?? throw new ArgumentNullException(
                     nameof(secureFileProcessor));
@@ -259,10 +264,40 @@ namespace CryptoBook.Models
 
         public bool CanExecute_CloseFile(object? obj)
         {
-            return true;
+            return documentSession.HasDocument;
         }
-        public void Execute_CloseFile(object? obj)
+        public async Task Execute_CloseFileAsync(
+            object? obj,
+            CancellationToken cancellationToken)
         {
+            if(!documentSession.HasDocument)
+                return;
+
+            if(documentSession.IsDirty)
+            {
+                UnsavedChangesChoice choice =
+                    documentDialogService.ConfirmCloseWithUnsavedChanges();
+                if(choice == UnsavedChangesChoice.Cancel)
+                    return;
+
+                if(choice == UnsavedChangesChoice.Save)
+                {
+                    bool saved = await TrySaveCurrentAsync(cancellationToken);
+                    if(!saved || documentSession.IsDirty)
+                        return;
+                }
+            }
+
+            try
+            {
+                await recoveryService.DeleteSnapshotAsync();
+            }
+            catch(Exception exception)
+            {
+                documentDialogService.ShowRecoveryCleanupError(exception);
+            }
+
+            documentSession.Close();
         }
 
         public bool CanExecute_UpdateFile(object? obj)

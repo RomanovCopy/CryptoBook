@@ -16,9 +16,18 @@ namespace CryptoBook.Models
                 ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".webp"
             };
 
+        private static readonly HashSet<string> SecureFileExtensions =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                ".cbook", ".cbox"
+            };
+
         private CancellationTokenSource? _openCancellation;
         private readonly IFileManagerService _fileManagerService;
         private readonly IMessageService _messageService;
+        private readonly IMediaSourcePreparationService _mediaSourcePreparationService;
+        private readonly List<IPreparedMediaSource> _retiredSources = [];
+        private IPreparedMediaSource? _activeSource;
         private IReadOnlyList<string> _imagePaths = Array.Empty<string>();
         private int _currentImageIndex = -1;
         private bool _isClosing;
@@ -34,7 +43,8 @@ namespace CryptoBook.Models
             IImageService imageService,
             IWindowContext windowContext,
             IFileManagerService fileManagerService,
-            IMessageService messageService)
+            IMessageService messageService,
+            IMediaSourcePreparationService mediaSourcePreparationService)
         {
             VideoService = videoService ?? throw new ArgumentNullException(nameof(videoService));
             ImageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
@@ -42,6 +52,8 @@ namespace CryptoBook.Models
                 throw new ArgumentNullException(nameof(fileManagerService));
             _messageService = messageService ??
                 throw new ArgumentNullException(nameof(messageService));
+            _mediaSourcePreparationService = mediaSourcePreparationService ??
+                throw new ArgumentNullException(nameof(mediaSourcePreparationService));
 
             VideoService.MediaFailed += OnMediaFailed;
 
@@ -128,6 +140,7 @@ namespace CryptoBook.Models
                     "Медиафайлы|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|" +
                     "Изображения|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|" +
                     "Видео|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|" +
+                    "Файлы CryptoBook|*.cbook;*.cbox|" +
                     "Все файлы|*.*"
             };
 
@@ -147,12 +160,16 @@ namespace CryptoBook.Models
             SetStatus($"Загрузка: {Path.GetFileName(path)}");
             SetProperty(ref _mediaTitle, Path.GetFileName(path), nameof(MediaTitle));
 
+            IPreparedMediaSource? preparedSource = null;
             try
             {
-                if(ImageExtensions.Contains(Path.GetExtension(path)))
+                preparedSource = await _mediaSourcePreparationService.PrepareAsync(path, token);
+                string playbackPath = preparedSource.PlaybackPath;
+
+                if(ImageExtensions.Contains(Path.GetExtension(playbackPath)))
                 {
                     VideoService.Stop();
-                    await ImageService.LoadImageAsync(path, token);
+                    await ImageService.LoadImageAsync(playbackPath, token);
                     token.ThrowIfCancellationRequested();
                     if(_disposed || _isClosing)
                         return;
@@ -160,7 +177,7 @@ namespace CryptoBook.Models
                     if(ImageService.ImageSource == null)
                         throw new InvalidOperationException("Не удалось декодировать изображение.");
 
-                    UpdateImageSequence(path);
+                    UpdateImageSequence(path, preparedSource.IsTemporary);
                     SetMode(isImage: true);
                 }
                 else
@@ -168,12 +185,14 @@ namespace CryptoBook.Models
                     ClearImageSequence();
                     ImageService.Clear();
                     SetMode(isImage: false);
-                    await VideoService.OpenAsync(path, autoPlay: true, token);
+                    await VideoService.OpenAsync(playbackPath, autoPlay: true, token);
                     token.ThrowIfCancellationRequested();
                     if(_disposed || _isClosing)
                         return;
                 }
 
+                ReplaceActiveSource(preparedSource);
+                preparedSource = null;
                 SetStatus(string.Empty);
             }
             catch(OperationCanceledException)
@@ -187,6 +206,10 @@ namespace CryptoBook.Models
                 ImageService.Clear();
                 VideoService.Stop();
                 SetEmpty(ex.Message);
+            }
+            finally
+            {
+                preparedSource?.Dispose();
             }
         }
 
@@ -274,7 +297,7 @@ namespace CryptoBook.Models
             await OpenPathAsync(remainingImages[nextIndex]);
         }
 
-        private void UpdateImageSequence(string path)
+        private void UpdateImageSequence(string path, bool isEncrypted)
         {
             var fullPath = Path.GetFullPath(path);
             var directory = Path.GetDirectoryName(fullPath);
@@ -284,7 +307,7 @@ namespace CryptoBook.Models
                 _imagePaths = string.IsNullOrWhiteSpace(directory)
                     ? [fullPath]
                     : Directory.EnumerateFiles(directory)
-                        .Where(file => ImageExtensions.Contains(Path.GetExtension(file)))
+                        .Where(file => IsImageSequenceCandidate(file, isEncrypted))
                         .OrderBy(
                             file => Path.GetFileName(file),
                             StringComparer.CurrentCultureIgnoreCase)
@@ -301,6 +324,13 @@ namespace CryptoBook.Models
 
             _currentImageIndex = FindImageIndex(fullPath);
             CommandManager.InvalidateRequerySuggested();
+        }
+
+        internal static bool IsImageSequenceCandidate(string path, bool includeSecureFiles)
+        {
+            string extension = Path.GetExtension(path);
+            return ImageExtensions.Contains(extension) ||
+                includeSecureFiles && SecureFileExtensions.Contains(extension);
         }
 
         private int FindImageIndex(string fullPath)
@@ -350,6 +380,23 @@ namespace CryptoBook.Models
             _openCancellation = null;
         }
 
+        private void ReplaceActiveSource(IPreparedMediaSource source)
+        {
+            if(_activeSource is not null)
+            {
+                _activeSource.Dispose();
+                string? directory = Path.GetDirectoryName(_activeSource.PlaybackPath);
+                if(_activeSource.IsTemporary &&
+                   directory is not null &&
+                   Directory.Exists(directory))
+                {
+                    _retiredSources.Add(_activeSource);
+                }
+            }
+
+            _activeSource = source;
+        }
+
         public void Dispose()
         {
             if(_disposed)
@@ -360,6 +407,10 @@ namespace CryptoBook.Models
             VideoService.MediaFailed -= OnMediaFailed;
             ImageService.Clear();
             VideoService.Dispose();
+            _activeSource?.Dispose();
+            foreach(var source in _retiredSources)
+                source.Dispose();
+            _retiredSources.Clear();
             GC.SuppressFinalize(this);
         }
     }

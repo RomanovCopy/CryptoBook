@@ -250,6 +250,7 @@
   <data name="SideMenu.Save.Description" xml:space="preserve"><value>Save the current document</value></data>
   <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Save changes to the current file</value></data>
   <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Choose a name, folder, and format</value></data>
+  <data name="SideMenu.CloseDocument.Description" xml:space="preserve"><value>Close the current document</value></data>
   <data name="SideMenu.RenameBook" xml:space="preserve"><value>Rename book</value></data>
   <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Change the name of the current book</value></data>
   <data name="SideMenu.Content" xml:space="preserve"><value>Content</value></data>

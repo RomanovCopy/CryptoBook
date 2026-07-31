@@ -100,6 +100,33 @@ namespace CryptoBook.Tests
         }
 
         [WpfFact]
+        public void Close_ClearsEditorAndDocumentIdentity()
+        {
+            IRichTextBoxService richTextBox = new RichTextBoxService(
+                new TestParagraphFactory(),
+                new TestUriNavigationService());
+            var session = new DocumentSession(richTextBox);
+            var template = new XamlPackageFileTemplate();
+            session.Open(
+                Path.Combine(Path.GetTempPath(), "CryptoBook-close-test.XamlPackage"),
+                template);
+            richTextBox.Selection.Text = "content";
+
+            session.Close();
+
+            Assert.False(session.HasDocument);
+            Assert.False(session.IsDirty);
+            Assert.Null(session.FilePath);
+            Assert.Equal(string.Empty, session.DisplayName);
+            Assert.Null(session.Template);
+            Assert.Equal(
+                string.Empty,
+                new TextRange(
+                    richTextBox.Document.ContentStart,
+                    richTextBox.Document.ContentEnd).Text.Trim());
+        }
+
+        [WpfFact]
         public void ImageEditor_MarksSessionDirty()
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(

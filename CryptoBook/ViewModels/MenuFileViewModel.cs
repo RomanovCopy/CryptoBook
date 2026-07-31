@@ -23,6 +23,7 @@ namespace CryptoBook.ViewModels
                 OnPropertyChanged(args.PropertyName);
                 saveFile?.RaiseCanExecuteChanged();
                 saveAsFile?.RaiseCanExecuteChanged();
+                closeFile?.RaiseCanExecuteChanged();
             };
             RegistryCommands();
         }
@@ -53,8 +54,11 @@ namespace CryptoBook.ViewModels
 
         public ICommand OpenDirectory => openDirectory ??= new RelayCommand(menuFileModel.Execute_OpenDirectory, menuFileModel.CanExecute_OpenDirectory);
         RelayCommand openDirectory;
-        public ICommand CloseFile => closeFile ??= new RelayCommand(menuFileModel.Execute_CloseFile, menuFileModel.CanExecute_CloseFile);
-        RelayCommand closeFile;
+        public ICommand CloseFile => closeFile ??=
+            new AsyncRelayCommand(
+                menuFileModel.Execute_CloseFileAsync,
+                menuFileModel.CanExecute_CloseFile);
+        AsyncRelayCommand? closeFile;
         public ICommand UpdateFile => updateFile ??= new RelayCommand(menuFileModel.Execute_UpdateFile, menuFileModel.CanExecute_UpdateFile);
         RelayCommand updateFile;
 

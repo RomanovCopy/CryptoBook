@@ -312,11 +312,22 @@ namespace CryptoBook.Tests
             public bool IsDirty { get; set; }
             public long Revision { get; private set; }
             public long SavedRevision { get; private set; }
+            public bool HasDocument => IsDirty ||
+                !string.IsNullOrWhiteSpace(FilePath) ||
+                !string.IsNullOrWhiteSpace(DisplayName);
 
             public void Open(string filePath, IFileTemplate template)
             {
                 FilePath = filePath;
                 Template = template;
+                IsDirty = false;
+            }
+
+            public void Close()
+            {
+                FilePath = null;
+                DisplayName = string.Empty;
+                Template = null;
                 IsDirty = false;
             }
 
