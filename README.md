@@ -8,6 +8,14 @@ CryptoBook — настольное Windows-приложение для рабо
 
 > Проект находится в активной разработке. Перед работой с важными данными сохраняйте отдельные резервные копии.
 
+## Скриншоты
+
+| Редактор | Боковое меню |
+| --- | --- |
+| ![Редактор CryptoBook](docs/screenshots/editor.png) | ![Боковое меню CryptoBook](docs/screenshots/side-menu.png) |
+| **Настройки тем** | **Режим чтения Sepia** |
+| ![Настройки тем CryptoBook](docs/screenshots/settings-themes.png) | ![CryptoBook в теме Sepia](docs/screenshots/sepia-reading.png) |
+
 ## Возможности
 
 - создание и редактирование текстовых, RTF, XAML и XamlPackage-документов;
