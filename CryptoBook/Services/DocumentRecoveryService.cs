@@ -17,6 +17,12 @@ namespace CryptoBook.Services
         private static readonly TimeSpan SaveDelay = TimeSpan.FromSeconds(15);
         private static readonly TimeSpan FailureLogInterval =
             TimeSpan.FromMinutes(5);
+        private static readonly TimeSpan[] DeleteRetryDelays =
+        [
+            TimeSpan.FromMilliseconds(50),
+            TimeSpan.FromMilliseconds(150),
+            TimeSpan.FromMilliseconds(300)
+        ];
 
         private readonly IDocumentSession documentSession;
         private readonly IRichTextBoxService richTextBox;
@@ -28,7 +34,11 @@ namespace CryptoBook.Services
         private readonly Action<Exception> autosaveFailureLogger;
         private readonly Func<DateTimeOffset> getUtcNow;
         private readonly XamlPackageFileTemplate recoveryTemplate = new();
+        private readonly SemaphoreSlim recoveryFileGate = new(1, 1);
+        private readonly object saveTaskSync = new();
+        private Task activeSaveTask = Task.CompletedTask;
         private bool started;
+        private bool stopping;
         private bool saving;
         private bool disposed;
         private long lastSnapshotRevision = -1;
@@ -98,9 +108,24 @@ namespace CryptoBook.Services
             if(started)
                 return;
 
+            stopping = false;
             started = true;
             documentSession.PropertyChanged += OnSessionPropertyChanged;
             ScheduleIfDirty();
+        }
+
+        public async Task StopAsync()
+        {
+            if(disposed || stopping)
+                return;
+
+            stopping = true;
+            started = false;
+            timer.Stop();
+            documentSession.PropertyChanged -= OnSessionPropertyChanged;
+            invalidationVersion++;
+            lastSnapshotRevision = -1;
+            await WaitForActiveSaveAsync();
         }
 
         public async Task<bool> RestoreSnapshotAsync(
@@ -171,16 +196,25 @@ namespace CryptoBook.Services
             }
         }
 
-        public Task DeleteSnapshotAsync()
+        public async Task DeleteSnapshotAsync()
         {
             timer.Stop();
             invalidationVersion++;
             lastSnapshotRevision = -1;
-            File.Delete(recoveryFilePath);
-            return Task.CompletedTask;
+            await WaitForActiveSaveAsync();
+
+            await recoveryFileGate.WaitAsync();
+            try
+            {
+                await DeleteRecoveryFileWithRetryAsync();
+            }
+            finally
+            {
+                recoveryFileGate.Release();
+            }
         }
 
-        internal Task SaveSnapshotNowAsync() => SaveSnapshotAsync();
+        internal Task SaveSnapshotNowAsync() => GetOrStartSaveTask();
 
         private void OnSessionPropertyChanged(
             object? sender,
@@ -195,6 +229,7 @@ namespace CryptoBook.Services
         private void ScheduleIfDirty()
         {
             if(!started ||
+               stopping ||
                saving ||
                !documentSession.IsDirty ||
                documentSession.Revision == lastSnapshotRevision)
@@ -207,13 +242,13 @@ namespace CryptoBook.Services
         private async void OnTimerTick(object? sender, EventArgs args)
         {
             timer.Stop();
-            if(saving || !documentSession.IsDirty)
+            if(stopping || saving || !documentSession.IsDirty)
                 return;
 
             saving = true;
             try
             {
-                await SaveSnapshotAsync();
+                await GetOrStartSaveTask();
                 lastAutosaveFailureLoggedAt = null;
             }
             catch(Exception exception)
@@ -223,9 +258,37 @@ namespace CryptoBook.Services
             finally
             {
                 saving = false;
-                if(documentSession.IsDirty &&
+                if(!stopping &&
+                   documentSession.IsDirty &&
                    documentSession.Revision != lastSnapshotRevision)
                     timer.Start();
+            }
+        }
+
+        private Task GetOrStartSaveTask()
+        {
+            lock(saveTaskSync)
+            {
+                if(activeSaveTask.IsCompleted)
+                    activeSaveTask = SaveSnapshotAsync();
+                return activeSaveTask;
+            }
+        }
+
+        private async Task WaitForActiveSaveAsync()
+        {
+            Task saveTask;
+            lock(saveTaskSync)
+                saveTask = activeSaveTask;
+
+            try
+            {
+                await saveTask;
+            }
+            catch(Exception exception)
+            {
+                // Очистка должна продолжиться даже после сбоя автосохранения.
+                LogAutosaveFailure(exception);
             }
         }
 
@@ -307,15 +370,23 @@ namespace CryptoBook.Services
                     output.Flush(flushToDisk: true);
                 }
 
-                if(snapshotInvalidationVersion != invalidationVersion ||
-                   !documentSession.IsDirty)
-                    return;
+                await recoveryFileGate.WaitAsync();
+                try
+                {
+                    if(snapshotInvalidationVersion != invalidationVersion ||
+                       !documentSession.IsDirty)
+                        return;
 
-                File.Move(
-                    temporaryPath,
-                    recoveryFilePath,
-                    overwrite: true);
-                lastSnapshotRevision = revision;
+                    File.Move(
+                        temporaryPath,
+                        recoveryFilePath,
+                        overwrite: true);
+                    lastSnapshotRevision = revision;
+                }
+                finally
+                {
+                    recoveryFileGate.Release();
+                }
             }
             finally
             {
@@ -367,6 +438,34 @@ namespace CryptoBook.Services
             }
         }
 
+        private async Task DeleteRecoveryFileWithRetryAsync()
+        {
+            for(int attempt = 0; ; attempt++)
+            {
+                try
+                {
+                    File.Delete(recoveryFilePath);
+                    return;
+                }
+                catch(FileNotFoundException)
+                {
+                    return;
+                }
+                catch(DirectoryNotFoundException)
+                {
+                    // Отсутствующий каталог означает, что очищать уже нечего.
+                    return;
+                }
+                catch(Exception exception) when(
+                    exception is IOException or UnauthorizedAccessException &&
+                    attempt < DeleteRetryDelays.Length)
+                {
+                    // Краткая блокировка файла не должна мешать штатному закрытию.
+                    await Task.Delay(DeleteRetryDelays[attempt]);
+                }
+            }
+        }
+
         private static void DeleteStaleTemporaryFiles(
             string recoveryPath)
         {
@@ -395,6 +494,8 @@ namespace CryptoBook.Services
                 return;
 
             disposed = true;
+            stopping = true;
+            started = false;
             timer.Stop();
             documentSession.PropertyChanged -= OnSessionPropertyChanged;
         }

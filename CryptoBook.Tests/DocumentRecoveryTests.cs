@@ -131,6 +131,121 @@ namespace CryptoBook.Tests
         }
 
         [WpfFact]
+        public async Task DeleteSnapshotAsync_Retries_AfterTemporaryLock()
+        {
+            string directory = Path.Combine(
+                Path.GetTempPath(),
+                "CryptoBook.Tests",
+                Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            string recoveryPath =
+                Path.Combine(directory, "current.recovery");
+            await File.WriteAllTextAsync(recoveryPath, "snapshot");
+
+            try
+            {
+                IRichTextBoxService editor = CreateEditor();
+                using var recovery = new DocumentRecoveryService(
+                    new DocumentSession(editor),
+                    editor,
+                    new TestSaveService(),
+                    new TestLoadService(),
+                    new FileTemplateRegistry([]),
+                    Dispatcher.CurrentDispatcher,
+                    recoveryPath);
+                FileStream lockedFile = new(
+                    recoveryPath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.None);
+                Task releaseLock = Task.Run(async () =>
+                {
+                    await Task.Delay(100);
+                    await lockedFile.DisposeAsync();
+                });
+
+                await recovery.DeleteSnapshotAsync();
+                await releaseLock;
+
+                Assert.False(File.Exists(recoveryPath));
+            }
+            finally
+            {
+                if(Directory.Exists(directory))
+                    Directory.Delete(directory, recursive: true);
+            }
+        }
+
+        [WpfFact]
+        public async Task DeleteSnapshotAsync_Succeeds_WhenDirectoryDoesNotExist()
+        {
+            string directory = Path.Combine(
+                Path.GetTempPath(),
+                "CryptoBook.Tests",
+                Guid.NewGuid().ToString("N"));
+            string recoveryPath =
+                Path.Combine(directory, "current.recovery");
+            IRichTextBoxService editor = CreateEditor();
+            using var recovery = new DocumentRecoveryService(
+                new DocumentSession(editor),
+                editor,
+                new TestSaveService(),
+                new TestLoadService(),
+                new FileTemplateRegistry([]),
+                Dispatcher.CurrentDispatcher,
+                recoveryPath);
+
+            await recovery.DeleteSnapshotAsync();
+
+            Assert.False(Directory.Exists(directory));
+        }
+
+        [WpfFact]
+        public async Task StopAsync_WaitsForActiveSave_AndPreventsSnapshotCommit()
+        {
+            string directory = Path.Combine(
+                Path.GetTempPath(),
+                "CryptoBook.Tests",
+                Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            string recoveryPath =
+                Path.Combine(directory, "current.recovery");
+
+            try
+            {
+                IRichTextBoxService editor = CreateEditor();
+                var session = new DocumentSession(editor);
+                session.MarkDirty();
+                var saveService = new BlockingSaveService();
+                using var recovery = new DocumentRecoveryService(
+                    session,
+                    editor,
+                    saveService,
+                    new TestLoadService(),
+                    new FileTemplateRegistry([]),
+                    Dispatcher.CurrentDispatcher,
+                    recoveryPath);
+
+                Task snapshot = recovery.SaveSnapshotNowAsync();
+                await saveService.Started.Task.WaitAsync(
+                    TimeSpan.FromSeconds(5));
+
+                Task stop = recovery.StopAsync();
+                Assert.False(stop.IsCompleted);
+                saveService.Continue.TrySetResult();
+
+                await Task.WhenAll(snapshot, stop);
+
+                Assert.False(File.Exists(recoveryPath));
+            }
+            finally
+            {
+                if(Directory.Exists(directory))
+                    Directory.Delete(directory, recursive: true);
+            }
+        }
+
+        [WpfFact]
         public void AutosaveFailureLogging_IsRateLimited()
         {
             string recoveryPath = Path.Combine(
@@ -216,6 +331,36 @@ namespace CryptoBook.Tests
                         source,
                         DataFormats.Xaml);
                 return Task.CompletedTask;
+            }
+        }
+
+        private sealed class BlockingSaveService: IFlowDocumentSaveService
+        {
+            public TaskCompletionSource Started { get; } = new(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+            public TaskCompletionSource Continue { get; } = new(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
+            public Task SaveToFileAsync(
+                IRichTextBoxService richTextBoxService,
+                string filePath,
+                IFileTemplate template,
+                CancellationToken cancellationToken = default,
+                IProgressReporter? progress = null) =>
+                throw new NotSupportedException();
+
+            public async Task SaveToStreamAsync(
+                IRichTextBoxService richTextBoxService,
+                Stream destination,
+                IFileTemplate template,
+                CancellationToken cancellationToken = default,
+                IProgressReporter? progress = null)
+            {
+                Started.TrySetResult();
+                await Continue.Task.WaitAsync(cancellationToken);
+                await destination.WriteAsync(
+                    Encoding.UTF8.GetBytes("snapshot"),
+                    cancellationToken);
             }
         }
 
