@@ -11,6 +11,8 @@
         xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
         xmlns:local="clr-namespace:CryptoBook.Views"
         mc:Ignorable="d" d:DataContext="{markup:ResolveViewModel ViewModelType='{x:Type interfaces:IKeyInputViewModel}'}"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}"
         WindowStartupLocation="CenterOwner"
         MinWidth="420"
         MinHeight="230">
@@ -52,14 +54,27 @@
         </Grid.RowDefinitions>
 
         <TextBlock Text="{Binding Message,UpdateSourceTrigger=PropertyChanged}"
+                   Foreground="{DynamicResource CurrentWindowForeground}"
                    TextWrapping="Wrap"/>
 
         <PasswordBox x:Name="PasswordBox" 
                      Grid.Row="2"
+                     Foreground="{DynamicResource CurrentInputForeground}"
+                     Background="{DynamicResource CurrentInputBackground}"
+                     CaretBrush="{DynamicResource CurrentInputForeground}"
+                     SelectionBrush="{DynamicResource CurrentSelectionBackground}"
+                     SelectionTextBrush="{DynamicResource CurrentSelectionForeground}"
+                     BorderBrush="{DynamicResource CurrentBorderColor}"
                      MinHeight="28"/>
 
         <PasswordBox x:Name="RepeatPasswordBox"
                      Grid.Row="4"
+                     Foreground="{DynamicResource CurrentInputForeground}"
+                     Background="{DynamicResource CurrentInputBackground}"
+                     CaretBrush="{DynamicResource CurrentInputForeground}"
+                     SelectionBrush="{DynamicResource CurrentSelectionBackground}"
+                     SelectionTextBrush="{DynamicResource CurrentSelectionForeground}"
+                     BorderBrush="{DynamicResource CurrentBorderColor}"
                      MinHeight="28"/>
 
         <TextBlock x:Name="ErrorText"

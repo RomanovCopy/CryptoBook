@@ -60,6 +60,28 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
+        public async Task V2_EncryptFile_CanReplaceSourceFile()
+        {
+            byte[] content = Encoding.UTF8.GetBytes(
+                "replace the source without locking it");
+            string source = CreateSource("replace.txt", content);
+            var (processor, _) = CreateProcessor("replace password");
+
+            await processor.EncryptFileAsync(source, source);
+
+            await using Stream decrypted =
+                await processor.DecryptFileAsyncToStream(source);
+            using var restored = new MemoryStream();
+            await decrypted.CopyToAsync(restored);
+
+            Assert.Equal(content, restored.ToArray());
+            Assert.False(File.Exists(source + ".bak"));
+            Assert.DoesNotContain(
+                Directory.EnumerateFiles(_directory),
+                path => path.EndsWith(".tmp"));
+        }
+
+        [Fact]
         public async Task V2_WrongPassword_IsRejected()
         {
             string source = CreateSource("secret.txt", Encoding.UTF8.GetBytes("classified"));

@@ -48,13 +48,20 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
-            await using FileStream input = OpenRead(inputFile);
-            await EncryptStreamAsync(
-                input,
-                Path.GetExtension(inputFile),
-                outputFile,
-                progress,
-                cancellationToken);
+            StagedEncryption staged;
+            await using(FileStream input = OpenRead(inputFile))
+            {
+                staged = await EncryptToTemporaryFileAsync(
+                    input,
+                    Path.GetExtension(inputFile),
+                    outputFile,
+                    progress,
+                    cancellationToken);
+            }
+
+            CommitEncryptedFile(
+                staged,
+                preserveBackup: !PathsEqual(inputFile, outputFile));
         }
 
         public async Task EncryptStreamAsync(
@@ -63,6 +70,23 @@ namespace CryptoBook.Security
             string outputFile,
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
+        {
+            StagedEncryption staged = await EncryptToTemporaryFileAsync(
+                input,
+                originalExtension,
+                outputFile,
+                progress,
+                cancellationToken);
+
+            CommitEncryptedFile(staged, preserveBackup: true);
+        }
+
+        private async Task<StagedEncryption> EncryptToTemporaryFileAsync(
+            Stream input,
+            string originalExtension,
+            string outputFile,
+            IProgressReporter? progress,
+            CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(input);
             if(!input.CanRead || !input.CanSeek)
@@ -86,15 +110,44 @@ namespace CryptoBook.Security
                     tempFile,
                     progress,
                     cancellationToken);
-                AtomicFileCommit.CommitWithBackup(
-                    tempFile,
-                    fullOutputPath);
+                return new StagedEncryption(tempFile, fullOutputPath);
             } catch
             {
                 TryDelete(tempFile);
                 throw;
             }
         }
+
+        private static void CommitEncryptedFile(
+            StagedEncryption staged,
+            bool preserveBackup)
+        {
+            try
+            {
+                if(preserveBackup)
+                {
+                    AtomicFileCommit.CommitWithBackup(
+                        staged.TemporaryPath,
+                        staged.OutputPath);
+                }
+                else
+                {
+                    AtomicFileCommit.CommitWithoutBackup(
+                        staged.TemporaryPath,
+                        staged.OutputPath);
+                }
+            } catch
+            {
+                TryDelete(staged.TemporaryPath);
+                throw;
+            }
+        }
+
+        private static bool PathsEqual(string firstPath, string secondPath) =>
+            string.Equals(
+                Path.GetFullPath(firstPath),
+                Path.GetFullPath(secondPath),
+                StringComparison.OrdinalIgnoreCase);
 
         public async Task DecryptFileAsyncToFile(
             string inputFile,
@@ -526,6 +579,10 @@ namespace CryptoBook.Security
             {
             }
         }
+
+        private sealed record StagedEncryption(
+            string TemporaryPath,
+            string OutputPath);
 
         private sealed record ParsedHeader(
             KeyDerivationParameters Parameters,
