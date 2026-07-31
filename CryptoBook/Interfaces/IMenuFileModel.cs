@@ -41,7 +41,9 @@ namespace CryptoBook.Interfaces
         public void Execute_WorkingDirectorySynchronization(object? obj);
 
         public bool CanExecute_CloseFile(object? obj);
-        public void Execute_CloseFile(object? obj);
+        public Task Execute_CloseFileAsync(
+            object? obj,
+            CancellationToken cancellationToken);
 
         public bool CanExecute_UpdateFile(object? obj);
         public void Execute_UpdateFile(object? obj);

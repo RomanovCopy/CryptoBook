@@ -12,8 +12,10 @@ namespace CryptoBook.Interfaces
         bool IsDirty { get; }
         long Revision { get; }
         long SavedRevision { get; }
+        bool HasDocument { get; }
 
         void Open(string filePath, IFileTemplate template);
+        void Close();
         void MarkDirty();
         void MarkSaved(string filePath, IFileTemplate template);
         void MarkSaved(

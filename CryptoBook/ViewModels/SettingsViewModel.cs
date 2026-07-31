@@ -110,10 +110,11 @@ namespace CryptoBook.ViewModels
         private RelayCommand? search;
 
         public ICommand OpenSearchResult => openSearchResult ??=
-            new RelayCommand(
-                parameter => model.OpenSearchResult(
-                    parameter as WorkspaceSearchResult));
-        private RelayCommand? openSearchResult;
+            new AsyncRelayCommand(
+                (parameter, token) => model.OpenSearchResultAsync(
+                    parameter as WorkspaceSearchResult,
+                    token));
+        private AsyncRelayCommand? openSearchResult;
 
         public ICommand RevealSearchResult => revealSearchResult ??=
             new RelayCommand(

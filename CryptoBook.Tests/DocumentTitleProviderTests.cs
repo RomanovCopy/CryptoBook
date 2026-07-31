@@ -99,6 +99,9 @@ namespace CryptoBook.Tests
             public bool IsDirty { get; private set; }
             public long Revision { get; private set; }
             public long SavedRevision { get; private set; }
+            public bool HasDocument => IsDirty ||
+                !string.IsNullOrWhiteSpace(FilePath) ||
+                !string.IsNullOrWhiteSpace(DisplayName);
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -122,6 +125,8 @@ namespace CryptoBook.Tests
                     this,
                     new PropertyChangedEventArgs(nameof(FilePath)));
             }
+
+            public void Close() => SetFilePath(null);
 
             public void MarkDirty()
             {

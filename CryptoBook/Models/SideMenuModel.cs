@@ -94,7 +94,13 @@ namespace CryptoBook.Models
                     LocalizationManager.GetString("Common.Save"),
                     "\uE74E",
                     LocalizationManager.GetString("SideMenu.Save.Description"),
-                    CommandKey.menuFile_SaveFile)
+                    CommandKey.menuFile_SaveFile),
+                CreateItem(
+                    commandService,
+                    LocalizationManager.GetString("Common.Close"),
+                    "\uE8BB",
+                    LocalizationManager.GetString("SideMenu.CloseDocument.Description"),
+                    CommandKey.menuFile_CloseFile)
             ];
         }
 
@@ -127,7 +133,6 @@ namespace CryptoBook.Models
                 IsEnabled = true,
                 Command = renameBookCommand
             });
-
             var content = new MenuItemBase(commandService)
             {
                 Name = LocalizationManager.GetString("SideMenu.Content"),

@@ -27,7 +27,9 @@ namespace CryptoBook.Interfaces
 
         Task ChooseWorkspaceAsync();
         Task SearchAsync();
-        void OpenSearchResult(WorkspaceSearchResult? result);
+        Task OpenSearchResultAsync(
+            WorkspaceSearchResult? result,
+            CancellationToken cancellationToken = default);
         void RevealSearchResult(WorkspaceSearchResult? result);
         void Close();
         void Closing();

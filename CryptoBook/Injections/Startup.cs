@@ -181,6 +181,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<WindowsThemeProvider>().As<IWindowsThemeProvider>().SingleInstance();
             builder.RegisterType<SettingsWindowService>().As<ISettingsWindowService>().SingleInstance();
             builder.RegisterType<WorkspaceService>().As<IWorkspaceService>().SingleInstance();
+            builder.RegisterType<WorkspaceFileOpenService>()
+                .As<IWorkspaceFileOpenService>()
+                .SingleInstance();
+            builder.RegisterType<WorkspaceInternalFileOpenService>()
+                .As<IWorkspaceInternalFileOpenService>()
+                .SingleInstance();
             builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
             builder.RegisterType<FontService>().As<IFontService>().SingleInstance();
             builder.RegisterType<TextFormatService>().As<ITextFormatService>().SingleInstance();
