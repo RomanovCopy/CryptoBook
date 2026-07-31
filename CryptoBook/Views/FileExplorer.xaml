@@ -597,6 +597,10 @@
                                  FontSize="12"
                                  BorderThickness="0"
                                  Background="Transparent"
+                                 Foreground="{DynamicResource CurrentInputForeground}"
+                                 CaretBrush="{DynamicResource CurrentInputForeground}"
+                                 SelectionBrush="{DynamicResource CurrentSelectionBackground}"
+                                 SelectionTextBrush="{DynamicResource CurrentSelectionForeground}"
                                  VerticalScrollBarVisibility="Auto"
                                  HorizontalScrollBarVisibility="Auto">
                             <TextBox.Style>

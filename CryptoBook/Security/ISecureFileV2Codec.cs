@@ -16,6 +16,13 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default);
 
+        Task EncryptStreamAsync(
+            Stream input,
+            string originalExtension,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default);
+
         Task DecryptFileAsyncToFile(
             string inputFile,
             string outputFile,

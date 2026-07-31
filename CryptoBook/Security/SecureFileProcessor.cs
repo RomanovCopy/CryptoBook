@@ -30,6 +30,21 @@ namespace CryptoBook.Security
                 cancellationToken);
         }
 
+        public Task EncryptStreamAsync(
+            Stream input,
+            string originalExtension,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            return _v2Codec.EncryptStreamAsync(
+                input,
+                originalExtension,
+                outputFile,
+                progress,
+                cancellationToken);
+        }
+
         public async Task DecryptFileAsyncToFile(
             string inputFile,
             string outputFile,

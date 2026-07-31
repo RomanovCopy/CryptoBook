@@ -65,7 +65,6 @@ namespace CryptoBook.Models
         public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
         private string _currentPath;
         public ReadOnlyObservableCollection<IDriveItem> GetDrives { get; private set; }
-        private ObservableCollection<IDriveItem> _drives;
         private string _lastItemName;
 
 
@@ -611,7 +610,11 @@ namespace CryptoBook.Models
             IContainerSystemItem current = root;
             string currentPath = rootPath;
             foreach(string segment in relativePath.Split(
-                [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+                new[]
+                {
+                    Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar
+                },
                 StringSplitOptions.RemoveEmptyEntries))
             {
                 currentPath = Path.Combine(currentPath, segment);

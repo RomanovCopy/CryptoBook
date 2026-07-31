@@ -40,7 +40,10 @@ namespace CryptoBook.Injections
 
 
             //Models
-            builder.RegisterType<MenuFileModel>().As<IMenuFileModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuFileModel>()
+                .As<IMenuFileModel>()
+                .As<ICurrentDocumentSaver>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<NewFileDialogModel>().As<INewFileDialogModel>().InstancePerLifetimeScope();
             builder.RegisterType<FileExplorerModel>().As<IFileExplorerModel>().InstancePerLifetimeScope();
             builder.RegisterType<TitleBarModel>().As<ITitleBarModel>().InstancePerLifetimeScope();
@@ -227,6 +230,14 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentSession>()
                 .As<IDocumentSession>()
                 .SingleInstance();
+            builder.RegisterType<DocumentRecoveryService>()
+                .As<IDocumentRecoveryService>()
+                .SingleInstance();
+            builder.RegisterType<WpfDocumentDialogService>()
+                .As<IDocumentDialogService>()
+                .SingleInstance();
+            builder.RegisterType<DocumentCloseCoordinator>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<DocumentSaveTargetPicker>()
                 .As<IDocumentSaveTargetPicker>()
                 .SingleInstance();

@@ -34,6 +34,32 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
+        public async Task V2_EncryptStream_DoesNotRequirePlaintextFile()
+        {
+            byte[] content = Encoding.UTF8.GetBytes(
+                "document kept only in memory");
+            string encrypted =
+                Path.Combine(_directory, "memory.cbook");
+            var (processor, _) = CreateProcessor("stream password");
+            await using var source =
+                new MemoryStream(content, writable: false);
+
+            await processor.EncryptStreamAsync(
+                source,
+                ".XamlPackage",
+                encrypted);
+            await using Stream decrypted =
+                await processor.DecryptFileAsyncToStream(encrypted);
+            using var restored = new MemoryStream();
+            await decrypted.CopyToAsync(restored);
+
+            Assert.Equal(content, restored.ToArray());
+            Assert.DoesNotContain(
+                Directory.EnumerateFiles(_directory),
+                path => path.EndsWith(".tmp"));
+        }
+
+        [Fact]
         public async Task V2_WrongPassword_IsRejected()
         {
             string source = CreateSource("secret.txt", Encoding.UTF8.GetBytes("classified"));

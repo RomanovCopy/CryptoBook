@@ -17,7 +17,8 @@ using System.Threading.Tasks;
 /// </summary>
 public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDisposable
 {
-    private readonly Dictionary<string, Entry> _entries = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, WatcherEntry> _entries =
+        new(StringComparer.OrdinalIgnoreCase);
 
     private readonly object _lock = new();
 
@@ -121,8 +122,22 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
                         }
                     };
                     watcher.Error += errorHandler;
+                    watcherEntry = new WatcherEntry(
+                        key,
+                        watcher,
+                        includeSubdirectories,
+                        notifyFilters,
+                        internalBufferSize,
+                        _restartDebounce,
+                        _restartMaxAttempts,
+                        _restartBaseDelay,
+                        createdHandler,
+                        deletedHandler,
+                        renamedHandler,
+                        changedHandler,
+                        errorHandler);
                     watcher.EnableRaisingEvents = true;
-                    entry=new Entry(key, watcher);
+                    entry = watcherEntry;
 
                     _entries[key] = entry;
 
@@ -155,7 +170,7 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
             return false;
         }
 
-        Entry? entry;
+        WatcherEntry? entry;
         lock(_lock)
         {
             if(!_entries.TryGetValue(key, out entry))
@@ -174,10 +189,10 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
 
     public void Dispose()
     {
-        Entry[] entries;
+        WatcherEntry[] entries;
         lock(_lock)
         {
-            entries = new Entry[_entries.Count];
+            entries = new WatcherEntry[_entries.Count];
             _entries.Values.CopyTo(entries, 0);
             _entries.Clear();
         }
@@ -263,6 +278,8 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
         private CancellationTokenSource? _restartCts;
         private Exception? _lastRestartReason;
 
+        public int RefCount { get; set; }
+
         public WatcherEntry(
             string key,
             FileSystemWatcher watcher,
@@ -294,6 +311,7 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
             _renamed = renamed;
             _changed = changed;
             _error = error;
+            RefCount = 1;
         }
 
         private bool IsDisposed => Volatile.Read(ref _disposed) == 1;
@@ -454,30 +472,6 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
 
                 try
                 { w.Dispose(); } catch { }
-            } catch { }
-        }
-    }
-
-
-    private sealed class Entry: IDisposable
-    {
-        public string Path { get; }
-        public FileSystemWatcher Watcher { get; }
-        public int RefCount;
-
-        public Entry(string path, FileSystemWatcher watcher)
-        {
-            Path = path;
-            Watcher = watcher;
-            RefCount = 0;
-        }
-
-        public void Dispose()
-        {
-            try
-            {
-                Watcher.EnableRaisingEvents = false;
-                Watcher.Dispose();
             } catch { }
         }
     }

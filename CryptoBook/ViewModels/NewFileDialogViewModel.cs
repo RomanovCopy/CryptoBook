@@ -19,7 +19,11 @@ namespace CryptoBook.ViewModels
         private readonly IFileDisplayNameService fileDisplayNameService;
         private bool disposed;
 
-        public event EventHandler RequestClose;
+        event EventHandler ICloseable.RequestClose
+        {
+            add { }
+            remove { }
+        }
 
         public Guid WindowId { get => newFileDialogModel.WindowId; }
 

@@ -1,10 +1,14 @@
 ﻿using Autofac;
 
 using CryptoBook.DTO;
+using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Security;
 using CryptoBook.Views;
 
+using System.IO;
+using System.Security.Cryptography;
 using System.Windows.Input;
 
 namespace CryptoBook.Models
@@ -18,6 +22,8 @@ namespace CryptoBook.Models
         private readonly IDocumentSaveTargetPicker saveTargetPicker;
         private readonly IProgressDialogService progressDialogService;
         private readonly IMessageService messageService;
+        private readonly IDocumentRecoveryService recoveryService;
+        private readonly ISecureFileProcessor secureFileProcessor;
 
         public MenuFileModel(
             IWindowManager windowManager,
@@ -26,7 +32,9 @@ namespace CryptoBook.Models
             IDocumentSession documentSession,
             IDocumentSaveTargetPicker saveTargetPicker,
             IProgressDialogService progressDialogService,
-            IMessageService messageService)
+            IMessageService messageService,
+            IDocumentRecoveryService recoveryService,
+            ISecureFileProcessor secureFileProcessor)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
@@ -43,6 +51,11 @@ namespace CryptoBook.Models
                     nameof(progressDialogService));
             this.messageService = messageService
                 ?? throw new ArgumentNullException(nameof(messageService));
+            this.recoveryService = recoveryService
+                ?? throw new ArgumentNullException(nameof(recoveryService));
+            this.secureFileProcessor = secureFileProcessor
+                ?? throw new ArgumentNullException(
+                    nameof(secureFileProcessor));
 
             documentSession.PropertyChanged += (_, _) =>
                 OnPropertyChanged(nameof(documentSession));
@@ -78,7 +91,7 @@ namespace CryptoBook.Models
             object? obj,
             CancellationToken cancellationToken)
         {
-            return SaveAsync(
+            return SaveAndIgnoreResultAsync(
                 forceChooseTarget: false,
                 cancellationToken);
         }
@@ -91,12 +104,23 @@ namespace CryptoBook.Models
             object? obj,
             CancellationToken cancellationToken)
         {
-            return SaveAsync(
+            return SaveAndIgnoreResultAsync(
                 forceChooseTarget: true,
                 cancellationToken);
         }
 
-        private async Task SaveAsync(
+        public Task<bool> TrySaveCurrentAsync(
+            CancellationToken cancellationToken = default) =>
+            SaveAsync(forceChooseTarget: false, cancellationToken);
+
+        private async Task SaveAndIgnoreResultAsync(
+            bool forceChooseTarget,
+            CancellationToken cancellationToken)
+        {
+            await SaveAsync(forceChooseTarget, cancellationToken);
+        }
+
+        private async Task<bool> SaveAsync(
             bool forceChooseTarget,
             CancellationToken cancellationToken)
         {
@@ -105,7 +129,9 @@ namespace CryptoBook.Models
                 DocumentSaveTarget? target =
                     GetSaveTarget(forceChooseTarget);
                 if(target is null)
-                    return;
+                    return false;
+
+                long savedRevision = documentSession.Revision;
 
                 await progressDialogService.RunAsync(
                     "Сохранение документа",
@@ -116,27 +142,76 @@ namespace CryptoBook.Models
                                 .CreateLinkedTokenSource(
                                     cancellationToken,
                                     dialogToken);
-                        await saveService.SaveToFileAsync(
-                            richTextBox,
-                            target.FilePath,
-                            target.Template,
-                            linkedTokenSource.Token,
-                            progress);
+                        if(target.Template is SecureFileTemplate)
+                        {
+                            await SaveEncryptedAsync(
+                                target.FilePath,
+                                linkedTokenSource.Token,
+                                progress);
+                        }
+                        else
+                        {
+                            await saveService.SaveToFileAsync(
+                                richTextBox,
+                                target.FilePath,
+                                target.Template,
+                                linkedTokenSource.Token,
+                                progress);
+                        }
                         return true;
                     });
 
                 documentSession.MarkSaved(
                     target.FilePath,
-                    target.Template);
+                    target.Template,
+                    savedRevision);
+                if(!documentSession.IsDirty)
+                    await recoveryService.DeleteSnapshotAsync();
+                return true;
             }
             catch(OperationCanceledException)
             {
+                return false;
             }
             catch(Exception exception)
             {
                 await messageService.ShowMessage(
                     "Ошибка сохранения",
                     exception.Message);
+                return false;
+            }
+        }
+
+        private async Task SaveEncryptedAsync(
+            string filePath,
+            CancellationToken cancellationToken,
+            IProgressReporter progress)
+        {
+            await using MemoryStream plaintext = new();
+            try
+            {
+                await saveService.SaveToStreamAsync(
+                    richTextBox,
+                    plaintext,
+                    new XamlPackageFileTemplate(),
+                    cancellationToken,
+                    progress);
+                plaintext.Position = 0;
+                await secureFileProcessor.EncryptStreamAsync(
+                    plaintext,
+                    ".XamlPackage",
+                    filePath,
+                    progress,
+                    cancellationToken);
+            }
+            finally
+            {
+                if(plaintext.TryGetBuffer(
+                    out ArraySegment<byte> buffer))
+                {
+                    CryptographicOperations.ZeroMemory(
+                        buffer.AsSpan(0, (int)plaintext.Length));
+                }
             }
         }
 

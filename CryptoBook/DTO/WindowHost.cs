@@ -34,7 +34,7 @@ namespace CryptoBook.DTO
 
         private void OnClosing(object? sender, CancelEventArgs e)
         {
-            IsClosing = true;
+            IsClosing = !e.Cancel;
         }
 
         private void OnClosed(object? sender, EventArgs e)

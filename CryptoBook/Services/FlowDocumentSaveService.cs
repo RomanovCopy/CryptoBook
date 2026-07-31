@@ -49,13 +49,16 @@ namespace CryptoBook.Services
                     await SaveToStreamAsync( richTextBoxService, stream, template, cancellationToken, progress);
 
                     await stream.FlushAsync(cancellationToken);
+                    stream.Flush(flushToDisk: true);
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
 
                 
 
-                File.Move( temporaryPath, fullPath, overwrite: true);
+                AtomicFileCommit.CommitWithBackup(
+                    temporaryPath,
+                    fullPath);
                 progress?.Report(1.0, "Файл сохранён");
             } 
             catch

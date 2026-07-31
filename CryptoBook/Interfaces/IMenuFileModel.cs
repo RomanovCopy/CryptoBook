@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMenuFileModel:IModel
+    public interface IMenuFileModel:IModel, ICurrentDocumentSaver
     {
 
         public bool CanExecute_NewFile(object? obj);
@@ -28,7 +28,6 @@ namespace CryptoBook.Interfaces
         public Task Execute_SaveAsFileAsync(
             object? obj,
             CancellationToken cancellationToken);
-
 
         public bool CanExecute_FileOverview(object? obj);
         public void Execute_FileOverview(object? obj);

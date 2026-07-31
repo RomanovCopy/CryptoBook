@@ -1,4 +1,5 @@
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 
 using System.Buffers.Binary;
 using System.IO;
@@ -47,6 +48,29 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
+            await using FileStream input = OpenRead(inputFile);
+            await EncryptStreamAsync(
+                input,
+                Path.GetExtension(inputFile),
+                outputFile,
+                progress,
+                cancellationToken);
+        }
+
+        public async Task EncryptStreamAsync(
+            Stream input,
+            string originalExtension,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(input);
+            if(!input.CanRead || !input.CanSeek)
+                throw new ArgumentException(
+                    "Поток должен поддерживать чтение и позиционирование.",
+                    nameof(input));
+            ArgumentException.ThrowIfNullOrWhiteSpace(originalExtension);
+
             string fullOutputPath = Path.GetFullPath(outputFile);
             string outputDirectory = Path.GetDirectoryName(fullOutputPath) ??
                 throw new IOException("Не удалось определить каталог назначения.");
@@ -56,8 +80,15 @@ namespace CryptoBook.Security
 
             try
             {
-                await EncryptCoreAsync(inputFile, tempFile, progress, cancellationToken);
-                File.Move(tempFile, outputFile, overwrite: true);
+                await EncryptCoreAsync(
+                    input,
+                    originalExtension,
+                    tempFile,
+                    progress,
+                    cancellationToken);
+                AtomicFileCommit.CommitWithBackup(
+                    tempFile,
+                    fullOutputPath);
             } catch
             {
                 TryDelete(tempFile);
@@ -127,7 +158,8 @@ namespace CryptoBook.Security
         }
 
         private async Task EncryptCoreAsync(
-            string inputFile,
+            Stream input,
+            string originalExtension,
             string tempFile,
             IProgressReporter? progress,
             CancellationToken cancellationToken)
@@ -150,16 +182,27 @@ namespace CryptoBook.Security
                     parameters,
                     cancellationToken);
 
-                await using FileStream input = OpenRead(inputFile);
-                byte[] extension = Encoding.UTF8.GetBytes(Path.GetExtension(inputFile));
-                if(extension.Length is <= 0 or > SecureFileFormat.MaxExtensionLength)
+                if(!originalExtension.StartsWith('.') ||
+                   originalExtension.IndexOfAny(
+                       Path.GetInvalidFileNameChars()) >= 0)
+                {
+                    throw new CryptographicException(
+                        "Некорректное расширение файла.");
+                }
+
+                byte[] extension =
+                    Encoding.UTF8.GetBytes(originalExtension);
+                if(extension.Length is <= 0 or
+                   > SecureFileFormat.MaxExtensionLength)
                     throw new CryptographicException("Некорректная длина расширения файла.");
 
                 byte[] metadata = new byte[sizeof(int) + extension.Length];
                 BinaryPrimitives.WriteInt32LittleEndian(metadata, extension.Length);
                 extension.CopyTo(metadata.AsSpan(sizeof(int)));
 
-                long payloadLength = checked(input.Length + metadata.Length);
+                long contentLength = input.Length - input.Position;
+                long payloadLength =
+                    checked(contentLength + metadata.Length);
                 byte[] header = CreateHeader(
                     parameters,
                     salt,
@@ -222,12 +265,14 @@ namespace CryptoBook.Security
                     await output.WriteAsync(tag, cancellationToken);
 
                     fileProcessed += fileBytes;
-                    if(input.Length > 0)
-                        progress?.Report((double)fileProcessed / input.Length);
+                    if(contentLength > 0)
+                        progress?.Report(
+                            (double)fileProcessed / contentLength);
                     chunkIndex++;
                 }
 
                 await output.FlushAsync(cancellationToken);
+                output.Flush(flushToDisk: true);
                 progress?.Report(1.0);
             } finally
             {

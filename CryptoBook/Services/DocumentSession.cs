@@ -12,7 +12,8 @@ namespace CryptoBook.Services
         private string? filePath;
         private string displayName = string.Empty;
         private IFileTemplate? template;
-        private bool isDirty;
+        private long revision;
+        private long savedRevision;
 
         public DocumentSession(IRichTextBoxService richTextBox)
         {
@@ -64,16 +65,37 @@ namespace CryptoBook.Services
             }
         }
 
-        public bool IsDirty
+        public bool IsDirty => Revision != SavedRevision;
+
+        public long Revision
         {
-            get => isDirty;
+            get => revision;
             private set
             {
-                if(isDirty == value)
+                if(revision == value)
                     return;
 
-                isDirty = value;
+                bool wasDirty = IsDirty;
+                revision = value;
                 OnPropertyChanged();
+                if(wasDirty != IsDirty)
+                    OnPropertyChanged(nameof(IsDirty));
+            }
+        }
+
+        public long SavedRevision
+        {
+            get => savedRevision;
+            private set
+            {
+                if(savedRevision == value)
+                    return;
+
+                bool wasDirty = IsDirty;
+                savedRevision = value;
+                OnPropertyChanged();
+                if(wasDirty != IsDirty)
+                    OnPropertyChanged(nameof(IsDirty));
             }
         }
 
@@ -86,20 +108,30 @@ namespace CryptoBook.Services
 
         public void MarkDirty()
         {
-            IsDirty = true;
+            Revision = checked(Revision + 1);
         }
 
         public void MarkSaved(
             string filePath,
             IFileTemplate template)
         {
+            MarkSaved(filePath, template, Revision);
+        }
+
+        public void MarkSaved(
+            string filePath,
+            IFileTemplate template,
+            long savedRevision)
+        {
             ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
             ArgumentNullException.ThrowIfNull(template);
+            if(savedRevision < 0 || savedRevision > Revision)
+                throw new ArgumentOutOfRangeException(nameof(savedRevision));
 
             FilePath = Path.GetFullPath(filePath);
             DisplayName = Path.GetFileName(FilePath);
             Template = template;
-            IsDirty = false;
+            SavedRevision = savedRevision;
         }
 
         public void Rename(string filePath)

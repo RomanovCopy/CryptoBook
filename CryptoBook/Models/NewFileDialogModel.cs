@@ -31,12 +31,6 @@ namespace CryptoBook.Models
 
 
         /// <summary>
-        /// Событие запроса на закрытие окна диалога.
-        /// Вызывается из VM → View с результатом операции (успех/ошибка).
-        /// </summary>
-        public event Func<FileOperationResult, Task>? CloseRequested; // VM → View (успех/ошибка)
-
-        /// <summary>
         /// Уникальный идентификатор окна (используется менеджером окон для управления конкретным экземпляром).
         /// </summary>
         public Guid WindowId { get => windowId; private set => SetProperty(ref windowId, value); }

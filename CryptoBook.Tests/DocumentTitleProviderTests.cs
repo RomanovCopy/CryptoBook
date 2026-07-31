@@ -97,6 +97,8 @@ namespace CryptoBook.Tests
             public string DisplayName { get; private set; } = string.Empty;
             public IFileTemplate? Template { get; private set; }
             public bool IsDirty { get; private set; }
+            public long Revision { get; private set; }
+            public long SavedRevision { get; private set; }
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -123,6 +125,7 @@ namespace CryptoBook.Tests
 
             public void MarkDirty()
             {
+                Revision++;
                 IsDirty = true;
                 PropertyChanged?.Invoke(
                     this,
@@ -131,6 +134,15 @@ namespace CryptoBook.Tests
 
             public void MarkSaved(string filePath, IFileTemplate template) =>
                 Open(filePath, template);
+
+            public void MarkSaved(
+                string filePath,
+                IFileTemplate template,
+                long savedRevision)
+            {
+                SavedRevision = savedRevision;
+                Open(filePath, template);
+            }
 
             public void Rename(string filePath) => SetFilePath(filePath);
 

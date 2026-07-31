@@ -38,6 +38,30 @@ namespace CryptoBook.Tests
         }
 
         [WpfFact]
+        public void SavingOlderRevision_DoesNotClearNewerChanges()
+        {
+            IRichTextBoxService richTextBox = new RichTextBoxService(
+                new TestParagraphFactory(),
+                new TestUriNavigationService());
+            var session = new DocumentSession(richTextBox);
+            var template = new XamlPackageFileTemplate();
+            string path = Path.Combine(
+                Path.GetTempPath(),
+                "CryptoBook-revision-test.XamlPackage");
+            session.Open(path, template);
+
+            richTextBox.Selection.Text = "первая версия";
+            long revisionBeingSaved = session.Revision;
+            richTextBox.Selection.Text = "новая версия";
+
+            session.MarkSaved(path, template, revisionBeingSaved);
+
+            Assert.True(session.IsDirty);
+            Assert.Equal(revisionBeingSaved, session.SavedRevision);
+            Assert.True(session.Revision > session.SavedRevision);
+        }
+
+        [WpfFact]
         public void Rename_UpdatesPath_AndPreservesDirtyState()
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(

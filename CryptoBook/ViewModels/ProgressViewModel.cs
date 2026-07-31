@@ -16,7 +16,11 @@ namespace CryptoBook.ViewModels
         public Guid WindowId => progressModel.WindowId;
 
 
-        public event EventHandler RequestClose;
+        event EventHandler ICloseable.RequestClose
+        {
+            add { }
+            remove { }
+        }
 
         public double WindowWidth { get => progressModel.WindowWidth; set => progressModel.WindowWidth = value; }
         public double WindowHeight { get => progressModel.WindowHeight; set => progressModel.WindowHeight = value; }
@@ -40,7 +44,10 @@ namespace CryptoBook.ViewModels
             progressModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-        public ICommand StartLongOperation => startLongOperation ?? new RelayCommand(progressModel.Execute_StartLongOperation, progressModel.CanExecute_StartLongOperation);
+        public ICommand StartLongOperation => startLongOperation ??=
+            new RelayCommand(
+                progressModel.Execute_StartLongOperation,
+                progressModel.CanExecute_StartLongOperation);
         RelayCommand startLongOperation;
 
         public ICommand Canceled => canceled ??= new RelayCommand(progressModel.Execute_Canceled, progressModel.CanExecute_Canceled);
