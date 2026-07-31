@@ -12,6 +12,65 @@ namespace CryptoBook.Tests;
 public sealed class FontTypingTests
 {
     [WpfFact]
+    public void ColorPalette_ContainsEverySupportedColorInDisplayOrder()
+    {
+        var (_, fonts) = CreateServices(new Run("text"));
+        DrawingColor[] expected =
+        [
+            DrawingColor.Black,
+            DrawingColor.DimGray,
+            DrawingColor.Gray,
+            DrawingColor.DarkGray,
+            DrawingColor.Silver,
+            DrawingColor.LightGray,
+            DrawingColor.Gainsboro,
+            DrawingColor.White,
+            DrawingColor.Maroon,
+            DrawingColor.DarkRed,
+            DrawingColor.Red,
+            DrawingColor.Crimson,
+            DrawingColor.IndianRed,
+            DrawingColor.Salmon,
+            DrawingColor.LightCoral,
+            DrawingColor.OrangeRed,
+            DrawingColor.Orange,
+            DrawingColor.Gold,
+            DrawingColor.Yellow,
+            DrawingColor.Olive,
+            DrawingColor.DarkGreen,
+            DrawingColor.Green,
+            DrawingColor.SeaGreen,
+            DrawingColor.LimeGreen,
+            DrawingColor.YellowGreen,
+            DrawingColor.Lime,
+            DrawingColor.Teal,
+            DrawingColor.DarkCyan,
+            DrawingColor.Cyan,
+            DrawingColor.Turquoise,
+            DrawingColor.LightBlue,
+            DrawingColor.SteelBlue,
+            DrawingColor.Blue,
+            DrawingColor.Navy,
+            DrawingColor.Indigo,
+            DrawingColor.Purple,
+            DrawingColor.Magenta,
+            DrawingColor.DeepPink,
+            DrawingColor.Pink,
+            DrawingColor.Brown,
+            DrawingColor.SaddleBrown,
+            DrawingColor.Chocolate,
+            DrawingColor.Tan,
+            DrawingColor.Beige,
+            DrawingColor.Transparent
+        ];
+
+        Assert.Equal(expected, fonts.FontColors);
+        Assert.Equal(
+            fonts.FontColors.Count,
+            fonts.FontColors.Select(color => color.ToArgb()).Distinct().Count());
+    }
+
+    [WpfFact]
     public void FontWeight_IsAppliedToTextTypedBetweenAdjacentCharacters()
     {
         var (service, fonts) = CreateServices(new Run("ab"));

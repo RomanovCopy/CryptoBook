@@ -215,17 +215,62 @@ namespace CryptoBook.Services
             FontColors = new ObservableCollection<Drawing.Color>(
                 new Drawing.Color[]
                 {
+                    // Neutral tones
                     Drawing.Color.Black,
-                    Drawing.Color.White,
-                    Drawing.Color.Red,
-                    Drawing.Color.Green,
-                    Drawing.Color.Blue,
-                    Drawing.Color.Yellow,
+                    Drawing.Color.DimGray,
                     Drawing.Color.Gray,
+                    Drawing.Color.DarkGray,
+                    Drawing.Color.Silver,
+                    Drawing.Color.LightGray,
+                    Drawing.Color.Gainsboro,
+                    Drawing.Color.White,
+
+                    // Reds and warm tones
+                    Drawing.Color.Maroon,
+                    Drawing.Color.DarkRed,
+                    Drawing.Color.Red,
+                    Drawing.Color.Crimson,
+                    Drawing.Color.IndianRed,
+                    Drawing.Color.Salmon,
+                    Drawing.Color.LightCoral,
+                    Drawing.Color.OrangeRed,
                     Drawing.Color.Orange,
-                    Drawing.Color.Purple,
-                    Drawing.Color.Brown,
+                    Drawing.Color.Gold,
+                    Drawing.Color.Yellow,
+
+                    // Greens
+                    Drawing.Color.Olive,
+                    Drawing.Color.DarkGreen,
+                    Drawing.Color.Green,
+                    Drawing.Color.SeaGreen,
+                    Drawing.Color.LimeGreen,
+                    Drawing.Color.YellowGreen,
+                    Drawing.Color.Lime,
+
+                    // Cyans and blues
+                    Drawing.Color.Teal,
+                    Drawing.Color.DarkCyan,
                     Drawing.Color.Cyan,
+                    Drawing.Color.Turquoise,
+                    Drawing.Color.LightBlue,
+                    Drawing.Color.SteelBlue,
+                    Drawing.Color.Blue,
+                    Drawing.Color.Navy,
+
+                    // Purples and pinks
+                    Drawing.Color.Indigo,
+                    Drawing.Color.Purple,
+                    Drawing.Color.Magenta,
+                    Drawing.Color.DeepPink,
+                    Drawing.Color.Pink,
+
+                    // Earth tones
+                    Drawing.Color.Brown,
+                    Drawing.Color.SaddleBrown,
+                    Drawing.Color.Chocolate,
+                    Drawing.Color.Tan,
+                    Drawing.Color.Beige,
+
                     Drawing.Color.Transparent
                 });
 

@@ -22,6 +22,12 @@
                         <!-- Основная кнопка -->
                         <ToggleButton x:Name="ToggleButton"
                                   Focusable="False"
+                                  Background="{TemplateBinding Background}"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  HorizontalContentAlignment="Stretch"
+                                  VerticalContentAlignment="Stretch"
                                   IsChecked="{Binding IsDropDownOpen,
                                       RelativeSource={RelativeSource TemplatedParent},
                                       Mode=TwoWay}"
@@ -39,12 +45,13 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Отображение выбранного элемента -->
-                                    <ContentPresenter Grid.Column="0"
-                                                  Margin="5,0"
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Left"
-                                                  Content="{TemplateBinding SelectionBoxItem}"
-                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"/>
+                                    <TextBlock Grid.Column="0"
+                                               Margin="8,0"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Text="{Binding SelectedItem,
+                                                   RelativeSource={RelativeSource TemplatedParent}}"
+                                               Foreground="{TemplateBinding Foreground}"/>
 
                                     <!-- Стрелка -->
                                     <Path Grid.Column="1"
@@ -61,8 +68,8 @@
 
                         <!-- Выпадающий список -->
                         <Popup x:Name="PART_Popup"
-                           Placement="Top"
-                           VerticalOffset="-2"
+                           Placement="Bottom"
+                           VerticalOffset="2"
                            AllowsTransparency="True"
                            PopupAnimation="Fade"
                            Focusable="False"

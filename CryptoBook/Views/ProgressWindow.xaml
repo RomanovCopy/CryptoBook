@@ -54,7 +54,7 @@
                    Foreground="{DynamicResource CurrentMutedForeground}"/>
 
         <!-- Кнопка отмены -->
-        <Button Grid.Row="3" Content="Отмена" Width="90" Height="30" HorizontalAlignment="Center"
+        <Button Grid.Row="3" Content="{Binding [Common.Cancel], Source={StaticResource Res}}" Width="90" Height="30" HorizontalAlignment="Center"
                 Command="{Binding Canceled}" IsEnabled="{Binding IsOperationRunning}" />
     </Grid>
     <i:Interaction.Triggers>

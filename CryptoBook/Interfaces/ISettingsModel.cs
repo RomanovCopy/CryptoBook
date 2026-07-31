@@ -10,6 +10,13 @@ namespace CryptoBook.Interfaces
         Guid WindowId { get; }
         IReadOnlyList<ApplicationThemeOption> Themes { get; }
         ApplicationThemeOption SelectedTheme { get; set; }
+        IReadOnlyList<ApplicationLanguageOption> Languages { get; }
+        ApplicationLanguageOption SelectedLanguage { get; set; }
+        string SelectedCultureName { get; set; }
+        int SelectedLanguageIndex { get; set; }
+        bool IsEnglishSelected { get; set; }
+        bool IsRussianSelected { get; set; }
+        IReadOnlyList<string> LanguageDisplayNames { get; }
         GridLength NavigationPaneWidth { get; set; }
         int SelectedSectionIndex { get; set; }
         string WorkspaceDirectory { get; }

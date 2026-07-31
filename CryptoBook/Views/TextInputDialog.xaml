@@ -32,7 +32,7 @@
                     Margin="0,0,8,0"
                     IsDefault="True"
                     Command="{Binding AcceptCommand}"/>
-            <Button Content="Отмена"
+            <Button Content="{Binding [Common.Cancel], Source={StaticResource Res}}"
                     Width="90"
                     IsCancel="True"
                     Command="{Binding CancelCommand}"/>

@@ -3,9 +3,9 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 using CryptoBook.Views;
 
-using System.Globalization;
 using System.Windows;
 
 namespace CryptoBook.Models
@@ -37,10 +37,23 @@ namespace CryptoBook.Models
             this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             WindowId = Guid.NewGuid();
 
-            WindowHeight = Properties.Settings.Default.WindowHeight;
-            WindowWidth = Properties.Settings.Default.WindowWidth;
-            WindowLeft = Properties.Settings.Default.WindowLeft;
-            WindowTop = Properties.Settings.Default.WindowTop;
+            double savedHeight = Properties.Settings.Default.WindowHeight;
+            double savedWidth = Properties.Settings.Default.WindowWidth;
+            if(WindowLayoutDefaults.IsLegacyMainSize(savedWidth, savedHeight))
+            {
+                Rect placement = WindowLayoutDefaults.CreateMain(SystemParameters.WorkArea);
+                WindowHeight = placement.Height;
+                WindowWidth = placement.Width;
+                WindowLeft = placement.Left;
+                WindowTop = placement.Top;
+            }
+            else
+            {
+                WindowHeight = savedHeight;
+                WindowWidth = savedWidth;
+                WindowLeft = Properties.Settings.Default.WindowLeft;
+                WindowTop = Properties.Settings.Default.WindowTop;
+            }
 
             //восстанавливаем состояние окна
             WindowState = Properties.Settings.Default.WindowState == "Normal" ? WindowState.Normal : Properties.Settings.Default.WindowState == "Minimized" ? WindowState.Minimized : Properties.Settings.Default.WindowState == "Maximized" ? WindowState.Maximized :
@@ -100,9 +113,6 @@ namespace CryptoBook.Models
         }
         public void Execute_Loaded(object? obj)
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(Properties.Settings.Default.CultureInfo);
-
             if(Ready != null)
             {
                 Ready.Invoke();

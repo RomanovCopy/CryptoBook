@@ -68,6 +68,7 @@ namespace CryptoBook.Models
             FontSize = Properties.Settings.Default.SideMenuFontSize;
             QuickActions = InitializeQuickActions();
             MenuItems = InitializeMenu();
+            LocalizationManager.CultureChanged += OnCultureChanged;
         }
 
         private ObservableCollection<MenuItem> InitializeQuickActions()
@@ -78,21 +79,21 @@ namespace CryptoBook.Models
             [
                 CreateItem(
                     commandService,
-                    "Создать",
+                    LocalizationManager.GetString("SideMenu.Create"),
                     "\uE710",
-                    "Создать новую книгу",
+                    LocalizationManager.GetString("SideMenu.Create.Description"),
                     CommandKey.menuFile_NewFile),
                 CreateItem(
                     commandService,
-                    "Открыть",
+                    LocalizationManager.GetString("Common.Open"),
                     "\uE8E5",
-                    "Открыть книгу или рабочую директорию",
+                    LocalizationManager.GetString("SideMenu.Open.Description"),
                     CommandKey.menuFile_OpenFile),
                 CreateItem(
                     commandService,
-                    "Сохранить",
+                    LocalizationManager.GetString("Common.Save"),
                     "\uE74E",
-                    "Сохранить текущий документ",
+                    LocalizationManager.GetString("SideMenu.Save.Description"),
                     CommandKey.menuFile_SaveFile)
             ];
         }
@@ -102,57 +103,57 @@ namespace CryptoBook.Models
             var commandService = scope.Resolve<ICommandService>();
             var file = new MenuItemBase(commandService)
             {
-                Name = "Файл",
+                Name = LocalizationManager.GetString("Common.File"),
                 IsEnabled = true,
                 HasChildren = true
             };
             file.Children.Add(CreateItem(
                 commandService,
-                "Сохранить",
+                LocalizationManager.GetString("Common.Save"),
                 "\uE74E",
-                "Сохранить изменения в текущем файле",
+                LocalizationManager.GetString("SideMenu.SaveChanges.Description"),
                 CommandKey.menuFile_SaveFile));
             file.Children.Add(CreateItem(
                 commandService,
-                "Сохранить как",
+                LocalizationManager.GetString("Common.SaveAs"),
                 "\uE792",
-                "Выбрать имя, папку и формат",
+                LocalizationManager.GetString("SideMenu.SaveAs.Description"),
                 CommandKey.menuFile_SaveAsFile));
             file.Children.Add(new MenuItem(commandService)
             {
-                Name = "Переименовать книгу",
+                Name = LocalizationManager.GetString("SideMenu.RenameBook"),
                 Glyph = "\uE8AC",
-                Description = "Изменить имя текущей книги",
+                Description = LocalizationManager.GetString("SideMenu.RenameBook.Description"),
                 IsEnabled = true,
                 Command = renameBookCommand
             });
 
             var content = new MenuItemBase(commandService)
             {
-                Name = "Содержимое",
+                Name = LocalizationManager.GetString("SideMenu.Content"),
                 IsEnabled = true,
                 HasChildren = true
             };
 
             content.Children.Add(new MenuItem(commandService)
             {
-                Name = "Закладки",
+                Name = LocalizationManager.GetString("Bookmarks.Title"),
                 Glyph = "\uE8A4",
-                Description = "Переходы, заметки и ссылки внутри книги",
+                Description = LocalizationManager.GetString("SideMenu.Bookmarks.Description"),
                 IsEnabled = true,
                 Command = bookmarksViewModel.OpenManager
             });
             content.Children.Add(CreateItem(
                 commandService,
-                "Вставить изображение",
+                LocalizationManager.GetString("SideMenu.InsertImage"),
                 "\uE91B",
-                "Добавить изображение в позицию курсора",
+                LocalizationManager.GetString("SideMenu.InsertImage.Description"),
                 CommandKey.menuContent_InsertImage));
             content.Children.Add(CreateItem(
                 commandService,
-                "Фото и видео",
+                LocalizationManager.GetString("Media.Title"),
                 "\uE714",
-                "Просмотр медиафайлов рабочей директории",
+                LocalizationManager.GetString("SideMenu.Media.Description"),
                 CommandKey.menuContent_MediaPlayer));
 
             return [file, content];
@@ -171,10 +172,10 @@ namespace CryptoBook.Models
                 extension = documentSession.Template?.DefaultExtension ?? string.Empty;
             string initialName = Path.GetFileNameWithoutExtension(oldFileName);
             string? requestedName = textInputService.Request(
-                "Переименование книги",
-                "Введите новое имя книги:",
+                LocalizationManager.GetString("SideMenu.RenameBook.DialogTitle"),
+                LocalizationManager.GetString("SideMenu.RenameBook.Prompt"),
                 initialName,
-                "Переименовать");
+                LocalizationManager.GetString("Common.Rename"));
 
             if(requestedName is null)
                 return;
@@ -183,8 +184,8 @@ namespace CryptoBook.Models
             if(string.IsNullOrWhiteSpace(newName))
             {
                 await messageService.ShowMessage(
-                    "Переименование книги",
-                    "Имя книги не может быть пустым.");
+                    LocalizationManager.GetString("SideMenu.RenameBook.DialogTitle"),
+                    LocalizationManager.GetString("SideMenu.RenameBook.Empty"));
                 return;
             }
 
@@ -192,8 +193,8 @@ namespace CryptoBook.Models
                newName is "." or "..")
             {
                 await messageService.ShowMessage(
-                    "Переименование книги",
-                    "Имя книги содержит недопустимые символы.");
+                    LocalizationManager.GetString("SideMenu.RenameBook.DialogTitle"),
+                    LocalizationManager.GetString("SideMenu.RenameBook.Invalid"));
                 return;
             }
 
@@ -222,8 +223,9 @@ namespace CryptoBook.Models
             if(!result.Success)
             {
                 await messageService.ShowMessage(
-                    "Ошибка переименования",
-                    result.ErrorMessage ?? "Не удалось переименовать книгу.");
+                    LocalizationManager.GetString("SideMenu.RenameBook.ErrorTitle"),
+                    result.ErrorMessage ?? LocalizationManager.GetString(
+                        "SideMenu.RenameBook.Failed"));
                 return;
             }
 
@@ -273,6 +275,13 @@ namespace CryptoBook.Models
 
         internal void Execute_Closed(object? obj)
         {
+            LocalizationManager.CultureChanged -= OnCultureChanged;
+        }
+
+        private void OnCultureChanged(object? sender, EventArgs args)
+        {
+            QuickActions = InitializeQuickActions();
+            MenuItems = InitializeMenu();
         }
 
     }

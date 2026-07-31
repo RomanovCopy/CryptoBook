@@ -7,7 +7,7 @@
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         mc:Ignorable="d"
-        Title="Настройки CryptoBook"
+        Title="{Binding [Settings.WindowTitle], Source={StaticResource Res}}"
         Width="760"
         Height="520"
         MinWidth="640"
@@ -104,7 +104,7 @@
                 Padding="14">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top" Margin="8,6,8,18">
-                    <TextBlock Text="Настройки"
+                    <TextBlock Text="{Binding [Settings.Title], Source={StaticResource Res}}"
                                FontSize="21"
                                FontWeight="SemiBold"/>
                     <TextBlock Text="CryptoBook"
@@ -121,7 +121,7 @@
                                        Text="&#xE790;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="Оформление"/>
+                            <TextBlock Text="{Binding [Settings.Appearance], Source={StaticResource Res}}"/>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem>
@@ -130,7 +130,16 @@
                                        Text="&#xE838;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="Рабочее пространство"/>
+                            <TextBlock Text="{Binding [Settings.Workspace], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE774;"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding [Settings.Language], Source={StaticResource Res}}"/>
                         </StackPanel>
                     </ListBoxItem>
                 </ListBox>
@@ -163,14 +172,14 @@
                 </Style>
             </ScrollViewer.Style>
             <StackPanel Margin="28,24">
-                <TextBlock Text="Оформление"
+                <TextBlock Text="{Binding [Settings.Appearance], Source={StaticResource Res}}"
                            FontSize="24"
                            FontWeight="SemiBold"/>
-                <TextBlock Text="Тема применяется сразу и сохраняется для следующего запуска."
+                <TextBlock Text="{Binding [Settings.Appearance.Description], Source={StaticResource Res}}"
                            Foreground="{DynamicResource CurrentMutedForeground}"
                            Margin="0,5,0,22"/>
 
-                <TextBlock Text="Тема приложения"
+                <TextBlock Text="{Binding [Settings.ApplicationTheme], Source={StaticResource Res}}"
                            FontSize="15"
                            FontWeight="SemiBold"
                            Margin="0,0,0,10"/>
@@ -242,7 +251,7 @@
                         Background="{DynamicResource CurrentControlBackground}"
                         BorderBrush="{DynamicResource CurrentBorderColor}"
                         BorderThickness="1">
-                    <TextBlock Text="Оформление интерфейса не изменяет цвета и форматирование, сохранённые внутри документа."
+                    <TextBlock Text="{Binding [Settings.Appearance.DocumentNote], Source={StaticResource Res}}"
                                TextWrapping="Wrap"
                                Foreground="{DynamicResource CurrentMutedForeground}"/>
                 </Border>
@@ -265,15 +274,15 @@
             </ScrollViewer.Style>
 
             <StackPanel Margin="28,24">
-                <TextBlock Text="Рабочее пространство"
+                <TextBlock Text="{Binding [Settings.Workspace], Source={StaticResource Res}}"
                            FontSize="24"
                            FontWeight="SemiBold"/>
-                <TextBlock Text="Выберите корневую папку, в которой CryptoBook будет искать файлы по имени."
+                <TextBlock Text="{Binding [Settings.Workspace.Description], Source={StaticResource Res}}"
                            Foreground="{DynamicResource CurrentMutedForeground}"
                            TextWrapping="Wrap"
                            Margin="0,5,0,22"/>
 
-                <TextBlock Text="Рабочая директория"
+                <TextBlock Text="{Binding [Settings.WorkspaceDirectory], Source={StaticResource Res}}"
                            FontSize="15"
                            FontWeight="SemiBold"
                            Margin="0,0,0,8"/>
@@ -289,14 +298,14 @@
                              VerticalContentAlignment="Center"
                              ToolTip="{Binding WorkspaceDirectory}"/>
                     <Button Grid.Column="1"
-                            Content="Выбрать..."
+                            Content="{Binding [Common.Browse], Source={StaticResource Res}}"
                             Command="{Binding ChooseWorkspace}"
                             MinWidth="105"
                             Height="34"
                             Margin="8,0,0,0"/>
                 </Grid>
 
-                <TextBlock Text="Поиск файла по имени"
+                <TextBlock Text="{Binding [Settings.SearchByFileName], Source={StaticResource Res}}"
                            FontSize="15"
                            FontWeight="SemiBold"
                            Margin="0,24,0,8"/>
@@ -311,14 +320,14 @@
                              MinHeight="34"
                              Padding="9,6"
                              VerticalContentAlignment="Center"
-                             ToolTip="Введите имя файла или его часть">
+                             ToolTip="{Binding [Settings.Search.Hint], Source={StaticResource Res}}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
                                         Command="{Binding Search}"/>
                         </TextBox.InputBindings>
                     </TextBox>
                     <Button Grid.Column="1"
-                            Content="Найти"
+                            Content="{Binding [Common.Search], Source={StaticResource Res}}"
                             Command="{Binding Search}"
                             MinWidth="90"
                             Height="34"
@@ -371,24 +380,92 @@
                                                ToolTip="{Binding FullPath}"/>
                                 </StackPanel>
                                 <Button Grid.Column="1"
-                                        Content="Открыть"
+                                        Content="{Binding [Common.Open], Source={StaticResource Res}}"
                                         Command="{Binding DataContext.OpenSearchResult,
                                             RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
                                         Margin="10,0,0,0"
                                         Padding="10,4"/>
                                 <Button Grid.Column="2"
-                                        Content="Показать"
+                                        Content="{Binding [Common.Show], Source={StaticResource Res}}"
                                         Command="{Binding DataContext.RevealSearchResult,
                                             RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
                                         Margin="6,0,0,0"
                                         Padding="10,4"
-                                        ToolTip="Показать файл в Проводнике"/>
+                                        ToolTip="{Binding [Settings.RevealInExplorer], Source={StaticResource Res}}"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Style>
+                <Style TargetType="ScrollViewer">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSectionIndex}"
+                                     Value="2">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Style>
+            <StackPanel Margin="28,24">
+                <TextBlock Text="{Binding [Settings.Language], Source={StaticResource Res}}"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding [Settings.Language.Description], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           TextWrapping="Wrap"
+                           Margin="0,5,0,22"/>
+                <TextBlock Text="{Binding [Settings.ApplicationLanguage], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8"/>
+                <ComboBox x:Name="LanguageComboBox"
+                          Style="{StaticResource DropUpComboBoxStyle}"
+                          ItemsSource="{Binding LanguageDisplayNames}"
+                          SelectedIndex="{Binding SelectedLanguageIndex, Mode=TwoWay}"
+                          Loaded="LanguageComboBox_OnLoaded"
+                          IsVisibleChanged="LanguageComboBox_OnIsVisibleChanged"
+                          MinWidth="220"
+                          Height="34"
+                          Foreground="{DynamicResource CurrentInputForeground}"
+                          Background="{DynamicResource CurrentInputBackground}"
+                          HorizontalAlignment="Left">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="ComboBoxItem">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentInputForeground}"/>
+                            <Setter Property="Background"
+                                    Value="{DynamicResource CurrentInputBackground}"/>
+                            <Setter Property="Padding" Value="8,5"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsHighlighted" Value="True">
+                                    <Setter Property="Foreground"
+                                            Value="{DynamicResource CurrentSelectionForeground}"/>
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource CurrentSelectionBackground}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground"
+                                            Value="{DynamicResource CurrentSelectionForeground}"/>
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource CurrentSelectionBackground}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
+                <TextBlock Text="{Binding [Settings.Language.AppliedImmediately], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           TextWrapping="Wrap"
+                           Margin="0,12,0,0"/>
             </StackPanel>
         </ScrollViewer>
 
@@ -397,7 +474,7 @@
                 BorderBrush="{DynamicResource CurrentBorderColor}"
                 BorderThickness="0,1,0,0"
                 Padding="12">
-            <Button Content="Закрыть"
+            <Button Content="{Binding [Common.Close], Source={StaticResource Res}}"
                     Command="{Binding Close}"
                     Width="96"
                     Height="32"

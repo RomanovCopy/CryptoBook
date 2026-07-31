@@ -16,6 +16,7 @@ namespace CryptoBook.Models
         private readonly IFolderPickerService? folderPickerService;
         private readonly IFileLauncherService? fileLauncherService;
         private ApplicationThemeOption selectedTheme;
+        private ApplicationLanguageOption selectedLanguage;
         private GridLength navigationPaneWidth;
         private CancellationTokenSource? searchCancellation;
         private int selectedSectionIndex;
@@ -54,6 +55,9 @@ namespace CryptoBook.Models
 
             selectedTheme = Themes.First(
                 option => option.Theme == themeManager.CurrentTheme);
+            selectedLanguage = Languages.First(
+                option => option.CultureName ==
+                    LocalizationManager.CurrentCultureName);
             navigationPaneWidth = new GridLength(
                 NormalizeNavigationPaneWidth(
                     Properties.Settings.Default.SettingsNavigationPaneWidth));
@@ -69,11 +73,93 @@ namespace CryptoBook.Models
             get => selectedTheme;
             set
             {
-                ArgumentNullException.ThrowIfNull(value);
+                if(value is null)
+                    return;
                 if(SetProperty(ref selectedTheme, value))
                     themeManager.ApplyTheme(value.Theme);
             }
         }
+
+        public IReadOnlyList<ApplicationLanguageOption> Languages =>
+            LocalizationManager.AvailableLanguages;
+
+        public ApplicationLanguageOption SelectedLanguage
+        {
+            get => selectedLanguage;
+            set
+            {
+                if(value is null)
+                    return;
+                if(!SetProperty(ref selectedLanguage, value))
+                    return;
+
+                LocalizationManager.SelectCulture(value.CultureName);
+                selectedTheme = Themes.First(
+                    option => option.Theme == themeManager.CurrentTheme);
+                OnPropertyChanged(nameof(Themes));
+                OnPropertyChanged(nameof(SelectedTheme));
+                OnPropertyChanged(nameof(SelectedCultureName));
+                OnPropertyChanged(nameof(SelectedLanguageIndex));
+                OnPropertyChanged(nameof(IsEnglishSelected));
+                OnPropertyChanged(nameof(IsRussianSelected));
+            }
+        }
+
+        public string SelectedCultureName
+        {
+            get => selectedLanguage.CultureName;
+            set
+            {
+                if(string.IsNullOrWhiteSpace(value))
+                    return;
+
+                string normalized =
+                    LocalizationManager.NormalizeCultureName(value);
+                ApplicationLanguageOption language = Languages.First(
+                    option => option.CultureName == normalized);
+                SelectedLanguage = language;
+            }
+        }
+
+        public int SelectedLanguageIndex
+        {
+            get => string.Equals(
+                selectedLanguage.CultureName,
+                "ru-RU",
+                StringComparison.OrdinalIgnoreCase)
+                    ? 1
+                    : 0;
+            set
+            {
+                if(value is < 0 or > 1)
+                    return;
+
+                SelectedLanguage = Languages[value];
+            }
+        }
+
+        public bool IsEnglishSelected
+        {
+            get => SelectedLanguageIndex == 0;
+            set
+            {
+                if(value)
+                    SelectedLanguageIndex = 0;
+            }
+        }
+
+        public bool IsRussianSelected
+        {
+            get => SelectedLanguageIndex == 1;
+            set
+            {
+                if(value)
+                    SelectedLanguageIndex = 1;
+            }
+        }
+
+        public IReadOnlyList<string> LanguageDisplayNames { get; } =
+            ["English", "Русский"];
 
         public GridLength NavigationPaneWidth
         {
@@ -148,8 +234,9 @@ namespace CryptoBook.Models
             }
             catch(Exception ex)
             {
-                SearchStatus =
-                    $"Не удалось выбрать рабочую директорию: {ex.Message}";
+                SearchStatus = LocalizationManager.Format(
+                    "Settings.Workspace.ChooseFailed",
+                    ex.Message);
             }
         }
 
@@ -160,7 +247,8 @@ namespace CryptoBook.Models
             if(string.IsNullOrWhiteSpace(SearchQuery))
             {
                 SearchResults = Array.Empty<WorkspaceSearchResult>();
-                SearchStatus = "Введите часть имени файла.";
+                SearchStatus = LocalizationManager.GetString(
+                    "Settings.Search.EnterQuery");
                 return;
             }
 
@@ -170,7 +258,8 @@ namespace CryptoBook.Models
             CancellationToken cancellationToken = searchCancellation.Token;
 
             IsSearching = true;
-            SearchStatus = "Поиск...";
+            SearchStatus = LocalizationManager.GetString(
+                "Settings.Search.InProgress");
 
             try
             {
@@ -201,13 +290,13 @@ namespace CryptoBook.Models
             ExecuteLaunch(
                 result,
                 item => fileLauncherService?.Open(item.FullPath),
-                "Не удалось открыть файл");
+                LocalizationManager.GetString("Settings.Search.OpenFailed"));
 
         public void RevealSearchResult(WorkspaceSearchResult? result) =>
             ExecuteLaunch(
                 result,
                 item => fileLauncherService?.RevealInExplorer(item.FullPath),
-                "Не удалось показать файл");
+                LocalizationManager.GetString("Settings.Search.RevealFailed"));
 
         public void Close() => windowManager.CloseWindow(WindowId);
 
@@ -230,17 +319,25 @@ namespace CryptoBook.Models
         {
             string status = outcome.Results.Count switch
             {
-                0 => "Файлы не найдены.",
-                1 => "Найден 1 файл.",
-                _ => $"Найдено файлов: {outcome.Results.Count}."
+                0 => LocalizationManager.GetString(
+                    "Settings.Search.NoFiles"),
+                1 => LocalizationManager.GetString(
+                    "Settings.Search.OneFile"),
+                _ => LocalizationManager.Format(
+                    "Settings.Search.ManyFiles",
+                    outcome.Results.Count)
             };
 
             if(outcome.IsTruncated)
-                status += " Показаны первые 200 результатов.";
+            {
+                status += LocalizationManager.GetString(
+                    "Settings.Search.Truncated");
+            }
             if(outcome.SkippedDirectoryCount > 0)
             {
-                status +=
-                    $" Пропущено недоступных папок: {outcome.SkippedDirectoryCount}.";
+                status += LocalizationManager.Format(
+                    "Settings.Search.SkippedDirectories",
+                    outcome.SkippedDirectoryCount);
             }
 
             return status;

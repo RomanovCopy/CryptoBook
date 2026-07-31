@@ -12,38 +12,6 @@ namespace CryptoBook.Infrastructure
         IThemeManager,
         IDisposable
     {
-        private static readonly IReadOnlyList<ApplicationThemeOption> Themes =
-        [
-            new(
-                ApplicationTheme.System,
-                "Системная",
-                "Использовать системные цвета Windows.",
-                "SystemTheme",
-                "#FFF3F3F3",
-                "#FF0078D4"),
-            new(
-                ApplicationTheme.Light,
-                "Светлая",
-                "Светлый нейтральный интерфейс.",
-                "LightTheme",
-                "#FFF7F8FA",
-                "#FF2563EB"),
-            new(
-                ApplicationTheme.Dark,
-                "Тёмная",
-                "Графитовый интерфейс для работы при слабом освещении.",
-                "DarkTheme",
-                "#FF202124",
-                "#FF60A5FA"),
-            new(
-                ApplicationTheme.Sepia,
-                "Сепия",
-                "Тёплая палитра для продолжительного чтения.",
-                "SepiaTheme",
-                "#FFF2E8D5",
-                "#FFA05A2C")
-        ];
-
         private readonly Application app;
         private readonly IThemePreferenceStore preferenceStore;
         private readonly IWindowsThemeProvider windowsThemeProvider;
@@ -62,7 +30,7 @@ namespace CryptoBook.Infrastructure
             windowsThemeProvider.ThemeChanged += OnWindowsThemeChanged;
         }
 
-        public IReadOnlyList<ApplicationThemeOption> AvailableThemes => Themes;
+        public IReadOnlyList<ApplicationThemeOption> AvailableThemes => CreateThemes();
 
         public ApplicationTheme CurrentTheme { get; private set; } =
             ApplicationTheme.System;
@@ -82,8 +50,9 @@ namespace CryptoBook.Infrastructure
             ApplicationTheme theme,
             bool savePreference)
         {
-            ApplicationThemeOption option = Themes.FirstOrDefault(
-                item => item.Theme == theme) ?? Themes[0];
+            IReadOnlyList<ApplicationThemeOption> themes = CreateThemes();
+            ApplicationThemeOption option = themes.FirstOrDefault(
+                item => item.Theme == theme) ?? themes[0];
             string resourceName = option.Theme == ApplicationTheme.System
                 ? windowsThemeProvider.UsesLightTheme
                     ? "LightTheme"
@@ -152,5 +121,37 @@ namespace CryptoBook.Infrastructure
 
             return -1;
         }
+
+        private static IReadOnlyList<ApplicationThemeOption> CreateThemes() =>
+        [
+            new(
+                ApplicationTheme.System,
+                LocalizationManager.GetString("Theme.System.Name"),
+                LocalizationManager.GetString("Theme.System.Description"),
+                "SystemTheme",
+                "#FFF3F3F3",
+                "#FF0078D4"),
+            new(
+                ApplicationTheme.Light,
+                LocalizationManager.GetString("Theme.Light.Name"),
+                LocalizationManager.GetString("Theme.Light.Description"),
+                "LightTheme",
+                "#FFF7F8FA",
+                "#FF2563EB"),
+            new(
+                ApplicationTheme.Dark,
+                LocalizationManager.GetString("Theme.Dark.Name"),
+                LocalizationManager.GetString("Theme.Dark.Description"),
+                "DarkTheme",
+                "#FF202124",
+                "#FF60A5FA"),
+            new(
+                ApplicationTheme.Sepia,
+                LocalizationManager.GetString("Theme.Sepia.Name"),
+                LocalizationManager.GetString("Theme.Sepia.Description"),
+                "SepiaTheme",
+                "#FFF2E8D5",
+                "#FFA05A2C")
+        ];
     }
 }

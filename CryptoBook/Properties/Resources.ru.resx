@@ -195,4 +195,139 @@
   <data name="updateFile" xml:space="preserve">
     <value>Обновить файл</value>
   </data>
+  <data name="App.StartupFailureMessage" xml:space="preserve"><value>Не удалось запустить CryptoBook. Подробности записаны в локальный журнал ошибок.</value></data>
+  <data name="App.StartupFailureTitle" xml:space="preserve"><value>Ошибка запуска</value></data>
+  <data name="Common.Browse" xml:space="preserve"><value>Выбрать...</value></data>
+  <data name="Common.Close" xml:space="preserve"><value>Закрыть</value></data>
+  <data name="Common.Open" xml:space="preserve"><value>Открыть</value></data>
+  <data name="Common.Search" xml:space="preserve"><value>Найти</value></data>
+  <data name="Common.Show" xml:space="preserve"><value>Показать</value></data>
+  <data name="Settings.WindowTitle" xml:space="preserve"><value>Настройки CryptoBook</value></data>
+  <data name="Settings.Title" xml:space="preserve"><value>Настройки</value></data>
+  <data name="Settings.Appearance" xml:space="preserve"><value>Оформление</value></data>
+  <data name="Settings.Appearance.Description" xml:space="preserve"><value>Тема применяется сразу и сохраняется для следующего запуска.</value></data>
+  <data name="Settings.ApplicationTheme" xml:space="preserve"><value>Тема приложения</value></data>
+  <data name="Settings.Appearance.DocumentNote" xml:space="preserve"><value>Оформление интерфейса не изменяет цвета и форматирование, сохранённые внутри документа.</value></data>
+  <data name="Settings.Workspace" xml:space="preserve"><value>Рабочее пространство</value></data>
+  <data name="Settings.Workspace.Description" xml:space="preserve"><value>Выберите корневую папку, в которой CryptoBook будет искать файлы по имени.</value></data>
+  <data name="Settings.WorkspaceDirectory" xml:space="preserve"><value>Рабочая директория</value></data>
+  <data name="Settings.SearchByFileName" xml:space="preserve"><value>Поиск файла по имени</value></data>
+  <data name="Settings.Search.Hint" xml:space="preserve"><value>Введите имя файла или его часть</value></data>
+  <data name="Settings.RevealInExplorer" xml:space="preserve"><value>Показать файл в Проводнике</value></data>
+  <data name="Settings.Language" xml:space="preserve"><value>Язык</value></data>
+  <data name="Settings.Language.Description" xml:space="preserve"><value>Выберите язык интерфейса CryptoBook.</value></data>
+  <data name="Settings.ApplicationLanguage" xml:space="preserve"><value>Язык приложения</value></data>
+  <data name="Settings.Language.AppliedImmediately" xml:space="preserve"><value>Язык применяется сразу и сохраняется для следующего запуска.</value></data>
+  <data name="Settings.Workspace.ChooseFailed" xml:space="preserve"><value>Не удалось выбрать рабочую директорию: {0}</value></data>
+  <data name="Settings.Search.EnterQuery" xml:space="preserve"><value>Введите часть имени файла.</value></data>
+  <data name="Settings.Search.InProgress" xml:space="preserve"><value>Поиск...</value></data>
+  <data name="Settings.Search.OpenFailed" xml:space="preserve"><value>Не удалось открыть файл</value></data>
+  <data name="Settings.Search.RevealFailed" xml:space="preserve"><value>Не удалось показать файл</value></data>
+  <data name="Settings.Search.NoFiles" xml:space="preserve"><value>Файлы не найдены.</value></data>
+  <data name="Settings.Search.OneFile" xml:space="preserve"><value>Найден 1 файл.</value></data>
+  <data name="Settings.Search.ManyFiles" xml:space="preserve"><value>Найдено файлов: {0}.</value></data>
+  <data name="Settings.Search.Truncated" xml:space="preserve"><value> Показаны первые 200 результатов.</value></data>
+  <data name="Settings.Search.SkippedDirectories" xml:space="preserve"><value> Пропущено недоступных папок: {0}.</value></data>
+  <data name="Theme.System.Name" xml:space="preserve"><value>Системная</value></data>
+  <data name="Theme.System.Description" xml:space="preserve"><value>Использовать системные цвета Windows.</value></data>
+  <data name="Theme.Light.Name" xml:space="preserve"><value>Светлая</value></data>
+  <data name="Theme.Light.Description" xml:space="preserve"><value>Светлый нейтральный интерфейс.</value></data>
+  <data name="Theme.Dark.Name" xml:space="preserve"><value>Тёмная</value></data>
+  <data name="Theme.Dark.Description" xml:space="preserve"><value>Графитовый интерфейс для работы при слабом освещении.</value></data>
+  <data name="Theme.Sepia.Name" xml:space="preserve"><value>Сепия</value></data>
+  <data name="Theme.Sepia.Description" xml:space="preserve"><value>Тёплая палитра для продолжительного чтения.</value></data>
+  <data name="Common.File" xml:space="preserve"><value>Файл</value></data>
+  <data name="Common.Rename" xml:space="preserve"><value>Переименовать</value></data>
+  <data name="Common.Save" xml:space="preserve"><value>Сохранить</value></data>
+  <data name="Common.SaveAs" xml:space="preserve"><value>Сохранить как</value></data>
+  <data name="Bookmarks.Title" xml:space="preserve"><value>Закладки</value></data>
+  <data name="Media.Title" xml:space="preserve"><value>Фото и видео</value></data>
+  <data name="SideMenu.Subtitle" xml:space="preserve"><value>Книга и рабочее пространство</value></data>
+  <data name="SideMenu.MoreSections" xml:space="preserve"><value>Другие разделы появятся по мере готовности</value></data>
+  <data name="SideMenu.Create" xml:space="preserve"><value>Создать</value></data>
+  <data name="SideMenu.Create.Description" xml:space="preserve"><value>Создать новую книгу</value></data>
+  <data name="SideMenu.Open.Description" xml:space="preserve"><value>Открыть книгу или рабочую директорию</value></data>
+  <data name="SideMenu.Save.Description" xml:space="preserve"><value>Сохранить текущий документ</value></data>
+  <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Сохранить изменения в текущем файле</value></data>
+  <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Выбрать имя, папку и формат</value></data>
+  <data name="SideMenu.RenameBook" xml:space="preserve"><value>Переименовать книгу</value></data>
+  <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Изменить имя текущей книги</value></data>
+  <data name="SideMenu.Content" xml:space="preserve"><value>Содержимое</value></data>
+  <data name="SideMenu.Bookmarks.Description" xml:space="preserve"><value>Переходы, заметки и ссылки внутри книги</value></data>
+  <data name="SideMenu.InsertImage" xml:space="preserve"><value>Вставить изображение</value></data>
+  <data name="SideMenu.InsertImage.Description" xml:space="preserve"><value>Добавить изображение в позицию курсора</value></data>
+  <data name="SideMenu.Media.Description" xml:space="preserve"><value>Просмотр медиафайлов рабочей директории</value></data>
+  <data name="SideMenu.RenameBook.DialogTitle" xml:space="preserve"><value>Переименование книги</value></data>
+  <data name="SideMenu.RenameBook.Prompt" xml:space="preserve"><value>Введите новое имя книги:</value></data>
+  <data name="SideMenu.RenameBook.Empty" xml:space="preserve"><value>Имя книги не может быть пустым.</value></data>
+  <data name="SideMenu.RenameBook.Invalid" xml:space="preserve"><value>Имя книги содержит недопустимые символы.</value></data>
+  <data name="SideMenu.RenameBook.ErrorTitle" xml:space="preserve"><value>Ошибка переименования</value></data>
+  <data name="SideMenu.RenameBook.Failed" xml:space="preserve"><value>Не удалось переименовать книгу.</value></data>
+  <data name="Editor.Lists" xml:space="preserve"><value>Списки</value></data>
+  <data name="Editor.BulletedList" xml:space="preserve"><value>Маркированный список</value></data>
+  <data name="Editor.NumberedList" xml:space="preserve"><value>Нумерованный список</value></data>
+  <data name="Editor.RemoveList" xml:space="preserve"><value>Убрать список</value></data>
+  <data name="Editor.Paragraph" xml:space="preserve"><value>Абзац</value></data>
+  <data name="Editor.AlignLeft" xml:space="preserve"><value>По левому краю</value></data>
+  <data name="Editor.AlignCenter" xml:space="preserve"><value>По центру</value></data>
+  <data name="Editor.AlignRight" xml:space="preserve"><value>По правому краю</value></data>
+  <data name="Editor.Justify" xml:space="preserve"><value>По ширине</value></data>
+  <data name="Editor.FirstLineIndent" xml:space="preserve"><value>Отступ первой строки</value></data>
+  <data name="Editor.IncreaseLineSpacing" xml:space="preserve"><value>Увеличить межстрочный интервал</value></data>
+  <data name="Editor.DecreaseLineSpacing" xml:space="preserve"><value>Уменьшить межстрочный интервал</value></data>
+  <data name="Editor.InsertHyperlink" xml:space="preserve"><value>Вставить гиперссылку</value></data>
+  <data name="Editor.Font" xml:space="preserve"><value>Шрифт</value></data>
+  <data name="Editor.FontFamily" xml:space="preserve"><value>Гарнитура</value></data>
+  <data name="Editor.FontStyle" xml:space="preserve"><value>Стиль</value></data>
+  <data name="Editor.FontWeight" xml:space="preserve"><value>Начертание</value></data>
+  <data name="Editor.Decoration" xml:space="preserve"><value>Декор</value></data>
+  <data name="Editor.FontStretch" xml:space="preserve"><value>Ширина</value></data>
+  <data name="Editor.FontSize" xml:space="preserve"><value>Размер</value></data>
+  <data name="Editor.Color" xml:space="preserve"><value>Цвет</value></data>
+  <data name="Editor.Highlight" xml:space="preserve"><value>Выделение</value></data>
+  <data name="Editor.Paper" xml:space="preserve"><value>Бумага</value></data>
+  <data name="Editor.DocumentBackground" xml:space="preserve"><value>Фоновый цвет документа</value></data>
+  <data name="Editor.ToggleDocumentMode" xml:space="preserve"><value>Переключить режим документа</value></data>
+  <data name="Bookmarks.New" xml:space="preserve"><value>Новая закладка</value></data>
+  <data name="Bookmarks.AddAtCaret" xml:space="preserve"><value>Добавить в позиции каретки</value></data>
+  <data name="Bookmarks.NewName" xml:space="preserve"><value>Имя новой закладки</value></data>
+  <data name="Bookmarks.Selected" xml:space="preserve"><value>Выбранная закладка</value></data>
+  <data name="Bookmarks.Previous" xml:space="preserve"><value>Предыдущая закладка</value></data>
+  <data name="Bookmarks.GoToSelected" xml:space="preserve"><value>Перейти к выбранной закладке</value></data>
+  <data name="Bookmarks.Next" xml:space="preserve"><value>Следующая закладка</value></data>
+  <data name="Bookmarks.OpenManager" xml:space="preserve"><value>Открыть диспетчер закладок</value></data>
+  <data name="Bookmarks.RefreshIndex" xml:space="preserve"><value>Обновить индекс из документа</value></data>
+  <data name="Bookmarks.DeleteSelected" xml:space="preserve"><value>Удалить выбранную закладку</value></data>
+  <data name="Bookmarks.RenameSelected" xml:space="preserve"><value>Переименовать выбранную закладку</value></data>
+  <data name="Bookmarks.SelectedNewName" xml:space="preserve"><value>Новое имя выбранной закладки</value></data>
+  <data name="Bookmarks.InsertSelectedLink" xml:space="preserve"><value>Вставить ссылку на выбранную закладку</value></data>
+  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>Текст ссылки; можно предварительно выделить текст в документе</value></data>
+  <data name="Common.Cancel" xml:space="preserve"><value>Отмена</value></data>
+  <data name="Common.Insert" xml:space="preserve"><value>Вставить</value></data>
+  <data name="Hyperlink.Title" xml:space="preserve"><value>Вставка гиперссылки</value></data>
+  <data name="Hyperlink.Address" xml:space="preserve"><value>Адрес ссылки:</value></data>
+  <data name="Hyperlink.DisplayText" xml:space="preserve"><value>Отображаемый текст:</value></data>
+  <data name="Directory.NewTitle" xml:space="preserve"><value>Новая директория</value></data>
+  <data name="Directory.NewPrompt" xml:space="preserve"><value>Введите имя новой директории:</value></data>
+  <data name="File.Folder" xml:space="preserve"><value>Папка:</value></data>
+  <data name="File.ReadOnly" xml:space="preserve"><value>Только для чтения:</value></data>
+  <data name="File.Hidden" xml:space="preserve"><value>Скрытый файл:</value></data>
+  <data name="File.Type" xml:space="preserve"><value>Тип файла:</value></data>
+  <data name="File.Name" xml:space="preserve"><value>Имя файла:</value></data>
+  <data name="File.Extension" xml:space="preserve"><value>Расширение файла:</value></data>
+  <data name="Common.Back" xml:space="preserve"><value>Назад</value></data>
+  <data name="Common.Refresh" xml:space="preserve"><value>Обновить</value></data>
+  <data name="Common.Cut" xml:space="preserve"><value>Вырезать</value></data>
+  <data name="Common.Copy" xml:space="preserve"><value>Копировать</value></data>
+  <data name="Common.Paste" xml:space="preserve"><value>Вставить</value></data>
+  <data name="Common.Delete" xml:space="preserve"><value>Удалить</value></data>
+  <data name="Explorer.CreateFile" xml:space="preserve"><value>Создать файл</value></data>
+  <data name="Explorer.CreateFolder" xml:space="preserve"><value>Создать папку</value></data>
+  <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Добавить текущую директорию в избранное</value></data>
+  <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Задать ключ шифрования</value></data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Зашифровать выбранный элемент</value></data>
+  <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Расшифровать выбранный элемент</value></data>
+  <data name="Explorer.Favorites" xml:space="preserve"><value>Избранное</value></data>
+  <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Удалить из избранного</value></data>
+  <data name="Explorer.Favorites.Empty" xml:space="preserve"><value>Добавьте текущую папку кнопкой ★</value></data>
 </root>
