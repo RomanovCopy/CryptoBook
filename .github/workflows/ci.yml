@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   verify:
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 20
 
     steps:
@@ -22,7 +22,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: 8.0.423
           cache: true
           cache-dependency-path: |
             **/packages.lock.json
@@ -30,16 +30,20 @@ jobs:
       - name: Restore locked dependencies
         run: dotnet restore CryptoBook/CryptoBook.sln --locked-mode
 
+      - name: Restore Windows x64 runtime
+        run: dotnet restore CryptoBook/CryptoBook.csproj --locked-mode -r win-x64
+
       - name: Test Release
         run: dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore --logger "trx;LogFileName=tests.trx"
 
-      - name: Publish Windows artifact
-        run: dotnet publish CryptoBook/CryptoBook.csproj -c Release --no-restore --self-contained false -o artifacts/win-x64
+      - name: Build Windows installer
+        shell: pwsh
+        run: ./installer/Build-Installer.ps1 -NoRestore
 
       - name: Create checksums
         shell: pwsh
         run: |
-          Get-ChildItem artifacts/win-x64 -File -Recurse |
+          Get-ChildItem artifacts -File -Recurse |
             Get-FileHash -Algorithm SHA256 |
             ForEach-Object { "$($_.Hash)  $($_.Path.Substring($env:GITHUB_WORKSPACE.Length + 1))" } |
             Set-Content artifacts/SHA256SUMS.txt

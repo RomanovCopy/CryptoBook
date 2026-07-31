@@ -18,7 +18,8 @@ builds are not production artifacts.
 
 - Restore dependencies with `--locked-mode`.
 - Run all tests in `Release`.
-- Publish on `windows-latest`.
+- Publish on the pinned `windows-2022` image, which includes Inno Setup.
+- Produce both the self-contained Windows x64 application and its installer.
 - Sign the executable or installer with an Authenticode certificate when the
   signing secrets are configured.
 - Publish SHA-256 checksums and an SBOM with the release.
