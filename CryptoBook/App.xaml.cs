@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Injections;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
@@ -22,6 +23,8 @@ namespace CryptoBook
 
         public App()
         {
+            LocalizationManager.InitializeFromSettings();
+
             DispatcherUnhandledException += OnDispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException +=
                 OnUnhandledException;
@@ -53,9 +56,8 @@ namespace CryptoBook
             {
                 WriteCrashLog(exception, "Startup");
                 WpfMessageBox.Show(
-                    "CryptoBook не удалось запустить. Подробности записаны " +
-                    "в локальный журнал ошибок.",
-                    "Ошибка запуска",
+                    LocalizationManager.GetString("App.StartupFailureMessage"),
+                    LocalizationManager.GetString("App.StartupFailureTitle"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 Shutdown(-1);

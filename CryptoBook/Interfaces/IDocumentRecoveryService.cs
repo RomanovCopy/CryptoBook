@@ -5,6 +5,7 @@ namespace CryptoBook.Interfaces
         bool HasSnapshot { get; }
 
         void Start();
+        Task StopAsync();
         Task<bool> RestoreSnapshotAsync(
             CancellationToken cancellationToken = default);
         Task DeleteSnapshotAsync();

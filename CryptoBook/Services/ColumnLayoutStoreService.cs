@@ -13,6 +13,9 @@ namespace CryptoBook.Services
     {
 
         private const string SettingName = "GridViewColumnRatios";
+        private const string FileExplorerViewId = "FileExplorer.MainGrid";
+        private static readonly double[] FileExplorerDefaultRatios =
+            [0.46, 0.27, 0.15, 0.12];
 
         private sealed class Model
         {
@@ -27,21 +30,38 @@ namespace CryptoBook.Services
 
             var json = Properties.Settings.Default[SettingName] as string;
             if(string.IsNullOrWhiteSpace(json))
-                return false;
+                return TryLoadDefault(viewId, out ratios);
 
             Model? model;
             try
-            { model = JsonSerializer.Deserialize<Model>(json); } catch { return false; }
+            { model = JsonSerializer.Deserialize<Model>(json); } catch { return TryLoadDefault(viewId, out ratios); }
 
-            if(model?.Items is null) return false;
-            if(!model.Items.TryGetValue(viewId, out var arr)) return false;
-            if(arr is null || arr.Length == 0) return false;
+            if(model?.Items is null) return TryLoadDefault(viewId, out ratios);
+            if(!model.Items.TryGetValue(viewId, out var arr)) return TryLoadDefault(viewId, out ratios);
+            if(arr is null || arr.Length == 0) return TryLoadDefault(viewId, out ratios);
 
             // защита от мусора
             if(arr.Any(x => double.IsNaN(x) || x <= 0)) return false;
 
             ratios = arr;
             return true;
+        }
+
+        private static bool TryLoadDefault(
+            string viewId,
+            out IReadOnlyList<double> ratios)
+        {
+            if(string.Equals(
+                viewId,
+                FileExplorerViewId,
+                StringComparison.Ordinal))
+            {
+                ratios = FileExplorerDefaultRatios;
+                return true;
+            }
+
+            ratios = Array.Empty<double>();
+            return false;
         }
 
 

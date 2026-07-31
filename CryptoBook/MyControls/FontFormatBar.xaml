@@ -120,12 +120,12 @@
         <!-- Кнопка для вызова панели -->
         <ToggleButton x:Name="TogglePanelButton"
                       Style="{StaticResource EditorPanelToggleStyle}"
-                      ToolTip="Шрифт">
+                      ToolTip="{Binding [Editor.Font], Source={StaticResource Res}}">
             <StackPanel Orientation="Horizontal">
                 <Path Data="{StaticResource Icon.Font}"
                       Style="{StaticResource EditorToolbarIconStyle}"
                       Width="16" Height="16" Margin="0,0,6,0"/>
-                <TextBlock Text="Шрифт" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding [Editor.Font], Source={StaticResource Res}}" VerticalAlignment="Center"/>
             </StackPanel>
         </ToggleButton>
         <!-- Popup-панель -->
@@ -141,7 +141,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelFamily">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.FontFamily}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Гарнитура" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.FontFamily], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <ComboBox x:Name="family" Tag="isFontFamily"
                               ItemsSource="{Binding FontFamilyes}"
@@ -162,7 +162,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelStyle">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.FontStyle}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Стиль" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.FontStyle], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <ComboBox x:Name="style" Tag="isFontStyle"
                               ItemsSource="{Binding FontStyles}" Width="100" Height="24"
@@ -184,7 +184,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelWeight">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.FontWeight}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Начертание" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.FontWeight], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <ComboBox x:Name="weight" Tag="isFontWeight"
                               ItemsSource="{Binding FontWeights}" Width="100" Height="24"
@@ -206,7 +206,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelDecoration">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.Underline}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Декор" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.Decoration], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <ComboBox x:Name="decoration" Tag="isTextDecoration"
                               ItemsSource="{Binding TextDecorations}" Width="100" Height="24"
@@ -227,7 +227,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelStrech">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.Stretch}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Ширина" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.FontStretch], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <ComboBox x:Name="fontstretch" Tag="isFontStretch"
                               ItemsSource="{Binding FontStretches}" Width="100" Height="24"
@@ -249,7 +249,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelSize">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.FontSize}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Размер" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.FontSize], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <!-- FontSize -->
                         <ComboBox x:Name="fontsize" 
@@ -272,7 +272,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelColor">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.FontColor}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Цвет" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.Color], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <!--FontColor-->
                         <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Foreground"
@@ -291,7 +291,7 @@
                     <StackPanel Orientation="Vertical" x:Name="panelBackColor">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.Highlight}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Выделение" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.Highlight], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <!--Background -->
                         <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Background"
@@ -310,10 +310,10 @@
                     <StackPanel Orientation="Vertical" x:Name="panelDocumentBackColor">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <Path Data="{StaticResource Icon.DocumentBackground}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                            <TextBlock Text="Бумага" Style="{StaticResource textBlockHeader}"/>
+                            <TextBlock Text="{Binding [Editor.Paper], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
                         <ComboBox ItemsSource="{Binding FontColors}"
-                                  ToolTip="Фоновый цвет документа"
+                                  ToolTip="{Binding [Editor.DocumentBackground], Source={StaticResource Res}}"
                                   SelectedItem="{Binding DocumentBackground, Mode=TwoWay}"
                                   Width="100"
                                   Height="24"

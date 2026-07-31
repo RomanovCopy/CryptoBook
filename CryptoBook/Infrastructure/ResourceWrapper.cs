@@ -1,15 +1,29 @@
-﻿namespace CryptoBook.Infrastructure
+namespace CryptoBook.Infrastructure
 {
     public class ResourceWrapper: ViewModelBase
     {
-        //public event PropertyChangedEventHandler? PropertyChanged;
+        private static readonly List<WeakReference<ResourceWrapper>> Instances = [];
 
-        public string? this[string key] => Properties.Resources.ResourceManager.GetString(key);
+        public ResourceWrapper()
+        {
+            lock(Instances)
+                Instances.Add(new WeakReference<ResourceWrapper>(this));
+        }
 
-        //public void OnCultureChanged()
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
-        //}
+        public string this[string key] => LocalizationManager.GetString(key);
+
+        public static void NotifyCultureChanged()
+        {
+            lock(Instances)
+            {
+                for(int index = Instances.Count - 1; index >= 0; index--)
+                {
+                    if(Instances[index].TryGetTarget(out ResourceWrapper? wrapper))
+                        wrapper.OnPropertyChanged("Item[]");
+                    else
+                        Instances.RemoveAt(index);
+                }
+            }
+        }
     }
-
 }

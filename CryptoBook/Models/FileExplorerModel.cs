@@ -757,10 +757,23 @@ namespace CryptoBook.Models
         }
         public void Execute_Loaded(object? obj)
         {
-            WindowHeight = Properties.Settings.Default.WindowHeight_FileExplorer;
-            WindowLeft = Properties.Settings.Default.WindowLeft_FileExplorer;
-            WindowTop = Properties.Settings.Default.WindowTop_FileExplorer;
-            WindowWidth = Properties.Settings.Default.WindowWidth_FileExplorer;
+            double savedHeight = Properties.Settings.Default.WindowHeight_FileExplorer;
+            double savedWidth = Properties.Settings.Default.WindowWidth_FileExplorer;
+            if(WindowLayoutDefaults.IsLegacyExplorerSize(savedWidth, savedHeight))
+            {
+                Rect placement = WindowLayoutDefaults.CreateExplorer(SystemParameters.WorkArea);
+                WindowHeight = placement.Height;
+                WindowWidth = placement.Width;
+                WindowLeft = placement.Left;
+                WindowTop = placement.Top;
+            }
+            else
+            {
+                WindowHeight = savedHeight;
+                WindowWidth = savedWidth;
+                WindowLeft = Properties.Settings.Default.WindowLeft_FileExplorer;
+                WindowTop = Properties.Settings.Default.WindowTop_FileExplorer;
+            }
             WindowState = Properties.Settings.Default.WindowState_FileExplorer;
             RightColumnPercent = Properties.Settings.Default.RightColumnPercent_FileExplorer;
             LeftColumnPercent = Properties.Settings.Default.LeftColumnPercent_FileExplorer;

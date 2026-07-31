@@ -141,24 +141,24 @@
         <!-- 1. Command Bar (упрощённая в Win11) -->
         <ToolBar Grid.Row="0"  Height="49"  Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
             <Button Content="&#xE72B;"
-                    ToolTip="Назад"
+                    ToolTip="{Binding [Common.Back], Source={StaticResource Res}}"
                     AutomationProperties.Name="Назад"
                     Command="{Binding BackCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
 
             <Button Content="&#xE7C3;"
-                    ToolTip="Создать файл"
+                    ToolTip="{Binding [Explorer.CreateFile], Source={StaticResource Res}}"
                     AutomationProperties.Name="Создать файл"
                     Command="{Binding CreateFileCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE8F4;"
-                    ToolTip="Создать папку"
+                    ToolTip="{Binding [Explorer.CreateFolder], Source={StaticResource Res}}"
                     AutomationProperties.Name="Создать папку"
                     Command="{Binding CreateDirectoryCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE734;"
-                    ToolTip="Добавить текущую директорию в избранное"
+                    ToolTip="{Binding [Explorer.AddCurrentToFavorites], Source={StaticResource Res}}"
                     AutomationProperties.Name="Добавить текущую директорию в избранное"
                     Command="{Binding Favorites.AddCurrentDirectoryCommand}"
                     CommandParameter="{Binding CurrentPath}"
@@ -166,7 +166,7 @@
             <Separator/>
 
             <Button Content="&#xE72C;"
-                    ToolTip="Обновить содержимое"
+                    ToolTip="{Binding [Common.Refresh], Source={StaticResource Res}}"
                     AutomationProperties.Name="Обновить содержимое"
                     Command="{Binding RefreshCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItem}"
@@ -174,19 +174,19 @@
             <Separator/>
 
             <Button Content="&#xE8C6;"
-                    ToolTip="Вырезать"
+                    ToolTip="{Binding [Common.Cut], Source={StaticResource Res}}"
                     AutomationProperties.Name="Вырезать"
                     Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"
                     CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="&#xE8C8;"
-                    ToolTip="Копировать"
+                    ToolTip="{Binding [Common.Copy], Source={StaticResource Res}}"
                     AutomationProperties.Name="Копировать"
                     Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"
                     CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="&#xE77F;"
-                    ToolTip="Вставить"
+                    ToolTip="{Binding [Common.Paste], Source={StaticResource Res}}"
                     AutomationProperties.Name="Вставить"
                     Command="{Binding PasteCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"
@@ -194,13 +194,13 @@
             <Separator/>
 
             <Button Content="&#xE8AC;"
-                    ToolTip="Переименовать"
+                    ToolTip="{Binding [Common.Rename], Source={StaticResource Res}}"
                     AutomationProperties.Name="Переименовать"
                     Command="{Binding RenameClickCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE74D;"
-                    ToolTip="Удалить"
+                    ToolTip="{Binding [Common.Delete], Source={StaticResource Res}}"
                     AutomationProperties.Name="Удалить"
                     Command="{Binding DeleteCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
@@ -208,18 +208,18 @@
             <Separator/>
 
             <Button Content="&#xE8D7;"
-                    ToolTip="Задать ключ шифрования"
+                    ToolTip="{Binding [Explorer.SetEncryptionKey], Source={StaticResource Res}}"
                     AutomationProperties.Name="Задать ключ шифрования"
                     Command="{Binding EncryptingKeyCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE72E;"
-                    ToolTip="Зашифровать выбранный элемент"
+                    ToolTip="{Binding [Explorer.EncryptSelected], Source={StaticResource Res}}"
                     AutomationProperties.Name="Зашифровать выбранный элемент"
                     Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItem, ElementName=listview}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE785;"
-                    ToolTip="Расшифровать выбранный элемент"
+                    ToolTip="{Binding [Explorer.DecryptSelected], Source={StaticResource Res}}"
                     AutomationProperties.Name="Расшифровать выбранный элемент"
                     Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItem, ElementName=listview}"
@@ -247,7 +247,7 @@
                                Text="&#xE734;"/>
                     <TextBlock VerticalAlignment="Center"
                                FontWeight="SemiBold"
-                               Text="Избранное"/>
+                               Text="{Binding [Explorer.Favorites], Source={StaticResource Res}}"/>
                 </StackPanel>
             </Border>
 
@@ -264,14 +264,14 @@
                                     ToolTip="{Binding AvailabilityText}">
                                 <Border.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Открыть"
+                                        <MenuItem Header="{Binding [Common.Open], Source={StaticResource Res}}"
                                                   Command="{Binding PlacementTarget.Tag.OpenCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                   CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                         <Separator/>
-                                        <MenuItem Header="Переименовать"
+                                        <MenuItem Header="{Binding [Common.Rename], Source={StaticResource Res}}"
                                                   Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                   CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
-                                        <MenuItem Header="Удалить из избранного"
+                                        <MenuItem Header="{Binding [Explorer.RemoveFromFavorites], Source={StaticResource Res}}"
                                                   Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                   CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                     </ContextMenu>
@@ -314,7 +314,7 @@
                            Foreground="{DynamicResource CurrentMutedForeground}"
                            FontSize="11"
                            IsHitTestVisible="False"
-                           Text="Добавьте текущую папку кнопкой ★">
+                           Text="{Binding [Explorer.Favorites.Empty], Source={StaticResource Res}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed"/>

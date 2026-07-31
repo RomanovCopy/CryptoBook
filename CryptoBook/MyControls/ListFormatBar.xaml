@@ -14,12 +14,12 @@
     <Grid>
         <ToggleButton x:Name="TogglePanelButton"
                       Style="{StaticResource EditorPanelToggleStyle}"
-                      ToolTip="Списки">
+                      ToolTip="{Binding [Editor.Lists], Source={StaticResource Res}}">
             <StackPanel Orientation="Horizontal">
                 <Path Data="{StaticResource Icon.List}"
                       Style="{StaticResource EditorToolbarIconStyle}"
                       Width="16" Height="16" Margin="0,0,6,0"/>
-                <TextBlock Text="Списки" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding [Editor.Lists], Source={StaticResource Res}}" VerticalAlignment="Center"/>
             </StackPanel>
         </ToggleButton>
 
@@ -33,19 +33,19 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding ToggleBulleted}"
-                            ToolTip="Маркированный список">
+                            ToolTip="{Binding [Editor.BulletedList], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.BulletList}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding ToggleNumbered}"
-                            ToolTip="Нумерованный список">
+                            ToolTip="{Binding [Editor.NumberedList], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.NumberedList}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding ClearLists}"
-                            ToolTip="Убрать список">
+                            ToolTip="{Binding [Editor.RemoveList], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.ClearList}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>

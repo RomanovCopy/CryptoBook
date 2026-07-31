@@ -1,7 +1,7 @@
 <Window x:Class="CryptoBook.Views.DirectoryNameDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Новая директория"
+        Title="{Binding [Directory.NewTitle], Source={StaticResource Res}}"
         Width="420"
         Height="170"
         MinWidth="360"
@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Введите имя новой директории:"/>
+        <TextBlock Text="{Binding [Directory.NewPrompt], Source={StaticResource Res}}"/>
         <TextBox x:Name="DirectoryNameTextBox"
                  Grid.Row="2"
                  MinHeight="28"
@@ -27,12 +27,12 @@
         <StackPanel Grid.Row="4"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Content="Создать"
+            <Button Content="{Binding [SideMenu.Create], Source={StaticResource Res}}"
                     Width="90"
                     Margin="0,0,8,0"
                     IsDefault="True"
                     Click="CreateButton_Click"/>
-            <Button Content="Отмена"
+            <Button Content="{Binding [Common.Cancel], Source={StaticResource Res}}"
                     Width="90"
                     IsCancel="True"
                     Click="CancelButton_Click"/>

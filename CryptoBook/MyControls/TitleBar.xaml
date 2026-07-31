@@ -91,8 +91,8 @@
             
             <Button x:Name="settings" Style="{StaticResource buttons}" 
                     Command="{Binding ButtonSettingsClick, UpdateSourceTrigger=PropertyChanged}"
-                    AutomationProperties.Name="Настройки"
-                    ToolTip="Настройки">
+                    AutomationProperties.Name="{Binding [Settings.Title], Source={StaticResource Res}}"
+                    ToolTip="{Binding [Settings.Title], Source={StaticResource Res}}">
                 <TextBlock Style="{StaticResource icon}" Text="&#xE713;"/>
             </Button>
 

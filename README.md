@@ -39,10 +39,11 @@ CryptoBook — настольное Windows-приложение для рабо
 Для запуска готовой сборки:
 
 - Windows 10 версии 1809 или новее;
-- 64-разрядная система;
-- [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0).
+- 64-разрядная система.
 
-Для разработки также понадобится [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Репозиторий фиксирует SDK `8.0.206` и допускает более свежий patch-релиз той же версии. Для работы через Visual Studio установите workload **.NET desktop development**.
+Официальный установщик содержит .NET 8 Desktop Runtime и не требует его отдельной установки.
+
+Для разработки также понадобится [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Базовая разработка поддерживает SDK от `8.0.206`, а сборка установщика требует SDK `8.0.423`, включающий security patch .NET `8.0.29`. Для работы через Visual Studio установите workload **.NET desktop development**.
 
 ## Быстрый старт
 
@@ -65,12 +66,8 @@ dotnet restore CryptoBook/CryptoBook.sln --locked-mode
 dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
-# Framework-dependent публикация
-dotnet publish CryptoBook/CryptoBook.csproj `
-  -c Release `
-  --no-restore `
-  --self-contained false `
-  -o artifacts/win-x64
+# Автономная x64-публикация и установочный EXE (требуется Inno Setup 6)
+./installer/Build-Installer.ps1 -Version 1.0.0
 ```
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные NuGet-уязвимости считаются ошибками.
@@ -118,7 +115,7 @@ CryptoBook/
 
 ## CI и релизы
 
-GitHub Actions восстанавливает зафиксированные зависимости, запускает Release-тесты и публикует проверенный Windows-артефакт. Производственные релизы создаются по тегам вида `v1.2.3` и включают SHA-256-контрольные суммы, SPDX SBOM и явный статус цифровой подписи. До подключения production-сертификата сборки выпускаются без Authenticode; перед запуском сверяйте контрольные суммы.
+GitHub Actions восстанавливает зафиксированные зависимости, запускает Release-тесты и собирает автономный x64-установщик. Производственные релизы создаются по тегам вида `v1.2.3` и включают установочный EXE, ZIP-архив, SHA-256-контрольные суммы, SPDX SBOM и явный статус цифровой подписи. До подключения production-сертификата сборки выпускаются без Authenticode; перед запуском сверяйте контрольные суммы.
 
 Подробные требования к выпуску и восстановлению описаны в [docs/PRODUCTION.md](docs/PRODUCTION.md).
 

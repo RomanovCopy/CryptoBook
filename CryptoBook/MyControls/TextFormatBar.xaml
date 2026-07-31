@@ -15,12 +15,12 @@
     <Grid>
         <ToggleButton x:Name="TogglePanelButton"
                       Style="{StaticResource EditorPanelToggleStyle}"
-                      ToolTip="Абзац">
+                      ToolTip="{Binding [Editor.Paragraph], Source={StaticResource Res}}">
             <StackPanel Orientation="Horizontal">
                 <Path Data="{StaticResource Icon.Text}"
                       Style="{StaticResource EditorToolbarIconStyle}"
                       Width="16" Height="16" Margin="0,0,6,0"/>
-                <TextBlock Text="Абзац" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding [Editor.Paragraph], Source={StaticResource Res}}" VerticalAlignment="Center"/>
             </StackPanel>
         </ToggleButton>
 
@@ -35,28 +35,28 @@
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetTextAlignment}"
                             CommandParameter="{x:Static TextAlignment.Left}"
-                            ToolTip="По левому краю">
+                            ToolTip="{Binding [Editor.AlignLeft], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.AlignLeft}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetTextAlignment}"
                             CommandParameter="{x:Static TextAlignment.Center}"
-                            ToolTip="По центру">
+                            ToolTip="{Binding [Editor.AlignCenter], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.AlignCenter}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetTextAlignment}"
                             CommandParameter="{x:Static TextAlignment.Right}"
-                            ToolTip="По правому краю">
+                            ToolTip="{Binding [Editor.AlignRight], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.AlignRight}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetTextAlignment}"
                             CommandParameter="{x:Static TextAlignment.Justify}"
-                            ToolTip="По ширине">
+                            ToolTip="{Binding [Editor.Justify], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.AlignJustify}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
@@ -68,13 +68,13 @@
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetParagraphIndent}"
                             CommandParameter="20"
-                            ToolTip="Отступ первой строки">
+                            ToolTip="{Binding [Editor.FirstLineIndent], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.Indent}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetLineHeight}"
-                            ToolTip="Увеличить межстрочный интервал">
+                            ToolTip="{Binding [Editor.IncreaseLineSpacing], Source={StaticResource Res}}">
                         <Button.CommandParameter>
                             <sys:Double>1.0</sys:Double>
                         </Button.CommandParameter>
@@ -83,7 +83,7 @@
                     </Button>
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetLineHeight}"
-                            ToolTip="Уменьшить межстрочный интервал">
+                            ToolTip="{Binding [Editor.DecreaseLineSpacing], Source={StaticResource Res}}">
                         <Button.CommandParameter>
                             <sys:Double>-1.0</sys:Double>
                         </Button.CommandParameter>
@@ -97,7 +97,7 @@
 
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding InsertHyperlink}"
-                            ToolTip="Вставить гиперссылку">
+                            ToolTip="{Binding [Editor.InsertHyperlink], Source={StaticResource Res}}">
                         <ContentControl Content="{StaticResource Icon_InsertHyperlink}"
                                         Width="24"
                                         Height="24"/>

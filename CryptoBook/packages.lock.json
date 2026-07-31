@@ -256,6 +256,34 @@
         "resolved": "1.0.8",
         "contentHash": "XkClT52TgzGO4kvYULaHCxfw95qoSJLQVsKT9NGx7ZnFoKIkwAsuDpS8b9e9HVi6rQC2cblznEE+ZqjVecLVYg=="
       }
+    },
+    "net8.0-windows10.0.17763/win-x64": {
+      "Mono.Posix.NETStandard": {
+        "type": "Direct",
+        "requested": "[5.20.1-preview, )",
+        "resolved": "5.20.1-preview",
+        "contentHash": "MXVozCVdwZGXzLhu8BHQ7B5OpMyHAKpnhOc2qS/dkpDoE8gaDxG5+aUL31KGGM3Nz98/0H7642WLhbnlqhA5vg=="
+      },
+      "Sdcb.FFmpeg.runtime.windows-x64": {
+        "type": "Direct",
+        "requested": "[7.1.0, )",
+        "resolved": "7.1.0",
+        "contentHash": "VOG9c8uIKrYFkzSVLEiuEChB/7a6pBJ2KNabMXzXjWwymsHxyUVprQGxm5Rbrurpf1lbPmpOnoqFB2sqKLWeYA=="
+      },
+      "System.Management": {
+        "type": "Direct",
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "/mywt9LtfYM+QbnIPPqdES/qWWU3tkorSDHPX99KYhCTtxdjGFmLcz7QwpAAeBKU0o+rZzEcpKZlrtEr1Xq39g==",
+        "dependencies": {
+          "System.CodeDom": "10.0.1"
+        }
+      },
+      "System.Text.Encodings.Web": {
+        "type": "Transitive",
+        "resolved": "9.0.1",
+        "contentHash": "XkspqduP2t1e1x2vBUAD/xZ5ZDvmywuUwsmB93MvyQLospJfqtX0GsR/kU0vUL2h4kmvf777z3txV2W4NrQ9Qg=="
+      }
     }
   }
 }

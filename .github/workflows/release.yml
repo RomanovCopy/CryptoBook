@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   release:
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 30
     environment: production
 
@@ -21,7 +21,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: 8.0.423
           cache: true
           cache-dependency-path: |
             **/packages.lock.json
@@ -38,11 +38,14 @@ jobs:
       - name: Restore locked dependencies
         run: dotnet restore CryptoBook/CryptoBook.sln --locked-mode
 
+      - name: Restore Windows x64 runtime
+        run: dotnet restore CryptoBook/CryptoBook.csproj --locked-mode -r win-x64
+
       - name: Verify Release
         run: dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish CryptoBook/CryptoBook.csproj -c Release --no-restore --self-contained false -p:Version=$env:RELEASE_VERSION -o artifacts/win-x64
+        run: dotnet publish CryptoBook/CryptoBook.csproj -c Release --no-restore -r win-x64 --self-contained true -p:Version=$env:RELEASE_VERSION -p:PublishSingleFile=false -p:PublishTrimmed=false -o artifacts/win-x64
 
       - name: Import signing certificate
         id: certificate
@@ -88,6 +91,25 @@ jobs:
             }
           }
 
+      - name: Build installer
+        shell: pwsh
+        run: ./installer/Build-Installer.ps1 -Version $env:RELEASE_VERSION -SkipPublish
+
+      - name: Sign installer
+        if: steps.certificate.outputs.enabled == 'true'
+        shell: pwsh
+        run: |
+          $certificate = Get-Item "Cert:\CurrentUser\My\${{ steps.certificate.outputs.thumbprint }}"
+          $installerPath = "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe"
+          $signature = Set-AuthenticodeSignature `
+            -FilePath $installerPath `
+            -Certificate $certificate `
+            -HashAlgorithm SHA256 `
+            -TimestampServer "http://timestamp.digicert.com"
+          if ($signature.Status -ne "Valid") {
+            throw "Authenticode signing failed for ${installerPath}: $($signature.StatusMessage)"
+          }
+
       - name: Record signing status
         shell: pwsh
         run: |
@@ -116,6 +138,7 @@ jobs:
             -Path artifacts/win-x64/* `
             -DestinationPath artifacts/CryptoBook-win-x64.zip
           Get-Item `
+              "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe", `
               artifacts/CryptoBook-win-x64.zip, `
               artifacts/packages.lock.json, `
               artifacts/CryptoBook.spdx.json, `
@@ -135,6 +158,7 @@ jobs:
             "⚠️ The Windows binaries are not digitally signed. Verify the SHA-256 checksums before use."
           }
           gh release create "${{ github.ref_name }}" `
+            "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe" `
             artifacts/CryptoBook-win-x64.zip `
             artifacts/packages.lock.json `
             artifacts/CryptoBook.spdx.json `

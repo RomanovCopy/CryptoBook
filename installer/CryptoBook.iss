@@ -1,0 +1,65 @@
+#ifndef SourceDir
+  #error SourceDir must point to the published CryptoBook files.
+#endif
+
+#ifndef OutputDir
+  #define OutputDir "..\artifacts"
+#endif
+
+#ifndef MyAppVersion
+  #define MyAppVersion "1.0.0"
+#endif
+
+#ifndef VersionInfoVersion
+  #define VersionInfoVersion "1.0.0.0"
+#endif
+
+#define MyAppName "CryptoBook"
+#define MyAppPublisher "CryptoBook"
+#define MyAppExeName "CryptoBook.exe"
+
+[Setup]
+AppId={{9D51F202-0EB4-4A62-A45E-0601F8C12D01}
+AppName={#MyAppName}
+AppVersion={#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion}
+AppPublisher={#MyAppPublisher}
+ArchitecturesAllowed=x64compatible
+ArchitecturesInstallIn64BitMode=x64compatible
+DefaultDirName={autopf}\{#MyAppName}
+DefaultGroupName={#MyAppName}
+DisableProgramGroupPage=yes
+OutputDir={#OutputDir}
+OutputBaseFilename=CryptoBook-Setup-{#MyAppVersion}
+SetupIconFile=..\CryptoBook\Resources\Icons\icon002.ico
+UninstallDisplayIcon={app}\{#MyAppExeName}
+Compression=lzma2/ultra64
+SolidCompression=yes
+WizardStyle=modern
+PrivilegesRequired=admin
+MinVersion=10.0.17763
+CloseApplications=yes
+RestartApplications=no
+AppMutex=CryptoBook.Application
+VersionInfoVersion={#VersionInfoVersion}
+VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppVersion}
+VersionInfoCompany={#MyAppPublisher}
+VersionInfoDescription={#MyAppName} installer
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+
+[Tasks]
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[Files]
+Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[Icons]
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+[Run]
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

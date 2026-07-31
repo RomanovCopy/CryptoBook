@@ -78,6 +78,7 @@ namespace CryptoBook.Services
                     }
                 }
 
+                await recoveryService.StopAsync();
                 await TryDeleteSnapshotAsync();
                 IsCloseApproved = true;
                 return true;

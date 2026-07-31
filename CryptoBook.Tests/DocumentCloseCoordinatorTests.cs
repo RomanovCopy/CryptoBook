@@ -116,6 +116,7 @@ namespace CryptoBook.Tests
             Assert.False(approved);
             Assert.False(coordinator.IsCloseApproved);
             Assert.Equal(0, recovery.DeleteCount);
+            Assert.Equal(0, recovery.StopCount);
         }
 
         [Fact]
@@ -145,6 +146,7 @@ namespace CryptoBook.Tests
             Assert.True(approved);
             Assert.True(coordinator.IsCloseApproved);
             Assert.Equal(1, saver.SaveCount);
+            Assert.Equal(1, recovery.StopCount);
             Assert.Equal(1, recovery.DeleteCount);
         }
 
@@ -167,6 +169,7 @@ namespace CryptoBook.Tests
 
             Assert.False(approved);
             Assert.False(coordinator.IsCloseApproved);
+            Assert.Equal(0, recovery.StopCount);
             Assert.Equal(0, recovery.DeleteCount);
         }
 
@@ -189,6 +192,7 @@ namespace CryptoBook.Tests
 
             Assert.True(approved);
             Assert.True(coordinator.IsCloseApproved);
+            Assert.Equal(1, recovery.StopCount);
             Assert.Equal(1, recovery.DeleteCount);
         }
 
@@ -210,6 +214,7 @@ namespace CryptoBook.Tests
 
             Assert.True(approved);
             Assert.True(coordinator.IsCloseApproved);
+            Assert.Equal(1, recovery.StopCount);
             Assert.Same(expected, dialogs.RecoveryCleanupError);
         }
 
@@ -262,10 +267,17 @@ namespace CryptoBook.Tests
             public Exception? RestoreException { get; init; }
             public Exception? DeleteException { get; init; }
             public int StartCount { get; private set; }
+            public int StopCount { get; private set; }
             public int RestoreCount { get; private set; }
             public int DeleteCount { get; private set; }
 
             public void Start() => StartCount++;
+
+            public Task StopAsync()
+            {
+                StopCount++;
+                return Task.CompletedTask;
+            }
 
             public Task<bool> RestoreSnapshotAsync(
                 CancellationToken cancellationToken = default)
