@@ -23,6 +23,7 @@ namespace CryptoBook.Interfaces
         public Media.FontFamily? FontFamily { get; set; }    
         public Drawing.Color? FontColor { get; set; }
         public Drawing.Color? FontBackground { get; set; }
+        public Drawing.Color? DocumentBackground { get; set; }
         public TextDecorationItem? TextDecoration { get; set; }
         public FontWeight? FontWeight { get; set; }
         public FontStretch? FontStretch { get; set; }
@@ -64,6 +65,7 @@ namespace CryptoBook.Interfaces
         ICommand SetTextDecorationCommand { get; }
         ICommand SetFontColorCommand { get; }
         ICommand SetFontBackgroundCommand { get; }
+        ICommand SetDocumentBackgroundCommand { get; }
         ICommand SetFontSizeCommand { get; }
         ICommand ClearFormattingCommand { get; }
         ICommand Opened { get; }

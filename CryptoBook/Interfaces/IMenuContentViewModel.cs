@@ -2,7 +2,7 @@
 
 namespace CryptoBook.Interfaces
 {
-    public interface IMenuContentViewModel
+    public interface IMenuContentViewModel: IViewModel
     {
         public ICommand Reading { get; }
         public ICommand InsertImage { get; }

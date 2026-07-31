@@ -1,0 +1,89 @@
+﻿<Window x:Class="CryptoBook.Views.EncryptionModeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:vm="clr-namespace:CryptoBook.ViewModels"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:converters="clr-namespace:CryptoBook.Converters"
+        xmlns:security="clr-namespace:CryptoBook.Security"
+        xmlns:local="clr-namespace:CryptoBook.Views"
+        mc:Ignorable="d"
+        d:DataContext="{x:Type interfaces:IEncryptionMode_ViewModel}"
+        MinHeight="280" MinWidth="450">
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IEncryptionMode_ViewModel}" />
+    </Window.DataContext>
+
+
+    <Window.Title>
+        <Binding Path="Title" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Title>
+
+    <Window.Width>
+        <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Width>
+    <Window.Height>
+        <Binding Path="WindowHeight"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Height>
+    <Window.Top>
+        <Binding Path="WindowTop"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Top>
+    <Window.Left >
+        <Binding Path="WindowLeft"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.Left>
+    <Window.WindowState>
+        <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+    </Window.WindowState>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding MessageMode, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="DemiBold"/>
+        <StackPanel Margin="10" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <!-- Свойство GroupName объединяет кнопки в один переключатель -->
+            <RadioButton Content="{Binding MessageModeTop, UpdateSourceTrigger=PropertyChanged}"
+                GroupName="EncriptedMode" Margin="10,10,10,5" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
+                         VerticalContentAlignment="Center"
+                     IsChecked="{Binding SelectedMode,UpdateSourceTrigger=PropertyChanged,
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
+                ConverterParameter={x:Static security:EncryptionTargetMode.SaveAs}}" />
+
+            <RadioButton Content="{Binding MessageModeBottom, UpdateSourceTrigger=PropertyChanged }" 
+                     GroupName="EncriptedMode" Margin="10,5,10,20" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
+                          VerticalContentAlignment="Center"
+                     IsChecked="{Binding SelectedMode, 
+                Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
+                ConverterParameter={x:Static security:EncryptionTargetMode.ReplaceSource}}" />
+
+        </StackPanel>
+        <TextBlock Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="NoWrap" 
+                   Text="{Binding ProcessedItem.FullPath, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" 
+                   FontSize="16" FontWeight="DemiBold" FontStyle="Italic" Margin="20,10,20,10"/>
+        
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                
+                <Button x:Name="btnOk" Content="Ok" Style="{StaticResource PrimaryButtonStyle}" Background="Green"
+                        Grid.Column="0" HorizontalAlignment="Center" Margin="20"
+                        Command="{Binding ButtonOk,UpdateSourceTrigger=PropertyChanged}" />
+                <Button x:Name="btnCancel" Content="Cancel" Style="{StaticResource PrimaryButtonStyle}" Background="Red"
+                        Grid.Column="1" HorizontalAlignment="Center" Margin="20"
+                        Command="{Binding ButtonCancel, UpdateSourceTrigger=PropertyChanged}"/>
+
+        </StackPanel>
+    </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+</Window>

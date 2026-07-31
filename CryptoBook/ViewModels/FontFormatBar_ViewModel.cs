@@ -24,6 +24,7 @@ namespace CryptoBook.ViewModels
         public Media.FontFamily? FontFamily { get => model.FontFamily; set => model.FontFamily=value; }
         public Drawing.Color? FontColor { get => model.FontColor; set => model.FontColor=value; }
         public Drawing.Color? FontBackground { get => model.FontBackground; set => model.FontBackground=value; }
+        public Drawing.Color? DocumentBackground { get => model.DocumentBackground; set => model.DocumentBackground=value; }
         public TextDecorationItem? TextDecoration { get => model.TextDecoration; set => model.TextDecoration=value; }
         public FontWeight? FontWeight { get => model.FontWeight; set => model.FontWeight=value; }
         public FontStretch? FontStretch { get => model.FontStretch; set => model.FontStretch=value; }
@@ -77,6 +78,12 @@ namespace CryptoBook.ViewModels
         public ICommand SetFontBackgroundCommand => 
             setFontBackgroundCommand ??= new RelayCommand(model.Execute_SetFontBackgroundCommand, model.CanExecute_SetFontBackgroundCommand);
         RelayCommand? setFontBackgroundCommand;
+
+        public ICommand SetDocumentBackgroundCommand =>
+            setDocumentBackgroundCommand ??= new RelayCommand(
+                model.Execute_SetDocumentBackgroundCommand,
+                model.CanExecute_SetDocumentBackgroundCommand);
+        RelayCommand? setDocumentBackgroundCommand;
 
         public ICommand SetFontSizeCommand => 
             setFontSizeCommand ??= new RelayCommand(model.Execute_SetFontSizeCommand, model.CanExecute_SetFontSizeCommand);

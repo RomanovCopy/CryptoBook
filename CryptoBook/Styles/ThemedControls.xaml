@@ -1,0 +1,196 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="{x:Type Window}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentWindowForeground}"/>
+    </Style>
+
+    <!-- Popup создаёт отдельное визуальное дерево, поэтому цвет текста
+         задаётся и для текстовых элементов, а не только для Window. -->
+    <Style TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentWindowForeground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Label}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentWindowForeground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root"
+                                    Property="Background"
+                                    Value="{DynamicResource CurrentControlHoverBackground}"/>
+                            <Setter TargetName="Root"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource CurrentAccent}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root"
+                                    Property="Background"
+                                    Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentSelectionForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentDisabledForeground}"/>
+                            <Setter Property="Opacity" Value="0.72"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type TextBox}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentInputBackground}"/>
+        <Setter Property="CaretBrush"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="SelectionBrush"
+                Value="{DynamicResource CurrentSelectionBackground}"/>
+        <Setter Property="SelectionTextBrush"
+                Value="{DynamicResource CurrentSelectionForeground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+        <Setter Property="Padding" Value="5,3"/>
+    </Style>
+
+    <Style TargetType="{x:Type PasswordBox}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentInputBackground}"/>
+        <Setter Property="CaretBrush"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="SelectionBrush"
+                Value="{DynamicResource CurrentSelectionBackground}"/>
+        <Setter Property="SelectionTextBrush"
+                Value="{DynamicResource CurrentSelectionForeground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+        <Setter Property="Padding" Value="5,3"/>
+    </Style>
+
+    <Style TargetType="{x:Type ComboBox}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentInputBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ListBox}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentInputBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ListView}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentInputBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type TreeView}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentInputBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type CheckBox}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentWindowForeground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type RadioButton}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentWindowForeground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ContextMenu}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type MenuItem}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentControlBackground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ToolTip}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+        <Setter Property="Padding" Value="7,4"/>
+    </Style>
+
+    <Style TargetType="{x:Type GridViewColumnHeader}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+</ResourceDictionary>

@@ -4,7 +4,6 @@ using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,8 +19,6 @@ namespace CryptoBook.Markup
             /// </summary>
         public Type ServiceType { get; set; }
 
-        private static readonly ConcurrentDictionary<Type, object> _cache = new();
-
         public ResolveServiceExtension() { }
 
         public ResolveServiceExtension(Type type)
@@ -36,18 +33,14 @@ namespace CryptoBook.Markup
             if(!typeof(IService).IsAssignableFrom(ServiceType))
                 throw new InvalidOperationException($"Type {ServiceType.FullName} must implement IViewModel.");
 
-            return _cache.GetOrAdd(ServiceType, type =>
-            {
-                var scope = GetScope(serviceProvider);
-                object service = scope.Resolve(type)
-                    ?? throw new InvalidOperationException($"Type {type.FullName} could not be resolved from Autofac container.");
+            var scope = GetScope(serviceProvider);
+            object service = scope.Resolve(ServiceType)
+                ?? throw new InvalidOperationException($"Type {ServiceType.FullName} could not be resolved from Autofac container.");
 
-                if(service is not IService resolvedService)
-                    throw new InvalidOperationException($"Resolved type {type.FullName} does not implement IViewModel.");
+            if(service is not IService resolvedService)
+                throw new InvalidOperationException($"Resolved type {ServiceType.FullName} does not implement IService.");
 
-                System.Diagnostics.Debug.WriteLine($"Added ViewModel for {type.FullName} to cache.");
-                return resolvedService;
-            });
+            return resolvedService;
         }
 
         //private static IContainer GetContainer()

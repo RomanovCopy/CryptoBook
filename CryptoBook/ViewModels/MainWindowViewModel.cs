@@ -15,7 +15,11 @@ namespace CryptoBook.ViewModels
 
         public Guid WindowId => mainWindowModel.WindowId;
 
-        public event EventHandler RequestClose;
+        event EventHandler ICloseable.RequestClose
+        {
+            add { }
+            remove { }
+        }
 
         public bool IsMenuOpen { get => mainWindowModel.IsMenuOpen; set => mainWindowModel.IsMenuOpen = value; }
 

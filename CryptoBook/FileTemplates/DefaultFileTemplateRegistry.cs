@@ -13,16 +13,7 @@ namespace CryptoBook.FileTemplates
     /// </summary>
     public sealed class DefaultFileTemplateRegistry: IFileTemplateRegistry
     {
-        private readonly IFileTemplate[] _items;
-
-        public DefaultFileTemplateRegistry()
-        {
-            _items =
-            [
-                new TextFileTemplate(),
-                new ImageFileTemplate()
-            ];
-        }
+        private readonly IFileTemplate[] _items = [];
 
         public IReadOnlyList<IFileTemplate> GetAll() => _items;
 

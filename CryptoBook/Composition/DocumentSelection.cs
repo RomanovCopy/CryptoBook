@@ -18,8 +18,14 @@ namespace CryptoBook.Composition
 
         public IReadOnlyList<Paragraph> GetSelectedParagraphsOrCurrent()
         {
-            if(Selection == null || Selection.IsEmpty)
+            if(Selection == null)
                 return Array.Empty<Paragraph>();
+
+            if(Selection.IsEmpty)
+            {
+                var current = _rtb.CaretPosition?.Paragraph;
+                return current == null ? Array.Empty<Paragraph>() : [current];
+            }
 
             var startPara = Selection.Start?.Paragraph ?? GetNextParagraph(Selection.Start);
             var endPara = Selection.End?.Paragraph ?? GetPreviousParagraph(Selection.End);

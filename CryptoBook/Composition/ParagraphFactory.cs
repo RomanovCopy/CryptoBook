@@ -23,6 +23,7 @@ namespace CryptoBook.Composition
         {
             var paragraph= scope.Resolve<IParagraphService>();
             paragraph.TextIndent = 20; // Устанавливаем отступ для нового параграфа
+            paragraph.Margin = new System.Windows.Thickness(0);
             if (inline != null)
             {
                 // Если передан Inline, то обернём его в Paragraph

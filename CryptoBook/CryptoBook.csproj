@@ -32,17 +32,17 @@
     <Compile Remove="FileTemplates\JsonFileTemplate.cs" />
     <Compile Remove="FileTemplates\MarkdownFileTemplate.cs" />
     <Compile Remove="FileTemplates\PNGFileTemplate.cs" />
-    <Compile Remove="FileTemplates\RichTextFileTemplate.cs" />
     <Compile Remove="FileTemplates\SourceCodeTemplate.cs" />
+    <Compile Remove="FileTemplates\TextFileTemplate.cs" />
     <Compile Remove="Infrastructure\BindableRichtextbox.cs" />
     <Compile Remove="Interfaces\IBehaviorTextBox.cs" />
     <Compile Remove="Interfaces\IDisplayProgressTarget.cs" />
+    <Compile Remove="Interfaces\IDocument.cs" />
     <Compile Remove="Interfaces\IDownloadItem.cs" />
     <Compile Remove="Interfaces\IEncoding.cs" />
     <Compile Remove="Interfaces\IFileOperationResult.cs" />
     <Compile Remove="Interfaces\IFileSystemEntry.cs" />
     <Compile Remove="Interfaces\IFlowDocumentService.cs" />
-    <Compile Remove="Interfaces\IImageService.cs" />
     <Compile Remove="Interfaces\ILastFileName.cs" />
     <Compile Remove="Interfaces\INode.cs" />
     <Compile Remove="Interfaces\IReadOnlyObservableCollection.cs" />
@@ -51,7 +51,6 @@
     <Compile Remove="Interfaces\IVolume.cs" />
     <Compile Remove="Interfaces\IWindowViewModel.cs" />
     <Compile Remove="Models\BookmarksBarModel.cs" />
-    <Compile Remove="Models\MediaPlayerModel.cs" />
     <Compile Remove="Models\SystemItemName_Editor_Model.cs" />
     <Compile Remove="Models\TimeWebAIControlModel.cs" />
     <Compile Remove="Models\TimeWebAIPageModel.cs" />
@@ -62,9 +61,7 @@
     <Compile Remove="MyControls\TitleBarTimeWebAIControl.xaml.cs" />
     <Compile Remove="MyPages\TimeWebAIPage.xaml.cs" />
     <Compile Remove="Services\FlowDocumentService.cs" />
-    <Compile Remove="Services\ImageService.cs" />
     <Compile Remove="ViewModels\BookmarksBarViewModel.cs" />
-    <Compile Remove="ViewModels\MediaPlayerViewModel.cs" />
     <Compile Remove="ViewModels\SystemItemName_Editor_ViewModel.cs" />
     <Compile Remove="ViewModels\TimeWebAIControlViewModel.cs" />
     <Compile Remove="ViewModels\TimeWebAIPageViewModel.cs" />
@@ -111,7 +108,6 @@
     <None Remove="Resources\Images\033UpFileOverview.png" />
     <None Remove="Resources\Images\034CatalogV001.png" />
     <None Remove="Resources\Images\035FileV001.png" />
-    <None Remove="Resources\widget.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -123,20 +119,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Icons\icon002.ico">
+    <Resource Include="Resources\Icons\icon002.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\widget.html" />
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="9.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="FlyleafLib" Version="3.10.4" />
+    <PackageReference Include="FlyleafLib.Controls.WPF" Version="1.6.4" />
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.3.1-ci1190" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3712-prerelease" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-preview" />
     <PackageReference Include="System.Management" Version="10.0.1" />
+    <PackageReference Include="Sdcb.FFmpeg.runtime.windows-x64" Version="7.1.0" />
   </ItemGroup>
 
   <ItemGroup>

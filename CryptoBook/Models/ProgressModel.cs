@@ -39,6 +39,9 @@ namespace CryptoBook.Models
 
         internal bool IsOperationRunning { get => isOperationRunning; set => SetProperty(ref isOperationRunning, value); }
         private bool isOperationRunning;
+        internal bool IsIndeterminate { get => isIndeterminate; set => SetProperty(ref isIndeterminate, value); }
+        private bool isIndeterminate;
+        internal CancellationToken CancellationToken => cancellationToken;
 
 
 
@@ -50,6 +53,7 @@ namespace CryptoBook.Models
             this.scope = scope;
             cancellationTokenSource = new();
             cancellationToken = cancellationTokenSource.Token;
+            IsOperationRunning = true;
         }
 
         private void Initialization()
@@ -93,7 +97,8 @@ namespace CryptoBook.Models
         internal void Execute_Canceled(object? obj)
         {
             cancellationTokenSource.Cancel();
-            Execute_Close(null);
+            StatusMessage = "Отмена операции…";
+            IsOperationRunning = false;
         }
 
 
@@ -103,6 +108,9 @@ namespace CryptoBook.Models
         }
         internal void Execute_Closing(object? obj)
         {
+            if(IsOperationRunning)
+                cancellationTokenSource.Cancel();
+
             Properties.Settings.Default.ProgressWindowHeight = WindowHeight;
             Properties.Settings.Default.ProgressWindowWidth = WindowWidth;
             Properties.Settings.Default.ProgressWindowLeft = WindowLeft;
@@ -128,6 +136,24 @@ namespace CryptoBook.Models
         internal void Execute_Close(object? obj)
         {
             scope.Resolve<IWindowManager>().CloseWindow(WindowId);
+        }
+
+        internal void Prepare(string operationName)
+        {
+            OperationName = operationName;
+            Progress = 0;
+            StatusMessage = string.Empty;
+            IsIndeterminate = false;
+            IsOperationRunning = true;
+        }
+
+        internal void Report(double? value, string? currentInfo)
+        {
+            IsIndeterminate = value is null;
+            if(value is not null)
+                Progress = Math.Clamp(value.Value, 0.0, 1.0) * 100.0;
+            if(!string.IsNullOrWhiteSpace(currentInfo))
+                StatusMessage = currentInfo;
         }
 
 

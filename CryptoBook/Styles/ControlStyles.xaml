@@ -37,7 +37,7 @@
                                                     <ControlTemplate TargetType="ToggleButton">
                                                         <Border Background="{DynamicResource CurrentWindowBackground}" VerticalAlignment="Center">
                                                             <Path x:Name="ExpandPath" 
-                                                                      Fill="Black"
+                                                                      Fill="{DynamicResource CurrentWindowForeground}"
                                                                       Data="M 0 8 L 5 3 L 5 13 Z">
                                                                 <Path.RenderTransform>
                                                                     <RotateTransform x:Name="ExpandPathRotate" 
@@ -186,7 +186,7 @@
         <Setter Property="Height" Value="Auto"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Margin" Value="20,0,20,0"/>
-        <Setter Property="Foreground" Value="{Binding {DynamicResource CurrentWindowForeground}, 
-            Converter={markup:ResolveConverter ConverterType=converters:ColorToColorConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentWindowForeground}"/>
     </Style>
 </ResourceDictionary>

@@ -30,12 +30,12 @@ namespace CryptoBook.ViewModels
         {
             menuItemModel = new();
             menuItemModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            SelectItem = new RelayCommand(_ => { });
         }
 
 
 
-        public ICommand SelectItem { get; set; }
-        RelayCommand selectItem;
+        public ICommand SelectItem { get; }
 
 
 

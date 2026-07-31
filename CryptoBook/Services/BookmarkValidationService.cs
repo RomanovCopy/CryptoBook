@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 
@@ -13,9 +12,6 @@ namespace CryptoBook.Services
     public class BookmarkValidationService:IBookmarkValidationService
     {
         private readonly IBookmarkService bookmarkService;
-        private readonly Regex NameRx = new(@"^[\w\-.]+$", RegexOptions.Compiled);
-
-
         public BookmarkValidationService(IBookmarkService bookmarkService)
         {
             this.bookmarkService = bookmarkService ?? throw new ArgumentNullException(nameof(bookmarkService));
@@ -31,9 +27,10 @@ namespace CryptoBook.Services
                 return ValidationResult.Fail(ValidationCode.ReadOnly, "Документ только для чтения.");
             if(string.IsNullOrWhiteSpace(name))
                 return ValidationResult.Fail(ValidationCode.NameEmpty, "Имя закладки пустое.");
-            if(!NameRx.IsMatch(name))
-                return ValidationResult.Fail(ValidationCode.NameInvalid, "Недопустимые символы.");
-            if(bookmarkService.Exists(name))
+            name = name.Trim();
+            if(name.Length > 128 || name.Any(char.IsControl) || name.Contains('#'))
+                return ValidationResult.Fail(ValidationCode.NameInvalid, "Имя не должно содержать # или управляющие символы.");
+            if(existsByName(name))
                 return ValidationResult.Fail(ValidationCode.NameExists, $"«{name}» уже существует.");
 
             var pos = svc.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
@@ -55,13 +52,15 @@ namespace CryptoBook.Services
                 return ValidationResult.Fail(ValidationCode.NameEmpty, "Старое имя пустое.");
             if(string.IsNullOrWhiteSpace(newName))
                 return ValidationResult.Fail(ValidationCode.NameEmpty, "Новое имя пустое.");
-            if(!NameRx.IsMatch(newName))
+            oldName = oldName.Trim();
+            newName = newName.Trim();
+            if(newName.Length > 128 || newName.Any(char.IsControl) || newName.Contains('#'))
                 return ValidationResult.Fail(ValidationCode.NameInvalid);
-            if(string.Equals(oldName, newName, StringComparison.Ordinal))
-                return ValidationResult.Fail(ValidationCode.NameInvalid, "Имя не изменилось.");
-            if(svc.Document.FindName(oldName) is not TextElement)
+            if(string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+                return ValidationResult.Fail(ValidationCode.NameUnchanged, "Имя не изменилось.");
+            if(!existsByName(oldName))
                 return ValidationResult.Fail(ValidationCode.NameNotFound, $"«{oldName}» не найдена.");
-            if(bookmarkService.Exists(newName))
+            if(existsByName(newName))
                 return ValidationResult.Fail(ValidationCode.NameExists, $"«{newName}» уже существует.");
             return ValidationResult.Success();
         }
@@ -74,7 +73,7 @@ namespace CryptoBook.Services
                 return ValidationResult.Fail(ValidationCode.ReadOnly);
             if(string.IsNullOrWhiteSpace(name))
                 return ValidationResult.Fail(ValidationCode.NameEmpty);
-            if(svc.Document.FindName(name) is not TextElement)
+            if(!bookmarkService.Exists(name))
                 return ValidationResult.Fail(ValidationCode.NameNotFound, $"«{name}» не найдена.");
             return ValidationResult.Success();
         }
@@ -122,12 +121,8 @@ namespace CryptoBook.Services
             if(string.IsNullOrWhiteSpace(name))
                 return ValidationResult.Fail(ValidationCode.NameEmpty, "Имя пустое.");
 
-            if(svc.Document.FindName(name) is not TextElement el)
+            if(!bookmarkService.Exists(name))
                 return ValidationResult.Fail(ValidationCode.NameNotFound, $"Закладка «{name}» не найдена.");
-
-            // Базовая проверка «живости» позиции: элемент в потоке текста и имеет Paragraph-предка
-            if(el.ContentStart?.Paragraph is null)
-                return ValidationResult.Fail(ValidationCode.TargetDetached, "Цель не привязана к текстовому потоку.");
 
             return ValidationResult.Success();
         }

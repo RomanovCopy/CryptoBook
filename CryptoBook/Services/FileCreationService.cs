@@ -16,7 +16,7 @@ namespace CryptoBook.Services
 
         public FileCreationService(IFileManagerService fs)
         {
-            _fs = fs;
+            _fs = fs ?? throw new ArgumentNullException(nameof(fs));
         }
 
         public async Task<string> SuggestUniqueNameAsync(
@@ -41,7 +41,7 @@ namespace CryptoBook.Services
                 bool exists;
                 try
                 {
-                    using var s = await _fs.OpenReadAsync(fullPath, ct);
+                    using var s = await _fs.OpenReadAsync(fullPath, null, ct);
                     exists = true;
                 } catch(FileNotFoundException)
                 {
@@ -50,6 +50,9 @@ namespace CryptoBook.Services
                 {
                     // Если папки нет — подскажем исходное имя; создание папки — ответственность выше
                     exists = false;
+                } catch(OperationCanceledException)
+                {
+                    throw;
                 } catch
                 {
                     // Любая другая ошибка — считаем, что имя занято/проблемное, ищем дальше
@@ -65,7 +68,7 @@ namespace CryptoBook.Services
         }
 
         public async Task<FileOperationResult> CreateAsync( string targetDirectory, string fileNameWithOrWithoutExt, IFileTemplate template,
-            IfExistsMode ifExists, bool isHidden, bool isReadOnly, CancellationToken ct)
+            IfExistsMode ifExists, bool isHidden, bool isReadOnly, CancellationToken ct, IProgressReporter? progress = null)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -106,7 +109,17 @@ namespace CryptoBook.Services
 
                 if(content.Length > 0)
                 {
-                    await stream.WriteAsync(content, ct);
+                    const int chunkSize = 81920;
+                    for(int offset = 0; offset < content.Length; offset += chunkSize)
+                    {
+                        int count = Math.Min(chunkSize, content.Length - offset);
+                        await stream.WriteAsync(content.AsMemory(offset, count), ct);
+                        progress?.Report((double)(offset + count) / content.Length, "Запись файла");
+                    }
+                }
+                else
+                {
+                    progress?.Report(1.0, "Файл создан");
                 }
                 await _fs.SetHiddenAsync(fullPath, isHidden, ct);
                 await _fs.SetReadOnlyAsync(fullPath, isReadOnly, ct);
@@ -114,7 +127,7 @@ namespace CryptoBook.Services
                 return FileOperationResult.Ok();
             } catch(OperationCanceledException)
             {
-                return FileOperationResult.Fail("Операция отменена.");
+                throw;
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -160,11 +173,12 @@ namespace CryptoBook.Services
         {
             try
             {
-                using var s = await _fs.OpenReadAsync(fullPath, ct);
+                using var s = await _fs.OpenReadAsync(fullPath, null, ct);
                 return true;
             } 
             catch(FileNotFoundException) { return false; } 
             catch(DirectoryNotFoundException) { return false; } 
+            catch(OperationCanceledException) { throw; }
             catch { return true; } // прочие ошибки трактуем как «занято»
         }
 

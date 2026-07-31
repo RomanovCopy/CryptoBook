@@ -39,6 +39,8 @@ namespace CryptoBook.Interfaces
         /// Перейти к закладке
         /// </summary>
         bool NavigateTo(IRichTextBoxService service, string name);
+        bool NavigateNext(IRichTextBoxService service);
+        bool NavigatePrevious(IRichTextBoxService service);
         /// <summary>
         /// Вставить Hyperlink на закладку в текущую позицию (видимый текст задаётся параметром)
         /// </summary>

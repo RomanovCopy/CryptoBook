@@ -16,8 +16,14 @@ namespace CryptoBook.ViewModels
     {
         private readonly INewFileDialogModel newFileDialogModel;
         private readonly ICommandService commandService;
+        private readonly IFileDisplayNameService fileDisplayNameService;
+        private bool disposed;
 
-        public event EventHandler RequestClose;
+        event EventHandler ICloseable.RequestClose
+        {
+            add { }
+            remove { }
+        }
 
         public Guid WindowId { get => newFileDialogModel.WindowId; }
 
@@ -27,6 +33,10 @@ namespace CryptoBook.ViewModels
         public IFileTemplate? SelectedTemplate { get => newFileDialogModel.SelectedTemplate; set => newFileDialogModel.SelectedTemplate = value; }
 
         public string FileName { get => newFileDialogModel.FileName; set => newFileDialogModel.FileName = value; }
+        public string Caption => fileDisplayNameService.GetDisplayName(
+            FileName,
+            SelectedTemplate?.DefaultExtension);
+        public string? CaptionToolTip => Caption;
 
         public IfExistsMode IfExists { get => newFileDialogModel.IfExists; set => newFileDialogModel.IfExists = value; }
 
@@ -39,13 +49,39 @@ namespace CryptoBook.ViewModels
         public bool CreateDirectoryIfMissing { get => newFileDialogModel.CreateDirectoryIfMissing; set => newFileDialogModel.CreateDirectoryIfMissing = value; }
 
 
-        public NewFileDialogViewModel(INewFileDialogModel newFileDialogModel, ICommandService commandService)
+        public NewFileDialogViewModel(
+            INewFileDialogModel newFileDialogModel,
+            ICommandService commandService,
+            IFileDisplayNameService fileDisplayNameService)
         {
-            this.newFileDialogModel = newFileDialogModel;
-            this.commandService = commandService;
-            this.newFileDialogModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName??string.Empty);
+            this.newFileDialogModel = newFileDialogModel ??
+                throw new ArgumentNullException(nameof(newFileDialogModel));
+            this.commandService = commandService ??
+                throw new ArgumentNullException(nameof(commandService));
+            this.fileDisplayNameService = fileDisplayNameService ??
+                throw new ArgumentNullException(nameof(fileDisplayNameService));
+            this.newFileDialogModel.PropertyChanged += OnModelPropertyChanged;
         }
 
+        private void OnModelPropertyChanged(
+            object? sender,
+            System.ComponentModel.PropertyChangedEventArgs args)
+        {
+            string propertyName = args.PropertyName ?? string.Empty;
+            OnPropertyChanged(propertyName);
+
+            if(propertyName is nameof(FileName) or nameof(SelectedTemplate))
+                OnPropertyChanged(nameof(Caption), nameof(CaptionToolTip));
+        }
+
+        public void Dispose()
+        {
+            if(disposed)
+                return;
+
+            disposed = true;
+            newFileDialogModel.PropertyChanged -= OnModelPropertyChanged;
+        }
 
         public ICommand InitSuggested => initSuggested ??= new RelayCommand(newFileDialogModel.Execute_InitSuggested, newFileDialogModel.CanExceute_InitSuggested);
         RelayCommand? initSuggested;

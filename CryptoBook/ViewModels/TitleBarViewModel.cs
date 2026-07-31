@@ -12,19 +12,51 @@ namespace CryptoBook.ViewModels
     {
 
         private readonly ITitleBarModel titleBarModel;
+        private readonly IDocumentTitleProvider documentTitleProvider;
+        private bool disposed;
 
         public double MyFontSize => titleBarModel.MyFontSize;
-        public string MyText => titleBarModel.MyText;
+        public string DocumentTitle => documentTitleProvider.Title;
+        public string? DocumentPath => documentTitleProvider.Path;
 
 
 
-
-        public TitleBarViewModel(ITitleBarModel titleBarModel)
+        public TitleBarViewModel(
+            ITitleBarModel titleBarModel,
+            IDocumentTitleProvider documentTitleProvider)
         {
-            this.titleBarModel = titleBarModel;
-            titleBarModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            this.titleBarModel = titleBarModel ??
+                throw new ArgumentNullException(nameof(titleBarModel));
+            this.documentTitleProvider = documentTitleProvider ??
+                throw new ArgumentNullException(nameof(documentTitleProvider));
+            this.titleBarModel.PropertyChanged += OnTitleBarModelPropertyChanged;
+            this.documentTitleProvider.PropertyChanged += OnDocumentTitlePropertyChanged;
         }
 
+        private void OnTitleBarModelPropertyChanged(
+            object? sender,
+            System.ComponentModel.PropertyChangedEventArgs args) =>
+            OnPropertyChanged(args.PropertyName ?? string.Empty);
+
+        private void OnDocumentTitlePropertyChanged(
+            object? sender,
+            System.ComponentModel.PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(IDocumentTitleProvider.Title))
+                OnPropertyChanged(nameof(DocumentTitle));
+            else if(args.PropertyName == nameof(IDocumentTitleProvider.Path))
+                OnPropertyChanged(nameof(DocumentPath));
+        }
+
+        public void Dispose()
+        {
+            if(disposed)
+                return;
+
+            disposed = true;
+            titleBarModel.PropertyChanged -= OnTitleBarModelPropertyChanged;
+            documentTitleProvider.PropertyChanged -= OnDocumentTitlePropertyChanged;
+        }
 
 
 
@@ -52,11 +84,6 @@ namespace CryptoBook.ViewModels
         public ICommand ToggleMenu_Click => toggleMenu_Click ??= new RelayCommand(titleBarModel.Execute_ToggleMenu_Click, titleBarModel.CanExecute_ToggleMenu_Click);
         RelayCommand toggleMenu_Click;
 
-        public ICommand ButtonLightTheme_Click => buttonLightTheme_Click ??= new RelayCommand(titleBarModel.Execute_ButtonLightTheme_Click, titleBarModel.CanExecute_ButtonLightTheme_Click);
-        RelayCommand buttonLightTheme_Click;
-
-        public ICommand ButtonDarkThemeClick => buttonDarkThemeClick ??= new RelayCommand(titleBarModel.Execute_ButtonDarkThemeClick, titleBarModel.CanExecute_ButtonDarkThemeClick);
-        RelayCommand buttonDarkThemeClick;
         public ICommand ButtonSettingsClick => buttonSettingsClick ??= new RelayCommand(titleBarModel.Execute_ButtonSettingsClick, titleBarModel.CanExecute_ButtonSettingsClick);
         RelayCommand buttonSettingsClick;
 
@@ -78,6 +105,8 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => closing ??= new RelayCommand(titleBarModel.Execute_Closing, titleBarModel.CanExecute_Closing);
         RelayCommand closing;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closed => closed ??=
+            new RelayCommand(titleBarModel.Execute_Closed, titleBarModel.CanExecute_Closed);
+        RelayCommand closed;
     }
 }

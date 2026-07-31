@@ -7,6 +7,7 @@ using CryptoBook.ViewModels;
 using DTO=CryptoBook.DTO;
 
 using System.Collections.ObjectModel;
+using System.IO;
 using CryptoBook.DTO;
 
 namespace CryptoBook.Models
@@ -17,6 +18,8 @@ namespace CryptoBook.Models
         private readonly ILifetimeScope scope;
         internal ObservableCollection<MenuItemBase> MenuItems { get => menuItems; private set => SetProperty(ref menuItems, value); }
         ObservableCollection<MenuItemBase> menuItems;
+        internal ObservableCollection<MenuItem> QuickActions { get => quickActions; private set => SetProperty(ref quickActions, value); }
+        ObservableCollection<MenuItem> quickActions;
 
         /// <summary>
         /// ширина бокового меню в процентах от ширины окна
@@ -40,6 +43,12 @@ namespace CryptoBook.Models
         private readonly IMenuSettingsViewModel menuSettingsViewModel;
         private readonly IMenuEncryptionViewModel menuEncryptionViewModel;
         private readonly IMenuContentViewModel menuContentViewModel;
+        private readonly IBookmarksViewModel bookmarksViewModel;
+        private readonly IDocumentSession documentSession;
+        private readonly IFileManagerService fileManagerService;
+        private readonly ITextInputService textInputService;
+        private readonly IMessageService messageService;
+        private readonly AsyncRelayCommand renameBookCommand;
 
         public SideMenuModel(ILifetimeScope _scope)
         {
@@ -48,20 +57,222 @@ namespace CryptoBook.Models
             menuSettingsViewModel = _scope.Resolve<IMenuSettingsViewModel>();
             menuEncryptionViewModel = _scope.Resolve<IMenuEncryptionViewModel>();
             menuContentViewModel = _scope.Resolve<IMenuContentViewModel>();
+            bookmarksViewModel = _scope.Resolve<IBookmarksViewModel>();
+            documentSession = _scope.Resolve<IDocumentSession>();
+            fileManagerService = _scope.Resolve<IFileManagerService>();
+            textInputService = _scope.Resolve<ITextInputService>();
+            messageService = _scope.Resolve<IMessageService>();
+            renameBookCommand = new AsyncRelayCommand(RenameBookAsync);
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
             FontSize = Properties.Settings.Default.SideMenuFontSize;
+            QuickActions = InitializeQuickActions();
             MenuItems = InitializeMenu();
         }
 
+        private ObservableCollection<MenuItem> InitializeQuickActions()
+        {
+            var commandService = scope.Resolve<ICommandService>();
+
+            return
+            [
+                CreateItem(
+                    commandService,
+                    "Создать",
+                    "\uE710",
+                    "Создать новую книгу",
+                    CommandKey.menuFile_NewFile),
+                CreateItem(
+                    commandService,
+                    "Открыть",
+                    "\uE8E5",
+                    "Открыть книгу или рабочую директорию",
+                    CommandKey.menuFile_OpenFile),
+                CreateItem(
+                    commandService,
+                    "Сохранить",
+                    "\uE74E",
+                    "Сохранить текущий документ",
+                    CommandKey.menuFile_SaveFile)
+            ];
+        }
 
         private ObservableCollection<MenuItemBase> InitializeMenu()
         {
-            var menuItems = new ObservableCollection<MenuItemBase>
+            var commandService = scope.Resolve<ICommandService>();
+            var file = new MenuItemBase(commandService)
             {
-                new MenuFileItem(scope.Resolve<ICommandService>()),
+                Name = "Файл",
+                IsEnabled = true,
+                HasChildren = true
             };
-            return menuItems;
+            file.Children.Add(CreateItem(
+                commandService,
+                "Сохранить",
+                "\uE74E",
+                "Сохранить изменения в текущем файле",
+                CommandKey.menuFile_SaveFile));
+            file.Children.Add(CreateItem(
+                commandService,
+                "Сохранить как",
+                "\uE792",
+                "Выбрать имя, папку и формат",
+                CommandKey.menuFile_SaveAsFile));
+            file.Children.Add(new MenuItem(commandService)
+            {
+                Name = "Переименовать книгу",
+                Glyph = "\uE8AC",
+                Description = "Изменить имя текущей книги",
+                IsEnabled = true,
+                Command = renameBookCommand
+            });
+
+            var content = new MenuItemBase(commandService)
+            {
+                Name = "Содержимое",
+                IsEnabled = true,
+                HasChildren = true
+            };
+
+            content.Children.Add(new MenuItem(commandService)
+            {
+                Name = "Закладки",
+                Glyph = "\uE8A4",
+                Description = "Переходы, заметки и ссылки внутри книги",
+                IsEnabled = true,
+                Command = bookmarksViewModel.OpenManager
+            });
+            content.Children.Add(CreateItem(
+                commandService,
+                "Вставить изображение",
+                "\uE91B",
+                "Добавить изображение в позицию курсора",
+                CommandKey.menuContent_InsertImage));
+            content.Children.Add(CreateItem(
+                commandService,
+                "Фото и видео",
+                "\uE714",
+                "Просмотр медиафайлов рабочей директории",
+                CommandKey.menuContent_MediaPlayer));
+
+            return [file, content];
+        }
+
+        private async Task RenameBookAsync(
+            object? parameter,
+            CancellationToken cancellationToken)
+        {
+            string? oldPath = documentSession.FilePath;
+            string oldFileName = string.IsNullOrWhiteSpace(oldPath)
+                ? documentSession.DisplayName
+                : Path.GetFileName(oldPath);
+            string extension = Path.GetExtension(oldFileName);
+            if(string.IsNullOrWhiteSpace(extension))
+                extension = documentSession.Template?.DefaultExtension ?? string.Empty;
+            string initialName = Path.GetFileNameWithoutExtension(oldFileName);
+            string? requestedName = textInputService.Request(
+                "Переименование книги",
+                "Введите новое имя книги:",
+                initialName,
+                "Переименовать");
+
+            if(requestedName is null)
+                return;
+
+            string newName = requestedName.Trim();
+            if(string.IsNullOrWhiteSpace(newName))
+            {
+                await messageService.ShowMessage(
+                    "Переименование книги",
+                    "Имя книги не может быть пустым.");
+                return;
+            }
+
+            if(newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+               newName is "." or "..")
+            {
+                await messageService.ShowMessage(
+                    "Переименование книги",
+                    "Имя книги содержит недопустимые символы.");
+                return;
+            }
+
+            if(newName.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+                newName = Path.GetFileNameWithoutExtension(newName);
+
+            string newFileName = newName + extension;
+            if(string.Equals(
+                oldFileName,
+                newFileName,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            if(string.IsNullOrWhiteSpace(oldPath))
+            {
+                documentSession.SetDisplayName(newFileName);
+                return;
+            }
+
+            FileOperationResult result = await fileManagerService.RenameAsync(
+                oldPath,
+                newFileName,
+                cancellationToken);
+            if(!result.Success)
+            {
+                await messageService.ShowMessage(
+                    "Ошибка переименования",
+                    result.ErrorMessage ?? "Не удалось переименовать книгу.");
+                return;
+            }
+
+            string? directory = Path.GetDirectoryName(oldPath);
+            if(string.IsNullOrWhiteSpace(directory))
+                return;
+
+            documentSession.Rename(Path.Combine(directory, newFileName));
+        }
+
+        private static MenuItem CreateItem(
+            ICommandService commandService,
+            string name,
+            string glyph,
+            string description,
+            CommandKey commandKey)
+        {
+            return new MenuItem(commandService)
+            {
+                Name = name,
+                Glyph = glyph,
+                Description = description,
+                IsEnabled = true,
+                Command = commandService.GetCommand(commandKey)
+                    ?? throw new InvalidOperationException(
+                        $"Команда {commandKey} не зарегистрирована.")
+            };
+        }
+
+        internal bool CanExecute_Lifecycle(object? obj) => true;
+
+        internal void Execute_Loaded(object? obj)
+        {
+        }
+
+        internal void Execute_Close(object? obj)
+        {
+        }
+
+        internal void Execute_Closing(object? obj)
+        {
+            Settings.Default.SideMenuWidth = Width;
+            Settings.Default.SideMenuFontSizeHeader = FontSizeHeader;
+            Settings.Default.SideMenuFontSize = FontSize;
+            Settings.Default.Save();
+        }
+
+        internal void Execute_Closed(object? obj)
+        {
         }
 
     }

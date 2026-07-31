@@ -11,8 +11,8 @@ namespace CryptoBook.MyControls
     {
         public SideMenu(ILifetimeScope scope)
         {
-            DataContext = scope.Resolve<ISideMenuViewModel>();
             InitializeComponent();
+            DataContext = scope.Resolve<ISideMenuViewModel>();
         }
 
     }

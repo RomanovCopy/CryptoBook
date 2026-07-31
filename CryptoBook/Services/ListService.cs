@@ -51,6 +51,7 @@ namespace CryptoBook.Services
                 if(paras.Count == 0)
                     return;
                 UnwrapParagraphsFromLists(paras);
+                RestoreSelection(paras);
             }
         }
 
@@ -64,10 +65,6 @@ namespace CryptoBook.Services
                 if(selected.Count == 0)
                     return;
 
-                // Вычисляем крайние блоки выделения
-                var firstBlock = selected.First();    // гарантированно Paragraph
-                var lastBlock = selected.Last();
-
                 // Нормализуем: снять любые списки с непустых параграфов в выделении
                 var nonEmpty = selected.Where(p => !IsParagraphEmptyOrWhitespace(p)).ToList();
                 if(nonEmpty.Count == 0)
@@ -76,22 +73,28 @@ namespace CryptoBook.Services
                 if(AllInSameListWithMarkerIgnoringEmpty(selected, marker))
                 {
                     UnwrapParagraphsFromLists(nonEmpty);
+                    RestoreSelection(nonEmpty);
                     return; // toggle off
                 }
 
-                //UnwrapParagraphsFromLists(nonEmpty);
-
-
-                // Пробег от первого до последнего по указателю конца последнего
-                var endAnchor = lastBlock.ElementEnd;           // граница, до которой идём
+                // Смена маркера не должна создавать вложенный список.
+                UnwrapParagraphsFromLists(nonEmpty);
 
                 // Владелец блока (FlowDocument/Section/ListItem)
+                var firstBlock = nonEmpty.First();
+                var lastBlock = nonEmpty.Last();
                 var owner = GetBlocksOwner(firstBlock);
                 if(owner is null)
                     return;
 
                 // 1) создаём ЕДИНЫЙ список перед первым блоком выделения
-                var list = new List { MarkerStyle = marker, StartIndex = startIndex };
+                var list = new List
+                {
+                    MarkerStyle = marker,
+                    StartIndex = startIndex,
+                    Margin = new Thickness(0),
+                    LineStackingStrategy = LineStackingStrategy.MaxHeight
+                };
                 InsertBefore(owner, firstBlock, list);
 
                 // 2) идём по блокам в рамках ЭТОГО ЖЕ owner, от firstBlock до lastBlock ВКЛЮЧИТЕЛЬНО
@@ -99,10 +102,12 @@ namespace CryptoBook.Services
                 {
                     var next = GetNextSiblingInOwner(owner, current); // берём next ДО возможного перемещения
 
-                    if(current is Paragraph p && !IsParagraphEmptyOrWhitespace(p))
+                    if(current is Paragraph p && nonEmpty.Contains(p))
                     {
                         RemoveFromOwner(p);
-                        var li = new ListItem();
+                        p.Margin = new Thickness(0);
+                        p.LineStackingStrategy = LineStackingStrategy.MaxHeight;
+                        var li = new ListItem { Margin = new Thickness(0) };
                         li.Blocks.Add(p);
                         list.ListItems.Add(li);
                     }
@@ -121,6 +126,7 @@ namespace CryptoBook.Services
                 }
 
                 EnsureFirstItemHasContent(list);
+                RestoreSelection(nonEmpty);
                 // MergeAdjacentLists(owner); // опционально
 
             }
@@ -274,6 +280,16 @@ namespace CryptoBook.Services
                 prev = b;
             }
             return null; // текущий был последним
+        }
+
+        private void RestoreSelection(IReadOnlyList<Paragraph> paragraphs)
+        {
+            if(paragraphs.Count == 0)
+                return;
+
+            _sel.Selection.Select(
+                paragraphs.First().ContentStart,
+                paragraphs.Last().ContentEnd);
         }
 
 

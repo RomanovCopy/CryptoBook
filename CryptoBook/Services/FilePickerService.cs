@@ -64,7 +64,9 @@ namespace CryptoBook.Services
             var filterParts = new List<string>();
             foreach(var template in templates)
             {
-                string extensions = string.Join(";", template.DefaultExtension.Select(ext => $"*{ext}"));
+                string extensions = string.Join(
+                    ";",
+                    template.Extensions.Select(extension => $"*{extension}"));
                 filterParts.Add($"{template.DisplayName} ({extensions})|{extensions}");
             }
             filterParts.Add("All Files (*.*)|*.*");

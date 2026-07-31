@@ -39,6 +39,10 @@ namespace CryptoBook.Interfaces
         /// </summary>
         Drawing.Color DefaultFontBackground { get; set; }
         /// <summary>
+        /// Фоновый цвет бумаги текущего документа.
+        /// </summary>
+        Drawing.Color DocumentBackground { get; }
+        /// <summary>
         /// TextDecoration шрифта по умолчанию
         /// </summary>
         TextDecorationItem DefaultTextDecoration { get; set; }
@@ -89,6 +93,7 @@ namespace CryptoBook.Interfaces
         void SetTextDecoration(TextDecorationCollection decoration);
         void SetFontColor(System.Drawing.Color? fontColor);
         void SetFontBackground(System.Drawing.Color? fontBackground);
+        void SetDocumentBackground(System.Drawing.Color? documentBackground);
         void SetFontSize(double fontSize);
 
         void ClearFormatting();

@@ -18,7 +18,12 @@ namespace CryptoBook.ViewModels
         {
             menuFileModel = model;
             this.commandService = commandService;
-            menuFileModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            menuFileModel.PropertyChanged += (_, args) =>
+            {
+                OnPropertyChanged(args.PropertyName);
+                saveFile?.RaiseCanExecuteChanged();
+                saveAsFile?.RaiseCanExecuteChanged();
+            };
             RegistryCommands();
         }
 
@@ -31,11 +36,17 @@ namespace CryptoBook.ViewModels
         public ICommand OpenFile => openFile ??= new RelayCommand(menuFileModel.Execute_OpenFile, menuFileModel.CanExecute_OpenFile);
         RelayCommand openFile;
 
-        public ICommand SaveFile => saveFile ??= new RelayCommand(menuFileModel.Execute_SaveFile, menuFileModel.CanExecute_SaveFile);
-        RelayCommand saveFile;
+        public ICommand SaveFile => saveFile ??=
+            new AsyncRelayCommand(
+                menuFileModel.Execute_SaveFileAsync,
+                menuFileModel.CanExecute_SaveFile);
+        AsyncRelayCommand? saveFile;
 
-        public ICommand SaveAsFile => saveAsFile ??= new RelayCommand(menuFileModel.Execute_SaveAsFile, menuFileModel.CanExecute_SaveAsFile);
-        RelayCommand saveAsFile;
+        public ICommand SaveAsFile => saveAsFile ??=
+            new AsyncRelayCommand(
+                menuFileModel.Execute_SaveAsFileAsync,
+                menuFileModel.CanExecute_SaveAsFile);
+        AsyncRelayCommand? saveAsFile;
 
         public ICommand FileOverview => fileOverview ??= new RelayCommand(menuFileModel.Execute_FileOverview, menuFileModel.CanExecute_FileOverview);
         RelayCommand fileOverview;

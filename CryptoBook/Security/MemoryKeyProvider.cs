@@ -11,7 +11,13 @@ namespace CryptoBook.Security
 {
     internal sealed class MemoryKeyProvider: IKeyProvider, IDisposable
     {
+        private readonly IPasswordKeyDeriver _keyDeriver;
         private byte[]? _passwordBytes;
+
+        public MemoryKeyProvider(IPasswordKeyDeriver keyDeriver)
+        {
+            _keyDeriver = keyDeriver ?? throw new ArgumentNullException(nameof(keyDeriver));
+        }
 
         public bool HasKey => _passwordBytes is { Length: > 0 };
 
@@ -33,6 +39,21 @@ namespace CryptoBook.Security
             using Rfc2898DeriveBytes rfc2898 = new( _passwordBytes, salt, 100_000, HashAlgorithmName.SHA256);
 
             return rfc2898.GetBytes(32);
+        }
+
+        public Task<byte[]> DeriveKeyAsync(
+            ReadOnlyMemory<byte> salt,
+            KeyDerivationParameters parameters,
+            CancellationToken cancellationToken = default)
+        {
+            if(_passwordBytes is null)
+                throw new InvalidOperationException("Ключ не задан.");
+
+            return _keyDeriver.DeriveAsync(
+                _passwordBytes,
+                salt,
+                parameters,
+                cancellationToken);
         }
 
         public void Clear()

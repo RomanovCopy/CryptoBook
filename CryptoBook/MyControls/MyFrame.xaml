@@ -13,7 +13,7 @@
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyFrameViewModel}"/>
     </UserControl.DataContext>
-    <Grid Background="Gray">
+    <Grid Background="{DynamicResource CurrentWindowBackground}">
         <Frame  Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
     </Grid>
     <i:Interaction.Triggers>

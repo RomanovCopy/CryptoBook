@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CryptoBook.Interfaces
 {
-    public interface IDialogResult<T>
+    public interface IDialogResult{ }
+    public interface IDialogResult<out T>: IDialogResult
     {
         T? Result { get; }
     }

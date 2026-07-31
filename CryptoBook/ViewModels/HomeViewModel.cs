@@ -12,13 +12,17 @@ namespace CryptoBook.ViewModels
     {
         private readonly HomeModel homeModel;
         private readonly ILifetimeScope scope;
+        public IRichtextboxViewModel DocumentView { get; }
 
         public Action<object> BehaviorReady { get => behaviorReady; set => behaviorReady = value; }
         Action<object> behaviorReady;
 
-        public HomeViewModel(ILifetimeScope scope)
+        public HomeViewModel(
+            ILifetimeScope scope,
+            IRichtextboxViewModel documentView)
         {
             this.scope = scope;
+            DocumentView = documentView ?? throw new ArgumentNullException(nameof(documentView));
             homeModel = new(scope);
             homeModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
@@ -31,12 +35,20 @@ namespace CryptoBook.ViewModels
         public ICommand PageClear => pageClear ??= new RelayCommand(homeModel.Execute_PageClear, homeModel.CanExecute_PageClear);
         RelayCommand pageClear;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand Loaded => loaded ??=
+            new RelayCommand(homeModel.Execute_PageLoaded, homeModel.CanExecute_PageLoded);
+        RelayCommand loaded;
 
-        public ICommand Close => throw new NotImplementedException();
+        public ICommand Close => close ??=
+            new RelayCommand(homeModel.Execute_PageClose, homeModel.CanExecute_PageClose);
+        RelayCommand close;
 
-        public ICommand Closing => throw new NotImplementedException();
+        public ICommand Closing => closing ??=
+            new RelayCommand(_ => { });
+        RelayCommand closing;
 
-        public ICommand Closed => throw new NotImplementedException();
+        public ICommand Closed => closed ??=
+            new RelayCommand(_ => { });
+        RelayCommand closed;
     }
 }

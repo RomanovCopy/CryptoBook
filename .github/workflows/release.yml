@@ -1,0 +1,152 @@
+name: Production release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: |
+            **/packages.lock.json
+
+      - name: Resolve release version
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          if ($version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') {
+            throw "Tag does not contain a valid release version."
+          }
+          "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Restore locked dependencies
+        run: dotnet restore CryptoBook/CryptoBook.sln --locked-mode
+
+      - name: Verify Release
+        run: dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish CryptoBook/CryptoBook.csproj -c Release --no-restore --self-contained false -p:Version=$env:RELEASE_VERSION -o artifacts/win-x64
+
+      - name: Import signing certificate
+        id: certificate
+        shell: pwsh
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.CODE_SIGNING_CERTIFICATE_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:CERTIFICATE_BASE64) -or
+              [string]::IsNullOrWhiteSpace($env:CERTIFICATE_PASSWORD)) {
+            "enabled=false" >> $env:GITHUB_OUTPUT
+            Write-Warning "Code-signing secrets are not configured. Publishing an unsigned release."
+            exit 0
+          }
+          $certificatePath = Join-Path $env:RUNNER_TEMP "cryptobook-signing.pfx"
+          [IO.File]::WriteAllBytes(
+            $certificatePath,
+            [Convert]::FromBase64String($env:CERTIFICATE_BASE64))
+          $password = ConvertTo-SecureString $env:CERTIFICATE_PASSWORD -AsPlainText -Force
+          $certificate = Import-PfxCertificate `
+            -FilePath $certificatePath `
+            -CertStoreLocation Cert:\CurrentUser\My `
+            -Password $password
+          "enabled=true" >> $env:GITHUB_OUTPUT
+          "thumbprint=$($certificate.Thumbprint)" >> $env:GITHUB_OUTPUT
+          "certificate_path=$certificatePath" >> $env:GITHUB_OUTPUT
+
+      - name: Sign executable
+        if: steps.certificate.outputs.enabled == 'true'
+        shell: pwsh
+        run: |
+          $certificate = Get-Item "Cert:\CurrentUser\My\${{ steps.certificate.outputs.thumbprint }}"
+          foreach ($path in @(
+              "artifacts/win-x64/CryptoBook.exe",
+              "artifacts/win-x64/CryptoBook.dll")) {
+            $signature = Set-AuthenticodeSignature `
+              -FilePath $path `
+              -Certificate $certificate `
+              -HashAlgorithm SHA256 `
+              -TimestampServer "http://timestamp.digicert.com"
+            if ($signature.Status -ne "Valid") {
+              throw "Authenticode signing failed for ${path}: $($signature.StatusMessage)"
+            }
+          }
+
+      - name: Record signing status
+        shell: pwsh
+        run: |
+          if ("${{ steps.certificate.outputs.enabled }}" -eq "true") {
+            "CryptoBook binaries in this release are signed with Authenticode." |
+              Set-Content artifacts/SIGNING-STATUS.txt
+          } else {
+            "CryptoBook binaries in this release are not digitally signed." |
+              Set-Content artifacts/SIGNING-STATUS.txt
+          }
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: artifacts/win-x64
+          format: spdx-json
+          output-file: artifacts/CryptoBook.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: Create release manifest
+        shell: pwsh
+        run: |
+          Copy-Item CryptoBook/packages.lock.json artifacts/packages.lock.json
+          Compress-Archive `
+            -Path artifacts/win-x64/* `
+            -DestinationPath artifacts/CryptoBook-win-x64.zip
+          Get-Item `
+              artifacts/CryptoBook-win-x64.zip, `
+              artifacts/packages.lock.json, `
+              artifacts/CryptoBook.spdx.json, `
+              artifacts/SIGNING-STATUS.txt |
+            Get-FileHash -Algorithm SHA256 |
+            ForEach-Object { "$($_.Hash)  $($_.Path.Substring($env:GITHUB_WORKSPACE.Length + 1))" } |
+            Set-Content artifacts/SHA256SUMS.txt
+
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $signingNote = if ("${{ steps.certificate.outputs.enabled }}" -eq "true") {
+            "The Windows binaries are digitally signed with Authenticode."
+          } else {
+            "⚠️ The Windows binaries are not digitally signed. Verify the SHA-256 checksums before use."
+          }
+          gh release create "${{ github.ref_name }}" `
+            artifacts/CryptoBook-win-x64.zip `
+            artifacts/packages.lock.json `
+            artifacts/CryptoBook.spdx.json `
+            artifacts/SIGNING-STATUS.txt `
+            artifacts/SHA256SUMS.txt `
+            --generate-notes `
+            --notes $signingNote `
+            --verify-tag
+
+      - name: Remove signing certificate
+        if: always() && steps.certificate.outputs.enabled == 'true'
+        shell: pwsh
+        run: |
+          Remove-Item "Cert:\CurrentUser\My\${{ steps.certificate.outputs.thumbprint }}" -Force
+          Remove-Item "${{ steps.certificate.outputs.certificate_path }}" -Force

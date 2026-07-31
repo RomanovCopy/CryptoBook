@@ -81,20 +81,20 @@ namespace CryptoBook.Models
 
         public void Execute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
         }
         public bool CanExecute_Loaded(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool CanExecute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            Result = false;
+            _messageService.CloseDialog(WindowId);
         }
 
         public bool CanExecute_Closing(object? obj)
@@ -113,11 +113,10 @@ namespace CryptoBook.Models
 
         public bool CanExecute_Closed(object? obj)
         {
-            throw new NotImplementedException();
+            return true;
         }
         public void Execute_Closed(object? obj)
         {
-            throw new NotImplementedException();
         }
 
     }

@@ -25,10 +25,16 @@ namespace CryptoBook.FileTemplates
         ];
 
         public string SuggestedBaseName => "New Image";
+        public FileOpenMode OpenMode => FileOpenMode.Media;
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct)
         {
-            throw new NotImplementedException();
+            ct.ThrowIfCancellationRequested();
+
+            // Валидное прозрачное PNG-изображение размером 1x1.
+            return Task.FromResult(Convert.FromBase64String(
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ" +
+                "AAAADUlEQVR42mNk+M/wHwAF/gL+X1WQ0gAAAABJRU5ErkJggg=="));
         }
 
     }

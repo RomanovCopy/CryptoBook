@@ -1,8 +1,19 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <SolidColorBrush x:Key="WindowBackground" Color="LightGray" />
-    <SolidColorBrush x:Key="WindowForeground" Color="Black" />
-    <SolidColorBrush x:Key="TitleBarBackground" Color="LightGray" />
-    <SolidColorBrush x:Key="TitleBarForeground" Color="Black" />
-    <SolidColorBrush x:Key="BorderColor" Color="Black" />
+    <SolidColorBrush x:Key="CurrentWindowBackground" Color="#FFF7F8FA"/>
+    <SolidColorBrush x:Key="CurrentWindowForeground" Color="#FF202124"/>
+    <SolidColorBrush x:Key="CurrentTitleBarBackground" Color="#FFE8ECF2"/>
+    <SolidColorBrush x:Key="CurrentTitleBarForeground" Color="#FF17191C"/>
+    <SolidColorBrush x:Key="CurrentBorderColor" Color="#FFB8C0CC"/>
+    <SolidColorBrush x:Key="CurrentAccent" Color="#FF2563EB"/>
+    <SolidColorBrush x:Key="CurrentControlBackground" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="CurrentControlHoverBackground" Color="#FFE8EEF9"/>
+    <SolidColorBrush x:Key="CurrentMutedForeground" Color="#FF596273"/>
+    <SolidColorBrush x:Key="CurrentDocumentBackground" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="CurrentInputBackground" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="CurrentInputForeground" Color="#FF202124"/>
+    <SolidColorBrush x:Key="CurrentDisabledForeground" Color="#FF6B7280"/>
+    <SolidColorBrush x:Key="CurrentSelectionBackground" Color="#FF2563EB"/>
+    <SolidColorBrush x:Key="CurrentSelectionForeground" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="CurrentErrorForeground" Color="#FFB42318"/>
 </ResourceDictionary>

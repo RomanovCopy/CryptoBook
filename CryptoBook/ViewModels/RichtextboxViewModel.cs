@@ -1,156 +1,134 @@
-﻿using Autofac;
-
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.Models;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Documents;
 
 namespace CryptoBook.ViewModels
 {
     public class RichtextboxViewModel: ViewModelBase, IRichtextboxViewModel
     {
-        private readonly RichtextboxModel richtextboxModel;
+        private readonly IRichtextboxModel richtextboxModel;
+        private readonly IRichTextBoxService richTextBox;
+        private readonly IDocumentPreviewService previewService;
+        private readonly IUriNavigationService uriNavigationService;
+        private readonly IMenuFileViewModel menuFile;
+        private bool isPreviewMode;
+        private bool isFitToWindow = true;
+        private FlowDocument? previewDocument;
 
-
-        /// <summary>
-        /// Конструктор ViewModel.
-        /// </summary>
-        /// <param name="scope">Область жизни для внедрения зависимостей.</param>
-        public RichtextboxViewModel(ILifetimeScope scope)
+        public RichtextboxViewModel(
+            IRichtextboxModel richtextboxModel,
+            IRichTextBoxService richTextBox,
+            IDocumentPreviewService previewService,
+            IUriNavigationService uriNavigationService,
+            IMenuFileViewModel menuFile)
         {
-            richtextboxModel = new(scope);
+            this.richtextboxModel = richtextboxModel ??
+                throw new ArgumentNullException(nameof(richtextboxModel));
+            this.richTextBox = richTextBox ?? throw new ArgumentNullException(nameof(richTextBox));
+            this.previewService = previewService ?? throw new ArgumentNullException(nameof(previewService));
+            this.uriNavigationService = uriNavigationService ??
+                throw new ArgumentNullException(nameof(uriNavigationService));
+            this.menuFile = menuFile
+                ?? throw new ArgumentNullException(nameof(menuFile));
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
+        public bool IsPreviewMode
+        {
+            get => isPreviewMode;
+            private set
+            {
+                if(SetProperty(ref isPreviewMode, value))
+                    OnPropertyChanged(nameof(ModeLabel), nameof(ToggleViewText));
+            }
+        }
 
+        public string ModeLabel =>
+            IsPreviewMode ? "Постраничный просмотр" : "Редактирование";
 
+        public string ToggleViewText =>
+            IsPreviewMode ? "Редактор" : "Просмотр";
 
-        public ICommand Loaded => loaded ??= new RelayCommand(richtextboxModel.Execute_Loaded, richtextboxModel.CanExecute_Loaded);
-        RelayCommand loaded;
+        public FlowDocument? PreviewDocument
+        {
+            get => previewDocument;
+            private set => SetProperty(ref previewDocument, value);
+        }
 
+        public bool IsFitToWindow
+        {
+            get => isFitToWindow;
+            private set
+            {
+                if(SetProperty(ref isFitToWindow, value))
+                    OnPropertyChanged(
+                        nameof(FitToWindowText),
+                        nameof(FitToWindowGlyph));
+            }
+        }
 
-        public ICommand Close => close ??= new RelayCommand(richtextboxModel.Execute_Close, richtextboxModel.CanExecute_Close);
-        RelayCommand close;
+        public string FitToWindowText =>
+            IsFitToWindow ? "Масштаб 100%" : "Вписать в окно";
 
+        public string FitToWindowGlyph =>
+            IsFitToWindow ? "\uE73F" : "\uE740";
 
-        public ICommand Closing => closing ??= new RelayCommand(richtextboxModel.Execute_Closing, richtextboxModel.CanExecute_Closing);
-        RelayCommand closing;
+        public ICommand ToggleView => toggleView ??=
+            new RelayCommand(_ => SetPreviewMode(!IsPreviewMode));
+        private RelayCommand? toggleView;
 
+        public ICommand ToggleFitToWindow => toggleFitToWindow ??=
+            new RelayCommand(
+                _ => IsFitToWindow = !IsFitToWindow,
+                _ => IsPreviewMode);
+        private RelayCommand? toggleFitToWindow;
 
-        public ICommand Closed => closed ??= new RelayCommand(richtextboxModel.Execute_Closed, richtextboxModel.CanExecute_Closed);
-        RelayCommand closed;
+        public ICommand OpenHyperlink => openHyperlink ??=
+            new RelayCommand(
+                parameter =>
+                {
+                    if(parameter is Uri uri)
+                        uriNavigationService.TryOpen(uri);
+                },
+                parameter => parameter is Uri);
+        private RelayCommand? openHyperlink;
 
-        public double FontSize => throw new NotImplementedException();
+        public ICommand SaveDocument => menuFile.SaveFile;
+        public ICommand SaveDocumentAs => menuFile.SaveAsFile;
 
-        public string FontFamily => throw new NotImplementedException();
+        public ICommand Loaded => loaded ??=
+            new RelayCommand(richtextboxModel.Execute_Loaded, richtextboxModel.CanExecute_Loaded);
+        private RelayCommand? loaded;
 
-        public Color FontColor => throw new NotImplementedException();
+        public ICommand Close => close ??=
+            new RelayCommand(richtextboxModel.Execute_Close, richtextboxModel.CanExecute_Close);
+        private RelayCommand? close;
 
-        public Color FontBackground => throw new NotImplementedException();
+        public ICommand Closing => closing ??=
+            new RelayCommand(richtextboxModel.Execute_Closing, richtextboxModel.CanExecute_Closing);
+        private RelayCommand? closing;
 
-        public ICommand BoldCommand => throw new NotImplementedException();
+        public ICommand Closed => closed ??=
+            new RelayCommand(richtextboxModel.Execute_Closed, richtextboxModel.CanExecute_Closed);
+        private RelayCommand? closed;
 
-        public ICommand ItalicCommand => throw new NotImplementedException();
+        private void SetPreviewMode(bool previewMode)
+        {
+            if(previewMode == IsPreviewMode)
+                return;
 
-        public ICommand UnderlineCommand => throw new NotImplementedException();
+            if(!previewMode)
+            {
+                PreviewDocument = null;
+                IsPreviewMode = false;
+                richTextBox.Focus();
+                return;
+            }
 
-        public ICommand ClearFormattingCommand => throw new NotImplementedException();
-
-        public ICommand InsertTextCommand => throw new NotImplementedException();
-
-        public ICommand ClearTextCommand => throw new NotImplementedException();
-
-        public ICommand InsertImageCommand => throw new NotImplementedException();
-
-        public ICommand CopyCommand => throw new NotImplementedException();
-
-        public ICommand CutCommand => throw new NotImplementedException();
-
-        public ICommand PasteCommand => throw new NotImplementedException();
-
-        public ICommand ChangeFontSizeCommand => throw new NotImplementedException();
-
-        public ICommand ChangeFontFamilyCommand => throw new NotImplementedException();
-
-        public ICommand ChangeForegroundColor => throw new NotImplementedException();
-
-        public ICommand ChangeBackgroundColor => throw new NotImplementedException();
-
-        public ICommand ApplyTextAlignment => throw new NotImplementedException();
-
-        public ICommand ApplyAcceptsTab => throw new NotImplementedException();
-
-        public ICommand ApplyAcceptsReturn => throw new NotImplementedException();
-
-        public ICommand ApplyVerticalScrollBarVisibility => throw new NotImplementedException();
-
-        public ICommand ApplyHorizontalScrollBarVisibility => throw new NotImplementedException();
-
-        public ICommand ApplyContextMenu => throw new NotImplementedException();
-
-        public ICommand ClearFormatting => throw new NotImplementedException();
-
-        public ICommand SelectAll => throw new NotImplementedException();
-
-        public ICommand ClearSelection => throw new NotImplementedException();
-
-        public ICommand GetSelectedTextAsString => throw new NotImplementedException();
-
-        public ICommand ReplaceSelectedText => throw new NotImplementedException();
-
-        public ICommand InsertHyperlink => throw new NotImplementedException();
-
-        public ICommand InsertParagraph => throw new NotImplementedException();
-
-        public ICommand InsertLineBreak => throw new NotImplementedException();
-
-        public ICommand InsertTable => throw new NotImplementedException();
-
-        public ICommand GetRtf => throw new NotImplementedException();
-
-        public ICommand LoadRtf => throw new NotImplementedException();
-
-        public ICommand LoadPlainText => throw new NotImplementedException();
-
-        public ICommand ClearDocument => throw new NotImplementedException();
-
-        public ICommand ScrollToCaret => throw new NotImplementedException();
-
-        public ICommand ScrollToEnd => throw new NotImplementedException();
-
-        public ICommand ScrollToStart => throw new NotImplementedException();
-
-        public ICommand SetDocumentMargin => throw new NotImplementedException();
-
-        public ICommand Undo => throw new NotImplementedException();
-
-        public ICommand Redo => throw new NotImplementedException();
-
-        public ICommand FindText => throw new NotImplementedException();
-
-        public ICommand ReplaceText => throw new NotImplementedException();
-
-        public ICommand ReplaceAllText => throw new NotImplementedException();
-
-        public ICommand ApplyBulletedList => throw new NotImplementedException();
-
-        public ICommand ApplyNumberedList => throw new NotImplementedException();
-
-        public ICommand RemoveListFormatting => throw new NotImplementedException();
-
-        public ICommand IncreaseIndent => throw new NotImplementedException();
-
-        public ICommand DecreaseIndent => throw new NotImplementedException();
-
-        public ICommand Focus => throw new NotImplementedException();
-
-        public ICommand InsertTextAtCaret => throw new NotImplementedException();
+            PreviewDocument = previewService.CreatePreview(richTextBox.Document);
+            IsPreviewMode = true;
+        }
     }
 }

@@ -17,5 +17,10 @@ namespace CryptoBook.FileTemplates
         public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct)
             => Task.FromResult(System.Text.Encoding.UTF8.GetBytes(@"{\rtf1\ansi\deff0 {\fonttbl {\f0 Arial;}} \f0\fs24 New document \par }"));
+
+        public IReadOnlyCollection<string> Extensions =>
+        [
+            ".rtf",
+        ];
     }
 }

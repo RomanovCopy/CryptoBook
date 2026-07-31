@@ -1,0 +1,221 @@
+<Window x:Class="CryptoBook.Views.MediaPlayer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
+        xmlns:converters="clr-namespace:CryptoBook.Converters"
+        xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:markup="clr-namespace:CryptoBook.Markup"
+        xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
+        xmlns:fl="clr-namespace:FlyleafLib.Controls.WPF;assembly=FlyleafLib.Controls.WPF"
+        mc:Ignorable="d"
+        d:DataContext="{x:Type viewmodels:MediaPlayerViewModel}"
+        Title="{Binding MediaTitle}"
+        Height="600"
+        Width="960"
+        MinHeight="420"
+        MinWidth="680"
+        Background="#111111"
+        WindowStartupLocation="CenterOwner">
+    <Window.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMediaPlayerViewModel}"/>
+    </Window.DataContext>
+    <Window.Resources>
+        <!-- FlyleafME создаёт собственные окна рендеринга, поэтому он не должен
+             существовать в визуальном дереве при просмотре изображения. -->
+        <DataTemplate x:Key="VideoPlayerTemplate">
+            <fl:FlyleafME Player="{Binding}"/>
+        </DataTemplate>
+        <Style x:Key="ImageNavigationButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#FFF5F5F5"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Panel.ZIndex" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center">
+                                <ContentPresenter.Effect>
+                                    <DropShadowEffect Color="Black"
+                                                      BlurRadius="5"
+                                                      ShadowDepth="1"
+                                                      Opacity="0.9"/>
+                                </ContentPresenter.Effect>
+                            </ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsMouseOver, ElementName=ImageArea}" Value="True">
+                    <Setter Property="Opacity" Value="0.72"/>
+                </DataTrigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.9"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ImageToolbarButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="42"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#FFF5F5F5"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center">
+                                <ContentPresenter.Effect>
+                                    <DropShadowEffect Color="Black"
+                                                      BlurRadius="5"
+                                                      ShadowDepth="1"
+                                                      Opacity="0.9"/>
+                                </ContentPresenter.Effect>
+                            </ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.35"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Closing}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <!-- Пустое состояние и ошибки остаются видимыми до успешной загрузки. -->
+        <Grid Visibility="{Binding IsEmptyVisible,
+                                   Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Фото и видео" Foreground="White" FontSize="26" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding StatusText}" Foreground="#B8B8B8" FontSize="14"
+                           Margin="0,10,0,22" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="520"/>
+                <Button Content="Открыть файл" Command="{Binding OpenFileCommand}"
+                        Padding="20,8" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Visibility="{Binding IsVideoVisible,
+                                   Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">
+            <ContentControl ContentTemplate="{StaticResource VideoPlayerTemplate}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Content" Value="{x:Null}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsVideoVisible}" Value="True">
+                                <Setter Property="Content"
+                                        Value="{Binding VideoService.PlayerInstance}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </Grid>
+
+        <Grid x:Name="ImageArea"
+              Background="Transparent"
+              Visibility="{Binding IsImageVisible,
+                                   Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">
+            <Border Background="Transparent" ClipToBounds="True">
+                <i:Interaction.Behaviors>
+                    <behaviors:ImageInteractionBehavior
+                        ImageService="{Binding ImageService}"
+                        PreviousImageCommand="{Binding PreviousImageCommand}"
+                        NextImageCommand="{Binding NextImageCommand}"
+                        DeleteImageCommand="{Binding DeleteCurrentImageCommand}"/>
+                </i:Interaction.Behaviors>
+                <!-- Зум и смещение работают в координатах контейнера мыши. -->
+                <Grid>
+                    <Grid.RenderTransform>
+                        <MatrixTransform Matrix="{Binding ImageService.TransformMatrix}"/>
+                    </Grid.RenderTransform>
+                    <!-- Поворот отделён от матрицы и выполняется вокруг центра изображения. -->
+                    <Image Source="{Binding ImageService.ImageSource}"
+                           Stretch="Uniform"
+                           RenderTransformOrigin="0.5,0.5"
+                           RenderOptions.BitmapScalingMode="HighQuality">
+                        <Image.RenderTransform>
+                            <RotateTransform Angle="{Binding ImageService.RotationAngle}"/>
+                        </Image.RenderTransform>
+                    </Image>
+                </Grid>
+            </Border>
+
+            <Button Content="‹"
+                    Command="{Binding PreviousImageCommand}"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource ImageNavigationButtonStyle}"
+                    ToolTip="Предыдущее изображение"/>
+            <Button Content="›"
+                    Command="{Binding NextImageCommand}"
+                    HorizontalAlignment="Right"
+                    Style="{StaticResource ImageNavigationButtonStyle}"
+                    ToolTip="Следующее изображение"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Margin="0,0,0,12">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Opacity" Value="0"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=ImageArea}"
+                                         Value="True">
+                                <Setter Property="Opacity" Value="0.72"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Button Content="&#xE8E5;"
+                        Command="{Binding OpenFileCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="Открыть файл"/>
+                <Button Content="&#xE7AD;"
+                        Command="{Binding RotateImageCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="Повернуть"/>
+                <Button Content="&#xE740;"
+                        Command="{Binding ResetImageTransformCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="Вписать изображение"/>
+                <Button Content="&#xE74D;"
+                        Command="{Binding DeleteCurrentImageCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="Удалить изображение"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

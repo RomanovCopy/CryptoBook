@@ -92,7 +92,6 @@ namespace CryptoBook.Services
         /// <param name="progress"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<IReadOnlyList<FileOperationResult>> PasteAsync(string destinationDirectory, IProgressReporter? progress, CancellationToken cancellationToken)
         {
             ClipboardData data;
@@ -108,10 +107,14 @@ namespace CryptoBook.Services
             }
 
             var results = new List<FileOperationResult>();
+            long[] itemSizes = data.SourcePaths.Select(GetLocalItemSize).ToArray();
+            long totalBytes = itemSizes.Sum();
+            long completedBytes = 0;
 
-            foreach(var srcPath in data.SourcePaths)
+            for(int index = 0; index < data.SourcePaths.Count; index++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                string srcPath = data.SourcePaths[index];
 
                 // Вычисляем конечный путь назначения:
                 // - Берем имя файла/каталога из srcPath
@@ -136,6 +139,14 @@ namespace CryptoBook.Services
                 // В local это превратится в "local://C:/Target/filename".
                 // В ssh это будет "ssh://user@host:/home/user/filename".
                 string finalDestPath = AppendChild(destinationDirectory, itemName);
+                IProgressReporter? itemProgress = progress is null
+                    ? null
+                    : new ClipboardProgressReporter(
+                        progress,
+                        completedBytes,
+                        itemSizes[index],
+                        totalBytes,
+                        itemName);
 
                 FileOperationResult result;
                 if(data.Operation == ClipboardOperationKind.Copy)
@@ -143,17 +154,20 @@ namespace CryptoBook.Services
                     result = await _fileManager.CopyAsync(
                         srcPath,
                         finalDestPath,
-                        progress,
+                        itemProgress,
                         cancellationToken);
                 } else // Move
                 {
                     result = await _fileManager.MoveAsync(
                         srcPath,
                         finalDestPath,
+                        itemProgress,
                         cancellationToken);
                 }
 
                 results.Add(result);
+                if(result.Success)
+                    completedBytes += itemSizes[index];
             }
 
             // Если это был Move и всё прошло успешно для всех элементов — чистим буфер,
@@ -165,6 +179,63 @@ namespace CryptoBook.Services
             }
 
             return results;
+        }
+
+        private static long GetLocalItemSize(string path)
+        {
+            string nativePath = path.StartsWith("local://", StringComparison.OrdinalIgnoreCase)
+                ? path[8..]
+                : path;
+
+            if(File.Exists(nativePath))
+                return new FileInfo(nativePath).Length;
+            if(!Directory.Exists(nativePath))
+                return 0;
+
+            // Ссылки пропускаются, чтобы оценка совпадала с рекурсивным копированием.
+            var options = new EnumerationOptions
+            {
+                RecurseSubdirectories = true,
+                IgnoreInaccessible = false,
+                AttributesToSkip = FileAttributes.ReparsePoint
+            };
+            return Directory.EnumerateFiles(nativePath, "*", options)
+                .Sum(file => new FileInfo(file).Length);
+        }
+
+        private sealed class ClipboardProgressReporter: IProgressReporter
+        {
+            private readonly IProgressReporter _outer;
+            private readonly long _completedBytes;
+            private readonly long _itemSize;
+            private readonly long _totalBytes;
+            private readonly string _itemName;
+
+            public ClipboardProgressReporter(
+                IProgressReporter outer,
+                long completedBytes,
+                long itemSize,
+                long totalBytes,
+                string itemName)
+            {
+                _outer = outer;
+                _completedBytes = completedBytes;
+                _itemSize = itemSize;
+                _totalBytes = totalBytes;
+                _itemName = itemName;
+            }
+
+            public void Report(double? value, string? currentInfo = null)
+            {
+                if(value is null || _totalBytes == 0)
+                {
+                    _outer.Report(value, currentInfo ?? _itemName);
+                    return;
+                }
+
+                double overall = (_completedBytes + _itemSize * value.Value) / _totalBytes;
+                _outer.Report(Math.Clamp(overall, 0.0, 1.0), currentInfo ?? _itemName);
+            }
         }
 
 

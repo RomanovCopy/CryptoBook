@@ -39,8 +39,11 @@ namespace CryptoBook.Models
         bool showRepeatPassword;
 
 
-        public KeyInputModel()
+        private readonly IWindowManager _windowManager;
+
+        public KeyInputModel(IWindowManager windowManager)
         {
+            _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             WindowId = Guid.NewGuid();
             Title = "Ключ шифрования";
             Message = "Введите ключ шифрования:";
@@ -83,7 +86,7 @@ namespace CryptoBook.Models
         }
         public void Execute_Close(object? obj)
         {
-            throw new NotImplementedException();
+            _windowManager.CloseWindow(WindowId);
         }
 
 

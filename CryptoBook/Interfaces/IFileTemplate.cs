@@ -17,6 +17,8 @@ namespace CryptoBook.Interfaces
                                               
         bool DefaultIsHidden => false;
         bool DefaultIsReadOnly => false;
+        bool CanCreate => true;
+        FileOpenMode OpenMode => FileOpenMode.Document;
 
         Task<byte[]> GetInitialContentAsync(CancellationToken ct);
         // Опционально: кодировка подписи/комментария и т.п. Если null — оставим как есть.
@@ -26,5 +28,12 @@ namespace CryptoBook.Interfaces
         {
             return Extensions.Contains( extension, StringComparer.OrdinalIgnoreCase);
         }
+    }
+
+    public enum FileOpenMode
+    {
+        Document,
+        Media,
+        External
     }
 }

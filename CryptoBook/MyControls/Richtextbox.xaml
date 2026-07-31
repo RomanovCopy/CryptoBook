@@ -1,21 +1,118 @@
-﻿<UserControl x:Class="CryptoBook.MyControls.Richtextbox"
+<UserControl x:Class="CryptoBook.MyControls.Richtextbox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
-             xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
-             xmlns:local="clr-namespace:CryptoBook.MyControls" 
-             mc:Ignorable="d" 
-             d:DataContext="{x:Type interfaces:IRichtextboxViewModel}"> 
+             xmlns:services="clr-namespace:CryptoBook.Services"
+             xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
+             xmlns:local="clr-namespace:CryptoBook.MyControls"
+             mc:Ignorable="d"
+             d:DataContext="{x:Type interfaces:IRichtextboxViewModel}">
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IRichtextboxViewModel}"/>
     </UserControl.DataContext>
-    <Border  BorderBrush="Black" BorderThickness="1,1,1,0" >
-        <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}"/>
+    <UserControl.InputBindings>
+        <KeyBinding Key="S"
+                    Modifiers="Control"
+                    Command="{Binding SaveDocument}"/>
+        <KeyBinding Key="S"
+                    Modifiers="Control+Shift"
+                    Command="{Binding SaveDocumentAs}"/>
+    </UserControl.InputBindings>
+    <Border BorderBrush="Black" BorderThickness="1,1,1,0">
+        <Grid>
+            <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+                <ContentControl.Resources>
+                    <Style TargetType="{x:Type services:RichTextBoxService}">
+                        <Setter Property="ContextMenu"
+                                Value="{markup:ResolveService ServiceType={x:Type local:RichTextEditorContextMenu}}"/>
+                        <Setter Property="behaviors:DocumentImageResizeBehavior.ImageEditor"
+                                Value="{markup:ResolveService ServiceType={x:Type interfaces:IEmbeddedImageEditor}}"/>
+                        <Setter Property="behaviors:DocumentImageResizeBehavior.ImageLayoutService"
+                                Value="{markup:ResolveService ServiceType={x:Type interfaces:IEmbeddedImageLayoutService}}"/>
+                        <Setter Property="behaviors:DocumentImageResizeBehavior.IsEnabled"
+                                Value="True"/>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
+
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <FlowDocumentPageViewer x:Name="PageViewer"
+                                        Document="{Binding PreviewDocument}"
+                                        behaviors:HyperlinkCommandBehavior.Command="{Binding OpenHyperlink}"
+                                        behaviors:DocumentPageKeyboardNavigationBehavior.IsEnabled="True"
+                                        behaviors:DocumentPageFitBehavior.IsEnabled="{Binding IsFitToWindow}"
+                                        Zoom="100"/>
+                <Button HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="12,56,12,12"
+                        Width="36"
+                        Height="36"
+                        Panel.ZIndex="10"
+                        Command="{Binding ToggleFitToWindow}"
+                        ToolTip="{Binding FitToWindowText}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Transparent"
+                                    Padding="8">
+                                <TextBlock x:Name="Icon"
+                                           Text="{Binding FitToWindowGlyph}"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           FontSize="18"
+                                           Foreground="{DynamicResource CurrentWindowForeground}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="False">
+                                    <Setter TargetName="Icon"
+                                            Property="Opacity"
+                                            Value="0.68"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Icon"
+                                            Property="Opacity"
+                                            Value="0.42"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Icon"
+                                            Property="Opacity"
+                                            Value="0.28"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </Grid>
     </Border>
+
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Loaded, UpdateSourceTrigger=PropertyChanged}"/>

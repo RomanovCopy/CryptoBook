@@ -99,7 +99,7 @@
                                                 Grid.Column="2"
                                                 Width="24"
                                                 Height="24"
-                                                Foreground="White"
+                                                Foreground="{DynamicResource CurrentTitleBarForeground}"
                                                 Style="{StaticResource MenuButtonStyle01}"
                                                 Margin="4,0,0,0">
                                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE700;"
@@ -123,12 +123,10 @@
                                             FontSize="12"
                                             FontWeight="Bold"
                                             Opacity="1"
-                                            Foreground="White"
+                                            Foreground="{DynamicResource CurrentTitleBarForeground}"
                                             Text="{Binding Path=Title, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
                                         <TextBlock
                                             x:Name="currentpath"
-                                            Text="{Binding LastFileName, UpdateSourceTrigger=PropertyChanged}"
-                                            ToolTip="{Binding PathToLastFile, UpdateSourceTrigger=PropertyChanged}"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
                                             MinWidth="150"
@@ -136,9 +134,24 @@
                                             Grid.Column="5"
                                             TextWrapping="NoWrap"
                                             FontWeight="Medium"
-                                            Foreground="White"
+                                            Foreground="{DynamicResource CurrentTitleBarForeground}"
                                             FontSize="12"
-                                            Opacity="1"/>
+                                            Opacity="1">
+                                            <TextBlock.Text>
+                                                <PriorityBinding>
+                                                    <Binding Path="DataContext.Caption"
+                                                             RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                    <Binding Path="DocumentTitle"/>
+                                                </PriorityBinding>
+                                            </TextBlock.Text>
+                                            <TextBlock.ToolTip>
+                                                <PriorityBinding>
+                                                    <Binding Path="DataContext.CaptionToolTip"
+                                                             RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                    <Binding Path="DocumentPath"/>
+                                                </PriorityBinding>
+                                            </TextBlock.ToolTip>
+                                        </TextBlock>
                                         <Button
                                             x:Name="MinButton" 
                                             Grid.Column="7"

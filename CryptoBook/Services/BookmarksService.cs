@@ -1,185 +1,393 @@
-﻿using CryptoBook.Infrastructure;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using System.Windows.Documents;
 
 namespace CryptoBook.Services
 {
-    public class BookmarksService:ViewModelBase, IBookmarkService
+    /// <summary>
+    /// Хранит пользовательские данные закладок и синхронизирует их с якорями FlowDocument.
+    /// </summary>
+    public sealed class BookmarksService: ViewModelBase, IBookmarkService
     {
-        private readonly IRichTextBoxService service;
-        private readonly Dictionary<string, IBookmarkEntryViewModel> index;
+        private const string MetadataPrefix = "CryptoBook.Bookmark:";
+        private const string ZeroWidthSpace = "\u200B";
 
-        private bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name) && name.All(ch => char.IsLetterOrDigit(ch) || ch is '_' or '-');
+        private readonly Dictionary<string, BookmarkRecord> index =
+            new(StringComparer.OrdinalIgnoreCase);
 
         public ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; } = [];
 
-        public bool Exists(string name)=> index.ContainsKey(name);
-
-
         public BookmarksService(IRichTextBoxService service)
         {
-            this.service = service;
-            index= new(StringComparer.Ordinal);
-            testAddIndex();
+            _ = service ?? throw new ArgumentNullException(nameof(service));
         }
 
-        private void testAddIndex()
-        {
-            var vm = new BookmarkEntryViewModel { Name = "Test", Note = "Comment01" };
-            Bookmarks.Add(vm);
-            index[vm.Name] = vm;
-            vm=new BookmarkEntryViewModel { Name = "Test2", Note="Comment02" };
-            Bookmarks.Add(vm);
-            index[vm.Name] = vm;
-        }
-
+        public bool Exists(string name) =>
+            !string.IsNullOrWhiteSpace(name) && index.ContainsKey(name.Trim());
 
         public void AddAtCaret(IRichTextBoxService service, string name)
         {
-            if(service is null)
-                throw new ArgumentNullException(nameof(service));
-            if(!IsValidName(name))
-                throw new ArgumentException("Недопустимое имя закладки.", nameof(name));
-            if(index.ContainsKey(name))
-                throw new InvalidOperationException($"Закладка «{name}» уже существует.");
+            ArgumentNullException.ThrowIfNull(service);
+            name = NormalizeName(name);
+            EnsureValidNewName(name);
 
-            // 1) вставляем якорь в документ
-            const string ZWSP = "\u200B";
-            var pos = GetInsertionPos(service);
+            var anchorId = $"Bookmark_{Guid.NewGuid():N}";
+            var position = GetInsertionPosition(service);
+
             service.BeginChange();
             try
             {
-                var tr = new TextRange(pos, pos) { Text = ZWSP };
-                var start = tr.Start;
-                var end = start.GetPositionAtOffset(1, LogicalDirection.Forward)!;
-                var span = new Span(start, end) { Name = name };
-                service.CaretPosition = span.ElementEnd;
-            } finally { service.EndChange(); }
+                var anchor = new Span(position, position)
+                {
+                    Name = anchorId
+                };
+                anchor.Inlines.Add(new Run(ZeroWidthSpace));
+                service.CaretPosition = anchor.ElementEnd;
 
-            // 2) регистрируем в модели
-            var vm = new BookmarkEntryViewModel
+                var record = CreateRecord(service, name, string.Empty, anchorId);
+                anchor.Tag = SerializeMetadata(record.Entry);
+                AddRecord(name, record);
+            }
+            finally
             {
-                Name = name
-            };
-            Bookmarks.Add(vm);
-            index[name] = vm;
+                service.EndChange();
+            }
         }
 
         public bool Remove(IRichTextBoxService service, string name)
         {
-            if(!index.TryGetValue(name, out var vm))
+            ArgumentNullException.ThrowIfNull(service);
+            if(string.IsNullOrWhiteSpace(name) || !index.TryGetValue(name.Trim(), out var record))
                 return false;
 
-            // убрать из документа
-            if(service?.Document != null && service.Document.FindName(name) is Span span)
+            service.BeginChange();
+            try
             {
-                service.BeginChange();
-                try
-                { new TextRange(span.ContentStart, span.ContentEnd).Text = string.Empty; } finally { service.EndChange(); }
+                var anchor = FindAnchor(service.Document, record.AnchorId);
+                if(anchor != null)
+                    anchor.SiblingInlines?.Remove(anchor);
+                RemoveRecord(record);
+            }
+            finally
+            {
+                service.EndChange();
             }
 
-            // убрать из коллекции + индекса
-            index.Remove(name);
-            Bookmarks.Remove(vm);
             return true;
         }
 
         public void Rename(IRichTextBoxService service, string oldName, string newName)
         {
-            if(!index.TryGetValue(oldName, out var vm))
+            ArgumentNullException.ThrowIfNull(service);
+            oldName = oldName?.Trim() ?? string.Empty;
+            newName = NormalizeName(newName);
+
+            if(!index.TryGetValue(oldName, out var record))
                 throw new KeyNotFoundException($"Нет закладки «{oldName}».");
-            if(!IsValidName(newName))
-                throw new ArgumentException("Недопустимое имя закладки.", nameof(newName));
-            if(index.ContainsKey(newName))
-                throw new InvalidOperationException($"Закладка «{newName}» уже существует.");
+            if(string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+                return;
 
-            // документ
-            if(service?.Document != null && service.Document.FindName(oldName) is Span span)
-                span.Name = newName;
-
-            // индекс и ВМ
+            EnsureValidNewName(newName);
             index.Remove(oldName);
-            vm.Name = newName;           // триггерит Uri и INotifyPropertyChanged
-            index[newName] = vm;
+            record.Entry.Name = newName;
+            index[newName] = record;
+            UpdateAnchorMetadata(service, record);
+            OnPropertyChanged(nameof(Bookmarks));
         }
 
         public bool NavigateTo(IRichTextBoxService service, string name)
         {
-            if(service?.Document is null)
-                return false;
-            var el = service.Document.FindName(name) as TextElement;
-            if(el is null)
+            ArgumentNullException.ThrowIfNull(service);
+            if(string.IsNullOrWhiteSpace(name) || !index.TryGetValue(name.Trim(), out var record))
                 return false;
 
-            service.Selection.Select(el.ContentStart, el.ContentStart);
-            service.CaretPosition = el.ContentStart;
-            el.BringIntoView();
+            var anchor = FindAnchor(service.Document, record.AnchorId);
+            if(anchor?.ContentStart?.Paragraph == null)
+                return false;
+
+            var position = anchor.ContentStart.GetInsertionPosition(LogicalDirection.Forward);
+            service.Selection.Select(position, position);
+            service.CaretPosition = position;
+            anchor.BringIntoView();
             service.Focus();
             return true;
         }
 
-        public void InsertHyperlinkTo(IRichTextBoxService service, string bookmarkName, string? linkText = null)
+        public bool NavigateNext(IRichTextBoxService service) =>
+            NavigateRelative(service, forward: true);
+
+        public bool NavigatePrevious(IRichTextBoxService service) =>
+            NavigateRelative(service, forward: false);
+
+        public void InsertHyperlinkTo(
+            IRichTextBoxService service,
+            string bookmarkName,
+            string? linkText = null)
         {
-            if(!index.TryGetValue(bookmarkName, out var vm))
-                throw new KeyNotFoundException($"Нет закладки «{bookmarkName}».");
-
-            var run = new Run(linkText ?? bookmarkName, service.CaretPosition);
-            var link = new Hyperlink(run) { NavigateUri = vm.BookmarkUri };
-
-            link.RequestNavigate += (s, e) =>
+            ArgumentNullException.ThrowIfNull(service);
+            if(string.IsNullOrWhiteSpace(bookmarkName) ||
+               !index.TryGetValue(bookmarkName.Trim(), out var record))
             {
-                if(e.Uri.IsAbsoluteUri)
+                throw new KeyNotFoundException($"Нет закладки «{bookmarkName}».");
+            }
+
+            var uri = new Uri($"#{record.AnchorId}", UriKind.Relative);
+            service.BeginChange();
+            try
+            {
+                Hyperlink link;
+                if(!service.Selection.IsEmpty)
                 {
-                    Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
-                } else
-                {
-                    var target = e.Uri.OriginalString.TrimStart('#');
-                    NavigateTo(service, target);
+                    link = new Hyperlink(service.Selection.Start, service.Selection.End);
                 }
-                e.Handled = true;
-            };
+                else
+                {
+                    var position = GetInsertionPosition(service);
+                    link = new Hyperlink(position, position);
+                    link.Inlines.Add(new Run(
+                        string.IsNullOrWhiteSpace(linkText) ? record.Entry.Name : linkText));
+                }
+
+                link.NavigateUri = uri;
+                service.CaretPosition = link.ContentEnd;
+                service.ClearSelection();
+            }
+            finally
+            {
+                service.EndChange();
+            }
         }
-
-
 
         public void RebuildIndexFromDocument(IRichTextBoxService service)
         {
-            if(service?.Document is null)
-                return;
+            ArgumentNullException.ThrowIfNull(service);
 
-            Bookmarks.Clear();
-            index.Clear();
-
-            // простой проход по документу
-            for(var p = service.Document.ContentStart;
-                 p != null && p.CompareTo(service.Document.ContentEnd) < 0;
-                 p = p.GetNextContextPosition(LogicalDirection.Forward))
+            ClearRecords();
+            foreach(var anchor in EnumerateNamedSpans(service.Document))
             {
-                if(p.GetAdjacentElement(LogicalDirection.Forward) is Span s && !string.IsNullOrEmpty(s.Name))
+                var metadata = DeserializeMetadata(anchor);
+                var name = metadata?.Name;
+                var note = metadata?.Note ?? string.Empty;
+
+                // Поддержка документов старого формата, где имя пользователя
+                // записывалось непосредственно в Span.Name.
+                if(string.IsNullOrWhiteSpace(name) &&
+                   !anchor.Name.StartsWith("Bookmark_", StringComparison.Ordinal))
                 {
-                    var vm = new BookmarkEntryViewModel() { Name=s.Name};
-                    Bookmarks.Add(vm);
-                    index[vm.Name] = vm;
+                    name = anchor.Name;
+                }
+
+                if(string.IsNullOrWhiteSpace(name))
+                    continue;
+
+                name = MakeUniqueName(name.Trim());
+                var record = CreateRecord(service, name, note, anchor.Name);
+                anchor.Tag = SerializeMetadata(record.Entry);
+                AddRecord(name, record);
+            }
+
+            OnPropertyChanged(nameof(Bookmarks));
+        }
+
+        private bool NavigateRelative(IRichTextBoxService service, bool forward)
+        {
+            ArgumentNullException.ThrowIfNull(service);
+            var anchors = index.Values
+                .Select(record => new
+                {
+                    Record = record,
+                    Anchor = FindAnchor(service.Document, record.AnchorId)
+                })
+                .Where(item => item.Anchor?.ContentStart?.Paragraph != null)
+                .OrderBy(item => item.Anchor!.ContentStart, TextPointerComparer.Instance)
+                .ToList();
+
+            if(anchors.Count == 0)
+                return false;
+
+            var caret = service.CaretPosition;
+            var currentIndex = anchors.FindIndex(item =>
+                item.Anchor!.ContentStart.CompareTo(caret) <= 0 &&
+                item.Anchor.ContentEnd.CompareTo(caret) >= 0);
+
+            var target = currentIndex >= 0
+                ? anchors[forward
+                    ? (currentIndex + 1) % anchors.Count
+                    : (currentIndex - 1 + anchors.Count) % anchors.Count]
+                : forward
+                    ? anchors.FirstOrDefault(item => item.Anchor!.ContentStart.CompareTo(caret) > 0)
+                        ?? anchors[0]
+                    : anchors.LastOrDefault(item => item.Anchor!.ContentEnd.CompareTo(caret) < 0)
+                        ?? anchors[^1];
+
+            return NavigateTo(service, target.Record.Entry.Name);
+        }
+
+        private BookmarkRecord CreateRecord(
+            IRichTextBoxService service,
+            string name,
+            string note,
+            string anchorId)
+        {
+            var entry = new BookmarkEntryViewModel
+            {
+                Name = name,
+                Note = note,
+                BookmarkUri = new Uri($"#{anchorId}", UriKind.Relative)
+            };
+            var record = new BookmarkRecord(entry, anchorId);
+
+            PropertyChangedEventHandler handler = (_, args) =>
+            {
+                if(args.PropertyName == nameof(IBookmarkEntryViewModel.Note))
+                    UpdateAnchorMetadata(service, record);
+            };
+            record.Handler = handler;
+            entry.PropertyChanged += handler;
+            return record;
+        }
+
+        private void AddRecord(string name, BookmarkRecord record)
+        {
+            index[name] = record;
+            Bookmarks.Add(record.Entry);
+            OnPropertyChanged(nameof(Bookmarks));
+        }
+
+        private void RemoveRecord(BookmarkRecord record)
+        {
+            record.Entry.PropertyChanged -= record.Handler;
+            index.Remove(record.Entry.Name);
+            Bookmarks.Remove(record.Entry);
+            OnPropertyChanged(nameof(Bookmarks));
+        }
+
+        private void ClearRecords()
+        {
+            foreach(var record in index.Values)
+                record.Entry.PropertyChanged -= record.Handler;
+            index.Clear();
+            Bookmarks.Clear();
+        }
+
+        private void UpdateAnchorMetadata(IRichTextBoxService service, BookmarkRecord record)
+        {
+            var anchor = FindAnchor(service.Document, record.AnchorId);
+            if(anchor != null)
+                anchor.Tag = SerializeMetadata(record.Entry);
+        }
+
+        private void EnsureValidNewName(string name)
+        {
+            if(name.Length > 128 || name.Any(char.IsControl) || name.Contains('#'))
+                throw new ArgumentException("Недопустимое имя закладки.", nameof(name));
+            if(index.ContainsKey(name))
+                throw new InvalidOperationException($"Закладка «{name}» уже существует.");
+        }
+
+        private static string NormalizeName(string? name)
+        {
+            var result = name?.Trim() ?? string.Empty;
+            if(result.Length == 0)
+                throw new ArgumentException("Имя закладки не задано.", nameof(name));
+            return result;
+        }
+
+        private string MakeUniqueName(string name)
+        {
+            if(!index.ContainsKey(name))
+                return name;
+
+            var number = 2;
+            while(index.ContainsKey($"{name} ({number})"))
+                number++;
+            return $"{name} ({number})";
+        }
+
+        private static TextPointer GetInsertionPosition(IRichTextBoxService service)
+        {
+            var position = service.CaretPosition;
+            return position.IsAtInsertionPosition
+                ? position
+                : position.GetInsertionPosition(LogicalDirection.Forward);
+        }
+
+        private static Span? FindAnchor(FlowDocument document, string anchorId) =>
+            EnumerateNamedSpans(document)
+                .FirstOrDefault(span => string.Equals(
+                    span.Name,
+                    anchorId,
+                    StringComparison.Ordinal));
+
+        private static IEnumerable<Span> EnumerateNamedSpans(FlowDocument document)
+        {
+            var seen = new HashSet<Span>();
+            for(var position = document.ContentStart;
+                position != null && position.CompareTo(document.ContentEnd) < 0;
+                position = position.GetNextContextPosition(LogicalDirection.Forward))
+            {
+                if(position.GetAdjacentElement(LogicalDirection.Forward) is Span span &&
+                   !string.IsNullOrWhiteSpace(span.Name) &&
+                   seen.Add(span))
+                {
+                    yield return span;
                 }
             }
         }
 
+        private static string SerializeMetadata(IBookmarkEntryViewModel entry) =>
+            MetadataPrefix + JsonSerializer.Serialize(
+                new BookmarkMetadata(entry.Name, entry.Note ?? string.Empty));
 
-
-        private TextPointer GetInsertionPos(IRichTextBoxService svc)
+        private static BookmarkMetadata? DeserializeMetadata(Span anchor)
         {
-            var pos = svc.CaretPosition;
-            return pos.IsAtInsertionPosition ? pos : pos.GetInsertionPosition(LogicalDirection.Forward);
+            if(anchor.Tag is not string value ||
+               !value.StartsWith(MetadataPrefix, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            try
+            {
+                return JsonSerializer.Deserialize<BookmarkMetadata>(
+                    value[MetadataPrefix.Length..]);
+            }
+            catch(JsonException)
+            {
+                return null;
+            }
         }
 
+        private sealed class BookmarkRecord
+        {
+            public BookmarkEntryViewModel Entry { get; }
+            public string AnchorId { get; }
+            public PropertyChangedEventHandler Handler { get; set; } = null!;
+
+            public BookmarkRecord(BookmarkEntryViewModel entry, string anchorId)
+            {
+                Entry = entry;
+                AnchorId = anchorId;
+            }
+        }
+
+        private sealed record BookmarkMetadata(string Name, string Note);
+
+        private sealed class TextPointerComparer: IComparer<TextPointer>
+        {
+            public static TextPointerComparer Instance { get; } = new();
+            public int Compare(TextPointer? x, TextPointer? y) =>
+                x == null ? (y == null ? 0 : -1)
+                : y == null ? 1
+                : x.CompareTo(y);
+        }
     }
 }

@@ -17,6 +17,11 @@ namespace CryptoBook.Interfaces
         /// Публично доступное хранилище закладок
         /// </summary>
         ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; }
+        IBookmarkEntryViewModel? SelectedBookmark { get; set; }
+        string NewBookmarkName { get; set; }
+        string RenameTo { get; set; }
+        string LinkText { get; set; }
+        string StatusMessage { get; }
 
 
         /// <summary>
@@ -51,6 +56,7 @@ namespace CryptoBook.Interfaces
         /// Перестроить словарь из реально существующих якорей документа (например, после загрузки XAML)
         /// </summary>
         ICommand RebuildIndexFromDocument{ get; }
+        ICommand OpenManager { get; }
 
     }
 }

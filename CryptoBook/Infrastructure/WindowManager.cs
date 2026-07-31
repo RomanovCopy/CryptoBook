@@ -14,7 +14,7 @@ namespace CryptoBook.Infrastructure
     {
         private readonly ILifetimeScope _root;
         private readonly Dictionary<Guid, WindowHost> _windowHosts;
-        private readonly Dictionary<Guid, bool> _results;
+        private readonly Dictionary<Guid, IDialogResult> _results;
 
         static Window? GetOwner()
         {
@@ -30,15 +30,17 @@ namespace CryptoBook.Infrastructure
             return null;
         }
 
-        public bool GetResult(Guid guid)
+        public TResult? GetResult<TResult>(Guid guid)
         {
             if(_results.ContainsKey(guid))
             {
-                var res = _results[guid];
-                _results.Remove(guid);
-                return res;
+                if(_results.TryGetValue(guid, out var tresult) && tresult is IDialogResult<TResult> result)
+                {
+                    _results.Remove(guid);
+                    return result.Result;
+                }
             }
-            return false;
+            return default;
         }
 
         public WindowManager(ILifetimeScope scope)
@@ -72,18 +74,16 @@ namespace CryptoBook.Infrastructure
             }
 
 
-            var host = RegisterWindow(scope, window)
-                ?? throw new InvalidOperationException("Failed to register window");
+            var host = RegisterWindow(scope, window) ?? throw new InvalidOperationException("Failed to register window");
 
             window.Closed += (_, __) =>
             {
-                if(window.DataContext is IDialogResult<bool> dialogResult)
+                if(window.DataContext is IDialogResult dialogResult)
                 {
-                    _results[host.Key]=dialogResult.Result;
+                    _results[host.Key] = dialogResult;
                 }
                 UnregisterWindow(host);
-                scope.Dispose();
-                window.Owner?.Focus();
+                FocusWindowIfAvailable(window.Owner);
                 window = null;
             };
 
@@ -94,39 +94,51 @@ namespace CryptoBook.Infrastructure
         public void ShowWindow(Guid windowId)
         {
             var winHost = FindHostWindow(windowId);
-            if(winHost is null)
+            if(winHost is null || winHost.IsClosing || winHost.IsClosed)
                 return;
-            if(winHost is WindowHost host)
-                host.Window.Show();
+
+            if(!winHost.Window.IsVisible)
+                winHost.Window.Show();
         }
 
         public void ShowWindowDialog(Guid windowId)
         {
             var winHost = FindHostWindow(windowId);
-            if(winHost is null)
+            if(winHost is null || winHost.IsClosing || winHost.IsClosed)
                 return;
-            if(winHost is WindowHost host)
-            {
-                host.Window.ShowDialog();
-            }
+
+            if(!winHost.Window.IsVisible)
+                winHost.Window.ShowDialog();
+        }
+
+        public void ActivateWindow(Guid windowId)
+        {
+            var winHost = FindHostWindow(windowId);
+            if(winHost is null || winHost.IsClosing || winHost.IsClosed)
+                return;
+
+            if(!winHost.Window.IsVisible)
+                winHost.Window.Show();
+            if(winHost.Window.WindowState == WindowState.Minimized)
+                winHost.Window.WindowState = WindowState.Normal;
+
+            winHost.Window.Activate();
+            winHost.Window.Focus();
         }
 
         public void CloseWindow(Guid windowId)
         {
-            if(IsWindowOpen(windowId))
-            {
-                var winHost = FindHostWindow(windowId);
-                if(winHost is WindowHost win)
-                {
-                    WinClose(win);
-                    UnregisterWindow(win);
-                }
-            }
+            var winHost = FindHostWindow(windowId);
+            if(winHost is null || winHost.IsClosing || winHost.IsClosed)
+                return;
+
+            WinClose(winHost);
         }
 
         public bool IsWindowOpen(Guid windowId)
         {
-            return FindHostWindow(windowId) != null;
+            var host = FindHostWindow(windowId);
+            return host is { IsClosing: false, IsClosed: false };
         }
 
         public WindowHost? FindHostWindow(Guid windowId)
@@ -157,16 +169,25 @@ namespace CryptoBook.Infrastructure
 
         private void WinClose(WindowHost windowHost)
         {
-            if(windowHost is not null)
-            {
-                windowHost.Window.Owner?.Focus();
-                windowHost.Window.Close();
-            }
+            if(windowHost.IsClosing || windowHost.IsClosed)
+                return;
+
+            FocusWindowIfAvailable(windowHost.Window.Owner);
+            windowHost.Window.Close();
+        }
+
+        private static void FocusWindowIfAvailable(Window? window)
+        {
+            if(window is { IsLoaded: true, IsVisible: true })
+                window.Focus();
         }
 
         public void Dispose()
         {
-            _root?.Dispose();
+            // Корневым scope владеет App. WindowManager использует его только
+            // как фабрику дочерних scope и не должен уничтожать контейнер повторно.
+            _windowHosts.Clear();
+            _results.Clear();
         }
 
     }

@@ -10,10 +10,18 @@ namespace CryptoBook.Models
 {
     internal class BookmarkEntryModel: ViewModelBase
     {
-        internal string Name { get => name is null ? "No data" : name; set => SetProperty(ref name, value is null ? "No data" : value ); }
-        string name;
-        internal string Note { get => note is null ? "No data" : note; set => SetProperty(ref note, value is null ? "No data" : value); }
-        string note;
+        internal string Name
+        {
+            get => name;
+            set => SetProperty(ref name, value ?? string.Empty);
+        }
+        string name = string.Empty;
+        internal string Note
+        {
+            get => note;
+            set => SetProperty(ref note, value ?? string.Empty);
+        }
+        string note = string.Empty;
         internal Uri? BookmarkUri 
         {
             get => bookmarkUri;
@@ -26,14 +34,18 @@ namespace CryptoBook.Models
                 }
                 else
                 {
-                    BookmarkUriString = Uri.UnescapeDataString("No data");
+                    SetProperty(ref bookmarkUri, null);
+                    BookmarkUriString = string.Empty;
                 }
             }
         }
         Uri? bookmarkUri;
-        internal string BookmarkUriString { get => bookmarkUriString is null ? "No data" : bookmarkUriString; 
-            private set => SetProperty(ref bookmarkUriString, value is null ? "No data" : value); }
-        string bookmarkUriString;
+        internal string BookmarkUriString
+        {
+            get => bookmarkUriString;
+            private set => SetProperty(ref bookmarkUriString, value ?? string.Empty);
+        }
+        string bookmarkUriString = string.Empty;
 
 
         internal BookmarkEntryModel()

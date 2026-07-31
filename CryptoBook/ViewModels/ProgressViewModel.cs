@@ -16,7 +16,11 @@ namespace CryptoBook.ViewModels
         public Guid WindowId => progressModel.WindowId;
 
 
-        public event EventHandler RequestClose;
+        event EventHandler ICloseable.RequestClose
+        {
+            add { }
+            remove { }
+        }
 
         public double WindowWidth { get => progressModel.WindowWidth; set => progressModel.WindowWidth = value; }
         public double WindowHeight { get => progressModel.WindowHeight; set => progressModel.WindowHeight = value; }
@@ -28,6 +32,8 @@ namespace CryptoBook.ViewModels
         public double Progress { get => progressModel.Progress; set => progressModel.Progress = value; }
         public string StatusMessage { get => progressModel.StatusMessage; set => progressModel.StatusMessage = value; }
         public bool IsOperationRunning { get => progressModel.IsOperationRunning; set => progressModel.IsOperationRunning = value; }
+        public bool IsIndeterminate { get => progressModel.IsIndeterminate; set => progressModel.IsIndeterminate = value; }
+        public CancellationToken CancellationToken => progressModel.CancellationToken;
 
 
 
@@ -38,7 +44,10 @@ namespace CryptoBook.ViewModels
             progressModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
-        public ICommand StartLongOperation => startLongOperation ?? new RelayCommand(progressModel.Execute_StartLongOperation, progressModel.CanExecute_StartLongOperation);
+        public ICommand StartLongOperation => startLongOperation ??=
+            new RelayCommand(
+                progressModel.Execute_StartLongOperation,
+                progressModel.CanExecute_StartLongOperation);
         RelayCommand startLongOperation;
 
         public ICommand Canceled => canceled ??= new RelayCommand(progressModel.Execute_Canceled, progressModel.CanExecute_Canceled);
@@ -55,6 +64,11 @@ namespace CryptoBook.ViewModels
 
         public ICommand Close => close ??= new RelayCommand(progressModel.Execute_Close, progressModel.CanExecute_Close);
         RelayCommand close;
+
+        public void Prepare(string operationName) => progressModel.Prepare(operationName);
+
+        public void Report(double? value, string? currentInfo = null) =>
+            progressModel.Report(value, currentInfo);
 
     }
 }

@@ -92,7 +92,6 @@ namespace CryptoBook.Services
         {
             _monitoringService.OnDriveConnected -= OnDriveConnected;
             _monitoringService.OnDriveDisconnected -= OnDriveDisconnected;
-            _monitoringService.Dispose();
         }
     }
 }

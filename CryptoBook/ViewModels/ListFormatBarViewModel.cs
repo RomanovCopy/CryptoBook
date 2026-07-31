@@ -2,11 +2,6 @@
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -30,12 +25,11 @@ namespace CryptoBook.ViewModels
         public ICommand ClearLists => clearLists ??= new RelayCommand(model.Execute_ClearLists, model.CanExecute_ClearLists);
         RelayCommand clearLists;
 
-        public ICommand Loaded => throw new NotImplementedException();
+        public ICommand Loaded => NoOpCommand;
+        public ICommand Close => NoOpCommand;
+        public ICommand Closing => NoOpCommand;
+        public ICommand Closed => NoOpCommand;
 
-        public ICommand Close => throw new NotImplementedException();
-
-        public ICommand Closing => throw new NotImplementedException();
-
-        public ICommand Closed => throw new NotImplementedException();
+        private static ICommand NoOpCommand { get; } = new RelayCommand(_ => { });
     }
 }

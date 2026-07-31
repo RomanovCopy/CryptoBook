@@ -1,40 +1,113 @@
-﻿using CryptoBook.Infrastructure;
+using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
-using CryptoBook.Models;
+using CryptoBook.Views;
 
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class MenuContentViewModel: ViewModelBase, IMenuContentViewModel
+    public sealed class MenuContentViewModel:
+        ViewModelBase,
+        IMenuContentViewModel,
+        ICommandRegistry
     {
-        private readonly MenuContentModel menuContentModel;
+        private readonly IWindowManager windowManager;
+        private readonly ICommandService commandService;
+        private readonly IImageFilePicker imageFilePicker;
+        private readonly IImageContentLoader imageLoader;
+        private readonly IDocumentImageInserter imageInserter;
+        private readonly IMessageService messages;
 
-        public MenuContentViewModel()
+        public MenuContentViewModel(
+            IWindowManager windowManager,
+            ICommandService commandService,
+            IImageFilePicker imageFilePicker,
+            IImageContentLoader imageLoader,
+            IDocumentImageInserter imageInserter,
+            IMessageService messages)
         {
-            menuContentModel = new MenuContentModel();
-            menuContentModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            this.windowManager = windowManager
+                ?? throw new ArgumentNullException(nameof(windowManager));
+            this.commandService = commandService
+                ?? throw new ArgumentNullException(nameof(commandService));
+            this.imageFilePicker = imageFilePicker
+                ?? throw new ArgumentNullException(nameof(imageFilePicker));
+            this.imageLoader = imageLoader
+                ?? throw new ArgumentNullException(nameof(imageLoader));
+            this.imageInserter = imageInserter
+                ?? throw new ArgumentNullException(nameof(imageInserter));
+            this.messages = messages
+                ?? throw new ArgumentNullException(nameof(messages));
+
+            RegistryCommands();
         }
 
-        public ICommand Reading => reading ??= new RelayCommand(menuContentModel.Execute_Reading, menuContentModel.CanExecute_Reading);
-        RelayCommand reading;
+        public ICommand Reading => NoOpCommand;
+        public ICommand InsertText => NoOpCommand;
+        public ICommand OpenDocumentTree => NoOpCommand;
 
-        public ICommand InsertImage => insertImage ??= new RelayCommand(menuContentModel.Execute_InsertImage, menuContentModel.CanExecute_InsertImage);
-        RelayCommand insertImage;
+        public ICommand InsertImage => insertImage ??=
+            new AsyncRelayCommand(
+                (_, cancellationToken) =>
+                    InsertImageAsync(cancellationToken));
+        private AsyncRelayCommand? insertImage;
 
-        public ICommand InsertText => insertText ??= new RelayCommand(menuContentModel.Execute_InsertText, menuContentModel.CanExecute_InsertText);
-        RelayCommand insertText;
+        public ICommand MediaPlayer => mediaPlayer ??=
+            new RelayCommand(_ => OpenMediaPlayer());
+        private RelayCommand? mediaPlayer;
 
-        public ICommand OpenDocumentTree => openDocumentTree ??= new RelayCommand(menuContentModel.Execute_OpenDocumentTree, menuContentModel.CanExecute_OpenDocumentTree);
-        RelayCommand openDocumentTree;
+        public ICommand Loaded => NoOpCommand;
+        public ICommand Close => NoOpCommand;
+        public ICommand Closing => NoOpCommand;
+        public ICommand Closed => NoOpCommand;
 
-        public ICommand MediaPlayer => mediaPlayer ??= new RelayCommand(menuContentModel.Execute_MediaPlayer, menuContentModel.CanExecute_MediaPlayer);
-        RelayCommand mediaPlayer;
+        private static ICommand NoOpCommand { get; } =
+            new RelayCommand(_ => { });
 
-        public ICommand Loaded => loaded ??= new RelayCommand(menuContentModel.Execute_Loaded, menuContentModel.CanExecute_Loaded);
-        RelayCommand loaded;
+        public void RegistryCommands()
+        {
+            commandService.Register(
+                CommandKey.menuContent_InsertImage,
+                InsertImage);
+            commandService.Register(
+                CommandKey.menuContent_MediaPlayer,
+                MediaPlayer);
+        }
 
+        private async Task InsertImageAsync(
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                string? path = await imageFilePicker.PickImageAsync(
+                    cancellationToken);
+                if(string.IsNullOrWhiteSpace(path))
+                    return;
 
+                var image = await imageLoader.LoadFromFileAsync(
+                    path,
+                    cancellationToken);
+                await imageInserter.InsertAsync(
+                    image,
+                    cancellationToken);
+            }
+            catch(OperationCanceledException)
+            {
+                // Отмена пользователем не является ошибкой.
+            }
+            catch(Exception exception)
+            {
+                await messages.ShowMessage(
+                    "Не удалось вставить изображение",
+                    exception.Message);
+            }
+        }
 
+        private void OpenMediaPlayer()
+        {
+            Guid id = windowManager.CreateWindow<MediaPlayer>();
+            windowManager.ShowWindow(id);
+        }
     }
 }

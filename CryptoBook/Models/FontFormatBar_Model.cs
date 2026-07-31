@@ -38,6 +38,8 @@ namespace CryptoBook.Models
         Drawing.Color? fontColor;
         public Drawing.Color? FontBackground { get => fontBackground; set => SetProperty(ref fontBackground, value); }
         Drawing.Color? fontBackground;
+        public Drawing.Color? DocumentBackground { get => documentBackground; set => SetProperty(ref documentBackground, value); }
+        Drawing.Color? documentBackground;
         public TextDecorationItem? TextDecoration 
         { get=>textDecoration; 
             set=>SetProperty(ref textDecoration, value); }
@@ -64,6 +66,7 @@ namespace CryptoBook.Models
             FontFamily=fontService.DefaultFontFamily;
             FontColor=fontService.DefaultFontColor;
             FontBackground =fontService.DefaultFontBackground;
+            DocumentBackground = fontService.DocumentBackground;
             TextDecoration =fontService.DefaultTextDecoration;
         }
 
@@ -174,6 +177,19 @@ namespace CryptoBook.Models
             fontService.SetFontBackground(fontBackgroundColor);
         }
 
+        internal bool CanExecute_SetDocumentBackgroundCommand(object? obj)
+        {
+            return obj is Drawing.Color color &&
+                   FontColors.Contains(color);
+        }
+        internal void Execute_SetDocumentBackgroundCommand(object? obj)
+        {
+            if(obj is not Drawing.Color color)
+                throw new ArgumentException("obj must be of type Color", nameof(obj));
+
+            fontService.SetDocumentBackground(color);
+        }
+
         internal bool CanExecute_SetFontSizeCommand(object? obj)
         {
             if(obj is not double fontSize)
@@ -235,6 +251,7 @@ namespace CryptoBook.Models
                 FontBackground = FindColorInPalette(FontColors, back, exactMatch: true)
                                  ?? FindNearestColor(FontColors, back);
             }
+            DocumentBackground = GetDocumentBackground();
 
         }
 
@@ -325,6 +342,20 @@ namespace CryptoBook.Models
         private void SetDrawingColor(InlineStyle style, DependencyProperty dp, Drawing.Color color)
         {
             SetMediaColor(style, dp, Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+        }
+
+        private Drawing.Color? GetDocumentBackground()
+        {
+            if(richService.Document.Background is not Media.SolidColorBrush brush)
+                return null;
+
+            var color = Drawing.Color.FromArgb(
+                brush.Color.A,
+                brush.Color.R,
+                brush.Color.G,
+                brush.Color.B);
+            return FindColorInPalette(FontColors, color, exactMatch: true)
+                   ?? FindNearestColor(FontColors, color);
         }
 
         /// <summary>

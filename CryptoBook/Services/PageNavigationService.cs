@@ -15,7 +15,7 @@ using System.Windows.Controls;
 
 namespace CryptoBook.Services
 {
-    public sealed class PageNavigationService: ViewModelBase, IPageNavigationService
+    public sealed class PageNavigationService: ViewModelBase, IPageNavigationService, IDisposable
     {
         private readonly ILifetimeScope _windowScope;
 
@@ -119,6 +119,15 @@ namespace CryptoBook.Services
                 e.Dispose();
 
             _list.RemoveRange(_index + 1, _list.Count - _index - 1);
+        }
+
+        public void Dispose()
+        {
+            foreach(var entry in _list)
+                entry.Dispose();
+
+            _list.Clear();
+            _index = -1;
         }
 
     }

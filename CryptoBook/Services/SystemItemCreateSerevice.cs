@@ -10,8 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Windows.Graphics.DirectX.Direct3D11;
-
 namespace CryptoBook.Services
 {
     public class SystemItemCreateService: ISystemItemCreateService
@@ -21,7 +19,7 @@ namespace CryptoBook.Services
         public SystemItemCreateService(ILifetimeScope scope, IDirectoryMonitoringService directoryMonitoringService)
         {
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
-            _directoryMonitoringService = directoryMonitoringService;
+            _directoryMonitoringService = directoryMonitoringService ?? throw new ArgumentNullException(nameof(directoryMonitoringService));
         }
 
         public IDriveItem CreateRoot(string rootPath)
@@ -70,7 +68,9 @@ namespace CryptoBook.Services
             var fileInfo = new FileInfo(normalized);
             if(!fileInfo.Exists)
                 throw new FileNotFoundException($"File '{normalized}' not found.");
-            var file = _scope.Resolve<IFileItem>(new NamedParameter("path", normalized), new NamedParameter("parent", parent));
+
+            // FileItem не принимает путь и родителя в конструкторе — свойства заполняются после создания.
+            var file = _scope.Resolve<IFileItem>();
             file.Name =Path.GetFileNameWithoutExtension(fileInfo.Name);
             file.Size = fileInfo.Length;
             file.Extension = fileInfo.Extension;

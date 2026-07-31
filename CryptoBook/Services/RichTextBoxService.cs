@@ -18,9 +18,9 @@ using Controls = System.Windows.Controls;
 using FontStyle = System.Windows.FontStyle;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Windows.Navigation;
 using System.Runtime.CompilerServices;
 using System.CodeDom;
-
 namespace CryptoBook.Services
 {
     public class RichTextBoxService: Controls.RichTextBox, IRichTextBoxService
@@ -28,6 +28,22 @@ namespace CryptoBook.Services
 
         private TextRange last_Selection;
         private IParagraphFactory paragraphFactory;
+        private readonly IUriNavigationService uriNavigationService;
+        private readonly Dictionary<DependencyProperty, object?> typingProperties = new();
+        private Paragraph? typingAnchorParagraph;
+        private int typingAnchorTextOffset;
+        private static readonly DependencyProperty[] inheritedTypingProperties =
+        [
+            TextElement.FontFamilyProperty,
+            TextElement.FontSizeProperty,
+            TextElement.FontWeightProperty,
+            TextElement.FontStyleProperty,
+            TextElement.FontStretchProperty,
+            TextElement.ForegroundProperty,
+            TextElement.BackgroundProperty,
+            Inline.TextDecorationsProperty,
+            Inline.BaselineAlignmentProperty
+        ];
 
         FlowDocument IRichTextBoxService.Document => this.Document;
 
@@ -57,35 +73,42 @@ namespace CryptoBook.Services
         bool IRichTextBoxService.CanRedo => this.CanRedo;
 
 
-        public RichTextBoxService( IParagraphFactory paragraphFactory)
+        public RichTextBoxService(
+            IParagraphFactory paragraphFactory,
+            IUriNavigationService uriNavigationService)
         {
-            this.paragraphFactory = paragraphFactory;
+            this.paragraphFactory = paragraphFactory ??
+                throw new ArgumentNullException(nameof(paragraphFactory));
+            this.uriNavigationService = uriNavigationService ??
+                throw new ArgumentNullException(nameof(uriNavigationService));
+            var hyperlinkStyle = new Style(typeof(Hyperlink));
+            hyperlinkStyle.Setters.Add(
+                new Setter(Hyperlink.CursorProperty, System.Windows.Input.Cursors.Hand));
+            this.Resources[typeof(Hyperlink)] = hyperlinkStyle;
+
             this.LostFocus += RichTextBoxService_LostFocus;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
+            this.PreviewTextInput += RichTextBoxService_PreviewTextInput;
+            this.PreviewMouseLeftButtonDown += RichTextBoxService_PreviewMouseLeftButtonDown;
+            this.AddHandler(
+                Hyperlink.RequestNavigateEvent,
+                new RequestNavigateEventHandler(RichTextBoxService_RequestNavigate));
             InitializeDocument();
+            this.IsDocumentEnabled = true;
             this.AcceptsTab = true; // Разрешаем табы
         }
 
 
-        //перенос строки без создания нового параграфа
+        // Shift+Enter — перенос строки внутри текущего абзаца. Обычный Enter
+        // не перехватываем: WPF сам создаёт новый Paragraph или ListItem.
         private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
-            {
-                e.Handled = true; // отменяем стандартный Enter
+            var isEnter = e.Key == Key.Enter || e.Key == Key.Return;
+            if(!isEnter || !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                return;
 
-                var caret = this.CaretPosition;
-
-                // Вставляем перенос строки
-                caret.InsertLineBreak();
-
-                // Вставляем пустой Run, чтобы была точка для курсора
-                var emptyRun = new Run("");
-                caret.Paragraph.Inlines.Add(emptyRun);
-
-                // Ставим курсор в этот Run
-                this.CaretPosition = emptyRun.ContentStart;
-            }
+            e.Handled = true;
+            EditingCommands.EnterLineBreak.Execute(null, this);
         }
 
         void IRichTextBoxService.Focus() => this.Focus();
@@ -111,7 +134,115 @@ namespace CryptoBook.Services
             }
             this.Focus();
         }
-        void IRichTextBoxService.InsertTextAtCaret(string text) => this.CaretPosition.InsertTextInRun(text);
+        void IRichTextBoxService.SetTypingProperty(DependencyProperty property, object? value)
+        {
+            if(property == null)
+                throw new ArgumentNullException(nameof(property));
+
+            if(!IsTypingAnchorAtCaret())
+                typingProperties.Clear();
+
+            RememberTypingAnchor();
+            typingProperties[property] = value;
+        }
+        void IRichTextBoxService.InsertTextAtCaret(string text)
+        {
+            if(string.IsNullOrEmpty(text))
+                return;
+
+            var start = this.CaretPosition;
+            bool applyTypingProperties = typingProperties.Count > 0 && IsTypingAnchorAtCaret();
+
+            if(applyTypingProperties)
+            {
+                var inheritedValues = inheritedTypingProperties.ToDictionary(
+                    property => property,
+                    property => GetEffectiveValue(start, property));
+
+                var run = new Run(text, start);
+                foreach(var (property, value) in inheritedValues)
+                {
+                    if(!ReferenceEquals(value, DependencyProperty.UnsetValue))
+                        run.SetValue(property, value);
+                }
+                foreach(var (property, value) in typingProperties)
+                    run.SetValue(property, value);
+
+                this.CaretPosition = run.ContentEnd;
+            } else
+            {
+                typingProperties.Clear();
+                start.InsertTextInRun(text);
+                this.CaretPosition = start.GetPositionAtOffset(text.Length, LogicalDirection.Forward) ?? start;
+            }
+
+            this.Selection.Select(this.CaretPosition, this.CaretPosition);
+            RememberTypingAnchor();
+        }
+        void IRichTextBoxService.ClearDocument()
+        {
+            this.BeginChange();
+            try
+            {
+                var paragraph = paragraphFactory.Create();
+                paragraph.Margin = new Thickness(0);
+                paragraph.Element.ClearValue(Paragraph.LineHeightProperty);
+                paragraph.LineStackingStrategy =
+                    LineStackingStrategy.MaxHeight;
+
+                this.Document.LineHeight = double.NaN;
+                this.Document.LineStackingStrategy =
+                    LineStackingStrategy.MaxHeight;
+                this.Document.Blocks.Clear();
+                this.Document.Blocks.Add(paragraph.Element);
+
+                var caret = paragraph.Element.ContentStart
+                    .GetInsertionPosition(LogicalDirection.Forward);
+                this.CaretPosition = caret;
+                this.Selection.Select(caret, caret);
+
+                typingProperties.Clear();
+                RememberTypingAnchor();
+            } finally
+            {
+                this.EndChange();
+            }
+        }
+
+        bool IRichTextBoxService.HasEmptyParagraphs() =>
+            HasRemovableEmptyParagraphs(this.Document.Blocks);
+
+        int IRichTextBoxService.RemoveEmptyParagraphs()
+        {
+            int removed;
+            this.BeginChange();
+            try
+            {
+                removed = RemoveEmptyParagraphs(this.Document.Blocks);
+                if(this.Document.Blocks.Count == 0)
+                {
+                    var paragraph = paragraphFactory.Create();
+                    paragraph.Margin = new Thickness(0);
+                    this.Document.Blocks.Add(paragraph.Element);
+                }
+
+                if(this.CaretPosition.Paragraph is null)
+                {
+                    TextPointer caret = this.Document.ContentStart
+                        .GetInsertionPosition(LogicalDirection.Forward);
+                    this.CaretPosition = caret;
+                    this.Selection.Select(caret, caret);
+                }
+
+                typingProperties.Clear();
+                RememberTypingAnchor();
+            } finally
+            {
+                this.EndChange();
+            }
+
+            return removed;
+        }
         void IRichTextBoxService.Undo() => this.Undo();
         void IRichTextBoxService.Redo() => this.Redo();
         void IRichTextBoxService.ApplyVerticalScrollBarVisibility(ScrollBarVisibility visibility)
@@ -131,33 +262,14 @@ namespace CryptoBook.Services
 
         public double GetFontSizeInSelection()
         {
-            if(Selection.IsEmpty)
-                return (double)(Selection.GetPropertyValue(System.Windows.Documents.TextElement.FontSizeProperty) ?? 12.0);
+            var value = Selection.GetPropertyValue(TextElement.FontSizeProperty);
+            if(value is double size)
+                return size;
 
-            TextPointer start = Selection.Start;
-            TextPointer end = Selection.End;
-
-            var sizes = new List<double>();
-            var position = start;
-
-            while(position != null && position.CompareTo(end) < 0)
-            {
-                if(position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text ||
-                    position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.ElementStart)
-                {
-                    var element = position.Parent as System.Windows.Documents.TextElement;
-                    if(element != null)
-                    {
-                        var sizeObj = element.GetValue(System.Windows.Documents.TextElement.FontSizeProperty);
-                        if(sizeObj is double size)
-                            sizes.Add(size);
-                    }
-                }
-                position = position.GetNextContextPosition(LogicalDirection.Forward);
-            }
-            if(sizes.Count == 0)
-                return 12.0;
-            return sizes.Count > 1 ? 0 : sizes[0];
+            // Ноль обозначает смешанные размеры в выделении.
+            return ReferenceEquals(value, DependencyProperty.UnsetValue)
+                ? 0
+                : Document.FontSize;
         }
         private object GetTextPropertiesInCaretPosition(DependencyProperty property)
         {
@@ -169,28 +281,255 @@ namespace CryptoBook.Services
             return range.GetPropertyValue(property);
         }
 
+        private static bool HasRemovableEmptyParagraphs(
+            BlockCollection blocks)
+        {
+            Block[] items = blocks.ToList().ToArray();
+            if(items.Length > 1 &&
+               items.Any(block =>
+                   block is Paragraph paragraph &&
+                   IsEmptyParagraph(paragraph)))
+            {
+                return true;
+            }
+
+            return items.Any(block => block switch
+            {
+                Section section =>
+                    HasRemovableEmptyParagraphs(section.Blocks),
+                System.Windows.Documents.List list =>
+                    list.ListItems.Any(item =>
+                        HasRemovableEmptyParagraphs(item.Blocks)),
+                _ => false
+            });
+        }
+
+        private static int RemoveEmptyParagraphs(
+            BlockCollection blocks)
+        {
+            int removed = 0;
+
+            foreach(Block block in blocks.ToList())
+            {
+                if(block is Section section)
+                {
+                    removed += RemoveEmptyParagraphs(section.Blocks);
+                }
+                else if(block is System.Windows.Documents.List list)
+                {
+                    foreach(ListItem item in list.ListItems)
+                        removed += RemoveEmptyParagraphs(item.Blocks);
+                }
+            }
+
+            if(blocks.Count <= 1)
+                return removed;
+
+            foreach(Paragraph paragraph in blocks
+                .OfType<Paragraph>()
+                .Where(IsEmptyParagraph)
+                .ToList())
+            {
+                if(blocks.Count <= 1)
+                    break;
+
+                blocks.Remove(paragraph);
+                removed++;
+            }
+
+            return removed;
+        }
+
+        private static bool IsEmptyParagraph(Paragraph paragraph)
+        {
+            if(!string.IsNullOrWhiteSpace(paragraph.Name) ||
+               paragraph.Tag is not null)
+            {
+                return false;
+            }
+
+            return paragraph.Inlines.All(IsEmptyInline);
+        }
+
+        private static bool IsEmptyInline(Inline inline)
+        {
+            if(!string.IsNullOrWhiteSpace(inline.Name) ||
+               inline.Tag is not null)
+            {
+                return false;
+            }
+
+            return inline switch
+            {
+                Run run => string.IsNullOrWhiteSpace(
+                    (run.Text ?? string.Empty)
+                    .Replace("\u200B", string.Empty)
+                    .Replace("\u2060", string.Empty)),
+                LineBreak => true,
+                Hyperlink => false,
+                Span span => span.Inlines.All(IsEmptyInline),
+                _ => false
+            };
+        }
+
         private void RichTextBoxService_LostFocus(object sender, RoutedEventArgs e)
         {
             last_Selection = new TextRange(Selection?.Start, Selection?.End);
         }
-        double IRichTextBoxService.GetFontSizeInSelection()
+        private void RichTextBoxService_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            throw new NotImplementedException();
+            if(string.IsNullOrEmpty(e.Text) || typingProperties.Count == 0 || !IsTypingAnchorAtCaret())
+                return;
+
+            e.Handled = true;
+            ((IRichTextBoxService)this).InsertTextAtCaret(e.Text);
         }
+
+        private void RichTextBoxService_PreviewMouseLeftButtonDown(
+            object sender,
+            MouseButtonEventArgs e)
+        {
+            var position = GetPositionFromPoint(e.GetPosition(this), snapToText: true);
+            var hyperlink = FindHyperlink(position);
+            if(hyperlink?.NavigateUri == null)
+                return;
+
+            e.Handled = TryNavigate(hyperlink.NavigateUri);
+        }
+
+        private void RichTextBoxService_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            if(e.Uri != null)
+                e.Handled = TryNavigate(e.Uri);
+        }
+
+        private bool TryNavigate(Uri uri)
+        {
+            if(!uri.IsAbsoluteUri)
+            {
+                var anchorName = Uri.UnescapeDataString(
+                    uri.OriginalString.TrimStart('#'));
+                var target = FindNamedTextElement(anchorName);
+                if(target != null)
+                {
+                    var position = target.ContentStart.GetInsertionPosition(LogicalDirection.Forward);
+                    this.Selection.Select(position, position);
+                    this.CaretPosition = position;
+                    target.BringIntoView();
+                    this.Focus();
+                    return true;
+                }
+                return false;
+            }
+
+            uriNavigationService.TryOpen(uri);
+            return true;
+        }
+
+        private static Hyperlink? FindHyperlink(TextPointer? position)
+        {
+            if(position == null)
+                return null;
+
+            return FindAncestorHyperlink(position.Parent) ??
+                   FindAncestorHyperlink(
+                       position.GetAdjacentElement(LogicalDirection.Forward) as DependencyObject) ??
+                   FindAncestorHyperlink(
+                       position.GetAdjacentElement(LogicalDirection.Backward) as DependencyObject);
+        }
+
+        private static Hyperlink? FindAncestorHyperlink(DependencyObject? current)
+        {
+            while(current != null)
+            {
+                if(current is Hyperlink hyperlink)
+                    return hyperlink;
+
+                current = current is FrameworkContentElement element
+                    ? element.Parent
+                    : null;
+            }
+
+            return null;
+        }
+
+        private TextElement? FindNamedTextElement(string name)
+        {
+            var seen = new HashSet<TextElement>();
+            for(var position = this.Document.ContentStart;
+                position != null && position.CompareTo(this.Document.ContentEnd) < 0;
+                position = position.GetNextContextPosition(LogicalDirection.Forward))
+            {
+                if(position.GetAdjacentElement(LogicalDirection.Forward) is TextElement element &&
+                   !string.IsNullOrWhiteSpace(element.Name) &&
+                   string.Equals(element.Name, name, StringComparison.Ordinal) &&
+                   seen.Add(element))
+                {
+                    return element;
+                }
+            }
+
+            return null;
+        }
+        private bool IsTypingAnchorAtCaret()
+        {
+            var paragraph = this.CaretPosition.Paragraph;
+            if(typingAnchorParagraph == null || !ReferenceEquals(typingAnchorParagraph, paragraph))
+                return false;
+
+            return GetTextOffset(paragraph, this.CaretPosition) == typingAnchorTextOffset;
+        }
+        private void RememberTypingAnchor()
+        {
+            typingAnchorParagraph = this.CaretPosition.Paragraph;
+            typingAnchorTextOffset = GetTextOffset(typingAnchorParagraph, this.CaretPosition);
+        }
+        private static int GetTextOffset(Paragraph? paragraph, TextPointer position)
+        {
+            if(paragraph == null)
+                return 0;
+
+            return new TextRange(paragraph.ContentStart, position).Text.Length;
+        }
+        private object GetEffectiveValue(TextPointer position, DependencyProperty property)
+        {
+            var value = new TextRange(position, position).GetPropertyValue(property);
+            if(!ReferenceEquals(value, DependencyProperty.UnsetValue))
+                return value;
+
+            if(position.Parent is TextElement parent)
+                return parent.GetValue(property);
+
+            var backward = position.GetAdjacentElement(LogicalDirection.Backward) as TextElement;
+            if(backward != null)
+                return backward.GetValue(property);
+
+            var forward = position.GetAdjacentElement(LogicalDirection.Forward) as TextElement;
+            return forward?.GetValue(property) ?? this.Document.GetValue(property);
+        }
+        double IRichTextBoxService.GetFontSizeInSelection() => GetFontSizeInSelection();
         private void InitializeDocument()
         {
             var document = this.Document;
-            document.Background=System.Windows.Media.Brushes.Transparent;
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
-            document.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
-            document.LineHeight = 20;
+            document.SetResourceReference(
+                FlowDocument.BackgroundProperty,
+                "CurrentDocumentBackground");
+            this.SetResourceReference(
+                BackgroundProperty,
+                "CurrentDocumentBackground");
+            // Автоматическая высота учитывает реальные метрики выбранного шрифта.
+            // MaxHeight не позволяет глифам и маркерам списка перекрывать соседнюю строку.
+            document.LineStackingStrategy = LineStackingStrategy.MaxHeight;
+            document.LineHeight = double.NaN;
             Run newRun = new("     ");
             newRun.Foreground = System.Windows.Media.Brushes.Black;
             newRun.Background= System.Windows.Media.Brushes.Transparent;
             var newParagraph = paragraphFactory.Create();
+            newParagraph.Margin = new Thickness(0);
 
-            document.PagePadding = new Thickness(10, 20, 10, 20);
+            DocumentPageLayout.Apply(document);
             document.Blocks.Clear();
             document.Blocks.Add((Paragraph)newParagraph);
 
