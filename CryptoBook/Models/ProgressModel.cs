@@ -97,7 +97,8 @@ namespace CryptoBook.Models
         internal void Execute_Canceled(object? obj)
         {
             cancellationTokenSource.Cancel();
-            StatusMessage = "Отмена операции…";
+            StatusMessage = LocalizationManager.GetString(
+                "Progress.Canceling");
             IsOperationRunning = false;
         }
 

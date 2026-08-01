@@ -17,7 +17,7 @@ namespace CryptoBook.Converters
         public StockIconIdToImageSourceConverter(IStockIconService stockIconService)
             => _stockIconService = stockIconService ?? throw new ArgumentNullException(nameof(stockIconService));
 
-        // value: SHSTOCKICONID | string ("SIID_FOLDER") | uint/int
+        // Значение: SHSTOCKICONID, строка (например, "SIID_FOLDER"), uint или int.
         // parameter: "small" | "large" | null (по умолчанию small)
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

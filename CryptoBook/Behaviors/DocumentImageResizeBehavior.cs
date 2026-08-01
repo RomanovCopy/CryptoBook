@@ -1,5 +1,6 @@
 using CryptoBook.Adorners;
 using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
 
@@ -28,7 +29,8 @@ namespace CryptoBook.Behaviors
     {
         public static RoutedUICommand SetImageLayoutCommand { get; } =
             new(
-                "Изменить размещение изображения",
+                LocalizationManager.GetString(
+                    "Editor.ImageLayoutCommand"),
                 nameof(SetImageLayoutCommand),
                 typeof(DocumentImageResizeBehavior));
 

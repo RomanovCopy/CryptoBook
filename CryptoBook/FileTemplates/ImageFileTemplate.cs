@@ -11,7 +11,9 @@ namespace CryptoBook.FileTemplates
     public class ImageFileTemplate: IFileTemplate
     {
         public string Id => "Image";
-        public string DisplayName => "Изображение";
+        public string DisplayName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.Image");
         public string DefaultExtension => ".png";
 
         public IReadOnlyCollection<string> Extensions => 
@@ -24,7 +26,9 @@ namespace CryptoBook.FileTemplates
             ".webp"
         ];
 
-        public string SuggestedBaseName => "New Image";
+        public string SuggestedBaseName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.NewImage");
         public FileOpenMode OpenMode => FileOpenMode.Media;
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct)

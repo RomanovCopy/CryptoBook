@@ -36,7 +36,7 @@ namespace CryptoBook.Composition
             return [.. EnumerateParagraphs(startPara, endPara)];
         }
 
-        // --- helpers (локальные) ---
+        // --- Локальные вспомогательные методы ---
 
         private static IEnumerable<Paragraph> EnumerateParagraphs(Paragraph start, Paragraph end)
         {

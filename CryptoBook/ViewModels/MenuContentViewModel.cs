@@ -99,7 +99,8 @@ namespace CryptoBook.ViewModels
             catch(Exception exception)
             {
                 await messages.ShowMessage(
-                    "Не удалось вставить изображение",
+                    LocalizationManager.GetString(
+                        "Document.InsertImageError"),
                     exception.Message);
             }
         }

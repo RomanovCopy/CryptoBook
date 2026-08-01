@@ -3,11 +3,17 @@ using CryptoBook.Interfaces;
 using CryptoBook.Security;
 using CryptoBook.Views;
 
+using CryptoBook.Infrastructure;
+
 using System.Diagnostics;
 using System.IO;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Выбирает внутреннее или системное открытие файла. Защищённые файлы
+    /// расшифровываются только во временный каталог текущего процесса.
+    /// </summary>
     public sealed class WorkspaceFileOpenService:
         IWorkspaceFileOpenService,
         IDisposable
@@ -80,6 +86,8 @@ namespace CryptoBook.Services
             if(!EnsureEncryptionKey())
                 return WorkspaceFileOpenResult.Cancel();
 
+            // Отдельный каталог на операцию упрощает проверку результата и позволяет
+            // удалить открытый текст целиком после внутреннего открытия или ошибки.
             string operationDirectory = Path.Combine(
                 temporaryRoot,
                 Guid.NewGuid().ToString("N"));
@@ -91,7 +99,7 @@ namespace CryptoBook.Services
                     operationDirectory,
                     "document");
                 await progressDialogService.RunAsync(
-                    "Расшифровка файла",
+                LocalizationManager.GetString("Media.DecryptingFile"),
                     async (progress, token) =>
                     {
                         using var linkedTokenSource =
@@ -110,7 +118,8 @@ namespace CryptoBook.Services
                 if(outputFiles.Length != 1)
                 {
                     throw new IOException(
-                        "Не удалось определить расшифрованный файл.");
+                    LocalizationManager.GetString(
+                        "Media.DecryptedFileUnknown"));
                 }
 
                 string decryptedPath = outputFiles[0];
@@ -130,6 +139,8 @@ namespace CryptoBook.Services
 
                 if(template?.OpenMode == FileOpenMode.Media)
                 {
+                    // Медиаплеер читает файл после возврата из метода, поэтому каталог
+                    // остаётся жить до Dispose сервиса вместе с окном приложения.
                     var context = new Dictionary<string, object?>
                     {
                         ["path"] = decryptedPath
@@ -181,6 +192,8 @@ namespace CryptoBook.Services
             if(!Directory.Exists(externalRoot))
                 return;
 
+            // Имя каталога начинается с PID владельца. Каталоги живых процессов
+            // не трогаем: параллельно могут быть запущены несколько экземпляров.
             foreach(string directory in Directory.GetDirectories(externalRoot))
             {
                 string name = Path.GetFileName(directory);

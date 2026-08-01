@@ -202,8 +202,9 @@ namespace CryptoBook.Services
             }
 
             throw new DirectoryNotFoundException(
-                "Не найдены нативные библиотеки FFmpeg. Ожидался полный " +
-                $"FFmpeg 7.1 runtime в '{string.Join("' или '", candidates)}'.");
+                LocalizationManager.Format(
+                    "Media.FfmpegMissing",
+                    string.Join(" | ", candidates)));
         }
 
         private void OnOpenCompleted( object? sender, FlyleafLib.MediaPlayer.OpenCompletedArgs e)
@@ -218,7 +219,7 @@ namespace CryptoBook.Services
             else
             {
                 var error = string.IsNullOrWhiteSpace(e.Error)
-                    ? "Не удалось открыть медиафайл."
+                    ? LocalizationManager.GetString("Media.OpenFailed")
                     : e.Error;
 
                 openCompletion?.TrySetException(new InvalidOperationException(error));

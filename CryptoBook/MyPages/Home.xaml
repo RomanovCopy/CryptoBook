@@ -10,7 +10,7 @@
       xmlns:local="clr-namespace:CryptoBook.MyPages"
       mc:Ignorable="d" 
       d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IHomeViewModel}}"
-      Title="Home"
+      Title="{Binding [Home.Title], Source={StaticResource Res}}"
       Background="{DynamicResource CurrentWindowBackground}">
     <Page.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IHomeViewModel}"/>

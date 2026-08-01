@@ -17,7 +17,7 @@ namespace CryptoBook.ViewModels
     {
         private readonly FontFormatBar_Model model;
 
-        // IFontFormatBar_ViewModel implementation
+        // Реализация IFontFormatBar_ViewModel.
 
         public double FontSize { get=>model.FontSize; set=>model.FontSize=value; }
         public System.Windows.FontStyle? FontStyle { get => model.FontStyle; set => model.FontStyle=value; }
@@ -39,7 +39,7 @@ namespace CryptoBook.ViewModels
         public ObservableCollection<FontStretch> FontStretches => model.FontStretches;
 
 
-        // Constructor
+        // Конструктор.
         public FontFormatBar_ViewModel(IFontService service, IInlineService inlineService, IRichTextBoxService richService)
         {
             model = new FontFormatBar_Model(
@@ -51,7 +51,7 @@ namespace CryptoBook.ViewModels
 
 
 
-        // IFontFormatBar_ViewModel implementation
+        // Реализация IFontFormatBar_ViewModel.
 
         public ICommand SetFontStyleCommand => setFontStyleCommand??=new RelayCommand(model.Execute_SetFontStyleCommand, model.CanExecute_SetFontStyleCommand);
         RelayCommand? setFontStyleCommand;
@@ -102,7 +102,7 @@ namespace CryptoBook.ViewModels
         RelayCommand? popupClosed;
 
 
-        // IViewModel implementation
+        // Реализация IViewModel.
 
 
         public ICommand Loaded => 

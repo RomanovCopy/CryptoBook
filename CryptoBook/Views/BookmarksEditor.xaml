@@ -15,7 +15,7 @@
         BorderThickness="1"
         d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IBookmarksEditorViewModel}}"
         Icon="/CryptoBook;component/Resources/Icons/icon002.ico"
-        Title="Закладки">
+        Title="{Binding [Bookmarks.Title], Source={StaticResource Res}}">
 
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IBookmarksEditorViewModel}"/>
@@ -61,7 +61,7 @@
                 </Grid.RowDefinitions>
 
                 <DockPanel Margin="4,2,4,7">
-                    <TextBlock Text="Закладки"
+                    <TextBlock Text="{Binding [Bookmarks.Title], Source={StaticResource Res}}"
                                FontSize="15"
                                FontWeight="SemiBold"
                                VerticalAlignment="Center"/>
@@ -108,11 +108,11 @@
                         Height="32"
                         HorizontalAlignment="Stretch"
                         Command="{Binding RebuildIndexFromDocument}"
-                        ToolTip="Обновить индекс из документа">
+                        ToolTip="{Binding [Bookmarks.RefreshIndex], Source={StaticResource Res}}">
                     <StackPanel Orientation="Horizontal">
                         <Path Data="{StaticResource Icon.Refresh}"
                               Style="{StaticResource EditorToolbarSmallIconStyle}"/>
-                        <TextBlock Text="Обновить" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding [Bookmarks.Refresh], Source={StaticResource Res}}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </Grid>
@@ -142,27 +142,27 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="Свойства закладки"
+                <TextBlock Text="{Binding [Bookmarks.Properties], Source={StaticResource Res}}"
                            FontSize="15"
                            FontWeight="SemiBold"
                            Margin="0,0,0,10"/>
 
                 <TextBlock Grid.Row="1"
-                           Text="Имя"
+                           Text="{Binding [Bookmarks.Name], Source={StaticResource Res}}"
                            FontWeight="SemiBold"
                            Margin="0,0,0,4"/>
                 <DockPanel Grid.Row="2" LastChildFill="True">
                     <Button DockPanel.Dock="Right"
                             Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding Remove}"
-                            ToolTip="Удалить">
+                            ToolTip="{Binding [Bookmarks.DeleteSelected], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.BookmarkRemove}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button DockPanel.Dock="Right"
                             Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding Rename}"
-                            ToolTip="Переименовать">
+                            ToolTip="{Binding [Bookmarks.RenameSelected], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.BookmarkRename}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
@@ -177,7 +177,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Заметка"
+                    <TextBlock Text="{Binding [Bookmarks.Note], Source={StaticResource Res}}"
                                FontWeight="SemiBold"
                                Margin="0,0,0,4"/>
                     <TextBox Grid.Row="1"
@@ -190,30 +190,32 @@
                 </Grid>
 
                 <TextBlock Grid.Row="4"
-                           Text="{Binding SelectedBookmark.BookmarkUriString, StringFormat=Якорь: {0}}"
                            TextTrimming="CharacterEllipsis"
                            Opacity="0.65"
-                           Margin="0,0,0,7"/>
+                           Margin="0,0,0,7">
+                    <Run Text="{Binding [Bookmarks.Anchor], Source={StaticResource Res}}"/>
+                    <Run Text="{Binding SelectedBookmark.BookmarkUriString}"/>
+                </TextBlock>
 
                 <DockPanel Grid.Row="5" LastChildFill="True">
                     <Button DockPanel.Dock="Right"
                             Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding InsertHyperlinkTo}"
-                            ToolTip="Вставить ссылку">
+                            ToolTip="{Binding [Bookmarks.InsertSelectedLink], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.Link}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <Button DockPanel.Dock="Right"
                             Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding NavigateTo}"
-                            ToolTip="Перейти к закладке">
+                            ToolTip="{Binding [Bookmarks.GoToSelected], Source={StaticResource Res}}">
                         <Path Data="{StaticResource Icon.Bookmark}"
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <TextBox Text="{Binding LinkText, UpdateSourceTrigger=PropertyChanged}"
                              Padding="7,5"
                              Margin="0,3,3,3"
-                             ToolTip="Текст новой ссылки"/>
+                             ToolTip="{Binding [Bookmarks.LinkTextHint], Source={StaticResource Res}}"/>
                 </DockPanel>
 
                 <TextBlock Grid.Row="6"
@@ -232,7 +234,7 @@
                 Margin="0,10,0,0"
                 HorizontalAlignment="Right"
                 Command="{Binding Close}"
-                Content="Закрыть"/>
+                Content="{Binding [Common.Close], Source={StaticResource Res}}"/>
     </Grid>
 
     <i:Interaction.Triggers>

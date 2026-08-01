@@ -49,6 +49,39 @@ public sealed class ComboBoxLocalizationTests
             toggleButton.HorizontalContentAlignment);
     }
 
+    [WpfFact]
+    public void DropUpTemplate_HonorsDisplayMemberPathForSelectedItem()
+    {
+        ResourceDictionary styles = LoadCompiledDictionary(
+            "ComboBoxStyles.xaml");
+        var foreground = new SolidColorBrush(Color.FromRgb(241, 243, 245));
+        var comboBox = new ComboBox
+        {
+            Style = Assert.IsType<Style>(styles["DropUpComboBoxStyle"]),
+            Foreground = foreground,
+            Background = Brushes.Black,
+            BorderBrush = Brushes.Gray,
+            Width = 220,
+            Height = 34,
+            DisplayMemberPath = nameof(FileTemplateOption.DisplayName),
+            ItemsSource = new[] { new FileTemplateOption("PDF") },
+            SelectedIndex = 0
+        };
+
+        comboBox.ApplyTemplate();
+        comboBox.Measure(new Size(220, 34));
+        comboBox.Arrange(new Rect(0, 0, 220, 34));
+        comboBox.UpdateLayout();
+
+        var toggleButton = Assert.IsType<ToggleButton>(
+            comboBox.Template.FindName("ToggleButton", comboBox));
+        TextBlock selectedText = Assert.Single(
+            FindVisualDescendants<TextBlock>(toggleButton),
+            textBlock => textBlock.Text == "PDF");
+
+        Assert.Equal(foreground.Color, GetColor(selectedText.Foreground));
+    }
+
     private static IEnumerable<T> FindVisualDescendants<T>(
         DependencyObject parent)
         where T: DependencyObject
@@ -79,4 +112,6 @@ public sealed class ComboBoxLocalizationTests
 
         return Assert.IsType<ResourceDictionary>(XamlReader.Load(stream));
     }
+
+    private sealed record FileTemplateOption(string DisplayName);
 }

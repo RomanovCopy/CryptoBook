@@ -7,8 +7,9 @@
         MinWidth="360"
         MinHeight="150"
         WindowStartupLocation="CenterOwner"
+        Background="{StaticResource CurrentWindowBackground}"
         ResizeMode="NoResize">
-    <Grid Margin="18">
+    <Grid Margin="18" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="12"/>
@@ -17,22 +18,23 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding [Directory.NewPrompt], Source={StaticResource Res}}"/>
+        <TextBlock Text="{Binding [Directory.NewPrompt], Source={StaticResource Res}}" Foreground="{StaticResource CurrentInputForeground}"/>
         <TextBox x:Name="DirectoryNameTextBox"
                  Grid.Row="2"
                  MinHeight="28"
                  VerticalContentAlignment="Center"
+                 Foreground="{StaticResource CurrentInputForeground}"
                  Text="{Binding DirectoryName, UpdateSourceTrigger=PropertyChanged}"/>
 
         <StackPanel Grid.Row="4"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Content="{Binding [SideMenu.Create], Source={StaticResource Res}}"
+            <Button Content="{Binding [SideMenu.Create], Source={StaticResource Res}}" Style="{StaticResource PrimaryButtonStyle}" 
                     Width="90"
                     Margin="0,0,8,0"
                     IsDefault="True"
                     Click="CreateButton_Click"/>
-            <Button Content="{Binding [Common.Cancel], Source={StaticResource Res}}"
+            <Button Content="{Binding [Common.Cancel], Source={StaticResource Res}}" Style="{StaticResource PrimaryButtonStyle}" 
                     Width="90"
                     IsCancel="True"
                     Click="CancelButton_Click"/>

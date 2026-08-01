@@ -4,36 +4,50 @@ using System.Globalization;
 
 namespace CryptoBook.Infrastructure
 {
+    /// <summary>
+    /// Менеджер локализации приложения: хранит доступные языки, текущую культуру
+    /// и методы для инициализации и смены культуры.
+    /// </summary>
     public static class LocalizationManager
     {
+        /// <summary>Имя культуры по умолчанию.</summary>
         public const string DefaultCultureName = "en-US";
+
+        /// <summary>Событие, возникающее при смене текущей культуры.</summary>
         public static event EventHandler? CultureChanged;
 
+        /// <summary>Список доступных локалей, которые поддерживает приложение.</summary>
         public static IReadOnlyList<ApplicationLanguageOption> AvailableLanguages { get; } =
         [
             new(DefaultCultureName, "English"),
             new("ru-RU", "Русский")
         ];
 
-        public static string CurrentCultureName =>
-            NormalizeCultureName(CultureInfo.CurrentUICulture.Name);
+        /// <summary>Текущее имя культуры (нормализованное).</summary>
+        public static string CurrentCultureName => NormalizeCultureName(CultureInfo.CurrentUICulture.Name);
 
+        /// <summary>
+        /// Инициализирует текущую культуру из настроек приложения.
+        /// Если в настройках указана некорректная или устаревшая культура,
+        /// сохраняет нормализованное значение в настройки.
+        /// </summary>
         public static void InitializeFromSettings()
         {
-            string cultureName = NormalizeCultureName(
-                Properties.Settings.Default.CultureInfo);
+            string cultureName = NormalizeCultureName( Properties.Settings.Default.CultureInfo);
             ApplyCulture(cultureName);
 
-            if(!string.Equals(
-                Properties.Settings.Default.CultureInfo,
-                cultureName,
-                StringComparison.Ordinal))
+            if(!string.Equals(Properties.Settings.Default.CultureInfo, cultureName, StringComparison.Ordinal))
             {
                 Properties.Settings.Default.CultureInfo = cultureName;
                 Properties.Settings.Default.Save();
             }
         }
 
+        /// <summary>
+        /// Выбирает и применяет культуру по имени. Сохраняет выбор в настройках,
+        /// уведомляет о смене ресурсов и вызывает событие CultureChanged.
+        /// </summary>
+        /// <param name="cultureName">Имя культуры (может быть null).</param>
         public static void SelectCulture(string? cultureName)
         {
             string normalized = NormalizeCultureName(cultureName);
@@ -44,22 +58,40 @@ namespace CryptoBook.Infrastructure
             CultureChanged?.Invoke(null, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Получает локализованную строку по ключу. Если ключ не найден,
+        /// возвращает сам ключ.
+        /// </summary>
+        /// <param name="key">Ключ ресурса.</param>
+        /// <returns>Локализованная строка или ключ при отсутствии ресурса.</returns>
         public static string GetString(string key) =>
             Properties.Resources.ResourceManager.GetString(
                 key,
                 CultureInfo.CurrentUICulture) ?? key;
 
+        /// <summary>
+        /// Форматирует локализованную строку с переданными аргументами
+        /// в соответствии с текущей культурой (например, форматы дат/чисел).
+        /// </summary>
+        /// <param name="key">Ключ ресурса.</param>
+        /// <param name="arguments">Параметры форматирования.</param>
+        /// <returns>Форматированная строка.</returns>
         public static string Format(string key, params object?[] arguments) =>
-            string.Format(
-                CultureInfo.CurrentCulture,
-                GetString(key),
-                arguments);
+            string.Format( CultureInfo.CurrentCulture, GetString(key), arguments);
 
+        /// <summary>
+        /// Нормализует имя культуры: любые варианты русской локали приводятся к "ru-RU",
+        /// все остальные — к культуре по умолчанию.
+        /// </summary>
+        /// <param name="cultureName">Входное имя культуры (может быть null).</param>
+        /// <returns>Нормализованное имя культуры.</returns>
         public static string NormalizeCultureName(string? cultureName) =>
-            cultureName?.StartsWith("ru", StringComparison.OrdinalIgnoreCase) is true
-                ? "ru-RU"
-                : DefaultCultureName;
+            cultureName?.StartsWith("ru", StringComparison.OrdinalIgnoreCase) is true ? "ru-RU" : DefaultCultureName;
 
+        /// <summary>
+        /// Применяет культуру к текущему потоку и ресурсам приложения.
+        /// </summary>
+        /// <param name="cultureName">Имя культуры для применения (должно быть нормализованным).</param>
         private static void ApplyCulture(string cultureName)
         {
             var culture = CultureInfo.GetCultureInfo(cultureName);

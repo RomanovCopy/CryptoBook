@@ -9,6 +9,10 @@ using System.Xml.Linq;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Загружает XamlPackage и совместимые текстовые представления. Перед загрузкой
+    /// нормализует устаревшие прикладные типы абзацев до стандартных элементов WPF.
+    /// </summary>
     public sealed class XamlPackageDocumentFormatHandler:
         TextRangeDocumentFormatHandler<XamlPackageFileTemplate>
     {
@@ -26,6 +30,8 @@ namespace CryptoBook.Services
             if(!IsXamlPackage(content))
                 return content;
 
+            // Работаем с копией пакета: исходный массив остаётся нетронутым,
+            // а при отсутствии устаревших типов возвращается без изменений.
             using var package = new MemoryStream();
             package.Write(content);
             package.Position = 0;
@@ -73,6 +79,8 @@ namespace CryptoBook.Services
         protected override string ResolveLoadDataFormat(
             ReadOnlySpan<byte> content)
         {
+            // Исторически документы могли сохраняться под одним расширением
+            // в нескольких форматах, поэтому определяем формат по содержимому.
             if(IsXamlPackage(content))
                 return System.Windows.DataFormats.XamlPackage;
 

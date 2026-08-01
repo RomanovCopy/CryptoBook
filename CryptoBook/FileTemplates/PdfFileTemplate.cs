@@ -18,6 +18,7 @@ namespace CryptoBook.FileTemplates
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct) =>
             throw new NotSupportedException(
-                "Создание PDF в CryptoBook не поддерживается.");
+                CryptoBook.Infrastructure.LocalizationManager.GetString(
+                    "FileTemplate.PdfUnsupported"));
     }
 }

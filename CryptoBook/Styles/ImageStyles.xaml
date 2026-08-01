@@ -81,7 +81,7 @@
         <Path Fill="{DynamicResource IconBrush}" Data="M17,17 L23,17 L20,13 Z"/>
     </Canvas>
     
-    <!--Bullet List-->
+    <!-- Маркированный список. -->
     <Canvas x:Key="Icon_BulletList" Width="24" Height="24">
         <!-- Первая строка -->
         <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="5" />
@@ -96,7 +96,7 @@
         <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
     </Canvas>
 
-    <!--Numbered List-->
+    <!-- Нумерованный список. -->
     <Canvas x:Key="Icon_NumberedList" Width="24" Height="24">
         <!-- 1 -->
         <TextBlock FontSize="8" FontWeight="Normal" Text="1" Canvas.Left="2" Canvas.Top="1"/>
@@ -111,7 +111,7 @@
         <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
     </Canvas>
 
-    <!--Clear List-->
+    <!-- Очистка списка. -->
     <Canvas x:Key="Icon_ClearList" Width="24" Height="24">
         <!-- bullets + lines -->
         <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="5"/>
@@ -129,7 +129,7 @@
     </Canvas>
 
 
-    <!-- Insert Hyperlink 24x24 -->
+    <!-- Вставка гиперссылки, 24x24. -->
     <Canvas x:Key="Icon_InsertHyperlink" Width="24" Height="24"
         SnapsToDevicePixels="True"
         RenderTransformOrigin="0.5,0.5">

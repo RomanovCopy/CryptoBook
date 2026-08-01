@@ -5,6 +5,10 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Behaviors
 {
+    /// <summary>
+    /// Добавляет ожидаемую клавиатурную навигацию по страницам и возвращает фокус
+    /// просмотрщику после его появления.
+    /// </summary>
     public static class DocumentPageKeyboardNavigationBehavior
     {
         public static readonly DependencyProperty IsEnabledProperty =
@@ -54,6 +58,8 @@ namespace CryptoBook.Behaviors
             if(!viewer.IsVisible)
                 return;
 
+            // Фокус запрашивается после обработки IsVisibleChanged, когда элемент
+            // уже участвует в визуальном дереве и способен принять ввод.
             viewer.Dispatcher.BeginInvoke(
                 DispatcherPriority.Input,
                 new Action(() =>

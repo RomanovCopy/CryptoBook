@@ -9,9 +9,13 @@ namespace CryptoBook.FileTemplates
     public sealed class VideoFileTemplate: IFileTemplate
     {
         public string Id => "Video";
-        public string DisplayName => "Видео";
+        public string DisplayName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.Video");
         public string DefaultExtension => ".mp4";
-        public string SuggestedBaseName => "New Video";
+        public string SuggestedBaseName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.NewVideo");
         public FileOpenMode OpenMode => FileOpenMode.Media;
 
         public IReadOnlyCollection<string> Extensions =>

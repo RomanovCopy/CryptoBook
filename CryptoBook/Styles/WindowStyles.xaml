@@ -55,25 +55,25 @@
                                     <Grid Height="Auto">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
-                                            <!--Button Back-->
+                                            <!-- Кнопка «Назад». -->
                                             <ColumnDefinition Width="Auto"/>
-                                            <!--Button Forward-->
+                                            <!-- Кнопка «Вперёд». -->
                                             <ColumnDefinition Width="Auto"/>
-                                            <!--Icon-->
+                                            <!-- Значок. -->
                                             <ColumnDefinition Width="Auto"/>
-                                            <!--Title-->
+                                            <!-- Заголовок. -->
                                             <ColumnDefinition Width="Auto"/>
-                                            <!--ComboBox-->
+                                            <!-- Выпадающий список. -->
                                             <ColumnDefinition Width="*"/>
-                                            <!--CurrentPath-->
+                                            <!-- Текущий путь. -->
                                             <ColumnDefinition Width="*"/>
-                                            <!--Search-->
+                                            <!-- Поиск. -->
                                             <ColumnDefinition Width="24"/>
-                                            <!--Button MinSize-->
+                                            <!-- Кнопка сворачивания. -->
                                             <ColumnDefinition Width="24"/>
-                                            <!--Button MaxSize-->
+                                            <!-- Кнопка разворачивания. -->
                                             <ColumnDefinition Width="24"/>
-                                            <!--Button Close-->
+                                            <!-- Кнопка закрытия. -->
                                         </Grid.ColumnDefinitions>
                                         <Button
                                             x:Name="buttonBack" 

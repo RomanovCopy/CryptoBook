@@ -331,4 +331,233 @@
   <data name="Explorer.Favorites" xml:space="preserve"><value>Favorites</value></data>
   <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Remove from favorites</value></data>
   <data name="Explorer.Favorites.Empty" xml:space="preserve"><value>Add the current folder using the ★ button</value></data>
+  <data name="Common.OK" xml:space="preserve"><value>OK</value></data>
+  <data name="Common.Undo" xml:space="preserve"><value>_Undo</value></data>
+  <data name="Common.Redo" xml:space="preserve"><value>_Redo</value></data>
+  <data name="Common.SelectAll" xml:space="preserve"><value>Select _all</value></data>
+  <data name="Common.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Home.Title" xml:space="preserve"><value>Home</value></data>
+  <data name="Editor.ClearDocument" xml:space="preserve"><value>_Clear document</value></data>
+  <data name="Editor.RemoveEmptyParagraphs" xml:space="preserve"><value>Remove _empty paragraphs</value></data>
+  <data name="Editor.Formatting" xml:space="preserve"><value>_Formatting</value></data>
+  <data name="Editor.Bold" xml:space="preserve"><value>_Bold</value></data>
+  <data name="Editor.Italic" xml:space="preserve"><value>_Italic</value></data>
+  <data name="Editor.Underline" xml:space="preserve"><value>_Underline</value></data>
+  <data name="Editor.ClearFormatting" xml:space="preserve"><value>_Clear formatting</value></data>
+  <data name="Editor.Alignment" xml:space="preserve"><value>_Alignment</value></data>
+  <data name="Editor.Image" xml:space="preserve"><value>_Image</value></data>
+  <data name="Editor.ImageInline" xml:space="preserve"><value>_Inline</value></data>
+  <data name="Editor.ImageCenteredBlock" xml:space="preserve"><value>Centered _block</value></data>
+  <data name="Editor.ImageFloatLeft" xml:space="preserve"><value>Wrap: image on the _left</value></data>
+  <data name="Editor.ImageFloatRight" xml:space="preserve"><value>Wrap: image on the _right</value></data>
+  <data name="Editor.ImageLayoutCommand" xml:space="preserve"><value>Change image layout</value></data>
+  <data name="Editor.PagedPreview" xml:space="preserve"><value>Paged preview</value></data>
+  <data name="Editor.Editing" xml:space="preserve"><value>Editing</value></data>
+  <data name="Editor.Editor" xml:space="preserve"><value>Editor</value></data>
+  <data name="Editor.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Editor.Zoom100" xml:space="preserve"><value>100% zoom</value></data>
+  <data name="Editor.FitToWindow" xml:space="preserve"><value>Fit to window</value></data>
+  <data name="Bookmarks.Properties" xml:space="preserve"><value>Bookmark properties</value></data>
+  <data name="Bookmarks.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Bookmarks.Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Bookmarks.AnchorFormat" xml:space="preserve"><value>Anchor: {0}</value></data>
+  <data name="Bookmarks.Anchor" xml:space="preserve"><value>Anchor:</value></data>
+  <data name="Bookmarks.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Bookmarks.Added" xml:space="preserve"><value>Bookmark “{0}” was added.</value></data>
+  <data name="Bookmarks.Removed" xml:space="preserve"><value>Bookmark “{0}” was removed.</value></data>
+  <data name="Bookmarks.Renamed" xml:space="preserve"><value>“{0}” was renamed to “{1}”.</value></data>
+  <data name="Bookmarks.LinkInserted" xml:space="preserve"><value>A link to “{0}” was inserted.</value></data>
+  <data name="Bookmarks.IndexRefreshed" xml:space="preserve"><value>Index refreshed. Bookmarks: {0}.</value></data>
+  <data name="Bookmarks.OperationFailed" xml:space="preserve"><value>The operation could not be completed.</value></data>
+  <data name="Bookmarks.NoDocument" xml:space="preserve"><value>No document is open.</value></data>
+  <data name="Bookmarks.ReadOnly" xml:space="preserve"><value>The document is read-only.</value></data>
+  <data name="Bookmarks.NameEmpty" xml:space="preserve"><value>The bookmark name is empty.</value></data>
+  <data name="Bookmarks.OldNameEmpty" xml:space="preserve"><value>The old name is empty.</value></data>
+  <data name="Bookmarks.NewNameEmpty" xml:space="preserve"><value>The new name is empty.</value></data>
+  <data name="Bookmarks.NameInvalid" xml:space="preserve"><value>The name must not contain # or control characters.</value></data>
+  <data name="Bookmarks.NameExists" xml:space="preserve"><value>“{0}” already exists.</value></data>
+  <data name="Bookmarks.NameUnchanged" xml:space="preserve"><value>The name has not changed.</value></data>
+  <data name="Bookmarks.NameNotFound" xml:space="preserve"><value>Bookmark “{0}” was not found.</value></data>
+  <data name="Bookmarks.BadCaret" xml:space="preserve"><value>The caret position is unavailable.</value></data>
+  <data name="Bookmarks.InsideHyperlink" xml:space="preserve"><value>The caret is inside a hyperlink.</value></data>
+  <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Only inline content within one paragraph is supported.</value></data>
+  <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>The selection overlaps another hyperlink.</value></data>
+  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Enter link text or select text in the document.</value></data>
+  <data name="Explorer.WindowTitle" xml:space="preserve"><value>File Explorer</value></data>
+  <data name="Explorer.Column.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Date modified</value></data>
+  <data name="Explorer.Column.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Explorer.Column.Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Selected: {0}</value></data>
+  <data name="Explorer.Selected" xml:space="preserve"><value>Selected:</value></data>
+  <data name="Explorer.Copying" xml:space="preserve"><value>Copying files</value></data>
+  <data name="Explorer.CopyError" xml:space="preserve"><value>Copy error</value></data>
+  <data name="Explorer.SortError" xml:space="preserve"><value>Sorting error</value></data>
+  <data name="Explorer.UnknownSortColumn" xml:space="preserve"><value>Could not recognize the column to sort.</value></data>
+  <data name="Explorer.CreateDirectoryError" xml:space="preserve"><value>Directory creation error</value></data>
+  <data name="Explorer.ItemAlreadyExists" xml:space="preserve"><value>An item named “{0}” already exists.</value></data>
+  <data name="Explorer.RenameError" xml:space="preserve"><value>Rename error</value></data>
+  <data name="Explorer.Moving" xml:space="preserve"><value>Moving</value></data>
+  <data name="Explorer.MoveError" xml:space="preserve"><value>Move error</value></data>
+  <data name="Explorer.RefreshError" xml:space="preserve"><value>Refresh error</value></data>
+  <data name="Explorer.CancelOperation" xml:space="preserve"><value>Cancel operation</value></data>
+  <data name="Explorer.RenameCanceledConfirmation" xml:space="preserve"><value>Item renaming was canceled.{0}Are you sure?</value></data>
+  <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Directory open error</value></data>
+  <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Could not open “{0}”:{1}{2}</value></data>
+  <data name="Explorer.OpenFileTitle" xml:space="preserve"><value>Open file</value></data>
+  <data name="Explorer.FileOpenError" xml:space="preserve"><value>File open error</value></data>
+  <data name="Explorer.FileOpenFailed" xml:space="preserve"><value>Failed to open {0}:{1}{2}</value></data>
+  <data name="Explorer.OpenFileDefaultFailed" xml:space="preserve"><value>Could not open {0} with the default application.</value></data>
+  <data name="Explorer.DirectoryPathRequired" xml:space="preserve"><value>A directory path is required.</value></data>
+  <data name="Explorer.RootPathNotFound" xml:space="preserve"><value>Could not determine the root of “{0}”.</value></data>
+  <data name="Explorer.DirectoryNameEmpty" xml:space="preserve"><value>The directory name cannot be empty.</value></data>
+  <data name="Explorer.DirectoryNameInvalid" xml:space="preserve"><value>The directory name contains invalid characters or has an invalid format.</value></data>
+  <data name="Explorer.DirectoryNameReserved" xml:space="preserve"><value>The name “{0}” is reserved by the operating system.</value></data>
+  <data name="Explorer.CryptoBookFilesFilter" xml:space="preserve"><value>CryptoBook files (*.cbook)|*.cbook</value></data>
+  <data name="Explorer.AllFilesFilter" xml:space="preserve"><value>All files (*.*)|*.*</value></data>
+  <data name="Explorer.SaveEncryptedTitle" xml:space="preserve"><value>Save encrypted file</value></data>
+  <data name="Explorer.SaveDecryptedTitle" xml:space="preserve"><value>Save decrypted file</value></data>
+  <data name="Explorer.EncryptionError" xml:space="preserve"><value>Encryption error</value></data>
+  <data name="Explorer.DecryptionError" xml:space="preserve"><value>Decryption error</value></data>
+  <data name="Explorer.Encryption" xml:space="preserve"><value>Encryption</value></data>
+  <data name="Explorer.Decryption" xml:space="preserve"><value>Decryption</value></data>
+  <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve"><value>An entire drive cannot be encrypted or decrypted. Select a file or directory.</value></data>
+  <data name="Explorer.ItemDoesNotExist" xml:space="preserve"><value>The selected file or directory does not exist.</value></data>
+  <data name="Explorer.RefreshAfterOperationFailed" xml:space="preserve"><value>The operation completed successfully, but the file view could not be refreshed:{0}{1}</value></data>
+  <data name="Explorer.OverwriteTitle" xml:space="preserve"><value>Overwrite source item</value></data>
+  <data name="Explorer.OverwriteFilePrompt" xml:space="preserve"><value>Replace the source file with the {0} copy?</value></data>
+  <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve"><value>Replace the source files with the {0} copies?</value></data>
+  <data name="Explorer.EncryptedAdjective" xml:space="preserve"><value>encrypted</value></data>
+  <data name="Explorer.DecryptedAdjective" xml:space="preserve"><value>decrypted</value></data>
+  <data name="Explorer.EncryptedCopiesAdjective" xml:space="preserve"><value>encrypted</value></data>
+  <data name="Explorer.DecryptedCopiesAdjective" xml:space="preserve"><value>decrypted</value></data>
+  <data name="Explorer.EncryptionWarning" xml:space="preserve"><value>Opening without the key will no longer be possible.</value></data>
+  <data name="Explorer.EncryptedSuffix" xml:space="preserve"><value>Encrypted</value></data>
+  <data name="Explorer.DecryptedSuffix" xml:space="preserve"><value>Decrypted</value></data>
+  <data name="File.NewTitle" xml:space="preserve"><value>New file</value></data>
+  <data name="File.CreateOperation" xml:space="preserve"><value>Creating file</value></data>
+  <data name="File.TypeNotSelected" xml:space="preserve"><value>No file type is selected.</value></data>
+  <data name="FileTemplate.Image" xml:space="preserve"><value>Image</value></data>
+  <data name="FileTemplate.Text" xml:space="preserve"><value>Text file</value></data>
+  <data name="FileTemplate.Secure" xml:space="preserve"><value>Encrypted file</value></data>
+  <data name="FileTemplate.Video" xml:space="preserve"><value>Video</value></data>
+  <data name="FileTemplate.Xaml" xml:space="preserve"><value>XAML file</value></data>
+  <data name="FileTemplate.XamlPackage" xml:space="preserve"><value>XAML package file</value></data>
+  <data name="FileTemplate.PdfUnsupported" xml:space="preserve"><value>Creating PDF files in CryptoBook is not supported.</value></data>
+  <data name="FileTemplate.RichText" xml:space="preserve"><value>Rich Text Format</value></data>
+  <data name="FileTemplate.NewImage" xml:space="preserve"><value>New image</value></data>
+  <data name="FileTemplate.NewFile" xml:space="preserve"><value>New file</value></data>
+  <data name="FileTemplate.NewDocument" xml:space="preserve"><value>New document</value></data>
+  <data name="FileTemplate.NewEncryptedFile" xml:space="preserve"><value>New encrypted file</value></data>
+  <data name="FileTemplate.NewVideo" xml:space="preserve"><value>New video</value></data>
+  <data name="FileTemplate.NewXamlPackage" xml:space="preserve"><value>New XAML package</value></data>
+  <data name="Media.EmptyTitle" xml:space="preserve"><value>Photos and videos</value></data>
+  <data name="Media.PlayerTitle" xml:space="preserve"><value>Media player</value></data>
+  <data name="Media.DefaultStatus" xml:space="preserve"><value>Open an image or video</value></data>
+  <data name="Media.OpenFile" xml:space="preserve"><value>Open file</value></data>
+  <data name="Media.PreviousImage" xml:space="preserve"><value>Previous image</value></data>
+  <data name="Media.NextImage" xml:space="preserve"><value>Next image</value></data>
+  <data name="Media.Rotate" xml:space="preserve"><value>Rotate</value></data>
+  <data name="Media.FitImage" xml:space="preserve"><value>Fit image</value></data>
+  <data name="Media.DeleteImage" xml:space="preserve"><value>Delete image</value></data>
+  <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Open an image or video</value></data>
+  <data name="Media.Loading" xml:space="preserve"><value>Loading: {0}</value></data>
+  <data name="Media.DeleteTitle" xml:space="preserve"><value>Delete image</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>Delete “{0}”?</value></data>
+  <data name="Media.DeleteError" xml:space="preserve"><value>Delete error</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Could not delete the image.</value></data>
+  <data name="Media.NoMoreImages" xml:space="preserve"><value>There are no more images in the folder.</value></data>
+  <data name="Media.DecodeFailed" xml:space="preserve"><value>Could not decode the image.</value></data>
+  <data name="Media.Filter" xml:space="preserve"><value>Media files|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Images|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Video|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|CryptoBook files|*.cbook;*.cbox|All files|*.*</value></data>
+  <data name="Key.Title" xml:space="preserve"><value>Encryption key</value></data>
+  <data name="Key.Prompt" xml:space="preserve"><value>Enter the encryption key:</value></data>
+  <data name="Key.TooShort" xml:space="preserve"><value>The key must be at least {0} characters long.</value></data>
+  <data name="Key.InvalidCharacters" xml:space="preserve"><value>The key contains invalid characters.</value></data>
+  <data name="Key.Enter" xml:space="preserve"><value>Enter a key.</value></data>
+  <data name="Key.MinimumLength" xml:space="preserve"><value>Minimum key length: {0}.</value></data>
+  <data name="Key.Repeat" xml:space="preserve"><value>Repeat the key.</value></data>
+  <data name="Key.Mismatch" xml:space="preserve"><value>The keys do not match.</value></data>
+  <data name="EncryptionMode.Title" xml:space="preserve"><value>File save mode</value></data>
+  <data name="EncryptionMode.Prompt" xml:space="preserve"><value>Choose how to save the file:</value></data>
+  <data name="EncryptionMode.SaveAs" xml:space="preserve"><value>Save file as...</value></data>
+  <data name="EncryptionMode.ReplaceSource" xml:space="preserve"><value>Replace source file</value></data>
+  <data name="Progress.Canceling" xml:space="preserve"><value>Canceling operation…</value></data>
+  <data name="Favorites.ErrorTitle" xml:space="preserve"><value>Favorites error</value></data>
+  <data name="Favorites.AddFailed" xml:space="preserve"><value>Could not add the directory:{0}{1}</value></data>
+  <data name="Favorites.RenameTitle" xml:space="preserve"><value>Rename favorite</value></data>
+  <data name="Favorites.RenamePrompt" xml:space="preserve"><value>Enter a display name:</value></data>
+  <data name="Favorites.RenameFailed" xml:space="preserve"><value>Could not rename the favorite:{0}{1}</value></data>
+  <data name="Favorites.RemoveFailed" xml:space="preserve"><value>Could not remove the favorite:{0}{1}</value></data>
+  <data name="Favorites.RefreshFailed" xml:space="preserve"><value>Could not refresh favorites:{0}{1}</value></data>
+  <data name="Hyperlink.InvalidAddress" xml:space="preserve"><value>Enter a valid HTTP or HTTPS address, for example https://example.com.</value></data>
+  <data name="SystemItemRename.Title" xml:space="preserve"><value>Rename item</value></data>
+  <data name="SystemItemRename.OldName" xml:space="preserve"><value>Old name:</value></data>
+  <data name="SystemItemRename.OldExtension" xml:space="preserve"><value>Old extension:</value></data>
+  <data name="SystemItemRename.NewName" xml:space="preserve"><value>New name:</value></data>
+  <data name="SystemItemRename.NewExtension" xml:space="preserve"><value>New extension:</value></data>
+  <data name="Document.SaveOperation" xml:space="preserve"><value>Saving document</value></data>
+  <data name="Document.SaveError" xml:space="preserve"><value>Save error</value></data>
+  <data name="Document.InsertImageError" xml:space="preserve"><value>Could not insert the image</value></data>
+  <data name="Document.RecoveryPrompt" xml:space="preserve"><value>An automatically saved copy from the previous session was found. Restore the document?</value></data>
+  <data name="Document.RecoveryTitle" xml:space="preserve"><value>CryptoBook recovery</value></data>
+  <data name="Document.UnsavedPrompt" xml:space="preserve"><value>The document has unsaved changes. Save them before closing?</value></data>
+  <data name="Document.RecoveryFailed" xml:space="preserve"><value>Could not restore the document:{0}{1}</value></data>
+  <data name="Document.RecoveryErrorTitle" xml:space="preserve"><value>Recovery error</value></data>
+  <data name="Document.RecoveryCleanupFailed" xml:space="preserve"><value>Could not delete the automatic recovery file. It may be offered again at the next startup:{0}{1}</value></data>
+  <data name="Document.RecoveryCleanupErrorTitle" xml:space="preserve"><value>Recovery cleanup error</value></data>
+  <data name="Preview.SelectFile" xml:space="preserve"><value>Select a file to preview.</value></data>
+  <data name="Preview.Creating" xml:space="preserve"><value>Creating preview…</value></data>
+  <data name="Preview.DisplayFailed" xml:space="preserve"><value>Could not display the file:{0}{1}</value></data>
+  <data name="Preview.EncryptedNeedsKey" xml:space="preserve"><value>The file is encrypted. Enter the key to enable preview.</value></data>
+  <data name="Preview.PdfUnsupported" xml:space="preserve"><value>Built-in PDF preview is not supported yet.</value></data>
+  <data name="Preview.DetailsOnly" xml:space="preserve"><value>Only file details are available for this file type.</value></data>
+  <data name="Preview.EncryptedTooLarge" xml:space="preserve"><value>The encrypted file is too large for an in-memory preview.</value></data>
+  <data name="Preview.DecryptedTooLarge" xml:space="preserve"><value>The decrypted file is too large for a safe preview.</value></data>
+  <data name="Preview.DecryptedPdfUnsupported" xml:space="preserve"><value>The file was decrypted successfully, but built-in PDF preview is not supported yet.</value></data>
+  <data name="Preview.Truncated" xml:space="preserve"><value>— Preview truncated —</value></data>
+  <data name="Preview.DecryptedTypeUnsupported" xml:space="preserve"><value>The file was decrypted successfully, but its format does not support built-in preview.</value></data>
+  <data name="Preview.DecryptFailed" xml:space="preserve"><value>Could not decrypt the file for preview. Check the key:{0}{1}</value></data>
+  <data name="Preview.ImageTooLarge" xml:space="preserve"><value>The image is too large for a safe preview.</value></data>
+  <data name="Preview.DirectoryUnavailable" xml:space="preserve"><value>{0}{1}The directory is currently unavailable</value></data>
+  <data name="Preview.BytesFormat" xml:space="preserve"><value>{0} B</value></data>
+  <data name="Preview.KilobytesFormat" xml:space="preserve"><value>{0:F1} KB</value></data>
+  <data name="Preview.MegabytesFormat" xml:space="preserve"><value>{0:F1} MB</value></data>
+  <data name="Preview.GigabytesFormat" xml:space="preserve"><value>{0:F1} GB</value></data>
+  <data name="File.AlreadyExists" xml:space="preserve"><value>The file already exists.</value></data>
+  <data name="File.Writing" xml:space="preserve"><value>Writing file</value></data>
+  <data name="File.Created" xml:space="preserve"><value>File created</value></data>
+  <data name="File.Loaded" xml:space="preserve"><value>File loaded</value></data>
+  <data name="File.ReadComplete" xml:space="preserve"><value>Reading complete</value></data>
+  <data name="File.Reading" xml:space="preserve"><value>Reading file</value></data>
+  <data name="File.Saved" xml:space="preserve"><value>File saved</value></data>
+  <data name="File.CopyComplete" xml:space="preserve"><value>Copy complete</value></data>
+  <data name="File.PickerTitle" xml:space="preserve"><value>Select a file</value></data>
+  <data name="File.TextFilter" xml:space="preserve"><value>Text files (*.txt)|*.txt|All files (*.*)|*.*</value></data>
+  <data name="File.ImagePickerTitle" xml:space="preserve"><value>Insert image</value></data>
+  <data name="File.ImageFilter" xml:space="preserve"><value>Images|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|All files|*.*</value></data>
+  <data name="File.NewFolderPickerDescription" xml:space="preserve"><value>Select a folder for the new file</value></data>
+  <data name="Document.SaveAsTitle" xml:space="preserve"><value>Save document as</value></data>
+  <data name="Workspace.DirectoryNotFound" xml:space="preserve"><value>Workspace directory not found: {0}</value></data>
+  <data name="Workspace.EnterSearchQuery" xml:space="preserve"><value>Enter part of a file name.</value></data>
+  <data name="Workspace.NotSelected" xml:space="preserve"><value>No workspace directory is selected.</value></data>
+  <data name="Workspace.LocalOnly" xml:space="preserve"><value>Search is currently supported only in a local workspace directory.</value></data>
+  <data name="Error.OperationCanceled" xml:space="preserve"><value>The operation was canceled.</value></data>
+  <data name="Security.UnknownMode" xml:space="preserve"><value>Unknown processing mode.</value></data>
+  <data name="Security.DestinationRequired" xml:space="preserve"><value>No destination path was specified.</value></data>
+  <data name="Security.UnsupportedItemType" xml:space="preserve"><value>Item type “{0}” is not supported.</value></data>
+  <data name="Security.DestinationDirectoryUnknown" xml:space="preserve"><value>Could not determine the destination directory for “{0}”.</value></data>
+  <data name="Security.SourceDirectoryUnknown" xml:space="preserve"><value>Could not determine the directory of “{0}”.</value></data>
+  <data name="Security.DecryptionResultUnknown" xml:space="preserve"><value>Could not determine the decryption result.</value></data>
+  <data name="Security.SourceFileNotFound" xml:space="preserve"><value>The source file was not found.</value></data>
+  <data name="Security.SourceDirectoryNotFound" xml:space="preserve"><value>Source directory “{0}” was not found.</value></data>
+  <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve"><value>In Save As mode, the destination directory must differ from the source directory.</value></data>
+  <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve"><value>The file is not an encrypted CryptoBook file.</value></data>
+  <data name="Security.InvalidExtension" xml:space="preserve"><value>Invalid file extension.</value></data>
+  <data name="Media.FfmpegMissing" xml:space="preserve"><value>FFmpeg native libraries were not found. A complete FFmpeg 7.1 runtime was expected in “{0}”.</value></data>
+  <data name="Media.OpenFailed" xml:space="preserve"><value>Could not open the media file.</value></data>
+  <data name="Media.DecryptedFileUnknown" xml:space="preserve"><value>Could not determine the decrypted media file.</value></data>
+  <data name="Media.DecryptingFile" xml:space="preserve"><value>Decrypting file</value></data>
+  <data name="Document.NoSaveFormats" xml:space="preserve"><value>No document save formats are registered.</value></data>
+  <data name="Image.EmptyFile" xml:space="preserve"><value>The image file is empty.</value></data>
+  <data name="Image.FileNotFound" xml:space="preserve"><value>The image file was not found.</value></data>
 </root>

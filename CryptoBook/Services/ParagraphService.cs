@@ -120,7 +120,7 @@ namespace CryptoBook.Services
             // Набор DependencyProperty, которые обычно имеет смысл переносить
             var dps = new DependencyProperty[]
             {
-                // TextElement-level
+                // Уровень TextElement.
                 ParagraphService.BackgroundProperty,
                 ParagraphService.ForegroundProperty,
                 ParagraphService.FontFamilyProperty,
@@ -133,14 +133,14 @@ namespace CryptoBook.Services
                 ParagraphService.KeepTogetherProperty,
                 ParagraphService.KeepWithNextProperty,
 
-                // Block-level
+                // Уровень Block.
                 Block.TextAlignmentProperty,
                 Block.LineHeightProperty,
                 Block.LineStackingStrategyProperty,
                 Block.MarginProperty,
                 Block.BreakPageBeforeProperty,
 
-                // Paragraph-level
+                // Уровень Paragraph.
                 Paragraph.TextIndentProperty
             };
 

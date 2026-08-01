@@ -273,7 +273,7 @@ public sealed class DirectoryMonitoringService: IDirectoryMonitoringService, IDi
         private int _disposed;               // 0/1
         private int _restartInProgress;      // 0/1
 
-        // Debounce restart
+        // Перезапуск с подавлением серии повторных событий.
         private readonly object _restartLock = new();
         private CancellationTokenSource? _restartCts;
         private Exception? _lastRestartReason;

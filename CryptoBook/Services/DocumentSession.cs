@@ -7,6 +7,10 @@ using System.Windows.Controls;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Единый источник состояния текущего документа: пути, отображаемого имени,
+    /// формата и ревизий, по которым определяется наличие несохранённых изменений.
+    /// </summary>
     public sealed class DocumentSession: IDocumentSession
     {
         private readonly IRichTextBoxService richTextBox;
@@ -172,6 +176,8 @@ namespace CryptoBook.Services
             if(savedRevision < 0 || savedRevision > Revision)
                 throw new ArgumentOutOfRangeException(nameof(savedRevision));
 
+            // Сохраняем именно переданную ревизию: пока шла запись на диск,
+            // пользователь мог продолжить редактирование и увеличить Revision.
             FilePath = Path.GetFullPath(filePath);
             DisplayName = Path.GetFileName(FilePath);
             Template = template;
@@ -195,6 +201,8 @@ namespace CryptoBook.Services
             object sender,
             TextChangedEventArgs args)
         {
+            // Загрузка и программная очистка временно подавляют TextChanged,
+            // иначе только что открытый документ сразу считался бы изменённым.
             if(!suppressDocumentChanges)
                 MarkDirty();
         }

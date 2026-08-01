@@ -21,7 +21,7 @@
         d:DataContext="{x:Type viewmodels:FileExplorerViewModel}"
         MinHeight="400" MinWidth="600"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
-        Title="FileExplorer">
+        Title="{Binding [Explorer.WindowTitle], Source={StaticResource Res}}">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}" />
     </Window.DataContext>
@@ -125,17 +125,17 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Command Bar -->
+            <!-- Панель команд. -->
             <RowDefinition Height="Auto"/>
-            <!-- Favorites Bar -->
+            <!-- Панель избранного. -->
             <RowDefinition Height="Auto"/>
-            <!-- Address Bar + Tabs -->
+            <!-- Адресная строка и вкладки. -->
             <RowDefinition Height="*"/>
-            <!-- Main Content: Nav Pane + File View -->
+            <!-- Основная область: навигация и список файлов. -->
             <RowDefinition Height="Auto"/>
-            <!--Selected File-->
+            <!-- Выбранный файл. -->
             <RowDefinition Height="Auto"/>
-            <!-- Status Bar -->
+            <!-- Строка состояния. -->
         </Grid.RowDefinitions>
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
@@ -340,16 +340,16 @@
                 <ColumnDefinition x:Name="leftcolumn"  Width="{Binding LeftColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/>
 
                 <ColumnDefinition Width="3"/>
-                <!--Splitter-->
+                <!-- Разделитель. -->
 
                 <ColumnDefinition Width="*"/>
-                <!-- File List -->
+                <!-- Список файлов. -->
 
                 <ColumnDefinition Width="3"/>
-                <!--Splitter-->
+                <!-- Разделитель. -->
 
                 <ColumnDefinition  Width="{Binding RightColumnPercent, Converter={markup:ResolveConverter ConverterType={x:Type converters:PercentToGridLengthConverter}},ConverterParameter={markup:ResolveViewModel ViewModelType={x:Type interfaces:IFileExplorerViewModel}},Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"/>
-                <!-- Details Pane (опционально) -->
+                <!-- Необязательная панель сведений. -->
 
             </Grid.ColumnDefinitions>
 
@@ -397,7 +397,7 @@
                     <GridView>
                         <GridViewColumn >
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Name" Content="Name" />
+                                <GridViewColumnHeader Tag="Name" Content="{Binding [Explorer.Column.Name], Source={StaticResource Res}}" />
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -436,7 +436,7 @@
                         </GridViewColumn>
                         <GridViewColumn >
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="LastWriteTimeUtc" Content="Date modified" />
+                                <GridViewColumnHeader Tag="LastWriteTimeUtc" Content="{Binding [Explorer.Column.DateModified], Source={StaticResource Res}}" />
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -448,7 +448,7 @@
                         </GridViewColumn>
                         <GridViewColumn >
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Extension" Content="Type" />
+                                <GridViewColumnHeader Tag="Extension" Content="{Binding [Explorer.Column.Type], Source={StaticResource Res}}" />
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -460,7 +460,7 @@
                         </GridViewColumn>
                         <GridViewColumn>
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Size" Content="Size" />
+                                <GridViewColumnHeader Tag="Size" Content="{Binding [Explorer.Column.Size], Source={StaticResource Res}}" />
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -490,7 +490,7 @@
                         <Setter Property="HorizontalAlignment" Value="Center"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontWeight" Value="Medium"/>
                         <Setter Property="FontSize" Value="16"/>
                     </Style>
                 </ListView.ItemContainerStyle>
@@ -648,10 +648,21 @@
                 BorderThickness="1"
                 CornerRadius="5"
                 Padding="5">
-            <TextBlock Text="{Binding Path=SelectedItem.FullPath, StringFormat='Selected: {0}', 
-                UpdateSourceTrigger=PropertyChanged, ElementName=listview}"
-                       Foreground="{DynamicResource CurrentWindowForeground}"
-                       FontSize="16"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding [Explorer.Selected], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           FontSize="16"
+                           Margin="0,0,4,0"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding SelectedItem.FullPath, ElementName=listview}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           FontSize="16"
+                           TextTrimming="CharacterEllipsis"/>
+            </Grid>
         </Border>
 
     </Grid>

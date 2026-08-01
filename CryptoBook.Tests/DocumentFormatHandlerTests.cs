@@ -1,4 +1,5 @@
 using CryptoBook.FileTemplates;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
 
@@ -47,7 +48,9 @@ public sealed class DocumentFormatHandlerTests
             document.ContentEnd).Text;
 
         Assert.NotEmpty(content);
-        Assert.Contains("New document", text);
+        Assert.Contains(
+            LocalizationManager.GetString("FileTemplate.NewDocument"),
+            text);
     }
 
     [StaFact]

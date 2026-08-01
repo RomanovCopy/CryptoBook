@@ -1,6 +1,8 @@
 using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System.IO;
 
 namespace CryptoBook.Services
@@ -27,7 +29,9 @@ namespace CryptoBook.Services
             string nativePath = GetNativeLocalPath(path);
             if(!Directory.Exists(nativePath))
                 throw new DirectoryNotFoundException(
-                    $"Рабочая директория не найдена: {nativePath}");
+                    LocalizationManager.Format(
+                        "Workspace.DirectoryNotFound",
+                        nativePath));
 
             Properties.Settings.Default.WorkspaceDirectory =
                 LocalScheme + nativePath;
@@ -45,13 +49,16 @@ namespace CryptoBook.Services
 
             if(normalizedQuery.Length == 0)
                 throw new ArgumentException(
-                    "Введите часть имени файла.",
+                    LocalizationManager.GetString(
+                        "Workspace.EnterSearchQuery"),
                     nameof(query));
             if(maxResults <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maxResults));
             if(!Directory.Exists(root))
                 throw new DirectoryNotFoundException(
-                    $"Рабочая директория не найдена: {root}");
+                    LocalizationManager.Format(
+                        "Workspace.DirectoryNotFound",
+                        root));
 
             return Task.Run(
                 () => SearchCore(
@@ -157,7 +164,8 @@ namespace CryptoBook.Services
         {
             if(string.IsNullOrWhiteSpace(path))
                 throw new InvalidOperationException(
-                    "Рабочая директория не выбрана.");
+                    LocalizationManager.GetString(
+                        "Workspace.NotSelected"));
 
             string trimmedPath = path.Trim();
             int schemeSeparator = trimmedPath.IndexOf(
@@ -169,7 +177,8 @@ namespace CryptoBook.Services
             string scheme = trimmedPath[..(schemeSeparator + 3)];
             if(!scheme.Equals(LocalScheme, StringComparison.OrdinalIgnoreCase))
                 throw new NotSupportedException(
-                    "Поиск пока поддерживается только в локальной рабочей директории.");
+                    LocalizationManager.GetString(
+                        "Workspace.LocalOnly"));
 
             return Path.GetFullPath(trimmedPath[LocalScheme.Length..]);
         }

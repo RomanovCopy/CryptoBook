@@ -28,12 +28,12 @@
         </Style>
     </ContextMenu.Resources>
 
-    <MenuItem Header="_Отменить" Command="ApplicationCommands.Undo" InputGestureText="Ctrl+Z">
+    <MenuItem Header="{Binding [Common.Undo], Source={StaticResource Res}}" Command="ApplicationCommands.Undo" InputGestureText="Ctrl+Z">
         <MenuItem.Icon>
             <Image Source="{DynamicResource editundoimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
     </MenuItem>
-    <MenuItem Header="_Повторить" Command="ApplicationCommands.Redo" InputGestureText="Ctrl+Y">
+    <MenuItem Header="{Binding [Common.Redo], Source={StaticResource Res}}" Command="ApplicationCommands.Redo" InputGestureText="Ctrl+Y">
         <MenuItem.Icon>
             <Image Source="{DynamicResource editredoimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
@@ -41,17 +41,17 @@
 
     <Separator/>
 
-    <MenuItem Header="В_ырезать" Command="ApplicationCommands.Cut" InputGestureText="Ctrl+X">
+    <MenuItem Header="{Binding [Common.Cut], Source={StaticResource Res}}" Command="ApplicationCommands.Cut" InputGestureText="Ctrl+X">
         <MenuItem.Icon>
             <Image Source="{DynamicResource editcutimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
     </MenuItem>
-    <MenuItem Header="_Копировать" Command="ApplicationCommands.Copy" InputGestureText="Ctrl+C">
+    <MenuItem Header="{Binding [Common.Copy], Source={StaticResource Res}}" Command="ApplicationCommands.Copy" InputGestureText="Ctrl+C">
         <MenuItem.Icon>
             <Image Source="{DynamicResource editcopyimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
     </MenuItem>
-    <MenuItem Header="В_ставить" Command="ApplicationCommands.Paste" InputGestureText="Ctrl+V">
+    <MenuItem Header="{Binding [Common.Paste], Source={StaticResource Res}}" Command="ApplicationCommands.Paste" InputGestureText="Ctrl+V">
         <MenuItem.Icon>
             <Image Source="{DynamicResource editpasteimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
@@ -59,25 +59,25 @@
 
     <Separator/>
 
-    <MenuItem Header="Выделить _всё" Command="ApplicationCommands.SelectAll" InputGestureText="Ctrl+A"/>
+    <MenuItem Header="{Binding [Common.SelectAll], Source={StaticResource Res}}" Command="ApplicationCommands.SelectAll" InputGestureText="Ctrl+A"/>
 
     <Separator/>
 
-    <MenuItem Header="О_чистить документ" Command="{Binding ClearDocument}">
+    <MenuItem Header="{Binding [Editor.ClearDocument], Source={StaticResource Res}}" Command="{Binding ClearDocument}">
         <MenuItem.Icon>
             <Image Source="{DynamicResource normaltextimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
     </MenuItem>
-    <MenuItem Header="Удалить _пустые абзацы"
+    <MenuItem Header="{Binding [Editor.RemoveEmptyParagraphs], Source={StaticResource Res}}"
               Command="{Binding RemoveEmptyParagraphs}"/>
 
     <Separator/>
 
-    <MenuItem Header="_Форматирование">
+    <MenuItem Header="{Binding [Editor.Formatting], Source={StaticResource Res}}">
         <MenuItem.Icon>
             <Image Source="{DynamicResource normaltextimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
-        <MenuItem Header="_Жирный"
+        <MenuItem Header="{Binding [Editor.Bold], Source={StaticResource Res}}"
                   Command="{Binding FontFormatting.SetFontWeightCommand}"
                   CommandParameter="{Binding Bold}"
                   InputGestureText="Ctrl+B">
@@ -85,7 +85,7 @@
                 <Image Source="{DynamicResource fontboldimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="_Курсив"
+        <MenuItem Header="{Binding [Editor.Italic], Source={StaticResource Res}}"
                   Command="{Binding FontFormatting.SetFontStyleCommand}"
                   CommandParameter="{Binding Italic}"
                   InputGestureText="Ctrl+I">
@@ -93,7 +93,7 @@
                 <Image Source="{DynamicResource fontitalicimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="_Подчёркивание"
+        <MenuItem Header="{Binding [Editor.Underline], Source={StaticResource Res}}"
                   Command="{Binding FontFormatting.SetTextDecorationCommand}"
                   CommandParameter="{Binding Underline}"
                   InputGestureText="Ctrl+U">
@@ -102,7 +102,7 @@
             </MenuItem.Icon>
         </MenuItem>
         <Separator/>
-        <MenuItem Header="_Очистить форматирование"
+        <MenuItem Header="{Binding [Editor.ClearFormatting], Source={StaticResource Res}}"
                   Command="{Binding FontFormatting.ClearFormattingCommand}">
             <MenuItem.Icon>
                 <Image Source="{DynamicResource normaltextimage}" Width="16" Height="16"/>
@@ -110,29 +110,29 @@
         </MenuItem>
     </MenuItem>
 
-    <MenuItem Header="_Выравнивание">
-        <MenuItem Header="По _левому краю"
+    <MenuItem Header="{Binding [Editor.Alignment], Source={StaticResource Res}}">
+        <MenuItem Header="{Binding [Editor.AlignLeft], Source={StaticResource Res}}"
                   Command="{Binding TextFormatting.SetTextAlignment}"
                   CommandParameter="{x:Static TextAlignment.Left}">
             <MenuItem.Icon>
                 <Image Source="{DynamicResource alignleftimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="По _центру"
+        <MenuItem Header="{Binding [Editor.AlignCenter], Source={StaticResource Res}}"
                   Command="{Binding TextFormatting.SetTextAlignment}"
                   CommandParameter="{x:Static TextAlignment.Center}">
             <MenuItem.Icon>
                 <Image Source="{DynamicResource aligncenterimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="По _правому краю"
+        <MenuItem Header="{Binding [Editor.AlignRight], Source={StaticResource Res}}"
                   Command="{Binding TextFormatting.SetTextAlignment}"
                   CommandParameter="{x:Static TextAlignment.Right}">
             <MenuItem.Icon>
                 <Image Source="{DynamicResource alignrightimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="По _ширине"
+        <MenuItem Header="{Binding [Editor.Justify], Source={StaticResource Res}}"
                   Command="{Binding TextFormatting.SetTextAlignment}"
                   CommandParameter="{x:Static TextAlignment.Justify}">
             <MenuItem.Icon>
@@ -141,40 +141,40 @@
         </MenuItem>
     </MenuItem>
 
-    <MenuItem Header="_Изображение">
-        <MenuItem Header="В _строке"
+    <MenuItem Header="{Binding [Editor.Image], Source={StaticResource Res}}">
+        <MenuItem Header="{Binding [Editor.ImageInline], Source={StaticResource Res}}"
                   Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
                   CommandParameter="{x:Static dto:ImageLayoutMode.Inline}"/>
-        <MenuItem Header="_Отдельный блок по центру"
+        <MenuItem Header="{Binding [Editor.ImageCenteredBlock], Source={StaticResource Res}}"
                   Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
                   CommandParameter="{x:Static dto:ImageLayoutMode.CenteredBlock}"/>
         <Separator/>
-        <MenuItem Header="Обтекание: изображение _слева"
+        <MenuItem Header="{Binding [Editor.ImageFloatLeft], Source={StaticResource Res}}"
                   Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
                   CommandParameter="{x:Static dto:ImageLayoutMode.FloatLeft}"/>
-        <MenuItem Header="Обтекание: изображение с_права"
+        <MenuItem Header="{Binding [Editor.ImageFloatRight], Source={StaticResource Res}}"
                   Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
                   CommandParameter="{x:Static dto:ImageLayoutMode.FloatRight}"/>
     </MenuItem>
 
-    <MenuItem Header="_Списки">
+    <MenuItem Header="{Binding [Editor.Lists], Source={StaticResource Res}}">
         <MenuItem.Icon>
             <Image Source="{DynamicResource listbulletsimage}" Width="16" Height="16"/>
         </MenuItem.Icon>
-        <MenuItem Header="_Маркированный список"
+        <MenuItem Header="{Binding [Editor.BulletedList], Source={StaticResource Res}}"
                   Command="{Binding ListFormatting.ToggleBulleted}">
             <MenuItem.Icon>
                 <Image Source="{DynamicResource listbulletsimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="_Нумерованный список"
+        <MenuItem Header="{Binding [Editor.NumberedList], Source={StaticResource Res}}"
                   Command="{Binding ListFormatting.ToggleNumbered}">
             <MenuItem.Icon>
                 <Image Source="{DynamicResource listnumbersimage}" Width="16" Height="16"/>
             </MenuItem.Icon>
         </MenuItem>
         <Separator/>
-        <MenuItem Header="_Убрать список"
+        <MenuItem Header="{Binding [Editor.RemoveList], Source={StaticResource Res}}"
                   Command="{Binding ListFormatting.ClearLists}">
             <MenuItem.Icon>
                 <Image Source="{DynamicResource normaltextimage}" Width="16" Height="16"/>

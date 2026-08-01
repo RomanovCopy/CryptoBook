@@ -1,5 +1,7 @@
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 namespace CryptoBook.Services
 {
     public sealed class ImageFilePickerService: IImageFilePicker
@@ -19,10 +21,9 @@ namespace CryptoBook.Services
 
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Вставить изображение",
-                Filter =
-                    "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|" +
-                    "Все файлы|*.*",
+                Title = LocalizationManager.GetString(
+                    "File.ImagePickerTitle"),
+                Filter = LocalizationManager.GetString("File.ImageFilter"),
                 Multiselect = false,
                 CheckFileExists = true
             };

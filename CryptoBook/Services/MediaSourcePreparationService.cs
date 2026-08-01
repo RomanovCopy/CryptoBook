@@ -1,6 +1,8 @@
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
 
+using CryptoBook.Infrastructure;
+
 using System.IO;
 
 namespace CryptoBook.Services
@@ -51,7 +53,9 @@ namespace CryptoBook.Services
 
                 string[] files = Directory.GetFiles(temporaryDirectory);
                 if(files.Length != 1)
-                    throw new IOException("Не удалось определить расшифрованный медиафайл.");
+                throw new IOException(
+                    LocalizationManager.GetString(
+                        "Media.DecryptedFileUnknown"));
 
                 return new PreparedMediaSource(
                     fullPath,

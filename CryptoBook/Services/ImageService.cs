@@ -1,5 +1,7 @@
 ﻿using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,7 +57,9 @@ namespace CryptoBook.Services
         public async Task LoadImageAsync(string filePath, CancellationToken cancellationToken = default)
         {
             if(!File.Exists(filePath))
-                throw new FileNotFoundException("Файл изображения не найден.", filePath);
+                throw new FileNotFoundException(
+                    LocalizationManager.GetString("Image.FileNotFound"),
+                    filePath);
 
             IsLoading = true;
             CurrentImagePath = filePath;

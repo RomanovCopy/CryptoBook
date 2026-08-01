@@ -1,6 +1,8 @@
 using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System.IO;
 using System.Text;
 
@@ -48,7 +50,8 @@ namespace CryptoBook.Services
                     {
                         return new FilePreviewContent(
                             FilePreviewKind.Protected,
-                            Message: "Файл зашифрован. Введите ключ, чтобы включить предварительный просмотр.");
+                            Message: LocalizationManager.GetString(
+                                "Preview.EncryptedNeedsKey"));
                     }
 
                     return await LoadDecryptedAsync(file, cancellationToken);
@@ -63,8 +66,10 @@ namespace CryptoBook.Services
                 return new FilePreviewContent(
                     FilePreviewKind.Unsupported,
                     Message: extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase)
-                        ? "Встроенный просмотр PDF пока не поддерживается."
-                        : "Для этого типа файла доступен только просмотр сведений.");
+                        ? LocalizationManager.GetString(
+                            "Preview.PdfUnsupported")
+                        : LocalizationManager.GetString(
+                            "Preview.DetailsOnly"));
             }
             catch(OperationCanceledException)
             {
@@ -74,7 +79,10 @@ namespace CryptoBook.Services
             {
                 return new FilePreviewContent(
                     FilePreviewKind.Error,
-                    Message: $"Не удалось создать предварительный просмотр:\r\n{ex.Message}");
+                    Message: LocalizationManager.Format(
+                        "Preview.DisplayFailed",
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 
@@ -86,7 +94,8 @@ namespace CryptoBook.Services
             {
                 return new FilePreviewContent(
                     FilePreviewKind.Unsupported,
-                    Message: "Зашифрованный файл слишком велик для предварительного просмотра в памяти.");
+                    Message: LocalizationManager.GetString(
+                        "Preview.EncryptedTooLarge"));
             }
 
             try
@@ -104,7 +113,8 @@ namespace CryptoBook.Services
                 {
                     return new FilePreviewContent(
                         FilePreviewKind.Unsupported,
-                        Message: "Расшифрованный файл слишком велик для безопасного предварительного просмотра.");
+                        Message: LocalizationManager.GetString(
+                            "Preview.DecryptedTooLarge"));
                 }
 
                 if(IsSupportedImage(bytes))
@@ -118,14 +128,17 @@ namespace CryptoBook.Services
                 {
                     return new FilePreviewContent(
                         FilePreviewKind.Unsupported,
-                        Message: "Файл успешно расшифрован, но встроенный просмотр PDF пока не поддерживается.");
+                        Message: LocalizationManager.GetString(
+                            "Preview.DecryptedPdfUnsupported"));
                 }
 
                 if(LooksLikeText(bytes))
                 {
                     int textLength = Math.Min(bytes.Length, MaxTextBytes);
                     string suffix = bytes.Length > MaxTextBytes
-                        ? "\r\n\r\n— Предварительный просмотр сокращён —"
+                        ? Environment.NewLine + Environment.NewLine +
+                            LocalizationManager.GetString(
+                                "Preview.Truncated")
                         : string.Empty;
                     return new FilePreviewContent(
                         FilePreviewKind.Text,
@@ -134,7 +147,8 @@ namespace CryptoBook.Services
 
                 return new FilePreviewContent(
                     FilePreviewKind.Unsupported,
-                    Message: "Файл успешно расшифрован, но его формат не поддерживает встроенный просмотр.");
+                    Message: LocalizationManager.GetString(
+                        "Preview.DecryptedTypeUnsupported"));
             }
             catch(OperationCanceledException)
             {
@@ -144,7 +158,10 @@ namespace CryptoBook.Services
             {
                 return new FilePreviewContent(
                     FilePreviewKind.Error,
-                    Message: $"Не удалось расшифровать файл для просмотра. Проверьте ключ.\r\n{ex.Message}");
+                    Message: LocalizationManager.Format(
+                        "Preview.DecryptFailed",
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 
@@ -161,7 +178,8 @@ namespace CryptoBook.Services
                 cancellationToken);
             string text = DecodeText(bytes);
             string? suffix = stream.CanSeek && stream.Position < stream.Length
-                ? "\r\n\r\n— Предварительный просмотр сокращён —"
+                ? Environment.NewLine + Environment.NewLine +
+                    LocalizationManager.GetString("Preview.Truncated")
                 : null;
             return new FilePreviewContent(
                 FilePreviewKind.Text,
@@ -176,7 +194,8 @@ namespace CryptoBook.Services
             {
                 return new FilePreviewContent(
                     FilePreviewKind.Unsupported,
-                    Message: "Изображение слишком велико для безопасного предварительного просмотра.");
+                    Message: LocalizationManager.GetString(
+                        "Preview.ImageTooLarge"));
             }
 
             await using Stream stream = await _contentSource.OpenReadAsync(
@@ -190,7 +209,8 @@ namespace CryptoBook.Services
             {
                 return new FilePreviewContent(
                     FilePreviewKind.Unsupported,
-                    Message: "Изображение слишком велико для безопасного предварительного просмотра.");
+                    Message: LocalizationManager.GetString(
+                        "Preview.ImageTooLarge"));
             }
 
             return new FilePreviewContent(

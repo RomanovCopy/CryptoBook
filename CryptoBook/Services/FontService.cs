@@ -215,7 +215,7 @@ namespace CryptoBook.Services
             FontColors = new ObservableCollection<Drawing.Color>(
                 new Drawing.Color[]
                 {
-                    // Neutral tones
+                    // Нейтральные тона.
                     Drawing.Color.Black,
                     Drawing.Color.DimGray,
                     Drawing.Color.Gray,
@@ -225,7 +225,7 @@ namespace CryptoBook.Services
                     Drawing.Color.Gainsboro,
                     Drawing.Color.White,
 
-                    // Reds and warm tones
+                    // Красные и тёплые тона.
                     Drawing.Color.Maroon,
                     Drawing.Color.DarkRed,
                     Drawing.Color.Red,
@@ -238,7 +238,7 @@ namespace CryptoBook.Services
                     Drawing.Color.Gold,
                     Drawing.Color.Yellow,
 
-                    // Greens
+                    // Зелёные тона.
                     Drawing.Color.Olive,
                     Drawing.Color.DarkGreen,
                     Drawing.Color.Green,
@@ -247,7 +247,7 @@ namespace CryptoBook.Services
                     Drawing.Color.YellowGreen,
                     Drawing.Color.Lime,
 
-                    // Cyans and blues
+                    // Голубые и синие тона.
                     Drawing.Color.Teal,
                     Drawing.Color.DarkCyan,
                     Drawing.Color.Cyan,
@@ -257,14 +257,14 @@ namespace CryptoBook.Services
                     Drawing.Color.Blue,
                     Drawing.Color.Navy,
 
-                    // Purples and pinks
+                    // Фиолетовые и розовые тона.
                     Drawing.Color.Indigo,
                     Drawing.Color.Purple,
                     Drawing.Color.Magenta,
                     Drawing.Color.DeepPink,
                     Drawing.Color.Pink,
 
-                    // Earth tones
+                    // Земляные тона.
                     Drawing.Color.Brown,
                     Drawing.Color.SaddleBrown,
                     Drawing.Color.Chocolate,

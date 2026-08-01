@@ -11,9 +11,13 @@ namespace CryptoBook.FileTemplates
     public class PlainTextTemplate:IFileTemplate
     {
         public string Id => "Text";
-        public string DisplayName => "Текстовый файл";
+        public string DisplayName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.Text");
         public string DefaultExtension => ".txt";
-        public string SuggestedBaseName => "New file";
+        public string SuggestedBaseName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.NewFile");
         public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct) => Task.FromResult(Array.Empty<byte>());

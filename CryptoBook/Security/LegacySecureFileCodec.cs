@@ -1,11 +1,17 @@
 ﻿using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace CryptoBook.Security
 {
+    /// <summary>
+    /// Читает прежний формат защищённых файлов. Кодек оставлен только для обратной
+    /// совместимости; новые контейнеры создаются форматом V2.
+    /// </summary>
     public sealed class LegacySecureFileCodec: ILegacySecureFileCodec
     {
         private readonly IKeyProvider _keyProvider;
@@ -92,6 +98,8 @@ namespace CryptoBook.Security
                     throw new CryptographicException("Некорректная структура зашифрованного файла.");
                 }
 
+                // HMAC проверяется до расшифрования: повреждённые или подменённые данные
+                // не должны передаваться в CryptoStream и записываться на диск.
                 await ValidateHmacAsync(inputStream, contentLength, key, cancellationToken);
 
                 long encryptedContentStart = SecureFileFormat.MagicHeader.Length + SecureFileFormat.SaltSize + iv.Length;
@@ -141,7 +149,8 @@ namespace CryptoBook.Security
             if(!header.SequenceEqual(SecureFileFormat.MagicHeader))
             {
                 throw new CryptographicException(
-                    "Файл не является зашифрованным файлом CryptoBook.");
+                    LocalizationManager.GetString(
+                        "Security.NotEncryptedCryptoBookFile"));
             }
         }
         private async Task ValidateHmacAsync(Stream stream, long contentLength, byte[] key, CancellationToken cancellationToken = default)
@@ -230,6 +239,8 @@ namespace CryptoBook.Security
 
         private sealed class LimitedReadStream: Stream
         {
+            // Ограничение не позволяет CryptoStream прочитать хвост контейнера с HMAC
+            // как часть зашифрованной полезной нагрузки.
             private readonly Stream _innerStream;
             private readonly bool _leaveOpen;
             private long _remainingBytes;

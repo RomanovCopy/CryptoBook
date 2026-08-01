@@ -1,6 +1,8 @@
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
 
+using CryptoBook.Infrastructure;
+
 using System.Buffers.Binary;
 using System.IO;
 using System.Security.Cryptography;
@@ -8,6 +10,10 @@ using System.Text;
 
 namespace CryptoBook.Security
 {
+    /// <summary>
+    /// Потоковый кодек защищённого формата V2. Шифрует данные независимыми
+    /// аутентифицированными блоками, чтобы не загружать исходный файл целиком в память.
+    /// </summary>
     public sealed class SecureFileV2Codec: ISecureFileV2Codec
     {
         private const byte FormatVersion = 2;
@@ -95,6 +101,8 @@ namespace CryptoBook.Security
                     nameof(input));
             ArgumentException.ThrowIfNullOrWhiteSpace(originalExtension);
 
+            // Сначала формируем контейнер рядом с целевым файлом: это позволяет
+            // завершить операцию атомарной заменой и не оставить частичный результат.
             string fullOutputPath = Path.GetFullPath(outputFile);
             string outputDirectory = Path.GetDirectoryName(fullOutputPath) ??
                 throw new IOException("Не удалось определить каталог назначения.");
@@ -124,6 +132,8 @@ namespace CryptoBook.Security
         {
             try
             {
+                // При шифровании в другой путь сохраняем предыдущую версию цели.
+                // При шифровании файла «на месте» резервная копия содержала бы открытый текст.
                 if(preserveBackup)
                 {
                     AtomicFileCommit.CommitWithBackup(
@@ -219,6 +229,8 @@ namespace CryptoBook.Security
         {
             byte[] salt = RandomNumberGenerator.GetBytes(SecureFileFormat.SaltSize);
             byte[] baseNonce = RandomNumberGenerator.GetBytes(SecureFileFormat.NonceSize);
+            // Последние восемь байтов зарезервированы под номер блока. Благодаря этому
+            // каждый блок получает уникальный nonce при одном случайном префиксе.
             baseNonce.AsSpan(4).Clear();
 
             KeyDerivationParameters parameters = _options.KeyDerivation;
@@ -240,7 +252,8 @@ namespace CryptoBook.Security
                        Path.GetInvalidFileNameChars()) >= 0)
                 {
                     throw new CryptographicException(
-                        "Некорректное расширение файла.");
+                        LocalizationManager.GetString(
+                            "Security.InvalidExtension"));
                 }
 
                 byte[] extension =
@@ -249,6 +262,8 @@ namespace CryptoBook.Security
                    > SecureFileFormat.MaxExtensionLength)
                     throw new CryptographicException("Некорректная длина расширения файла.");
 
+                // Расширение входит в зашифрованную полезную нагрузку и не раскрывает
+                // исходный тип файла по незашифрованному заголовку контейнера.
                 byte[] metadata = new byte[sizeof(int) + extension.Length];
                 BinaryPrimitives.WriteInt32LittleEndian(metadata, extension.Length);
                 extension.CopyTo(metadata.AsSpan(sizeof(int)));
@@ -283,6 +298,8 @@ namespace CryptoBook.Security
                     int chunkLength = (int)Math.Min(plaintext.Length, remaining);
                     int offset = 0;
 
+                    // Метаданные занимают начало первого блока, далее без разрывов
+                    // следуют байты исходного файла.
                     if(firstChunk)
                     {
                         metadata.CopyTo(plaintext, 0);
@@ -305,6 +322,8 @@ namespace CryptoBook.Security
                     BinaryPrimitives.WriteInt32LittleEndian(recordHeader.AsSpan(1), actualLength);
 
                     CreateNonce(baseNonce, chunkIndex, nonce);
+                    // Заголовок контейнера, номер и длина блока аутентифицируются как AAD:
+                    // их подмена должна обнаруживаться даже при неизменном шифротексте.
                     byte[] associatedData = CreateAssociatedData(header, chunkIndex, recordHeader);
                     aes.Encrypt(
                         nonce,
@@ -329,6 +348,8 @@ namespace CryptoBook.Security
                 progress?.Report(1.0);
             } finally
             {
+                // Ключ и буферы открытого текста не должны оставаться в управляемой памяти
+                // дольше, чем требуется для операции.
                 if(key is not null)
                     CryptographicOperations.ZeroMemory(key);
                 CryptographicOperations.ZeroMemory(plaintext);
@@ -407,7 +428,9 @@ namespace CryptoBook.Security
                         if(extensionLength is <= 0 or > SecureFileFormat.MaxExtensionLength ||
                            sizeof(int) + extensionLength > chunkLength)
                         {
-                            throw new CryptographicException("Некорректное расширение файла.");
+                            throw new CryptographicException(
+                                LocalizationManager.GetString(
+                                    "Security.InvalidExtension"));
                         }
 
                         string extension = Encoding.UTF8.GetString(
@@ -417,7 +440,9 @@ namespace CryptoBook.Security
                         if(!extension.StartsWith('.') ||
                            extension.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                         {
-                            throw new CryptographicException("Некорректное расширение файла.");
+                            throw new CryptographicException(
+                                LocalizationManager.GetString(
+                                    "Security.InvalidExtension"));
                         }
 
                         output = outputFactory(extension);
@@ -489,6 +514,8 @@ namespace CryptoBook.Security
 
         private static ParsedHeader ParseHeader(byte[] header)
         {
+            // Все поля заголовка считаются недоверенными: до выделения буферов и
+            // запуска Argon2id проверяем версию, алгоритмы и допустимые границы.
             if(header.Length != HeaderSize ||
                !header.AsSpan(0, SecureFileFormat.V2MagicHeader.Length)
                    .SequenceEqual(SecureFileFormat.V2MagicHeader) ||
@@ -542,6 +569,8 @@ namespace CryptoBook.Security
         private static void CreateNonce(byte[] baseNonce, ulong chunkIndex, byte[] destination)
         {
             baseNonce.CopyTo(destination, 0);
+            // Сетевой порядок байтов даёт однозначное представление счётчика
+            // и не зависит от архитектуры машины.
             BinaryPrimitives.WriteUInt64BigEndian(destination.AsSpan(4), chunkIndex);
         }
 

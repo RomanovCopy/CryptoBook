@@ -44,10 +44,10 @@ namespace CryptoBook.Composition
                 }
             }
 
-            // Typography (добавьте нужные при необходимости)
+            // Типографические параметры (при необходимости список можно расширить).
             CopyTypography(target, source, copyOnlyLocal);
 
-            // TextDecorations (часто наследуется, но поддержим копирование)
+            // Декорации текста обычно наследуются, но явно поддерживаем их копирование.
             var tdLocal = source.ReadLocalValue(Inline.TextDecorationsProperty);
             if(!copyOnlyLocal || tdLocal != DependencyProperty.UnsetValue)
                 target.TextDecorations = source.TextDecorations;

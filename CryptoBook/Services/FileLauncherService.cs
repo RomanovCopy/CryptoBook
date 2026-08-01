@@ -167,7 +167,7 @@ namespace CryptoBook.Services
 
                 if(File.Exists(path))
                 {
-                    // explorer.exe /select,"C:\file.txt"
+                    // Формат explorer.exe: /select,"C:\file.txt".
                     var args = select ? $"/select,{QuoteIfNeeded(path)}" : QuoteIfNeeded(Path.GetDirectoryName(path) ?? path);
                     var p = Process.Start(new ProcessStartInfo
                     {
@@ -207,7 +207,7 @@ namespace CryptoBook.Services
             if(string.IsNullOrWhiteSpace(command))
                 return LaunchResult.Fail("cmd", "", "Command is empty.");
 
-            // cmd.exe /c "..."
+            // Формат cmd.exe: /c "...".
             return StartProcess(new ProcessLaunchOptions
             {
                 FileName = "cmd.exe",
@@ -240,7 +240,7 @@ namespace CryptoBook.Services
             });
         }
 
-        // ---------------- helpers ----------------
+        // ---------------- Вспомогательные методы ----------------
 
         private static string SafeGetDirectory(string target)
         {
@@ -279,7 +279,7 @@ namespace CryptoBook.Services
         private static string QuotePowerShell(string ps)
         {
             // Безопаснее передать как строку в кавычках
-            // PowerShell: -Command "<...>"
+            // Формат PowerShell: -Command "<...>".
             // Экранируем двойные кавычки `"
             var escaped = ps.Replace("\"", "`\"");
             return $"\"{escaped}\"";

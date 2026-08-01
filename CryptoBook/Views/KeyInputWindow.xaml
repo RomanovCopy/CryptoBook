@@ -22,7 +22,7 @@
     </Window.DataContext>
 
     <Window.Title>
-        <Binding Path="Title" UpdateSourceTrigger="PropertyChanged"/>
+        <Binding Path="[Key.Title]" Source="{StaticResource Res}"/>
     </Window.Title>
 
     <Window.Width>
@@ -53,7 +53,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding Message,UpdateSourceTrigger=PropertyChanged}"
+        <TextBlock Text="{Binding [Key.Prompt], Source={StaticResource Res}}"
                    Foreground="{DynamicResource CurrentWindowForeground}"
                    TextWrapping="Wrap"/>
 
@@ -88,13 +88,13 @@
                     HorizontalAlignment="Right">
             
             <Button x:Name="OkButton"
-                    Content="OK"
+                    Content="{Binding [Common.OK], Source={StaticResource Res}}"
                     Width="90"
                     IsDefault="True"
                     Margin="0,0,8,0"/>
 
             <Button x:Name="CancelButton"
-                    Content="Cancel"
+                    Content="{Binding [Common.Cancel], Source={StaticResource Res}}"
                     Width="90"
                     IsCancel="True"/>
         </StackPanel>

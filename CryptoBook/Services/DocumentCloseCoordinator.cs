@@ -2,6 +2,10 @@ using CryptoBook.Interfaces;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Координирует восстановление при запуске и безопасное закрытие документа,
+    /// включая сохранение изменений и удаление аварийного снимка.
+    /// </summary>
     public sealed class DocumentCloseCoordinator
     {
         private readonly IDocumentSession documentSession;
@@ -59,6 +63,8 @@ namespace CryptoBook.Services
             if(closeInProgress)
                 return false;
 
+            // Повторное событие Closing возможно, пока открыто модальное окно
+            // или выполняется сохранение. Одновременно разрешена одна попытка.
             closeInProgress = true;
             try
             {
@@ -73,6 +79,8 @@ namespace CryptoBook.Services
                     {
                         bool saved =
                             await documentSaver.TrySaveCurrentAsync();
+                        // Успешный вызов ещё не гарантирует чистое состояние:
+                        // документ мог измениться во время асинхронного сохранения.
                         if(!saved || documentSession.IsDirty)
                             return false;
                     }

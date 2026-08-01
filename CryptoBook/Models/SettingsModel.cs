@@ -6,6 +6,10 @@ using System.Windows;
 
 namespace CryptoBook.Models
 {
+    /// <summary>
+    /// Состояние окна настроек: тема, язык, рабочая папка и поиск файлов
+    /// с отменой предыдущего запроса при запуске нового.
+    /// </summary>
     public sealed class SettingsModel:
         ViewModelBase,
         ISettingsModel
@@ -256,6 +260,8 @@ namespace CryptoBook.Models
                 return;
             }
 
+            // Результат завершившегося старого запроса не должен заменить
+            // результаты более нового поиска.
             searchCancellation?.Cancel();
             searchCancellation?.Dispose();
             searchCancellation = new CancellationTokenSource();
@@ -285,6 +291,8 @@ namespace CryptoBook.Models
             }
             finally
             {
+                // Отменённая задача уже могла быть заменена новым поиском;
+                // его индикатор выполнения здесь выключать нельзя.
                 if(!cancellationToken.IsCancellationRequested)
                     IsSearching = false;
             }

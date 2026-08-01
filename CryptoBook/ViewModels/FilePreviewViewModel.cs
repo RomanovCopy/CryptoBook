@@ -18,7 +18,8 @@ namespace CryptoBook.ViewModels
         private string _fileName = string.Empty;
         private string _fileDetails = string.Empty;
         private string _text = string.Empty;
-        private string _message = "Выберите файл для предварительного просмотра.";
+        private string _message =
+            LocalizationManager.GetString("Preview.SelectFile");
         private ImageSource? _image;
 
         public FilePreviewViewModel(IFilePreviewService previewService)
@@ -54,7 +55,7 @@ namespace CryptoBook.ViewModels
             FileDetails = BuildDetails(file);
             Text = string.Empty;
             Image = null;
-            Message = "Создание предварительного просмотра…";
+            Message = LocalizationManager.GetString("Preview.Creating");
             PreviewKind = FilePreviewKind.Loading;
 
             try
@@ -78,7 +79,10 @@ namespace CryptoBook.ViewModels
 
                 Image = null;
                 Text = string.Empty;
-                Message = $"Не удалось отобразить файл:\r\n{ex.Message}";
+                Message = LocalizationManager.Format(
+                    "Preview.DisplayFailed",
+                    Environment.NewLine,
+                    ex.Message);
                 PreviewKind = FilePreviewKind.Error;
             }
         }
@@ -90,7 +94,7 @@ namespace CryptoBook.ViewModels
             FileDetails = string.Empty;
             Text = string.Empty;
             Image = null;
-            Message = "Выберите файл для предварительного просмотра.";
+            Message = LocalizationManager.GetString("Preview.SelectFile");
             PreviewKind = FilePreviewKind.Empty;
         }
 
@@ -111,10 +115,18 @@ namespace CryptoBook.ViewModels
         {
             string size = file.Size switch
             {
-                < 1024 => $"{file.Size} Б",
-                < 1024 * 1024 => $"{file.Size / 1024d:F1} КБ",
-                < 1024L * 1024 * 1024 => $"{file.Size / (1024d * 1024):F1} МБ",
-                _ => $"{file.Size / (1024d * 1024 * 1024):F1} ГБ"
+                < 1024 => LocalizationManager.Format(
+                    "Preview.BytesFormat",
+                    file.Size),
+                < 1024 * 1024 => LocalizationManager.Format(
+                    "Preview.KilobytesFormat",
+                    file.Size / 1024d),
+                < 1024L * 1024 * 1024 => LocalizationManager.Format(
+                    "Preview.MegabytesFormat",
+                    file.Size / (1024d * 1024)),
+                _ => LocalizationManager.Format(
+                    "Preview.GigabytesFormat",
+                    file.Size / (1024d * 1024 * 1024))
             };
             return $"{file.Extension} • {size} • {file.LastWriteTimeUtc.ToLocalTime():dd.MM.yyyy HH:mm}";
         }

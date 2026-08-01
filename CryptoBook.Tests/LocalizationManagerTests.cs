@@ -1,6 +1,8 @@
 using CryptoBook.Infrastructure;
 
+using System.Collections;
 using System.Globalization;
+using System.Resources;
 
 using Xunit;
 
@@ -58,5 +60,53 @@ namespace CryptoBook.Tests
                 LocalizationManager.DefaultCultureName,
                 LocalizationManager.AvailableLanguages[0].CultureName);
         }
+
+        [Fact]
+        public void NeutralAndRussianResources_HaveIdenticalNonEmptyKeySets()
+        {
+            ResourceManager manager =
+                CryptoBook.Properties.Resources.ResourceManager;
+            ResourceSet neutral = Assert.IsAssignableFrom<ResourceSet>(
+                manager.GetResourceSet(
+                    CultureInfo.InvariantCulture,
+                    createIfNotExists: true,
+                    tryParents: false));
+            ResourceSet russian = Assert.IsAssignableFrom<ResourceSet>(
+                manager.GetResourceSet(
+                    CultureInfo.GetCultureInfo("ru-RU"),
+                    createIfNotExists: true,
+                    tryParents: false));
+
+            Dictionary<string, string> neutralValues = ReadStrings(neutral);
+            Dictionary<string, string> russianValues = ReadStrings(russian);
+
+            Assert.NotEmpty(neutralValues);
+            Assert.Equal(
+                neutralValues.Keys.OrderBy(key => key),
+                russianValues.Keys.OrderBy(key => key));
+            Assert.All(
+                neutralValues,
+                pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
+            Assert.All(
+                russianValues,
+                pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
+        }
+
+        [Fact]
+        public void GetString_MissingKey_ReturnsKeyForObservableFallback()
+        {
+            const string missingKey = "Localization.Tests.Missing";
+
+            Assert.Equal(missingKey, LocalizationManager.GetString(missingKey));
+        }
+
+        private static Dictionary<string, string> ReadStrings(
+            ResourceSet resourceSet) =>
+            resourceSet
+                .Cast<DictionaryEntry>()
+                .ToDictionary(
+                    entry => Assert.IsType<string>(entry.Key),
+                    entry => Assert.IsType<string>(entry.Value),
+                    StringComparer.Ordinal);
     }
 }

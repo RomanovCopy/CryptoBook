@@ -223,14 +223,18 @@ namespace CryptoBook.Models
                 {
                     IReadOnlyList<FileOperationResult> results =
                         await _progressDialogService.RunAsync(
-                            "Копирование файлов",
+                            LocalizationManager.GetString(
+                                "Explorer.Copying"),
                             (progress, token) =>
                                 _fileClipboardService.PasteAsync(CurrentPath, progress, token));
 
                     FileOperationResult? failure = results.FirstOrDefault(result => !result.Success);
                     if(failure is not null)
                     {
-                        _ = await _messageService.ShowMessage("Ошибка копирования", failure.ErrorMessage);
+                        _ = await _messageService.ShowMessage(
+                            LocalizationManager.GetString(
+                                "Explorer.CopyError"),
+                            failure.ErrorMessage);
                         return;
                     }
 
@@ -240,7 +244,9 @@ namespace CryptoBook.Models
                     // Отмена пользователем не является ошибкой копирования.
                 } catch(Exception ex)
                 {
-                    _ = await _messageService.ShowMessage("Ошибка копирования", ex.Message);
+                    _ = await _messageService.ShowMessage(
+                        LocalizationManager.GetString("Explorer.CopyError"),
+                        ex.Message);
                 }
             } else
             {
@@ -279,11 +285,16 @@ namespace CryptoBook.Models
                     var fileOperationResult = await container.SortingAsync(result);
                     if(fileOperationResult.Success)
                         return;
-                    _ = await _messageService.ShowMessage("Sorting error", fileOperationResult.ErrorMessage);
+                    _ = await _messageService.ShowMessage(
+                        LocalizationManager.GetString("Explorer.SortError"),
+                        fileOperationResult.ErrorMessage);
                 } else
                 {
                     Console.WriteLine("Не удалось распознать");
-                    _ = await _messageService.ShowMessage("Sorting error", "Could not recognize column to sort");
+                    _ = await _messageService.ShowMessage(
+                        LocalizationManager.GetString("Explorer.SortError"),
+                        LocalizationManager.GetString(
+                            "Explorer.UnknownSortColumn"));
                 }
             }
         }
@@ -321,14 +332,22 @@ namespace CryptoBook.Models
 
             if(!TryValidateDirectoryName(directoryName, out string validationError))
             {
-                _ = await _messageService.ShowMessage("Ошибка создания директории", validationError);
+                _ = await _messageService.ShowMessage(
+                    LocalizationManager.GetString(
+                        "Explorer.CreateDirectoryError"),
+                    validationError);
                 return;
             }
 
             string directoryPath = Path.Combine(container.FullPath, directoryName);
             if(Path.Exists(directoryPath))
             {
-                _ = await _messageService.ShowMessage("Ошибка создания директории", $"Элемент с именем «{directoryName}» уже существует.");
+                _ = await _messageService.ShowMessage(
+                    LocalizationManager.GetString(
+                        "Explorer.CreateDirectoryError"),
+                    LocalizationManager.Format(
+                        "Explorer.ItemAlreadyExists",
+                        directoryName));
                 return;
             }
 
@@ -336,7 +355,10 @@ namespace CryptoBook.Models
 
             if(!result.Success)
             {
-                _ = await _messageService.ShowMessage("Ошибка создания директории", result.ErrorMessage);
+                _ = await _messageService.ShowMessage(
+                    LocalizationManager.GetString(
+                        "Explorer.CreateDirectoryError"),
+                    result.ErrorMessage);
                 return;
             }
 
@@ -375,7 +397,10 @@ namespace CryptoBook.Models
                     }
                     if(!res.Success)
                     {
-                        _ = await _messageService.ShowMessage("Rename error", res.ErrorMessage);
+                        _ = await _messageService.ShowMessage(
+                            LocalizationManager.GetString(
+                                "Explorer.RenameError"),
+                            res.ErrorMessage);
                         systemItem.Name = _lastItemName;
                     }
                 }
@@ -403,7 +428,7 @@ namespace CryptoBook.Models
                     item.Name);
 
                 FileOperationResult result = await _progressDialogService.RunAsync(
-                    "Перемещение",
+                    LocalizationManager.GetString("Explorer.Moving"),
                     (progress, token) => _fileManagerService.MoveAsync(
                         item.FullPath,
                         destinationPath,
@@ -413,7 +438,7 @@ namespace CryptoBook.Models
                 if(!result.Success)
                 {
                     await _messageService.ShowMessage(
-                        "Ошибка перемещения",
+                        LocalizationManager.GetString("Explorer.MoveError"),
                         result.ErrorMessage);
                     return;
                 }
@@ -437,7 +462,9 @@ namespace CryptoBook.Models
             {
             } catch(Exception ex)
             {
-                await _messageService.ShowMessage("Ошибка перемещения", ex.Message);
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.MoveError"),
+                    ex.Message);
             }
         }
         public async void Execute_RefreshCommand(object? obj)
@@ -453,13 +480,18 @@ namespace CryptoBook.Models
             } catch(Exception ex)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка обновления",
+                    LocalizationManager.GetString("Explorer.RefreshError"),
                     ex.Message);
             }
         }
         public async void Execute_CancelRenameCommand(object? obj)
         {
-            var id = await _messageService.ShowMessage("Отмена операции", $"Переименование элемента отменено." + '\n' + "Вы уверены?", true);
+            var id = await _messageService.ShowMessage(
+                LocalizationManager.GetString("Explorer.CancelOperation"),
+                LocalizationManager.Format(
+                    "Explorer.RenameCanceledConfirmation",
+                    Environment.NewLine),
+                true);
             if(obj is ISystemItem systemItem && _messageService.ShowConfirmation(id))
             {
                 systemItem.Name = _lastItemName;
@@ -522,10 +554,17 @@ namespace CryptoBook.Models
             }
             catch(Exception ex)
             {
-                var itemName = obj is ISystemItem item ? item.Name : "item";
+                var itemName = obj is ISystemItem item
+                    ? item.Name
+                    : LocalizationManager.GetString("Common.File");
                 _ = await _messageService.ShowMessage(
-                    "File open error",
-                    $"Failed to open {itemName}:\r\n{ex.Message}");
+                    LocalizationManager.GetString(
+                        "Explorer.FileOpenError"),
+                    LocalizationManager.Format(
+                        "Explorer.FileOpenFailed",
+                        itemName,
+                        Environment.NewLine,
+                        ex.Message));
             }
             finally
             {
@@ -551,7 +590,10 @@ namespace CryptoBook.Models
             CancellationToken cancellationToken = default)
         {
             if(string.IsNullOrWhiteSpace(path))
-                throw new ArgumentException("Путь к директории не задан.", nameof(path));
+                throw new ArgumentException(
+                    LocalizationManager.GetString(
+                        "Explorer.DirectoryPathRequired"),
+                    nameof(path));
 
             string nativePath = GetNativePath(path);
             var lockTaken = false;
@@ -577,8 +619,13 @@ namespace CryptoBook.Models
             catch(Exception ex)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка открытия директории",
-                    $"Не удалось открыть «{nativePath}»:\r\n{ex.Message}");
+                    LocalizationManager.GetString(
+                        "Explorer.OpenDirectoryError"),
+                    LocalizationManager.Format(
+                        "Explorer.OpenDirectoryFailed",
+                        nativePath,
+                        Environment.NewLine,
+                        ex.Message));
             }
             finally
             {
@@ -592,7 +639,9 @@ namespace CryptoBook.Models
             string fullPath = Path.GetFullPath(path);
             string rootPath = Path.GetPathRoot(fullPath)
                 ?? throw new DirectoryNotFoundException(
-                    $"Не удалось определить корень пути «{path}».");
+                    LocalizationManager.Format(
+                        "Explorer.RootPathNotFound",
+                        path));
 
             IContainerSystemItem root = GetDrives
                 .OfType<IContainerSystemItem>()
@@ -705,9 +754,11 @@ namespace CryptoBook.Models
             }
 
             _ = await _messageService.ShowMessage(
-                "File open error",
+                LocalizationManager.GetString("Explorer.FileOpenError"),
                 result.Error ??
-                $"Не удалось открыть {Path.GetFileName(filePath)} приложением по умолчанию.");
+                LocalizationManager.Format(
+                    "Explorer.OpenFileDefaultFailed",
+                    Path.GetFileName(filePath)));
         }
 
         private async Task OpenDocumentAsync(
@@ -715,7 +766,7 @@ namespace CryptoBook.Models
             IFileTemplate template)
         {
             await _progressDialogService.RunAsync(
-                "Открытие файла",
+                LocalizationManager.GetString("Explorer.OpenFileTitle"),
                 async (progress, token) =>
                 {
                     await using var stream = await _fileManagerService.OpenReadAsync(
@@ -833,7 +884,8 @@ namespace CryptoBook.Models
 
             if(string.IsNullOrWhiteSpace(name))
             {
-                error = "Имя директории не может быть пустым.";
+                error = LocalizationManager.GetString(
+                    "Explorer.DirectoryNameEmpty");
                 return false;
             }
 
@@ -844,7 +896,8 @@ namespace CryptoBook.Models
                name.Contains(Path.DirectorySeparatorChar) ||
                name.Contains(Path.AltDirectorySeparatorChar))
             {
-                error = "Имя директории содержит недопустимые символы или имеет недопустимый формат.";
+                error = LocalizationManager.GetString(
+                    "Explorer.DirectoryNameInvalid");
                 return false;
             }
 
@@ -858,7 +911,9 @@ namespace CryptoBook.Models
 
             if(reservedNames.Contains(baseName, StringComparer.OrdinalIgnoreCase))
             {
-                error = $"Имя «{name}» зарезервировано операционной системой.";
+                error = LocalizationManager.Format(
+                    "Explorer.DirectoryNameReserved",
+                    name);
                 return false;
             }
 
@@ -870,15 +925,19 @@ namespace CryptoBook.Models
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
                 InitialDirectory = Path.GetDirectoryName(sourcePath),
-                FileName = Path.GetFileNameWithoutExtension(sourcePath) + "_Encrypted",
+                FileName = Path.GetFileNameWithoutExtension(sourcePath) +
+                    "_" + LocalizationManager.GetString(
+                        "Explorer.EncryptedSuffix"),
                 DefaultExt = ".cbook",
                 AddExtension = true,
-                Filter = "Файлы CryptoBook (*.cbook)|*.cbook",
+                Filter = LocalizationManager.GetString(
+                    "Explorer.CryptoBookFilesFilter"),
                 FilterIndex = 1,
                 OverwritePrompt = true,
                 CheckPathExists = true,
                 ValidateNames = true,
-                Title = "Сохранить зашифрованный файл"
+                Title = LocalizationManager.GetString(
+                    "Explorer.SaveEncryptedTitle")
             };
 
             return dialog.ShowDialog() == true ? dialog.FileName : null;
@@ -886,7 +945,10 @@ namespace CryptoBook.Models
 
         private async Task ExecuteFileSecurityCommandAsync(object? obj, bool decrypt)
         {
-            string errorTitle = decrypt ? "Ошибка дешифрования" : "Ошибка шифрования";
+            string errorTitle = LocalizationManager.GetString(
+                decrypt
+                    ? "Explorer.DecryptionError"
+                    : "Explorer.EncryptionError");
 
             try
             {
@@ -894,7 +956,8 @@ namespace CryptoBook.Models
                 {
                     await _messageService.ShowMessage(
                         errorTitle,
-                        "Нельзя зашифровать или расшифровать весь диск. Выберите файл или директорию.");
+                        LocalizationManager.GetString(
+                            "Explorer.WholeDriveNotAllowed"));
                     return;
                 }
 
@@ -907,7 +970,8 @@ namespace CryptoBook.Models
                 {
                     await _messageService.ShowMessage(
                         errorTitle,
-                        "Выбранный файл или директория не существует.");
+                        LocalizationManager.GetString(
+                            "Explorer.ItemDoesNotExist"));
                     return;
                 }
 
@@ -927,7 +991,10 @@ namespace CryptoBook.Models
                 }
 
                 FileOperationResult result = await _progressDialogService.RunAsync(
-                    decrypt ? "Дешифрование" : "Шифрование",
+                    LocalizationManager.GetString(
+                        decrypt
+                            ? "Explorer.Decryption"
+                            : "Explorer.Encryption"),
                     (progress, token) => decrypt
                         ? _fileSecurityService.DecryptAsync(systemItem, targetPath, mode, progress, token)
                         : _fileSecurityService.EncryptAsync(systemItem, targetPath, mode, progress, token));
@@ -944,8 +1011,13 @@ namespace CryptoBook.Models
                     await RefreshAffectedContainersAsync( systemItem, targetPath, CancellationToken.None);
                 } catch(Exception ex)
                 {
-                    await _messageService.ShowMessage( "Ошибка обновления проводника",
-                        $"Операция завершена успешно, но не удалось обновить представление файлов:\r\n{ex.Message}");
+                    await _messageService.ShowMessage(
+                        LocalizationManager.GetString(
+                            "Explorer.RefreshError"),
+                        LocalizationManager.Format(
+                            "Explorer.RefreshAfterOperationFailed",
+                            Environment.NewLine,
+                            ex.Message));
                 }
             } catch(OperationCanceledException)
             {
@@ -993,22 +1065,32 @@ namespace CryptoBook.Models
         private async Task<bool> ConfirmSourceReplacementAsync( ISystemItem systemItem, string sourcePath, bool decrypt)
         {
             bool isDirectory = systemItem is IDirectoryItem;
-            string subject = isDirectory ? "исходные файлы" : "исходный файл";
-            string verb = isDirectory ? "будут заменены" : "будет заменён";
-            string replacement = decrypt
-                ? isDirectory ? "дешифрованными копиями" : "дешифрованной копией"
-                : isDirectory ? "зашифрованными копиями" : "зашифрованной копией";
-            string keyWarning = decrypt
-                ? string.Empty
-                : "\r\n\r\nОткрытие без ключа станет невозможным.";
-
-            string warning =
-                $"Заменить {subject}?\r\n\r\n" +
-                $"{char.ToUpperInvariant(subject[0])}{subject[1..]} {verb} {replacement}.\r\n" +
-                $"{sourcePath}{keyWarning}";
+            string replacement = LocalizationManager.GetString(
+                decrypt
+                    ? isDirectory
+                        ? "Explorer.DecryptedCopiesAdjective"
+                        : "Explorer.DecryptedAdjective"
+                    : isDirectory
+                        ? "Explorer.EncryptedCopiesAdjective"
+                        : "Explorer.EncryptedAdjective");
+            string warning = LocalizationManager.Format(
+                    isDirectory
+                        ? "Explorer.OverwriteDirectoryPrompt"
+                        : "Explorer.OverwriteFilePrompt",
+                    replacement) +
+                Environment.NewLine +
+                Environment.NewLine +
+                sourcePath;
+            if(!decrypt)
+            {
+                warning += Environment.NewLine +
+                    Environment.NewLine +
+                    LocalizationManager.GetString(
+                        "Explorer.EncryptionWarning");
+            }
 
             Guid messageId = await _messageService.ShowMessage(
-                "Перезапись исходного элемента",
+                LocalizationManager.GetString("Explorer.OverwriteTitle"),
                 warning,
                 true);
             return _messageService.ShowConfirmation(messageId);
@@ -1160,14 +1242,18 @@ namespace CryptoBook.Models
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
                 InitialDirectory = Path.GetDirectoryName(sourcePath),
-                FileName = Path.GetFileNameWithoutExtension(sourcePath) + "_Decrypted",
+                FileName = Path.GetFileNameWithoutExtension(sourcePath) +
+                    "_" + LocalizationManager.GetString(
+                        "Explorer.DecryptedSuffix"),
                 AddExtension = false,
-                Filter = "Все файлы (*.*)|*.*",
+                Filter = LocalizationManager.GetString(
+                    "Explorer.AllFilesFilter"),
                 FilterIndex = 1,
                 OverwritePrompt = true,
                 CheckPathExists = true,
                 ValidateNames = true,
-                Title = "Сохранить расшифрованный файл"
+                Title = LocalizationManager.GetString(
+                    "Explorer.SaveDecryptedTitle")
             };
 
             return dialog.ShowDialog() == true ? dialog.FileName : null;

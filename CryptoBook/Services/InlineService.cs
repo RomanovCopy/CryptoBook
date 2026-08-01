@@ -110,7 +110,7 @@ namespace CryptoBook.Services
                 _disposed = true;
             }
 
-            // ---------- helpers ----------
+            // ---------- Вспомогательные методы ----------
 
             private static TextPointer EnsureInsertionPosition(TextPointer pos) =>
                 pos.IsAtInsertionPosition ? pos : pos.GetInsertionPosition(LogicalDirection.Forward);
@@ -812,7 +812,7 @@ namespace CryptoBook.Services
         /* ---------- TextDecorations ---------- */
         private bool TextDecorationsEqual(TextDecorationCollection a, TextDecorationCollection b)
         {
-            // Treat null and empty as equal
+            // null и пустая коллекция форматирования эквивалентны.
             if(a == null || a.Count == 0)
                 return b == null || b.Count == 0;
             if(b == null || b.Count == 0)

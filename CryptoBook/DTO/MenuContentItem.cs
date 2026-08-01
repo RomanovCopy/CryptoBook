@@ -14,10 +14,11 @@ namespace CryptoBook.DTO
 
         protected override void Initialize()
         {
-            Name = "Медиа";
+            Name = LocalizationManager.GetString("Media.Title");
             Children.Add(new MenuItem(commandService)
             {
-                Name = "   Фото и видео",
+                Name = "   " +
+                    LocalizationManager.GetString("Media.EmptyTitle"),
                 IsEnabled = true,
                 Command = commandService.GetCommand(CommandKey.menuContent_MediaPlayer)
                     ?? throw new InvalidOperationException("Команда MediaPlayer не зарегистрирована.")

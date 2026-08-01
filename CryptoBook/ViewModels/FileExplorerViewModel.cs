@@ -146,8 +146,11 @@ namespace CryptoBook.ViewModels
             catch(Exception ex)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка избранного",
-                    $"Не удалось загрузить список избранного:\r\n{ex.Message}");
+                    LocalizationManager.GetString("Favorites.ErrorTitle"),
+                    LocalizationManager.Format(
+                        "Favorites.RefreshFailed",
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 

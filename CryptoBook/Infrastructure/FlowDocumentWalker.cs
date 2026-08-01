@@ -9,6 +9,10 @@ using CryptoBook.Interfaces;
 
 namespace CryptoBook.Infrastructure
 {
+    /// <summary>
+    /// Обходит и изменяет логическое дерево FlowDocument, учитывая разные типы
+    /// коллекций-владельцев WPF: Blocks, Inlines, ListItems, Rows и Cells.
+    /// </summary>
     public sealed class FlowDocumentWalker: IFlowDocumentWalker
     {
         public IEnumerable<TextElement> Traverse(
@@ -71,6 +75,8 @@ namespace CryptoBook.Infrastructure
 
         private static IEnumerable<TextElement> TraverseBlock(Block block)
         {
+            // Родитель выдаётся раньше потомков, поэтому результат подходит как
+            // для поиска, так и для последовательной обработки дерева сверху вниз.
             yield return block;
 
             switch(block)
@@ -255,6 +261,8 @@ namespace CryptoBook.Infrastructure
 
         private static bool InsertNear(TextElement target, TextElement newElement, bool before)
         {
+            // WPF не предоставляет общей изменяемой коллекции TextElement.
+            // Вставка допустима только между элементами одного структурного уровня.
             return (target, newElement) switch
             {
                 (Block targetBlock, Block newBlock) =>

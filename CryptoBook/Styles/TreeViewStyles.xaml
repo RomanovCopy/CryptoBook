@@ -4,7 +4,7 @@
                     xmlns:markup="clr-namespace:CryptoBook.Markup"
                     xmlns:converters="clr-namespace:CryptoBook.Converters">
 
-  <!--#region  FILE EXPLORER -->
+  <!--#region  ПРОВОДНИК ФАЙЛОВ -->
     
     
 
@@ -93,7 +93,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Expander -->
+                        <!-- Переключатель разворачивания. -->
                         <ToggleButton x:Name="Expander"
                                       Grid.Column="0"
                                       Margin="2,0,2,0"
@@ -101,7 +101,7 @@
                                       IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                       Visibility="Visible"/>
 
-                        <!-- Row -->
+                        <!-- Строка. -->
                         <Border x:Name="Row"
                                 Grid.Column="1"
                                 Padding="{StaticResource Tv_ItemPadding}"
@@ -114,7 +114,7 @@
                                               RecognizesAccessKey="True"/>
                         </Border>
 
-                        <!-- Children -->
+                        <!-- Дочерние элементы. -->
                         <ItemsPresenter x:Name="ItemsHost"
                                         Grid.Column="1"
                                         Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Level, Converter={x:Null}}"/>

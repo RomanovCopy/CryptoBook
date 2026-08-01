@@ -92,7 +92,7 @@
 
 
     <Window.Title>
-        <Binding Path="Title" UpdateSourceTrigger="PropertyChanged"/>
+        <Binding Path="[EncryptionMode.Title]" Source="{StaticResource Res}"/>
     </Window.Title>
 
     <Window.Width>
@@ -119,7 +119,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0"
-                   Text="{Binding MessageMode, UpdateSourceTrigger=PropertyChanged}"
+                   Text="{Binding [EncryptionMode.Prompt], Source={StaticResource Res}}"
                    Foreground="{DynamicResource CurrentWindowForeground}"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
@@ -128,7 +128,7 @@
         <StackPanel Margin="10" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <!-- Свойство GroupName объединяет кнопки в один переключатель -->
             <RadioButton x:Name="SaveAsRadioButton"
-                         Content="{Binding MessageModeTop, UpdateSourceTrigger=PropertyChanged}"
+                         Content="{Binding [EncryptionMode.SaveAs], Source={StaticResource Res}}"
                          Style="{StaticResource EncryptionModeRadioButtonStyle}"
                          GroupName="EncriptedMode" Margin="10,10,10,5" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
                          VerticalContentAlignment="Center"
@@ -137,7 +137,7 @@
                 ConverterParameter={x:Static security:EncryptionTargetMode.SaveAs}}" />
 
             <RadioButton x:Name="ReplaceSourceRadioButton"
-                         Content="{Binding MessageModeBottom, UpdateSourceTrigger=PropertyChanged}"
+                         Content="{Binding [EncryptionMode.ReplaceSource], Source={StaticResource Res}}"
                          Style="{StaticResource EncryptionModeRadioButtonStyle}"
                          GroupName="EncriptedMode" Margin="10,5,10,20" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
                          VerticalContentAlignment="Center"
@@ -153,10 +153,10 @@
         
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                 
-                <Button x:Name="btnOk" Content="Ok"
+        <Button x:Name="btnOk" Content="{Binding [Common.OK], Source={StaticResource Res}}"
                         Grid.Column="0" HorizontalAlignment="Center" Margin="20"
                         Command="{Binding ButtonOk,UpdateSourceTrigger=PropertyChanged}" />
-                <Button x:Name="btnCancel" Content="Cancel"
+        <Button x:Name="btnCancel" Content="{Binding [Common.Cancel], Source={StaticResource Res}}"
                         Grid.Column="1" HorizontalAlignment="Center" Margin="20"
                         Command="{Binding ButtonCancel, UpdateSourceTrigger=PropertyChanged}"/>
 

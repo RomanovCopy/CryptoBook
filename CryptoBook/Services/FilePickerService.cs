@@ -1,5 +1,7 @@
 ﻿using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +39,9 @@ namespace CryptoBook.Services
 
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Выберите файл",
-                Filter = GetFilterString()?? "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
+                Title = LocalizationManager.GetString("File.PickerTitle"),
+                Filter = GetFilterString() ??
+                    LocalizationManager.GetString("File.TextFilter"),
                 FilterIndex = 1,
                 Multiselect = false,
                 CheckFileExists = true,

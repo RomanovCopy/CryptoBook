@@ -11,7 +11,7 @@
         xmlns:local="clr-namespace:CryptoBook.Views"
         d:DataContext="{x:Type viewmodels:SystemItemName_Editor_ViewModel}"
         mc:Ignorable="d"
-        Title="SystemItemName_Editor" MinHeight="200" MinWidth="400">
+        Title="{Binding [SystemItemRename.Title], Source={StaticResource Res}}" MinHeight="200" MinWidth="400">
     <Window.DataContext>
         <marcup:ResolveViewModel ViewModelType="{x:Type interfaces:ISystemItemName_Editor_ViewModel}"/>
     </Window.DataContext>
@@ -75,19 +75,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" >
-            <Label Content="Old Name:" Margin="5,0,5,0"/>
+            <Label Content="{Binding [SystemItemRename.OldName], Source={StaticResource Res}}" Margin="5,0,5,0"/>
             <TextBlock Text="{Binding OldName, UpdateSourceTrigger=PropertyChanged}"  />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="3">
-            <Label Content="Old Extension:" Margin="5,0,5,0"/>
+            <Label Content="{Binding [SystemItemRename.OldExtension], Source={StaticResource Res}}" Margin="5,0,5,0"/>
             <TextBlock Text="{Binding OldExtension, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
-            <Label Content="New Name:"  Margin="5,0,5,0"/>
+            <Label Content="{Binding [SystemItemRename.NewName], Source={StaticResource Res}}"  Margin="5,0,5,0"/>
             <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3">
-            <Label Content="New Extension:"  Margin="5,0,5,0"/>
+            <Label Content="{Binding [SystemItemRename.NewExtension], Source={StaticResource Res}}"  Margin="5,0,5,0"/>
             <TextBox Text="{Binding NewExtension, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
     </Grid>

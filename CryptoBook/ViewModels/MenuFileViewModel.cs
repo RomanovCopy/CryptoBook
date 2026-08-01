@@ -29,7 +29,7 @@ namespace CryptoBook.ViewModels
         }
 
 
-        //    IMenuFileViewModel
+        // Реализация IMenuFileViewModel.
 
         public ICommand NewFile => newFile ??= new RelayCommand(menuFileModel.Execute_NewFile, menuFileModel.CanExecute_NewFile);
         RelayCommand newFile;
@@ -73,7 +73,7 @@ namespace CryptoBook.ViewModels
 
 
 
-        //    ICommandRegistry
+        // Реализация ICommandRegistry.
 
 
         /// <summary>

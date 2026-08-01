@@ -1,5 +1,7 @@
 ﻿using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +32,8 @@ namespace CryptoBook.Services
             {
                 SelectedPath = native,
                 ShowNewFolderButton = true,
-                Description = "Выберите папку для нового файла"
+                Description = LocalizationManager.GetString(
+                    "File.NewFolderPickerDescription")
             };
 
             var result = dlg.ShowDialog();

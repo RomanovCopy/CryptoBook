@@ -56,9 +56,6 @@
     <Setting Name="MyMessageTop" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="CurrentTheme" Type="System.String" Scope="User">
-      <Value Profile="(Default)">System</Value>
-    </Setting>
     <Setting Name="FontSizeDefault" Type="System.Double" Scope="User">
       <Value Profile="(Default)">16</Value>
     </Setting>
@@ -178,6 +175,9 @@
     </Setting>
     <Setting Name="DocumentBackgroundColor" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="CurrentTheme" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SystemTheme</Value>
     </Setting>
   </Settings>
 </SettingsFile>

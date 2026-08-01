@@ -2,6 +2,8 @@ using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
 
+using CryptoBook.Infrastructure;
+
 using System.IO;
 
 namespace CryptoBook.Services
@@ -36,13 +38,17 @@ namespace CryptoBook.Services
                 ArgumentNullException.ThrowIfNull(source);
 
                 if(mode == EncryptionTargetMode.Cancels)
-                    return FileOperationResult.Fail("Операция отменена.");
+                    return FileOperationResult.Fail(
+                        LocalizationManager.GetString("Error.OperationCanceled"));
 
                 if(mode is not EncryptionTargetMode.SaveAs and not EncryptionTargetMode.ReplaceSource)
-                    return FileOperationResult.Fail("Неизвестный режим обработки.");
+                    return FileOperationResult.Fail(
+                        LocalizationManager.GetString("Security.UnknownMode"));
 
                 if(string.IsNullOrWhiteSpace(destinationPath))
-                    return FileOperationResult.Fail("Не указан путь назначения.");
+                    return FileOperationResult.Fail(
+                        LocalizationManager.GetString(
+                            "Security.DestinationRequired"));
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -65,7 +71,10 @@ namespace CryptoBook.Services
                         break;
 
                     default:
-                        throw new NotSupportedException( $"Тип элемента '{source.GetType().Name}' не поддерживается.");
+                        throw new NotSupportedException(
+                            LocalizationManager.Format(
+                                "Security.UnsupportedItemType",
+                                source.GetType().Name));
                 }
 
                 foreach(string directory in destinationDirectories)
@@ -86,7 +95,10 @@ namespace CryptoBook.Services
 
                     string? destinationDirectory = Path.GetDirectoryName(file.DestinationPath);
                     if(string.IsNullOrWhiteSpace(destinationDirectory))
-                        throw new IOException($"Не удалось определить каталог назначения для '{file.DestinationPath}'.");
+                        throw new IOException(
+                            LocalizationManager.Format(
+                                "Security.DestinationDirectoryUnknown",
+                                file.DestinationPath));
 
                     Directory.CreateDirectory(destinationDirectory);
 
@@ -113,7 +125,8 @@ namespace CryptoBook.Services
                 throw;
             } catch(OperationCanceledException)
             {
-                return FileOperationResult.Fail("Операция отменена.");
+                return FileOperationResult.Fail(
+                    LocalizationManager.GetString("Error.OperationCanceled"));
             } catch(Exception ex)
             {
                 return FileOperationResult.Fail(ex.Message);
@@ -132,7 +145,11 @@ namespace CryptoBook.Services
             // расширение к переданному базовому имени. Промежуточный каталог
             // позволяет точно определить получившийся путь и безопасно заменить
             // исходный зашифрованный файл, даже если расширения отличаются.
-            string sourceDirectory = Path.GetDirectoryName(file.SourcePath) ?? throw new IOException($"Не удалось определить каталог файла '{file.SourcePath}'.");
+            string sourceDirectory = Path.GetDirectoryName(file.SourcePath) ??
+                throw new IOException(
+                    LocalizationManager.Format(
+                        "Security.SourceDirectoryUnknown",
+                        file.SourcePath));
             string stagingDirectory = Path.Combine( sourceDirectory, $".cryptobook-{Guid.NewGuid():N}");
 
             Directory.CreateDirectory(stagingDirectory);
@@ -145,7 +162,9 @@ namespace CryptoBook.Services
 
                 string[] stagedFiles = Directory.GetFiles(stagingDirectory);
                 if(stagedFiles.Length != 1)
-                    throw new IOException("Не удалось определить результат расшифрования.");
+                    throw new IOException(
+                        LocalizationManager.GetString(
+                            "Security.DecryptionResultUnknown"));
 
                 string finalPath = Path.Combine( sourceDirectory, Path.GetFileName(stagedFiles[0]));
 
@@ -168,13 +187,19 @@ namespace CryptoBook.Services
         {
             FileInfo sourceFile = new(sourcePath);
             if(!sourceFile.Exists)
-                throw new FileNotFoundException("Исходный файл не найден.", sourcePath);
+                throw new FileNotFoundException(
+                    LocalizationManager.GetString(
+                        "Security.SourceFileNotFound"),
+                    sourcePath);
 
             string targetPath = mode == EncryptionTargetMode.ReplaceSource
                 ? decrypt
                     ? Path.Combine(
                         sourceFile.DirectoryName
-                            ?? throw new IOException($"Не удалось определить каталог файла '{sourcePath}'."),
+                            ?? throw new IOException(
+                                LocalizationManager.Format(
+                                    "Security.SourceDirectoryUnknown",
+                                    sourcePath)),
                         Path.GetFileNameWithoutExtension(sourceFile.Name))
                     : sourceFile.FullName
                 : destinationPath;
@@ -197,7 +222,10 @@ namespace CryptoBook.Services
         {
             DirectoryInfo sourceDirectory = new(sourcePath);
             if(!sourceDirectory.Exists)
-                throw new DirectoryNotFoundException($"Исходный каталог '{sourcePath}' не найден.");
+                throw new DirectoryNotFoundException(
+                    LocalizationManager.Format(
+                        "Security.SourceDirectoryNotFound",
+                        sourcePath));
 
             string destinationRoot = mode == EncryptionTargetMode.ReplaceSource
                 ? sourceDirectory.FullName
@@ -207,7 +235,8 @@ namespace CryptoBook.Services
                PathsEqual(sourceDirectory.FullName, destinationRoot))
             {
                 throw new IOException(
-                    "Для режима «Сохранить как» каталог назначения должен отличаться от исходного.");
+                    LocalizationManager.GetString(
+                        "Security.SaveAsDirectoryMustDiffer"));
             }
 
             bool destinationIsInsideSource =

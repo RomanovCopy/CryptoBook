@@ -331,4 +331,233 @@
   <data name="Explorer.Favorites" xml:space="preserve"><value>Избранное</value></data>
   <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Удалить из избранного</value></data>
   <data name="Explorer.Favorites.Empty" xml:space="preserve"><value>Добавьте текущую папку кнопкой ★</value></data>
+  <data name="Common.OK" xml:space="preserve"><value>ОК</value></data>
+  <data name="Common.Undo" xml:space="preserve"><value>_Отменить</value></data>
+  <data name="Common.Redo" xml:space="preserve"><value>_Повторить</value></data>
+  <data name="Common.SelectAll" xml:space="preserve"><value>Выделить _всё</value></data>
+  <data name="Common.Error" xml:space="preserve"><value>Ошибка</value></data>
+  <data name="Home.Title" xml:space="preserve"><value>Главная</value></data>
+  <data name="Editor.ClearDocument" xml:space="preserve"><value>О_чистить документ</value></data>
+  <data name="Editor.RemoveEmptyParagraphs" xml:space="preserve"><value>Удалить _пустые абзацы</value></data>
+  <data name="Editor.Formatting" xml:space="preserve"><value>_Форматирование</value></data>
+  <data name="Editor.Bold" xml:space="preserve"><value>_Жирный</value></data>
+  <data name="Editor.Italic" xml:space="preserve"><value>_Курсив</value></data>
+  <data name="Editor.Underline" xml:space="preserve"><value>_Подчёркивание</value></data>
+  <data name="Editor.ClearFormatting" xml:space="preserve"><value>_Очистить форматирование</value></data>
+  <data name="Editor.Alignment" xml:space="preserve"><value>_Выравнивание</value></data>
+  <data name="Editor.Image" xml:space="preserve"><value>_Изображение</value></data>
+  <data name="Editor.ImageInline" xml:space="preserve"><value>В _строке</value></data>
+  <data name="Editor.ImageCenteredBlock" xml:space="preserve"><value>_Отдельный блок по центру</value></data>
+  <data name="Editor.ImageFloatLeft" xml:space="preserve"><value>Обтекание: изображение _слева</value></data>
+  <data name="Editor.ImageFloatRight" xml:space="preserve"><value>Обтекание: изображение с_права</value></data>
+  <data name="Editor.ImageLayoutCommand" xml:space="preserve"><value>Изменить размещение изображения</value></data>
+  <data name="Editor.PagedPreview" xml:space="preserve"><value>Постраничный просмотр</value></data>
+  <data name="Editor.Editing" xml:space="preserve"><value>Редактирование</value></data>
+  <data name="Editor.Editor" xml:space="preserve"><value>Редактор</value></data>
+  <data name="Editor.Preview" xml:space="preserve"><value>Просмотр</value></data>
+  <data name="Editor.Zoom100" xml:space="preserve"><value>Масштаб 100%</value></data>
+  <data name="Editor.FitToWindow" xml:space="preserve"><value>Вписать в окно</value></data>
+  <data name="Bookmarks.Properties" xml:space="preserve"><value>Свойства закладки</value></data>
+  <data name="Bookmarks.Name" xml:space="preserve"><value>Имя</value></data>
+  <data name="Bookmarks.Note" xml:space="preserve"><value>Заметка</value></data>
+  <data name="Bookmarks.AnchorFormat" xml:space="preserve"><value>Якорь: {0}</value></data>
+  <data name="Bookmarks.Anchor" xml:space="preserve"><value>Якорь:</value></data>
+  <data name="Bookmarks.Refresh" xml:space="preserve"><value>Обновить</value></data>
+  <data name="Bookmarks.Added" xml:space="preserve"><value>Закладка «{0}» добавлена.</value></data>
+  <data name="Bookmarks.Removed" xml:space="preserve"><value>Закладка «{0}» удалена.</value></data>
+  <data name="Bookmarks.Renamed" xml:space="preserve"><value>«{0}» переименована в «{1}».</value></data>
+  <data name="Bookmarks.LinkInserted" xml:space="preserve"><value>Ссылка на «{0}» вставлена.</value></data>
+  <data name="Bookmarks.IndexRefreshed" xml:space="preserve"><value>Индекс обновлён. Закладок: {0}.</value></data>
+  <data name="Bookmarks.OperationFailed" xml:space="preserve"><value>Операцию выполнить не удалось.</value></data>
+  <data name="Bookmarks.NoDocument" xml:space="preserve"><value>Документ отсутствует.</value></data>
+  <data name="Bookmarks.ReadOnly" xml:space="preserve"><value>Документ только для чтения.</value></data>
+  <data name="Bookmarks.NameEmpty" xml:space="preserve"><value>Имя закладки пустое.</value></data>
+  <data name="Bookmarks.OldNameEmpty" xml:space="preserve"><value>Старое имя пустое.</value></data>
+  <data name="Bookmarks.NewNameEmpty" xml:space="preserve"><value>Новое имя пустое.</value></data>
+  <data name="Bookmarks.NameInvalid" xml:space="preserve"><value>Имя не должно содержать # или управляющие символы.</value></data>
+  <data name="Bookmarks.NameExists" xml:space="preserve"><value>«{0}» уже существует.</value></data>
+  <data name="Bookmarks.NameUnchanged" xml:space="preserve"><value>Имя не изменилось.</value></data>
+  <data name="Bookmarks.NameNotFound" xml:space="preserve"><value>Закладка «{0}» не найдена.</value></data>
+  <data name="Bookmarks.BadCaret" xml:space="preserve"><value>Недоступная позиция каретки.</value></data>
+  <data name="Bookmarks.InsideHyperlink" xml:space="preserve"><value>Позиция находится внутри ссылки.</value></data>
+  <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Поддерживается только содержимое в пределах одного абзаца.</value></data>
+  <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>Выделение пересекается с другой ссылкой.</value></data>
+  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Укажите текст ссылки или выделите текст в документе.</value></data>
+  <data name="Explorer.WindowTitle" xml:space="preserve"><value>Проводник</value></data>
+  <data name="Explorer.Column.Name" xml:space="preserve"><value>Имя</value></data>
+  <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Дата изменения</value></data>
+  <data name="Explorer.Column.Type" xml:space="preserve"><value>Тип</value></data>
+  <data name="Explorer.Column.Size" xml:space="preserve"><value>Размер</value></data>
+  <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Выбрано: {0}</value></data>
+  <data name="Explorer.Selected" xml:space="preserve"><value>Выбрано:</value></data>
+  <data name="Explorer.Copying" xml:space="preserve"><value>Копирование файлов</value></data>
+  <data name="Explorer.CopyError" xml:space="preserve"><value>Ошибка копирования</value></data>
+  <data name="Explorer.SortError" xml:space="preserve"><value>Ошибка сортировки</value></data>
+  <data name="Explorer.UnknownSortColumn" xml:space="preserve"><value>Не удалось определить колонку для сортировки.</value></data>
+  <data name="Explorer.CreateDirectoryError" xml:space="preserve"><value>Ошибка создания директории</value></data>
+  <data name="Explorer.ItemAlreadyExists" xml:space="preserve"><value>Элемент с именем «{0}» уже существует.</value></data>
+  <data name="Explorer.RenameError" xml:space="preserve"><value>Ошибка переименования</value></data>
+  <data name="Explorer.Moving" xml:space="preserve"><value>Перемещение</value></data>
+  <data name="Explorer.MoveError" xml:space="preserve"><value>Ошибка перемещения</value></data>
+  <data name="Explorer.RefreshError" xml:space="preserve"><value>Ошибка обновления</value></data>
+  <data name="Explorer.CancelOperation" xml:space="preserve"><value>Отмена операции</value></data>
+  <data name="Explorer.RenameCanceledConfirmation" xml:space="preserve"><value>Переименование элемента отменено.{0}Вы уверены?</value></data>
+  <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Ошибка открытия директории</value></data>
+  <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Не удалось открыть «{0}»:{1}{2}</value></data>
+  <data name="Explorer.OpenFileTitle" xml:space="preserve"><value>Открытие файла</value></data>
+  <data name="Explorer.FileOpenError" xml:space="preserve"><value>Ошибка открытия файла</value></data>
+  <data name="Explorer.FileOpenFailed" xml:space="preserve"><value>Не удалось открыть {0}:{1}{2}</value></data>
+  <data name="Explorer.OpenFileDefaultFailed" xml:space="preserve"><value>Не удалось открыть {0} приложением по умолчанию.</value></data>
+  <data name="Explorer.DirectoryPathRequired" xml:space="preserve"><value>Путь к директории не задан.</value></data>
+  <data name="Explorer.RootPathNotFound" xml:space="preserve"><value>Не удалось определить корень пути «{0}».</value></data>
+  <data name="Explorer.DirectoryNameEmpty" xml:space="preserve"><value>Имя директории не может быть пустым.</value></data>
+  <data name="Explorer.DirectoryNameInvalid" xml:space="preserve"><value>Имя директории содержит недопустимые символы или имеет недопустимый формат.</value></data>
+  <data name="Explorer.DirectoryNameReserved" xml:space="preserve"><value>Имя «{0}» зарезервировано операционной системой.</value></data>
+  <data name="Explorer.CryptoBookFilesFilter" xml:space="preserve"><value>Файлы CryptoBook (*.cbook)|*.cbook</value></data>
+  <data name="Explorer.AllFilesFilter" xml:space="preserve"><value>Все файлы (*.*)|*.*</value></data>
+  <data name="Explorer.SaveEncryptedTitle" xml:space="preserve"><value>Сохранить зашифрованный файл</value></data>
+  <data name="Explorer.SaveDecryptedTitle" xml:space="preserve"><value>Сохранить расшифрованный файл</value></data>
+  <data name="Explorer.EncryptionError" xml:space="preserve"><value>Ошибка шифрования</value></data>
+  <data name="Explorer.DecryptionError" xml:space="preserve"><value>Ошибка дешифрования</value></data>
+  <data name="Explorer.Encryption" xml:space="preserve"><value>Шифрование</value></data>
+  <data name="Explorer.Decryption" xml:space="preserve"><value>Дешифрование</value></data>
+  <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve"><value>Нельзя зашифровать или расшифровать весь диск. Выберите файл или директорию.</value></data>
+  <data name="Explorer.ItemDoesNotExist" xml:space="preserve"><value>Выбранный файл или директория не существует.</value></data>
+  <data name="Explorer.RefreshAfterOperationFailed" xml:space="preserve"><value>Операция завершена успешно, но не удалось обновить представление файлов:{0}{1}</value></data>
+  <data name="Explorer.OverwriteTitle" xml:space="preserve"><value>Перезапись исходного элемента</value></data>
+  <data name="Explorer.OverwriteFilePrompt" xml:space="preserve"><value>Заменить исходный файл {0} копией?</value></data>
+  <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve"><value>Заменить исходные файлы {0} копиями?</value></data>
+  <data name="Explorer.EncryptedAdjective" xml:space="preserve"><value>зашифрованной</value></data>
+  <data name="Explorer.DecryptedAdjective" xml:space="preserve"><value>расшифрованной</value></data>
+  <data name="Explorer.EncryptedCopiesAdjective" xml:space="preserve"><value>зашифрованными</value></data>
+  <data name="Explorer.DecryptedCopiesAdjective" xml:space="preserve"><value>расшифрованными</value></data>
+  <data name="Explorer.EncryptionWarning" xml:space="preserve"><value>Открытие без ключа станет невозможным.</value></data>
+  <data name="Explorer.EncryptedSuffix" xml:space="preserve"><value>Зашифрованный</value></data>
+  <data name="Explorer.DecryptedSuffix" xml:space="preserve"><value>Расшифрованный</value></data>
+  <data name="File.NewTitle" xml:space="preserve"><value>Новый файл</value></data>
+  <data name="File.CreateOperation" xml:space="preserve"><value>Создание файла</value></data>
+  <data name="File.TypeNotSelected" xml:space="preserve"><value>Не выбран тип файла.</value></data>
+  <data name="FileTemplate.Image" xml:space="preserve"><value>Изображение</value></data>
+  <data name="FileTemplate.Text" xml:space="preserve"><value>Текстовый файл</value></data>
+  <data name="FileTemplate.Secure" xml:space="preserve"><value>Зашифрованный файл</value></data>
+  <data name="FileTemplate.Video" xml:space="preserve"><value>Видео</value></data>
+  <data name="FileTemplate.Xaml" xml:space="preserve"><value>XAML-файл</value></data>
+  <data name="FileTemplate.XamlPackage" xml:space="preserve"><value>Пакет XAML</value></data>
+  <data name="FileTemplate.PdfUnsupported" xml:space="preserve"><value>Создание PDF в CryptoBook не поддерживается.</value></data>
+  <data name="FileTemplate.RichText" xml:space="preserve"><value>Документ RTF</value></data>
+  <data name="FileTemplate.NewImage" xml:space="preserve"><value>Новое изображение</value></data>
+  <data name="FileTemplate.NewFile" xml:space="preserve"><value>Новый файл</value></data>
+  <data name="FileTemplate.NewDocument" xml:space="preserve"><value>Новый документ</value></data>
+  <data name="FileTemplate.NewEncryptedFile" xml:space="preserve"><value>Новый зашифрованный файл</value></data>
+  <data name="FileTemplate.NewVideo" xml:space="preserve"><value>Новое видео</value></data>
+  <data name="FileTemplate.NewXamlPackage" xml:space="preserve"><value>Новый пакет XAML</value></data>
+  <data name="Media.EmptyTitle" xml:space="preserve"><value>Фото и видео</value></data>
+  <data name="Media.PlayerTitle" xml:space="preserve"><value>Медиаплеер</value></data>
+  <data name="Media.DefaultStatus" xml:space="preserve"><value>Откройте изображение или видео</value></data>
+  <data name="Media.OpenFile" xml:space="preserve"><value>Открыть файл</value></data>
+  <data name="Media.PreviousImage" xml:space="preserve"><value>Предыдущее изображение</value></data>
+  <data name="Media.NextImage" xml:space="preserve"><value>Следующее изображение</value></data>
+  <data name="Media.Rotate" xml:space="preserve"><value>Повернуть</value></data>
+  <data name="Media.FitImage" xml:space="preserve"><value>Вписать изображение</value></data>
+  <data name="Media.DeleteImage" xml:space="preserve"><value>Удалить изображение</value></data>
+  <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Открыть изображение или видео</value></data>
+  <data name="Media.Loading" xml:space="preserve"><value>Загрузка: {0}</value></data>
+  <data name="Media.DeleteTitle" xml:space="preserve"><value>Удаление изображения</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>Удалить «{0}»?</value></data>
+  <data name="Media.DeleteError" xml:space="preserve"><value>Ошибка удаления</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Не удалось удалить изображение.</value></data>
+  <data name="Media.NoMoreImages" xml:space="preserve"><value>В папке больше нет изображений.</value></data>
+  <data name="Media.DecodeFailed" xml:space="preserve"><value>Не удалось декодировать изображение.</value></data>
+  <data name="Media.Filter" xml:space="preserve"><value>Медиафайлы|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Изображения|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Видео|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Файлы CryptoBook|*.cbook;*.cbox|Все файлы|*.*</value></data>
+  <data name="Key.Title" xml:space="preserve"><value>Ключ шифрования</value></data>
+  <data name="Key.Prompt" xml:space="preserve"><value>Введите ключ шифрования:</value></data>
+  <data name="Key.TooShort" xml:space="preserve"><value>Ключ должен быть не менее {0} символов.</value></data>
+  <data name="Key.InvalidCharacters" xml:space="preserve"><value>Недопустимые символы в ключе.</value></data>
+  <data name="Key.Enter" xml:space="preserve"><value>Введите ключ.</value></data>
+  <data name="Key.MinimumLength" xml:space="preserve"><value>Минимальная длина ключа: {0}.</value></data>
+  <data name="Key.Repeat" xml:space="preserve"><value>Повторите ключ.</value></data>
+  <data name="Key.Mismatch" xml:space="preserve"><value>Ключи не совпадают.</value></data>
+  <data name="EncryptionMode.Title" xml:space="preserve"><value>Режим сохранения файла</value></data>
+  <data name="EncryptionMode.Prompt" xml:space="preserve"><value>Выберите способ сохранения файла:</value></data>
+  <data name="EncryptionMode.SaveAs" xml:space="preserve"><value>Сохранить файл как...</value></data>
+  <data name="EncryptionMode.ReplaceSource" xml:space="preserve"><value>Заменить исходный файл</value></data>
+  <data name="Progress.Canceling" xml:space="preserve"><value>Отмена операции…</value></data>
+  <data name="Favorites.ErrorTitle" xml:space="preserve"><value>Ошибка избранного</value></data>
+  <data name="Favorites.AddFailed" xml:space="preserve"><value>Не удалось добавить директорию:{0}{1}</value></data>
+  <data name="Favorites.RenameTitle" xml:space="preserve"><value>Переименование закладки</value></data>
+  <data name="Favorites.RenamePrompt" xml:space="preserve"><value>Введите отображаемое имя:</value></data>
+  <data name="Favorites.RenameFailed" xml:space="preserve"><value>Не удалось переименовать закладку:{0}{1}</value></data>
+  <data name="Favorites.RemoveFailed" xml:space="preserve"><value>Не удалось удалить закладку:{0}{1}</value></data>
+  <data name="Favorites.RefreshFailed" xml:space="preserve"><value>Не удалось обновить список избранного:{0}{1}</value></data>
+  <data name="Hyperlink.InvalidAddress" xml:space="preserve"><value>Введите корректный адрес HTTP или HTTPS, например https://example.com.</value></data>
+  <data name="SystemItemRename.Title" xml:space="preserve"><value>Переименование элемента</value></data>
+  <data name="SystemItemRename.OldName" xml:space="preserve"><value>Старое имя:</value></data>
+  <data name="SystemItemRename.OldExtension" xml:space="preserve"><value>Старое расширение:</value></data>
+  <data name="SystemItemRename.NewName" xml:space="preserve"><value>Новое имя:</value></data>
+  <data name="SystemItemRename.NewExtension" xml:space="preserve"><value>Новое расширение:</value></data>
+  <data name="Document.SaveOperation" xml:space="preserve"><value>Сохранение документа</value></data>
+  <data name="Document.SaveError" xml:space="preserve"><value>Ошибка сохранения</value></data>
+  <data name="Document.InsertImageError" xml:space="preserve"><value>Не удалось вставить изображение</value></data>
+  <data name="Document.RecoveryPrompt" xml:space="preserve"><value>Обнаружена автоматически сохранённая копия после предыдущего завершения. Восстановить документ?</value></data>
+  <data name="Document.RecoveryTitle" xml:space="preserve"><value>Восстановление CryptoBook</value></data>
+  <data name="Document.UnsavedPrompt" xml:space="preserve"><value>В документе есть несохранённые изменения. Сохранить их перед закрытием?</value></data>
+  <data name="Document.RecoveryFailed" xml:space="preserve"><value>Не удалось восстановить документ:{0}{1}</value></data>
+  <data name="Document.RecoveryErrorTitle" xml:space="preserve"><value>Ошибка восстановления</value></data>
+  <data name="Document.RecoveryCleanupFailed" xml:space="preserve"><value>Не удалось удалить файл автоматического восстановления. Он может быть снова предложен при следующем запуске:{0}{1}</value></data>
+  <data name="Document.RecoveryCleanupErrorTitle" xml:space="preserve"><value>Ошибка очистки восстановления</value></data>
+  <data name="Preview.SelectFile" xml:space="preserve"><value>Выберите файл для предварительного просмотра.</value></data>
+  <data name="Preview.Creating" xml:space="preserve"><value>Создание предварительного просмотра…</value></data>
+  <data name="Preview.DisplayFailed" xml:space="preserve"><value>Не удалось отобразить файл:{0}{1}</value></data>
+  <data name="Preview.EncryptedNeedsKey" xml:space="preserve"><value>Файл зашифрован. Введите ключ, чтобы включить предварительный просмотр.</value></data>
+  <data name="Preview.PdfUnsupported" xml:space="preserve"><value>Встроенный просмотр PDF пока не поддерживается.</value></data>
+  <data name="Preview.DetailsOnly" xml:space="preserve"><value>Для этого типа файла доступен только просмотр сведений.</value></data>
+  <data name="Preview.EncryptedTooLarge" xml:space="preserve"><value>Зашифрованный файл слишком велик для предварительного просмотра в памяти.</value></data>
+  <data name="Preview.DecryptedTooLarge" xml:space="preserve"><value>Расшифрованный файл слишком велик для безопасного предварительного просмотра.</value></data>
+  <data name="Preview.DecryptedPdfUnsupported" xml:space="preserve"><value>Файл успешно расшифрован, но встроенный просмотр PDF пока не поддерживается.</value></data>
+  <data name="Preview.Truncated" xml:space="preserve"><value>— Предварительный просмотр сокращён —</value></data>
+  <data name="Preview.DecryptedTypeUnsupported" xml:space="preserve"><value>Файл успешно расшифрован, но его формат не поддерживает встроенный просмотр.</value></data>
+  <data name="Preview.DecryptFailed" xml:space="preserve"><value>Не удалось расшифровать файл для просмотра. Проверьте ключ:{0}{1}</value></data>
+  <data name="Preview.ImageTooLarge" xml:space="preserve"><value>Изображение слишком велико для безопасного предварительного просмотра.</value></data>
+  <data name="Preview.DirectoryUnavailable" xml:space="preserve"><value>{0}{1}Директория сейчас недоступна</value></data>
+  <data name="Preview.BytesFormat" xml:space="preserve"><value>{0} Б</value></data>
+  <data name="Preview.KilobytesFormat" xml:space="preserve"><value>{0:F1} КБ</value></data>
+  <data name="Preview.MegabytesFormat" xml:space="preserve"><value>{0:F1} МБ</value></data>
+  <data name="Preview.GigabytesFormat" xml:space="preserve"><value>{0:F1} ГБ</value></data>
+  <data name="File.AlreadyExists" xml:space="preserve"><value>Файл уже существует.</value></data>
+  <data name="File.Writing" xml:space="preserve"><value>Запись файла</value></data>
+  <data name="File.Created" xml:space="preserve"><value>Файл создан</value></data>
+  <data name="File.Loaded" xml:space="preserve"><value>Файл загружен</value></data>
+  <data name="File.ReadComplete" xml:space="preserve"><value>Чтение завершено</value></data>
+  <data name="File.Reading" xml:space="preserve"><value>Чтение файла</value></data>
+  <data name="File.Saved" xml:space="preserve"><value>Файл сохранён</value></data>
+  <data name="File.CopyComplete" xml:space="preserve"><value>Копирование завершено</value></data>
+  <data name="File.PickerTitle" xml:space="preserve"><value>Выберите файл</value></data>
+  <data name="File.TextFilter" xml:space="preserve"><value>Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*</value></data>
+  <data name="File.ImagePickerTitle" xml:space="preserve"><value>Вставить изображение</value></data>
+  <data name="File.ImageFilter" xml:space="preserve"><value>Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Все файлы|*.*</value></data>
+  <data name="File.NewFolderPickerDescription" xml:space="preserve"><value>Выберите папку для нового файла</value></data>
+  <data name="Document.SaveAsTitle" xml:space="preserve"><value>Сохранить документ как</value></data>
+  <data name="Workspace.DirectoryNotFound" xml:space="preserve"><value>Рабочая директория не найдена: {0}</value></data>
+  <data name="Workspace.EnterSearchQuery" xml:space="preserve"><value>Введите часть имени файла.</value></data>
+  <data name="Workspace.NotSelected" xml:space="preserve"><value>Рабочая директория не выбрана.</value></data>
+  <data name="Workspace.LocalOnly" xml:space="preserve"><value>Поиск пока поддерживается только в локальной рабочей директории.</value></data>
+  <data name="Error.OperationCanceled" xml:space="preserve"><value>Операция отменена.</value></data>
+  <data name="Security.UnknownMode" xml:space="preserve"><value>Неизвестный режим обработки.</value></data>
+  <data name="Security.DestinationRequired" xml:space="preserve"><value>Не указан путь назначения.</value></data>
+  <data name="Security.UnsupportedItemType" xml:space="preserve"><value>Тип элемента «{0}» не поддерживается.</value></data>
+  <data name="Security.DestinationDirectoryUnknown" xml:space="preserve"><value>Не удалось определить каталог назначения для «{0}».</value></data>
+  <data name="Security.SourceDirectoryUnknown" xml:space="preserve"><value>Не удалось определить каталог файла «{0}».</value></data>
+  <data name="Security.DecryptionResultUnknown" xml:space="preserve"><value>Не удалось определить результат расшифрования.</value></data>
+  <data name="Security.SourceFileNotFound" xml:space="preserve"><value>Исходный файл не найден.</value></data>
+  <data name="Security.SourceDirectoryNotFound" xml:space="preserve"><value>Исходный каталог «{0}» не найден.</value></data>
+  <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve"><value>Для режима «Сохранить как» каталог назначения должен отличаться от исходного.</value></data>
+  <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve"><value>Файл не является зашифрованным файлом CryptoBook.</value></data>
+  <data name="Security.InvalidExtension" xml:space="preserve"><value>Некорректное расширение файла.</value></data>
+  <data name="Media.FfmpegMissing" xml:space="preserve"><value>Не найдены нативные библиотеки FFmpeg. Ожидался полный FFmpeg 7.1 runtime в «{0}».</value></data>
+  <data name="Media.OpenFailed" xml:space="preserve"><value>Не удалось открыть медиафайл.</value></data>
+  <data name="Media.DecryptedFileUnknown" xml:space="preserve"><value>Не удалось определить расшифрованный медиафайл.</value></data>
+  <data name="Media.DecryptingFile" xml:space="preserve"><value>Расшифровка файла</value></data>
+  <data name="Document.NoSaveFormats" xml:space="preserve"><value>Не зарегистрированы форматы сохранения документа.</value></data>
+  <data name="Image.EmptyFile" xml:space="preserve"><value>Файл изображения пуст.</value></data>
+  <data name="Image.FileNotFound" xml:space="preserve"><value>Файл изображения не найден.</value></data>
 </root>

@@ -120,6 +120,32 @@
                 Value="{DynamicResource CurrentBorderColor}"/>
     </Style>
 
+    <Style TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentInputBackground}"/>
+        <Setter Property="Padding" Value="6,4"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource CurrentSelectionForeground}"/>
+                <Setter Property="Background"
+                        Value="{DynamicResource CurrentSelectionBackground}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource CurrentSelectionForeground}"/>
+                <Setter Property="Background"
+                        Value="{DynamicResource CurrentSelectionBackground}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource CurrentDisabledForeground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="{x:Type ListBox}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentInputForeground}"/>

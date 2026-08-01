@@ -33,6 +33,7 @@ namespace CryptoBook.ViewModels
             this.menuFile = menuFile
                 ?? throw new ArgumentNullException(nameof(menuFile));
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            LocalizationManager.CultureChanged += OnCultureChanged;
         }
 
         public bool IsPreviewMode
@@ -45,11 +46,11 @@ namespace CryptoBook.ViewModels
             }
         }
 
-        public string ModeLabel =>
-            IsPreviewMode ? "Постраничный просмотр" : "Редактирование";
+        public string ModeLabel => LocalizationManager.GetString(
+            IsPreviewMode ? "Editor.PagedPreview" : "Editor.Editing");
 
-        public string ToggleViewText =>
-            IsPreviewMode ? "Редактор" : "Просмотр";
+        public string ToggleViewText => LocalizationManager.GetString(
+            IsPreviewMode ? "Editor.Editor" : "Editor.Preview");
 
         public FlowDocument? PreviewDocument
         {
@@ -69,8 +70,8 @@ namespace CryptoBook.ViewModels
             }
         }
 
-        public string FitToWindowText =>
-            IsFitToWindow ? "Масштаб 100%" : "Вписать в окно";
+        public string FitToWindowText => LocalizationManager.GetString(
+            IsFitToWindow ? "Editor.Zoom100" : "Editor.FitToWindow");
 
         public string FitToWindowGlyph =>
             IsFitToWindow ? "\uE73F" : "\uE740";
@@ -111,7 +112,13 @@ namespace CryptoBook.ViewModels
         private RelayCommand? closing;
 
         public ICommand Closed => closed ??=
-            new RelayCommand(richtextboxModel.Execute_Closed, richtextboxModel.CanExecute_Closed);
+            new RelayCommand(
+                parameter =>
+                {
+                    LocalizationManager.CultureChanged -= OnCultureChanged;
+                    richtextboxModel.Execute_Closed(parameter);
+                },
+                richtextboxModel.CanExecute_Closed);
         private RelayCommand? closed;
 
         private void SetPreviewMode(bool previewMode)
@@ -130,5 +137,11 @@ namespace CryptoBook.ViewModels
             PreviewDocument = previewService.CreatePreview(richTextBox.Document);
             IsPreviewMode = true;
         }
+
+        private void OnCultureChanged(object? sender, EventArgs args) =>
+            OnPropertyChanged(
+                nameof(ModeLabel),
+                nameof(ToggleViewText),
+                nameof(FitToWindowText));
     }
 }

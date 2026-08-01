@@ -4,6 +4,8 @@ using CryptoBook.Security;
 
 using Mono.Unix;
 
+using CryptoBook.Infrastructure;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -767,7 +769,9 @@ namespace CryptoBook.Services
                 completedBytes += fileSize;
             }
 
-            progress?.Report(1.0, "Копирование завершено");
+            progress?.Report(
+                1.0,
+                LocalizationManager.GetString("File.CopyComplete"));
         }
 
         private sealed class CopyProgressReporter: IProgressReporter

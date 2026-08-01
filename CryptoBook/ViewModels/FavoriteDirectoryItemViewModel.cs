@@ -30,7 +30,10 @@ namespace CryptoBook.ViewModels
 
         public string AvailabilityText => IsAvailable
             ? DisplayPath
-            : $"{DisplayPath}\nДиректория сейчас недоступна";
+            : LocalizationManager.Format(
+                "Preview.DirectoryUnavailable",
+                DisplayPath,
+                Environment.NewLine);
 
         public override void OnPropertyChanged(string prop = "")
         {

@@ -35,7 +35,7 @@ namespace CryptoBook.Interfaces
         /// </summary>
         double LineHeight { get; set; }
 
-        // --- Undo/Redo ---
+        // --- Отмена и повтор действий ---
         void Undo();
         void Redo();
 

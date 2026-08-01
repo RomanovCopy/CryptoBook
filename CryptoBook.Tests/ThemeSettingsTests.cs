@@ -46,6 +46,8 @@ public sealed class ThemeSettingsTests
         Assert.IsType<Style>(styles[typeof(TextBlock)]);
         Assert.IsType<Style>(styles[typeof(TextBox)]);
         Assert.IsType<Style>(styles[typeof(PasswordBox)]);
+        Assert.IsType<Style>(styles[typeof(ComboBox)]);
+        Assert.IsType<Style>(styles[typeof(ComboBoxItem)]);
         Assert.IsType<Style>(styles[typeof(ContextMenu)]);
         Assert.IsType<Style>(styles[typeof(ToolTip)]);
     }

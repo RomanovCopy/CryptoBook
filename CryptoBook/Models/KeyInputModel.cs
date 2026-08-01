@@ -45,8 +45,8 @@ namespace CryptoBook.Models
         {
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             WindowId = Guid.NewGuid();
-            Title = "Ключ шифрования";
-            Message = "Введите ключ шифрования:";
+            Title = LocalizationManager.GetString("Key.Title");
+            Message = LocalizationManager.GetString("Key.Prompt");
             ShowRepeatPassword = true;
         }
 
