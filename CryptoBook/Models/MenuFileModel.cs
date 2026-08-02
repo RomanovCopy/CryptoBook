@@ -13,6 +13,10 @@ using System.Windows.Input;
 
 namespace CryptoBook.Models
 {
+    /// <summary>
+    /// Реализует команды файлового меню и единый конвейер обычного
+    /// и защищённого сохранения текущего документа.
+    /// </summary>
     public class MenuFileModel: ViewModelBase, IMenuFileModel
     {
         private readonly IWindowManager windowManager;
@@ -136,10 +140,13 @@ namespace CryptoBook.Models
                 if(target is null)
                     return false;
 
+                // Фиксируем ревизию до асинхронной записи: последующие правки
+                // должны оставить документ в состоянии IsDirty.
                 long savedRevision = documentSession.Revision;
 
                 await progressDialogService.RunAsync(
-                    "Сохранение документа",
+                    LocalizationManager.GetString(
+                        "Document.SaveOperation"),
                     async (progress, dialogToken) =>
                     {
                         using var linkedTokenSource =
@@ -181,7 +188,7 @@ namespace CryptoBook.Models
             catch(Exception exception)
             {
                 await messageService.ShowMessage(
-                    "Ошибка сохранения",
+                    LocalizationManager.GetString("Document.SaveError"),
                     exception.Message);
                 return false;
             }
@@ -192,6 +199,8 @@ namespace CryptoBook.Models
             CancellationToken cancellationToken,
             IProgressReporter progress)
         {
+            // XamlPackage сначала формируется в памяти, чтобы открытая версия
+            // документа не появлялась во временном файле на диске.
             await using MemoryStream plaintext = new();
             try
             {
@@ -211,6 +220,8 @@ namespace CryptoBook.Models
             }
             finally
             {
+                // MemoryStream.Dispose не очищает массив; открытый текст
+                // затирается явно после завершения или ошибки шифрования.
                 if(plaintext.TryGetBuffer(
                     out ArraySegment<byte> buffer))
                 {

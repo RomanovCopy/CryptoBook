@@ -35,8 +35,13 @@ namespace CryptoBook.Models
         private bool _isVideoVisible;
         private bool _isImageVisible;
         private bool _isEmptyVisible = true;
-        private string _statusText = "Откройте изображение или видео";
-        private string _mediaTitle = "Медиаплеер";
+        private string _statusText =
+            LocalizationManager.GetString("Media.DefaultStatus");
+        private string _mediaTitle =
+            LocalizationManager.GetString("Media.PlayerTitle");
+        private string? _statusResourceKey = "Media.DefaultStatus";
+        private object?[] _statusArguments = [];
+        private bool _usesDefaultTitle = true;
 
         public MediaPlayerModel(
             IMediaPlayerService videoService,
@@ -56,6 +61,7 @@ namespace CryptoBook.Models
                 throw new ArgumentNullException(nameof(mediaSourcePreparationService));
 
             VideoService.MediaFailed += OnMediaFailed;
+            LocalizationManager.CultureChanged += OnCultureChanged;
 
             if(windowContext.TryGet<string>("path", out var initialPath) &&
                 !string.IsNullOrWhiteSpace(initialPath))
@@ -135,13 +141,8 @@ namespace CryptoBook.Models
         {
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Открыть изображение или видео",
-                Filter =
-                    "Медиафайлы|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|" +
-                    "Изображения|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|" +
-                    "Видео|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|" +
-                    "Файлы CryptoBook|*.cbook;*.cbox|" +
-                    "Все файлы|*.*"
+                Title = LocalizationManager.GetString("Media.OpenDialogTitle"),
+                Filter = LocalizationManager.GetString("Media.Filter")
             };
 
             if(dialog.ShowDialog() == true)
@@ -157,7 +158,8 @@ namespace CryptoBook.Models
             _openCancellation = new CancellationTokenSource();
             var token = _openCancellation.Token;
 
-            SetStatus($"Загрузка: {Path.GetFileName(path)}");
+            SetLocalizedStatus("Media.Loading", Path.GetFileName(path));
+            _usesDefaultTitle = false;
             SetProperty(ref _mediaTitle, Path.GetFileName(path), nameof(MediaTitle));
 
             IPreparedMediaSource? preparedSource = null;
@@ -175,7 +177,8 @@ namespace CryptoBook.Models
                         return;
 
                     if(ImageService.ImageSource == null)
-                        throw new InvalidOperationException("Не удалось декодировать изображение.");
+                        throw new InvalidOperationException(
+                            LocalizationManager.GetString("Media.DecodeFailed"));
 
                     UpdateImageSequence(path, preparedSource.IsTemporary);
                     SetMode(isImage: true);
@@ -239,7 +242,24 @@ namespace CryptoBook.Models
         }
 
         private void SetStatus(string value) =>
+            SetRawStatus(value);
+
+        private void SetRawStatus(string value)
+        {
+            _statusResourceKey = null;
+            _statusArguments = [];
             SetProperty(ref _statusText, value, nameof(StatusText));
+        }
+
+        private void SetLocalizedStatus(string key, params object?[] arguments)
+        {
+            _statusResourceKey = key;
+            _statusArguments = arguments;
+            SetProperty(
+                ref _statusText,
+                LocalizationManager.Format(key, arguments),
+                nameof(StatusText));
+        }
 
         private async Task NavigateImageAsync(int offset)
         {
@@ -258,8 +278,10 @@ namespace CryptoBook.Models
             var deletedIndex = _currentImageIndex;
             var path = _imagePaths[deletedIndex];
             var dialogId = await _messageService.ShowMessage(
-                "Удаление изображения",
-                $"Удалить «{Path.GetFileName(path)}»?",
+                LocalizationManager.GetString("Media.DeleteTitle"),
+                LocalizationManager.Format(
+                    "Media.DeletePrompt",
+                    Path.GetFileName(path)),
                 isCanceled: true);
 
             if(!_messageService.ShowConfirmation(dialogId) || _disposed || _isClosing)
@@ -272,8 +294,9 @@ namespace CryptoBook.Models
             if(!result.Success)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка удаления",
-                    result.ErrorMessage ?? "Не удалось удалить изображение.");
+                    LocalizationManager.GetString("Media.DeleteError"),
+                    result.ErrorMessage ?? LocalizationManager.GetString(
+                        "Media.DeleteFailed"));
                 return;
             }
 
@@ -288,8 +311,13 @@ namespace CryptoBook.Models
             {
                 ImageService.Clear();
                 ClearImageSequence();
-                SetProperty(ref _mediaTitle, "Медиаплеер", nameof(MediaTitle));
-                SetEmpty("В папке больше нет изображений.");
+                _usesDefaultTitle = true;
+                SetProperty(
+                    ref _mediaTitle,
+                    LocalizationManager.GetString("Media.PlayerTitle"),
+                    nameof(MediaTitle));
+                SetEmpty(LocalizationManager.GetString("Media.NoMoreImages"));
+                SetLocalizedStatus("Media.NoMoreImages");
                 return;
             }
 
@@ -405,6 +433,7 @@ namespace CryptoBook.Models
             _disposed = true;
             CancelPendingOpen();
             VideoService.MediaFailed -= OnMediaFailed;
+            LocalizationManager.CultureChanged -= OnCultureChanged;
             ImageService.Clear();
             VideoService.Dispose();
             _activeSource?.Dispose();
@@ -412,6 +441,27 @@ namespace CryptoBook.Models
                 source.Dispose();
             _retiredSources.Clear();
             GC.SuppressFinalize(this);
+        }
+
+        private void OnCultureChanged(object? sender, EventArgs args)
+        {
+            if(_statusResourceKey is not null)
+            {
+                SetProperty(
+                    ref _statusText,
+                    LocalizationManager.Format(
+                        _statusResourceKey,
+                        _statusArguments),
+                    nameof(StatusText));
+            }
+
+            if(_usesDefaultTitle)
+            {
+                SetProperty(
+                    ref _mediaTitle,
+                    LocalizationManager.GetString("Media.PlayerTitle"),
+                    nameof(MediaTitle));
+            }
         }
     }
 }

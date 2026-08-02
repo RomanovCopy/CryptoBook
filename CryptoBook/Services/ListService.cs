@@ -55,7 +55,7 @@ namespace CryptoBook.Services
             }
         }
 
-        // -------- core --------
+        // -------- Основные операции --------
 
         private void ToggleCore(TextMarkerStyle marker, int startIndex)
         {
@@ -133,7 +133,7 @@ namespace CryptoBook.Services
         }
 
 
-        // -------- helpers: unwrap/detect --------
+        // -------- Определение и извлечение структуры --------
 
         private void UnwrapParagraphsFromLists(IReadOnlyList<Paragraph> paras)
         {
@@ -178,7 +178,7 @@ namespace CryptoBook.Services
             }
         }
 
-        // -------- helpers: structure ops --------
+        // -------- Вспомогательные операции со структурой --------
 
         private BlockCollection? GetBlocksOwner(Block b)
         {

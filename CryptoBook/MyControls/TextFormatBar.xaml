@@ -63,7 +63,7 @@
 
                     <Border Width="1" Height="22"
                             Margin="4,5"
-                            Background="#557CA0CC"/>
+                            Background="{DynamicResource CurrentControlHoverBackground}"/>
 
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding SetParagraphIndent}"
@@ -93,7 +93,7 @@
 
                     <Border Width="1" Height="22"
                             Margin="4,5"
-                            Background="#557CA0CC"/>
+                            Background="{DynamicResource CurrentControlHoverBackground}"/>
 
                     <Button Style="{StaticResource EditorToolButtonStyle}"
                             Command="{Binding InsertHyperlink}"

@@ -8,6 +8,10 @@ using WpfImage = System.Windows.Controls.Image;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Переключает встроенные изображения между строчным и плавающим размещением,
+    /// сохраняя корректную позицию каретки и структуру FlowDocument.
+    /// </summary>
     public sealed class EmbeddedImageLayoutService:
         IEmbeddedImageLayoutService
     {
@@ -114,6 +118,8 @@ namespace CryptoBook.Services
             }
 
             ImageLayoutMode mode = GetLayout(image);
+            // Временный невидимый Run материализует устойчивую позицию назначения:
+            // TextPointer может измениться после извлечения изображения из дерева.
             var moveAnchor = new Run(MoveAnchorText);
             inlineService.InsertInlineAt(destination, moveAnchor);
 
@@ -308,6 +314,8 @@ namespace CryptoBook.Services
             RemoveCaretAnchor(paragraph, figure.PreviousInline);
             RemoveCaretAnchor(paragraph, figure.NextInline);
 
+            // Нулевые пробелы по сторонам Figure создают доступные каретке позиции;
+            // без них пользователь не всегда может поставить курсор рядом с рисунком.
             if(mode is ImageLayoutMode.FloatRight or
                ImageLayoutMode.CenteredBlock &&
                figure.PreviousInline is null)

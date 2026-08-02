@@ -12,7 +12,9 @@ namespace CryptoBook.FileTemplates
     {
         public string Id => "Encrypted file";
 
-        public string DisplayName => "Зашифрованный файл";
+        public string DisplayName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.Secure");
 
         // Актуальное расширение защищённых файлов; .cbox оставлено для совместимости.
         public string DefaultExtension => ".cbook";
@@ -24,7 +26,9 @@ namespace CryptoBook.FileTemplates
         ];
 
 
-        public string SuggestedBaseName => "New Encrypted File";
+        public string SuggestedBaseName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.NewEncryptedFile");
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct) => Task.FromResult(Array.Empty<byte>());
     }

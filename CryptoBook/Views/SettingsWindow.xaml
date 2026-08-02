@@ -155,7 +155,7 @@
                       ShowsPreview="True"
                       Focusable="False"
                       Cursor="SizeWE"
-                      Background="{DynamicResource CurrentBorderColor}"/>
+                      Background="{DynamicResource CurrentControlHoverBackground}"/>
 
         <ScrollViewer Grid.Column="2"
                       VerticalScrollBarVisibility="Auto"
@@ -427,12 +427,10 @@
                            FontSize="15"
                            FontWeight="SemiBold"
                            Margin="0,0,0,8"/>
-                <ComboBox x:Name="LanguageComboBox"
-                          Style="{StaticResource DropUpComboBoxStyle}"
-                          ItemsSource="{Binding LanguageDisplayNames}"
-                          SelectedIndex="{Binding SelectedLanguageIndex, Mode=TwoWay}"
-                          Loaded="LanguageComboBox_OnLoaded"
-                          IsVisibleChanged="LanguageComboBox_OnIsVisibleChanged"
+                <ComboBox Style="{StaticResource DropUpComboBoxStyle}"
+                          ItemsSource="{Binding Languages}"
+                          SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayName"
                           MinWidth="220"
                           Height="34"
                           Foreground="{DynamicResource CurrentInputForeground}"

@@ -10,6 +10,10 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Создаёт отложенный снимок несохранённого документа и защищает его средствами
+    /// DPAPI текущего пользователя. Снимок не заменяет обычное сохранение документа.
+    /// </summary>
     public sealed class DocumentRecoveryService: IDocumentRecoveryService
     {
         private static readonly byte[] AdditionalEntropy =
@@ -267,6 +271,8 @@ namespace CryptoBook.Services
 
         private Task GetOrStartSaveTask()
         {
+            // Таймер и принудительное сохранение могут сработать одновременно.
+            // Все вызывающие ожидают одну общую задачу, а не пишут файл параллельно.
             lock(saveTaskSync)
             {
                 if(activeSaveTask.IsCompleted)
@@ -316,6 +322,8 @@ namespace CryptoBook.Services
         private async Task SaveSnapshotAsync()
         {
             long revision = documentSession.Revision;
+            // Версия инвалидируется при остановке и удалении снимка. Она не позволяет
+            // уже начатому сохранению воскресить файл восстановления после очистки.
             long snapshotInvalidationVersion = invalidationVersion;
             await using MemoryStream document = new();
             await saveService.SaveToStreamAsync(
@@ -370,6 +378,8 @@ namespace CryptoBook.Services
                     output.Flush(flushToDisk: true);
                 }
 
+                // Проверяем актуальность непосредственно перед атомарной публикацией,
+                // удерживая тот же семафор, которым защищено удаление снимка.
                 await recoveryFileGate.WaitAsync();
                 try
                 {

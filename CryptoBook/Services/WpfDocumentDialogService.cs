@@ -1,5 +1,7 @@
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System.Windows;
 using WpfApplication = System.Windows.Application;
 using WpfMessageBox = System.Windows.MessageBox;
@@ -10,16 +12,14 @@ namespace CryptoBook.Services
     {
         public bool ConfirmRecovery() =>
             Show(
-                "Обнаружена автоматически сохранённая копия после " +
-                "предыдущего завершения. Восстановить документ?",
-                "Восстановление CryptoBook",
+                LocalizationManager.GetString("Document.RecoveryPrompt"),
+                LocalizationManager.GetString("Document.RecoveryTitle"),
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes;
 
         public UnsavedChangesChoice ConfirmCloseWithUnsavedChanges() =>
             Show(
-                "В документе есть несохранённые изменения. " +
-                "Сохранить их перед закрытием?",
+                LocalizationManager.GetString("Document.UnsavedPrompt"),
                 "CryptoBook",
                 MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Warning) switch
@@ -33,9 +33,12 @@ namespace CryptoBook.Services
         {
             ArgumentNullException.ThrowIfNull(exception);
             Show(
-                "Не удалось восстановить документ:\n" +
-                exception.Message,
-                "Ошибка восстановления",
+                LocalizationManager.Format(
+                    "Document.RecoveryFailed",
+                    Environment.NewLine,
+                    exception.Message),
+                LocalizationManager.GetString(
+                    "Document.RecoveryErrorTitle"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
@@ -44,10 +47,12 @@ namespace CryptoBook.Services
         {
             ArgumentNullException.ThrowIfNull(exception);
             Show(
-                "Не удалось удалить файл автоматического восстановления. " +
-                "Он может быть снова предложен при следующем запуске:\n" +
-                exception.Message,
-                "Ошибка очистки восстановления",
+                LocalizationManager.Format(
+                    "Document.RecoveryCleanupFailed",
+                    Environment.NewLine,
+                    exception.Message),
+                LocalizationManager.GetString(
+                    "Document.RecoveryCleanupErrorTitle"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
         }

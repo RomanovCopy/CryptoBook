@@ -8,6 +8,10 @@ using Application = System.Windows.Application;
 
 namespace CryptoBook.Infrastructure
 {
+    /// <summary>
+    /// Управляет единственным активным словарём темы и синхронизирует системный
+    /// режим с изменениями светлой или тёмной темы Windows.
+    /// </summary>
     public sealed class ThemeManager:
         IThemeManager,
         IDisposable
@@ -17,10 +21,7 @@ namespace CryptoBook.Infrastructure
         private readonly IWindowsThemeProvider windowsThemeProvider;
         private ResourceDictionary? activeThemeDictionary;
 
-        public ThemeManager(
-            Application app,
-            IThemePreferenceStore preferenceStore,
-            IWindowsThemeProvider windowsThemeProvider)
+        public ThemeManager( Application app, IThemePreferenceStore preferenceStore, IWindowsThemeProvider windowsThemeProvider)
         {
             this.app = app ?? throw new ArgumentNullException(nameof(app));
             this.preferenceStore = preferenceStore ??
@@ -32,23 +33,18 @@ namespace CryptoBook.Infrastructure
 
         public IReadOnlyList<ApplicationThemeOption> AvailableThemes => CreateThemes();
 
-        public ApplicationTheme CurrentTheme { get; private set; } =
-            ApplicationTheme.System;
+        public ApplicationTheme CurrentTheme { get; private set; } = ApplicationTheme.System;
 
-        public void Initialize() =>
-            ApplyThemeCore(preferenceStore.Load(), savePreference: false);
+        public void Initialize() => ApplyThemeCore(preferenceStore.Load(), savePreference: false);
 
-        public void ApplyTheme(ApplicationTheme theme) =>
-            ApplyThemeCore(theme, savePreference: true);
+        public void ApplyTheme(ApplicationTheme theme) => ApplyThemeCore(theme, savePreference: true);
 
         public void Dispose()
         {
             windowsThemeProvider.ThemeChanged -= OnWindowsThemeChanged;
         }
 
-        private void ApplyThemeCore(
-            ApplicationTheme theme,
-            bool savePreference)
+        private void ApplyThemeCore( ApplicationTheme theme, bool savePreference)
         {
             IReadOnlyList<ApplicationThemeOption> themes = CreateThemes();
             ApplicationThemeOption option = themes.FirstOrDefault(
@@ -68,6 +64,8 @@ namespace CryptoBook.Infrastructure
 
             Collection<ResourceDictionary> dictionaries =
                 app.Resources.MergedDictionaries;
+            // Сохраняем позицию словаря: порядок MergedDictionaries определяет,
+            // какие ресурсы переопределяют базовые стили приложения.
             int position = activeThemeDictionary is null
                 ? FindThemeDictionaryIndex(dictionaries)
                 : dictionaries.IndexOf(activeThemeDictionary);

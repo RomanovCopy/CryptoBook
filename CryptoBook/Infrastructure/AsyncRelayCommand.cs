@@ -2,6 +2,10 @@ using CryptoBook.Interfaces;
 
 namespace CryptoBook.Infrastructure
 {
+    /// <summary>
+    /// Адаптирует асинхронную операцию к ICommand, запрещает повторный запуск
+    /// и предоставляет единый токен отмены на время выполнения.
+    /// </summary>
     public sealed class AsyncRelayCommand:
         IAsyncCommand,
         IRaiseCanExecuteChanged
@@ -29,6 +33,8 @@ namespace CryptoBook.Infrastructure
 
         public async void Execute(object? parameter)
         {
+            // ICommand требует void. Исключение переводится в событие, чтобы оно
+            // не стало необработанным исключением диспетчера WPF.
             try
             {
                 await ExecuteAsync(parameter);
@@ -69,6 +75,8 @@ namespace CryptoBook.Infrastructure
             if(handler is null)
                 return;
 
+            // CanExecuteChanged может инициироваться рабочим потоком после await,
+            // но WPF ожидает уведомление на потоке интерфейса.
             var dispatcher = System.Windows.Application.Current?.Dispatcher;
             if(dispatcher is null || dispatcher.CheckAccess())
                 handler(this, EventArgs.Empty);

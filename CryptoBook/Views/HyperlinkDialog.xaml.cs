@@ -1,4 +1,5 @@
 using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
 using System.Windows;
@@ -27,8 +28,8 @@ namespace CryptoBook.Views
         {
             if(!TryNormalizeHttpUrl(Url, out var normalizedUrl))
             {
-                ValidationMessage.Text =
-                    "Введите корректный адрес HTTP или HTTPS, например https://example.com.";
+                ValidationMessage.Text = LocalizationManager.GetString(
+                    "Hyperlink.InvalidAddress");
                 UrlTextBox.Focus();
                 UrlTextBox.SelectAll();
                 return;

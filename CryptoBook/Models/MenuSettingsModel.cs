@@ -67,18 +67,15 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Localization(object? obj)
         {
-            if(obj is string localize)
-            {
-                if(Thread.CurrentThread.CurrentUICulture.ToString() != localize)
-                    return true;
-            }
-            return false;
+            return obj is string cultureName &&
+                !string.Equals(
+                    LocalizationManager.CurrentCultureName,
+                    LocalizationManager.NormalizeCultureName(cultureName),
+                    StringComparison.OrdinalIgnoreCase);
         }
         internal void Execute_Localization(object? obj)
         {
-            Properties.Settings.Default.CultureInfo = obj?.ToString();
-            Properties.Settings.Default.Save();
-            App.Current.MainWindow.Close();
+            LocalizationManager.SelectCulture(obj?.ToString());
         }
 
 

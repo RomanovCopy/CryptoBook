@@ -4,8 +4,8 @@
     <SolidColorBrush x:Key="CurrentWindowForeground" Color="#FF3F3226"/>
     <SolidColorBrush x:Key="CurrentTitleBarBackground" Color="#FFE1CFB0"/>
     <SolidColorBrush x:Key="CurrentTitleBarForeground" Color="#FF362A20"/>
-    <SolidColorBrush x:Key="CurrentBorderColor" Color="#FFB59B76"/>
-    <SolidColorBrush x:Key="CurrentAccent" Color="#FFA05A2C"/>
+    <SolidColorBrush x:Key="CurrentBorderColor" Color="#FF6B5237"/>
+    <SolidColorBrush x:Key="CurrentAccent" Color="#FF7A3E18"/>
     <SolidColorBrush x:Key="CurrentControlBackground" Color="#FFF9F1E3"/>
     <SolidColorBrush x:Key="CurrentControlHoverBackground" Color="#FFEAD9BC"/>
     <SolidColorBrush x:Key="CurrentMutedForeground" Color="#FF75634F"/>
@@ -13,7 +13,7 @@
     <SolidColorBrush x:Key="CurrentInputBackground" Color="#FFF9F1E3"/>
     <SolidColorBrush x:Key="CurrentInputForeground" Color="#FF3F3226"/>
     <SolidColorBrush x:Key="CurrentDisabledForeground" Color="#FF74624F"/>
-    <SolidColorBrush x:Key="CurrentSelectionBackground" Color="#FFA05A2C"/>
-    <SolidColorBrush x:Key="CurrentSelectionForeground" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="CurrentSelectionBackground" Color="#FFE3CDAA"/>
+    <SolidColorBrush x:Key="CurrentSelectionForeground" Color="#FF362A20"/>
     <SolidColorBrush x:Key="CurrentErrorForeground" Color="#FF9E2A2B"/>
 </ResourceDictionary>

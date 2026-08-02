@@ -35,7 +35,7 @@ namespace CryptoBook.ViewModels
         RelayCommand? insertHyperlink;
 
 
-        // IViewModel implementation
+        // Реализация IViewModel.
 
         public ICommand Loaded => NoOpCommand;
         public ICommand Close => NoOpCommand;

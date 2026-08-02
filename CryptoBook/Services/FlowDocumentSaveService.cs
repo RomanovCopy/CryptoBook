@@ -2,6 +2,8 @@
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
 
+using CryptoBook.Infrastructure;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +15,10 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Сериализует FlowDocument и публикует файл только после полной записи
+    /// временной копии, сохраняя предыдущую версию в резервной копии.
+    /// </summary>
     public sealed class FlowDocumentSaveService: IFlowDocumentSaveService
     {
         private readonly IDispatcherService _dispatcherService;
@@ -56,10 +62,14 @@ namespace CryptoBook.Services
 
                 
 
+                // После Flush(true) временный файл целиком находится на диске;
+                // только теперь его можно атомарно сделать текущей версией.
                 AtomicFileCommit.CommitWithBackup(
                     temporaryPath,
                     fullPath);
-                progress?.Report(1.0, "Файл сохранён");
+                progress?.Report(
+                    1.0,
+                    LocalizationManager.GetString("File.Saved"));
             } 
             catch
             {
@@ -86,6 +96,8 @@ namespace CryptoBook.Services
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            // Объекты FlowDocument принадлежат UI-потоку, а запись готового массива
+            // можно выполнять асинхронно небольшими блоками с поддержкой отмены.
             byte[] buffer = await SerializeAsync( document, template, cancellationToken);
             const int chunkSize = 81920;
             for(int offset = 0; offset < buffer.Length; offset += chunkSize)
@@ -95,7 +107,7 @@ namespace CryptoBook.Services
                 await destination.WriteAsync(buffer.AsMemory(offset, count), cancellationToken);
                 progress?.Report(
                     buffer.Length == 0 ? 1.0 : (double)(offset + count) / buffer.Length,
-                    "Запись файла");
+                    LocalizationManager.GetString("File.Writing"));
             }
         }
 

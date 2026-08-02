@@ -10,7 +10,7 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="#1A1A1A">
+    <Grid Background="{DynamicResource CurrentWindowBackground}">
         <!-- Контейнер для мышиных событий -->
         <Border Background="Transparent" ClipToBounds="True">
             <i:Interaction.Behaviors>
@@ -38,8 +38,8 @@
 
         <!-- Панель инструментов фото -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
-            <Button Content="🔄 Повернуть" Command="{Binding RotateImageCommand}" Margin="5" Padding="8,4"/>
-            <Button Content="🔍 Вписать" Command="{Binding ResetImageTransformCommand}" Margin="5" Padding="8,4"/>
+            <Button Content="{Binding [Media.Rotate], Source={StaticResource Res}}" Command="{Binding RotateImageCommand}" Margin="5" Padding="8,4"/>
+            <Button Content="{Binding [Media.FitImage], Source={StaticResource Res}}" Command="{Binding ResetImageTransformCommand}" Margin="5" Padding="8,4"/>
         </StackPanel>
     </Grid>
 </UserControl>

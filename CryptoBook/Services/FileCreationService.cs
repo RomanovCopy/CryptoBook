@@ -1,6 +1,8 @@
 ﻿using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -83,11 +85,12 @@ namespace CryptoBook.Services
             bool exists = await ExistsAsync(fullPath, ct);
 
             if(exists && ifExists == IfExistsMode.FailIfExists)
-                return FileOperationResult.Fail("Файл уже существует.");
+                return FileOperationResult.Fail(
+                    LocalizationManager.GetString("File.AlreadyExists"));
 
             if(exists && ifExists == IfExistsMode.AutoRename)
             {
-                // AutoRename: "name.txt" → "name (2).txt" → ...
+                // Автопереименование: "name.txt" → "name (2).txt" → ...
                 fileName = await SuggestUniqueNameAsync(targetDirectory, template, ct);
                 fullPath = Combine(targetDirectory, fileName);
             }
@@ -114,12 +117,16 @@ namespace CryptoBook.Services
                     {
                         int count = Math.Min(chunkSize, content.Length - offset);
                         await stream.WriteAsync(content.AsMemory(offset, count), ct);
-                        progress?.Report((double)(offset + count) / content.Length, "Запись файла");
+                        progress?.Report(
+                            (double)(offset + count) / content.Length,
+                            LocalizationManager.GetString("File.Writing"));
                     }
                 }
                 else
                 {
-                    progress?.Report(1.0, "Файл создан");
+                    progress?.Report(
+                        1.0,
+                        LocalizationManager.GetString("File.Created"));
                 }
                 await _fs.SetHiddenAsync(fullPath, isHidden, ct);
                 await _fs.SetReadOnlyAsync(fullPath, isReadOnly, ct);
@@ -134,7 +141,7 @@ namespace CryptoBook.Services
             }
         }
 
-        // ----------------- helpers -----------------
+        // ----------------- Вспомогательные методы -----------------
 
         private static string EnsureExtension(string nameOrFull, string dotExt)
         {

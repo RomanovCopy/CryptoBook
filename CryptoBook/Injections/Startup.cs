@@ -26,20 +26,20 @@ namespace CryptoBook.Injections
             ContainerBuilder builder = new();
             var dispatcher = app.Dispatcher;
 
-            //App
+            // Приложение.
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
             builder.RegisterInstance(dispatcher);
 
 
 
-            //Composition
+            // Компоновка документа.
             builder.RegisterType<ParagraphFactory>().As<IParagraphFactory>().SingleInstance();
             builder.RegisterType<ParagraphSession>().As<IParagraphSession>().SingleInstance();
             builder.RegisterType<DocumentSelection>().As<IDocumentSelection>().AsSelf().SingleInstance();
             builder.RegisterType<EditTransaction>().As<IEditTransaction>().AsSelf().SingleInstance();
 
 
-            //Models
+            // Модели.
             builder.RegisterType<MenuFileModel>()
                 .As<IMenuFileModel>()
                 .As<ICurrentDocumentSaver>()
@@ -58,7 +58,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<RichtextboxModel>().As<IRichtextboxModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsModel>().As<ISettingsModel>().InstancePerLifetimeScope();
 
-            //ViewModels
+            // Модели представления.
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().InstancePerLifetimeScope();
@@ -87,7 +87,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MediaPlayerViewModel>().As<IMediaPlayerViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
 
-            //Converters
+            // Конвертеры.
             builder.RegisterType<BitmapConverter>().AsSelf();
             builder.RegisterType<ColorToColorConverter>().InstancePerDependency();
             builder.RegisterType<SizeLocationConverter>().AsSelf();
@@ -105,7 +105,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<EnumToBoolConverter>().AsSelf();
 
 
-            //Helpers
+            // Вспомогательные компоненты.
             builder.RegisterType<FlowDocumentWalker>().As<IFlowDocumentWalker>().SingleInstance();
             builder.RegisterType<SecureFileValidator>().As<ISecureFileValidator>().SingleInstance();
             builder.RegisterType<SecureFileProcessor>().As<ISecureFileProcessor>().SingleInstance();
@@ -113,7 +113,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<SecureFileV2Codec>().As<ISecureFileV2Codec>().SingleInstance();
             builder.RegisterType<LegacySecureFileCodec>().As<ILegacySecureFileCodec>().SingleInstance();
 
-            //Windows
+            // Окна.
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindow>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionModeWindow>().InstancePerDependency();
@@ -133,7 +133,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MediaPlayer>().InstancePerDependency();
             builder.RegisterType<SettingsWindow>().InstancePerDependency();
                                                                                                          
-            //FileTemplate
+            // Шаблоны файлов.
             builder.RegisterType<PlainTextTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<ImageFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<VideoFileTemplate>().As<IFileTemplate>().SingleInstance();
@@ -165,13 +165,13 @@ namespace CryptoBook.Injections
                 .SingleInstance();
 
 
-            //DTOs
+            // Объекты передачи данных.
             builder.RegisterType<DirectoryItem>().As<IDirectoryItem>().InstancePerDependency();
             builder.RegisterType<FileItem>().As<IFileItem>().InstancePerDependency();
             builder.RegisterType<DriveItem>().As<IDriveItem>().InstancePerDependency();
 
 
-            //Services
+            // Сервисы.
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
             builder.RegisterType<UserThemePreferenceStore>().As<IThemePreferenceStore>().SingleInstance();
@@ -262,19 +262,19 @@ namespace CryptoBook.Injections
                 .InstancePerDependency();
 
 
-            //Providers
+            // Поставщики данных.
             builder.RegisterInstance(new SecureFileV2Options()).SingleInstance();
             builder.RegisterType<MemoryKeyProvider>().As<IKeyProvider>().SingleInstance();
 
-            //Accessors
+            // Аксессоры.
             builder.RegisterType<ReflectionPropertyAccessor>().As<IPropertyAccessor>().SingleInstance();
 
 
-            //Pages
+            // Страницы.
             builder.RegisterType<Home>().InstancePerLifetimeScope();
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 
-            //Controls
+            // Элементы управления.
             builder.RegisterType<TitleBar>().InstancePerLifetimeScope();
             builder.RegisterType<MyFrame>().InstancePerLifetimeScope();
             builder.RegisterType<SideMenu>().InstancePerLifetimeScope();
@@ -295,7 +295,7 @@ namespace CryptoBook.Injections
 
 
 
-            //Contexts
+            // Контексты.
 
             var container = builder.Build();
 

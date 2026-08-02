@@ -1,6 +1,8 @@
 ﻿using CryptoBook.FileTemplates;
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -67,7 +69,9 @@ namespace CryptoBook.Services
                 await _dispatcherService.InvokeAsync(() =>
                     _bookmarkService.RebuildIndexFromDocument(
                         richTextBoxService));
-                progress?.Report(1.0, "Файл загружен");
+                progress?.Report(
+                    1.0,
+                    LocalizationManager.GetString("File.Loaded"));
                 return;
             }
 
@@ -96,7 +100,9 @@ namespace CryptoBook.Services
                 LoadDocument(document, buffer, template);
                 _bookmarkService.RebuildIndexFromDocument(richTextBoxService);
             });
-            progress?.Report(1.0, "Файл загружен");
+            progress?.Report(
+                1.0,
+                LocalizationManager.GetString("File.Loaded"));
         }
 
         /// <summary>
@@ -175,7 +181,9 @@ namespace CryptoBook.Services
             if(source is MemoryStream memoryStream && memoryStream.TryGetBuffer(out ArraySegment<byte> segment) &&
                memoryStream.Position == 0 && segment.Offset == 0 && segment.Count == segment.Array!.Length)
             {
-                progress?.Report(1.0, "Чтение завершено");
+                progress?.Report(
+                    1.0,
+                    LocalizationManager.GetString("File.ReadComplete"));
                 return segment.Array;
             }
 
@@ -194,7 +202,7 @@ namespace CryptoBook.Services
                 readBytes += read;
                 progress?.Report(
                     totalBytes > 0 ? Math.Min(1.0, (double)readBytes / totalBytes) : null,
-                    "Чтение файла");
+                    LocalizationManager.GetString("File.Reading"));
             }
 
             return buffer.ToArray();

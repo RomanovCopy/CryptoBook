@@ -8,6 +8,9 @@ using WpfSize = System.Windows.Size;
 
 namespace CryptoBook.Behaviors
 {
+    /// <summary>
+    /// Подбирает масштаб так, чтобы страница целиком помещалась в область просмотра.
+    /// </summary>
     public static class DocumentPageFitBehavior
     {
         private const double HorizontalChrome = 64;
@@ -54,6 +57,8 @@ namespace CryptoBook.Behaviors
                     maximumZoom);
             }
 
+            // Запас учитывает рамки и встроенные панели FlowDocumentPageViewer,
+            // которые не входят в размер страницы пагинатора.
             double horizontalScale =
                 (viewport.Width - HorizontalChrome) / page.Width;
             double verticalScale =
@@ -132,6 +137,7 @@ namespace CryptoBook.Behaviors
 
             private void ScheduleFit()
             {
+                // Размер страницы стабилизируется только после прохода компоновки.
                 viewer.Dispatcher.BeginInvoke(
                     ApplyFit,
                     DispatcherPriority.Loaded);

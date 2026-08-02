@@ -22,7 +22,7 @@
                     Modifiers="Control+Shift"
                     Command="{Binding SaveDocumentAs}"/>
     </UserControl.InputBindings>
-    <Border BorderBrush="Black" BorderThickness="1,1,1,0">
+    <Border BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="1,1,1,0">
         <Grid>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
                 <ContentControl.Style>

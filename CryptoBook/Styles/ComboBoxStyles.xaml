@@ -45,13 +45,15 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Отображение выбранного элемента -->
-                                    <TextBlock Grid.Column="0"
-                                               Margin="8,0"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Left"
-                                               Text="{Binding SelectedItem,
-                                                   RelativeSource={RelativeSource TemplatedParent}}"
-                                               Foreground="{TemplateBinding Foreground}"/>
+                                    <ContentPresenter Grid.Column="0"
+                                                      Margin="8,0"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Left"
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                      ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
 
                                     <!-- Стрелка -->
                                     <Path Grid.Column="1"

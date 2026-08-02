@@ -418,7 +418,7 @@ namespace CryptoBook.Services
                 return System.IO.Path.Combine(parent, child);
             }
 
-            // fallback generic
+            // Универсальный запасной вариант.
             if(parent.EndsWith("/", StringComparison.Ordinal))
                 return parent + child;
             return parent + "/" + child;

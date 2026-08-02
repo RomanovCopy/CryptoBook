@@ -7,7 +7,7 @@ namespace CryptoBook.Converters
     public class MediBrushSerializeConverter: IValueConverter
     {
         /// <summary>
-        /// System.Windows.Media.Brush deserialize from string
+        /// Десериализует System.Windows.Media.Brush из строки.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>
@@ -28,7 +28,7 @@ namespace CryptoBook.Converters
         }
 
         /// <summary>
-        /// System.Windows.Media.Brush serialize to string
+        /// Сериализует System.Windows.Media.Brush в строку.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>

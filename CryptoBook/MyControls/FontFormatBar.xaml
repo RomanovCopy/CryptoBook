@@ -146,7 +146,7 @@
                         <ComboBox x:Name="family" Tag="isFontFamily"
                               ItemsSource="{Binding FontFamilyes}"
                               SelectedItem="{Binding FontFamily, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                              ToolTip="FontFamily" Width="100" Height="24"
+                            ToolTip="{Binding [Editor.FontFamily], Source={StaticResource Res}}" Width="100" Height="24"
                               Template="{StaticResource ComboBoxTemplate}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}" >
                             <i:Interaction.Triggers>
@@ -169,7 +169,7 @@
                               SelectedItem="{Binding FontStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               Template="{StaticResource ComboBoxTemplate}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
-                              ToolTip="FontStyle">
+                            ToolTip="{Binding [Editor.FontStyle], Source={StaticResource Res}}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction 
@@ -191,7 +191,7 @@
                               SelectedItem="{Binding FontWeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               Template="{StaticResource ComboBoxTemplate}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
-                              ToolTip="FontWeight">
+                            ToolTip="{Binding [Editor.FontWeight], Source={StaticResource Res}}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction 
@@ -213,7 +213,7 @@
                               SelectedItem="{Binding TextDecoration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
                               Template="{StaticResource ComboBoxTemplate}"
-                              ToolTip="TextDecoration">
+                            ToolTip="{Binding [Editor.Decoration], Source={StaticResource Res}}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction 
@@ -234,7 +234,7 @@
                               SelectedItem="{Binding FontStretch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
                               Template="{StaticResource ComboBoxTemplate}"
-                              ToolTip="Font Stretches">
+                            ToolTip="{Binding [Editor.FontStretch], Source={StaticResource Res}}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction 
@@ -251,9 +251,9 @@
                             <Path Data="{StaticResource Icon.FontSize}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
                             <TextBlock Text="{Binding [Editor.FontSize], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
-                        <!-- FontSize -->
+                        <!-- Размер шрифта. -->
                         <ComboBox x:Name="fontsize" 
-                              ToolTip="FontSize" Tag="isFontSize"
+                            ToolTip="{Binding [Editor.FontSize], Source={StaticResource Res}}" Tag="isFontSize"
                               ItemsSource="{Binding FontSizes}" Width="40" Height="24"
                               SelectedItem="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}"
@@ -274,8 +274,8 @@
                             <Path Data="{StaticResource Icon.FontColor}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
                             <TextBlock Text="{Binding [Editor.Color], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
-                        <!--FontColor-->
-                        <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Foreground"
+                        <!-- Цвет шрифта. -->
+                        <ComboBox ItemsSource="{Binding FontColors}" ToolTip="{Binding [Editor.Color], Source={StaticResource Res}}"
                               SelectedItem="{Binding FontColor, Mode=TwoWay}" Width="100" Height="24"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}" Tag="isColor"
                               Template="{StaticResource ComboBoxTemplate}">
@@ -293,8 +293,8 @@
                             <Path Data="{StaticResource Icon.Highlight}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
                             <TextBlock Text="{Binding [Editor.Highlight], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
-                        <!--Background -->
-                        <ComboBox ItemsSource="{Binding FontColors}" ToolTip="Background"
+                        <!-- Цвет фона. -->
+                        <ComboBox ItemsSource="{Binding FontColors}" ToolTip="{Binding [Editor.Highlight], Source={StaticResource Res}}"
                               SelectedItem="{Binding FontBackground, Mode=TwoWay}" Width="100" Height="24"
                               ItemTemplate="{StaticResource ComboBoxItemTemplate}" Tag="isColor"
                               Template="{StaticResource ComboBoxTemplate}">

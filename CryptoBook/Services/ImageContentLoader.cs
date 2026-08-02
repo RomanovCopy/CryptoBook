@@ -1,5 +1,7 @@
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -37,7 +39,8 @@ namespace CryptoBook.Services
             await source.CopyToAsync(buffer, cancellationToken);
             byte[] bytes = buffer.ToArray();
             if(bytes.Length == 0)
-                throw new InvalidDataException("Файл изображения пуст.");
+                throw new InvalidDataException(
+                    LocalizationManager.GetString("Image.EmptyFile"));
 
             cancellationToken.ThrowIfCancellationRequested();
             using var imageStream = new MemoryStream(bytes, writable: false);

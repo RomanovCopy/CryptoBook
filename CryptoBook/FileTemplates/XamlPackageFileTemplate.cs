@@ -13,9 +13,13 @@ namespace CryptoBook.FileTemplates
     public class XamlPackageFileTemplate:IFileTemplate
     {
         public string Id => "XamlPackage";
-        public string DisplayName => "Xaml Package файл";
+        public string DisplayName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.XamlPackage");
         public string DefaultExtension => ".XamlPackage";
-        public string SuggestedBaseName => "New XamlPackage";
+        public string SuggestedBaseName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.NewXamlPackage");
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();

@@ -80,7 +80,7 @@ namespace CryptoBook.Behaviors
             set => SetValue(SaveDebounceMsProperty, value);
         }
 
-        // ---- state ----
+        // ---- Состояние ----
         private DispatcherTimer? _saveTimer;
         private bool _applying;              // чтобы не ловить собственные изменения
         private bool _restoredOnce;

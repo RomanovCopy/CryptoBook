@@ -16,6 +16,10 @@ namespace CryptoBook.ViewModels
         public string Path { get; }
     }
 
+    /// <summary>
+    /// Поддерживает отображаемую коллекцию избранных папок и доступность команд,
+    /// синхронизируя её с постоянным хранилищем сервиса.
+    /// </summary>
     public sealed class FavoriteDirectoriesViewModel:
         ViewModelBase,
         IFavoriteDirectoriesViewModel,
@@ -88,8 +92,11 @@ namespace CryptoBook.ViewModels
             catch(Exception ex)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка избранного",
-                    $"Не удалось добавить директорию:\r\n{ex.Message}");
+                    LocalizationManager.GetString("Favorites.ErrorTitle"),
+                    LocalizationManager.Format(
+                        "Favorites.AddFailed",
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 
@@ -105,10 +112,10 @@ namespace CryptoBook.ViewModels
                 return;
 
             string? name = _textInputService.Request(
-                "Переименование закладки",
-                "Введите отображаемое имя:",
+                LocalizationManager.GetString("Favorites.RenameTitle"),
+                LocalizationManager.GetString("Favorites.RenamePrompt"),
                 item.DisplayName,
-                "Сохранить");
+                LocalizationManager.GetString("Common.Save"));
             if(name is null)
                 return;
 
@@ -119,8 +126,11 @@ namespace CryptoBook.ViewModels
             catch(Exception ex)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка избранного",
-                    $"Не удалось переименовать закладку:\r\n{ex.Message}");
+                    LocalizationManager.GetString("Favorites.ErrorTitle"),
+                    LocalizationManager.Format(
+                        "Favorites.RenameFailed",
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 
@@ -136,8 +146,11 @@ namespace CryptoBook.ViewModels
             catch(Exception ex)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка избранного",
-                    $"Не удалось удалить закладку:\r\n{ex.Message}");
+                    LocalizationManager.GetString("Favorites.ErrorTitle"),
+                    LocalizationManager.Format(
+                        "Favorites.RemoveFailed",
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 
@@ -180,6 +193,8 @@ namespace CryptoBook.ViewModels
 
         private async void Service_Changed(object? sender, EventArgs e)
         {
+            // Обработчик события имеет сигнатуру void, поэтому исключения
+            // перехватываются здесь и переводятся в пользовательское сообщение.
             try
             {
                 await RebuildAsync(CancellationToken.None);
@@ -187,8 +202,11 @@ namespace CryptoBook.ViewModels
             catch(Exception ex)
             {
                 await _messageService.ShowMessage(
-                    "Ошибка избранного",
-                    $"Не удалось обновить список избранного:\r\n{ex.Message}");
+                    LocalizationManager.GetString("Favorites.ErrorTitle"),
+                    LocalizationManager.Format(
+                        "Favorites.RefreshFailed",
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 

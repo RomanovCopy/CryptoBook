@@ -11,9 +11,13 @@ namespace CryptoBook.FileTemplates
     public class XamlFileTemplate:IFileTemplate
     {
         public string Id => "Xaml";
-        public string DisplayName => "Xaml файл";
+        public string DisplayName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.Xaml");
         public string DefaultExtension => ".xaml";
-        public string SuggestedBaseName => "New file";
+        public string SuggestedBaseName =>
+            CryptoBook.Infrastructure.LocalizationManager.GetString(
+                "FileTemplate.NewFile");
         public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct) => Task.FromResult(Array.Empty<byte>());

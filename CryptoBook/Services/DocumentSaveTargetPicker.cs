@@ -1,6 +1,8 @@
 using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
+using CryptoBook.Infrastructure;
+
 using System.IO;
 
 using WpfSaveFileDialog = Microsoft.Win32.SaveFileDialog;
@@ -34,12 +36,13 @@ namespace CryptoBook.Services
         {
             if(templates.Count == 0)
                 throw new InvalidOperationException(
-                    "Не зарегистрированы форматы сохранения документа.");
+                LocalizationManager.GetString("Document.NoSaveFormats"));
 
             int selectedIndex = FindTemplateIndex(currentTemplate);
             var dialog = new WpfSaveFileDialog
             {
-                Title = "Сохранить документ как",
+                Title = LocalizationManager.GetString(
+                    "Document.SaveAsTitle"),
                 AddExtension = true,
                 OverwritePrompt = true,
                 CheckPathExists = true,

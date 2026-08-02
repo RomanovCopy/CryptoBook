@@ -1,4 +1,5 @@
 ﻿using CryptoBook.Interfaces;
+using CryptoBook.Infrastructure;
 using CryptoBook.Security;
 using CryptoBook.Views;
 
@@ -311,7 +312,9 @@ namespace CryptoBook.Behaviors
             {
                 if(_passwordBox.Password.Length < MinLength)
                 {
-                    _errorText!.Text = $"Ключ должен быть не менее {MinLength} символов.";
+                _errorText!.Text = LocalizationManager.Format(
+                    "Key.TooShort",
+                    MinLength);
                     return;
                 }
                 _errorText!.Text = string.Empty;
@@ -381,7 +384,8 @@ namespace CryptoBook.Behaviors
             {
                 if(char.IsControl(ch) || ch == ' ' && !AllowWhiteSpace)
                 {
-                    _errorText!.Text = "Недопустимые символы в ключе.";
+                _errorText!.Text = LocalizationManager.GetString(
+                    "Key.InvalidCharacters");
                     return false;
                 }
             }
@@ -399,19 +403,21 @@ namespace CryptoBook.Behaviors
 
             if(length == 0)
             {
-                _errorText!.Text = "Введите ключ.";
+                _errorText!.Text = LocalizationManager.GetString("Key.Enter");
                 return false;
             }
 
             if(length < MinLength)
             {
-                _errorText!.Text = $"Минимальная длина ключа: {MinLength}.";
+                _errorText!.Text = LocalizationManager.Format(
+                    "Key.MinimumLength",
+                    MinLength);
                 return false;
             }
 
             if(_repeatPasswordBox!.SecurePassword.Length == 0)
             {
-                _errorText!.Text = "Повторите ключ.";
+                _errorText!.Text = LocalizationManager.GetString("Key.Repeat");
                 return false;
             }
 
@@ -419,7 +425,8 @@ namespace CryptoBook.Behaviors
 
             if(!equals)
             {
-                _errorText!.Text = "Ключи не совпадают.";
+                _errorText!.Text = LocalizationManager.GetString(
+                    "Key.Mismatch");
                 return false;
             }
 

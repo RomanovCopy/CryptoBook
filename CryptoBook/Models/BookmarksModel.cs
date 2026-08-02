@@ -91,7 +91,9 @@ namespace CryptoBook.Models
                 bookmarkService.AddAtCaret(richTextBox, name);
                 SelectedBookmark = bookmarkService.Bookmarks[^1];
                 NewBookmarkName = string.Empty;
-                StatusMessage = $"Закладка «{name}» добавлена.";
+                StatusMessage = LocalizationManager.Format(
+                    "Bookmarks.Added",
+                    name);
                 return true;
             });
 
@@ -125,7 +127,9 @@ namespace CryptoBook.Models
                 if(removed)
                 {
                     SelectedBookmark = null;
-                    StatusMessage = $"Закладка «{name}» удалена.";
+                    StatusMessage = LocalizationManager.Format(
+                        "Bookmarks.Removed",
+                        name);
                 }
                 return removed;
             });
@@ -153,7 +157,10 @@ namespace CryptoBook.Models
                 var oldName = bookmark.Name;
                 var newName = RenameTo.Trim();
                 bookmarkService.Rename(richTextBox, oldName, newName);
-                StatusMessage = $"«{oldName}» переименована в «{newName}».";
+                StatusMessage = LocalizationManager.Format(
+                    "Bookmarks.Renamed",
+                    oldName,
+                    newName);
                 return true;
             });
         }
@@ -193,7 +200,9 @@ namespace CryptoBook.Models
                     bookmark.Name,
                     LinkText);
                 LinkText = string.Empty;
-                StatusMessage = $"Ссылка на «{bookmark.Name}» вставлена.";
+                StatusMessage = LocalizationManager.Format(
+                    "Bookmarks.LinkInserted",
+                    bookmark.Name);
                 return true;
             });
         }
@@ -206,7 +215,9 @@ namespace CryptoBook.Models
             {
                 bookmarkService.RebuildIndexFromDocument(richTextBox);
                 SelectedBookmark = null;
-                StatusMessage = $"Индекс обновлён. Закладок: {Bookmarks.Count}.";
+                StatusMessage = LocalizationManager.Format(
+                    "Bookmarks.IndexRefreshed",
+                    Bookmarks.Count);
                 return true;
             });
 
@@ -219,7 +230,8 @@ namespace CryptoBook.Models
             try
             {
                 if(!action() && string.IsNullOrEmpty(StatusMessage))
-                    StatusMessage = "Операцию выполнить не удалось.";
+                    StatusMessage = LocalizationManager.GetString(
+                        "Bookmarks.OperationFailed");
             }
             catch(Exception exception)
             {

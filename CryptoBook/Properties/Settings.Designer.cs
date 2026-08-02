@@ -241,18 +241,6 @@ namespace CryptoBook.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("System")]
-        public string CurrentTheme {
-            get {
-                return ((string)(this["CurrentTheme"]));
-            }
-            set {
-                this["CurrentTheme"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public double FontSizeDefault {
             get {
@@ -694,7 +682,7 @@ namespace CryptoBook.Properties {
                 this["EncryptionTargetMode"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -706,7 +694,7 @@ namespace CryptoBook.Properties {
                 this["WorkspaceDirectory"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("190")]
@@ -718,7 +706,7 @@ namespace CryptoBook.Properties {
                 this["SettingsNavigationPaneWidth"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -728,6 +716,18 @@ namespace CryptoBook.Properties {
             }
             set {
                 this["DocumentBackgroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SystemTheme")]
+        public string CurrentTheme {
+            get {
+                return ((string)(this["CurrentTheme"]));
+            }
+            set {
+                this["CurrentTheme"] = value;
             }
         }
     }

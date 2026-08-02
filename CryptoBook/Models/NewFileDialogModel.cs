@@ -278,7 +278,7 @@ namespace CryptoBook.Models
         /// </summary>
         public bool CanExecute_Cancel(object? obj)
         {
-            return _cts is not null;
+            return true;
         }
 
         /// <summary>
@@ -383,10 +383,11 @@ namespace CryptoBook.Models
         private async Task<FileOperationResult> CreateAsync(string targetDirectory, CancellationToken ct)
         {
             if(SelectedTemplate is null)
-                return FileOperationResult.Fail("Не выбран тип файла.");
+                return FileOperationResult.Fail(
+                    LocalizationManager.GetString("File.TypeNotSelected"));
 
             return await _progressDialogService.RunAsync(
-                "Создание файла",
+                LocalizationManager.GetString("File.CreateOperation"),
                 async (progress, token) =>
                 {
                     using var linkedTokenSource =

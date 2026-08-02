@@ -151,10 +151,10 @@ namespace CryptoBook.Models
             WindowHeight = Settings.Default.EncryptionModeHeight;
             WindowLeft = Settings.Default.EncryptionModeLeft;
             WindowTop = Settings.Default.EncryptionModeTop;
-            Title = "Режим сохранения файла";
-            MessageMode = "Выберите способ сохранения файла:";
-            MessageModeTop = "Сохранить файл как ...";
-            MessageModeBottom = "Заменить исходный файл";
+            Title = LocalizationManager.GetString("EncryptionMode.Title");
+            MessageMode = LocalizationManager.GetString("EncryptionMode.Prompt");
+            MessageModeTop = LocalizationManager.GetString("EncryptionMode.SaveAs");
+            MessageModeBottom = LocalizationManager.GetString("EncryptionMode.ReplaceSource");
             SelectedMode = Settings.Default.EncryptionTargetMode is EncryptionTargetMode.SaveAs or EncryptionTargetMode.ReplaceSource
                 ? Settings.Default.EncryptionTargetMode
                 : EncryptionTargetMode.SaveAs;

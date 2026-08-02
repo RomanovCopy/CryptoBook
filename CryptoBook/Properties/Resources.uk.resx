@@ -1,0 +1,1188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="addImage" xml:space="preserve">
+    <value>Додати зображення</value>
+  </data>
+  <data name="addText" xml:space="preserve">
+    <value>Додати текст</value>
+  </data>
+  <data name="background" xml:space="preserve">
+    <value>Фон</value>
+  </data>
+  <data name="closeFile" xml:space="preserve">
+    <value>Закрити файл</value>
+  </data>
+  <data name="content" xml:space="preserve">
+    <value>Зміст</value>
+  </data>
+  <data name="decrypt" xml:space="preserve">
+    <value>Розшифрувати</value>
+  </data>
+  <data name="documentTree" xml:space="preserve">
+    <value>Дерево документів</value>
+  </data>
+  <data name="encoding" xml:space="preserve">
+    <value>Кодування</value>
+  </data>
+  <data name="encrypt" xml:space="preserve">
+    <value>Зашифрувати</value>
+  </data>
+  <data name="encryption" xml:space="preserve">
+    <value>Шифрування</value>
+  </data>
+  <data name="encryption: Off" xml:space="preserve">
+    <value>Шифрування: вимкнено</value>
+  </data>
+  <data name="encryption: On" xml:space="preserve">
+    <value>Шифрування: увімкнено</value>
+  </data>
+  <data name="file" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="ink" xml:space="preserve">
+    <value>Чорнило</value>
+  </data>
+  <data name="localization" xml:space="preserve">
+    <value>Локалізація</value>
+  </data>
+  <data name="mediaPlayer" xml:space="preserve">
+    <value>Медіаплеєр</value>
+  </data>
+  <data name="newFile" xml:space="preserve">
+    <value>Новий файл</value>
+  </data>
+  <data name="openDirectory" xml:space="preserve">
+    <value>Відкрити каталог</value>
+  </data>
+  <data name="openFile" xml:space="preserve">
+    <value>Відкрити файл</value>
+  </data>
+  <data name="paper" xml:space="preserve">
+    <value>Папір</value>
+  </data>
+  <data name="readDocument" xml:space="preserve">
+    <value>Прочитати документ</value>
+  </data>
+  <data name="saveFile" xml:space="preserve">
+    <value>Зберегти файл</value>
+  </data>
+  <data name="saveFileAs..." xml:space="preserve">
+    <value>Зберегти файл як...</value>
+  </data>
+  <data name="settings" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="synchronization" xml:space="preserve">
+    <value>Синхронізація</value>
+  </data>
+  <data name="updateFile" xml:space="preserve">
+    <value>Оновити файл</value>
+  </data>
+  <data name="App.StartupFailureMessage" xml:space="preserve">
+    <value>Не вдалося запустити CryptoBook. Докладні відомості записано до локального журналу помилок.</value>
+  </data>
+  <data name="App.StartupFailureTitle" xml:space="preserve">
+    <value>Помилка запуску</value>
+  </data>
+  <data name="Common.Browse" xml:space="preserve">
+    <value>Огляд...</value>
+  </data>
+  <data name="Common.Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="Common.Open" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Common.Show" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="Settings.WindowTitle" xml:space="preserve">
+    <value>Налаштування CryptoBook</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="Settings.Appearance" xml:space="preserve">
+    <value>Зовнішній вигляд</value>
+  </data>
+  <data name="Settings.Appearance.Description" xml:space="preserve">
+    <value>Тема застосовується негайно та зберігається для наступного запуску.</value>
+  </data>
+  <data name="Settings.ApplicationTheme" xml:space="preserve">
+    <value>Тема програми</value>
+  </data>
+  <data name="Settings.Appearance.DocumentNote" xml:space="preserve">
+    <value>Зовнішній вигляд інтерфейсу не змінює кольори чи форматування, що зберігаються в документі.</value>
+  </data>
+  <data name="Settings.Workspace" xml:space="preserve">
+    <value>Робоча область</value>
+  </data>
+  <data name="Settings.Workspace.Description" xml:space="preserve">
+    <value>Виберіть кореневу папку, де CryptoBook шукатиме файли за назвою.</value>
+  </data>
+  <data name="Settings.WorkspaceDirectory" xml:space="preserve">
+    <value>Каталог робочої області</value>
+  </data>
+  <data name="Settings.SearchByFileName" xml:space="preserve">
+    <value>Пошук файлу за назвою</value>
+  </data>
+  <data name="Settings.Search.Hint" xml:space="preserve">
+    <value>Введіть назву файлу або його частину</value>
+  </data>
+  <data name="Settings.RevealInExplorer" xml:space="preserve">
+    <value>Показати файл у Провіднику</value>
+  </data>
+  <data name="Settings.Language" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="Settings.Language.Description" xml:space="preserve">
+    <value>Виберіть мову інтерфейсу CryptoBook.</value>
+  </data>
+  <data name="Settings.ApplicationLanguage" xml:space="preserve">
+    <value>Мова програми</value>
+  </data>
+  <data name="Settings.Language.AppliedImmediately" xml:space="preserve">
+    <value>Мова застосовується негайно та зберігається для наступного запуску.</value>
+  </data>
+  <data name="Settings.Workspace.ChooseFailed" xml:space="preserve">
+    <value>Не вдалося вибрати каталог робочої області: {0}</value>
+  </data>
+  <data name="Settings.Search.EnterQuery" xml:space="preserve">
+    <value>Введіть частину імені файлу.</value>
+  </data>
+  <data name="Settings.Search.InProgress" xml:space="preserve">
+    <value>Пошук...</value>
+  </data>
+  <data name="Settings.Search.OpenFailed" xml:space="preserve">
+    <value>Не вдалося відкрити файл</value>
+  </data>
+  <data name="Settings.Search.RevealFailed" xml:space="preserve">
+    <value>Не вдалося показати файл</value>
+  </data>
+  <data name="Settings.Search.NoFiles" xml:space="preserve">
+    <value>Файли не знайдено.</value>
+  </data>
+  <data name="Settings.Search.OneFile" xml:space="preserve">
+    <value>Знайдено 1 файл.</value>
+  </data>
+  <data name="Settings.Search.ManyFiles" xml:space="preserve">
+    <value>Знайдено файлів: {0}.</value>
+  </data>
+  <data name="Settings.Search.Truncated" xml:space="preserve">
+    <value> Показано перші 200 результатів.</value>
+  </data>
+  <data name="Settings.Search.SkippedDirectories" xml:space="preserve">
+    <value> Недоступні папки пропущені: {0}.</value>
+  </data>
+  <data name="Theme.System.Name" xml:space="preserve">
+    <value>Системна</value>
+  </data>
+  <data name="Theme.System.Description" xml:space="preserve">
+    <value>Використовувати системні кольори Windows.</value>
+  </data>
+  <data name="Theme.Light.Name" xml:space="preserve">
+    <value>Світла</value>
+  </data>
+  <data name="Theme.Light.Description" xml:space="preserve">
+    <value>Світлий нейтральний інтерфейс.</value>
+  </data>
+  <data name="Theme.Dark.Name" xml:space="preserve">
+    <value>Темна</value>
+  </data>
+  <data name="Theme.Dark.Description" xml:space="preserve">
+    <value>Графітовий інтерфейс для середовищ із слабким освітленням.</value>
+  </data>
+  <data name="Theme.Sepia.Name" xml:space="preserve">
+    <value>Сепія</value>
+  </data>
+  <data name="Theme.Sepia.Description" xml:space="preserve">
+    <value>Тепла палітра для тривалого читання.</value>
+  </data>
+  <data name="Common.File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Common.Rename" xml:space="preserve">
+    <value>Перейменувати</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Common.SaveAs" xml:space="preserve">
+    <value>Зберегти як</value>
+  </data>
+  <data name="Bookmarks.Title" xml:space="preserve">
+    <value>Закладки</value>
+  </data>
+  <data name="Media.Title" xml:space="preserve">
+    <value>Фото та відео</value>
+  </data>
+  <data name="SideMenu.Subtitle" xml:space="preserve">
+    <value>Книга та робочий простір</value>
+  </data>
+  <data name="SideMenu.MoreSections" xml:space="preserve">
+    <value>Більше розділів з’являться, коли вони стануть доступними</value>
+  </data>
+  <data name="SideMenu.Create" xml:space="preserve">
+    <value>Створити</value>
+  </data>
+  <data name="SideMenu.Create.Description" xml:space="preserve">
+    <value>Створити нову книгу</value>
+  </data>
+  <data name="SideMenu.Open.Description" xml:space="preserve">
+    <value>Відкрити книгу або каталог робочої області</value>
+  </data>
+  <data name="SideMenu.Save.Description" xml:space="preserve">
+    <value>Зберегти поточний документ</value>
+  </data>
+  <data name="SideMenu.SaveChanges.Description" xml:space="preserve">
+    <value>Зберегти зміни в поточному файлі</value>
+  </data>
+  <data name="SideMenu.SaveAs.Description" xml:space="preserve">
+    <value>Вибрати назву, папку та формат</value>
+  </data>
+  <data name="SideMenu.CloseDocument.Description" xml:space="preserve">
+    <value>Закрити поточний документ</value>
+  </data>
+  <data name="SideMenu.RenameBook" xml:space="preserve">
+    <value>Перейменувати книгу</value>
+  </data>
+  <data name="SideMenu.RenameBook.Description" xml:space="preserve">
+    <value>Змінити назву поточної книги</value>
+  </data>
+  <data name="SideMenu.Content" xml:space="preserve">
+    <value>Зміст</value>
+  </data>
+  <data name="SideMenu.Bookmarks.Description" xml:space="preserve">
+    <value>Навігація, примітки та посилання в книзі</value>
+  </data>
+  <data name="SideMenu.InsertImage" xml:space="preserve">
+    <value>Вставити зображення</value>
+  </data>
+  <data name="SideMenu.InsertImage.Description" xml:space="preserve">
+    <value>Додати зображення в позиції курсора</value>
+  </data>
+  <data name="SideMenu.Media.Description" xml:space="preserve">
+    <value>Перегляд медіафайлів у каталозі робочої області</value>
+  </data>
+  <data name="SideMenu.RenameBook.DialogTitle" xml:space="preserve">
+    <value>Перейменувати книгу</value>
+  </data>
+  <data name="SideMenu.RenameBook.Prompt" xml:space="preserve">
+    <value>Введіть нову назву книги:</value>
+  </data>
+  <data name="SideMenu.RenameBook.Empty" xml:space="preserve">
+    <value>Назва книги не може бути порожньою.</value>
+  </data>
+  <data name="SideMenu.RenameBook.Invalid" xml:space="preserve">
+    <value>Назва книги містить неприпустимі символи.</value>
+  </data>
+  <data name="SideMenu.RenameBook.ErrorTitle" xml:space="preserve">
+    <value>Помилка перейменування</value>
+  </data>
+  <data name="SideMenu.RenameBook.Failed" xml:space="preserve">
+    <value>Не вдалося перейменувати книгу.</value>
+  </data>
+  <data name="Editor.Lists" xml:space="preserve">
+    <value>Списки</value>
+  </data>
+  <data name="Editor.BulletedList" xml:space="preserve">
+    <value>Маркований список</value>
+  </data>
+  <data name="Editor.NumberedList" xml:space="preserve">
+    <value>Нумерований список</value>
+  </data>
+  <data name="Editor.RemoveList" xml:space="preserve">
+    <value>Видалити список</value>
+  </data>
+  <data name="Editor.Paragraph" xml:space="preserve">
+    <value>Абзац</value>
+  </data>
+  <data name="Editor.AlignLeft" xml:space="preserve">
+    <value>Вирівняти ліворуч</value>
+  </data>
+  <data name="Editor.AlignCenter" xml:space="preserve">
+    <value>По центру</value>
+  </data>
+  <data name="Editor.AlignRight" xml:space="preserve">
+    <value>Вирівняти праворуч</value>
+  </data>
+  <data name="Editor.Justify" xml:space="preserve">
+    <value>За шириною</value>
+  </data>
+  <data name="Editor.FirstLineIndent" xml:space="preserve">
+    <value>Відступ першого рядка</value>
+  </data>
+  <data name="Editor.IncreaseLineSpacing" xml:space="preserve">
+    <value>Збільшити міжрядковий інтервал</value>
+  </data>
+  <data name="Editor.DecreaseLineSpacing" xml:space="preserve">
+    <value>Зменшити міжрядковий інтервал</value>
+  </data>
+  <data name="Editor.InsertHyperlink" xml:space="preserve">
+    <value>Вставити гіперпосилання</value>
+  </data>
+  <data name="Editor.Font" xml:space="preserve">
+    <value>Шрифт</value>
+  </data>
+  <data name="Editor.FontFamily" xml:space="preserve">
+    <value>Сімейство шрифтів</value>
+  </data>
+  <data name="Editor.FontStyle" xml:space="preserve">
+    <value>Стиль</value>
+  </data>
+  <data name="Editor.FontWeight" xml:space="preserve">
+    <value>Накреслення</value>
+  </data>
+  <data name="Editor.Decoration" xml:space="preserve">
+    <value>Оформлення</value>
+  </data>
+  <data name="Editor.FontStretch" xml:space="preserve">
+    <value>Ширина</value>
+  </data>
+  <data name="Editor.FontSize" xml:space="preserve">
+    <value>Розмір</value>
+  </data>
+  <data name="Editor.Color" xml:space="preserve">
+    <value>Колір</value>
+  </data>
+  <data name="Editor.Highlight" xml:space="preserve">
+    <value>Виділення</value>
+  </data>
+  <data name="Editor.Paper" xml:space="preserve">
+    <value>Папір</value>
+  </data>
+  <data name="Editor.DocumentBackground" xml:space="preserve">
+    <value>Колір фону документа</value>
+  </data>
+  <data name="Editor.ToggleDocumentMode" xml:space="preserve">
+    <value>Переключити режим документа</value>
+  </data>
+  <data name="Bookmarks.New" xml:space="preserve">
+    <value>Нова закладка</value>
+  </data>
+  <data name="Bookmarks.AddAtCaret" xml:space="preserve">
+    <value>Додати в позиції каретки</value>
+  </data>
+  <data name="Bookmarks.NewName" xml:space="preserve">
+    <value>Нова назва закладки</value>
+  </data>
+  <data name="Bookmarks.Selected" xml:space="preserve">
+    <value>Вибрана закладка</value>
+  </data>
+  <data name="Bookmarks.Previous" xml:space="preserve">
+    <value>Попередня закладка</value>
+  </data>
+  <data name="Bookmarks.GoToSelected" xml:space="preserve">
+    <value>Перейти до вибраної закладки</value>
+  </data>
+  <data name="Bookmarks.Next" xml:space="preserve">
+    <value>Наступна закладка</value>
+  </data>
+  <data name="Bookmarks.OpenManager" xml:space="preserve">
+    <value>Відкрити диспетчер закладок</value>
+  </data>
+  <data name="Bookmarks.RefreshIndex" xml:space="preserve">
+    <value>Оновити індекс із документа</value>
+  </data>
+  <data name="Bookmarks.DeleteSelected" xml:space="preserve">
+    <value>Видалити вибрану закладку</value>
+  </data>
+  <data name="Bookmarks.RenameSelected" xml:space="preserve">
+    <value>Перейменувати вибрану закладку</value>
+  </data>
+  <data name="Bookmarks.SelectedNewName" xml:space="preserve">
+    <value>Нова назва вибраної закладки</value>
+  </data>
+  <data name="Bookmarks.InsertSelectedLink" xml:space="preserve">
+    <value>Вставити посилання на вибрану закладку</value>
+  </data>
+  <data name="Bookmarks.LinkTextHint" xml:space="preserve">
+    <value>Текст посилання; можна спочатку виділити текст у документі</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Common.Insert" xml:space="preserve">
+    <value>Вставити</value>
+  </data>
+  <data name="Hyperlink.Title" xml:space="preserve">
+    <value>Вставлення гіперпосилання</value>
+  </data>
+  <data name="Hyperlink.Address" xml:space="preserve">
+    <value>Адреса посилання:</value>
+  </data>
+  <data name="Hyperlink.DisplayText" xml:space="preserve">
+    <value>Відображуваний текст:</value>
+  </data>
+  <data name="Directory.NewTitle" xml:space="preserve">
+    <value>Новий каталог</value>
+  </data>
+  <data name="Directory.NewPrompt" xml:space="preserve">
+    <value>Введіть назву для нового каталогу:</value>
+  </data>
+  <data name="File.Folder" xml:space="preserve">
+    <value>Папка:</value>
+  </data>
+  <data name="File.ReadOnly" xml:space="preserve">
+    <value>Тільки для читання:</value>
+  </data>
+  <data name="File.Hidden" xml:space="preserve">
+    <value>Прихований файл:</value>
+  </data>
+  <data name="File.Type" xml:space="preserve">
+    <value>Тип файлу:</value>
+  </data>
+  <data name="File.Name" xml:space="preserve">
+    <value>Ім&apos;я файлу:</value>
+  </data>
+  <data name="File.Extension" xml:space="preserve">
+    <value>Розширення файлу:</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="Common.Refresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="Common.Cut" xml:space="preserve">
+    <value>Вирізати</value>
+  </data>
+  <data name="Common.Copy" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="Common.Paste" xml:space="preserve">
+    <value>Вставити</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Explorer.CreateFile" xml:space="preserve">
+    <value>Створити файл</value>
+  </data>
+  <data name="Explorer.CreateFolder" xml:space="preserve">
+    <value>Створити папку</value>
+  </data>
+  <data name="Explorer.AddCurrentToFavorites" xml:space="preserve">
+    <value>Додати поточний каталог до вибраного</value>
+  </data>
+  <data name="Explorer.SetEncryptionKey" xml:space="preserve">
+    <value>Встановити ключ шифрування</value>
+  </data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve">
+    <value>Зашифрувати вибраний елемент</value>
+  </data>
+  <data name="Explorer.DecryptSelected" xml:space="preserve">
+    <value>Розшифрувати вибраний елемент</value>
+  </data>
+  <data name="Explorer.Favorites" xml:space="preserve">
+    <value>Вибране</value>
+  </data>
+  <data name="Explorer.RemoveFromFavorites" xml:space="preserve">
+    <value>Видалити з вибраного</value>
+  </data>
+  <data name="Explorer.Favorites.Empty" xml:space="preserve">
+    <value>Додайте поточну папку за допомогою кнопки ★</value>
+  </data>
+  <data name="Common.OK" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="Common.Undo" xml:space="preserve">
+    <value>_Скасувати</value>
+  </data>
+  <data name="Common.Redo" xml:space="preserve">
+    <value>_Повторити</value>
+  </data>
+  <data name="Common.SelectAll" xml:space="preserve">
+    <value>Вибрати _все</value>
+  </data>
+  <data name="Common.Error" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="Editor.ClearDocument" xml:space="preserve">
+    <value>_Очистити документ</value>
+  </data>
+  <data name="Editor.RemoveEmptyParagraphs" xml:space="preserve">
+    <value>Видалити _порожні абзаци</value>
+  </data>
+  <data name="Editor.Formatting" xml:space="preserve">
+    <value>_Форматування</value>
+  </data>
+  <data name="Editor.Bold" xml:space="preserve">
+    <value>_Жирний</value>
+  </data>
+  <data name="Editor.Italic" xml:space="preserve">
+    <value>_Курсив</value>
+  </data>
+  <data name="Editor.Underline" xml:space="preserve">
+    <value>_Підкреслити</value>
+  </data>
+  <data name="Editor.ClearFormatting" xml:space="preserve">
+    <value>_Очистити форматування</value>
+  </data>
+  <data name="Editor.Alignment" xml:space="preserve">
+    <value>_Вирівнювання</value>
+  </data>
+  <data name="Editor.Image" xml:space="preserve">
+    <value>_Зображення</value>
+  </data>
+  <data name="Editor.ImageInline" xml:space="preserve">
+    <value>У _рядку</value>
+  </data>
+  <data name="Editor.ImageCenteredBlock" xml:space="preserve">
+    <value>_Окремий блок по центру</value>
+  </data>
+  <data name="Editor.ImageFloatLeft" xml:space="preserve">
+    <value>Обтікання: зображення _ліворуч</value>
+  </data>
+  <data name="Editor.ImageFloatRight" xml:space="preserve">
+    <value>Обтікання: зображення _праворуч</value>
+  </data>
+  <data name="Editor.ImageLayoutCommand" xml:space="preserve">
+    <value>Змінити розміщення зображення</value>
+  </data>
+  <data name="Editor.PagedPreview" xml:space="preserve">
+    <value>Посторінковий перегляд</value>
+  </data>
+  <data name="Editor.Editing" xml:space="preserve">
+    <value>Редагування</value>
+  </data>
+  <data name="Editor.Editor" xml:space="preserve">
+    <value>Редактор</value>
+  </data>
+  <data name="Editor.Preview" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="Editor.Zoom100" xml:space="preserve">
+    <value>100% масштаб</value>
+  </data>
+  <data name="Editor.FitToWindow" xml:space="preserve">
+    <value>Вписати у вікно</value>
+  </data>
+  <data name="Bookmarks.Properties" xml:space="preserve">
+    <value>Властивості закладки</value>
+  </data>
+  <data name="Bookmarks.Name" xml:space="preserve">
+    <value>Ім&apos;я</value>
+  </data>
+  <data name="Bookmarks.Note" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="Bookmarks.AnchorFormat" xml:space="preserve">
+    <value>Якір: {0}</value>
+  </data>
+  <data name="Bookmarks.Anchor" xml:space="preserve">
+    <value>Якір:</value>
+  </data>
+  <data name="Bookmarks.Refresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="Bookmarks.Added" xml:space="preserve">
+    <value>Додано закладку «{0}».</value>
+  </data>
+  <data name="Bookmarks.Removed" xml:space="preserve">
+    <value>Закладку «{0}» видалено.</value>
+  </data>
+  <data name="Bookmarks.Renamed" xml:space="preserve">
+    <value>«{0}» перейменовано на «{1}».</value>
+  </data>
+  <data name="Bookmarks.LinkInserted" xml:space="preserve">
+    <value>Вставлено посилання на «{0}».</value>
+  </data>
+  <data name="Bookmarks.IndexRefreshed" xml:space="preserve">
+    <value>Індекс оновлено. Закладок: {0}.</value>
+  </data>
+  <data name="Bookmarks.OperationFailed" xml:space="preserve">
+    <value>Операцію не вдалося завершити.</value>
+  </data>
+  <data name="Bookmarks.NoDocument" xml:space="preserve">
+    <value>Немає відкритого документа.</value>
+  </data>
+  <data name="Bookmarks.ReadOnly" xml:space="preserve">
+    <value>Документ доступний лише для читання.</value>
+  </data>
+  <data name="Bookmarks.NameEmpty" xml:space="preserve">
+    <value>Назва закладки порожня.</value>
+  </data>
+  <data name="Bookmarks.OldNameEmpty" xml:space="preserve">
+    <value>Стара назва порожня.</value>
+  </data>
+  <data name="Bookmarks.NewNameEmpty" xml:space="preserve">
+    <value>Нова назва порожня.</value>
+  </data>
+  <data name="Bookmarks.NameInvalid" xml:space="preserve">
+    <value>Назва не повинна містити # або керувальні символи.</value>
+  </data>
+  <data name="Bookmarks.NameExists" xml:space="preserve">
+    <value>«{0}» вже існує.</value>
+  </data>
+  <data name="Bookmarks.NameUnchanged" xml:space="preserve">
+    <value>Назва не змінилася.</value>
+  </data>
+  <data name="Bookmarks.NameNotFound" xml:space="preserve">
+    <value>Закладка «{0}» не знайдена.</value>
+  </data>
+  <data name="Bookmarks.BadCaret" xml:space="preserve">
+    <value>Позиція каретки недоступна.</value>
+  </data>
+  <data name="Bookmarks.InsideHyperlink" xml:space="preserve">
+    <value>Каретка розташована всередині гіперпосилання.</value>
+  </data>
+  <data name="Bookmarks.RangeNotInline" xml:space="preserve">
+    <value>Підтримується лише вбудований вміст у межах одного абзацу.</value>
+  </data>
+  <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve">
+    <value>Виділення перетинається з іншим гіперпосиланням.</value>
+  </data>
+  <data name="Bookmarks.NeedLinkText" xml:space="preserve">
+    <value>Введіть текст посилання або виділіть текст у документі.</value>
+  </data>
+  <data name="Explorer.WindowTitle" xml:space="preserve">
+    <value>Файловий провідник</value>
+  </data>
+  <data name="Explorer.Column.Name" xml:space="preserve">
+    <value>Ім&apos;я</value>
+  </data>
+  <data name="Explorer.Column.DateModified" xml:space="preserve">
+    <value>Дата змінення</value>
+  </data>
+  <data name="Explorer.Column.Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Explorer.Column.Size" xml:space="preserve">
+    <value>Розмір</value>
+  </data>
+  <data name="Explorer.SelectedFormat" xml:space="preserve">
+    <value>Вибрано: {0}</value>
+  </data>
+  <data name="Explorer.Selected" xml:space="preserve">
+    <value>Вибрано:</value>
+  </data>
+  <data name="Explorer.Copying" xml:space="preserve">
+    <value>Копіювання файлів</value>
+  </data>
+  <data name="Explorer.CopyError" xml:space="preserve">
+    <value>Помилка копіювання</value>
+  </data>
+  <data name="Explorer.SortError" xml:space="preserve">
+    <value>Помилка сортування</value>
+  </data>
+  <data name="Explorer.UnknownSortColumn" xml:space="preserve">
+    <value>Не вдалося розпізнати стовпець для сортування.</value>
+  </data>
+  <data name="Explorer.CreateDirectoryError" xml:space="preserve">
+    <value>Помилка створення каталогу</value>
+  </data>
+  <data name="Explorer.ItemAlreadyExists" xml:space="preserve">
+    <value>Елемент із назвою «{0}» вже існує.</value>
+  </data>
+  <data name="Explorer.RenameError" xml:space="preserve">
+    <value>Помилка перейменування</value>
+  </data>
+  <data name="Explorer.Moving" xml:space="preserve">
+    <value>Переміщення</value>
+  </data>
+  <data name="Explorer.MoveError" xml:space="preserve">
+    <value>Помилка переміщення</value>
+  </data>
+  <data name="Explorer.RefreshError" xml:space="preserve">
+    <value>Помилка оновлення</value>
+  </data>
+  <data name="Explorer.CancelOperation" xml:space="preserve">
+    <value>Скасувати операцію</value>
+  </data>
+  <data name="Explorer.RenameCanceledConfirmation" xml:space="preserve">
+    <value>Перейменування елемента скасовано.{0}Ви впевнені?</value>
+  </data>
+  <data name="Explorer.OpenDirectoryError" xml:space="preserve">
+    <value>Помилка відкриття каталогу</value>
+  </data>
+  <data name="Explorer.OpenDirectoryFailed" xml:space="preserve">
+    <value>Не вдалося відкрити «{0}»:{1}{2}</value>
+  </data>
+  <data name="Explorer.OpenFileTitle" xml:space="preserve">
+    <value>Відкрити файл</value>
+  </data>
+  <data name="Explorer.FileOpenError" xml:space="preserve">
+    <value>Помилка відкриття файлу</value>
+  </data>
+  <data name="Explorer.FileOpenFailed" xml:space="preserve">
+    <value>Не вдалося відкрити {0}:{1}{2}</value>
+  </data>
+  <data name="Explorer.OpenFileDefaultFailed" xml:space="preserve">
+    <value>Не вдалося відкрити {0} програмою за замовчуванням.</value>
+  </data>
+  <data name="Explorer.DirectoryPathRequired" xml:space="preserve">
+    <value>Необхідно вказати шлях до каталогу.</value>
+  </data>
+  <data name="Explorer.RootPathNotFound" xml:space="preserve">
+    <value>Не вдалося визначити корінь шляху «{0}».</value>
+  </data>
+  <data name="Explorer.DirectoryNameEmpty" xml:space="preserve">
+    <value>Назва каталогу не може бути порожньою.</value>
+  </data>
+  <data name="Explorer.DirectoryNameInvalid" xml:space="preserve">
+    <value>Назва каталогу містить неприпустимі символи або має неприпустимий формат.</value>
+  </data>
+  <data name="Explorer.DirectoryNameReserved" xml:space="preserve">
+    <value>Ім&apos;я «{0}» зарезервовано операційною системою.</value>
+  </data>
+  <data name="Explorer.CryptoBookFilesFilter" xml:space="preserve">
+    <value>Файли CryptoBook (*.cbook)|*.cbook</value>
+  </data>
+  <data name="Explorer.AllFilesFilter" xml:space="preserve">
+    <value>Усі файли (*.*)|*.*</value>
+  </data>
+  <data name="Explorer.SaveEncryptedTitle" xml:space="preserve">
+    <value>Зберегти зашифрований файл</value>
+  </data>
+  <data name="Explorer.SaveDecryptedTitle" xml:space="preserve">
+    <value>Зберегти розшифрований файл</value>
+  </data>
+  <data name="Explorer.EncryptionError" xml:space="preserve">
+    <value>Помилка шифрування</value>
+  </data>
+  <data name="Explorer.DecryptionError" xml:space="preserve">
+    <value>Помилка розшифрування</value>
+  </data>
+  <data name="Explorer.Encryption" xml:space="preserve">
+    <value>Шифрування</value>
+  </data>
+  <data name="Explorer.Decryption" xml:space="preserve">
+    <value>Розшифрування</value>
+  </data>
+  <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve">
+    <value>Неможливо зашифрувати або розшифрувати весь диск. Виберіть файл або каталог.</value>
+  </data>
+  <data name="Explorer.ItemDoesNotExist" xml:space="preserve">
+    <value>Вибраний файл або каталог не існує.</value>
+  </data>
+  <data name="Explorer.RefreshAfterOperationFailed" xml:space="preserve">
+    <value>Операцію успішно завершено, але не вдалося оновити подання файлів:{0}{1}</value>
+  </data>
+  <data name="Explorer.OverwriteTitle" xml:space="preserve">
+    <value>Перезапис вихідного елемента</value>
+  </data>
+  <data name="Explorer.OverwriteFilePrompt" xml:space="preserve">
+    <value>Замінити вихідний файл {0} копією?</value>
+  </data>
+  <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve">
+    <value>Замінити вихідні файли {0} копіями?</value>
+  </data>
+  <data name="Explorer.EncryptedAdjective" xml:space="preserve">
+    <value>зашифрованою</value>
+  </data>
+  <data name="Explorer.DecryptedAdjective" xml:space="preserve">
+    <value>розшифрованою</value>
+  </data>
+  <data name="Explorer.EncryptedCopiesAdjective" xml:space="preserve">
+    <value>зашифрованими</value>
+  </data>
+  <data name="Explorer.DecryptedCopiesAdjective" xml:space="preserve">
+    <value>розшифрованими</value>
+  </data>
+  <data name="Explorer.EncryptionWarning" xml:space="preserve">
+    <value>Відкриття без ключа більше неможливе.</value>
+  </data>
+  <data name="Explorer.EncryptedSuffix" xml:space="preserve">
+    <value>Зашифрований</value>
+  </data>
+  <data name="Explorer.DecryptedSuffix" xml:space="preserve">
+    <value>Розшифрований</value>
+  </data>
+  <data name="File.NewTitle" xml:space="preserve">
+    <value>Новий файл</value>
+  </data>
+  <data name="File.CreateOperation" xml:space="preserve">
+    <value>Створення файлу</value>
+  </data>
+  <data name="File.TypeNotSelected" xml:space="preserve">
+    <value>Тип файлу не вибрано.</value>
+  </data>
+  <data name="FileTemplate.Image" xml:space="preserve">
+    <value>Зображення</value>
+  </data>
+  <data name="FileTemplate.Text" xml:space="preserve">
+    <value>Текстовий файл</value>
+  </data>
+  <data name="FileTemplate.Secure" xml:space="preserve">
+    <value>Зашифрований файл</value>
+  </data>
+  <data name="FileTemplate.Video" xml:space="preserve">
+    <value>Відео</value>
+  </data>
+  <data name="FileTemplate.Xaml" xml:space="preserve">
+    <value>XAML-файл</value>
+  </data>
+  <data name="FileTemplate.XamlPackage" xml:space="preserve">
+    <value>Пакет XAML</value>
+  </data>
+  <data name="FileTemplate.PdfUnsupported" xml:space="preserve">
+    <value>Створення PDF-файлів у CryptoBook не підтримується.</value>
+  </data>
+  <data name="FileTemplate.RichText" xml:space="preserve">
+    <value>Документ RTF</value>
+  </data>
+  <data name="FileTemplate.NewImage" xml:space="preserve">
+    <value>Нове зображення</value>
+  </data>
+  <data name="FileTemplate.NewFile" xml:space="preserve">
+    <value>Новий файл</value>
+  </data>
+  <data name="FileTemplate.NewDocument" xml:space="preserve">
+    <value>Новий документ</value>
+  </data>
+  <data name="FileTemplate.NewEncryptedFile" xml:space="preserve">
+    <value>Новий зашифрований файл</value>
+  </data>
+  <data name="FileTemplate.NewVideo" xml:space="preserve">
+    <value>Нове відео</value>
+  </data>
+  <data name="FileTemplate.NewXamlPackage" xml:space="preserve">
+    <value>Новий пакет XAML</value>
+  </data>
+  <data name="Media.EmptyTitle" xml:space="preserve">
+    <value>Фото та відео</value>
+  </data>
+  <data name="Media.PlayerTitle" xml:space="preserve">
+    <value>Медіаплеєр</value>
+  </data>
+  <data name="Media.DefaultStatus" xml:space="preserve">
+    <value>Відкрийте зображення або відео</value>
+  </data>
+  <data name="Media.OpenFile" xml:space="preserve">
+    <value>Відкрити файл</value>
+  </data>
+  <data name="Media.PreviousImage" xml:space="preserve">
+    <value>Попереднє зображення</value>
+  </data>
+  <data name="Media.NextImage" xml:space="preserve">
+    <value>Наступне зображення</value>
+  </data>
+  <data name="Media.Rotate" xml:space="preserve">
+    <value>Повернути</value>
+  </data>
+  <data name="Media.FitImage" xml:space="preserve">
+    <value>Вписати зображення</value>
+  </data>
+  <data name="Media.DeleteImage" xml:space="preserve">
+    <value>Видалити зображення</value>
+  </data>
+  <data name="Media.OpenDialogTitle" xml:space="preserve">
+    <value>Відкрити зображення або відео</value>
+  </data>
+  <data name="Media.Loading" xml:space="preserve">
+    <value>Завантаження: {0}</value>
+  </data>
+  <data name="Media.DeleteTitle" xml:space="preserve">
+    <value>Видалення зображення</value>
+  </data>
+  <data name="Media.DeletePrompt" xml:space="preserve">
+    <value>Видалити «{0}»?</value>
+  </data>
+  <data name="Media.DeleteError" xml:space="preserve">
+    <value>Помилка видалення</value>
+  </data>
+  <data name="Media.DeleteFailed" xml:space="preserve">
+    <value>Не вдалося видалити зображення.</value>
+  </data>
+  <data name="Media.NoMoreImages" xml:space="preserve">
+    <value>У папці більше немає зображень.</value>
+  </data>
+  <data name="Media.DecodeFailed" xml:space="preserve">
+    <value>Не вдалося декодувати зображення.</value>
+  </data>
+  <data name="Media.Filter" xml:space="preserve">
+    <value>Медіафайли|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Зображення|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Відео|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Файли CryptoBook|*.cbook;*.cbox|Усі файли|*.*</value>
+  </data>
+  <data name="Key.Title" xml:space="preserve">
+    <value>Ключ шифрування</value>
+  </data>
+  <data name="Key.Prompt" xml:space="preserve">
+    <value>Введіть ключ шифрування:</value>
+  </data>
+  <data name="Key.TooShort" xml:space="preserve">
+    <value>Довжина ключа має бути не менше {0} символів.</value>
+  </data>
+  <data name="Key.InvalidCharacters" xml:space="preserve">
+    <value>Ключ містить неприпустимі символи.</value>
+  </data>
+  <data name="Key.Enter" xml:space="preserve">
+    <value>Введіть ключ.</value>
+  </data>
+  <data name="Key.MinimumLength" xml:space="preserve">
+    <value>Мінімальна довжина ключа: {0}.</value>
+  </data>
+  <data name="Key.Repeat" xml:space="preserve">
+    <value>Повторіть ключ.</value>
+  </data>
+  <data name="Key.Mismatch" xml:space="preserve">
+    <value>Ключі не збігаються.</value>
+  </data>
+  <data name="EncryptionMode.Title" xml:space="preserve">
+    <value>Режим збереження файлу</value>
+  </data>
+  <data name="EncryptionMode.Prompt" xml:space="preserve">
+    <value>Виберіть спосіб збереження файлу:</value>
+  </data>
+  <data name="EncryptionMode.SaveAs" xml:space="preserve">
+    <value>Зберегти файл як...</value>
+  </data>
+  <data name="EncryptionMode.ReplaceSource" xml:space="preserve">
+    <value>Замінити вихідний файл</value>
+  </data>
+  <data name="Progress.Canceling" xml:space="preserve">
+    <value>Скасування операції…</value>
+  </data>
+  <data name="Favorites.ErrorTitle" xml:space="preserve">
+    <value>Помилка вибраного</value>
+  </data>
+  <data name="Favorites.AddFailed" xml:space="preserve">
+    <value>Не вдалося додати каталог:{0}{1}</value>
+  </data>
+  <data name="Favorites.RenameTitle" xml:space="preserve">
+    <value>Перейменування елемента вибраного</value>
+  </data>
+  <data name="Favorites.RenamePrompt" xml:space="preserve">
+    <value>Введіть відображувану назву:</value>
+  </data>
+  <data name="Favorites.RenameFailed" xml:space="preserve">
+    <value>Не вдалося перейменувати елемент вибраного:{0}{1}</value>
+  </data>
+  <data name="Favorites.RemoveFailed" xml:space="preserve">
+    <value>Не вдалося видалити елемент із вибраного:{0}{1}</value>
+  </data>
+  <data name="Favorites.RefreshFailed" xml:space="preserve">
+    <value>Не вдалося оновити список вибраного:{0}{1}</value>
+  </data>
+  <data name="Hyperlink.InvalidAddress" xml:space="preserve">
+    <value>Введіть дійсну адресу HTTP або HTTPS, наприклад https://example.com.</value>
+  </data>
+  <data name="SystemItemRename.Title" xml:space="preserve">
+    <value>Перейменування елемента</value>
+  </data>
+  <data name="SystemItemRename.OldName" xml:space="preserve">
+    <value>Стара назва:</value>
+  </data>
+  <data name="SystemItemRename.OldExtension" xml:space="preserve">
+    <value>Старе розширення:</value>
+  </data>
+  <data name="SystemItemRename.NewName" xml:space="preserve">
+    <value>Нова назва:</value>
+  </data>
+  <data name="SystemItemRename.NewExtension" xml:space="preserve">
+    <value>Нове розширення:</value>
+  </data>
+  <data name="Document.SaveOperation" xml:space="preserve">
+    <value>Збереження документа</value>
+  </data>
+  <data name="Document.SaveError" xml:space="preserve">
+    <value>Помилка збереження</value>
+  </data>
+  <data name="Document.InsertImageError" xml:space="preserve">
+    <value>Не вдалося вставити зображення</value>
+  </data>
+  <data name="Document.RecoveryPrompt" xml:space="preserve">
+    <value>Було знайдено автоматично збережену копію з попереднього сеансу. Відновити документ?</value>
+  </data>
+  <data name="Document.RecoveryTitle" xml:space="preserve">
+    <value>Відновлення CryptoBook</value>
+  </data>
+  <data name="Document.UnsavedPrompt" xml:space="preserve">
+    <value>У документі є незбережені зміни. Зберегти їх перед закриттям?</value>
+  </data>
+  <data name="Document.RecoveryFailed" xml:space="preserve">
+    <value>Не вдалося відновити документ:{0}{1}</value>
+  </data>
+  <data name="Document.RecoveryErrorTitle" xml:space="preserve">
+    <value>Помилка відновлення</value>
+  </data>
+  <data name="Document.RecoveryCleanupFailed" xml:space="preserve">
+    <value>Не вдалося видалити файл автоматичного відновлення. Його знову може бути запропоновано під час наступного запуску:{0}{1}</value>
+  </data>
+  <data name="Document.RecoveryCleanupErrorTitle" xml:space="preserve">
+    <value>Помилка очищення даних відновлення</value>
+  </data>
+  <data name="Preview.SelectFile" xml:space="preserve">
+    <value>Виберіть файл для попереднього перегляду.</value>
+  </data>
+  <data name="Preview.Creating" xml:space="preserve">
+    <value>Створення попереднього перегляду…</value>
+  </data>
+  <data name="Preview.DisplayFailed" xml:space="preserve">
+    <value>Не вдалося відобразити файл:{0}{1}</value>
+  </data>
+  <data name="Preview.EncryptedNeedsKey" xml:space="preserve">
+    <value>Файл зашифрований. Введіть ключ, щоб увімкнути попередній перегляд.</value>
+  </data>
+  <data name="Preview.PdfUnsupported" xml:space="preserve">
+    <value>Вбудований попередній перегляд PDF ще не підтримується.</value>
+  </data>
+  <data name="Preview.DetailsOnly" xml:space="preserve">
+    <value>Для цього типу файлу доступні лише відомості про файл.</value>
+  </data>
+  <data name="Preview.EncryptedTooLarge" xml:space="preserve">
+    <value>Зашифрований файл завеликий для попереднього перегляду в пам’яті.</value>
+  </data>
+  <data name="Preview.DecryptedTooLarge" xml:space="preserve">
+    <value>Розшифрований файл завеликий для безпечного попереднього перегляду.</value>
+  </data>
+  <data name="Preview.DecryptedPdfUnsupported" xml:space="preserve">
+    <value>Файл успішно розшифровано, але вбудований попередній перегляд PDF ще не підтримується.</value>
+  </data>
+  <data name="Preview.Truncated" xml:space="preserve">
+    <value>— Попередній перегляд скорочено —</value>
+  </data>
+  <data name="Preview.DecryptedTypeUnsupported" xml:space="preserve">
+    <value>Файл успішно розшифровано, але його формат не підтримує вбудований попередній перегляд.</value>
+  </data>
+  <data name="Preview.DecryptFailed" xml:space="preserve">
+    <value>Не вдалося розшифрувати файл для попереднього перегляду. Перевірте ключ:{0}{1}</value>
+  </data>
+  <data name="Preview.ImageTooLarge" xml:space="preserve">
+    <value>Зображення завелике для безпечного перегляду.</value>
+  </data>
+  <data name="Preview.DirectoryUnavailable" xml:space="preserve">
+    <value>{0}{1}Каталог зараз недоступний</value>
+  </data>
+  <data name="Preview.BytesFormat" xml:space="preserve">
+    <value>{0} Б</value>
+  </data>
+  <data name="Preview.KilobytesFormat" xml:space="preserve">
+    <value>{0:F1} КБ</value>
+  </data>
+  <data name="Preview.MegabytesFormat" xml:space="preserve">
+    <value>{0:F1} МБ</value>
+  </data>
+  <data name="Preview.GigabytesFormat" xml:space="preserve">
+    <value>{0:F1} ГБ</value>
+  </data>
+  <data name="File.AlreadyExists" xml:space="preserve">
+    <value>Файл уже існує.</value>
+  </data>
+  <data name="File.Writing" xml:space="preserve">
+    <value>Запис файлу</value>
+  </data>
+  <data name="File.Created" xml:space="preserve">
+    <value>Файл створено</value>
+  </data>
+  <data name="File.Loaded" xml:space="preserve">
+    <value>Файл завантажено</value>
+  </data>
+  <data name="File.ReadComplete" xml:space="preserve">
+    <value>Читання завершено</value>
+  </data>
+  <data name="File.Reading" xml:space="preserve">
+    <value>Читання файлу</value>
+  </data>
+  <data name="File.Saved" xml:space="preserve">
+    <value>Файл збережено</value>
+  </data>
+  <data name="File.CopyComplete" xml:space="preserve">
+    <value>Копіювання завершено</value>
+  </data>
+  <data name="File.PickerTitle" xml:space="preserve">
+    <value>Виберіть файл</value>
+  </data>
+  <data name="File.TextFilter" xml:space="preserve">
+    <value>Текстові файли (*.txt)|*.txt|Усі файли (*.*)|*.*</value>
+  </data>
+  <data name="File.ImagePickerTitle" xml:space="preserve">
+    <value>Вставити зображення</value>
+  </data>
+  <data name="File.ImageFilter" xml:space="preserve">
+    <value>Зображення|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Усі файли|*.*</value>
+  </data>
+  <data name="File.NewFolderPickerDescription" xml:space="preserve">
+    <value>Виберіть папку для нового файлу</value>
+  </data>
+  <data name="Document.SaveAsTitle" xml:space="preserve">
+    <value>Зберегти документ як</value>
+  </data>
+  <data name="Workspace.DirectoryNotFound" xml:space="preserve">
+    <value>Каталог робочої області не знайдено: {0}</value>
+  </data>
+  <data name="Workspace.EnterSearchQuery" xml:space="preserve">
+    <value>Введіть частину імені файлу.</value>
+  </data>
+  <data name="Workspace.NotSelected" xml:space="preserve">
+    <value>Каталог робочої області не вибрано.</value>
+  </data>
+  <data name="Workspace.LocalOnly" xml:space="preserve">
+    <value>Наразі пошук підтримується лише в локальному каталозі робочої області.</value>
+  </data>
+  <data name="Error.OperationCanceled" xml:space="preserve">
+    <value>Операцію скасовано.</value>
+  </data>
+  <data name="Security.UnknownMode" xml:space="preserve">
+    <value>Невідомий режим обробки.</value>
+  </data>
+  <data name="Security.DestinationRequired" xml:space="preserve">
+    <value>Шлях призначення не вказано.</value>
+  </data>
+  <data name="Security.UnsupportedItemType" xml:space="preserve">
+    <value>Тип елемента «{0}» не підтримується.</value>
+  </data>
+  <data name="Security.DestinationDirectoryUnknown" xml:space="preserve">
+    <value>Не вдалося визначити каталог призначення для «{0}».</value>
+  </data>
+  <data name="Security.SourceDirectoryUnknown" xml:space="preserve">
+    <value>Не вдалося визначити каталог файлу «{0}».</value>
+  </data>
+  <data name="Security.DecryptionResultUnknown" xml:space="preserve">
+    <value>Не вдалося визначити результат розшифрування.</value>
+  </data>
+  <data name="Security.SourceFileNotFound" xml:space="preserve">
+    <value>Вихідний файл не знайдено.</value>
+  </data>
+  <data name="Security.SourceDirectoryNotFound" xml:space="preserve">
+    <value>Вихідний каталог «{0}» не знайдено.</value>
+  </data>
+  <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve">
+    <value>У режимі «Зберегти як» цільовий каталог має відрізнятися від вихідного каталогу.</value>
+  </data>
+  <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve">
+    <value>Файл не є зашифрованим файлом CryptoBook.</value>
+  </data>
+  <data name="Security.InvalidExtension" xml:space="preserve">
+    <value>Некоректне розширення файлу.</value>
+  </data>
+  <data name="Media.FfmpegMissing" xml:space="preserve">
+    <value>Не знайдено нативних бібліотек FFmpeg. Повне середовище виконання FFmpeg 7.1 очікувалося в «{0}».</value>
+  </data>
+  <data name="Media.OpenFailed" xml:space="preserve">
+    <value>Не вдалося відкрити медіафайл.</value>
+  </data>
+  <data name="Media.DecryptedFileUnknown" xml:space="preserve">
+    <value>Не вдалося визначити розшифрований медіафайл.</value>
+  </data>
+  <data name="Media.DecryptingFile" xml:space="preserve">
+    <value>Розшифрування файлу</value>
+  </data>
+  <data name="Document.NoSaveFormats" xml:space="preserve">
+    <value>Не зареєстровано форматів збереження документів.</value>
+  </data>
+  <data name="Image.EmptyFile" xml:space="preserve">
+    <value>Файл зображення порожній.</value>
+  </data>
+  <data name="Image.FileNotFound" xml:space="preserve">
+    <value>Файл зображення не знайдено.</value>
+  </data>
+</root>

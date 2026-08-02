@@ -3,6 +3,9 @@ using System.IO;
 
 namespace CryptoBook.Services
 {
+    /// <summary>
+    /// Публикует полностью записанный временный файл атомарной заменой целевого.
+    /// </summary>
     internal static class AtomicFileCommit
     {
         internal static void CommitWithBackup(
@@ -28,6 +31,8 @@ namespace CryptoBook.Services
                 $"{backupPath}.{Guid.NewGuid():N}.tmp";
             bool preservedBackup = false;
 
+            // Существующую .bak временно отодвигаем: File.Replace перезапишет её.
+            // При ошибке прежняя резервная копия должна вернуться на место.
             try
             {
                 if(File.Exists(backupPath))
