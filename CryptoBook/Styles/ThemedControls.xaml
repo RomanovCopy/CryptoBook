@@ -8,6 +8,10 @@
                 Value="{DynamicResource CurrentWindowBackground}"/>
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentWindowForeground}"/>
+        <!-- Window.Icon остаётся DynamicResource, чтобы открытые окна меняли
+             контрастную версию иконки без перезапуска приложения. -->
+        <Setter Property="Icon"
+                Value="{DynamicResource ApplicationWindowIcon}"/>
     </Style>
 
     <!-- Popup создаёт отдельное визуальное дерево, поэтому цвет текста

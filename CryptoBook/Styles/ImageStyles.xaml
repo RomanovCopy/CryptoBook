@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 
-    <BitmapImage x:Key="iconimage" UriSource="\Resources\Icons\icon002.ico"/>
+    <BitmapImage x:Key="iconimage" UriSource="\Resources\Images\AppIcon.System.png"/>
     <BitmapImage x:Key="aligncenterimage" UriSource="\Resources\Images\001_align_center.png"/>
     <BitmapImage x:Key="alignjustifyimage" UriSource="\Resources\Images\004_justify.png"/>
     <BitmapImage x:Key="alignleftimage" UriSource="\Resources\Images\002_align_left.png"/>

@@ -1,5 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <BitmapImage x:Key="ApplicationWindowIcon"
+                 UriSource="/CryptoBook;component/Resources/Images/AppIcon.LightTheme.png"/>
     <SolidColorBrush x:Key="CurrentWindowBackground" Color="#FFF7F8FA"/>
     <SolidColorBrush x:Key="CurrentWindowForeground" Color="#FF202124"/>
     <SolidColorBrush x:Key="CurrentTitleBarBackground" Color="#FFE8ECF2"/>
