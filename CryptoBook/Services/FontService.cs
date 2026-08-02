@@ -15,6 +15,7 @@ namespace CryptoBook.Services
     public class FontService: IFontService
     {
         private readonly IDocumentBackgroundPreferenceStore documentBackgroundPreferenceStore;
+        private readonly IDocumentAppearanceDefaults appearanceDefaults;
         private Drawing.Color? storedDocumentBackground;
 
         public IRichTextBoxService Service { get; set; }
@@ -51,7 +52,8 @@ namespace CryptoBook.Services
         public FontService(
             IRichTextBoxService service,
             IInlineService inlineService,
-            IDocumentBackgroundPreferenceStore documentBackgroundPreferenceStore)
+            IDocumentBackgroundPreferenceStore documentBackgroundPreferenceStore,
+            IDocumentAppearanceDefaults appearanceDefaults)
         {
             Service = service ?? throw new ArgumentNullException(nameof(service));
             _ = inlineService ?? throw new ArgumentNullException(nameof(inlineService));
@@ -59,6 +61,8 @@ namespace CryptoBook.Services
                 documentBackgroundPreferenceStore ??
                 throw new ArgumentNullException(
                     nameof(documentBackgroundPreferenceStore));
+            this.appearanceDefaults = appearanceDefaults ??
+                throw new ArgumentNullException(nameof(appearanceDefaults));
             InitializeCollections();
             InitializeDefaultValues();
             SetDefaultValues();
@@ -151,9 +155,7 @@ namespace CryptoBook.Services
             Service.Document.FontWeight = DefaultFontWeight;
             SetFontStretch(DefaultFontStretch);
             Service.Document.FontStretch = DefaultFontStretch;
-            Service.Document.SetResourceReference(
-                TextElement.ForegroundProperty,
-                "CurrentWindowForeground");
+            Service.Document.Foreground = CreateBrush(DefaultFontColor);
             SetTextDecoration(DefaultTextDecoration.Decorations);
             SetFontBackground(DefaultFontBackground);
             SetFontFamily(DefaultFontFamily);
@@ -165,16 +167,13 @@ namespace CryptoBook.Services
             DefaultFontSize = 16.0;
             DefaultFontStyle = System.Windows.FontStyles.Normal;
             DefaultFontFamily = FontFamilyes.FirstOrDefault(f => f != null && f.Source == "Consolas") ?? FontFamilyes[0];
-            DefaultFontColor =
-                GetDrawingColor(Service.Document.Foreground) ??
-                FontColors.FirstOrDefault(c => c.Name == "Black");
+            DefaultFontColor = appearanceDefaults.TextColor;
             DefaultFontBackground = FontColors.FirstOrDefault(c => c.Name == "Transparent");
             storedDocumentBackground =
                 documentBackgroundPreferenceStore.Load();
             DocumentBackground =
                 storedDocumentBackground ??
-                GetDrawingColor(Service.Document.Background) ??
-                Drawing.Color.White;
+                appearanceDefaults.PaperColor;
             DefaultTextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "None") ?? new TextDecorationItem { Name = "None", Decorations = null };
             DefaultFontWeight = FontWeights.FirstOrDefault(f => f == System.Windows.FontWeights.Normal);
             DefaultFontStretch = FontStretches.FirstOrDefault(s => s == System.Windows.FontStretches.Normal);

@@ -28,7 +28,8 @@ namespace CryptoBook.Tests
                 new DocumentFormatHandlerRegistry([handler]));
             IRichTextBoxService editor = new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
 
             try
             {

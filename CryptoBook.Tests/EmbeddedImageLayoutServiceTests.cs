@@ -261,7 +261,8 @@ namespace CryptoBook.Tests
             var paragraphFactory = new TestParagraphFactory();
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 paragraphFactory,
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var inlineService = new InlineService(
                 richTextBox,
                 new ReflectionPropertyAccessor(),
@@ -310,7 +311,8 @@ namespace CryptoBook.Tests
             var paragraphFactory = new TestParagraphFactory();
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 paragraphFactory,
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var inlineService = new InlineService(
                 richTextBox,
                 new ReflectionPropertyAccessor(),

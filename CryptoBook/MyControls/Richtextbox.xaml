@@ -37,6 +37,8 @@
                 </ContentControl.Style>
                 <ContentControl.Resources>
                     <Style TargetType="{x:Type services:RichTextBoxService}">
+                        <Setter Property="Cursor"
+                                Value="{x:Static markup:HighContrastTextCursor.Instance}"/>
                         <Setter Property="ContextMenu"
                                 Value="{markup:ResolveService ServiceType={x:Type local:RichTextEditorContextMenu}}"/>
                         <Setter Property="behaviors:DocumentImageResizeBehavior.ImageEditor"

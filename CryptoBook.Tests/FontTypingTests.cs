@@ -1,5 +1,6 @@
 using CryptoBook.Accessors;
 using CryptoBook.Interfaces;
+using CryptoBook.Markup;
 using CryptoBook.Services;
 using System.Windows;
 using System.Windows.Documents;
@@ -68,6 +69,35 @@ public sealed class FontTypingTests
         Assert.Equal(
             fonts.FontColors.Count,
             fonts.FontColors.Select(color => color.ToArgb()).Distinct().Count());
+    }
+
+    [WpfFact]
+    public void DefaultPaperAndFontColors_DoNotFollowThemeResources()
+    {
+        var (service, _) = CreateServices(new Run("text"));
+
+        service.Service.Resources["CurrentDocumentBackground"] = Brushes.Red;
+        service.Service.Resources["CurrentWindowForeground"] = Brushes.Blue;
+
+        Assert.Equal(
+            Colors.White,
+            Assert.IsType<SolidColorBrush>(service.Document.Background).Color);
+        Assert.Equal(
+            Colors.Black,
+            Assert.IsType<SolidColorBrush>(service.Document.Foreground).Color);
+        Assert.Equal(
+            Colors.White,
+            Assert.IsType<SolidColorBrush>(service.BackGround).Color);
+        Assert.Equal(
+            Colors.Black,
+            Assert.IsType<SolidColorBrush>(service.Service.Foreground).Color);
+    }
+
+    [WpfFact]
+    public void HighContrastTextCursor_InstanceIsReusable()
+    {
+        Assert.NotNull(HighContrastTextCursor.Instance);
+        Assert.Same(HighContrastTextCursor.Instance, HighContrastTextCursor.Instance);
     }
 
     [WpfFact]
@@ -305,7 +335,8 @@ public sealed class FontTypingTests
     {
         IRichTextBoxService service = new RichTextBoxService(
             new TestParagraphFactory(),
-            new TestUriNavigationService());
+            new TestUriNavigationService(),
+            new DocumentAppearanceDefaults());
         var paragraph = new Paragraph();
         foreach(var run in runs)
             paragraph.Inlines.Add(run);
@@ -318,7 +349,8 @@ public sealed class FontTypingTests
         var fonts = new FontService(
             service,
             inline,
-            new DocumentBackgroundPreferenceStoreStub());
+            new DocumentBackgroundPreferenceStoreStub(),
+            new DocumentAppearanceDefaults());
 
         // FontService initializes defaults by changing the current caret. Restore the
         // exact document used by each test so initialization cannot mask a regression.

@@ -178,6 +178,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<UserDocumentBackgroundPreferenceStore>()
                 .As<IDocumentBackgroundPreferenceStore>()
                 .SingleInstance();
+            builder.RegisterType<DocumentAppearanceDefaults>()
+                .As<IDocumentAppearanceDefaults>()
+                .SingleInstance();
             builder.RegisterType<WindowsThemeProvider>().As<IWindowsThemeProvider>().SingleInstance();
             builder.RegisterType<SettingsWindowService>().As<ISettingsWindowService>().SingleInstance();
             builder.RegisterType<WorkspaceService>().As<IWorkspaceService>().SingleInstance();

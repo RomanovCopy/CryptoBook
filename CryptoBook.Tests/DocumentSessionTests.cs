@@ -16,7 +16,8 @@ namespace CryptoBook.Tests
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var session = new DocumentSession(richTextBox);
             var template = new XamlPackageFileTemplate();
             string path = Path.Combine(
@@ -42,7 +43,8 @@ namespace CryptoBook.Tests
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var session = new DocumentSession(richTextBox);
             var template = new XamlPackageFileTemplate();
             string path = Path.Combine(
@@ -66,7 +68,8 @@ namespace CryptoBook.Tests
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var session = new DocumentSession(richTextBox);
             var template = new XamlPackageFileTemplate();
             string originalPath = Path.Combine(
@@ -90,7 +93,8 @@ namespace CryptoBook.Tests
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var session = new DocumentSession(richTextBox);
 
             session.SetDisplayName("Моя книга.XamlPackage");
@@ -104,7 +108,8 @@ namespace CryptoBook.Tests
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var session = new DocumentSession(richTextBox);
             var template = new XamlPackageFileTemplate();
             session.Open(
@@ -131,7 +136,8 @@ namespace CryptoBook.Tests
         {
             IRichTextBoxService richTextBox = new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
             var session = new DocumentSession(richTextBox);
             var template = new XamlPackageFileTemplate();
             session.Open(

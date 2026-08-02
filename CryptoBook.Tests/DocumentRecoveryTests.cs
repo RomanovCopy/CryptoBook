@@ -283,7 +283,8 @@ namespace CryptoBook.Tests
         private static IRichTextBoxService CreateEditor() =>
             new RichTextBoxService(
                 new TestParagraphFactory(),
-                new TestUriNavigationService());
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
 
         private sealed class TestSaveService: IFlowDocumentSaveService
         {
