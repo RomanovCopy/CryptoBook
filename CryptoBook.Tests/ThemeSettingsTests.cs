@@ -8,10 +8,12 @@ using CryptoBook.Models;
 using CryptoBook.Services;
 using CryptoBook.Views;
 
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 using Xunit;
 
@@ -113,6 +115,24 @@ public sealed class ThemeSettingsTests
         Assert.IsType<Style>(styles[typeof(ProgressBar)]);
         Assert.IsType<Style>(styles[typeof(ContextMenu)]);
         Assert.IsType<Style>(styles[typeof(ToolTip)]);
+    }
+
+    [Fact]
+    public void HyperlinkDialog_WindowSurfaceUsesDynamicThemeResources()
+    {
+        string xamlPath = FindRepositoryFile(
+            "CryptoBook",
+            "Views",
+            "HyperlinkDialog.xaml");
+        XElement window = Assert.IsType<XElement>(
+            XDocument.Load(xamlPath).Root);
+
+        Assert.Equal(
+            "{DynamicResource CurrentWindowBackground}",
+            (string?)window.Attribute("Background"));
+        Assert.Equal(
+            "{DynamicResource CurrentWindowForeground}",
+            (string?)window.Attribute("Foreground"));
     }
 
     [WpfTheory]
@@ -414,6 +434,24 @@ public sealed class ThemeSettingsTests
         {
             Source = new Uri(source, UriKind.Relative)
         };
+
+    private static string FindRepositoryFile(params string[] pathParts)
+    {
+        DirectoryInfo? directory = new(AppContext.BaseDirectory);
+
+        while(directory != null)
+        {
+            string candidate = Path.Combine(
+                [directory.FullName, .. pathParts]);
+            if(File.Exists(candidate))
+                return candidate;
+
+            directory = directory.Parent;
+        }
+
+        throw new FileNotFoundException(
+            $"Repository file was not found: {Path.Combine(pathParts)}");
+    }
 
     private static Border ApplyTemplateAndFindRow(Control item)
     {
