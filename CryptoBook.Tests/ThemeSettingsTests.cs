@@ -23,11 +23,11 @@ namespace CryptoBook.Tests;
 public sealed class ThemeSettingsTests
 {
     [WpfTheory]
-    [InlineData("LightTheme", "AppIcon.LightTheme.png")]
-    [InlineData("DarkTheme", "AppIcon.DarkTheme.png")]
-    [InlineData("SepiaTheme", "AppIcon.LightTheme.png")]
-    [InlineData("SystemTheme", "AppIcon.System.png")]
-    public void ThemePalette_SelectsContrastingApplicationIcon(
+    [InlineData("LightTheme", "AppIcon.ico")]
+    [InlineData("DarkTheme", "AppIcon.ico")]
+    [InlineData("SepiaTheme", "AppIcon.ico")]
+    [InlineData("SystemTheme", "AppIcon.ico")]
+    public void ThemePalette_UsesCanonicalApplicationIcon(
         string resourceName,
         string expectedFileName)
     {
@@ -139,7 +139,7 @@ public sealed class ThemeSettingsTests
     }
 
     [WpfFact]
-    public void ThemedWindowStyle_UsesDynamicApplicationIcon()
+    public void ThemedWindowStyle_UsesCanonicalApplicationIcon()
     {
         Application app = Application.Current ?? new Application();
         ResourceDictionary previousResources = app.Resources;
@@ -343,7 +343,7 @@ public sealed class ThemeSettingsTests
     }
 
     [WpfFact]
-    public void ThemeManager_UpdatesOpenWindowIconWithoutRestart()
+    public void ThemeManager_KeepsCanonicalWindowIconWhenThemeChanges()
     {
         Application app = Application.Current ?? new Application();
         ResourceDictionary previousResources = app.Resources;
@@ -368,14 +368,14 @@ public sealed class ThemeSettingsTests
             };
 
             Assert.EndsWith(
-                "AppIcon.DarkTheme.png",
+                "AppIcon.ico",
                 Assert.IsType<BitmapImage>(window.Icon)
                     .UriSource.OriginalString);
 
             manager.ApplyTheme(ApplicationTheme.Light);
 
             Assert.EndsWith(
-                "AppIcon.LightTheme.png",
+                "AppIcon.ico",
                 Assert.IsType<BitmapImage>(window.Icon)
                     .UriSource.OriginalString);
         }

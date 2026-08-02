@@ -73,7 +73,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Icons\icon002.ico" />
     <None Remove="Resources\Icons\AppIcon.ico" />
     <None Remove="Resources\Images\000_aligncenter.png" />
     <None Remove="Resources\Images\001_alignjustify.png" />
@@ -95,9 +94,6 @@
     <None Remove="Resources\Images\017_fontunderline.png" />
     <None Remove="Resources\Images\018_forward.png" />
     <None Remove="Resources\Images\019_icon.png" />
-    <None Remove="Resources\Images\AppIcon.DarkTheme.png" />
-    <None Remove="Resources\Images\AppIcon.LightTheme.png" />
-    <None Remove="Resources\Images\AppIcon.System.png" />
     <None Remove="Resources\Images\020_indentdecrease.png" />
     <None Remove="Resources\Images\021_indentincrease.png" />
     <None Remove="Resources\Images\022_listbullets.png" />
@@ -126,9 +122,6 @@
 
   <ItemGroup>
     <Resource Include="Resources\Icons\AppIcon.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Icons\icon002.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
@@ -163,9 +156,6 @@
     <Resource Include="Resources\Images\017_fontunderline.png" />
     <Resource Include="Resources\Images\018_forward.png" />
     <Resource Include="Resources\Images\019_icon.png" />
-    <Resource Include="Resources\Images\AppIcon.DarkTheme.png" />
-    <Resource Include="Resources\Images\AppIcon.LightTheme.png" />
-    <Resource Include="Resources\Images\AppIcon.System.png" />
     <Resource Include="Resources\Images\020_indentdecrease.png" />
     <Resource Include="Resources\Images\021_indentincrease.png" />
     <Resource Include="Resources\Images\022_listbullets.png" />

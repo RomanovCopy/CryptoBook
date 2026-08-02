@@ -16,7 +16,7 @@ public sealed class BookmarkTests
     public void BookmarksEditorIcon_IsAvailableAsWpfResource()
     {
         var uri = new Uri(
-            "/CryptoBook;component/Resources/Icons/icon002.ico",
+            "/CryptoBook;component/Resources/Icons/AppIcon.ico",
             UriKind.Relative);
 
         var resource = Application.GetResourceStream(uri);
