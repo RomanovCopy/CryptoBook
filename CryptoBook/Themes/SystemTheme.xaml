@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <BitmapImage x:Key="ApplicationWindowIcon"
-                 UriSource="/CryptoBook;component/Resources/Images/AppIcon.System.png"/>
+                 UriSource="/CryptoBook;component/Resources/Icons/AppIcon.ico"/>
     <SolidColorBrush x:Key="CurrentWindowBackground"
                      Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     <SolidColorBrush x:Key="CurrentWindowForeground"

@@ -8,8 +8,7 @@
                 Value="{DynamicResource CurrentWindowBackground}"/>
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentWindowForeground}"/>
-        <!-- Window.Icon остаётся DynamicResource, чтобы открытые окна меняли
-             контрастную версию иконки без перезапуска приложения. -->
+        <!-- Все окна используют тот же канонический значок, что и EXE. -->
         <Setter Property="Icon"
                 Value="{DynamicResource ApplicationWindowIcon}"/>
     </Style>
