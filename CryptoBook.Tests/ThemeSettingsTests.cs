@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 
 using Xunit;
@@ -21,6 +22,26 @@ namespace CryptoBook.Tests;
 
 public sealed class ThemeSettingsTests
 {
+    [WpfTheory]
+    [InlineData("LightTheme", "AppIcon.LightTheme.png")]
+    [InlineData("DarkTheme", "AppIcon.DarkTheme.png")]
+    [InlineData("SepiaTheme", "AppIcon.LightTheme.png")]
+    [InlineData("SystemTheme", "AppIcon.System.png")]
+    public void ThemePalette_SelectsContrastingApplicationIcon(
+        string resourceName,
+        string expectedFileName)
+    {
+        ResourceDictionary theme = LoadDictionary(
+            $"/CryptoBook;component/Themes/{resourceName}.xaml");
+        BitmapImage icon = Assert.IsType<BitmapImage>(
+            theme["ApplicationWindowIcon"]);
+
+        Assert.EndsWith(
+            expectedFileName,
+            icon.UriSource.OriginalString,
+            StringComparison.Ordinal);
+    }
+
     [WpfTheory]
     [InlineData("LightTheme")]
     [InlineData("DarkTheme")]
@@ -115,6 +136,35 @@ public sealed class ThemeSettingsTests
         Assert.IsType<Style>(styles[typeof(ProgressBar)]);
         Assert.IsType<Style>(styles[typeof(ContextMenu)]);
         Assert.IsType<Style>(styles[typeof(ToolTip)]);
+    }
+
+    [WpfFact]
+    public void ThemedWindowStyle_UsesDynamicApplicationIcon()
+    {
+        Application app = Application.Current ?? new Application();
+        ResourceDictionary previousResources = app.Resources;
+        ResourceDictionary theme = LoadDictionary(
+            "/CryptoBook;component/Themes/DarkTheme.xaml");
+        ResourceDictionary styles = LoadDictionary(
+            "/CryptoBook;component/Styles/ThemedControls.xaml");
+
+        try
+        {
+            app.Resources = new ResourceDictionary();
+            app.Resources.MergedDictionaries.Add(theme);
+            app.Resources.MergedDictionaries.Add(styles);
+
+            var window = new Window
+            {
+                Style = Assert.IsType<Style>(styles[typeof(Window)])
+            };
+
+            Assert.Same(theme["ApplicationWindowIcon"], window.Icon);
+        }
+        finally
+        {
+            app.Resources = previousResources;
+        }
     }
 
     [Fact]
@@ -285,6 +335,49 @@ public sealed class ThemeSettingsTests
             Assert.Equal(ApplicationTheme.Sepia, store.SavedTheme);
             Assert.NotNull(app.Resources["CurrentWindowBackground"]);
             Assert.NotNull(app.Resources["CurrentAccent"]);
+        }
+        finally
+        {
+            app.Resources = previousResources;
+        }
+    }
+
+    [WpfFact]
+    public void ThemeManager_UpdatesOpenWindowIconWithoutRestart()
+    {
+        Application app = Application.Current ?? new Application();
+        ResourceDictionary previousResources = app.Resources;
+        var store = new ThemePreferenceStoreStub(ApplicationTheme.Dark);
+        var windowsTheme = new WindowsThemeProviderStub(
+            usesLightTheme: false);
+
+        try
+        {
+            app.Resources = new ResourceDictionary();
+            using var manager = new ThemeManager(
+                app,
+                store,
+                windowsTheme);
+            manager.Initialize();
+            ResourceDictionary styles = LoadDictionary(
+                "/CryptoBook;component/Styles/ThemedControls.xaml");
+            app.Resources.MergedDictionaries.Add(styles);
+            var window = new Window
+            {
+                Style = Assert.IsType<Style>(styles[typeof(Window)])
+            };
+
+            Assert.EndsWith(
+                "AppIcon.DarkTheme.png",
+                Assert.IsType<BitmapImage>(window.Icon)
+                    .UriSource.OriginalString);
+
+            manager.ApplyTheme(ApplicationTheme.Light);
+
+            Assert.EndsWith(
+                "AppIcon.LightTheme.png",
+                Assert.IsType<BitmapImage>(window.Icon)
+                    .UriSource.OriginalString);
         }
         finally
         {

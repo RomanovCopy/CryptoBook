@@ -16,7 +16,7 @@
         Background="{DynamicResource CurrentWindowBackground}"
         Foreground="{DynamicResource CurrentWindowForeground}"
         BorderBrush="{DynamicResource CurrentBorderColor}"
-        Icon="/CryptoBook;component/Resources/Icons/icon002.ico"
+        Icon="{DynamicResource ApplicationWindowIcon}"
         d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:ISettingsViewModel}}">
 
     <Window.DataContext>
