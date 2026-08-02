@@ -12,7 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 
 using Media = System.Windows.Media;
-using Draving = System.Drawing;
+using Drawing = System.Drawing;
 
 using Controls = System.Windows.Controls;
 using FontStyle = System.Windows.FontStyle;
@@ -29,6 +29,7 @@ namespace CryptoBook.Services
         private TextRange last_Selection;
         private IParagraphFactory paragraphFactory;
         private readonly IUriNavigationService uriNavigationService;
+        private readonly IDocumentAppearanceDefaults appearanceDefaults;
         private readonly Dictionary<DependencyProperty, object?> typingProperties = new();
         private Paragraph? typingAnchorParagraph;
         private int typingAnchorTextOffset;
@@ -75,12 +76,15 @@ namespace CryptoBook.Services
 
         public RichTextBoxService(
             IParagraphFactory paragraphFactory,
-            IUriNavigationService uriNavigationService)
+            IUriNavigationService uriNavigationService,
+            IDocumentAppearanceDefaults appearanceDefaults)
         {
             this.paragraphFactory = paragraphFactory ??
                 throw new ArgumentNullException(nameof(paragraphFactory));
             this.uriNavigationService = uriNavigationService ??
                 throw new ArgumentNullException(nameof(uriNavigationService));
+            this.appearanceDefaults = appearanceDefaults ??
+                throw new ArgumentNullException(nameof(appearanceDefaults));
             var hyperlinkStyle = new Style(typeof(Hyperlink));
             hyperlinkStyle.Setters.Add(
                 new Setter(Hyperlink.CursorProperty, System.Windows.Input.Cursors.Hand));
@@ -513,21 +517,15 @@ namespace CryptoBook.Services
             var document = this.Document;
             if(document == null)
                 throw new InvalidOperationException("Document cannot be null. Ensure that the RichTextBox is properly initialized.");
-            document.SetResourceReference(
-                FlowDocument.BackgroundProperty,
-                "CurrentDocumentBackground");
-            document.SetResourceReference(
-                FlowDocument.ForegroundProperty,
-                "CurrentWindowForeground");
-            this.SetResourceReference(
-                BackgroundProperty,
-                "CurrentDocumentBackground");
-            this.SetResourceReference(
-                ForegroundProperty,
-                "CurrentWindowForeground");
-            this.SetResourceReference(
-                CaretBrushProperty,
-                "CurrentWindowForeground");
+            // Бумага и текст являются частью документа, поэтому смена темы
+            // интерфейса не должна менять их цвета.
+            var paperBrush = CreateBrush(appearanceDefaults.PaperColor);
+            var textBrush = CreateBrush(appearanceDefaults.TextColor);
+            document.Background = paperBrush;
+            document.Foreground = textBrush;
+            this.Background = paperBrush;
+            this.Foreground = textBrush;
+            this.CaretBrush = textBrush;
             this.SetResourceReference(
                 BorderBrushProperty,
                 "CurrentBorderColor");
@@ -550,6 +548,9 @@ namespace CryptoBook.Services
             CaretPosition = newRun.ContentStart;
             Focus();
         }
+
+        private static Media.SolidColorBrush CreateBrush(Drawing.Color color) =>
+            new(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
 
 
 

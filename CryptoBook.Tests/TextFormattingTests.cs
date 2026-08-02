@@ -437,7 +437,8 @@ public sealed class TextFormattingTests
     {
         IRichTextBoxService richText = new RichTextBoxService(
             new TestParagraphFactory(),
-            new TestUriNavigationService());
+            new TestUriNavigationService(),
+            new DocumentAppearanceDefaults());
         richText.Document.Blocks.Clear();
         foreach(var text in paragraphs)
             richText.Document.Blocks.Add(new Paragraph(new Run(text)));

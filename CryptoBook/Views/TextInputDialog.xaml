@@ -6,6 +6,8 @@
         MinWidth="360"
         MinHeight="155"
         WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}"
         ResizeMode="NoResize"
         Title="{Binding DialogTitle}">
     <Grid Margin="18">

@@ -135,6 +135,24 @@ public sealed class ThemeSettingsTests
             (string?)window.Attribute("Foreground"));
     }
 
+    [Fact]
+    public void TextInputDialog_WindowSurfaceUsesDynamicThemeResources()
+    {
+        string xamlPath = FindRepositoryFile(
+            "CryptoBook",
+            "Views",
+            "TextInputDialog.xaml");
+        XElement window = Assert.IsType<XElement>(
+            XDocument.Load(xamlPath).Root);
+
+        Assert.Equal(
+            "{DynamicResource CurrentWindowBackground}",
+            (string?)window.Attribute("Background"));
+        Assert.Equal(
+            "{DynamicResource CurrentWindowForeground}",
+            (string?)window.Attribute("Foreground"));
+    }
+
     [WpfTheory]
     [InlineData("LightTheme")]
     [InlineData("DarkTheme")]

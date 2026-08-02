@@ -146,12 +146,14 @@ public sealed class RichTextContextMenuTests
         var paragraphFactory = new TestParagraphFactory();
         IRichTextBoxService service = new RichTextBoxService(
             paragraphFactory,
-            new TestUriNavigationService());
+            new TestUriNavigationService(),
+            new DocumentAppearanceDefaults());
         var inline = new InlineService(service, new ReflectionPropertyAccessor(), paragraphFactory);
         var fonts = new FontService(
             service,
             inline,
-            new DocumentBackgroundPreferenceStoreStub());
+            new DocumentBackgroundPreferenceStoreStub(),
+            new DocumentAppearanceDefaults());
         var textFormatService = new RecordingTextFormatService();
         var listService = new RecordingListService();
 

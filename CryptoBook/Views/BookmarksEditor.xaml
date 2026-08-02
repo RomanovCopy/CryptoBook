@@ -189,13 +189,16 @@
                              MinHeight="90"/>
                 </Grid>
 
-                <TextBlock Grid.Row="4"
-                           TextTrimming="CharacterEllipsis"
+                <DockPanel Grid.Row="4"
+                           LastChildFill="True"
                            Opacity="0.65"
                            Margin="0,0,0,7">
-                    <Run Text="{Binding [Bookmarks.Anchor], Source={StaticResource Res}}"/>
-                    <Run Text="{Binding SelectedBookmark.BookmarkUriString}"/>
-                </TextBlock>
+                    <TextBlock DockPanel.Dock="Left"
+                               Text="{Binding [Bookmarks.Anchor], Source={StaticResource Res}}"
+                               Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding SelectedBookmark.BookmarkUriString}"
+                               TextTrimming="CharacterEllipsis"/>
+                </DockPanel>
 
                 <DockPanel Grid.Row="5" LastChildFill="True">
                     <Button DockPanel.Dock="Right"
