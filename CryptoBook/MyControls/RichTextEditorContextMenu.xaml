@@ -8,7 +8,7 @@
              DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IRichTextContextMenuViewModel}}"
              Background="{DynamicResource CurrentWindowBackground}"
              Foreground="{DynamicResource CurrentWindowForeground}"
-             BorderBrush="#557CA0CC"
+             BorderBrush="{DynamicResource CurrentBorderColor}"
              BorderThickness="1"
              Padding="5"
              MinWidth="245"

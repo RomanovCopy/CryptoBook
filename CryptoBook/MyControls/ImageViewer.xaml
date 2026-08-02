@@ -10,7 +10,7 @@
              xmlns:local="clr-namespace:CryptoBook.MyControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="#1A1A1A">
+    <Grid Background="{DynamicResource CurrentWindowBackground}">
         <!-- Контейнер для мышиных событий -->
         <Border Background="Transparent" ClipToBounds="True">
             <i:Interaction.Behaviors>

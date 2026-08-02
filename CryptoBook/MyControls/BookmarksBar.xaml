@@ -51,7 +51,9 @@
                                  ToolTip="{Binding [Bookmarks.NewName], Source={StaticResource Res}}"/>
                     </DockPanel>
 
-                    <Border Height="1" Background="#557CA0CC" Margin="4,7"/>
+                    <Border Height="1"
+                            Background="{DynamicResource CurrentControlHoverBackground}"
+                            Margin="4,7"/>
 
                     <TextBlock Text="{Binding [Bookmarks.Selected], Source={StaticResource Res}}"
                                FontWeight="SemiBold"

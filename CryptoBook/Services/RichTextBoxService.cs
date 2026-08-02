@@ -516,15 +516,26 @@ namespace CryptoBook.Services
             document.SetResourceReference(
                 FlowDocument.BackgroundProperty,
                 "CurrentDocumentBackground");
+            document.SetResourceReference(
+                FlowDocument.ForegroundProperty,
+                "CurrentWindowForeground");
             this.SetResourceReference(
                 BackgroundProperty,
                 "CurrentDocumentBackground");
+            this.SetResourceReference(
+                ForegroundProperty,
+                "CurrentWindowForeground");
+            this.SetResourceReference(
+                CaretBrushProperty,
+                "CurrentWindowForeground");
+            this.SetResourceReference(
+                BorderBrushProperty,
+                "CurrentBorderColor");
             // Автоматическая высота учитывает реальные метрики выбранного шрифта.
             // MaxHeight не позволяет глифам и маркерам списка перекрывать соседнюю строку.
             document.LineStackingStrategy = LineStackingStrategy.MaxHeight;
             document.LineHeight = double.NaN;
             Run newRun = new("     ");
-            newRun.Foreground = System.Windows.Media.Brushes.Black;
             newRun.Background= System.Windows.Media.Brushes.Transparent;
             var newParagraph = paragraphFactory.Create();
             newParagraph.Margin = new Thickness(0);

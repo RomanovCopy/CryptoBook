@@ -53,27 +53,6 @@ namespace CryptoBook.ViewModels
             set => model.SelectedCultureName = value;
         }
 
-        public int SelectedLanguageIndex
-        {
-            get => model.SelectedLanguageIndex;
-            set => model.SelectedLanguageIndex = value;
-        }
-
-        public bool IsEnglishSelected
-        {
-            get => model.IsEnglishSelected;
-            set => model.IsEnglishSelected = value;
-        }
-
-        public bool IsRussianSelected
-        {
-            get => model.IsRussianSelected;
-            set => model.IsRussianSelected = value;
-        }
-
-        public IReadOnlyList<string> LanguageDisplayNames =>
-            model.LanguageDisplayNames;
-
         public GridLength NavigationPaneWidth
         {
             get => model.NavigationPaneWidth;

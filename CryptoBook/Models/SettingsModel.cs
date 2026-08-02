@@ -107,9 +107,6 @@ namespace CryptoBook.Models
                 OnPropertyChanged(nameof(Themes));
                 OnPropertyChanged(nameof(SelectedTheme));
                 OnPropertyChanged(nameof(SelectedCultureName));
-                OnPropertyChanged(nameof(SelectedLanguageIndex));
-                OnPropertyChanged(nameof(IsEnglishSelected));
-                OnPropertyChanged(nameof(IsRussianSelected));
             }
         }
 
@@ -128,46 +125,6 @@ namespace CryptoBook.Models
                 SelectedLanguage = language;
             }
         }
-
-        public int SelectedLanguageIndex
-        {
-            get => string.Equals(
-                selectedLanguage.CultureName,
-                "ru-RU",
-                StringComparison.OrdinalIgnoreCase)
-                    ? 1
-                    : 0;
-            set
-            {
-                if(value is < 0 or > 1)
-                    return;
-
-                SelectedLanguage = Languages[value];
-            }
-        }
-
-        public bool IsEnglishSelected
-        {
-            get => SelectedLanguageIndex == 0;
-            set
-            {
-                if(value)
-                    SelectedLanguageIndex = 0;
-            }
-        }
-
-        public bool IsRussianSelected
-        {
-            get => SelectedLanguageIndex == 1;
-            set
-            {
-                if(value)
-                    SelectedLanguageIndex = 1;
-            }
-        }
-
-        public IReadOnlyList<string> LanguageDisplayNames { get; } =
-            ["English", "Русский"];
 
         public GridLength NavigationPaneWidth
         {

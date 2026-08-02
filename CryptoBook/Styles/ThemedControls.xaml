@@ -12,6 +12,20 @@
 
     <!-- Popup создаёт отдельное визуальное дерево, поэтому цвет текста
          задаётся и для текстовых элементов, а не только для Window. -->
+    <Style TargetType="{x:Type Page}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type UserControl}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+    </Style>
+
     <Style TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentWindowForeground}"/>
@@ -109,6 +123,17 @@
         <Setter Property="Padding" Value="5,3"/>
     </Style>
 
+    <Style TargetType="{x:Type RichTextBox}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentDocumentBackground}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource CurrentSelectionBackground}"/>
+        <Setter Property="SelectionTextBrush" Value="{DynamicResource CurrentSelectionForeground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
     <Style TargetType="{x:Type ComboBox}">
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontSize" Value="13"/>
@@ -146,6 +171,12 @@
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="{x:Type ToggleButton}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
     <Style TargetType="{x:Type ListBox}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentInputForeground}"/>
@@ -164,6 +195,38 @@
                 Value="{DynamicResource CurrentBorderColor}"/>
     </Style>
 
+    <Style TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
+                <Setter Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type ListViewItem}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
+                <Setter Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="{x:Type TreeView}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentInputForeground}"/>
@@ -176,11 +239,88 @@
     <Style TargetType="{x:Type CheckBox}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
     </Style>
 
     <Style TargetType="{x:Type RadioButton}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type GroupBox}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Expander}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type TabControl}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type TabItem}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
+                <Setter Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type ToolBar}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type StatusBar}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type GridSplitter}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ProgressBar}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentAccent}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Slider}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentAccent}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ScrollBar}">
+        <Setter Property="Foreground" Value="{DynamicResource CurrentAccent}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
     </Style>
 
     <Style TargetType="{x:Type ContextMenu}">
@@ -197,6 +337,20 @@
                 Value="{DynamicResource CurrentInputForeground}"/>
         <Setter Property="Background"
                 Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource CurrentSelectionForeground}"/>
+                <Setter Property="Background"
+                        Value="{DynamicResource CurrentSelectionBackground}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource CurrentDisabledForeground}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="{x:Type ToolTip}">

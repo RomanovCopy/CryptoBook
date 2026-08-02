@@ -3,6 +3,9 @@
 
     <Style x:Key="VS2012WindowStyleNavigationButton" TargetType="{x:Type Button}">
         <Setter Property="Focusable" Value="false" />
+        <Setter Property="Foreground" Value="{DynamicResource CurrentTitleBarForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -27,7 +30,7 @@
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="PART_border" Property="Opacity" Value="1" />
-                            <Setter Property="Foreground" Value="#FFF"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentTitleBarForeground}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -37,6 +40,9 @@
 
     <Style x:Key="TitleBarButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Focusable" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource CurrentTitleBarForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -77,13 +83,18 @@
 
     <Style x:Key="VS2012WindowStyleTitleBarButton" TargetType="{x:Type Button}">
         <Setter Property="Focusable" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource CurrentTitleBarForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentTitleBarBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid>
                         <Border
                             x:Name="PART_border"
-                            Background="#FFF"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             Opacity="0.75"
                             CornerRadius="3"
                             />
@@ -91,13 +102,13 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_border" Property="Background" Value="#FFF" />
+                            <Setter TargetName="PART_border" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}" />
                             <Setter TargetName="PART_border" Property="Opacity" Value="0.5" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PART_border" Property="Background" Value="{StaticResource VS2012WindowBorderBrush}"/>
+                            <Setter TargetName="PART_border" Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
                             <Setter TargetName="PART_border" Property="Opacity" Value="1" />
-                            <Setter Property="Foreground" Value="#FFF"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -155,32 +166,25 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <!-- Устанавливаем значения по умолчанию -->
-        <!--<Setter Property="Background" Value="White"/>
-        <Setter Property="BorderBrush" Value="Black"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="5"/>
-        <Setter Property="Height" Value="30"/>
-        <Setter Property="Width" Value="100"/>-->
     </Style>
 
 
     <ControlTemplate x:Key="FlatButtonControlTemplate" TargetType="{x:Type Button}">
-        <Border x:Name="OuterBorder" BorderBrush="Gray" BorderThickness="1" CornerRadius="2" VerticalAlignment="Center">
+        <Border x:Name="OuterBorder" BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="1" CornerRadius="2" VerticalAlignment="Center">
             <Border x:Name="InnerBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="2">
                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" Margin="{TemplateBinding Padding}" />
             </Border>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="OuterBorder" Property="BorderBrush" Value="#FF7CA0CC" />
-                <Setter TargetName="InnerBorder" Property="BorderBrush" Value="#FFE4EFFD" />
-                <Setter TargetName="InnerBorder" Property="Background" Value="#FFDAE7F5" />
+                <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}" />
+                <Setter TargetName="InnerBorder" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}" />
+                <Setter TargetName="InnerBorder" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="OuterBorder" Property="BorderBrush" Value="#FF2E4E76" />
-                <Setter TargetName="InnerBorder" Property="BorderBrush" Value="#FF116EE4" />
-                <Setter TargetName="InnerBorder" Property="Background" Value="#FF3272B8" />
+                <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}" />
+                <Setter TargetName="InnerBorder" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}" />
+                <Setter TargetName="InnerBorder" Property="Background" Value="{DynamicResource CurrentSelectionBackground}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Opacity" Value="0.3"/>
@@ -236,12 +240,13 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="#297CA0CC"/>
-                            <Setter TargetName="Root" Property="BorderBrush" Value="#887CA0CC"/>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="#557CA0CC"/>
-                            <Setter TargetName="Root" Property="BorderBrush" Value="#CC4E78A5"/>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.35"/>
@@ -258,7 +263,7 @@
         <Setter Property="MinWidth" Value="72"/>
         <Setter Property="Padding" Value="8,4"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="#667CA0CC"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -276,11 +281,12 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="#297CA0CC"/>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="#557CA0CC"/>
-                            <Setter TargetName="Root" Property="BorderBrush" Value="#CC4E78A5"/>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.4"/>
@@ -293,29 +299,17 @@
 
     <Style x:Key="EditorToolbarPopupBorderStyle" TargetType="{x:Type Border}">
         <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
-        <Setter Property="BorderBrush" Value="#887CA0CC"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="6"/>
         <Setter Property="CornerRadius" Value="7"/>
     </Style>
 
 
-    <!-- Цвета кнопки — уже как Brush, не Color -->
-    <SolidColorBrush x:Key="BtnBg">#FF3B82F6</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnBgHover">#FF2563EB</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnBgPressed">#FF1D4ED8</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnBorder">#FF2563EB</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnBorderHover">#FF1D4ED8</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnBorderPressed">#FF1E40AF</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnDisabledBg">#FFE5E7EB</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnDisabledBorder">#FFCBD5E1</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnDisabledFg">#FF9CA3AF</SolidColorBrush>
-    <SolidColorBrush x:Key="BtnFocusBorder">#FF93C5FD</SolidColorBrush>
-
     <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="{StaticResource BtnBg}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BtnBorder}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="12,7"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -343,7 +337,7 @@
                         <Border x:Name="FocusRing"
                                 CornerRadius="7"
                                 BorderThickness="2"
-                                BorderBrush="{StaticResource BtnFocusBorder}"
+                                BorderBrush="{DynamicResource CurrentAccent}"
                                 Opacity="0.9"
                                 IsHitTestVisible="False"
                                 Visibility="Collapsed"/>
@@ -352,14 +346,16 @@
                     <ControlTemplate.Triggers>
                         <!-- Наведение -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnBgHover}"/>
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource BtnBorderHover}"/>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
                         </Trigger>
 
                         <!-- Нажатие -->
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnBgPressed}"/>
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource BtnBorderPressed}"/>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
                         </Trigger>
 
                         <!-- Отключено -->

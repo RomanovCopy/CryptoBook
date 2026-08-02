@@ -42,90 +42,89 @@
 
 
     <!-- Кисть иконки (можно заменить на любую) -->
-    <SolidColorBrush x:Key="IconBrush" Color="Black" />
 
 
     <!-- УВЕЛИЧИТЬ LineHeight -->
     <Canvas x:Key="Icon_IncreaseLineHeight" Width="24" Height="24"
         SnapsToDevicePixels="True">
         <!-- "строки текста" -->
-        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
-        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
-        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="{DynamicResource CurrentWindowForeground}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="{DynamicResource CurrentWindowForeground}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="{DynamicResource CurrentWindowForeground}"/>
 
         <!-- вертикальная шкала -->
-        <Path Stroke="{DynamicResource IconBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        <Path Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
         Data="M20,7 L20,17"/>
 
         <!-- стрелка вверх (увеличить) -->
-        <Path Fill="{DynamicResource IconBrush}" Data="M20,3 L17,7 L23,7 Z"/>
+        <Path Fill="{DynamicResource CurrentWindowForeground}" Data="M20,3 L17,7 L23,7 Z"/>
         <!-- стрелка вниз (увеличить) -->
-        <Path Fill="{DynamicResource IconBrush}" Data="M20,21 L23,17 L17,17 Z"/>
+        <Path Fill="{DynamicResource CurrentWindowForeground}" Data="M20,21 L23,17 L17,17 Z"/>
     </Canvas>
 
     <!-- УМЕНЬШИТЬ LineHeight -->
     <Canvas x:Key="Icon_DecreaseLineHeight" Width="24" Height="24"
         SnapsToDevicePixels="True">
         <!-- "строки текста" -->
-        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
-        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
-        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="{DynamicResource IconBrush}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="4"  Width="12" Height="2" Fill="{DynamicResource CurrentWindowForeground}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="11" Width="12" Height="2" Fill="{DynamicResource CurrentWindowForeground}"/>
+        <Rectangle Canvas.Left="3"  Canvas.Top="18" Width="12" Height="2" Fill="{DynamicResource CurrentWindowForeground}"/>
 
         <!-- короткая вертикальная шкала (сжатие) -->
-        <Path Stroke="{DynamicResource IconBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+        <Path Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
         Data="M20,11 L20,13"/>
 
         <!-- верхняя стрелка вниз (уменьшить) -->
-        <Path Fill="{DynamicResource IconBrush}" Data="M17,7 L23,7 L20,11 Z"/>
+        <Path Fill="{DynamicResource CurrentWindowForeground}" Data="M17,7 L23,7 L20,11 Z"/>
         <!-- нижняя стрелка вверх (уменьшить) -->
-        <Path Fill="{DynamicResource IconBrush}" Data="M17,17 L23,17 L20,13 Z"/>
+        <Path Fill="{DynamicResource CurrentWindowForeground}" Data="M17,17 L23,17 L20,13 Z"/>
     </Canvas>
     
     <!-- Маркированный список. -->
     <Canvas x:Key="Icon_BulletList" Width="24" Height="24">
         <!-- Первая строка -->
-        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="5" />
-        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource CurrentWindowForeground}" Canvas.Left="3" Canvas.Top="5" />
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
 
         <!-- Вторая строка -->
-        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="11"/>
-        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource CurrentWindowForeground}" Canvas.Left="3" Canvas.Top="11"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
 
         <!-- Третья строка -->
-        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="17"/>
-        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource CurrentWindowForeground}" Canvas.Left="3" Canvas.Top="17"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
     </Canvas>
 
     <!-- Нумерованный список. -->
     <Canvas x:Key="Icon_NumberedList" Width="24" Height="24">
         <!-- 1 -->
         <TextBlock FontSize="8" FontWeight="Normal" Text="1" Canvas.Left="2" Canvas.Top="1"/>
-        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
 
         <!-- 2 -->
         <TextBlock FontSize="8" FontWeight="Normal" Text="2" Canvas.Left="2" Canvas.Top="7"/>
-        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
 
         <!-- 3 -->
         <TextBlock FontSize="8" FontWeight="Normal" Text="3" Canvas.Left="2" Canvas.Top="13"/>
-        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
     </Canvas>
 
     <!-- Очистка списка. -->
     <Canvas x:Key="Icon_ClearList" Width="24" Height="24">
         <!-- bullets + lines -->
-        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="5"/>
-        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource CurrentWindowForeground}" Canvas.Left="3" Canvas.Top="5"/>
+        <Line X1="8" Y1="6.5" X2="21" Y2="6.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
 
-        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="11"/>
-        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource CurrentWindowForeground}" Canvas.Left="3" Canvas.Top="11"/>
+        <Line X1="8" Y1="12.5" X2="21" Y2="12.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
 
-        <Ellipse Width="3" Height="3" Fill="{DynamicResource IconBrush}" Canvas.Left="3" Canvas.Top="17"/>
-        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1"/>
+        <Ellipse Width="3" Height="3" Fill="{DynamicResource CurrentWindowForeground}" Canvas.Left="3" Canvas.Top="17"/>
+        <Line X1="8" Y1="18.5" X2="21" Y2="18.5" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1"/>
 
         <!-- крест -->
-        <Line X1="4" Y1="4" X2="20" Y2="20" Stroke="Red" StrokeThickness="1"/>
-        <Line X1="20" Y1="4" X2="4" Y2="20" Stroke="Red" StrokeThickness="1"/>
+        <Line X1="4" Y1="4" X2="20" Y2="20" Stroke="{DynamicResource CurrentErrorForeground}" StrokeThickness="1"/>
+        <Line X1="20" Y1="4" X2="4" Y2="20" Stroke="{DynamicResource CurrentErrorForeground}" StrokeThickness="1"/>
     </Canvas>
 
 
@@ -137,7 +136,7 @@
         <Rectangle Width="12" Height="6" RadiusX="3" RadiusY="3"
                Canvas.Left="3" Canvas.Top="6"
                Fill="Transparent"
-               Stroke="{DynamicResource IconBrush}"
+               Stroke="{DynamicResource CurrentWindowForeground}"
                StrokeThickness="2"
                StrokeLineJoin="Round">
             <Rectangle.RenderTransform>
@@ -149,7 +148,7 @@
         <Rectangle Width="12" Height="6" RadiusX="3" RadiusY="3"
                Canvas.Left="9" Canvas.Top="12"
                Fill="Transparent"
-               Stroke="{DynamicResource IconBrush}"
+               Stroke="{DynamicResource CurrentWindowForeground}"
                StrokeThickness="2"
                StrokeLineJoin="Round">
             <Rectangle.RenderTransform>
@@ -158,7 +157,7 @@
         </Rectangle>
 
         <!-- плюс (символ "вставить") -->
-        <Path Stroke="{DynamicResource IconBrush}"
+        <Path Stroke="{DynamicResource CurrentWindowForeground}"
           StrokeThickness="2"
           StrokeStartLineCap="Round"
           StrokeEndLineCap="Round"

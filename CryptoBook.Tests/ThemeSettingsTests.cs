@@ -10,6 +10,7 @@ using CryptoBook.Views;
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 using Xunit;
@@ -36,6 +37,56 @@ public sealed class ThemeSettingsTests
         AssertContrast(theme, "CurrentSelectionForeground", "CurrentSelectionBackground");
     }
 
+    [WpfTheory]
+    [InlineData("LightTheme", true)]
+    [InlineData("DarkTheme", false)]
+    [InlineData("SepiaTheme", true)]
+    public void ThemePalette_UsesOneShadeDirectionForEverySemanticRole(
+        string resourceName,
+        bool isLightTheme)
+    {
+        ResourceDictionary theme = LoadDictionary(
+            $"/CryptoBook;component/Themes/{resourceName}.xaml");
+        string[] backgroundKeys =
+        [
+            "CurrentWindowBackground",
+            "CurrentTitleBarBackground",
+            "CurrentControlBackground",
+            "CurrentControlHoverBackground",
+            "CurrentDocumentBackground",
+            "CurrentInputBackground",
+            "CurrentSelectionBackground"
+        ];
+        string[] contrastKeys =
+        [
+            "CurrentWindowForeground",
+            "CurrentTitleBarForeground",
+            "CurrentBorderColor",
+            "CurrentAccent",
+            "CurrentMutedForeground",
+            "CurrentInputForeground",
+            "CurrentDisabledForeground",
+            "CurrentSelectionForeground",
+            "CurrentErrorForeground"
+        ];
+
+        foreach(string key in backgroundKeys)
+        {
+            double luminance = GetLuminance(theme, key);
+            Assert.True(
+                isLightTheme ? luminance >= 0.55 : luminance <= 0.25,
+                $"{resourceName}/{key}: luminance {luminance:F3}");
+        }
+
+        foreach(string key in contrastKeys)
+        {
+            double luminance = GetLuminance(theme, key);
+            Assert.True(
+                isLightTheme ? luminance <= 0.25 : luminance >= 0.35,
+                $"{resourceName}/{key}: luminance {luminance:F3}");
+        }
+    }
+
     [WpfFact]
     public void ThemedControls_DefineImplicitReadableStyles()
     {
@@ -43,13 +94,122 @@ public sealed class ThemeSettingsTests
             "/CryptoBook;component/Styles/ThemedControls.xaml");
 
         Assert.IsType<Style>(styles[typeof(Window)]);
+        Assert.IsType<Style>(styles[typeof(Page)]);
+        Assert.IsType<Style>(styles[typeof(UserControl)]);
         Assert.IsType<Style>(styles[typeof(TextBlock)]);
         Assert.IsType<Style>(styles[typeof(TextBox)]);
         Assert.IsType<Style>(styles[typeof(PasswordBox)]);
+        Assert.IsType<Style>(styles[typeof(RichTextBox)]);
         Assert.IsType<Style>(styles[typeof(ComboBox)]);
         Assert.IsType<Style>(styles[typeof(ComboBoxItem)]);
+        Assert.IsType<Style>(styles[typeof(ToggleButton)]);
+        Assert.IsType<Style>(styles[typeof(ListBoxItem)]);
+        Assert.IsType<Style>(styles[typeof(ListViewItem)]);
+        Assert.IsType<Style>(styles[typeof(TabControl)]);
+        Assert.IsType<Style>(styles[typeof(TabItem)]);
+        Assert.IsType<Style>(styles[typeof(ToolBar)]);
+        Assert.IsType<Style>(styles[typeof(StatusBar)]);
+        Assert.IsType<Style>(styles[typeof(GridSplitter)]);
+        Assert.IsType<Style>(styles[typeof(ProgressBar)]);
         Assert.IsType<Style>(styles[typeof(ContextMenu)]);
         Assert.IsType<Style>(styles[typeof(ToolTip)]);
+    }
+
+    [WpfTheory]
+    [InlineData("LightTheme")]
+    [InlineData("DarkTheme")]
+    [InlineData("SepiaTheme")]
+    public void FileExplorerItemTemplates_UseThemeBrushesForEveryState(
+        string resourceName)
+    {
+        Application app = Application.Current ?? new Application();
+        ResourceDictionary previousResources = app.Resources;
+        ResourceDictionary theme = LoadDictionary(
+            $"/CryptoBook;component/Themes/{resourceName}.xaml");
+        ResourceDictionary listStyles = LoadDictionary(
+            "/CryptoBook;component/Styles/ListStyles.xaml");
+        ResourceDictionary treeStyles = LoadDictionary(
+            "/CryptoBook;component/Styles/TreeViewStyles.xaml");
+
+        try
+        {
+            app.Resources = new ResourceDictionary();
+            app.Resources.MergedDictionaries.Add(theme);
+            app.Resources.MergedDictionaries.Add(listStyles);
+            app.Resources.MergedDictionaries.Add(treeStyles);
+
+            var listItem = new ListViewItem
+            {
+                Content = "file.txt",
+                IsSelected = true,
+                Style = Assert.IsType<Style>(
+                    listStyles["FileExplorerListViewItemStyle"])
+            };
+            var treeItem = new TreeViewItem
+            {
+                Header = "Folder",
+                IsSelected = true,
+                Style = Assert.IsType<Style>(
+                    treeStyles["DiskTree_TreeViewItemStyle"])
+            };
+
+            Border listRow = ApplyTemplateAndFindRow(listItem);
+            Border treeRow = ApplyTemplateAndFindRow(treeItem);
+
+            AssertBrushEquals(
+                theme["CurrentSelectionBackground"],
+                listRow.Background);
+            AssertBrushEquals(
+                theme["CurrentSelectionForeground"],
+                listItem.Foreground);
+            AssertBrushEquals(
+                theme["CurrentBorderColor"],
+                listRow.BorderBrush);
+            AssertBrushEquals(
+                theme["CurrentSelectionBackground"],
+                treeRow.Background);
+            AssertBrushEquals(
+                theme["CurrentSelectionForeground"],
+                treeItem.Foreground);
+            AssertBrushEquals(
+                theme["CurrentBorderColor"],
+                treeRow.BorderBrush);
+
+            listItem.IsEnabled = false;
+            treeItem.IsEnabled = false;
+            listItem.UpdateLayout();
+            treeItem.UpdateLayout();
+
+            AssertBrushEquals(
+                theme["CurrentControlBackground"],
+                listRow.Background);
+            AssertBrushEquals(
+                theme["CurrentDisabledForeground"],
+                listItem.Foreground);
+            AssertBrushEquals(
+                theme["CurrentBorderColor"],
+                listRow.BorderBrush);
+            AssertBrushEquals(
+                theme["CurrentControlBackground"],
+                treeRow.Background);
+            AssertBrushEquals(
+                theme["CurrentDisabledForeground"],
+                treeItem.Foreground);
+            AssertBrushEquals(
+                theme["CurrentBorderColor"],
+                treeRow.BorderBrush);
+
+            AssertStateTriggers(
+                listItem.Template,
+                ListViewItem.IsSelectedProperty);
+            AssertStateTriggers(
+                treeItem.Template,
+                TreeViewItem.IsSelectedProperty);
+        }
+        finally
+        {
+            app.Resources = previousResources;
+        }
     }
 
     [WpfFact]
@@ -255,6 +415,48 @@ public sealed class ThemeSettingsTests
             Source = new Uri(source, UriKind.Relative)
         };
 
+    private static Border ApplyTemplateAndFindRow(Control item)
+    {
+        Assert.True(item.ApplyTemplate());
+        item.Measure(new Size(480, 80));
+        item.Arrange(new Rect(item.DesiredSize));
+        item.UpdateLayout();
+
+        return Assert.IsType<Border>(
+            item.Template.FindName("Row", item));
+    }
+
+    private static void AssertStateTriggers(
+        ControlTemplate template,
+        DependencyProperty selectedProperty)
+    {
+        DependencyProperty[] requiredProperties =
+        [
+            UIElement.IsMouseOverProperty,
+            selectedProperty,
+            UIElement.IsKeyboardFocusWithinProperty,
+            UIElement.IsEnabledProperty
+        ];
+
+        foreach(DependencyProperty property in requiredProperties)
+        {
+            Assert.Contains(
+                template.Triggers.OfType<Trigger>(),
+                trigger => trigger.Property == property);
+        }
+    }
+
+    private static void AssertBrushEquals(
+        object expected,
+        Brush actual)
+    {
+        Color expectedColor =
+            Assert.IsType<SolidColorBrush>(expected).Color;
+        Color actualColor =
+            Assert.IsType<SolidColorBrush>(actual).Color;
+        Assert.Equal(expectedColor, actualColor);
+    }
+
     private static void AssertContrast(
         ResourceDictionary theme,
         string foregroundKey,
@@ -270,6 +472,12 @@ public sealed class ThemeSettingsTests
             ratio >= 4.5,
             $"{foregroundKey}/{backgroundKey}: {ratio:F2}:1");
     }
+
+    private static double GetLuminance(
+        ResourceDictionary theme,
+        string key) =>
+        RelativeLuminance(
+            Assert.IsType<SolidColorBrush>(theme[key]).Color);
 
     private static double ContrastRatio(Color first, Color second)
     {

@@ -17,6 +17,8 @@ namespace CryptoBook.Tests
         [InlineData("en-GB", "en-US")]
         [InlineData("ru", "ru-RU")]
         [InlineData("ru-RU", "ru-RU")]
+        [InlineData("uk", "uk-UA")]
+        [InlineData("uk-UA", "uk-UA")]
         public void NormalizeCultureName_OnlyAllowsSupportedLanguages(
             string? value,
             string expected)
@@ -27,7 +29,7 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
-        public void GetString_UsesEnglishNeutralResourcesAndRussianSatellite()
+        public void GetString_UsesEnglishNeutralResourcesAndLocalizedSatellites()
         {
             CultureInfo originalCulture = CultureInfo.CurrentCulture;
             CultureInfo originalUiCulture = CultureInfo.CurrentUICulture;
@@ -45,6 +47,12 @@ namespace CryptoBook.Tests
                 Assert.Equal(
                     "Язык",
                     LocalizationManager.GetString("Settings.Language"));
+
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("uk-UA");
+                CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("uk-UA");
+                Assert.Equal(
+                    "Мова",
+                    LocalizationManager.GetString("Settings.Language"));
             }
             finally
             {
@@ -59,10 +67,46 @@ namespace CryptoBook.Tests
             Assert.Equal(
                 LocalizationManager.DefaultCultureName,
                 LocalizationManager.AvailableLanguages[0].CultureName);
+            Assert.Contains(
+                LocalizationManager.AvailableLanguages,
+                language => language.CultureName == "ru-RU");
+            Assert.Contains(
+                LocalizationManager.AvailableLanguages,
+                language => language.CultureName == "uk-UA");
+            Assert.All(
+                LocalizationManager.AvailableLanguages,
+                language => Assert.False(
+                    string.IsNullOrWhiteSpace(language.DisplayName)));
         }
 
         [Fact]
-        public void NeutralAndRussianResources_HaveIdenticalNonEmptyKeySets()
+        public void Catalog_DiscoversAdditionalSatelliteLanguages()
+        {
+            LocalizationCatalog catalog = LocalizationCatalog.Create(
+                ["ru", "uk", "de-DE", "not-a-culture"]);
+
+            Assert.Equal(
+                LocalizationManager.DefaultCultureName,
+                catalog.Languages[0].CultureName);
+            Assert.Contains(
+                catalog.Languages,
+                language => language.CultureName == "ru-RU");
+            Assert.Contains(
+                catalog.Languages,
+                language => language.CultureName == "de-DE");
+            Assert.Contains(
+                catalog.Languages,
+                language => language.CultureName == "uk-UA");
+            Assert.Equal("ru-RU", catalog.Normalize("ru-UA"));
+            Assert.Equal("uk-UA", catalog.Normalize("uk-PL"));
+            Assert.Equal("de-DE", catalog.Normalize("de-DE"));
+            Assert.Equal(
+                LocalizationManager.DefaultCultureName,
+                catalog.Normalize("de-AT"));
+        }
+
+        [Fact]
+        public void LocalizedResources_HaveIdenticalNonEmptyKeySets()
         {
             ResourceManager manager =
                 CryptoBook.Properties.Resources.ResourceManager;
@@ -76,19 +120,31 @@ namespace CryptoBook.Tests
                     CultureInfo.GetCultureInfo("ru-RU"),
                     createIfNotExists: true,
                     tryParents: false));
+            ResourceSet ukrainian = Assert.IsAssignableFrom<ResourceSet>(
+                manager.GetResourceSet(
+                    CultureInfo.GetCultureInfo("uk-UA"),
+                    createIfNotExists: true,
+                    tryParents: false));
 
             Dictionary<string, string> neutralValues = ReadStrings(neutral);
             Dictionary<string, string> russianValues = ReadStrings(russian);
+            Dictionary<string, string> ukrainianValues = ReadStrings(ukrainian);
 
             Assert.NotEmpty(neutralValues);
             Assert.Equal(
                 neutralValues.Keys.OrderBy(key => key),
                 russianValues.Keys.OrderBy(key => key));
+            Assert.Equal(
+                neutralValues.Keys.OrderBy(key => key),
+                ukrainianValues.Keys.OrderBy(key => key));
             Assert.All(
                 neutralValues,
                 pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
             Assert.All(
                 russianValues,
+                pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
+            Assert.All(
+                ukrainianValues,
                 pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
         }
 

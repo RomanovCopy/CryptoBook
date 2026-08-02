@@ -5,29 +5,31 @@
     <SolidColorBrush x:Key="CurrentWindowForeground"
                      Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     <SolidColorBrush x:Key="CurrentTitleBarBackground"
-                     Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     <SolidColorBrush x:Key="CurrentTitleBarForeground"
-                     Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     <SolidColorBrush x:Key="CurrentBorderColor"
-                     Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     <SolidColorBrush x:Key="CurrentAccent"
-                     Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     <SolidColorBrush x:Key="CurrentControlBackground"
-                     Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     <SolidColorBrush x:Key="CurrentControlHoverBackground"
-                     Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     <SolidColorBrush x:Key="CurrentMutedForeground"
-                     Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
-    <SolidColorBrush x:Key="CurrentDocumentBackground" Color="White"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+    <SolidColorBrush x:Key="CurrentDocumentBackground"
+                     Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     <SolidColorBrush x:Key="CurrentInputBackground"
                      Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     <SolidColorBrush x:Key="CurrentInputForeground"
                      Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     <SolidColorBrush x:Key="CurrentDisabledForeground"
-                     Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     <SolidColorBrush x:Key="CurrentSelectionBackground"
-                     Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     <SolidColorBrush x:Key="CurrentSelectionForeground"
-                     Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-    <SolidColorBrush x:Key="CurrentErrorForeground" Color="#FFB42318"/>
+                     Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+    <SolidColorBrush x:Key="CurrentErrorForeground"
+                     Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
 </ResourceDictionary>

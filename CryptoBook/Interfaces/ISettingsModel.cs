@@ -13,10 +13,6 @@ namespace CryptoBook.Interfaces
         IReadOnlyList<ApplicationLanguageOption> Languages { get; }
         ApplicationLanguageOption SelectedLanguage { get; set; }
         string SelectedCultureName { get; set; }
-        int SelectedLanguageIndex { get; set; }
-        bool IsEnglishSelected { get; set; }
-        bool IsRussianSelected { get; set; }
-        IReadOnlyList<string> LanguageDisplayNames { get; }
         GridLength NavigationPaneWidth { get; set; }
         int SelectedSectionIndex { get; set; }
         string WorkspaceDirectory { get; }

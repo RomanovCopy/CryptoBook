@@ -83,7 +83,6 @@
                        Margin="0,0,6,0"
                        Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
                 <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-                           Foreground="{DynamicResource CurrentWindowForeground}"
                            FontSize="14"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </DockPanel>
@@ -139,7 +138,7 @@
         </Grid.RowDefinitions>
 
         <!-- 1. Command Bar (упрощённая в Win11) -->
-        <ToolBar Grid.Row="0"  Height="49"  Background="Transparent" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+        <ToolBar Grid.Row="0"  Height="49"  Background="Transparent" BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="0,0,0,1">
             <Button Content="&#xE72B;"
                     ToolTip="{Binding [Common.Back], Source={StaticResource Res}}"
                     AutomationProperties.Name="Назад"
@@ -237,7 +236,7 @@
 
             <Border Grid.Column="0"
                     Padding="10,0,8,0"
-                    BorderBrush="#E0E0E0"
+                    BorderBrush="{DynamicResource CurrentBorderColor}"
                     BorderThickness="0,0,1,1">
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center">
@@ -254,7 +253,7 @@
             <Grid Grid.Column="1">
                 <ToolBar ItemsSource="{Binding Favorites.Items}"
                          Background="Transparent"
-                         BorderBrush="#E0E0E0"
+                         BorderBrush="{DynamicResource CurrentBorderColor}"
                          BorderThickness="0,0,0,1"
                          ToolBarTray.IsLocked="True">
                     <ToolBar.ItemTemplate>
@@ -358,7 +357,8 @@
                       VirtualizingPanel.IsContainerVirtualizable="True" HorizontalAlignment="Stretch">
 
                 <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem" >
+                    <Style TargetType="TreeViewItem"
+                           BasedOn="{StaticResource DiskTree_TreeViewItemStyle}">
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         <Setter Property="IsSelected" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         <Style.Triggers>
@@ -486,8 +486,9 @@
                     </GridView>
                 </ListView.View>
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource FileExplorerListViewItemStyle}">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="FontWeight" Value="Medium"/>

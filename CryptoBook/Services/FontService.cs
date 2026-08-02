@@ -151,8 +151,9 @@ namespace CryptoBook.Services
             Service.Document.FontWeight = DefaultFontWeight;
             SetFontStretch(DefaultFontStretch);
             Service.Document.FontStretch = DefaultFontStretch;
-            SetFontColor(DefaultFontColor);
-            Service.Document.Foreground = new Media.SolidColorBrush(Media.Color.FromArgb(DefaultFontColor.A, DefaultFontColor.R, DefaultFontColor.G, DefaultFontColor.B));
+            Service.Document.SetResourceReference(
+                TextElement.ForegroundProperty,
+                "CurrentWindowForeground");
             SetTextDecoration(DefaultTextDecoration.Decorations);
             SetFontBackground(DefaultFontBackground);
             SetFontFamily(DefaultFontFamily);
@@ -164,7 +165,9 @@ namespace CryptoBook.Services
             DefaultFontSize = 16.0;
             DefaultFontStyle = System.Windows.FontStyles.Normal;
             DefaultFontFamily = FontFamilyes.FirstOrDefault(f => f != null && f.Source == "Consolas") ?? FontFamilyes[0];
-            DefaultFontColor = FontColors.FirstOrDefault(c => c.Name == "Black");
+            DefaultFontColor =
+                GetDrawingColor(Service.Document.Foreground) ??
+                FontColors.FirstOrDefault(c => c.Name == "Black");
             DefaultFontBackground = FontColors.FirstOrDefault(c => c.Name == "Transparent");
             storedDocumentBackground =
                 documentBackgroundPreferenceStore.Load();

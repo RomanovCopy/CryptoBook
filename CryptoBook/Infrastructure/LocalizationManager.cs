@@ -1,6 +1,7 @@
 using CryptoBook.DTO;
 
 using System.Globalization;
+using System.IO;
 
 namespace CryptoBook.Infrastructure
 {
@@ -13,15 +14,15 @@ namespace CryptoBook.Infrastructure
         /// <summary>Имя культуры по умолчанию.</summary>
         public const string DefaultCultureName = "en-US";
 
+        private static readonly LocalizationCatalog languageCatalog =
+            LocalizationCatalog.Create(DiscoverResourceCultureNames());
+
         /// <summary>Событие, возникающее при смене текущей культуры.</summary>
         public static event EventHandler? CultureChanged;
 
         /// <summary>Список доступных локалей, которые поддерживает приложение.</summary>
-        public static IReadOnlyList<ApplicationLanguageOption> AvailableLanguages { get; } =
-        [
-            new(DefaultCultureName, "English"),
-            new("ru-RU", "Русский")
-        ];
+        public static IReadOnlyList<ApplicationLanguageOption> AvailableLanguages =>
+            languageCatalog.Languages;
 
         /// <summary>Текущее имя культуры (нормализованное).</summary>
         public static string CurrentCultureName => NormalizeCultureName(CultureInfo.CurrentUICulture.Name);
@@ -80,13 +81,48 @@ namespace CryptoBook.Infrastructure
             string.Format( CultureInfo.CurrentCulture, GetString(key), arguments);
 
         /// <summary>
-        /// Нормализует имя культуры: любые варианты русской локали приводятся к "ru-RU",
-        /// все остальные — к культуре по умолчанию.
+        /// Нормализует имя культуры по списку найденных локализаций.
+        /// Варианты языка, для которого существует нейтральный ресурс (например,
+        /// ru), приводятся к поддерживаемой приложением конкретной культуре.
         /// </summary>
         /// <param name="cultureName">Входное имя культуры (может быть null).</param>
         /// <returns>Нормализованное имя культуры.</returns>
         public static string NormalizeCultureName(string? cultureName) =>
-            cultureName?.StartsWith("ru", StringComparison.OrdinalIgnoreCase) is true ? "ru-RU" : DefaultCultureName;
+            languageCatalog.Normalize(cultureName);
+
+        private static IEnumerable<string> DiscoverResourceCultureNames()
+        {
+            string assemblyLocation = typeof(LocalizationManager).Assembly.Location;
+            string? baseDirectory = Path.GetDirectoryName(assemblyLocation);
+            if(string.IsNullOrWhiteSpace(baseDirectory))
+                yield break;
+
+            string satelliteAssemblyName =
+                $"{typeof(LocalizationManager).Assembly.GetName().Name}.resources.dll";
+            string[] cultureDirectories;
+            try
+            {
+                cultureDirectories = Directory.GetDirectories(baseDirectory);
+            }
+            catch(IOException)
+            {
+                yield break;
+            }
+            catch(UnauthorizedAccessException)
+            {
+                yield break;
+            }
+
+            foreach(string cultureDirectory in cultureDirectories)
+            {
+                if(File.Exists(Path.Combine(
+                    cultureDirectory,
+                    satelliteAssemblyName)))
+                {
+                    yield return Path.GetFileName(cultureDirectory);
+                }
+            }
+        }
 
         /// <summary>
         /// Применяет культуру к текущему потоку и ресурсам приложения.

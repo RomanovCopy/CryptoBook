@@ -7,7 +7,7 @@
         MinWidth="360"
         MinHeight="150"
         WindowStartupLocation="CenterOwner"
-        Background="{StaticResource CurrentWindowBackground}"
+        Background="{DynamicResource CurrentWindowBackground}"
         ResizeMode="NoResize">
     <Grid Margin="18" >
         <Grid.RowDefinitions>
@@ -18,12 +18,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding [Directory.NewPrompt], Source={StaticResource Res}}" Foreground="{StaticResource CurrentInputForeground}"/>
+        <TextBlock Text="{Binding [Directory.NewPrompt], Source={StaticResource Res}}" Foreground="{DynamicResource CurrentInputForeground}"/>
         <TextBox x:Name="DirectoryNameTextBox"
                  Grid.Row="2"
                  MinHeight="28"
                  VerticalContentAlignment="Center"
-                 Foreground="{StaticResource CurrentInputForeground}"
+                 Foreground="{DynamicResource CurrentInputForeground}"
                  Text="{Binding DirectoryName, UpdateSourceTrigger=PropertyChanged}"/>
 
         <StackPanel Grid.Row="4"

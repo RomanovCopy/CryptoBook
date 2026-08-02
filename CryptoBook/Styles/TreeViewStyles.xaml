@@ -15,16 +15,6 @@
     <Thickness x:Key="Tv_ItemPadding">6,3,6,3</Thickness>
     <CornerRadius x:Key="Tv_ItemCorner">6</CornerRadius>
 
-    <SolidColorBrush x:Key="Tv_Bg" Color="#00000000"/>
-    <SolidColorBrush x:Key="Tv_Fg" Color="#EAEAEA"/>
-
-    <SolidColorBrush x:Key="Tv_RowHover" Color="#22FFFFFF"/>
-    <SolidColorBrush x:Key="Tv_RowSelected" Color="#335AA9FF"/>
-    <SolidColorBrush x:Key="Tv_RowSelectedInactive" Color="#223B82D9"/>
-    <SolidColorBrush x:Key="Tv_BorderFocus" Color="#5AA9FF"/>
-
-    <SolidColorBrush x:Key="Tv_ExpanderFg" Color="#BFBFBF"/>
-
     <system:Double x:Key="Tv_Indent">16</system:Double>
     <system:Double x:Key="Tv_IconSize">16</system:Double>
 
@@ -42,7 +32,7 @@
                     <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
                         <!-- стрелка -->
                         <Path x:Name="Arrow"
-                              Fill="{StaticResource Tv_ExpanderFg}"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type TreeViewItem}}}"
                               Data="M 0 0 L 0 8 L 6 4 Z"
                               RenderTransformOrigin="0.5,0.5">
                             <Path.RenderTransform>
@@ -77,9 +67,15 @@
     <Style x:Key="DiskTree_TreeViewItemStyle" TargetType="{x:Type TreeViewItem}">
         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-        <Setter Property="Foreground" Value="{StaticResource Tv_Fg}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="{StaticResource Tv_ItemPadding}"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Continue"/>
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
         <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
@@ -88,6 +84,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TreeViewItem}">
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -104,20 +104,24 @@
                         <!-- Строка. -->
                         <Border x:Name="Row"
                                 Grid.Column="1"
-                                Padding="{StaticResource Tv_ItemPadding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{StaticResource Tv_ItemCorner}"
-                                Background="Transparent"
-                                BorderThickness="1"
-                                BorderBrush="Transparent">
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
                             <ContentPresenter x:Name="HeaderHost"
                                               ContentSource="Header"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               RecognizesAccessKey="True"/>
                         </Border>
 
                         <!-- Дочерние элементы. -->
                         <ItemsPresenter x:Name="ItemsHost"
+                                        Grid.Row="1"
                                         Grid.Column="1"
-                                        Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Level, Converter={x:Null}}"/>
+                                        Visibility="Collapsed"/>
                     </Grid>
 
                     <ControlTemplate.Triggers>
@@ -128,12 +132,16 @@
 
                         <!-- hover -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Tv_RowHover}"/>
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+                            <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
                         </Trigger>
 
                         <!-- selected -->
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Tv_RowSelected}"/>
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
                         </Trigger>
 
                         <!-- selected, но фокус в другом месте -->
@@ -142,12 +150,13 @@
                                 <Condition Property="IsSelected" Value="True"/>
                                 <Condition Property="IsKeyboardFocusWithin" Value="False"/>
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Tv_RowSelectedInactive}"/>
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
                         </MultiTrigger>
 
                         <!-- фокус рамкой -->
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource Tv_BorderFocus}"/>
+                            <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
                         </Trigger>
 
                         <!-- раскрытие -->
@@ -160,7 +169,10 @@
 
                         <!-- отключено -->
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.6"/>
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+                            <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentDisabledForeground}"/>
+                            <Setter Property="Opacity" Value="0.72"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -173,8 +185,8 @@
          Virtualization, ScrollViewer, навигация клавиатурой
          ========================================================= -->
     <Style x:Key="DiskTree_TreeViewStyle" TargetType="{x:Type TreeView}">
-        <Setter Property="Background" Value="{StaticResource Tv_Bg}"/>
-        <Setter Property="Foreground" Value="{StaticResource Tv_Fg}"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="{StaticResource Tv_Padding}"/>
 
