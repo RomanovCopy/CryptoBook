@@ -1,4 +1,5 @@
 using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
 
@@ -55,7 +56,12 @@ namespace CryptoBook.Tests
             FilePreviewContent result = await service.LoadAsync(CreateEncryptedFile());
 
             Assert.Equal(FilePreviewKind.Error, result.Kind);
-            Assert.Contains("Проверьте ключ", result.Message);
+            Assert.Equal(
+                LocalizationManager.Format(
+                    "Preview.DecryptFailed",
+                    Environment.NewLine,
+                    "authentication failed"),
+                result.Message);
         }
 
         private static FileItem CreateEncryptedFile() => new()

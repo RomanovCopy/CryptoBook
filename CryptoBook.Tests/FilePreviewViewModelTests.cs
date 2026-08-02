@@ -1,4 +1,5 @@
 using CryptoBook.DTO;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.ViewModels;
 
@@ -28,7 +29,9 @@ namespace CryptoBook.Tests
             Assert.Equal(FilePreviewKind.Text, viewModel.PreviewKind);
             Assert.Equal("preview", viewModel.Text);
             Assert.Equal("notes.txt", viewModel.FileName);
-            Assert.Contains("КБ", viewModel.FileDetails);
+            Assert.Contains(
+                LocalizationManager.Format("Preview.KilobytesFormat", 2d),
+                viewModel.FileDetails);
         }
 
         [Fact]
@@ -41,7 +44,9 @@ namespace CryptoBook.Tests
             await viewModel.SelectAsync(null);
 
             Assert.Equal(FilePreviewKind.Empty, viewModel.PreviewKind);
-            Assert.Contains("Выберите файл", viewModel.Message);
+            Assert.Equal(
+                LocalizationManager.GetString("Preview.SelectFile"),
+                viewModel.Message);
         }
 
         private sealed class StubPreviewService: IFilePreviewService
