@@ -335,13 +335,14 @@
                 Value="{DynamicResource CurrentBorderColor}"/>
     </Style>
 
-    <Style TargetType="{x:Type MenuItem}">
+    <Style x:Key="ThemedMenuItemStyle"
+           TargetType="{x:Type MenuItem}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentInputForeground}"/>
         <Setter Property="Background"
                 Value="{DynamicResource CurrentControlBackground}"/>
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource CurrentBorderColor}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Style.Triggers>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter Property="Foreground"
@@ -355,6 +356,9 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="{x:Type MenuItem}"
+           BasedOn="{StaticResource ThemedMenuItemStyle}"/>
 
     <Style TargetType="{x:Type ToolTip}">
         <Setter Property="FontFamily" Value="Segoe UI"/>
