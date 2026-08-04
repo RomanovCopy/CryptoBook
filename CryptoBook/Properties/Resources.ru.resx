@@ -218,6 +218,18 @@
   <data name="Settings.Language.Description" xml:space="preserve"><value>Выберите язык интерфейса CryptoBook.</value></data>
   <data name="Settings.ApplicationLanguage" xml:space="preserve"><value>Язык приложения</value></data>
   <data name="Settings.Language.AppliedImmediately" xml:space="preserve"><value>Язык применяется сразу и сохраняется для следующего запуска.</value></data>
+  <data name="Settings.About" xml:space="preserve"><value>О программе</value></data>
+  <data name="Settings.About.Description" xml:space="preserve"><value>Сведения о приложении и его текущей версии.</value></data>
+  <data name="Settings.About.ProductDescription" xml:space="preserve"><value>Настольное приложение для локальных документов, файлов и защищённого паролем хранилища.</value></data>
+  <data name="Settings.About.Version" xml:space="preserve"><value>Версия</value></data>
+  <data name="Settings.About.Highlights" xml:space="preserve"><value>Основные возможности</value></data>
+  <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Создание и форматирование документов, ссылок и изображений.</value></data>
+  <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Управление, поиск и предпросмотр локальных файлов.</value></data>
+  <data name="Settings.About.Feature.Security" xml:space="preserve"><value>Защита отдельных файлов и папок с помощью шифрования.</value></data>
+  <data name="Settings.About.Feedback" xml:space="preserve"><value>Отзывы и предложения</value></data>
+  <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Присылайте нам свои отзывы, идеи и предложения по улучшению CryptoBook.</value></data>
+  <data name="Settings.About.Feedback.ToolTip" xml:space="preserve"><value>Написать на EncryptoBook@gmail.com</value></data>
+  <data name="Settings.About.DevelopmentStatus" xml:space="preserve"><value>CryptoBook находится в активной разработке. Сохраняйте отдельные резервные копии важных данных.</value></data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve"><value>Не удалось выбрать рабочую директорию: {0}</value></data>
   <data name="Settings.Search.EnterQuery" xml:space="preserve"><value>Введите часть имени файла.</value></data>
   <data name="Settings.Search.InProgress" xml:space="preserve"><value>Поиск...</value></data>

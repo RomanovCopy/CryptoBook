@@ -159,6 +159,42 @@
   <data name="Settings.Language.AppliedImmediately" xml:space="preserve">
     <value>Мова застосовується негайно та зберігається для наступного запуску.</value>
   </data>
+  <data name="Settings.About" xml:space="preserve">
+    <value>Про програму</value>
+  </data>
+  <data name="Settings.About.Description" xml:space="preserve">
+    <value>Відомості про програму та її поточну версію.</value>
+  </data>
+  <data name="Settings.About.ProductDescription" xml:space="preserve">
+    <value>Настільна програма для локальних документів, файлів і захищеного паролем сховища.</value>
+  </data>
+  <data name="Settings.About.Version" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="Settings.About.Highlights" xml:space="preserve">
+    <value>Основні можливості</value>
+  </data>
+  <data name="Settings.About.Feature.Documents" xml:space="preserve">
+    <value>Створення та форматування документів, посилань і зображень.</value>
+  </data>
+  <data name="Settings.About.Feature.Files" xml:space="preserve">
+    <value>Керування, пошук і попередній перегляд локальних файлів.</value>
+  </data>
+  <data name="Settings.About.Feature.Security" xml:space="preserve">
+    <value>Захист окремих файлів і папок за допомогою шифрування.</value>
+  </data>
+  <data name="Settings.About.Feedback" xml:space="preserve">
+    <value>Відгуки та пропозиції</value>
+  </data>
+  <data name="Settings.About.Feedback.Description" xml:space="preserve">
+    <value>Надсилайте нам свої відгуки, ідеї та пропозиції щодо покращення CryptoBook.</value>
+  </data>
+  <data name="Settings.About.Feedback.ToolTip" xml:space="preserve">
+    <value>Написати на EncryptoBook@gmail.com</value>
+  </data>
+  <data name="Settings.About.DevelopmentStatus" xml:space="preserve">
+    <value>CryptoBook активно розробляється. Зберігайте окремі резервні копії важливих даних.</value>
+  </data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve">
     <value>Не вдалося вибрати каталог робочої області: {0}</value>
   </data>
