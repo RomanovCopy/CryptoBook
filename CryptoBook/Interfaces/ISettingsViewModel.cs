@@ -19,6 +19,7 @@ namespace CryptoBook.Interfaces
         int SelectedSectionIndex { get; set; }
         string ApplicationVersion { get; }
         string FeedbackEmail { get; }
+        string RepositoryUrl { get; }
         string WorkspaceDirectory { get; }
         string SearchQuery { get; set; }
         IReadOnlyList<WorkspaceSearchResult> SearchResults { get; }
@@ -30,5 +31,6 @@ namespace CryptoBook.Interfaces
         ICommand OpenSearchResult { get; }
         ICommand RevealSearchResult { get; }
         ICommand SendFeedback { get; }
+        ICommand OpenRepository { get; }
     }
 }

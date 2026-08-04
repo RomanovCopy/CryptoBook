@@ -195,6 +195,51 @@
   <data name="Settings.About.DevelopmentStatus" xml:space="preserve">
     <value>CryptoBook активно розробляється. Зберігайте окремі резервні копії важливих даних.</value>
   </data>
+  <data name="Settings.Developers" xml:space="preserve">
+    <value>Для розробників</value>
+  </data>
+  <data name="Settings.Developers.Description" xml:space="preserve">
+    <value>Технічний огляд проєкту, його архітектури, захисту даних і ресурсів для розробки.</value>
+  </data>
+  <data name="Settings.Developers.Technology" xml:space="preserve">
+    <value>Технології та архітектура</value>
+  </data>
+  <data name="Settings.Developers.Platform.Title" xml:space="preserve">
+    <value>Платформа та інтерфейс</value>
+  </data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve">
+    <value>.NET 8, WPF, Windows 10 версії 1809 або новіша, x64.</value>
+  </data>
+  <data name="Settings.Developers.Architecture.Title" xml:space="preserve">
+    <value>Архітектура</value>
+  </data>
+  <data name="Settings.Developers.Architecture.Description" xml:space="preserve">
+    <value>MVVM з упровадженням залежностей через Autofac і розділенням шарів представлення, предметної логіки та інфраструктурних сервісів.</value>
+  </data>
+  <data name="Settings.Developers.Security.Title" xml:space="preserve">
+    <value>Захист даних</value>
+  </data>
+  <data name="Settings.Developers.Security.Description" xml:space="preserve">
+    <value>Отримання ключа Argon2id, автентифіковане шифрування AES-256-GCM і Windows DPAPI для знімків аварійного відновлення.</value>
+  </data>
+  <data name="Settings.Developers.Quality.Title" xml:space="preserve">
+    <value>Якість збирання</value>
+  </data>
+  <data name="Settings.Developers.Quality.Description" xml:space="preserve">
+    <value>Тести xUnit і WPF STA, детерміновані збірки, CI у GitHub Actions; попередження та повідомлення про вразливості вважаються помилками.</value>
+  </data>
+  <data name="Settings.Developers.Repository" xml:space="preserve">
+    <value>Репозиторій вихідного коду</value>
+  </data>
+  <data name="Settings.Developers.Repository.Description" xml:space="preserve">
+    <value>Вихідний код, документація, історія завдань і поточна розробка проєкту доступні на GitHub.</value>
+  </data>
+  <data name="Settings.Developers.Repository.Open" xml:space="preserve">
+    <value>Відкрити репозиторій</value>
+  </data>
+  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve">
+    <value>Відкрити репозиторій CryptoBook на GitHub</value>
+  </data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve">
     <value>Не вдалося вибрати каталог робочої області: {0}</value>
   </data>

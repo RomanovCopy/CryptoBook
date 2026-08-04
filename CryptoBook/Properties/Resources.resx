@@ -230,6 +230,21 @@
   <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Send us your feedback, ideas, or suggestions for improving CryptoBook.</value></data>
   <data name="Settings.About.Feedback.ToolTip" xml:space="preserve"><value>Write to EncryptoBook@gmail.com</value></data>
   <data name="Settings.About.DevelopmentStatus" xml:space="preserve"><value>CryptoBook is under active development. Keep separate backups of important data.</value></data>
+  <data name="Settings.Developers" xml:space="preserve"><value>For developers</value></data>
+  <data name="Settings.Developers.Description" xml:space="preserve"><value>Technical overview of the project, its architecture, security, and development resources.</value></data>
+  <data name="Settings.Developers.Technology" xml:space="preserve"><value>Technology and architecture</value></data>
+  <data name="Settings.Developers.Platform.Title" xml:space="preserve"><value>Platform and interface</value></data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 8, WPF, Windows 10 version 1809 or later, x64.</value></data>
+  <data name="Settings.Developers.Architecture.Title" xml:space="preserve"><value>Architecture</value></data>
+  <data name="Settings.Developers.Architecture.Description" xml:space="preserve"><value>MVVM with dependency injection through Autofac and separated presentation, domain, and infrastructure services.</value></data>
+  <data name="Settings.Developers.Security.Title" xml:space="preserve"><value>Data protection</value></data>
+  <data name="Settings.Developers.Security.Description" xml:space="preserve"><value>Argon2id key derivation, authenticated AES-256-GCM encryption, and Windows DPAPI for recovery snapshots.</value></data>
+  <data name="Settings.Developers.Quality.Title" xml:space="preserve"><value>Build quality</value></data>
+  <data name="Settings.Developers.Quality.Description" xml:space="preserve"><value>xUnit and WPF STA tests, deterministic builds, GitHub Actions CI, with warnings and security advisories treated as errors.</value></data>
+  <data name="Settings.Developers.Repository" xml:space="preserve"><value>Source repository</value></data>
+  <data name="Settings.Developers.Repository.Description" xml:space="preserve"><value>The source code, documentation, issue history, and current project development are available on GitHub.</value></data>
+  <data name="Settings.Developers.Repository.Open" xml:space="preserve"><value>Open repository</value></data>
+  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve"><value>Open the CryptoBook repository on GitHub</value></data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve"><value>Could not select the workspace directory: {0}</value></data>
   <data name="Settings.Search.EnterQuery" xml:space="preserve"><value>Enter part of a file name.</value></data>
   <data name="Settings.Search.InProgress" xml:space="preserve"><value>Searching...</value></data>

@@ -13,8 +13,11 @@ namespace CryptoBook.ViewModels
         ISettingsViewModel
     {
         private const string FeedbackAddress = "EncryptoBook@gmail.com";
+        private const string RepositoryAddress =
+            "https://github.com/RomanovCopy/CryptoBook";
         private static readonly Uri FeedbackUri = new(
             $"mailto:{FeedbackAddress}");
+        private static readonly Uri RepositoryUri = new(RepositoryAddress);
         private readonly ISettingsModel model;
         private readonly IUriNavigationService uriNavigationService;
 
@@ -78,6 +81,8 @@ namespace CryptoBook.ViewModels
 
         public string FeedbackEmail => FeedbackAddress;
 
+        public string RepositoryUrl => RepositoryAddress;
+
         public string WorkspaceDirectory => model.WorkspaceDirectory;
 
         public string SearchQuery
@@ -117,6 +122,10 @@ namespace CryptoBook.ViewModels
         public ICommand SendFeedback => sendFeedback ??=
             new RelayCommand(_ => uriNavigationService.TryOpen(FeedbackUri));
         private RelayCommand? sendFeedback;
+
+        public ICommand OpenRepository => openRepository ??=
+            new RelayCommand(_ => uriNavigationService.TryOpen(RepositoryUri));
+        private RelayCommand? openRepository;
 
         public ICommand Loaded => loaded ??=
             new RelayCommand(_ => { });

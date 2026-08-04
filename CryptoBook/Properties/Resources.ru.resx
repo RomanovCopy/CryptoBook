@@ -230,6 +230,21 @@
   <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Присылайте нам свои отзывы, идеи и предложения по улучшению CryptoBook.</value></data>
   <data name="Settings.About.Feedback.ToolTip" xml:space="preserve"><value>Написать на EncryptoBook@gmail.com</value></data>
   <data name="Settings.About.DevelopmentStatus" xml:space="preserve"><value>CryptoBook находится в активной разработке. Сохраняйте отдельные резервные копии важных данных.</value></data>
+  <data name="Settings.Developers" xml:space="preserve"><value>Для разработчиков</value></data>
+  <data name="Settings.Developers.Description" xml:space="preserve"><value>Техническое описание проекта, его архитектуры, защиты данных и ресурсов для разработки.</value></data>
+  <data name="Settings.Developers.Technology" xml:space="preserve"><value>Технологии и архитектура</value></data>
+  <data name="Settings.Developers.Platform.Title" xml:space="preserve"><value>Платформа и интерфейс</value></data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 8, WPF, Windows 10 версии 1809 или новее, x64.</value></data>
+  <data name="Settings.Developers.Architecture.Title" xml:space="preserve"><value>Архитектура</value></data>
+  <data name="Settings.Developers.Architecture.Description" xml:space="preserve"><value>MVVM с внедрением зависимостей через Autofac и разделением слоёв представления, предметной логики и инфраструктурных сервисов.</value></data>
+  <data name="Settings.Developers.Security.Title" xml:space="preserve"><value>Защита данных</value></data>
+  <data name="Settings.Developers.Security.Description" xml:space="preserve"><value>Получение ключа Argon2id, аутентифицированное шифрование AES-256-GCM и Windows DPAPI для снимков аварийного восстановления.</value></data>
+  <data name="Settings.Developers.Quality.Title" xml:space="preserve"><value>Качество сборки</value></data>
+  <data name="Settings.Developers.Quality.Description" xml:space="preserve"><value>Тесты xUnit и WPF STA, детерминированные сборки, CI в GitHub Actions; предупреждения и сообщения об уязвимостях считаются ошибками.</value></data>
+  <data name="Settings.Developers.Repository" xml:space="preserve"><value>Репозиторий исходного кода</value></data>
+  <data name="Settings.Developers.Repository.Description" xml:space="preserve"><value>Исходный код, документация, история задач и текущая разработка проекта доступны на GitHub.</value></data>
+  <data name="Settings.Developers.Repository.Open" xml:space="preserve"><value>Открыть репозиторий</value></data>
+  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve"><value>Открыть репозиторий CryptoBook на GitHub</value></data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve"><value>Не удалось выбрать рабочую директорию: {0}</value></data>
   <data name="Settings.Search.EnterQuery" xml:space="preserve"><value>Введите часть имени файла.</value></data>
   <data name="Settings.Search.InProgress" xml:space="preserve"><value>Поиск...</value></data>
