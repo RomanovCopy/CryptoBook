@@ -2,6 +2,7 @@ using CryptoBook.Interfaces;
 using CryptoBook.Services;
 
 using System.ComponentModel;
+using System.Windows.Documents;
 using System.IO;
 
 using Xunit;
@@ -125,6 +126,11 @@ namespace CryptoBook.Tests
                     this,
                     new PropertyChangedEventArgs(nameof(FilePath)));
             }
+
+            public void Open(
+                string filePath,
+                IFileTemplate template,
+                FlowDocument document) => Open(filePath, template);
 
             public void Close() => SetFilePath(null);
 

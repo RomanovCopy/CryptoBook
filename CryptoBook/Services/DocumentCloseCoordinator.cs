@@ -9,7 +9,7 @@ namespace CryptoBook.Services
     public sealed class DocumentCloseCoordinator
     {
         private readonly IDocumentSession documentSession;
-        private readonly ICurrentDocumentSaver documentSaver;
+        private readonly IUnsavedChangesGuard unsavedChangesGuard;
         private readonly IDocumentRecoveryService recoveryService;
         private readonly IDocumentDialogService dialogService;
         private bool closeInProgress;
@@ -19,11 +19,27 @@ namespace CryptoBook.Services
             ICurrentDocumentSaver documentSaver,
             IDocumentRecoveryService recoveryService,
             IDocumentDialogService dialogService)
+            : this(
+                documentSession,
+                new UnsavedChangesGuard(
+                    documentSession,
+                    documentSaver,
+                    dialogService),
+                recoveryService,
+                dialogService)
+        {
+        }
+
+        private DocumentCloseCoordinator(
+            IDocumentSession documentSession,
+            IUnsavedChangesGuard unsavedChangesGuard,
+            IDocumentRecoveryService recoveryService,
+            IDocumentDialogService dialogService)
         {
             this.documentSession = documentSession
                 ?? throw new ArgumentNullException(nameof(documentSession));
-            this.documentSaver = documentSaver
-                ?? throw new ArgumentNullException(nameof(documentSaver));
+            this.unsavedChangesGuard = unsavedChangesGuard
+                ?? throw new ArgumentNullException(nameof(unsavedChangesGuard));
             this.recoveryService = recoveryService
                 ?? throw new ArgumentNullException(nameof(recoveryService));
             this.dialogService = dialogService
@@ -68,23 +84,8 @@ namespace CryptoBook.Services
             closeInProgress = true;
             try
             {
-                if(documentSession.IsDirty)
-                {
-                    UnsavedChangesChoice choice =
-                        dialogService.ConfirmCloseWithUnsavedChanges();
-                    if(choice == UnsavedChangesChoice.Cancel)
-                        return false;
-
-                    if(choice == UnsavedChangesChoice.Save)
-                    {
-                        bool saved =
-                            await documentSaver.TrySaveCurrentAsync();
-                        // Успешный вызов ещё не гарантирует чистое состояние:
-                        // документ мог измениться во время асинхронного сохранения.
-                        if(!saved || documentSession.IsDirty)
-                            return false;
-                    }
-                }
+                if(!await unsavedChangesGuard.CanCloseAsync())
+                    return false;
 
                 await recoveryService.StopAsync();
                 await TryDeleteSnapshotAsync();

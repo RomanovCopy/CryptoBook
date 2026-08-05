@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
@@ -28,13 +29,23 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Opacity" Value="0.72"/>
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource CurrentControlHoverBackground}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource CurrentSelectionBackground}"/>
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource CurrentSelectionForeground}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Border" Property="Opacity" Value="0.35"/>
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="{DynamicResource CurrentControlBackground}"/>
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource CurrentDisabledForeground}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -112,12 +123,33 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Margin="18,18,18,14">
-                    <TextBlock Text="{Binding BookTitle}"
-                               Foreground="{DynamicResource CurrentWindowForeground}"
-                               FontSize="21"
-                               FontWeight="SemiBold"
-                               TextTrimming="CharacterEllipsis"
-                               ToolTip="{Binding BookTitle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding BookTitle}"
+                                   Foreground="{DynamicResource CurrentWindowForeground}"
+                                   FontSize="21"
+                                   FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center"
+                                   ToolTip="{Binding BookTitle}"/>
+                        <Button Grid.Column="1"
+                                Width="34"
+                                Height="32"
+                                Margin="8,0,0,0"
+                                Padding="0"
+                                Style="{StaticResource QuickActionButtonStyle}"
+                                Command="{Binding PinnedDocuments.ToggleCurrentCommand}"
+                                ToolTip="{Binding PinnedDocuments.CurrentPinToolTip}">
+                            <TextBlock Text="{Binding PinnedDocuments.CurrentPinGlyph}"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="16"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Button>
+                    </Grid>
                     <TextBlock Margin="0,3,0,0"
                                Text="{Binding [SideMenu.Subtitle], Source={StaticResource Res}}"
                                Foreground="{DynamicResource CurrentWindowForeground}"
@@ -161,51 +193,244 @@
                 <ScrollViewer Grid.Row="2"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled">
-                    <ItemsControl Margin="12,0,12,12"
-                                  ItemsSource="{Binding MenuItems}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="0,0,0,14">
-                                    <TextBlock Margin="9,0,9,5"
-                                               Text="{Binding Name}"
-                                               Foreground="{DynamicResource CurrentWindowForeground}"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Opacity="0.58"/>
-                                    <ItemsControl ItemsSource="{Binding Children}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Button Style="{StaticResource NavigationButtonStyle}"
-                                                        Command="{Binding Command}"
-                                                        IsEnabled="{Binding IsEnabled}"
-                                                        ToolTip="{Binding Description}">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="28"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                        </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <StackPanel Margin="12,0,12,14">
+                            <TextBlock Margin="9,0,9,5"
+                                       Text="{Binding [PinnedDocuments.Title], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentWindowForeground}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Opacity="0.58"/>
+                            <TextBlock Margin="9,5,9,7"
+                                       Text="{Binding [PinnedDocuments.Empty], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentWindowForeground}"
+                                       FontSize="11"
+                                       Opacity="0.58"
+                                       TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding PinnedDocuments.HasItems}"
+                                                         Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <ItemsControl ItemsSource="{Binding PinnedDocuments.Items}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid x:Name="PinnedItemRoot"
+                                              Margin="0,1"
+                                              Background="Transparent"
+                                              Tag="{Binding DataContext.PinnedDocuments,
+                                                            RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                            <Grid.ContextMenu>
+                                                <ContextMenu>
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="Opened">
+                                                            <i:InvokeCommandAction
+                                                                Command="{Binding PlacementTarget.Tag.RefreshAvailabilityCommand,
+                                                                                  RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                                CommandParameter="{Binding PlacementTarget.DataContext,
+                                                                                           RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                    <MenuItem Header="{Binding [Common.Open], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.OpenCommand,
+                                                                                RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext,
+                                                                                         RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [PinnedDocuments.RevealInExplorer], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.RevealCommand,
+                                                                                RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext,
+                                                                                         RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [PinnedDocuments.Relocate], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.RelocateCommand,
+                                                                                RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext,
+                                                                                         RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="{Binding [PinnedDocuments.MoveUp], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.MoveUpCommand,
+                                                                                RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext,
+                                                                                         RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [PinnedDocuments.MoveDown], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.MoveDownCommand,
+                                                                                RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext,
+                                                                                         RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="{Binding [PinnedDocuments.Unpin], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.UnpinCommand,
+                                                                                RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext,
+                                                                                         RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                </ContextMenu>
+                                            </Grid.ContextMenu>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="3"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="32"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border x:Name="CurrentMarker"
+                                                    Background="Transparent"
+                                                    CornerRadius="2"/>
+                                            <Button x:Name="OpenPinnedButton"
+                                                    Grid.Column="1"
+                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Command="{Binding DataContext.PinnedDocuments.OpenCommand,
+                                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip="{Binding Path}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
                                                         <TextBlock Text="{Binding Glyph}"
-                                                                   FontFamily="Segoe MDL2 Assets"
-                                                                   FontSize="17"
-                                                                   VerticalAlignment="Center"/>
+                                                               FontFamily="Segoe MDL2 Assets"
+                                                               FontSize="16"
+                                                               VerticalAlignment="Center"/>
                                                         <StackPanel Grid.Column="1">
-                                                            <TextBlock Text="{Binding Name}"
-                                                                       FontSize="14"/>
-                                                            <TextBlock Text="{Binding Description}"
+                                                            <TextBlock Text="{Binding FileName}"
+                                                                       FontSize="13"
+                                                                       FontWeight="SemiBold"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       ToolTip="{Binding FileName}"/>
+                                                            <TextBlock Text="{Binding ParentDirectory}"
                                                                        Margin="0,2,0,0"
-                                                                       FontSize="11"
+                                                                       FontSize="10"
                                                                        Opacity="0.58"
-                                                                       TextTrimming="CharacterEllipsis"/>
-                                                        </StackPanel>
-                                                    </Grid>
-                                                </Button>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       ToolTip="{Binding ParentDirectory}"/>
+                                                            <TextBlock x:Name="MissingState"
+                                                                       Margin="0,3,0,0"
+                                                                       Text="{Binding [PinnedDocuments.MissingState], Source={StaticResource Res}}"
+                                                                       Foreground="{DynamicResource CurrentDisabledForeground}"
+                                                                       FontSize="10"
+                                                                       FontWeight="SemiBold"
+                                                                       Visibility="Collapsed"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="StateGlyph"
+                                                               Grid.Column="2"
+                                                               Margin="6,0,0,0"
+                                                               Foreground="{DynamicResource CurrentAccent}"
+                                                               FontSize="16"
+                                                               VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Button>
+                                            <Button Grid.Column="2"
+                                                    Margin="2,0,0,0"
+                                                    Padding="0"
+                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Command="{Binding DataContext.PinnedDocuments.UnpinCommand,
+                                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip="{Binding [PinnedDocuments.Unpin], Source={StaticResource Res}}">
+                                                <TextBlock Text="&#xE77A;"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           FontSize="13"
+                                                           HorizontalAlignment="Center"/>
+                                            </Button>
+                                        </Grid>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                                <Setter TargetName="CurrentMarker"
+                                                        Property="Background"
+                                                        Value="{DynamicResource CurrentAccent}"/>
+                                                <Setter TargetName="PinnedItemRoot"
+                                                        Property="Background"
+                                                        Value="{DynamicResource CurrentSelectionBackground}"/>
+                                                <Setter TargetName="OpenPinnedButton"
+                                                        Property="Foreground"
+                                                        Value="{DynamicResource CurrentSelectionForeground}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsDirty}" Value="True">
+                                                <Setter TargetName="StateGlyph" Property="Text" Value="•"/>
+                                                <Setter TargetName="StateGlyph"
+                                                        Property="ToolTip"
+                                                        Value="{Binding [PinnedDocuments.UnsavedChanges], Source={StaticResource Res}}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsOpening}" Value="True">
+                                                <Setter TargetName="StateGlyph" Property="Text" Value="…"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                                <Setter TargetName="PinnedItemRoot"
+                                                        Property="Background"
+                                                        Value="{DynamicResource CurrentControlHoverBackground}"/>
+                                                <Setter TargetName="OpenPinnedButton"
+                                                        Property="Foreground"
+                                                        Value="{DynamicResource CurrentDisabledForeground}"/>
+                                                <Setter TargetName="MissingState"
+                                                        Property="Visibility"
+                                                        Value="Visible"/>
+                                                <Setter TargetName="StateGlyph"
+                                                        Property="Text"
+                                                        Value="&#xE783;"/>
+                                                <Setter TargetName="StateGlyph"
+                                                        Property="Foreground"
+                                                        Value="{DynamicResource CurrentDisabledForeground}"/>
+                                                <Setter TargetName="StateGlyph"
+                                                        Property="ToolTip"
+                                                        Value="{Binding [PinnedDocuments.MissingState], Source={StaticResource Res}}"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <ItemsControl Margin="12,0,12,12"
+                                      ItemsSource="{Binding MenuItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,0,14">
+                                        <TextBlock Margin="9,0,9,5"
+                                                   Text="{Binding Name}"
+                                                   Foreground="{DynamicResource CurrentWindowForeground}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Opacity="0.58"/>
+                                        <ItemsControl ItemsSource="{Binding Children}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Style="{StaticResource NavigationButtonStyle}"
+                                                            Command="{Binding Command}"
+                                                            IsEnabled="{Binding IsEnabled}"
+                                                            ToolTip="{Binding Description}">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="28"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Text="{Binding Glyph}"
+                                                                       FontFamily="Segoe MDL2 Assets"
+                                                                       FontSize="17"
+                                                                       VerticalAlignment="Center"/>
+                                                            <StackPanel Grid.Column="1">
+                                                                <TextBlock Text="{Binding Name}"
+                                                                           FontSize="14"/>
+                                                                <TextBlock Text="{Binding Description}"
+                                                                           Margin="0,2,0,0"
+                                                                           FontSize="11"
+                                                                           Opacity="0.58"
+                                                                           TextTrimming="CharacterEllipsis"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </ScrollViewer>
 
                 <Border Grid.Row="3"
@@ -222,4 +447,9 @@
             </Grid>
         </Border>
     </Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 </UserControl>

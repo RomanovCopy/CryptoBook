@@ -318,6 +318,23 @@ namespace CryptoBook.Tests
 
         private sealed class TestLoadService: IFlowDocumentLoadService
         {
+            public async Task<FlowDocument> PrepareAsync(
+                Stream source,
+                IFileTemplate template,
+                CancellationToken cancellationToken = default,
+                IProgressReporter? progress = null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var document = new FlowDocument();
+                new TextRange(
+                    document.ContentStart,
+                    document.ContentEnd).Load(
+                        source,
+                        DataFormats.Xaml);
+                await Task.CompletedTask;
+                return document;
+            }
+
             public Task LoadAsync(
                 IRichTextBoxService richTextBoxService,
                 Stream source,
