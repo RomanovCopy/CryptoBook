@@ -10,16 +10,24 @@ namespace CryptoBook.Services
         {
             ArgumentNullException.ThrowIfNull(uri);
             if(!uri.IsAbsoluteUri ||
-               (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+               (uri.Scheme != Uri.UriSchemeHttp &&
+                uri.Scheme != Uri.UriSchemeHttps &&
+                uri.Scheme != Uri.UriSchemeMailto))
             {
                 return false;
             }
 
-            Process.Start(new ProcessStartInfo(uri.AbsoluteUri)
+            try
             {
-                UseShellExecute = true
-            });
-            return true;
+                Process.Start(new ProcessStartInfo(uri.AbsoluteUri)
+                {
+                    UseShellExecute = true
+                });
+                return true;
+            } catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
+using System.Reflection;
 using System.Windows.Input;
 using System.Windows;
 
@@ -11,12 +12,23 @@ namespace CryptoBook.ViewModels
         ViewModelBase,
         ISettingsViewModel
     {
+        private const string FeedbackAddress = "EncryptoBook@gmail.com";
+        private const string RepositoryAddress =
+            "https://github.com/RomanovCopy/CryptoBook";
+        private static readonly Uri FeedbackUri = new(
+            $"mailto:{FeedbackAddress}");
+        private static readonly Uri RepositoryUri = new(RepositoryAddress);
         private readonly ISettingsModel model;
+        private readonly IUriNavigationService uriNavigationService;
 
-        public SettingsViewModel(ISettingsModel model)
+        public SettingsViewModel(
+            ISettingsModel model,
+            IUriNavigationService uriNavigationService)
         {
             this.model = model ??
                 throw new ArgumentNullException(nameof(model));
+            this.uriNavigationService = uriNavigationService ??
+                throw new ArgumentNullException(nameof(uriNavigationService));
             model.PropertyChanged += (_, args) =>
                 OnPropertyChanged(args.PropertyName ?? string.Empty);
         }
@@ -65,6 +77,12 @@ namespace CryptoBook.ViewModels
             set => model.SelectedSectionIndex = value;
         }
 
+        public string ApplicationVersion { get; } = GetApplicationVersion();
+
+        public string FeedbackEmail => FeedbackAddress;
+
+        public string RepositoryUrl => RepositoryAddress;
+
         public string WorkspaceDirectory => model.WorkspaceDirectory;
 
         public string SearchQuery
@@ -101,6 +119,14 @@ namespace CryptoBook.ViewModels
                     parameter as WorkspaceSearchResult));
         private RelayCommand? revealSearchResult;
 
+        public ICommand SendFeedback => sendFeedback ??=
+            new RelayCommand(_ => uriNavigationService.TryOpen(FeedbackUri));
+        private RelayCommand? sendFeedback;
+
+        public ICommand OpenRepository => openRepository ??=
+            new RelayCommand(_ => uriNavigationService.TryOpen(RepositoryUri));
+        private RelayCommand? openRepository;
+
         public ICommand Loaded => loaded ??=
             new RelayCommand(_ => { });
         private RelayCommand? loaded;
@@ -116,5 +142,30 @@ namespace CryptoBook.ViewModels
         public ICommand Closed => closed ??=
             new RelayCommand(_ => model.Closed());
         private RelayCommand? closed;
+
+        private static string GetApplicationVersion()
+        {
+            Assembly assembly = typeof(SettingsViewModel).Assembly;
+            string? informationalVersion = assembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                .InformationalVersion;
+            if(!string.IsNullOrWhiteSpace(informationalVersion))
+            {
+                string releaseVersion = informationalVersion
+                    .Split('+', 2)[0];
+                if(!string.IsNullOrWhiteSpace(releaseVersion))
+                    return releaseVersion;
+            }
+
+            Version? version = assembly.GetName().Version;
+            if(version is null)
+                return "—";
+
+            return version.Revision > 0
+                ? version.ToString(4)
+                : version.Build >= 0
+                    ? version.ToString(3)
+                    : version.ToString(2);
+        }
     }
 }

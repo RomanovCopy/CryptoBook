@@ -41,11 +41,31 @@ namespace CryptoBook.Services
 
         public void Navigate(string key, object? args = null)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+            if(args is null)
+            {
+                int existingIndex = _list.FindIndex(entry =>
+                    string.Equals(
+                        entry.Key,
+                        key,
+                        StringComparison.Ordinal));
+                if(existingIndex >= 0)
+                {
+                    if(existingIndex != _index)
+                    {
+                        _index = existingIndex;
+                        NotifyNavigationChanged();
+                    }
+                    return;
+                }
+            }
+
             TrimForward();
             var entry = CreateEntry(key, args);
             _list.Add(entry);
             _index = _list.IndexOf(entry);
-            OnPropertyChanged(["CurrentPage", "CurrentKey", "CanGoBack", "CanGoForward","Keys"]);
+            NotifyNavigationChanged();
         }
 
         public void GoBack()
@@ -54,7 +74,7 @@ namespace CryptoBook.Services
                 return;
 
             _index--;
-            OnPropertyChanged(["CurrentPage", "CurrentKey", "CanGoBack", "CanGoForward", "Keys"]);
+            NotifyNavigationChanged();
         }
 
         public void GoForward()
@@ -63,7 +83,7 @@ namespace CryptoBook.Services
                 return;
 
             _index++;
-            OnPropertyChanged(["CurrentPage", "CurrentKey", "CanGoBack", "CanGoForward", "Keys"]);
+            NotifyNavigationChanged();
         }
 
         public void Remove(string key)
@@ -73,19 +93,26 @@ namespace CryptoBook.Services
                 return;
 
             var entry = _list[idx];
-            entry.Dispose();
             _list.RemoveAt(idx);
 
-            if(_index >= _list.Count)
-                _index = _list.Count - 1;
+            if(idx < _index)
+                _index--;
+            else if(idx == _index)
+                _index = Math.Min(idx, _list.Count - 1);
 
-            OnPropertyChanged(["CurrentPage", "CurrentKey", "CanGoBack", "CanGoForward", "Keys"]);
+            NotifyNavigationChanged();
+            entry.Dispose();
         }
 
         private PageEntry CreateEntry(string key, object? args)
         {
             var pageScope = _windowScope.BeginLifetimeScope(b =>
             {
+                // Страницы должны управлять навигацией окна, а не получать
+                // собственный пустой InstancePerLifetimeScope-экземпляр.
+                b.RegisterInstance(this)
+                    .As<IPageNavigationService>()
+                    .ExternallyOwned();
                 if(args is not null)
                     b.RegisterInstance(args)
                      .As(args.GetType())
@@ -120,6 +147,14 @@ namespace CryptoBook.Services
 
             _list.RemoveRange(_index + 1, _list.Count - _index - 1);
         }
+
+        private void NotifyNavigationChanged() =>
+            OnPropertyChanged([
+                "CurrentPage",
+                "CurrentKey",
+                "CanGoBack",
+                "CanGoForward",
+                "Keys"]);
 
         public void Dispose()
         {

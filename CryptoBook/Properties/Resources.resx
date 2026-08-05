@@ -218,6 +218,34 @@
   <data name="Settings.Language.Description" xml:space="preserve"><value>Choose the language used by the CryptoBook interface.</value></data>
   <data name="Settings.ApplicationLanguage" xml:space="preserve"><value>Application language</value></data>
   <data name="Settings.Language.AppliedImmediately" xml:space="preserve"><value>The language is applied immediately and saved for the next launch.</value></data>
+  <data name="Settings.About" xml:space="preserve"><value>About</value></data>
+  <data name="Settings.About.Description" xml:space="preserve"><value>Application details and version information.</value></data>
+  <data name="Settings.About.ProductDescription" xml:space="preserve"><value>A desktop application for local documents, files, and password-protected storage.</value></data>
+  <data name="Settings.About.Version" xml:space="preserve"><value>Version</value></data>
+  <data name="Settings.About.Highlights" xml:space="preserve"><value>Key features</value></data>
+  <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Create and format documents with links and images.</value></data>
+  <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Manage, search, and preview local files.</value></data>
+  <data name="Settings.About.Feature.Search" xml:space="preserve"><value>Search text across workspace documents, including encrypted files, and return to the results with title-bar navigation.</value></data>
+  <data name="Settings.About.Feature.Security" xml:space="preserve"><value>Protect individual files and folders with encryption.</value></data>
+  <data name="Settings.About.Feedback" xml:space="preserve"><value>Feedback and suggestions</value></data>
+  <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Send us your feedback, ideas, or suggestions for improving CryptoBook.</value></data>
+  <data name="Settings.About.Feedback.ToolTip" xml:space="preserve"><value>Write to EncryptoBook@gmail.com</value></data>
+  <data name="Settings.About.DevelopmentStatus" xml:space="preserve"><value>CryptoBook is under active development. Keep separate backups of important data.</value></data>
+  <data name="Settings.Developers" xml:space="preserve"><value>For developers</value></data>
+  <data name="Settings.Developers.Description" xml:space="preserve"><value>Technical overview of the project, its architecture, security, and development resources.</value></data>
+  <data name="Settings.Developers.Technology" xml:space="preserve"><value>Technology and architecture</value></data>
+  <data name="Settings.Developers.Platform.Title" xml:space="preserve"><value>Platform and interface</value></data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 8, WPF, Windows 10 version 1809 or later, x64.</value></data>
+  <data name="Settings.Developers.Architecture.Title" xml:space="preserve"><value>Architecture</value></data>
+  <data name="Settings.Developers.Architecture.Description" xml:space="preserve"><value>MVVM with dependency injection through Autofac and separated presentation, domain, and infrastructure services.</value></data>
+  <data name="Settings.Developers.Security.Title" xml:space="preserve"><value>Data protection</value></data>
+  <data name="Settings.Developers.Security.Description" xml:space="preserve"><value>Argon2id key derivation, authenticated AES-256-GCM encryption, and Windows DPAPI for recovery snapshots.</value></data>
+  <data name="Settings.Developers.Quality.Title" xml:space="preserve"><value>Build quality</value></data>
+  <data name="Settings.Developers.Quality.Description" xml:space="preserve"><value>xUnit and WPF STA tests, deterministic builds, GitHub Actions CI, with warnings and security advisories treated as errors.</value></data>
+  <data name="Settings.Developers.Repository" xml:space="preserve"><value>Source repository</value></data>
+  <data name="Settings.Developers.Repository.Description" xml:space="preserve"><value>The source code, documentation, issue history, and current project development are available on GitHub.</value></data>
+  <data name="Settings.Developers.Repository.Open" xml:space="preserve"><value>Open repository</value></data>
+  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve"><value>Open the CryptoBook repository on GitHub</value></data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve"><value>Could not select the workspace directory: {0}</value></data>
   <data name="Settings.Search.EnterQuery" xml:space="preserve"><value>Enter part of a file name.</value></data>
   <data name="Settings.Search.InProgress" xml:space="preserve"><value>Searching...</value></data>
@@ -541,6 +569,30 @@
   <data name="Workspace.EnterSearchQuery" xml:space="preserve"><value>Enter part of a file name.</value></data>
   <data name="Workspace.NotSelected" xml:space="preserve"><value>No workspace directory is selected.</value></data>
   <data name="Workspace.LocalOnly" xml:space="preserve"><value>Search is currently supported only in a local workspace directory.</value></data>
+  <data name="SideMenu.Workspace" xml:space="preserve"><value>Workspace</value></data>
+  <data name="SideMenu.Editor" xml:space="preserve"><value>Editor</value></data>
+  <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Open the current document</value></data>
+  <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Search documents</value></data>
+  <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Find text in workspace documents</value></data>
+  <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Search documents</value></data>
+  <data name="Workspace.ContentSearch.Description" xml:space="preserve"><value>Find text in supported documents throughout the workspace.</value></data>
+  <data name="Workspace.ContentSearch.EnterQuery" xml:space="preserve"><value>Enter text to search for.</value></data>
+  <data name="Workspace.ContentSearch.InProgress" xml:space="preserve"><value>Searching documents…</value></data>
+  <data name="Workspace.ContentSearch.FilesProcessed" xml:space="preserve"><value>Files processed: {0}</value></data>
+  <data name="Workspace.ContentSearch.Cancelled" xml:space="preserve"><value>Search cancelled.</value></data>
+  <data name="Workspace.ContentSearch.Results" xml:space="preserve"><value>Documents found: {0}.</value></data>
+  <data name="Workspace.ContentSearch.Truncated" xml:space="preserve"><value> The result limit has been reached.</value></data>
+  <data name="Workspace.ContentSearch.SkippedDirectories" xml:space="preserve"><value> Inaccessible folders skipped: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedFiles" xml:space="preserve"><value> Unavailable or oversized files skipped: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedEncrypted" xml:space="preserve"><value> Encrypted files skipped: {0}.</value></data>
+  <data name="Workspace.ContentSearch.OpenFailed" xml:space="preserve"><value>Could not open the document: {0}</value></data>
+  <data name="Workspace.ContentSearch.Encrypted" xml:space="preserve"><value>• encrypted</value></data>
+  <data name="Workspace.ContentSearch.Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Workspace.ContentSearch.DeleteTitle" xml:space="preserve"><value>Delete document</value></data>
+  <data name="Workspace.ContentSearch.DeletePrompt" xml:space="preserve"><value>Delete “{0}” permanently?</value></data>
+  <data name="Workspace.ContentSearch.DeleteFailed" xml:space="preserve"><value>The document could not be deleted.</value></data>
+  <data name="Workspace.ContentSearch.DeleteError" xml:space="preserve"><value>Could not delete the document: {0}</value></data>
+  <data name="Workspace.ContentSearch.DeleteSucceeded" xml:space="preserve"><value>Document “{0}” deleted.</value></data>
   <data name="Error.OperationCanceled" xml:space="preserve"><value>The operation was canceled.</value></data>
   <data name="Security.UnknownMode" xml:space="preserve"><value>Unknown processing mode.</value></data>
   <data name="Security.DestinationRequired" xml:space="preserve"><value>No destination path was specified.</value></data>

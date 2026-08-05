@@ -17,6 +17,7 @@ namespace CryptoBook.Injections
             _map = new Dictionary<string, Type>
             {
                 ["Home"] = typeof(MyPages.Home),
+                ["WorkspaceSearch"] = typeof(MyPages.WorkspaceSearch),
             };
         }
 

@@ -52,14 +52,31 @@ namespace CryptoBook.Security
         public async Task<Stream> DecryptFileAsyncToStream(string inputFile, IProgressReporter? progress = null,
         CancellationToken cancellationToken = default)
         {
+            DecryptedFileContent decrypted = await DecryptFileContentAsync(
+                inputFile,
+                progress,
+                cancellationToken);
+            return decrypted.Content;
+        }
+
+        public async Task<DecryptedFileContent> DecryptFileContentAsync(
+            string inputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
             MemoryStream outputStream = new();
 
             try
             {
-                await DecryptFileCoreAsync(inputFile, _ => outputStream, leaveOutputOpen: true, progress, cancellationToken);
+                string extension = await DecryptFileCoreAsync(
+                    inputFile,
+                    _ => outputStream,
+                    leaveOutputOpen: true,
+                    progress,
+                    cancellationToken);
 
                 outputStream.Position = 0;
-                return outputStream;
+                return new DecryptedFileContent(outputStream, extension);
             } catch
             {
                 await outputStream.DisposeAsync();

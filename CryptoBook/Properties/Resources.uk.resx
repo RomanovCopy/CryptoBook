@@ -159,6 +159,90 @@
   <data name="Settings.Language.AppliedImmediately" xml:space="preserve">
     <value>Мова застосовується негайно та зберігається для наступного запуску.</value>
   </data>
+  <data name="Settings.About" xml:space="preserve">
+    <value>Про програму</value>
+  </data>
+  <data name="Settings.About.Description" xml:space="preserve">
+    <value>Відомості про програму та її поточну версію.</value>
+  </data>
+  <data name="Settings.About.ProductDescription" xml:space="preserve">
+    <value>Настільна програма для локальних документів, файлів і захищеного паролем сховища.</value>
+  </data>
+  <data name="Settings.About.Version" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="Settings.About.Highlights" xml:space="preserve">
+    <value>Основні можливості</value>
+  </data>
+  <data name="Settings.About.Feature.Documents" xml:space="preserve">
+    <value>Створення та форматування документів, посилань і зображень.</value>
+  </data>
+  <data name="Settings.About.Feature.Files" xml:space="preserve">
+    <value>Керування, пошук і попередній перегляд локальних файлів.</value>
+  </data>
+  <data name="Settings.About.Feature.Search" xml:space="preserve">
+    <value>Пошук тексту в документах робочого простору, зокрема в зашифрованих файлах, із поверненням до результатів через навігацію в рядку заголовка.</value>
+  </data>
+  <data name="Settings.About.Feature.Security" xml:space="preserve">
+    <value>Захист окремих файлів і папок за допомогою шифрування.</value>
+  </data>
+  <data name="Settings.About.Feedback" xml:space="preserve">
+    <value>Відгуки та пропозиції</value>
+  </data>
+  <data name="Settings.About.Feedback.Description" xml:space="preserve">
+    <value>Надсилайте нам свої відгуки, ідеї та пропозиції щодо покращення CryptoBook.</value>
+  </data>
+  <data name="Settings.About.Feedback.ToolTip" xml:space="preserve">
+    <value>Написати на EncryptoBook@gmail.com</value>
+  </data>
+  <data name="Settings.About.DevelopmentStatus" xml:space="preserve">
+    <value>CryptoBook активно розробляється. Зберігайте окремі резервні копії важливих даних.</value>
+  </data>
+  <data name="Settings.Developers" xml:space="preserve">
+    <value>Для розробників</value>
+  </data>
+  <data name="Settings.Developers.Description" xml:space="preserve">
+    <value>Технічний огляд проєкту, його архітектури, захисту даних і ресурсів для розробки.</value>
+  </data>
+  <data name="Settings.Developers.Technology" xml:space="preserve">
+    <value>Технології та архітектура</value>
+  </data>
+  <data name="Settings.Developers.Platform.Title" xml:space="preserve">
+    <value>Платформа та інтерфейс</value>
+  </data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve">
+    <value>.NET 8, WPF, Windows 10 версії 1809 або новіша, x64.</value>
+  </data>
+  <data name="Settings.Developers.Architecture.Title" xml:space="preserve">
+    <value>Архітектура</value>
+  </data>
+  <data name="Settings.Developers.Architecture.Description" xml:space="preserve">
+    <value>MVVM з упровадженням залежностей через Autofac і розділенням шарів представлення, предметної логіки та інфраструктурних сервісів.</value>
+  </data>
+  <data name="Settings.Developers.Security.Title" xml:space="preserve">
+    <value>Захист даних</value>
+  </data>
+  <data name="Settings.Developers.Security.Description" xml:space="preserve">
+    <value>Отримання ключа Argon2id, автентифіковане шифрування AES-256-GCM і Windows DPAPI для знімків аварійного відновлення.</value>
+  </data>
+  <data name="Settings.Developers.Quality.Title" xml:space="preserve">
+    <value>Якість збирання</value>
+  </data>
+  <data name="Settings.Developers.Quality.Description" xml:space="preserve">
+    <value>Тести xUnit і WPF STA, детерміновані збірки, CI у GitHub Actions; попередження та повідомлення про вразливості вважаються помилками.</value>
+  </data>
+  <data name="Settings.Developers.Repository" xml:space="preserve">
+    <value>Репозиторій вихідного коду</value>
+  </data>
+  <data name="Settings.Developers.Repository.Description" xml:space="preserve">
+    <value>Вихідний код, документація, історія завдань і поточна розробка проєкту доступні на GitHub.</value>
+  </data>
+  <data name="Settings.Developers.Repository.Open" xml:space="preserve">
+    <value>Відкрити репозиторій</value>
+  </data>
+  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve">
+    <value>Відкрити репозиторій CryptoBook на GitHub</value>
+  </data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve">
     <value>Не вдалося вибрати каталог робочої області: {0}</value>
   </data>
@@ -1131,6 +1215,30 @@
   <data name="Error.OperationCanceled" xml:space="preserve">
     <value>Операцію скасовано.</value>
   </data>
+  <data name="SideMenu.Workspace" xml:space="preserve"><value>Робочий простір</value></data>
+  <data name="SideMenu.Editor" xml:space="preserve"><value>Редактор</value></data>
+  <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Відкрити поточний документ</value></data>
+  <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Пошук у документах</value></data>
+  <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Знайти текст у документах робочого простору</value></data>
+  <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Пошук у документах</value></data>
+  <data name="Workspace.ContentSearch.Description" xml:space="preserve"><value>Пошук тексту в підтримуваних документах у всьому робочому просторі.</value></data>
+  <data name="Workspace.ContentSearch.EnterQuery" xml:space="preserve"><value>Введіть текст для пошуку.</value></data>
+  <data name="Workspace.ContentSearch.InProgress" xml:space="preserve"><value>Триває пошук у документах…</value></data>
+  <data name="Workspace.ContentSearch.FilesProcessed" xml:space="preserve"><value>Оброблено файлів: {0}</value></data>
+  <data name="Workspace.ContentSearch.Cancelled" xml:space="preserve"><value>Пошук скасовано.</value></data>
+  <data name="Workspace.ContentSearch.Results" xml:space="preserve"><value>Знайдено документів: {0}.</value></data>
+  <data name="Workspace.ContentSearch.Truncated" xml:space="preserve"><value> Досягнуто ліміт результатів.</value></data>
+  <data name="Workspace.ContentSearch.SkippedDirectories" xml:space="preserve"><value> Пропущено недоступних папок: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedFiles" xml:space="preserve"><value> Пропущено недоступних або завеликих файлів: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedEncrypted" xml:space="preserve"><value> Пропущено зашифрованих файлів: {0}.</value></data>
+  <data name="Workspace.ContentSearch.OpenFailed" xml:space="preserve"><value>Не вдалося відкрити документ: {0}</value></data>
+  <data name="Workspace.ContentSearch.Encrypted" xml:space="preserve"><value>• зашифрований</value></data>
+  <data name="Workspace.ContentSearch.Clear" xml:space="preserve"><value>Очистити</value></data>
+  <data name="Workspace.ContentSearch.DeleteTitle" xml:space="preserve"><value>Видалення документа</value></data>
+  <data name="Workspace.ContentSearch.DeletePrompt" xml:space="preserve"><value>Назавжди видалити «{0}»?</value></data>
+  <data name="Workspace.ContentSearch.DeleteFailed" xml:space="preserve"><value>Не вдалося видалити документ.</value></data>
+  <data name="Workspace.ContentSearch.DeleteError" xml:space="preserve"><value>Помилка видалення документа: {0}</value></data>
+  <data name="Workspace.ContentSearch.DeleteSucceeded" xml:space="preserve"><value>Документ «{0}» видалено.</value></data>
   <data name="Security.UnknownMode" xml:space="preserve">
     <value>Невідомий режим обробки.</value>
   </data>

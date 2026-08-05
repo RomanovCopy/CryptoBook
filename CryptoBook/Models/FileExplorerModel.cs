@@ -187,6 +187,7 @@ namespace CryptoBook.Models
                 }
             } catch
             {
+
                 _cancellationTokenSource?.Cancel();
             } finally
             {

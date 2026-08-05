@@ -33,7 +33,7 @@ namespace CryptoBook.Tests
             var service = new WorkspaceFileOpenService(
                 new SecureFileValidatorStub(),
                 new SecureFileProcessorStub(".txt"),
-                new KeyProviderStub(),
+                new KeyRequestStub(),
                 new WindowManagerStub(),
                 new ProgressDialogServiceStub(),
                 launcher,
@@ -49,8 +49,39 @@ namespace CryptoBook.Tests
             Assert.Equal(".txt", Path.GetExtension(openedPath));
             Assert.Equal(sourcePath, internalOpener.EncryptedPath);
             Assert.IsType<PlainTextTemplate>(internalOpener.ContentTemplate);
+            Assert.True(internalOpener.SourceIsEncrypted);
             Assert.Null(launcher.OpenedPath);
             Assert.False(File.Exists(openedPath));
+
+            service.Dispose();
+        }
+
+        [Fact]
+        public async Task SupportedPlainFile_IsOpenedInsideCryptoBook()
+        {
+            string sourcePath = Path.Combine(testDirectory, "notes.txt");
+            await File.WriteAllTextAsync(sourcePath, "search result");
+            var launcher = new FileLauncherStub();
+            var internalOpener = new InternalFileOpenServiceStub();
+            var service = new WorkspaceFileOpenService(
+                new SecureFileValidatorStub(encrypted: false),
+                new SecureFileProcessorStub(".txt"),
+                new KeyRequestStub(),
+                new WindowManagerStub(),
+                new ProgressDialogServiceStub(),
+                launcher,
+                CreateTemplateRegistry(),
+                internalOpener);
+
+            WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
+
+            Assert.True(result.Success);
+            Assert.True(result.OpenedInternally);
+            Assert.Equal(sourcePath, internalOpener.SourcePath);
+            Assert.Equal(sourcePath, internalOpener.ContentPath);
+            Assert.False(internalOpener.SourceIsEncrypted);
+            Assert.IsType<PlainTextTemplate>(internalOpener.ContentTemplate);
+            Assert.Null(launcher.OpenedPath);
 
             service.Dispose();
         }
@@ -68,7 +99,7 @@ namespace CryptoBook.Tests
             var service = new WorkspaceFileOpenService(
                 new SecureFileValidatorStub(),
                 new SecureFileProcessorStub(extension),
-                new KeyProviderStub(),
+                new KeyRequestStub(),
                 new WindowManagerStub(),
                 new ProgressDialogServiceStub(),
                 launcher,
@@ -100,7 +131,7 @@ namespace CryptoBook.Tests
             var service = new WorkspaceFileOpenService(
                 new SecureFileValidatorStub(),
                 new SecureFileProcessorStub(".png"),
-                new KeyProviderStub(),
+                new KeyRequestStub(),
                 windowManager,
                 new ProgressDialogServiceStub(),
                 launcher,
@@ -139,12 +170,13 @@ namespace CryptoBook.Tests
                 Directory.Delete(testDirectory, recursive: true);
         }
 
-        private sealed class SecureFileValidatorStub: ISecureFileValidator
+        private sealed class SecureFileValidatorStub(bool encrypted = true):
+            ISecureFileValidator
         {
             public Task<bool> HasCryptoBookHeaderAsync(
                 string filePath,
                 CancellationToken cancellationToken = default) =>
-                Task.FromResult(true);
+                Task.FromResult(encrypted);
         }
 
         private sealed class SecureFileProcessorStub(string extension):
@@ -180,43 +212,44 @@ namespace CryptoBook.Tests
                 IProgressReporter? progress = null,
                 CancellationToken cancellationToken = default) =>
                 throw new NotSupportedException();
+
+            public Task<DecryptedFileContent> DecryptFileContentAsync(
+                string inputFile,
+                IProgressReporter? progress = null,
+                CancellationToken cancellationToken = default) =>
+                Task.FromResult(new DecryptedFileContent(
+                    new MemoryStream([4, 5, 6]),
+                    extension));
         }
 
         private sealed class InternalFileOpenServiceStub:
             IWorkspaceInternalFileOpenService
         {
-            public string? EncryptedPath { get; private set; }
-            public string? DecryptedPath { get; private set; }
+            public string? SourcePath { get; private set; }
+            public string? ContentPath { get; private set; }
+            public string? EncryptedPath => SourcePath;
+            public string? DecryptedPath => ContentPath;
             public IFileTemplate? ContentTemplate { get; private set; }
+            public bool SourceIsEncrypted { get; private set; }
 
             public Task OpenDocumentAsync(
-                string encryptedPath,
-                string decryptedPath,
+                string sourcePath,
+                string contentPath,
                 IFileTemplate contentTemplate,
+                bool sourceIsEncrypted,
                 CancellationToken cancellationToken = default)
             {
-                EncryptedPath = encryptedPath;
-                DecryptedPath = decryptedPath;
+                SourcePath = sourcePath;
+                ContentPath = contentPath;
                 ContentTemplate = contentTemplate;
+                SourceIsEncrypted = sourceIsEncrypted;
                 return Task.CompletedTask;
             }
         }
 
-        private sealed class KeyProviderStub: IKeyProvider
+        private sealed class KeyRequestStub: IEncryptionKeyRequestService
         {
-            public bool HasKey => true;
-            public void SetKey(ReadOnlySpan<char> password) =>
-                throw new NotSupportedException();
-            public byte[] DeriveKey(byte[] salt) =>
-                throw new NotSupportedException();
-            public Task<byte[]> DeriveKeyAsync(
-                ReadOnlyMemory<byte> salt,
-                KeyDerivationParameters parameters,
-                CancellationToken cancellationToken = default) =>
-                throw new NotSupportedException();
-            public void Clear()
-            {
-            }
+            public bool EnsureKeyAvailable() => true;
         }
 
         private sealed class ProgressDialogServiceStub: IProgressDialogService

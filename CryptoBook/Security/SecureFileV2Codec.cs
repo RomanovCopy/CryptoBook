@@ -202,17 +202,29 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
+            DecryptedFileContent decrypted = await DecryptFileContentAsync(
+                inputFile,
+                progress,
+                cancellationToken);
+            return decrypted.Content;
+        }
+
+        public async Task<DecryptedFileContent> DecryptFileContentAsync(
+            string inputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
             MemoryStream output = new();
             try
             {
-                await DecryptCoreAsync(
+                string extension = await DecryptCoreAsync(
                     inputFile,
                     _ => output,
                     leaveOutputOpen: true,
                     progress,
                     cancellationToken);
                 output.Position = 0;
-                return output;
+                return new DecryptedFileContent(output, extension);
             } catch
             {
                 await output.DisposeAsync();
@@ -357,7 +369,7 @@ namespace CryptoBook.Security
             }
         }
 
-        private async Task DecryptCoreAsync(
+        private async Task<string> DecryptCoreAsync(
             string inputFile,
             Func<string, Stream> outputFactory,
             bool leaveOutputOpen,
@@ -370,6 +382,7 @@ namespace CryptoBook.Security
             byte[] ciphertext = new byte[SecureFileFormat.V2ChunkSize];
             byte[] tag = new byte[SecureFileFormat.GcmTagSize];
             byte[] nonce = new byte[SecureFileFormat.NonceSize];
+            string? originalExtension = null;
 
             try
             {
@@ -446,6 +459,7 @@ namespace CryptoBook.Security
                         }
 
                         output = outputFactory(extension);
+                        originalExtension = extension;
                         dataOffset = sizeof(int) + extensionLength;
                         contentLength = parsed.PayloadLength - dataOffset;
                         firstChunk = false;
@@ -475,6 +489,9 @@ namespace CryptoBook.Security
                 if(output is not null)
                     await output.FlushAsync(cancellationToken);
                 progress?.Report(1.0);
+                return originalExtension ?? throw new CryptographicException(
+                    LocalizationManager.GetString(
+                        "Security.InvalidExtension"));
             } finally
             {
                 if(key is not null)
