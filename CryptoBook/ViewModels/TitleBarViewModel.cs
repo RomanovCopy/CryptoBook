@@ -4,6 +4,7 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -13,6 +14,7 @@ namespace CryptoBook.ViewModels
 
         private readonly ITitleBarModel titleBarModel;
         private readonly IDocumentTitleProvider documentTitleProvider;
+        private readonly IPageNavigationService pageNavigationService;
         private bool disposed;
 
         public double MyFontSize => titleBarModel.MyFontSize;
@@ -23,14 +25,19 @@ namespace CryptoBook.ViewModels
 
         public TitleBarViewModel(
             ITitleBarModel titleBarModel,
-            IDocumentTitleProvider documentTitleProvider)
+            IDocumentTitleProvider documentTitleProvider,
+            IPageNavigationService pageNavigationService)
         {
             this.titleBarModel = titleBarModel ??
                 throw new ArgumentNullException(nameof(titleBarModel));
             this.documentTitleProvider = documentTitleProvider ??
                 throw new ArgumentNullException(nameof(documentTitleProvider));
+            this.pageNavigationService = pageNavigationService ??
+                throw new ArgumentNullException(nameof(pageNavigationService));
             this.titleBarModel.PropertyChanged += OnTitleBarModelPropertyChanged;
             this.documentTitleProvider.PropertyChanged += OnDocumentTitlePropertyChanged;
+            this.pageNavigationService.PropertyChanged +=
+                OnPageNavigationServicePropertyChanged;
         }
 
         private void OnTitleBarModelPropertyChanged(
@@ -40,12 +47,23 @@ namespace CryptoBook.ViewModels
 
         private void OnDocumentTitlePropertyChanged(
             object? sender,
-            System.ComponentModel.PropertyChangedEventArgs args)
+            PropertyChangedEventArgs args)
         {
             if(args.PropertyName == nameof(IDocumentTitleProvider.Title))
                 OnPropertyChanged(nameof(DocumentTitle));
             else if(args.PropertyName == nameof(IDocumentTitleProvider.Path))
                 OnPropertyChanged(nameof(DocumentPath));
+        }
+
+        private void OnPageNavigationServicePropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(IPageNavigationService.CanGoBack))
+                buttonBack_Click?.RaiseCanExecuteChanged();
+            else if(args.PropertyName ==
+                    nameof(IPageNavigationService.CanGoForward))
+                buttonForward_Click?.RaiseCanExecuteChanged();
         }
 
         public void Dispose()
@@ -56,6 +74,8 @@ namespace CryptoBook.ViewModels
             disposed = true;
             titleBarModel.PropertyChanged -= OnTitleBarModelPropertyChanged;
             documentTitleProvider.PropertyChanged -= OnDocumentTitlePropertyChanged;
+            pageNavigationService.PropertyChanged -=
+                OnPageNavigationServicePropertyChanged;
         }
 
 

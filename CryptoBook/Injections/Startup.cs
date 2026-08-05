@@ -57,6 +57,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksEditorModel>().As<IBookmarksEditorModel>().InstancePerLifetimeScope();
             builder.RegisterType<RichtextboxModel>().As<IRichtextboxModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsModel>().As<ISettingsModel>().InstancePerLifetimeScope();
+            builder.RegisterType<WorkspaceSearchModel>().InstancePerLifetimeScope();
 
             // Модели представления.
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
@@ -86,6 +87,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<EncryptionMode_ViewModel>().As<IEncryptionMode_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MediaPlayerViewModel>().As<IMediaPlayerViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<WorkspaceSearchViewModel>()
+                .As<IWorkspaceSearchViewModel>()
+                .InstancePerLifetimeScope();
 
             // Конвертеры.
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -184,6 +188,23 @@ namespace CryptoBook.Injections
             builder.RegisterType<WindowsThemeProvider>().As<IWindowsThemeProvider>().SingleInstance();
             builder.RegisterType<SettingsWindowService>().As<ISettingsWindowService>().SingleInstance();
             builder.RegisterType<WorkspaceService>().As<IWorkspaceService>().SingleInstance();
+            builder.RegisterInstance(new WorkspaceContentSearchOptions())
+                .SingleInstance();
+            builder.RegisterType<PlainTextDocumentTextExtractor>()
+                .As<IDocumentTextExtractor>()
+                .SingleInstance();
+            builder.RegisterType<FlowDocumentTextExtractor>()
+                .As<IDocumentTextExtractor>()
+                .SingleInstance();
+            builder.RegisterType<EncryptionKeyRequestService>()
+                .As<IEncryptionKeyRequestService>()
+                .SingleInstance();
+            builder.RegisterType<WorkspaceContentSearchService>()
+                .As<IWorkspaceContentSearchService>()
+                .SingleInstance();
+            builder.RegisterType<WorkspaceDocumentDeleteService>()
+                .As<IWorkspaceDocumentDeleteService>()
+                .SingleInstance();
             builder.RegisterType<WorkspaceFileOpenService>()
                 .As<IWorkspaceFileOpenService>()
                 .SingleInstance();
@@ -275,6 +296,7 @@ namespace CryptoBook.Injections
 
             // Страницы.
             builder.RegisterType<Home>().InstancePerLifetimeScope();
+            builder.RegisterType<WorkspaceSearch>().InstancePerLifetimeScope();
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 
             // Элементы управления.

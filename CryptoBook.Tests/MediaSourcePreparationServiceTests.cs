@@ -116,6 +116,14 @@ namespace CryptoBook.Tests
                 IProgressReporter? progress = null,
                 CancellationToken cancellationToken = default) =>
                 throw new NotSupportedException();
+
+            public Task<DecryptedFileContent> DecryptFileContentAsync(
+                string inputFile,
+                IProgressReporter? progress = null,
+                CancellationToken cancellationToken = default) =>
+                Task.FromResult(new DecryptedFileContent(
+                    new MemoryStream([4, 5, 6]),
+                    ".mp4"));
         }
     }
 }

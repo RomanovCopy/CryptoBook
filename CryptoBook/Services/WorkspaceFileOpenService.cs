@@ -20,7 +20,7 @@ namespace CryptoBook.Services
     {
         private readonly ISecureFileValidator secureFileValidator;
         private readonly ISecureFileProcessor secureFileProcessor;
-        private readonly IKeyProvider keyProvider;
+        private readonly IEncryptionKeyRequestService keyRequestService;
         private readonly IWindowManager windowManager;
         private readonly IProgressDialogService progressDialogService;
         private readonly IFileLauncherService fileLauncherService;
@@ -32,7 +32,7 @@ namespace CryptoBook.Services
         public WorkspaceFileOpenService(
             ISecureFileValidator secureFileValidator,
             ISecureFileProcessor secureFileProcessor,
-            IKeyProvider keyProvider,
+            IEncryptionKeyRequestService keyRequestService,
             IWindowManager windowManager,
             IProgressDialogService progressDialogService,
             IFileLauncherService fileLauncherService,
@@ -43,8 +43,8 @@ namespace CryptoBook.Services
                 throw new ArgumentNullException(nameof(secureFileValidator));
             this.secureFileProcessor = secureFileProcessor ??
                 throw new ArgumentNullException(nameof(secureFileProcessor));
-            this.keyProvider = keyProvider ??
-                throw new ArgumentNullException(nameof(keyProvider));
+            this.keyRequestService = keyRequestService ??
+                throw new ArgumentNullException(nameof(keyRequestService));
             this.windowManager = windowManager ??
                 throw new ArgumentNullException(nameof(windowManager));
             this.progressDialogService = progressDialogService ??
@@ -77,13 +77,25 @@ namespace CryptoBook.Services
                 .HasCryptoBookHeaderAsync(filePath, cancellationToken);
             if(!isEncrypted)
             {
+                IFileTemplate? template = FindTemplate(filePath);
+                if(template?.OpenMode == FileOpenMode.Document)
+                {
+                    await internalFileOpenService.OpenDocumentAsync(
+                        filePath,
+                        filePath,
+                        template,
+                        sourceIsEncrypted: false,
+                        cancellationToken);
+                    return WorkspaceFileOpenResult.InternalSuccess();
+                }
+
                 LaunchResult launchResult = fileLauncherService.Open(filePath);
                 return launchResult.Success
                     ? WorkspaceFileOpenResult.ExternalSuccess()
                     : WorkspaceFileOpenResult.Fail(launchResult.Error);
             }
 
-            if(!EnsureEncryptionKey())
+            if(!keyRequestService.EnsureKeyAvailable())
                 return WorkspaceFileOpenResult.Cancel();
 
             // Отдельный каталог на операцию упрощает проверку результата и позволяет
@@ -123,15 +135,14 @@ namespace CryptoBook.Services
                 }
 
                 string decryptedPath = outputFiles[0];
-                IFileTemplate? template = fileTemplateRegistry.GetAll()
-                    .FirstOrDefault(item => item.CanHandleExtension(
-                        Path.GetExtension(decryptedPath)));
+                IFileTemplate? template = FindTemplate(decryptedPath);
                 if(template?.OpenMode == FileOpenMode.Document)
                 {
                     await internalFileOpenService.OpenDocumentAsync(
                         filePath,
                         decryptedPath,
                         template,
+                        sourceIsEncrypted: true,
                         cancellationToken);
                     TryDeleteDirectory(operationDirectory);
                     return WorkspaceFileOpenResult.InternalSuccess();
@@ -167,17 +178,6 @@ namespace CryptoBook.Services
             }
         }
 
-        private bool EnsureEncryptionKey()
-        {
-            if(keyProvider.HasKey)
-                return true;
-
-            // Защищённый результат поиска открывается только после ввода ключа.
-            Guid keyWindowId = windowManager.CreateWindow<KeyInputWindow>();
-            windowManager.ShowWindowDialog(keyWindowId);
-            return keyProvider.HasKey;
-        }
-
         public void Dispose()
         {
             if(disposed)
@@ -186,6 +186,11 @@ namespace CryptoBook.Services
             disposed = true;
             TryDeleteDirectory(temporaryRoot);
         }
+
+        private IFileTemplate? FindTemplate(string path) =>
+            fileTemplateRegistry.GetAll()
+                .FirstOrDefault(item => item.CanHandleExtension(
+                    Path.GetExtension(path)));
 
         private static void CleanupOrphanedDirectories(string externalRoot)
         {

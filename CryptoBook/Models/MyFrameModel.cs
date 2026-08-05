@@ -23,12 +23,26 @@ namespace CryptoBook.Models
         public MyFrameModel( IPageNavigationService pageNavigationService)
         {
             this.pageNavigationService = pageNavigationService ?? throw new ArgumentNullException(nameof(pageNavigationService));
+            pageNavigationService.PropertyChanged += (_, args) =>
+            {
+                if(args.PropertyName is nameof(IPageNavigationService.CurrentPage) or
+                   nameof(IPageNavigationService.CurrentKey))
+                {
+                    OnPropertyChanged(
+                        nameof(CurrentPage),
+                        nameof(CurrentPageKey));
+                }
+            };
             pageNavigationService.Navigate("Home");
         }
 
         public bool CanExecute_Navigate(object? obj)
         {
-            return pageNavigationService.Keys != null && obj is string key && !pageNavigationService.Keys.Contains(key);
+            return obj is string key &&
+                !string.Equals(
+                    pageNavigationService.CurrentKey,
+                    key,
+                    StringComparison.Ordinal);
         }
         public void Execute_Navigate(object? obj)
         {

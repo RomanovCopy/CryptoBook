@@ -48,12 +48,14 @@ namespace CryptoBook.Tests
                 source,
                 ".XamlPackage",
                 encrypted);
-            await using Stream decrypted =
-                await processor.DecryptFileAsyncToStream(encrypted);
+            await using DecryptedFileContent decryptedContent =
+                await processor.DecryptFileContentAsync(encrypted);
+            Stream decrypted = decryptedContent.Content;
             using var restored = new MemoryStream();
             await decrypted.CopyToAsync(restored);
 
             Assert.Equal(content, restored.ToArray());
+            Assert.Equal(".XamlPackage", decryptedContent.OriginalExtension);
             Assert.DoesNotContain(
                 Directory.EnumerateFiles(_directory),
                 path => path.EndsWith(".tmp"));

@@ -12,6 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\Icons\AppIcon.ico</ApplicationIcon>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <VersionPrefix>1.0.6</VersionPrefix>
 
   </PropertyGroup>
 
@@ -74,6 +75,7 @@
 
   <ItemGroup>
     <None Remove="Resources\Icons\AppIcon.ico" />
+    <None Remove="Resources\Images\AppIcon.BlueYellow.v1.png" />
     <None Remove="Resources\Images\000_aligncenter.png" />
     <None Remove="Resources\Images\001_alignjustify.png" />
     <None Remove="Resources\Images\002_alignleft.PNG" />
@@ -122,6 +124,9 @@
 
   <ItemGroup>
     <Resource Include="Resources\Icons\AppIcon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\AppIcon.BlueYellow.v1.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

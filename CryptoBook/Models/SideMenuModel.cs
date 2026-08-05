@@ -48,6 +48,7 @@ namespace CryptoBook.Models
         private readonly IFileManagerService fileManagerService;
         private readonly ITextInputService textInputService;
         private readonly IMessageService messageService;
+        private readonly IPageNavigationService pageNavigationService;
         private readonly AsyncRelayCommand renameBookCommand;
 
         public SideMenuModel(ILifetimeScope _scope)
@@ -62,6 +63,7 @@ namespace CryptoBook.Models
             fileManagerService = _scope.Resolve<IFileManagerService>();
             textInputService = _scope.Resolve<ITextInputService>();
             messageService = _scope.Resolve<IMessageService>();
+            pageNavigationService = _scope.Resolve<IPageNavigationService>();
             renameBookCommand = new AsyncRelayCommand(RenameBookAsync);
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
@@ -107,6 +109,26 @@ namespace CryptoBook.Models
         private ObservableCollection<MenuItemBase> InitializeMenu()
         {
             var commandService = scope.Resolve<ICommandService>();
+            var workspace = new MenuItemBase(commandService)
+            {
+                Name = LocalizationManager.GetString("SideMenu.Workspace"),
+                IsEnabled = true,
+                HasChildren = true
+            };
+            workspace.Children.Add(CreateNavigationItem(
+                commandService,
+                LocalizationManager.GetString("SideMenu.Editor"),
+                "\uE70F",
+                LocalizationManager.GetString("SideMenu.Editor.Description"),
+                "Home"));
+            workspace.Children.Add(CreateNavigationItem(
+                commandService,
+                LocalizationManager.GetString("SideMenu.SearchDocuments"),
+                "\uE721",
+                LocalizationManager.GetString(
+                    "SideMenu.SearchDocuments.Description"),
+                "WorkspaceSearch"));
+
             var file = new MenuItemBase(commandService)
             {
                 Name = LocalizationManager.GetString("Common.File"),
@@ -161,8 +183,28 @@ namespace CryptoBook.Models
                 LocalizationManager.GetString("SideMenu.Media.Description"),
                 CommandKey.menuContent_MediaPlayer));
 
-            return [file, content];
+            return [workspace, file, content];
         }
+
+        private MenuItem CreateNavigationItem(
+            ICommandService commandService,
+            string name,
+            string glyph,
+            string description,
+            string pageKey) =>
+            new(commandService)
+            {
+                Name = name,
+                Glyph = glyph,
+                Description = description,
+                IsEnabled = true,
+                Command = new RelayCommand(
+                    _ => pageNavigationService.Navigate(pageKey),
+                    _ => !string.Equals(
+                        pageNavigationService.CurrentKey,
+                        pageKey,
+                        StringComparison.Ordinal))
+            };
 
         private async Task RenameBookAsync(
             object? parameter,

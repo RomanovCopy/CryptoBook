@@ -24,6 +24,11 @@
     </Window.DataContext>
 
     <Window.Resources>
+        <BitmapImage x:Key="AboutApplicationLogo"
+                     UriSource="/CryptoBook;component/Resources/Images/AppIcon.BlueYellow.v1.png"
+                     DecodePixelWidth="256"
+                     CacheOption="OnLoad"/>
+
         <Style x:Key="SettingsNavigationItemStyle"
                TargetType="ListBoxItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -140,6 +145,24 @@
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
                             <TextBlock Text="{Binding [Settings.Language], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE946;"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding [Settings.About], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE943;"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding [Settings.Developers], Source={StaticResource Res}}"/>
                         </StackPanel>
                     </ListBoxItem>
                 </ListBox>
@@ -464,6 +487,367 @@
                            Foreground="{DynamicResource CurrentMutedForeground}"
                            TextWrapping="Wrap"
                            Margin="0,12,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Style>
+                <Style TargetType="ScrollViewer">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSectionIndex}"
+                                     Value="3">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Style>
+            <StackPanel Margin="28,24">
+                <TextBlock Text="{Binding [Settings.About], Source={StaticResource Res}}"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding [Settings.About.Description], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           TextWrapping="Wrap"
+                           Margin="0,5,0,22"/>
+
+                <Border Padding="20"
+                        CornerRadius="9"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Width="84"
+                                Height="84"
+                                Padding="10"
+                                CornerRadius="16"
+                                Background="{DynamicResource CurrentControlHoverBackground}"
+                                VerticalAlignment="Top">
+                            <Image Source="{StaticResource AboutApplicationLogo}"
+                                   Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1"
+                                    Margin="20,1,0,0">
+                            <TextBlock Text="CryptoBook"
+                                       FontSize="27"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding [Settings.About.ProductDescription], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,6,0,13"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding [Settings.About.Version], Source={StaticResource Res}}"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding ApplicationVersion}"/>
+                                <TextBlock Text="  ·  "
+                                           Foreground="{DynamicResource CurrentMutedForeground}"/>
+                                <TextBlock Text="Windows x64 · .NET 8"
+                                           Foreground="{DynamicResource CurrentMutedForeground}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <TextBlock Text="{Binding [Settings.About.Highlights], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,22,0,10"/>
+                <Border Padding="16,14"
+                        CornerRadius="8"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <StackPanel>
+                        <Grid Margin="0,2,0,9">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE8A5;"
+                                       Foreground="{DynamicResource CurrentAccent}"
+                                       FontSize="15"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding [Settings.About.Feature.Documents], Source={StaticResource Res}}"
+                                       TextWrapping="Wrap"/>
+                        </Grid>
+                        <Grid Margin="0,2,0,9">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE8B7;"
+                                       Foreground="{DynamicResource CurrentAccent}"
+                                       FontSize="15"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding [Settings.About.Feature.Files], Source={StaticResource Res}}"
+                                       TextWrapping="Wrap"/>
+                        </Grid>
+                        <Grid Margin="0,2,0,9">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE721;"
+                                       Foreground="{DynamicResource CurrentAccent}"
+                                       FontSize="15"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding [Settings.About.Feature.Search], Source={StaticResource Res}}"
+                                       TextWrapping="Wrap"/>
+                        </Grid>
+                        <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE72E;"
+                                       Foreground="{DynamicResource CurrentAccent}"
+                                       FontSize="15"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding [Settings.About.Feature.Security], Source={StaticResource Res}}"
+                                       TextWrapping="Wrap"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="{Binding [Settings.About.Feedback], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,22,0,10"/>
+                <Border Padding="16,14"
+                        CornerRadius="8"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="34"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE715;"
+                                   Foreground="{DynamicResource CurrentAccent}"
+                                   FontSize="19"
+                                   VerticalAlignment="Top"
+                                   Margin="0,3,0,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding [Settings.About.Feedback.Description], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap"/>
+                            <Button Content="{Binding FeedbackEmail}"
+                                    Command="{Binding SendFeedback}"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,10,0,0"
+                                    Padding="12,6"
+                                    ToolTip="{Binding [Settings.About.Feedback.ToolTip], Source={StaticResource Res}}"
+                                    AutomationProperties.Name="{Binding [Settings.About.Feedback.ToolTip], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Margin="0,12,0,0"
+                        Padding="13"
+                        CornerRadius="7"
+                        Background="{DynamicResource CurrentControlHoverBackground}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE946;"
+                                   Foreground="{DynamicResource CurrentAccent}"
+                                   FontSize="16"
+                                   Margin="0,1,10,0"/>
+                        <TextBlock Text="{Binding [Settings.About.DevelopmentStatus], Source={StaticResource Res}}"
+                                   Foreground="{DynamicResource CurrentMutedForeground}"
+                                   TextWrapping="Wrap"/>
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Style>
+                <Style TargetType="ScrollViewer">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSectionIndex}"
+                                     Value="4">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Style>
+            <StackPanel Margin="28,24">
+                <TextBlock Text="{Binding [Settings.Developers], Source={StaticResource Res}}"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding [Settings.Developers.Description], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           TextWrapping="Wrap"
+                           Margin="0,5,0,22"/>
+
+                <TextBlock Text="{Binding [Settings.Developers.Technology], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+
+                <Border Padding="16,14"
+                        CornerRadius="8"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE7F8;"
+                                   Foreground="{DynamicResource CurrentAccent}"
+                                   FontSize="19"
+                                   Margin="0,2,0,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding [Settings.Developers.Platform.Title], Source={StaticResource Res}}"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding [Settings.Developers.Platform.Description], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Margin="0,10,0,0"
+                        Padding="16,14"
+                        CornerRadius="8"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE950;"
+                                   Foreground="{DynamicResource CurrentAccent}"
+                                   FontSize="19"
+                                   Margin="0,2,0,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding [Settings.Developers.Architecture.Title], Source={StaticResource Res}}"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding [Settings.Developers.Architecture.Description], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Margin="0,10,0,0"
+                        Padding="16,14"
+                        CornerRadius="8"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE72E;"
+                                   Foreground="{DynamicResource CurrentAccent}"
+                                   FontSize="19"
+                                   Margin="0,2,0,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding [Settings.Developers.Security.Title], Source={StaticResource Res}}"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding [Settings.Developers.Security.Description], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Margin="0,10,0,0"
+                        Padding="16,14"
+                        CornerRadius="8"
+                        Background="{DynamicResource CurrentControlBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE9D9;"
+                                   Foreground="{DynamicResource CurrentAccent}"
+                                   FontSize="19"
+                                   Margin="0,2,0,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding [Settings.Developers.Quality.Title], Source={StaticResource Res}}"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding [Settings.Developers.Quality.Description], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <TextBlock Text="{Binding [Settings.Developers.Repository], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,22,0,10"/>
+                <Border Padding="16,14"
+                        CornerRadius="8"
+                        Background="{DynamicResource CurrentControlHoverBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                   Text="&#xE943;"
+                                   Foreground="{DynamicResource CurrentAccent}"
+                                   FontSize="19"
+                                   Margin="0,2,0,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding [Settings.Developers.Repository.Description], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding RepositoryUrl}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,8,0,0"/>
+                            <Button Content="{Binding [Settings.Developers.Repository.Open], Source={StaticResource Res}}"
+                                    Command="{Binding OpenRepository}"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,10,0,0"
+                                    Padding="12,6"
+                                    ToolTip="{Binding [Settings.Developers.Repository.ToolTip], Source={StaticResource Res}}"
+                                    AutomationProperties.Name="{Binding [Settings.Developers.Repository.ToolTip], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
             </StackPanel>
         </ScrollViewer>
 

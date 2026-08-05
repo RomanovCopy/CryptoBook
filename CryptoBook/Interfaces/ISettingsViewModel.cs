@@ -17,6 +17,9 @@ namespace CryptoBook.Interfaces
         string SelectedCultureName { get; set; }
         GridLength NavigationPaneWidth { get; set; }
         int SelectedSectionIndex { get; set; }
+        string ApplicationVersion { get; }
+        string FeedbackEmail { get; }
+        string RepositoryUrl { get; }
         string WorkspaceDirectory { get; }
         string SearchQuery { get; set; }
         IReadOnlyList<WorkspaceSearchResult> SearchResults { get; }
@@ -27,5 +30,7 @@ namespace CryptoBook.Interfaces
         ICommand Search { get; }
         ICommand OpenSearchResult { get; }
         ICommand RevealSearchResult { get; }
+        ICommand SendFeedback { get; }
+        ICommand OpenRepository { get; }
     }
 }
