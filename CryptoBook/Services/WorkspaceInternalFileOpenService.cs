@@ -34,9 +34,10 @@ namespace CryptoBook.Services
         }
 
         public async Task OpenDocumentAsync(
-            string encryptedPath,
-            string decryptedPath,
+            string sourcePath,
+            string contentPath,
             IFileTemplate contentTemplate,
+            bool sourceIsEncrypted,
             CancellationToken cancellationToken = default)
         {
             await progressDialogService.RunAsync(
@@ -48,7 +49,7 @@ namespace CryptoBook.Services
                             cancellationToken,
                             dialogToken);
                     await using FileStream stream = new(
-                        decryptedPath,
+                        contentPath,
                         FileMode.Open,
                         FileAccess.Read,
                         FileShare.Read,
@@ -63,9 +64,11 @@ namespace CryptoBook.Services
                     return true;
                 });
 
-            IFileTemplate secureTemplate = fileTemplateRegistry.GetAll()
-                .First(template => template is SecureFileTemplate);
-            documentSession.Open(encryptedPath, secureTemplate);
+            IFileTemplate sessionTemplate = sourceIsEncrypted
+                ? fileTemplateRegistry.GetAll()
+                    .First(template => template is SecureFileTemplate)
+                : contentTemplate;
+            documentSession.Open(sourcePath, sessionTemplate);
         }
     }
 }

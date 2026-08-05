@@ -225,6 +225,7 @@
   <data name="Settings.About.Highlights" xml:space="preserve"><value>Key features</value></data>
   <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Create and format documents with links and images.</value></data>
   <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Manage, search, and preview local files.</value></data>
+  <data name="Settings.About.Feature.Search" xml:space="preserve"><value>Search text across workspace documents, including encrypted files, and return to the results with title-bar navigation.</value></data>
   <data name="Settings.About.Feature.Security" xml:space="preserve"><value>Protect individual files and folders with encryption.</value></data>
   <data name="Settings.About.Feedback" xml:space="preserve"><value>Feedback and suggestions</value></data>
   <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Send us your feedback, ideas, or suggestions for improving CryptoBook.</value></data>
@@ -568,6 +569,30 @@
   <data name="Workspace.EnterSearchQuery" xml:space="preserve"><value>Enter part of a file name.</value></data>
   <data name="Workspace.NotSelected" xml:space="preserve"><value>No workspace directory is selected.</value></data>
   <data name="Workspace.LocalOnly" xml:space="preserve"><value>Search is currently supported only in a local workspace directory.</value></data>
+  <data name="SideMenu.Workspace" xml:space="preserve"><value>Workspace</value></data>
+  <data name="SideMenu.Editor" xml:space="preserve"><value>Editor</value></data>
+  <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Open the current document</value></data>
+  <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Search documents</value></data>
+  <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Find text in workspace documents</value></data>
+  <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Search documents</value></data>
+  <data name="Workspace.ContentSearch.Description" xml:space="preserve"><value>Find text in supported documents throughout the workspace.</value></data>
+  <data name="Workspace.ContentSearch.EnterQuery" xml:space="preserve"><value>Enter text to search for.</value></data>
+  <data name="Workspace.ContentSearch.InProgress" xml:space="preserve"><value>Searching documents…</value></data>
+  <data name="Workspace.ContentSearch.FilesProcessed" xml:space="preserve"><value>Files processed: {0}</value></data>
+  <data name="Workspace.ContentSearch.Cancelled" xml:space="preserve"><value>Search cancelled.</value></data>
+  <data name="Workspace.ContentSearch.Results" xml:space="preserve"><value>Documents found: {0}.</value></data>
+  <data name="Workspace.ContentSearch.Truncated" xml:space="preserve"><value> The result limit has been reached.</value></data>
+  <data name="Workspace.ContentSearch.SkippedDirectories" xml:space="preserve"><value> Inaccessible folders skipped: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedFiles" xml:space="preserve"><value> Unavailable or oversized files skipped: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedEncrypted" xml:space="preserve"><value> Encrypted files skipped: {0}.</value></data>
+  <data name="Workspace.ContentSearch.OpenFailed" xml:space="preserve"><value>Could not open the document: {0}</value></data>
+  <data name="Workspace.ContentSearch.Encrypted" xml:space="preserve"><value>• encrypted</value></data>
+  <data name="Workspace.ContentSearch.Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Workspace.ContentSearch.DeleteTitle" xml:space="preserve"><value>Delete document</value></data>
+  <data name="Workspace.ContentSearch.DeletePrompt" xml:space="preserve"><value>Delete “{0}” permanently?</value></data>
+  <data name="Workspace.ContentSearch.DeleteFailed" xml:space="preserve"><value>The document could not be deleted.</value></data>
+  <data name="Workspace.ContentSearch.DeleteError" xml:space="preserve"><value>Could not delete the document: {0}</value></data>
+  <data name="Workspace.ContentSearch.DeleteSucceeded" xml:space="preserve"><value>Document “{0}” deleted.</value></data>
   <data name="Error.OperationCanceled" xml:space="preserve"><value>The operation was canceled.</value></data>
   <data name="Security.UnknownMode" xml:space="preserve"><value>Unknown processing mode.</value></data>
   <data name="Security.DestinationRequired" xml:space="preserve"><value>No destination path was specified.</value></data>

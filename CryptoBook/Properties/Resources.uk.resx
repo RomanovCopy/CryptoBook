@@ -180,6 +180,9 @@
   <data name="Settings.About.Feature.Files" xml:space="preserve">
     <value>Керування, пошук і попередній перегляд локальних файлів.</value>
   </data>
+  <data name="Settings.About.Feature.Search" xml:space="preserve">
+    <value>Пошук тексту в документах робочого простору, зокрема в зашифрованих файлах, із поверненням до результатів через навігацію в рядку заголовка.</value>
+  </data>
   <data name="Settings.About.Feature.Security" xml:space="preserve">
     <value>Захист окремих файлів і папок за допомогою шифрування.</value>
   </data>
@@ -1212,6 +1215,30 @@
   <data name="Error.OperationCanceled" xml:space="preserve">
     <value>Операцію скасовано.</value>
   </data>
+  <data name="SideMenu.Workspace" xml:space="preserve"><value>Робочий простір</value></data>
+  <data name="SideMenu.Editor" xml:space="preserve"><value>Редактор</value></data>
+  <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Відкрити поточний документ</value></data>
+  <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Пошук у документах</value></data>
+  <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Знайти текст у документах робочого простору</value></data>
+  <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Пошук у документах</value></data>
+  <data name="Workspace.ContentSearch.Description" xml:space="preserve"><value>Пошук тексту в підтримуваних документах у всьому робочому просторі.</value></data>
+  <data name="Workspace.ContentSearch.EnterQuery" xml:space="preserve"><value>Введіть текст для пошуку.</value></data>
+  <data name="Workspace.ContentSearch.InProgress" xml:space="preserve"><value>Триває пошук у документах…</value></data>
+  <data name="Workspace.ContentSearch.FilesProcessed" xml:space="preserve"><value>Оброблено файлів: {0}</value></data>
+  <data name="Workspace.ContentSearch.Cancelled" xml:space="preserve"><value>Пошук скасовано.</value></data>
+  <data name="Workspace.ContentSearch.Results" xml:space="preserve"><value>Знайдено документів: {0}.</value></data>
+  <data name="Workspace.ContentSearch.Truncated" xml:space="preserve"><value> Досягнуто ліміт результатів.</value></data>
+  <data name="Workspace.ContentSearch.SkippedDirectories" xml:space="preserve"><value> Пропущено недоступних папок: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedFiles" xml:space="preserve"><value> Пропущено недоступних або завеликих файлів: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedEncrypted" xml:space="preserve"><value> Пропущено зашифрованих файлів: {0}.</value></data>
+  <data name="Workspace.ContentSearch.OpenFailed" xml:space="preserve"><value>Не вдалося відкрити документ: {0}</value></data>
+  <data name="Workspace.ContentSearch.Encrypted" xml:space="preserve"><value>• зашифрований</value></data>
+  <data name="Workspace.ContentSearch.Clear" xml:space="preserve"><value>Очистити</value></data>
+  <data name="Workspace.ContentSearch.DeleteTitle" xml:space="preserve"><value>Видалення документа</value></data>
+  <data name="Workspace.ContentSearch.DeletePrompt" xml:space="preserve"><value>Назавжди видалити «{0}»?</value></data>
+  <data name="Workspace.ContentSearch.DeleteFailed" xml:space="preserve"><value>Не вдалося видалити документ.</value></data>
+  <data name="Workspace.ContentSearch.DeleteError" xml:space="preserve"><value>Помилка видалення документа: {0}</value></data>
+  <data name="Workspace.ContentSearch.DeleteSucceeded" xml:space="preserve"><value>Документ «{0}» видалено.</value></data>
   <data name="Security.UnknownMode" xml:space="preserve">
     <value>Невідомий режим обробки.</value>
   </data>

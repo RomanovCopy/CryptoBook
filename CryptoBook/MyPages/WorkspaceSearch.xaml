@@ -1,0 +1,183 @@
+<Page x:Class="CryptoBook.MyPages.WorkspaceSearch"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+      xmlns:markup="clr-namespace:CryptoBook.Markup"
+      mc:Ignorable="d"
+      d:DataContext="{x:Type interfaces:IWorkspaceSearchViewModel}"
+      Title="{Binding [Workspace.ContentSearch.Title], Source={StaticResource Res}}"
+      Background="{DynamicResource CurrentWindowBackground}">
+    <Page.DataContext>
+        <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IWorkspaceSearchViewModel}"/>
+    </Page.DataContext>
+
+    <Grid Margin="28,22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="{Binding [Workspace.ContentSearch.Title], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           FontSize="26"
+                           FontWeight="SemiBold"/>
+                <TextBlock Margin="0,5,0,0"
+                           Text="{Binding [Workspace.ContentSearch.Description], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           Opacity="0.65"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Width="36"
+                        Height="32"
+                        Margin="8,0,0,0"
+                        Command="{Binding ClearPage}"
+                        ToolTip="{Binding [Workspace.ContentSearch.Clear], Source={StaticResource Res}}">
+                    <TextBlock Text="&#xEA99;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="15"/>
+                </Button>
+                <Button Width="36"
+                        Height="32"
+                        Margin="8,0,0,0"
+                        Command="{Binding ClosePage}"
+                        ToolTip="{Binding [Common.Close], Source={StaticResource Res}}">
+                    <TextBlock Text="&#xE8BB;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="15"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,20,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox MinHeight="38"
+                     Padding="10,7"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Grid.Column="1"
+                    MinWidth="100"
+                    Margin="10,0,0,0"
+                    IsDefault="True"
+                    Command="{Binding Search}"
+                    Content="{Binding [Common.Search], Source={StaticResource Res}}"/>
+            <Button Grid.Column="2"
+                    MinWidth="100"
+                    Margin="8,0,0,0"
+                    Command="{Binding CancelSearch}"
+                    Content="{Binding [Common.Cancel], Source={StaticResource Res}}"/>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="2,0,2,10">
+                <TextBlock Text="{Binding SearchStatus}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"/>
+                <TextBlock Margin="0,3,0,0"
+                           Text="{Binding CurrentFile}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           FontSize="11"
+                           Opacity="0.55"
+                           TextTrimming="CharacterEllipsis"/>
+            </StackPanel>
+
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding SearchResults}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="0,0,0,8"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="14"
+                                Background="{DynamicResource CurrentTitleBarBackground}"
+                                BorderBrush="{DynamicResource CurrentBorderColor}"
+                                BorderThickness="1"
+                                CornerRadius="7">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="{DynamicResource CurrentWindowForeground}"
+                                                   FontSize="15"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Margin="8,0,0,0"
+                                                   Text="{Binding [Workspace.ContentSearch.Encrypted], Source={StaticResource Res}}"
+                                                   Foreground="{DynamicResource CurrentWindowForeground}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEncrypted}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Margin="0,3,0,0"
+                                               Text="{Binding RelativePath}"
+                                               Foreground="{DynamicResource CurrentWindowForeground}"
+                                               FontSize="11"
+                                               Opacity="0.55"/>
+                                    <TextBlock Margin="0,9,0,0"
+                                               Text="{Binding Snippet}"
+                                               Foreground="{DynamicResource CurrentWindowForeground}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1"
+                                            Margin="14,0,0,0"
+                                            VerticalAlignment="Center">
+                                    <Button MinWidth="88"
+                                            Command="{Binding DataContext.OpenResult,
+                                                              RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                            CommandParameter="{Binding}"
+                                            Content="{Binding [Common.Open], Source={StaticResource Res}}"/>
+                                    <Button MinWidth="88"
+                                            Margin="0,7,0,0"
+                                            Command="{Binding DataContext.DeleteResult,
+                                                              RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                            CommandParameter="{Binding}"
+                                            Content="{Binding [Common.Delete], Source={StaticResource Res}}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding PageLoaded}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+</Page>

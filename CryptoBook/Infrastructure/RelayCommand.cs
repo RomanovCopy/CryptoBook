@@ -55,12 +55,16 @@ namespace CryptoBook.Infrastructure
             if(handler == null)
                 return;
 
-            if(System.Windows.Application.Current?.Dispatcher?.CheckAccess() == true)
+            var dispatcher = System.Windows.Application.Current?.Dispatcher;
+            if(dispatcher is null ||
+               dispatcher.CheckAccess() ||
+               dispatcher.HasShutdownStarted ||
+               dispatcher.HasShutdownFinished)
             {
                 handler(this, EventArgs.Empty);
             } else
             {
-                System.Windows.Application.Current?.Dispatcher?.Invoke(() => handler(this, EventArgs.Empty));
+                dispatcher.Invoke(() => handler(this, EventArgs.Empty));
             }
         }
     }

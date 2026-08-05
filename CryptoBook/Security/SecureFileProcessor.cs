@@ -73,15 +73,27 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
+            DecryptedFileContent decrypted = await DecryptFileContentAsync(
+                inputFile,
+                progress,
+                cancellationToken);
+            return decrypted.Content;
+        }
+
+        public async Task<DecryptedFileContent> DecryptFileContentAsync(
+            string inputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
             if(await _v2Codec.HasHeaderAsync(inputFile, cancellationToken))
             {
-                return await _v2Codec.DecryptFileAsyncToStream(
+                return await _v2Codec.DecryptFileContentAsync(
                     inputFile,
                     progress,
                     cancellationToken);
             }
 
-            return await _legacyCodec.DecryptFileAsyncToStream(
+            return await _legacyCodec.DecryptFileContentAsync(
                 inputFile,
                 progress,
                 cancellationToken);

@@ -225,6 +225,7 @@
   <data name="Settings.About.Highlights" xml:space="preserve"><value>Основные возможности</value></data>
   <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Создание и форматирование документов, ссылок и изображений.</value></data>
   <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Управление, поиск и предпросмотр локальных файлов.</value></data>
+  <data name="Settings.About.Feature.Search" xml:space="preserve"><value>Поиск текста в документах рабочего пространства, включая зашифрованные файлы, с возвратом к результатам через навигацию в строке заголовка.</value></data>
   <data name="Settings.About.Feature.Security" xml:space="preserve"><value>Защита отдельных файлов и папок с помощью шифрования.</value></data>
   <data name="Settings.About.Feedback" xml:space="preserve"><value>Отзывы и предложения</value></data>
   <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Присылайте нам свои отзывы, идеи и предложения по улучшению CryptoBook.</value></data>
@@ -568,6 +569,30 @@
   <data name="Workspace.EnterSearchQuery" xml:space="preserve"><value>Введите часть имени файла.</value></data>
   <data name="Workspace.NotSelected" xml:space="preserve"><value>Рабочая директория не выбрана.</value></data>
   <data name="Workspace.LocalOnly" xml:space="preserve"><value>Поиск пока поддерживается только в локальной рабочей директории.</value></data>
+  <data name="SideMenu.Workspace" xml:space="preserve"><value>Рабочее пространство</value></data>
+  <data name="SideMenu.Editor" xml:space="preserve"><value>Редактор</value></data>
+  <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Открыть текущий документ</value></data>
+  <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Поиск в документах</value></data>
+  <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Найти текст в документах рабочего пространства</value></data>
+  <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Поиск в документах</value></data>
+  <data name="Workspace.ContentSearch.Description" xml:space="preserve"><value>Поиск текста в поддерживаемых документах во всём рабочем пространстве.</value></data>
+  <data name="Workspace.ContentSearch.EnterQuery" xml:space="preserve"><value>Введите текст для поиска.</value></data>
+  <data name="Workspace.ContentSearch.InProgress" xml:space="preserve"><value>Идёт поиск в документах…</value></data>
+  <data name="Workspace.ContentSearch.FilesProcessed" xml:space="preserve"><value>Обработано файлов: {0}</value></data>
+  <data name="Workspace.ContentSearch.Cancelled" xml:space="preserve"><value>Поиск отменён.</value></data>
+  <data name="Workspace.ContentSearch.Results" xml:space="preserve"><value>Найдено документов: {0}.</value></data>
+  <data name="Workspace.ContentSearch.Truncated" xml:space="preserve"><value> Достигнут лимит результатов.</value></data>
+  <data name="Workspace.ContentSearch.SkippedDirectories" xml:space="preserve"><value> Пропущено недоступных папок: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedFiles" xml:space="preserve"><value> Пропущено недоступных или слишком больших файлов: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedEncrypted" xml:space="preserve"><value> Пропущено зашифрованных файлов: {0}.</value></data>
+  <data name="Workspace.ContentSearch.OpenFailed" xml:space="preserve"><value>Не удалось открыть документ: {0}</value></data>
+  <data name="Workspace.ContentSearch.Encrypted" xml:space="preserve"><value>• зашифрован</value></data>
+  <data name="Workspace.ContentSearch.Clear" xml:space="preserve"><value>Очистить</value></data>
+  <data name="Workspace.ContentSearch.DeleteTitle" xml:space="preserve"><value>Удаление документа</value></data>
+  <data name="Workspace.ContentSearch.DeletePrompt" xml:space="preserve"><value>Безвозвратно удалить «{0}»?</value></data>
+  <data name="Workspace.ContentSearch.DeleteFailed" xml:space="preserve"><value>Не удалось удалить документ.</value></data>
+  <data name="Workspace.ContentSearch.DeleteError" xml:space="preserve"><value>Ошибка удаления документа: {0}</value></data>
+  <data name="Workspace.ContentSearch.DeleteSucceeded" xml:space="preserve"><value>Документ «{0}» удалён.</value></data>
   <data name="Error.OperationCanceled" xml:space="preserve"><value>Операция отменена.</value></data>
   <data name="Security.UnknownMode" xml:space="preserve"><value>Неизвестный режим обработки.</value></data>
   <data name="Security.DestinationRequired" xml:space="preserve"><value>Не указан путь назначения.</value></data>
