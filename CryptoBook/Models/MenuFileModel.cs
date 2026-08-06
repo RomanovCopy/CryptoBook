@@ -29,6 +29,8 @@ namespace CryptoBook.Models
         private readonly IDocumentRecoveryService recoveryService;
         private readonly IDocumentDialogService documentDialogService;
         private readonly ISecureFileProcessor secureFileProcessor;
+        private readonly IDocumentContentInspector documentContentInspector;
+        private readonly IDocumentPrintService documentPrintService;
 
         public MenuFileModel(
             IWindowManager windowManager,
@@ -40,7 +42,9 @@ namespace CryptoBook.Models
             IMessageService messageService,
             IDocumentRecoveryService recoveryService,
             IDocumentDialogService documentDialogService,
-            ISecureFileProcessor secureFileProcessor)
+            ISecureFileProcessor secureFileProcessor,
+            IDocumentContentInspector documentContentInspector,
+            IDocumentPrintService documentPrintService)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
@@ -65,6 +69,12 @@ namespace CryptoBook.Models
             this.secureFileProcessor = secureFileProcessor
                 ?? throw new ArgumentNullException(
                     nameof(secureFileProcessor));
+            this.documentContentInspector = documentContentInspector
+                ?? throw new ArgumentNullException(
+                    nameof(documentContentInspector));
+            this.documentPrintService = documentPrintService
+                ?? throw new ArgumentNullException(
+                    nameof(documentPrintService));
 
             documentSession.PropertyChanged += (_, _) =>
                 OnPropertyChanged(nameof(documentSession));
@@ -116,6 +126,37 @@ namespace CryptoBook.Models
             return SaveAndIgnoreResultAsync(
                 forceChooseTarget: true,
                 cancellationToken);
+        }
+
+        public bool CanExecute_PrintFile(object? obj) =>
+            documentSession.HasDocument &&
+            documentContentInspector.HasPrintableContent(
+                richTextBox.Document);
+
+        public async Task Execute_PrintFileAsync(
+            object? obj,
+            CancellationToken cancellationToken)
+        {
+            if(!CanExecute_PrintFile(obj))
+                return;
+
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                string documentName = string.IsNullOrWhiteSpace(
+                    documentSession.FilePath)
+                    ? documentSession.DisplayName
+                    : Path.GetFileName(documentSession.FilePath);
+                documentPrintService.Print(
+                    richTextBox.Document,
+                    documentName);
+            }
+            catch(Exception exception)
+            {
+                await messageService.ShowMessage(
+                    LocalizationManager.GetString("Document.PrintError"),
+                    exception.Message);
+            }
         }
 
         public Task<bool> TrySaveCurrentAsync(

@@ -175,7 +175,7 @@
     <value>Основні можливості</value>
   </data>
   <data name="Settings.About.Feature.Documents" xml:space="preserve">
-    <value>Створення та форматування документів, посилань і зображень.</value>
+    <value>Створення та форматування документів, посилань і зображень, друк поточного документа.</value>
   </data>
   <data name="Settings.About.Feature.Files" xml:space="preserve">
     <value>Керування, пошук і попередній перегляд локальних файлів.</value>
@@ -312,6 +312,9 @@
   <data name="Common.SaveAs" xml:space="preserve">
     <value>Зберегти як</value>
   </data>
+  <data name="Common.Print" xml:space="preserve">
+    <value>Друк</value>
+  </data>
   <data name="Bookmarks.Title" xml:space="preserve">
     <value>Закладки</value>
   </data>
@@ -341,6 +344,9 @@
   </data>
   <data name="SideMenu.SaveAs.Description" xml:space="preserve">
     <value>Вибрати назву, папку та формат</value>
+  </data>
+  <data name="SideMenu.Print.Description" xml:space="preserve">
+    <value>Надрукувати поточний документ</value>
   </data>
   <data name="SideMenu.CloseDocument.Description" xml:space="preserve">
     <value>Закрити поточний документ</value>
@@ -383,6 +389,9 @@
   </data>
   <data name="SideMenu.RenameBook.Failed" xml:space="preserve">
     <value>Не вдалося перейменувати книгу.</value>
+  </data>
+  <data name="Document.PrintError" xml:space="preserve">
+    <value>Помилка друку</value>
   </data>
   <data name="Editor.Lists" xml:space="preserve">
     <value>Списки</value>

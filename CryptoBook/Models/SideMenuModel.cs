@@ -150,6 +150,12 @@ namespace CryptoBook.Models
                 "\uE792",
                 LocalizationManager.GetString("SideMenu.SaveAs.Description"),
                 CommandKey.menuFile_SaveAsFile));
+            file.Children.Add(CreateItem(
+                commandService,
+                LocalizationManager.GetString("Common.Print"),
+                "\uE749",
+                LocalizationManager.GetString("SideMenu.Print.Description"),
+                CommandKey.menuFile_PrintFile));
             file.Children.Add(new MenuItem(commandService)
             {
                 Name = LocalizationManager.GetString("SideMenu.RenameBook"),

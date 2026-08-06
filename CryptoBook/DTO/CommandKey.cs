@@ -12,6 +12,7 @@ namespace CryptoBook.DTO
         menuFile_OpenFile,
         menuFile_SaveFile, 
         menuFile_SaveAsFile,
+        menuFile_PrintFile,
         menuFile_FileOverview,
         menuFile_OpenDirectory,
         menuFile_UpdateFile,

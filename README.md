@@ -1,7 +1,7 @@
 # CryptoBook
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.0.7-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.0.7)
+[![Version](https://img.shields.io/badge/version-1.0.9-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.0.9)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 
@@ -28,6 +28,7 @@ CryptoBook — настольное Windows-приложение для рабо
 - полнотекстовый поиск по поддерживаемым документам рабочего пространства, включая зашифрованные файлы;
 - предпросмотр текста и изображений, воспроизведение видео через Flyleaf/FFmpeg;
 - закладки и навигация по документу;
+- печать текущего документа через системный диалог печати Windows;
 - системная, светлая, тёмная и сепия-темы;
 - шифрование отдельных файлов и каталогов с сохранением исходного расширения;
 - автоматическое восстановление несохранённого документа после сбоя;
@@ -92,7 +93,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Автономная x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.0.7
+./installer/Build-Installer.ps1 -Version 1.0.9
 ```
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные NuGet-уязвимости считаются ошибками.

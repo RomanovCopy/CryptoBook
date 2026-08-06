@@ -26,6 +26,7 @@ namespace CryptoBook.DTO
                 (CommandKey.menuFile_OpenFile, "OpenFile"),
                 (CommandKey.menuFile_SaveFile, "SaveFile"),
                 (CommandKey.menuFile_SaveAsFile, "SaveAsFile"),
+                (CommandKey.menuFile_PrintFile, "PrintFile"),
                 (CommandKey.menuFile_FileOverview, "FileOverview"),
                 (CommandKey.menuFile_OpenDirectory, "OpenDirectory"),
                 (CommandKey.menuFile_CloseFile, "CloseFile"),

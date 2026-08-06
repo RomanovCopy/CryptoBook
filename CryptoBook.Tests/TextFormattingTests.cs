@@ -480,6 +480,7 @@ public sealed class TextFormattingTests
         public ICommand OpenFile => Command;
         public ICommand SaveFile => Command;
         public ICommand SaveAsFile => Command;
+        public ICommand PrintFile => Command;
         public ICommand FileOverview => Command;
         public ICommand OpenDirectory => Command;
         public ICommand UpdateFile => Command;

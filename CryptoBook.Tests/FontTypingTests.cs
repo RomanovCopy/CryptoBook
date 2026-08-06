@@ -1,4 +1,5 @@
 using CryptoBook.Accessors;
+using CryptoBook.Behaviors;
 using CryptoBook.Interfaces;
 using CryptoBook.Markup;
 using CryptoBook.Services;
@@ -98,6 +99,20 @@ public sealed class FontTypingTests
     {
         Assert.NotNull(HighContrastTextCursor.Instance);
         Assert.Same(HighContrastTextCursor.Instance, HighContrastTextCursor.Instance);
+    }
+
+    [WpfFact]
+    public void ImageResizeBehavior_DoesNotClearCursorWhenEditorIsUnloaded()
+    {
+        var (service, _) = CreateServices(new Run("text"));
+        service.Service.Cursor = HighContrastTextCursor.Instance;
+        DocumentImageResizeBehavior.SetIsEnabled(service.Service, true);
+
+        service.Service.RaiseEvent(
+            new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+
+        Assert.Same(HighContrastTextCursor.Instance, service.Service.Cursor);
+        DocumentImageResizeBehavior.SetIsEnabled(service.Service, false);
     }
 
     [WpfFact]
