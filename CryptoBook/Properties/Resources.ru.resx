@@ -225,6 +225,7 @@
   <data name="Settings.About.Highlights" xml:space="preserve"><value>Основные возможности</value></data>
   <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Создание и форматирование документов, ссылок и изображений.</value></data>
   <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Управление, поиск и предпросмотр локальных файлов.</value></data>
+  <data name="Settings.About.Feature.QuickAccess" xml:space="preserve"><value>Закрепление часто используемых документов, безопасное переключение, изменение порядка ссылок и восстановление пути к недоступным файлам.</value></data>
   <data name="Settings.About.Feature.Search" xml:space="preserve"><value>Поиск текста в документах рабочего пространства, включая зашифрованные файлы, с возвратом к результатам через навигацию в строке заголовка.</value></data>
   <data name="Settings.About.Feature.Security" xml:space="preserve"><value>Защита отдельных файлов и папок с помощью шифрования.</value></data>
   <data name="Settings.About.Feedback" xml:space="preserve"><value>Отзывы и предложения</value></data>
@@ -529,6 +530,7 @@
   <data name="Document.RecoveryPrompt" xml:space="preserve"><value>Обнаружена автоматически сохранённая копия после предыдущего завершения. Восстановить документ?</value></data>
   <data name="Document.RecoveryTitle" xml:space="preserve"><value>Восстановление CryptoBook</value></data>
   <data name="Document.UnsavedPrompt" xml:space="preserve"><value>В документе есть несохранённые изменения. Сохранить их перед закрытием?</value></data>
+  <data name="Document.UnsavedSwitchPrompt" xml:space="preserve"><value>В документе есть несохранённые изменения. Сохранить их перед открытием другого файла?</value></data>
   <data name="Document.RecoveryFailed" xml:space="preserve"><value>Не удалось восстановить документ:{0}{1}</value></data>
   <data name="Document.RecoveryErrorTitle" xml:space="preserve"><value>Ошибка восстановления</value></data>
   <data name="Document.RecoveryCleanupFailed" xml:space="preserve"><value>Не удалось удалить файл автоматического восстановления. Он может быть снова предложен при следующем запуске:{0}{1}</value></data>
@@ -612,4 +614,25 @@
   <data name="Document.NoSaveFormats" xml:space="preserve"><value>Не зарегистрированы форматы сохранения документа.</value></data>
   <data name="Image.EmptyFile" xml:space="preserve"><value>Файл изображения пуст.</value></data>
   <data name="Image.FileNotFound" xml:space="preserve"><value>Файл изображения не найден.</value></data>
+  <data name="PinnedDocuments.Title" xml:space="preserve"><value>Закреплённые</value></data>
+  <data name="PinnedDocuments.Empty" xml:space="preserve"><value>Закрепите текущий документ для быстрого доступа. Новый документ сначала будет сохранён.</value></data>
+  <data name="PinnedDocuments.PinCurrent" xml:space="preserve"><value>Закрепить текущий документ</value></data>
+  <data name="PinnedDocuments.SaveAndPinCurrent" xml:space="preserve"><value>Сохранить и закрепить текущий документ</value></data>
+  <data name="PinnedDocuments.UnpinCurrent" xml:space="preserve"><value>Открепить текущий документ</value></data>
+  <data name="PinnedDocuments.Unpin" xml:space="preserve"><value>Открепить</value></data>
+  <data name="PinnedDocuments.UnsavedChanges" xml:space="preserve"><value>Есть несохранённые изменения</value></data>
+  <data name="PinnedDocuments.ErrorTitle" xml:space="preserve"><value>Закреплённые документы</value></data>
+  <data name="PinnedDocuments.LoadFailed" xml:space="preserve"><value>Не удалось загрузить закреплённые документы.</value></data>
+  <data name="PinnedDocuments.SaveFailed" xml:space="preserve"><value>Не удалось обновить закреплённые документы.</value></data>
+  <data name="PinnedDocuments.OpenFailed" xml:space="preserve"><value>Не удалось открыть закреплённый документ «{0}».</value></data>
+  <data name="PinnedDocuments.MissingState" xml:space="preserve"><value>Файл недоступен</value></data>
+  <data name="PinnedDocuments.MissingFile" xml:space="preserve"><value>Файл «{0}» недоступен. Укажите новое расположение или открепите его.</value></data>
+  <data name="PinnedDocuments.RevealInExplorer" xml:space="preserve"><value>Показать в проводнике</value></data>
+  <data name="PinnedDocuments.RevealFailed" xml:space="preserve"><value>Не удалось показать «{0}» в проводнике.</value></data>
+  <data name="PinnedDocuments.Relocate" xml:space="preserve"><value>Указать новое расположение…</value></data>
+  <data name="PinnedDocuments.RelocateInvalid" xml:space="preserve"><value>Новое расположение файла «{0}» недоступно.</value></data>
+  <data name="PinnedDocuments.RelocateFailed" xml:space="preserve"><value>Не удалось обновить расположение закреплённого документа.</value></data>
+  <data name="PinnedDocuments.MoveUp" xml:space="preserve"><value>Переместить выше</value></data>
+  <data name="PinnedDocuments.MoveDown" xml:space="preserve"><value>Переместить ниже</value></data>
+  <data name="PinnedDocuments.RenameSyncFailed" xml:space="preserve"><value>Файл переименован, но закреплённую ссылку обновить не удалось.</value></data>
 </root>

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Windows.Documents;
 
 namespace CryptoBook.Interfaces
 {
@@ -15,6 +16,10 @@ namespace CryptoBook.Interfaces
         bool HasDocument { get; }
 
         void Open(string filePath, IFileTemplate template);
+        void Open(
+            string filePath,
+            IFileTemplate template,
+            FlowDocument document);
         void Close();
         void MarkDirty();
         void MarkSaved(string filePath, IFileTemplate template);

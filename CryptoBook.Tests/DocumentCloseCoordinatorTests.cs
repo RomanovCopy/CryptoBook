@@ -3,6 +3,7 @@ using CryptoBook.Services;
 
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Documents;
 
 using Xunit;
 
@@ -322,6 +323,11 @@ namespace CryptoBook.Tests
                 Template = template;
                 IsDirty = false;
             }
+
+            public void Open(
+                string filePath,
+                IFileTemplate template,
+                FlowDocument document) => Open(filePath, template);
 
             public void Close()
             {

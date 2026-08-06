@@ -5,6 +5,7 @@ using CryptoBook.Security;
 using CryptoBook.Services;
 
 using System.IO;
+using System.Security.Cryptography;
 using System.Windows;
 
 using Xunit;
@@ -38,7 +39,11 @@ namespace CryptoBook.Tests
                 new ProgressDialogServiceStub(),
                 launcher,
                 CreateTemplateRegistry(),
-                internalOpener);
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                new DocumentDialogServiceStub());
 
             WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
             string openedPath = Assert.IsType<string>(internalOpener.DecryptedPath);
@@ -71,7 +76,11 @@ namespace CryptoBook.Tests
                 new ProgressDialogServiceStub(),
                 launcher,
                 CreateTemplateRegistry(),
-                internalOpener);
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                new DocumentDialogServiceStub());
 
             WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
 
@@ -104,7 +113,11 @@ namespace CryptoBook.Tests
                 new ProgressDialogServiceStub(),
                 launcher,
                 CreateTemplateRegistry(),
-                internalOpener);
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                new DocumentDialogServiceStub());
 
             WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
             string openedPath = Assert.IsType<string>(launcher.OpenedPath);
@@ -136,7 +149,11 @@ namespace CryptoBook.Tests
                 new ProgressDialogServiceStub(),
                 launcher,
                 CreateTemplateRegistry(),
-                internalOpener);
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                new DocumentDialogServiceStub());
 
             WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
             string playbackPath = Assert.IsType<string>(
@@ -154,6 +171,329 @@ namespace CryptoBook.Tests
 
             Assert.False(File.Exists(playbackPath));
         }
+
+        [Fact]
+        public async Task CurrentDocument_IsNotSavedOrReloaded()
+        {
+            string sourcePath = Path.Combine(testDirectory, "current.txt");
+            await File.WriteAllTextAsync(sourcePath, "current");
+            var session = new DocumentSessionStub();
+            session.Open(sourcePath, new PlainTextTemplate());
+            var guard = new UnsavedChangesGuardStub();
+            var validator = new SecureFileValidatorStub(encrypted: false);
+            var internalOpener = new InternalFileOpenServiceStub();
+            var service = CreateService(
+                validator,
+                new KeyRequestStub(),
+                internalOpener,
+                guard,
+                session,
+                new RecoveryServiceStub());
+
+            WorkspaceFileOpenResult result = await service.SwitchAsync(
+                sourcePath.ToUpperInvariant());
+
+            Assert.True(result.Success);
+            Assert.Equal(0, guard.CallCount);
+            Assert.Equal(0, validator.CallCount);
+            Assert.Equal(0, internalOpener.OpenCount);
+        }
+
+        [Fact]
+        public async Task CancelledUnsavedChangesGuard_PreventsProtectedFilePrompt()
+        {
+            string sourcePath = Path.Combine(testDirectory, "secret.cbook");
+            await File.WriteAllBytesAsync(sourcePath, [9, 8, 7]);
+            var guard = new UnsavedChangesGuardStub { CanProceed = false };
+            var keyRequest = new KeyRequestStub();
+            var validator = new SecureFileValidatorStub();
+            var service = CreateService(
+                validator,
+                keyRequest,
+                new InternalFileOpenServiceStub(),
+                guard,
+                new DocumentSessionStub(),
+                new RecoveryServiceStub());
+
+            WorkspaceFileOpenResult result = await service.SwitchAsync(sourcePath);
+
+            Assert.True(result.Cancelled);
+            Assert.Equal(1, guard.CallCount);
+            Assert.Equal(0, validator.CallCount);
+            Assert.Equal(0, keyRequest.CallCount);
+        }
+
+        [Fact]
+        public async Task ProtectedFile_SavesCurrentDocumentBeforeRequestingKey()
+        {
+            string currentPath = Path.Combine(testDirectory, "current.txt");
+            string targetPath = Path.Combine(testDirectory, "secret.cbook");
+            await File.WriteAllTextAsync(currentPath, "current");
+            await File.WriteAllBytesAsync(targetPath, [9, 8, 7]);
+            var order = new List<string>();
+            var session = new DocumentSessionStub();
+            session.Open(currentPath, new PlainTextTemplate());
+            session.IsDirty = true;
+            var saver = new CurrentDocumentSaverStub
+            {
+                Save = () =>
+                {
+                    order.Add("save");
+                    session.IsDirty = false;
+                    return true;
+                }
+            };
+            var guard = new UnsavedChangesGuard(
+                session,
+                saver,
+                new DocumentDialogServiceStub
+                {
+                    SwitchChoice = UnsavedChangesChoice.Save
+                });
+            var keyRequest = new KeyRequestStub
+            {
+                OnCall = () => order.Add("key")
+            };
+            var internalOpener = new InternalFileOpenServiceStub
+            {
+                OnOpen = (path, template) => session.Open(path, template)
+            };
+            var service = CreateService(
+                new SecureFileValidatorStub(),
+                keyRequest,
+                internalOpener,
+                guard,
+                session,
+                new RecoveryServiceStub());
+
+            WorkspaceFileOpenResult result = await service.SwitchAsync(targetPath);
+
+            Assert.True(result.Success);
+            Assert.Equal(["save", "key"], order);
+            Assert.Equal(1, saver.SaveCount);
+            Assert.Equal(Path.GetFullPath(targetPath), session.FilePath);
+        }
+
+        [Fact]
+        public async Task ProtectedFile_KeyCancellation_KeepsCurrentDocument()
+        {
+            string currentPath = Path.Combine(testDirectory, "current.txt");
+            string targetPath = Path.Combine(testDirectory, "secret.cbook");
+            await File.WriteAllTextAsync(currentPath, "current");
+            await File.WriteAllBytesAsync(targetPath, [9, 8, 7]);
+            var session = new DocumentSessionStub();
+            session.Open(currentPath, new PlainTextTemplate());
+            var recovery = new RecoveryServiceStub();
+            var internalOpener = new InternalFileOpenServiceStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(),
+                new KeyRequestStub { Available = false },
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                session,
+                recovery);
+
+            WorkspaceFileOpenResult result = await service.SwitchAsync(targetPath);
+
+            Assert.True(result.Cancelled);
+            Assert.Equal(Path.GetFullPath(currentPath), session.FilePath);
+            Assert.Equal(0, internalOpener.OpenCount);
+            Assert.Equal(0, recovery.DeleteCount);
+        }
+
+        [Fact]
+        public async Task ProtectedFile_DecryptionFailure_KeepsCurrentDocument()
+        {
+            string currentPath = Path.Combine(testDirectory, "current.txt");
+            string targetPath = Path.Combine(testDirectory, "secret.cbook");
+            await File.WriteAllTextAsync(currentPath, "current");
+            await File.WriteAllBytesAsync(targetPath, [9, 8, 7]);
+            var session = new DocumentSessionStub();
+            session.Open(currentPath, new PlainTextTemplate());
+            var recovery = new RecoveryServiceStub();
+            var expected = new CryptographicException("wrong key");
+            var service = CreateService(
+                new SecureFileValidatorStub(),
+                new KeyRequestStub(),
+                new InternalFileOpenServiceStub(),
+                new UnsavedChangesGuardStub(),
+                session,
+                recovery,
+                new SecureFileProcessorStub(".txt", expected));
+
+            Exception actual = await Assert.ThrowsAsync<CryptographicException>(
+                () => service.SwitchAsync(targetPath));
+
+            Assert.Same(expected, actual);
+            Assert.Equal(Path.GetFullPath(currentPath), session.FilePath);
+            Assert.Equal(0, recovery.DeleteCount);
+        }
+
+        [Fact]
+        public async Task InternalOpenFailure_KeepsCurrentSessionAndRecovery()
+        {
+            string currentPath = Path.Combine(testDirectory, "current.txt");
+            string targetPath = Path.Combine(testDirectory, "target.txt");
+            await File.WriteAllTextAsync(currentPath, "current");
+            await File.WriteAllTextAsync(targetPath, "target");
+            var session = new DocumentSessionStub();
+            session.Open(currentPath, new PlainTextTemplate());
+            var recovery = new RecoveryServiceStub();
+            var internalOpener = new InternalFileOpenServiceStub
+            {
+                Exception = new InvalidDataException("damaged")
+            };
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                new KeyRequestStub(),
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                session,
+                recovery);
+
+            await Assert.ThrowsAsync<InvalidDataException>(() =>
+                service.SwitchAsync(targetPath));
+
+            Assert.Equal(Path.GetFullPath(currentPath), session.FilePath);
+            Assert.Equal(0, recovery.DeleteCount);
+        }
+
+        [Fact]
+        public async Task SavedCurrentDocument_LoadFailureKeepsSavedDocumentOpen()
+        {
+            string currentPath = Path.Combine(testDirectory, "current.txt");
+            string targetPath = Path.Combine(testDirectory, "target.txt");
+            await File.WriteAllTextAsync(currentPath, "current");
+            await File.WriteAllTextAsync(targetPath, "target");
+            var session = new DocumentSessionStub();
+            session.Open(currentPath, new PlainTextTemplate());
+            session.IsDirty = true;
+            var saver = new CurrentDocumentSaverStub
+            {
+                Save = () =>
+                {
+                    session.IsDirty = false;
+                    return true;
+                }
+            };
+            var guard = new UnsavedChangesGuard(
+                session,
+                saver,
+                new DocumentDialogServiceStub
+                {
+                    SwitchChoice = UnsavedChangesChoice.Save
+                });
+            var recovery = new RecoveryServiceStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                new KeyRequestStub(),
+                new InternalFileOpenServiceStub
+                {
+                    Exception = new InvalidDataException("damaged")
+                },
+                guard,
+                session,
+                recovery);
+
+            await Assert.ThrowsAsync<InvalidDataException>(() =>
+                service.SwitchAsync(targetPath));
+
+            Assert.Equal(1, saver.SaveCount);
+            Assert.Equal(Path.GetFullPath(currentPath), session.FilePath);
+            Assert.False(session.IsDirty);
+            Assert.Equal(0, recovery.DeleteCount);
+        }
+
+        [Fact]
+        public async Task SuccessfulDocumentSwitch_UpdatesRecoveryAfterCommit()
+        {
+            string targetPath = Path.Combine(testDirectory, "target.txt");
+            await File.WriteAllTextAsync(targetPath, "target");
+            var session = new DocumentSessionStub();
+            var recovery = new RecoveryServiceStub();
+            var internalOpener = new InternalFileOpenServiceStub
+            {
+                OnOpen = (path, template) => session.Open(path, template)
+            };
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                new KeyRequestStub(),
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                session,
+                recovery);
+
+            WorkspaceFileOpenResult result = await service.SwitchAsync(targetPath);
+
+            Assert.True(result.Success);
+            Assert.Equal(Path.GetFullPath(targetPath), session.FilePath);
+            Assert.Equal(1, recovery.DeleteCount);
+        }
+
+        [Fact]
+        public async Task ConcurrentSwitches_AreSerialized()
+        {
+            string firstPath = Path.Combine(testDirectory, "first.txt");
+            string secondPath = Path.Combine(testDirectory, "second.txt");
+            await File.WriteAllTextAsync(firstPath, "first");
+            await File.WriteAllTextAsync(secondPath, "second");
+            var started = new TaskCompletionSource(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+            var release = new TaskCompletionSource(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+            var session = new DocumentSessionStub();
+            var guard = new UnsavedChangesGuardStub();
+            var internalOpener = new InternalFileOpenServiceStub
+            {
+                Started = started,
+                WaitFor = release.Task,
+                OnOpen = (path, template) => session.Open(path, template)
+            };
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                new KeyRequestStub(),
+                internalOpener,
+                guard,
+                session,
+                new RecoveryServiceStub());
+
+            Task<WorkspaceFileOpenResult> first = service.SwitchAsync(firstPath);
+            await started.Task;
+            Task<WorkspaceFileOpenResult> second = service.SwitchAsync(secondPath);
+            await Task.Delay(50);
+
+            Assert.Equal(1, guard.CallCount);
+            Assert.Equal(1, internalOpener.OpenCount);
+
+            release.SetResult();
+            await Task.WhenAll(first, second);
+
+            Assert.Equal(2, guard.CallCount);
+            Assert.Equal(2, internalOpener.OpenCount);
+            Assert.Equal(Path.GetFullPath(secondPath), session.FilePath);
+        }
+
+        private static WorkspaceFileOpenService CreateService(
+            SecureFileValidatorStub validator,
+            KeyRequestStub keyRequest,
+            InternalFileOpenServiceStub internalOpener,
+            IUnsavedChangesGuard guard,
+            DocumentSessionStub session,
+            RecoveryServiceStub recovery,
+            SecureFileProcessorStub? secureFileProcessor = null) =>
+            new(
+                validator,
+                secureFileProcessor ?? new SecureFileProcessorStub(".txt"),
+                keyRequest,
+                new WindowManagerStub(),
+                new ProgressDialogServiceStub(),
+                new FileLauncherStub(),
+                CreateTemplateRegistry(),
+                internalOpener,
+                guard,
+                session,
+                recovery,
+                new DocumentDialogServiceStub());
 
         private static IFileTemplateRegistry CreateTemplateRegistry() =>
             new FileTemplateRegistry(
@@ -173,13 +513,20 @@ namespace CryptoBook.Tests
         private sealed class SecureFileValidatorStub(bool encrypted = true):
             ISecureFileValidator
         {
+            public int CallCount { get; private set; }
+
             public Task<bool> HasCryptoBookHeaderAsync(
                 string filePath,
-                CancellationToken cancellationToken = default) =>
-                Task.FromResult(encrypted);
+                CancellationToken cancellationToken = default)
+            {
+                CallCount++;
+                return Task.FromResult(encrypted);
+            }
         }
 
-        private sealed class SecureFileProcessorStub(string extension):
+        private sealed class SecureFileProcessorStub(
+            string extension,
+            Exception? exception = null):
             ISecureFileProcessor
         {
             public Task EncryptFileAsync(
@@ -201,11 +548,15 @@ namespace CryptoBook.Tests
                 string inputFile,
                 string outputFile,
                 IProgressReporter? progress = null,
-                CancellationToken cancellationToken = default) =>
-                File.WriteAllBytesAsync(
-                    outputFile + extension,
-                    [4, 5, 6],
-                    cancellationToken);
+                CancellationToken cancellationToken = default)
+            {
+                return exception is null
+                    ? File.WriteAllBytesAsync(
+                        outputFile + extension,
+                        [4, 5, 6],
+                        cancellationToken)
+                    : Task.FromException(exception);
+            }
 
             public Task<Stream> DecryptFileAsyncToStream(
                 string inputFile,
@@ -225,6 +576,11 @@ namespace CryptoBook.Tests
         private sealed class InternalFileOpenServiceStub:
             IWorkspaceInternalFileOpenService
         {
+            public Exception? Exception { get; init; }
+            public Action<string, IFileTemplate>? OnOpen { get; init; }
+            public TaskCompletionSource? Started { get; init; }
+            public Task? WaitFor { get; init; }
+            public int OpenCount { get; private set; }
             public string? SourcePath { get; private set; }
             public string? ContentPath { get; private set; }
             public string? EncryptedPath => SourcePath;
@@ -232,24 +588,39 @@ namespace CryptoBook.Tests
             public IFileTemplate? ContentTemplate { get; private set; }
             public bool SourceIsEncrypted { get; private set; }
 
-            public Task OpenDocumentAsync(
+            public async Task OpenDocumentAsync(
                 string sourcePath,
                 string contentPath,
                 IFileTemplate contentTemplate,
                 bool sourceIsEncrypted,
                 CancellationToken cancellationToken = default)
             {
+                OpenCount++;
+                if(Exception is not null)
+                    throw Exception;
+                Started?.TrySetResult();
+                if(WaitFor is not null)
+                    await WaitFor.WaitAsync(cancellationToken);
                 SourcePath = sourcePath;
                 ContentPath = contentPath;
                 ContentTemplate = contentTemplate;
                 SourceIsEncrypted = sourceIsEncrypted;
-                return Task.CompletedTask;
+                OnOpen?.Invoke(sourcePath, contentTemplate);
             }
         }
 
         private sealed class KeyRequestStub: IEncryptionKeyRequestService
         {
-            public bool EnsureKeyAvailable() => true;
+            public Action? OnCall { get; init; }
+            public bool Available { get; init; } = true;
+            public int CallCount { get; private set; }
+
+            public bool EnsureKeyAvailable()
+            {
+                CallCount++;
+                OnCall?.Invoke();
+                return Available;
+            }
         }
 
         private sealed class ProgressDialogServiceStub: IProgressDialogService
@@ -264,6 +635,116 @@ namespace CryptoBook.Tests
         {
             public void Report(double? value, string? currentInfo = null)
             {
+            }
+        }
+
+        private sealed class UnsavedChangesGuardStub: IUnsavedChangesGuard
+        {
+            public bool CanProceed { get; init; } = true;
+            public Action? OnCall { get; init; }
+            public int CallCount { get; private set; }
+
+            public Task<bool> CanProceedAsync(
+                CancellationToken cancellationToken = default)
+            {
+                CallCount++;
+                OnCall?.Invoke();
+                return Task.FromResult(CanProceed);
+            }
+        }
+
+        private sealed class DocumentSessionStub: IDocumentSession
+        {
+            public event System.ComponentModel.PropertyChangedEventHandler?
+                PropertyChanged
+            {
+                add { }
+                remove { }
+            }
+
+            public string? FilePath { get; private set; }
+            public string DisplayName { get; private set; } = string.Empty;
+            public IFileTemplate? Template { get; private set; }
+            public bool IsDirty { get; set; }
+            public long Revision { get; private set; }
+            public long SavedRevision { get; private set; }
+            public bool HasDocument => FilePath is not null;
+
+            public void Open(string filePath, IFileTemplate template)
+            {
+                FilePath = filePath;
+                Template = template;
+            }
+
+            public void Open(
+                string filePath,
+                IFileTemplate template,
+                System.Windows.Documents.FlowDocument document) =>
+                Open(filePath, template);
+
+            public void Close() => FilePath = null;
+            public void MarkDirty() => IsDirty = true;
+            public void MarkSaved(string filePath, IFileTemplate template) =>
+                Open(filePath, template);
+            public void MarkSaved(
+                string filePath,
+                IFileTemplate template,
+                long savedRevision) => Open(filePath, template);
+            public void Rename(string filePath) => FilePath = filePath;
+            public void SetDisplayName(string displayName) =>
+                DisplayName = displayName;
+        }
+
+        private sealed class RecoveryServiceStub: IDocumentRecoveryService
+        {
+            public bool HasSnapshot => false;
+            public int DeleteCount { get; private set; }
+            public void Start()
+            {
+            }
+            public Task StopAsync() => Task.CompletedTask;
+            public Task<bool> RestoreSnapshotAsync(
+                CancellationToken cancellationToken = default) =>
+                Task.FromResult(false);
+            public Task DeleteSnapshotAsync()
+            {
+                DeleteCount++;
+                return Task.CompletedTask;
+            }
+            public void Dispose()
+            {
+            }
+        }
+
+        private sealed class DocumentDialogServiceStub: IDocumentDialogService
+        {
+            public UnsavedChangesChoice SwitchChoice { get; init; } =
+                UnsavedChangesChoice.Cancel;
+
+            public bool ConfirmRecovery() => false;
+            public UnsavedChangesChoice ConfirmCloseWithUnsavedChanges() =>
+                UnsavedChangesChoice.Cancel;
+            public UnsavedChangesChoice ConfirmSwitchWithUnsavedChanges() =>
+                SwitchChoice;
+            public void ShowRecoveryError(Exception exception)
+            {
+            }
+            public void ShowRecoveryCleanupError(Exception exception)
+            {
+            }
+        }
+
+        private sealed class CurrentDocumentSaverStub: ICurrentDocumentSaver
+        {
+            public Func<bool> Save { get; init; } = () => true;
+            public int SaveCount { get; private set; }
+
+            public Task<bool> TrySaveCurrentAsync(
+                CancellationToken cancellationToken = default)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                SaveCount++;
+                return Task.FromResult(Save());
             }
         }
 

@@ -53,6 +53,7 @@ namespace CryptoBook.Interfaces
         void SetTypingProperty(DependencyProperty property, object? value);
         void InsertTextAtCaret(string text);
         void ClearDocument();
+        void ReplaceDocument(FlowDocument document);
         bool HasEmptyParagraphs();
         int RemoveEmptyParagraphs();
 

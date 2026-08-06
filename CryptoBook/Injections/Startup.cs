@@ -79,6 +79,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<FavoriteDirectoriesViewModel>().As<IFavoriteDirectoriesViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<PinnedDocumentsViewModel>()
+                .As<IPinnedDocumentsViewModel>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<FilePreviewViewModel>().As<IFilePreviewViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<TextInputDialogViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
@@ -207,6 +210,7 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<WorkspaceFileOpenService>()
                 .As<IWorkspaceFileOpenService>()
+                .As<IDocumentSwitchCoordinator>()
                 .SingleInstance();
             builder.RegisterType<WorkspaceInternalFileOpenService>()
                 .As<IWorkspaceInternalFileOpenService>()
@@ -226,6 +230,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<JsonFavoriteDirectoryStore>().As<IFavoriteDirectoryStore>().SingleInstance();
             builder.RegisterType<FavoriteDirectoryPathPolicy>().As<IFavoriteDirectoryPathPolicy>().SingleInstance();
             builder.RegisterType<FavoriteDirectoryService>().As<IFavoriteDirectoryService>().SingleInstance();
+            builder.RegisterType<JsonPinnedDocumentStore>()
+                .As<IPinnedDocumentStore>()
+                .SingleInstance();
+            builder.RegisterType<PinnedDocumentService>()
+                .As<IPinnedDocumentService>()
+                .SingleInstance();
             builder.RegisterType<TextInputService>().As<ITextInputService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();
             builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
@@ -265,6 +275,9 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<WpfDocumentDialogService>()
                 .As<IDocumentDialogService>()
+                .SingleInstance();
+            builder.RegisterType<UnsavedChangesGuard>()
+                .As<IUnsavedChangesGuard>()
                 .SingleInstance();
             builder.RegisterType<DocumentCloseCoordinator>()
                 .InstancePerLifetimeScope();

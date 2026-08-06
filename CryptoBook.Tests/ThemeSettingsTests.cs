@@ -203,6 +203,60 @@ public sealed class ThemeSettingsTests
             (string?)window.Attribute("Foreground"));
     }
 
+    [Fact]
+    public void SideMenu_PinnedStatesUseSemanticThemeResourcesAndCommands()
+    {
+        string xamlPath = FindRepositoryFile(
+            "CryptoBook",
+            "MyControls",
+            "SideMenu.xaml");
+        string xaml = File.ReadAllText(xamlPath);
+        XDocument document = XDocument.Load(xamlPath);
+        XNamespace presentation =
+            "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+        XElement missingTrigger = Assert.Single(
+            document.Descendants(presentation + "DataTrigger"),
+            trigger => string.Equals(
+                (string?)trigger.Attribute("Binding"),
+                "{Binding IsAvailable}",
+                StringComparison.Ordinal) &&
+                string.Equals(
+                    (string?)trigger.Attribute("Value"),
+                    "False",
+                    StringComparison.Ordinal));
+        string missingTriggerXaml = missingTrigger.ToString(
+            SaveOptions.DisableFormatting);
+
+        Assert.Contains("CurrentControlHoverBackground", missingTriggerXaml);
+        Assert.Contains("CurrentDisabledForeground", missingTriggerXaml);
+        Assert.Contains("PinnedDocuments.MissingState", missingTriggerXaml);
+        Assert.Contains("CurrentSelectionBackground", xaml);
+        Assert.Contains("CurrentSelectionForeground", xaml);
+        Assert.Contains("CurrentControlBackground", xaml);
+        Assert.Contains("TextTrimming=\"CharacterEllipsis\"", xaml);
+        Assert.Contains("ToolTip=\"{Binding FileName}\"", xaml);
+        Assert.Contains("ToolTip=\"{Binding ParentDirectory}\"", xaml);
+        foreach(string command in new[]
+        {
+            "OpenCommand",
+            "RevealCommand",
+            "RelocateCommand",
+            "MoveUpCommand",
+            "MoveDownCommand",
+            "UnpinCommand"
+        })
+        {
+            Assert.Contains(command, xaml);
+        }
+
+        Assert.Equal(
+            6,
+            document.Descendants(presentation + "ContextMenu")
+                .Single()
+                .Elements(presentation + "MenuItem")
+                .Count());
+    }
+
     [WpfTheory]
     [InlineData("LightTheme")]
     [InlineData("DarkTheme")]

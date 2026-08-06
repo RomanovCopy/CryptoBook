@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,15 +31,12 @@ namespace CryptoBook.Models
         private readonly IFolderPickerService _folderPickerService;
         private readonly IMessageService _messageService;
         private readonly IKeyProvider _keyProvider;
-        private readonly IFileTemplateRegistry _fileTemplateRegistry;
-        private readonly IFlowDocumentLoadService _flowDocumentLoadService;
-        private readonly IRichTextBoxService _richTextBoxService;
         private readonly IFileSecurityService _fileSecurityService;
-        private readonly ISecureFileValidator _secureFileValidator;
         private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly IProgressDialogService _progressDialogService;
-        private readonly IFileLauncherService _fileLauncherService;
+        private readonly IWorkspaceFileOpenService _fileOpenService;
         private readonly IDocumentSession _documentSession;
+        private readonly IPinnedDocumentService _pinnedDocumentService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -69,7 +67,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileTemplateRegistry fileTemplateRegistry, IFlowDocumentLoadService flowDocumentLoadService, IRichTextBoxService richTextBoxService, IFileSecurityService fileSecurityService, ISecureFileValidator secureFileValidator, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IFileLauncherService fileLauncherService, IDocumentSession documentSession)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileSecurityService fileSecurityService, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IWorkspaceFileOpenService fileOpenService, IDocumentSession documentSession, IPinnedDocumentService pinnedDocumentService)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -79,15 +77,12 @@ namespace CryptoBook.Models
             _fileClipboardService = fileClipboardService ?? throw new ArgumentNullException(nameof(fileClipboardService));
             _folderPickerService = folderPickerService ?? throw new ArgumentNullException(nameof(folderPickerService));
             _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
-            _fileTemplateRegistry = fileTemplateRegistry ?? throw new ArgumentNullException(nameof(fileTemplateRegistry));
-            _flowDocumentLoadService = flowDocumentLoadService ?? throw new ArgumentNullException(nameof(flowDocumentLoadService));
-            _richTextBoxService = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
             _fileSecurityService = fileSecurityService ?? throw new ArgumentNullException(nameof(fileSecurityService));
-            _secureFileValidator = secureFileValidator ?? throw new ArgumentNullException(nameof(secureFileValidator));
             _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
             _progressDialogService = progressDialogService ?? throw new ArgumentNullException(nameof(progressDialogService));
-            _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(fileLauncherService));
+            _fileOpenService = fileOpenService ?? throw new ArgumentNullException(nameof(fileOpenService));
             _documentSession = documentSession ?? throw new ArgumentNullException(nameof(documentSession));
+            _pinnedDocumentService = pinnedDocumentService ?? throw new ArgumentNullException(nameof(pinnedDocumentService));
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -388,7 +383,12 @@ namespace CryptoBook.Models
                     return;
                 }
                 //выполняем переименование
-                var res = await _fileManagerService.RenameAsync(systemItem.FullPath, systemItem.Name, CancellationToken.None);
+                string oldPath = systemItem.FullPath;
+                string? directory = Path.GetDirectoryName(oldPath);
+                string? newPath = string.IsNullOrWhiteSpace(directory)
+                    ? null
+                    : Path.Combine(directory, systemItem.Name);
+                var res = await _fileManagerService.RenameAsync(oldPath, systemItem.Name, CancellationToken.None);
                 if(res.Success)
                 {
                     systemItem.Parent = SelectedItem;
@@ -404,11 +404,57 @@ namespace CryptoBook.Models
                             res.ErrorMessage);
                         systemItem.Name = _lastItemName;
                     }
+
+                    if(res.Success && !string.IsNullOrWhiteSpace(newPath))
+                        await SynchronizeRenamedDocumentAsync(oldPath, newPath);
                 }
                 systemItem.IsEditing = false;
             } else
             {
                 throw new ArgumentException("Invalid argument for RenameCommand", nameof(obj));
+            }
+        }
+
+        private async Task SynchronizeRenamedDocumentAsync(
+            string oldPath,
+            string newPath)
+        {
+            if(PathsEqual(_documentSession.FilePath, oldPath))
+                _documentSession.Rename(newPath);
+
+            try
+            {
+                await _pinnedDocumentService.UpdatePathAsync(
+                    oldPath,
+                    newPath,
+                    CancellationToken.None);
+            }
+            catch(Exception exception)
+            {
+                Debug.WriteLine(exception);
+                _ = await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.RenameError"),
+                    LocalizationManager.GetString(
+                        "PinnedDocuments.RenameSyncFailed"));
+            }
+        }
+
+        private static bool PathsEqual(string? left, string right)
+        {
+            if(string.IsNullOrWhiteSpace(left))
+                return false;
+
+            try
+            {
+                return string.Equals(
+                    Path.GetFullPath(left),
+                    Path.GetFullPath(right),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            catch(Exception exception) when(
+                exception is ArgumentException or NotSupportedException)
+            {
+                return false;
             }
         }
         public async void Execute_MoveCommand(object? obj)
@@ -685,106 +731,21 @@ namespace CryptoBook.Models
 
         private async Task OpenFileAsync(IFileItem file, CancellationToken cancellationToken)
         {
-            var isEncrypted = await _secureFileValidator.HasCryptoBookHeaderAsync(
+            WorkspaceFileOpenResult result = await _fileOpenService.OpenAsync(
                 file.FullPath,
                 cancellationToken);
-
-            if(isEncrypted && !EnsureEncryptionKey())
+            if(result.Cancelled)
                 return;
-
-            var template = FindTemplate(file.Extension);
-            if(template is null)
+            if(!result.Success)
             {
                 _ = await _messageService.ShowMessage(
-                    "File open error",
-                    $"No template found for file {file.Name}");
+                    LocalizationManager.GetString("Explorer.FileOpenError"),
+                    result.Error ?? LocalizationManager.Format(
+                        "Explorer.OpenFileDefaultFailed",
+                        file.Name));
                 return;
             }
 
-            if(!isEncrypted)
-            {
-                switch(template.OpenMode)
-                {
-                    case FileOpenMode.Media:
-                        OpenMediaPlayer(file.FullPath);
-                        return;
-                    case FileOpenMode.External:
-                        await OpenExternalFileAsync(file.FullPath);
-                        return;
-                }
-            }
-
-            await OpenDocumentAsync(file.FullPath, template);
-        }
-
-        private bool EnsureEncryptionKey()
-        {
-            if(_keyProvider.HasKey)
-                return true;
-
-            // Для защищённого файла запрашиваем ключ до открытия потока.
-            var keyWindowId = _windowManager.CreateWindow<KeyInputWindow>();
-            _windowManager.ShowWindowDialog(keyWindowId);
-            return _keyProvider.HasKey;
-        }
-
-        private IFileTemplate? FindTemplate(string extension)
-        {
-            return _fileTemplateRegistry.GetAll().FirstOrDefault(
-                template => template.CanHandleExtension(extension));
-        }
-
-        private void OpenMediaPlayer(string filePath)
-        {
-            // Медиафайл получает путь через собственный оконный scope.
-            var context = new Dictionary<string, object?>
-            {
-                ["path"] = filePath
-            };
-            var mediaPlayerId = _windowManager.CreateWindow<MediaPlayer>(context);
-            _windowManager.ShowWindow(mediaPlayerId);
-        }
-
-        private async Task OpenExternalFileAsync(string filePath)
-        {
-            var result = _fileLauncherService.Open(filePath);
-            if(result.Success)
-            {
-                _windowManager.CloseWindow(WindowId);
-                return;
-            }
-
-            _ = await _messageService.ShowMessage(
-                LocalizationManager.GetString("Explorer.FileOpenError"),
-                result.Error ??
-                LocalizationManager.Format(
-                    "Explorer.OpenFileDefaultFailed",
-                    Path.GetFileName(filePath)));
-        }
-
-        private async Task OpenDocumentAsync(
-            string filePath,
-            IFileTemplate template)
-        {
-            await _progressDialogService.RunAsync(
-                LocalizationManager.GetString("Explorer.OpenFileTitle"),
-                async (progress, token) =>
-                {
-                    await using var stream = await _fileManagerService.OpenReadAsync(
-                        filePath,
-                        progress,
-                        token);
-
-                    await _flowDocumentLoadService.LoadAsync(
-                        _richTextBoxService,
-                        stream,
-                        template,
-                        token,
-                        progress);
-                    return true;
-                });
-
-            _documentSession.Open(filePath, template);
             _windowManager.CloseWindow(WindowId);
         }
         public void Execute_ListViewSelectionChangedCommand(object? obj)

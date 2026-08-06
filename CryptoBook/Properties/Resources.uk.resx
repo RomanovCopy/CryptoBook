@@ -180,6 +180,9 @@
   <data name="Settings.About.Feature.Files" xml:space="preserve">
     <value>Керування, пошук і попередній перегляд локальних файлів.</value>
   </data>
+  <data name="Settings.About.Feature.QuickAccess" xml:space="preserve">
+    <value>Закріплення часто використовуваних документів, безпечне перемикання, зміна порядку посилань і відновлення шляху до недоступних файлів.</value>
+  </data>
   <data name="Settings.About.Feature.Search" xml:space="preserve">
     <value>Пошук тексту в документах робочого простору, зокрема в зашифрованих файлах, із поверненням до результатів через навігацію в рядку заголовка.</value>
   </data>
@@ -1092,6 +1095,9 @@
   <data name="Document.UnsavedPrompt" xml:space="preserve">
     <value>У документі є незбережені зміни. Зберегти їх перед закриттям?</value>
   </data>
+  <data name="Document.UnsavedSwitchPrompt" xml:space="preserve">
+    <value>Документ містить незбережені зміни. Зберегти їх перед відкриттям іншого файлу?</value>
+  </data>
   <data name="Document.RecoveryFailed" xml:space="preserve">
     <value>Не вдалося відновити документ:{0}{1}</value>
   </data>
@@ -1293,4 +1299,25 @@
   <data name="Image.FileNotFound" xml:space="preserve">
     <value>Файл зображення не знайдено.</value>
   </data>
+  <data name="PinnedDocuments.Title" xml:space="preserve"><value>Закріплені</value></data>
+  <data name="PinnedDocuments.Empty" xml:space="preserve"><value>Закріпіть поточний документ для швидкого доступу. Новий документ спочатку буде збережено.</value></data>
+  <data name="PinnedDocuments.PinCurrent" xml:space="preserve"><value>Закріпити поточний документ</value></data>
+  <data name="PinnedDocuments.SaveAndPinCurrent" xml:space="preserve"><value>Зберегти й закріпити поточний документ</value></data>
+  <data name="PinnedDocuments.UnpinCurrent" xml:space="preserve"><value>Відкріпити поточний документ</value></data>
+  <data name="PinnedDocuments.Unpin" xml:space="preserve"><value>Відкріпити</value></data>
+  <data name="PinnedDocuments.UnsavedChanges" xml:space="preserve"><value>Є незбережені зміни</value></data>
+  <data name="PinnedDocuments.ErrorTitle" xml:space="preserve"><value>Закріплені документи</value></data>
+  <data name="PinnedDocuments.LoadFailed" xml:space="preserve"><value>Не вдалося завантажити закріплені документи.</value></data>
+  <data name="PinnedDocuments.SaveFailed" xml:space="preserve"><value>Не вдалося оновити закріплені документи.</value></data>
+  <data name="PinnedDocuments.OpenFailed" xml:space="preserve"><value>Не вдалося відкрити закріплений документ «{0}».</value></data>
+  <data name="PinnedDocuments.MissingState" xml:space="preserve"><value>Файл недоступний</value></data>
+  <data name="PinnedDocuments.MissingFile" xml:space="preserve"><value>Файл «{0}» недоступний. Укажіть нове розташування або відкріпіть його.</value></data>
+  <data name="PinnedDocuments.RevealInExplorer" xml:space="preserve"><value>Показати у Провіднику</value></data>
+  <data name="PinnedDocuments.RevealFailed" xml:space="preserve"><value>Не вдалося показати «{0}» у Провіднику.</value></data>
+  <data name="PinnedDocuments.Relocate" xml:space="preserve"><value>Указати нове розташування…</value></data>
+  <data name="PinnedDocuments.RelocateInvalid" xml:space="preserve"><value>Нове розташування файла «{0}» недоступне.</value></data>
+  <data name="PinnedDocuments.RelocateFailed" xml:space="preserve"><value>Не вдалося оновити розташування закріпленого документа.</value></data>
+  <data name="PinnedDocuments.MoveUp" xml:space="preserve"><value>Перемістити вище</value></data>
+  <data name="PinnedDocuments.MoveDown" xml:space="preserve"><value>Перемістити нижче</value></data>
+  <data name="PinnedDocuments.RenameSyncFailed" xml:space="preserve"><value>Файл перейменовано, але закріплене посилання оновити не вдалося.</value></data>
 </root>

@@ -7,6 +7,7 @@ using CryptoBook.ViewModels;
 using DTO=CryptoBook.DTO;
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using CryptoBook.DTO;
 
@@ -49,6 +50,7 @@ namespace CryptoBook.Models
         private readonly ITextInputService textInputService;
         private readonly IMessageService messageService;
         private readonly IPageNavigationService pageNavigationService;
+        private readonly IPinnedDocumentService pinnedDocumentService;
         private readonly AsyncRelayCommand renameBookCommand;
 
         public SideMenuModel(ILifetimeScope _scope)
@@ -64,6 +66,7 @@ namespace CryptoBook.Models
             textInputService = _scope.Resolve<ITextInputService>();
             messageService = _scope.Resolve<IMessageService>();
             pageNavigationService = _scope.Resolve<IPageNavigationService>();
+            pinnedDocumentService = _scope.Resolve<IPinnedDocumentService>();
             renameBookCommand = new AsyncRelayCommand(RenameBookAsync);
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
@@ -280,7 +283,28 @@ namespace CryptoBook.Models
             if(string.IsNullOrWhiteSpace(directory))
                 return;
 
-            documentSession.Rename(Path.Combine(directory, newFileName));
+            string newPath = Path.Combine(directory, newFileName);
+            documentSession.Rename(newPath);
+            try
+            {
+                await pinnedDocumentService.UpdatePathAsync(
+                    oldPath,
+                    newPath,
+                    cancellationToken);
+            }
+            catch(OperationCanceledException)
+            {
+                throw;
+            }
+            catch(Exception exception)
+            {
+                Debug.WriteLine(exception);
+                await messageService.ShowMessage(
+                    LocalizationManager.GetString(
+                        "SideMenu.RenameBook.ErrorTitle"),
+                    LocalizationManager.GetString(
+                        "PinnedDocuments.RenameSyncFailed"));
+            }
         }
 
         private static MenuItem CreateItem(

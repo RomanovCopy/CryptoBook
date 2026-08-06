@@ -11,6 +11,8 @@ namespace CryptoBook.Interfaces
     {
         bool ConfirmRecovery();
         UnsavedChangesChoice ConfirmCloseWithUnsavedChanges();
+        UnsavedChangesChoice ConfirmSwitchWithUnsavedChanges() =>
+            ConfirmCloseWithUnsavedChanges();
         void ShowRecoveryError(Exception exception);
         void ShowRecoveryCleanupError(Exception exception);
     }
