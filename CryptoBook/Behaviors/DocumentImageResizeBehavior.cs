@@ -445,17 +445,19 @@ namespace CryptoBook.Behaviors
 
             private void EndImageDragVisuals()
             {
+                bool wasDragging = isDraggingImage;
                 WpfImage? image = dragImage;
                 isDraggingImage = false;
                 dragImage = null;
                 dropPosition = null;
 
-                if(image is not null)
+                if(wasDragging && image is not null)
                     image.Opacity = originalImageOpacity;
-                richTextBox.Cursor = originalCursor;
+                if(wasDragging)
+                    richTextBox.Cursor = originalCursor;
                 originalCursor = null;
 
-                if(richTextBox.IsMouseCaptured)
+                if(wasDragging && richTextBox.IsMouseCaptured)
                     richTextBox.ReleaseMouseCapture();
             }
 
