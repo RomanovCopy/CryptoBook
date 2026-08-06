@@ -223,7 +223,7 @@
   <data name="Settings.About.ProductDescription" xml:space="preserve"><value>Настольное приложение для локальных документов, файлов и защищённого паролем хранилища.</value></data>
   <data name="Settings.About.Version" xml:space="preserve"><value>Версия</value></data>
   <data name="Settings.About.Highlights" xml:space="preserve"><value>Основные возможности</value></data>
-  <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Создание и форматирование документов, ссылок и изображений.</value></data>
+  <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Создание и форматирование документов, ссылок и изображений, печать текущего документа.</value></data>
   <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Управление, поиск и предпросмотр локальных файлов.</value></data>
   <data name="Settings.About.Feature.QuickAccess" xml:space="preserve"><value>Закрепление часто используемых документов, безопасное переключение, изменение порядка ссылок и восстановление пути к недоступным файлам.</value></data>
   <data name="Settings.About.Feature.Search" xml:space="preserve"><value>Поиск текста в документах рабочего пространства, включая зашифрованные файлы, с возвратом к результатам через навигацию в строке заголовка.</value></data>

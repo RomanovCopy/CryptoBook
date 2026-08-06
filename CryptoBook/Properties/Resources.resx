@@ -223,7 +223,7 @@
   <data name="Settings.About.ProductDescription" xml:space="preserve"><value>A desktop application for local documents, files, and password-protected storage.</value></data>
   <data name="Settings.About.Version" xml:space="preserve"><value>Version</value></data>
   <data name="Settings.About.Highlights" xml:space="preserve"><value>Key features</value></data>
-  <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Create and format documents with links and images.</value></data>
+  <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Create and format documents with links and images, and print the current document.</value></data>
   <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Manage, search, and preview local files.</value></data>
   <data name="Settings.About.Feature.QuickAccess" xml:space="preserve"><value>Pin frequently used documents, switch safely, reorder links, and reconnect unavailable files.</value></data>
   <data name="Settings.About.Feature.Search" xml:space="preserve"><value>Search text across workspace documents, including encrypted files, and return to the results with title-bar navigation.</value></data>

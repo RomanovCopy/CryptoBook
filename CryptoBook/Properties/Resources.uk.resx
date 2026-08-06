@@ -175,7 +175,7 @@
     <value>Основні можливості</value>
   </data>
   <data name="Settings.About.Feature.Documents" xml:space="preserve">
-    <value>Створення та форматування документів, посилань і зображень.</value>
+    <value>Створення та форматування документів, посилань і зображень, друк поточного документа.</value>
   </data>
   <data name="Settings.About.Feature.Files" xml:space="preserve">
     <value>Керування, пошук і попередній перегляд локальних файлів.</value>
