@@ -600,6 +600,19 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE840;"
+                                       Foreground="{DynamicResource CurrentAccent}"
+                                       FontSize="15"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding [Settings.About.Feature.QuickAccess], Source={StaticResource Res}}"
+                                       TextWrapping="Wrap"/>
+                        </Grid>
+                        <Grid Margin="0,2,0,9">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE721;"
                                        Foreground="{DynamicResource CurrentAccent}"
                                        FontSize="15"/>

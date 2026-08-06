@@ -1,7 +1,9 @@
 using CryptoBook.FileTemplates;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
 using System.IO;
+using System.Windows.Documents;
 
 namespace CryptoBook.Services
 {
@@ -13,13 +15,15 @@ namespace CryptoBook.Services
         private readonly IRichTextBoxService richTextBoxService;
         private readonly IDocumentSession documentSession;
         private readonly IFileTemplateRegistry fileTemplateRegistry;
+        private readonly IBookmarkService bookmarkService;
 
         public WorkspaceInternalFileOpenService(
             IProgressDialogService progressDialogService,
             IFlowDocumentLoadService flowDocumentLoadService,
             IRichTextBoxService richTextBoxService,
             IDocumentSession documentSession,
-            IFileTemplateRegistry fileTemplateRegistry)
+            IFileTemplateRegistry fileTemplateRegistry,
+            IBookmarkService bookmarkService)
         {
             this.progressDialogService = progressDialogService ??
                 throw new ArgumentNullException(nameof(progressDialogService));
@@ -31,6 +35,8 @@ namespace CryptoBook.Services
                 throw new ArgumentNullException(nameof(documentSession));
             this.fileTemplateRegistry = fileTemplateRegistry ??
                 throw new ArgumentNullException(nameof(fileTemplateRegistry));
+            this.bookmarkService = bookmarkService ??
+                throw new ArgumentNullException(nameof(bookmarkService));
         }
 
         public async Task OpenDocumentAsync(
@@ -40,8 +46,8 @@ namespace CryptoBook.Services
             bool sourceIsEncrypted,
             CancellationToken cancellationToken = default)
         {
-            await progressDialogService.RunAsync(
-                "Открытие файла",
+            FlowDocument preparedDocument = await progressDialogService.RunAsync(
+                LocalizationManager.GetString("Explorer.OpenFileTitle"),
                 async (progress, dialogToken) =>
                 {
                     using var linkedTokenSource =
@@ -55,20 +61,28 @@ namespace CryptoBook.Services
                         FileShare.Read,
                         81920,
                         useAsync: true);
-                    await flowDocumentLoadService.LoadAsync(
-                        richTextBoxService,
+                    return await flowDocumentLoadService.PrepareAsync(
                         stream,
                         contentTemplate,
                         linkedTokenSource.Token,
                         progress);
-                    return true;
                 });
 
             IFileTemplate sessionTemplate = sourceIsEncrypted
                 ? fileTemplateRegistry.GetAll()
                     .First(template => template is SecureFileTemplate)
                 : contentTemplate;
-            documentSession.Open(sourcePath, sessionTemplate);
+            // Только полностью подготовленный FlowDocument заменяет активный.
+            // Ошибка чтения или разбора выше оставляет редактор и сессию прежними.
+            documentSession.Open(
+                sourcePath,
+                sessionTemplate,
+                preparedDocument);
+            bookmarkService.RebuildIndexFromDocument(richTextBoxService);
+            // Восстановление метаданных старых закладок может изменить Tag
+            // элементов и породить TextChanged. Открытый файл всё равно
+            // соответствует содержимому на диске и должен остаться чистым.
+            documentSession.MarkSaved(sourcePath, sessionTemplate);
         }
     }
 }

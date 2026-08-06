@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace CryptoBook.Services
 {
@@ -126,6 +127,34 @@ namespace CryptoBook.Services
         public void Open(string filePath, IFileTemplate template)
         {
             MarkSaved(filePath, template);
+        }
+
+        public void Open(
+            string filePath,
+            IFileTemplate template,
+            FlowDocument document)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+            ArgumentNullException.ThrowIfNull(template);
+            ArgumentNullException.ThrowIfNull(document);
+
+            FlowDocument previousDocument = richTextBox.Document;
+            suppressDocumentChanges = true;
+            try
+            {
+                richTextBox.ReplaceDocument(document);
+                MarkSaved(filePath, template);
+            }
+            catch
+            {
+                if(!ReferenceEquals(richTextBox.Document, previousDocument))
+                    richTextBox.ReplaceDocument(previousDocument);
+                throw;
+            }
+            finally
+            {
+                suppressDocumentChanges = false;
+            }
         }
 
         public void Close()

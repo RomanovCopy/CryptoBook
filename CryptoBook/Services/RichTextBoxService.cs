@@ -213,6 +213,31 @@ namespace CryptoBook.Services
             }
         }
 
+        void IRichTextBoxService.ReplaceDocument(FlowDocument document)
+        {
+            ArgumentNullException.ThrowIfNull(document);
+
+            var paperBrush = CreateBrush(appearanceDefaults.PaperColor);
+            var textBrush = CreateBrush(appearanceDefaults.TextColor);
+            document.Background = paperBrush;
+            document.Foreground = textBrush;
+            document.LineStackingStrategy = LineStackingStrategy.MaxHeight;
+            document.LineHeight = double.NaN;
+            DocumentPageLayout.Apply(document);
+
+            Document = document;
+            Background = paperBrush;
+            Foreground = textBrush;
+            CaretBrush = textBrush;
+
+            var caret = document.ContentStart.GetInsertionPosition(
+                LogicalDirection.Forward);
+            CaretPosition = caret;
+            Selection.Select(caret, caret);
+            typingProperties.Clear();
+            RememberTypingAnchor();
+        }
+
         bool IRichTextBoxService.HasEmptyParagraphs() =>
             HasRemovableEmptyParagraphs(this.Document.Blocks);
 

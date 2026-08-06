@@ -11,13 +11,16 @@ using System.IO;
 namespace CryptoBook.Services
 {
     /// <summary>
-    /// Выбирает внутреннее или системное открытие файла. Защищённые файлы
-    /// расшифровываются только во временный каталог текущего процесса.
+    /// Координирует безопасное переключение документа и выбирает внутреннее
+    /// или системное открытие. Защищённые файлы расшифровываются только во
+    /// временный каталог текущего процесса.
     /// </summary>
     public sealed class WorkspaceFileOpenService:
         IWorkspaceFileOpenService,
+        IDocumentSwitchCoordinator,
         IDisposable
     {
+        private readonly SemaphoreSlim switchGate = new(1, 1);
         private readonly ISecureFileValidator secureFileValidator;
         private readonly ISecureFileProcessor secureFileProcessor;
         private readonly IEncryptionKeyRequestService keyRequestService;
@@ -26,6 +29,10 @@ namespace CryptoBook.Services
         private readonly IFileLauncherService fileLauncherService;
         private readonly IFileTemplateRegistry fileTemplateRegistry;
         private readonly IWorkspaceInternalFileOpenService internalFileOpenService;
+        private readonly IUnsavedChangesGuard unsavedChangesGuard;
+        private readonly IDocumentSession documentSession;
+        private readonly IDocumentRecoveryService recoveryService;
+        private readonly IDocumentDialogService dialogService;
         private readonly string temporaryRoot;
         private bool disposed;
 
@@ -37,7 +44,11 @@ namespace CryptoBook.Services
             IProgressDialogService progressDialogService,
             IFileLauncherService fileLauncherService,
             IFileTemplateRegistry fileTemplateRegistry,
-            IWorkspaceInternalFileOpenService internalFileOpenService)
+            IWorkspaceInternalFileOpenService internalFileOpenService,
+            IUnsavedChangesGuard unsavedChangesGuard,
+            IDocumentSession documentSession,
+            IDocumentRecoveryService recoveryService,
+            IDocumentDialogService dialogService)
         {
             this.secureFileValidator = secureFileValidator ??
                 throw new ArgumentNullException(nameof(secureFileValidator));
@@ -55,6 +66,14 @@ namespace CryptoBook.Services
                 throw new ArgumentNullException(nameof(fileTemplateRegistry));
             this.internalFileOpenService = internalFileOpenService ??
                 throw new ArgumentNullException(nameof(internalFileOpenService));
+            this.unsavedChangesGuard = unsavedChangesGuard ??
+                throw new ArgumentNullException(nameof(unsavedChangesGuard));
+            this.documentSession = documentSession ??
+                throw new ArgumentNullException(nameof(documentSession));
+            this.recoveryService = recoveryService ??
+                throw new ArgumentNullException(nameof(recoveryService));
+            this.dialogService = dialogService ??
+                throw new ArgumentNullException(nameof(dialogService));
 
             string externalRoot = Path.Combine(
                 Path.GetTempPath(),
@@ -66,13 +85,62 @@ namespace CryptoBook.Services
                 $"{Environment.ProcessId}-{Guid.NewGuid():N}");
         }
 
-        public async Task<WorkspaceFileOpenResult> OpenAsync(
+        public Task<WorkspaceFileOpenResult> OpenAsync(
             string filePath,
+            CancellationToken cancellationToken = default) =>
+            SwitchAsync(filePath, cancellationToken);
+
+        public async Task<WorkspaceFileOpenResult> SwitchAsync(
+            string targetPath,
             CancellationToken cancellationToken = default)
         {
-            if(string.IsNullOrWhiteSpace(filePath))
+            if(string.IsNullOrWhiteSpace(targetPath))
                 return WorkspaceFileOpenResult.Fail("File path is empty.");
 
+            string normalizedPath;
+            try
+            {
+                normalizedPath = Path.GetFullPath(targetPath);
+            }
+            catch(Exception exception) when(
+                exception is ArgumentException or NotSupportedException)
+            {
+                return WorkspaceFileOpenResult.Fail(exception.Message);
+            }
+
+            await switchGate.WaitAsync(cancellationToken);
+            try
+            {
+                if(IsCurrentDocument(normalizedPath))
+                    return WorkspaceFileOpenResult.InternalSuccess();
+
+                string? accessError = ValidateReadableFile(normalizedPath);
+                if(accessError is not null)
+                    return WorkspaceFileOpenResult.Fail(accessError);
+
+                if(!await unsavedChangesGuard.CanProceedAsync(
+                    cancellationToken))
+                {
+                    return WorkspaceFileOpenResult.Cancel();
+                }
+
+                WorkspaceFileOpenResult result = await OpenCoreAsync(
+                    normalizedPath,
+                    cancellationToken);
+                if(result.Success && IsCurrentDocument(normalizedPath))
+                    await TryDeletePreviousRecoverySnapshotAsync();
+                return result;
+            }
+            finally
+            {
+                switchGate.Release();
+            }
+        }
+
+        private async Task<WorkspaceFileOpenResult> OpenCoreAsync(
+            string filePath,
+            CancellationToken cancellationToken)
+        {
             bool isEncrypted = await secureFileValidator
                 .HasCryptoBookHeaderAsync(filePath, cancellationToken);
             if(!isEncrypted)
@@ -185,6 +253,44 @@ namespace CryptoBook.Services
 
             disposed = true;
             TryDeleteDirectory(temporaryRoot);
+            switchGate.Dispose();
+        }
+
+        private bool IsCurrentDocument(string path) =>
+            !string.IsNullOrWhiteSpace(documentSession.FilePath) &&
+            string.Equals(
+                Path.GetFullPath(documentSession.FilePath),
+                path,
+                StringComparison.OrdinalIgnoreCase);
+
+        private static string? ValidateReadableFile(string path)
+        {
+            try
+            {
+                using FileStream _ = new(
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read);
+                return null;
+            }
+            catch(Exception exception) when(
+                exception is IOException or UnauthorizedAccessException)
+            {
+                return exception.Message;
+            }
+        }
+
+        private async Task TryDeletePreviousRecoverySnapshotAsync()
+        {
+            try
+            {
+                await recoveryService.DeleteSnapshotAsync();
+            }
+            catch(Exception exception)
+            {
+                dialogService.ShowRecoveryCleanupError(exception);
+            }
         }
 
         private IFileTemplate? FindTemplate(string path) =>

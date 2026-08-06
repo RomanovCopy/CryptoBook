@@ -53,56 +53,70 @@ namespace CryptoBook.Services
             IProgressReporter? progress = null)
         {
             ArgumentNullException.ThrowIfNull(richTextBoxService);
+            FlowDocument document = await PrepareAsync(
+                source,
+                template,
+                cancellationToken,
+                progress);
+            await _dispatcherService.InvokeAsync(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                richTextBoxService.ReplaceDocument(document);
+                _bookmarkService.RebuildIndexFromDocument(
+                    richTextBoxService);
+            });
+            progress?.Report(
+                1.0,
+                LocalizationManager.GetString("File.Loaded"));
+        }
+
+        public async Task<FlowDocument> PrepareAsync(
+            Stream source,
+            IFileTemplate template,
+            CancellationToken cancellationToken = default,
+            IProgressReporter? progress = null)
+        {
             ArgumentNullException.ThrowIfNull(source);
             ArgumentNullException.ThrowIfNull(template);
 
-            byte[] buffer = await ReadAllBytesAsync(source, cancellationToken, progress).ConfigureAwait(false);
+            byte[] buffer = await ReadAllBytesAsync(
+                source,
+                cancellationToken,
+                progress).ConfigureAwait(false);
+            FlowDocument document = await _dispatcherService.InvokeAsync(
+                () => new FlowDocument());
 
             IDocumentFormatHandler? formatHandler =
                 _formatHandlers.Find(template);
             if(formatHandler is not null)
             {
                 await formatHandler.LoadAsync(
-                    richTextBoxService.Document,
+                    document,
                     buffer,
                     cancellationToken);
-                await _dispatcherService.InvokeAsync(() =>
-                    _bookmarkService.RebuildIndexFromDocument(
-                        richTextBoxService));
-                progress?.Report(
-                    1.0,
-                    LocalizationManager.GetString("File.Loaded"));
-                return;
+                return document;
             }
 
             await _dispatcherService.InvokeAsync(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
-                FlowDocument document = richTextBoxService.Document;
-
                 document.Blocks.Clear();
 
                 if(buffer.Length == 0)
                 {
                     document.Blocks.Add(new Paragraph());
-                    _bookmarkService.RebuildIndexFromDocument(richTextBoxService);
                     return;
                 }
 
                 if(template is ImageFileTemplate)
                 {
                     LoadImage(document, buffer);
-                    _bookmarkService.RebuildIndexFromDocument(richTextBoxService);
                     return;
                 }
 
                 LoadDocument(document, buffer, template);
-                _bookmarkService.RebuildIndexFromDocument(richTextBoxService);
             });
-            progress?.Report(
-                1.0,
-                LocalizationManager.GetString("File.Loaded"));
+            return document;
         }
 
         /// <summary>

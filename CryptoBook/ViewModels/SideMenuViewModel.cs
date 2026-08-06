@@ -18,6 +18,7 @@ namespace CryptoBook.ViewModels
         private readonly IDocumentTitleProvider documentTitleProvider;
 
         public string BookTitle => documentTitleProvider.Title;
+        public IPinnedDocumentsViewModel PinnedDocuments { get; }
         public ObservableCollection<MenuItemBase> MenuItems { get => sideMenuModel.MenuItems; }
         public ObservableCollection<DTO.MenuItem> QuickActions { get => sideMenuModel.QuickActions; }
         public double Width { get => sideMenuModel.Width; set => sideMenuModel.Width = value; }
@@ -29,6 +30,7 @@ namespace CryptoBook.ViewModels
         {
             sideMenuModel = new(scope);
             documentTitleProvider = scope.Resolve<IDocumentTitleProvider>();
+            PinnedDocuments = scope.Resolve<IPinnedDocumentsViewModel>();
             sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             documentTitleProvider.PropertyChanged += (_, args) =>
             {
@@ -38,8 +40,16 @@ namespace CryptoBook.ViewModels
         }
 
         public ICommand Loaded => loaded ??=
-            new RelayCommand(sideMenuModel.Execute_Loaded, sideMenuModel.CanExecute_Lifecycle);
-        RelayCommand loaded;
+            new AsyncRelayCommand(ExecuteLoadedAsync, sideMenuModel.CanExecute_Lifecycle);
+        AsyncRelayCommand loaded;
+
+        private async Task ExecuteLoadedAsync(
+            object? parameter,
+            CancellationToken cancellationToken)
+        {
+            sideMenuModel.Execute_Loaded(parameter);
+            await PinnedDocuments.InitializeAsync(cancellationToken);
+        }
 
         public ICommand Close => close ??=
             new RelayCommand(sideMenuModel.Execute_Close, sideMenuModel.CanExecute_Lifecycle);
@@ -50,7 +60,13 @@ namespace CryptoBook.ViewModels
         RelayCommand closing;
 
         public ICommand Closed => closed ??=
-            new RelayCommand(sideMenuModel.Execute_Closed, sideMenuModel.CanExecute_Lifecycle);
+            new RelayCommand(ExecuteClosed, sideMenuModel.CanExecute_Lifecycle);
         RelayCommand closed;
+
+        private void ExecuteClosed(object? parameter)
+        {
+            PinnedDocuments.Dispose();
+            sideMenuModel.Execute_Closed(parameter);
+        }
     }
 }

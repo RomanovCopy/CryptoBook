@@ -195,6 +195,7 @@ namespace CryptoBook.Models
         public void Clear()
         {
             SearchResults = Array.Empty<WorkspaceContentSearchResult>();
+            SearchQuery = string.Empty;
             SearchStatus = string.Empty;
             CurrentFile = string.Empty;
         }

@@ -18,8 +18,15 @@ namespace CryptoBook.Services
                 MessageBoxImage.Question) == MessageBoxResult.Yes;
 
         public UnsavedChangesChoice ConfirmCloseWithUnsavedChanges() =>
+            ConfirmUnsavedChanges("Document.UnsavedPrompt");
+
+        public UnsavedChangesChoice ConfirmSwitchWithUnsavedChanges() =>
+            ConfirmUnsavedChanges("Document.UnsavedSwitchPrompt");
+
+        private static UnsavedChangesChoice ConfirmUnsavedChanges(
+            string resourceKey) =>
             Show(
-                LocalizationManager.GetString("Document.UnsavedPrompt"),
+                LocalizationManager.GetString(resourceKey),
                 "CryptoBook",
                 MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Warning) switch
