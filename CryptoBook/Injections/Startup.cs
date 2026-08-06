@@ -259,6 +259,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
             builder.RegisterType<DocumentPreviewService>().As<IDocumentPreviewService>().InstancePerDependency();
+            builder.RegisterType<FlowDocumentContentInspector>()
+                .As<IDocumentContentInspector>()
+                .SingleInstance();
+            builder.RegisterType<WpfDocumentPrintService>()
+                .As<IDocumentPrintService>()
+                .SingleInstance();
             builder.RegisterType<UriNavigationService>().As<IUriNavigationService>().SingleInstance();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
             builder.RegisterType<FileDisplayNameService>()

@@ -269,6 +269,7 @@
   <data name="Common.Rename" xml:space="preserve"><value>Rename</value></data>
   <data name="Common.Save" xml:space="preserve"><value>Save</value></data>
   <data name="Common.SaveAs" xml:space="preserve"><value>Save as</value></data>
+  <data name="Common.Print" xml:space="preserve"><value>Print</value></data>
   <data name="Bookmarks.Title" xml:space="preserve"><value>Bookmarks</value></data>
   <data name="Media.Title" xml:space="preserve"><value>Photos and videos</value></data>
   <data name="SideMenu.Subtitle" xml:space="preserve"><value>Book and workspace</value></data>
@@ -279,6 +280,7 @@
   <data name="SideMenu.Save.Description" xml:space="preserve"><value>Save the current document</value></data>
   <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Save changes to the current file</value></data>
   <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Choose a name, folder, and format</value></data>
+  <data name="SideMenu.Print.Description" xml:space="preserve"><value>Print the current document</value></data>
   <data name="SideMenu.CloseDocument.Description" xml:space="preserve"><value>Close the current document</value></data>
   <data name="SideMenu.RenameBook" xml:space="preserve"><value>Rename book</value></data>
   <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Change the name of the current book</value></data>
@@ -293,6 +295,7 @@
   <data name="SideMenu.RenameBook.Invalid" xml:space="preserve"><value>The book name contains invalid characters.</value></data>
   <data name="SideMenu.RenameBook.ErrorTitle" xml:space="preserve"><value>Rename error</value></data>
   <data name="SideMenu.RenameBook.Failed" xml:space="preserve"><value>Could not rename the book.</value></data>
+  <data name="Document.PrintError" xml:space="preserve"><value>Print error</value></data>
   <data name="Editor.Lists" xml:space="preserve"><value>Lists</value></data>
   <data name="Editor.BulletedList" xml:space="preserve"><value>Bulleted list</value></data>
   <data name="Editor.NumberedList" xml:space="preserve"><value>Numbered list</value></data>

@@ -29,6 +29,11 @@ namespace CryptoBook.Interfaces
             object? obj,
             CancellationToken cancellationToken);
 
+        public bool CanExecute_PrintFile(object? obj);
+        public Task Execute_PrintFileAsync(
+            object? obj,
+            CancellationToken cancellationToken);
+
         public bool CanExecute_FileOverview(object? obj);
         public void Execute_FileOverview(object? obj);
 

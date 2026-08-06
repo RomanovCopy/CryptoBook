@@ -23,6 +23,7 @@ namespace CryptoBook.ViewModels
                 OnPropertyChanged(args.PropertyName);
                 saveFile?.RaiseCanExecuteChanged();
                 saveAsFile?.RaiseCanExecuteChanged();
+                printFile?.RaiseCanExecuteChanged();
                 closeFile?.RaiseCanExecuteChanged();
             };
             RegistryCommands();
@@ -48,6 +49,12 @@ namespace CryptoBook.ViewModels
                 menuFileModel.Execute_SaveAsFileAsync,
                 menuFileModel.CanExecute_SaveAsFile);
         AsyncRelayCommand? saveAsFile;
+
+        public ICommand PrintFile => printFile ??=
+            new AsyncRelayCommand(
+                menuFileModel.Execute_PrintFileAsync,
+                menuFileModel.CanExecute_PrintFile);
+        AsyncRelayCommand? printFile;
 
         public ICommand FileOverview => fileOverview ??= new RelayCommand(menuFileModel.Execute_FileOverview, menuFileModel.CanExecute_FileOverview);
         RelayCommand fileOverview;
@@ -85,6 +92,7 @@ namespace CryptoBook.ViewModels
             commandService.Register(CommandKey.menuFile_OpenFile, OpenFile);
             commandService.Register(CommandKey.menuFile_SaveFile, SaveFile);
             commandService.Register(CommandKey.menuFile_SaveAsFile, SaveAsFile);
+            commandService.Register(CommandKey.menuFile_PrintFile, PrintFile);
             commandService.Register(CommandKey.menuFile_FileOverview, FileOverview);
             commandService.Register(CommandKey.menuFile_OpenDirectory, OpenDirectory);
             commandService.Register(CommandKey.menuFile_CloseFile, CloseFile);

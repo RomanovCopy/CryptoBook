@@ -269,6 +269,7 @@
   <data name="Common.Rename" xml:space="preserve"><value>Переименовать</value></data>
   <data name="Common.Save" xml:space="preserve"><value>Сохранить</value></data>
   <data name="Common.SaveAs" xml:space="preserve"><value>Сохранить как</value></data>
+  <data name="Common.Print" xml:space="preserve"><value>Печать</value></data>
   <data name="Bookmarks.Title" xml:space="preserve"><value>Закладки</value></data>
   <data name="Media.Title" xml:space="preserve"><value>Фото и видео</value></data>
   <data name="SideMenu.Subtitle" xml:space="preserve"><value>Книга и рабочее пространство</value></data>
@@ -279,6 +280,7 @@
   <data name="SideMenu.Save.Description" xml:space="preserve"><value>Сохранить текущий документ</value></data>
   <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Сохранить изменения в текущем файле</value></data>
   <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Выбрать имя, папку и формат</value></data>
+  <data name="SideMenu.Print.Description" xml:space="preserve"><value>Вывести текущий документ на печать</value></data>
   <data name="SideMenu.CloseDocument.Description" xml:space="preserve"><value>Закрыть текущий документ</value></data>
   <data name="SideMenu.RenameBook" xml:space="preserve"><value>Переименовать книгу</value></data>
   <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Изменить имя текущей книги</value></data>
@@ -293,6 +295,7 @@
   <data name="SideMenu.RenameBook.Invalid" xml:space="preserve"><value>Имя книги содержит недопустимые символы.</value></data>
   <data name="SideMenu.RenameBook.ErrorTitle" xml:space="preserve"><value>Ошибка переименования</value></data>
   <data name="SideMenu.RenameBook.Failed" xml:space="preserve"><value>Не удалось переименовать книгу.</value></data>
+  <data name="Document.PrintError" xml:space="preserve"><value>Ошибка печати</value></data>
   <data name="Editor.Lists" xml:space="preserve"><value>Списки</value></data>
   <data name="Editor.BulletedList" xml:space="preserve"><value>Маркированный список</value></data>
   <data name="Editor.NumberedList" xml:space="preserve"><value>Нумерованный список</value></data>

@@ -22,6 +22,10 @@ namespace CryptoBook.Interfaces
         /// </summary>
         public ICommand SaveAsFile { get; }
         /// <summary>
+        /// напечатать текущий документ
+        /// </summary>
+        public ICommand PrintFile { get; }
+        /// <summary>
         /// обзор файлов
         /// </summary>
         public ICommand FileOverview { get; }
