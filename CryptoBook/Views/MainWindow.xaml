@@ -43,11 +43,68 @@
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="forTitleBar" Height="Auto"/>
+            <RowDefinition x:Name="forUpdateNotification" Height="Auto"/>
             <RowDefinition x:Name="forMyFrame" Height="*"/>
             <RowDefinition x:Name="forStatusBar" Height="Auto"/>
         </Grid.RowDefinitions>
         <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:TitleBar}}" Grid.Row="0"/>
-        <Grid Grid.Row="1" >
+        <Border Grid.Row="1"
+                DataContext="{Binding UpdateNotification}"
+                Margin="10,8,10,0"
+                Padding="12,10"
+                CornerRadius="8"
+                Background="{DynamicResource CurrentControlBackground}"
+                BorderBrush="{DynamicResource CurrentAccent}"
+                BorderThickness="1"
+                AutomationProperties.Name="{Binding Title}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="&#xE946;"
+                           FontFamily="Segoe MDL2 Assets"
+                           FontSize="22"
+                           Foreground="{DynamicResource CurrentAccent}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0"/>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding Title}"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+                    <TextBlock Text="{Binding Description}"
+                               Foreground="{DynamicResource CurrentMutedForeground}"
+                               TextWrapping="Wrap"
+                               Margin="0,3,0,0"/>
+                    <WrapPanel Margin="-5,8,0,0">
+                        <Button Content="{Binding [Update.OpenRelease], Source={StaticResource Res}}"
+                                Command="{Binding OpenRelease}"
+                                Margin="5,0,0,5"
+                                Padding="12,6"/>
+                        <Button Content="{Binding [Update.Later], Source={StaticResource Res}}"
+                                Command="{Binding RemindLater}"
+                                Margin="5,0,0,5"
+                                Padding="12,6"/>
+                        <Button Content="{Binding [Update.Skip], Source={StaticResource Res}}"
+                                Command="{Binding SkipVersion}"
+                                Margin="5,0,0,5"
+                                Padding="12,6"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <Grid Grid.Row="2" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>

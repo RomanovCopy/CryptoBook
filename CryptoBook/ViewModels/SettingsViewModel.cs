@@ -12,25 +12,24 @@ namespace CryptoBook.ViewModels
         ViewModelBase,
         ISettingsViewModel
     {
-        private const string FeedbackAddress = "EncryptoBook@gmail.com";
-        private const string RepositoryAddress =
-            "https://github.com/RomanovCopy/CryptoBook";
-        private static readonly Uri FeedbackUri = new(
-            $"mailto:{FeedbackAddress}");
-        private static readonly Uri RepositoryUri = new(RepositoryAddress);
         private readonly ISettingsModel model;
-        private readonly IUriNavigationService uriNavigationService;
+        private readonly IUpdateNotificationViewModel updateNotification;
 
         public SettingsViewModel(
             ISettingsModel model,
-            IUriNavigationService uriNavigationService)
+            IUpdateNotificationViewModel updateNotification)
         {
             this.model = model ??
                 throw new ArgumentNullException(nameof(model));
-            this.uriNavigationService = uriNavigationService ??
-                throw new ArgumentNullException(nameof(uriNavigationService));
+            this.updateNotification = updateNotification ??
+                throw new ArgumentNullException(nameof(updateNotification));
             model.PropertyChanged += (_, args) =>
                 OnPropertyChanged(args.PropertyName ?? string.Empty);
+            updateNotification.PropertyChanged += (_, args) =>
+            {
+                if(args.PropertyName == nameof(updateNotification.CheckStatus))
+                    OnPropertyChanged(nameof(UpdateCheckStatus));
+            };
         }
 
         event EventHandler ICloseable.RequestClose
@@ -79,9 +78,10 @@ namespace CryptoBook.ViewModels
 
         public string ApplicationVersion { get; } = GetApplicationVersion();
 
-        public string FeedbackEmail => FeedbackAddress;
+        public string UpdateCheckStatus => updateNotification.CheckStatus;
 
-        public string RepositoryUrl => RepositoryAddress;
+        public IUpdateNotificationViewModel UpdateNotification =>
+            updateNotification;
 
         public string WorkspaceDirectory => model.WorkspaceDirectory;
 
@@ -119,13 +119,10 @@ namespace CryptoBook.ViewModels
                     parameter as WorkspaceSearchResult));
         private RelayCommand? revealSearchResult;
 
-        public ICommand SendFeedback => sendFeedback ??=
-            new RelayCommand(_ => uriNavigationService.TryOpen(FeedbackUri));
-        private RelayCommand? sendFeedback;
-
-        public ICommand OpenRepository => openRepository ??=
-            new RelayCommand(_ => uriNavigationService.TryOpen(RepositoryUri));
-        private RelayCommand? openRepository;
+        public ICommand CheckForUpdates => checkForUpdates ??=
+            new AsyncRelayCommand(
+                (_, token) => updateNotification.CheckNowAsync(token));
+        private AsyncRelayCommand? checkForUpdates;
 
         public ICommand Loaded => loaded ??=
             new RelayCommand(_ => { });

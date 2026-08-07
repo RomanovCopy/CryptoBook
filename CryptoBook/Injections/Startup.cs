@@ -15,6 +15,8 @@ using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
+using System.Net.Http;
+
 
 namespace CryptoBook.Injections
 {
@@ -93,6 +95,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<WorkspaceSearchViewModel>()
                 .As<IWorkspaceSearchViewModel>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<UpdateNotificationViewModel>()
+                .As<IUpdateNotificationViewModel>()
+                .SingleInstance();
 
             // Конвертеры.
             builder.RegisterType<BitmapConverter>().AsSelf();
@@ -266,6 +271,53 @@ namespace CryptoBook.Injections
                 .As<IDocumentPrintService>()
                 .SingleInstance();
             builder.RegisterType<UriNavigationService>().As<IUriNavigationService>().SingleInstance();
+            builder.RegisterInstance(new GitHubReleaseOptions(
+                    "RomanovCopy",
+                    "CryptoBook"))
+                .SingleInstance();
+            builder.RegisterInstance(new UpdateCheckOptions(
+                    TimeSpan.FromHours(24)))
+                .SingleInstance();
+            builder.RegisterInstance(TimeProvider.System).SingleInstance();
+            builder.Register(_ =>
+                {
+                    var client = new HttpClient
+                    {
+                        BaseAddress = new Uri("https://api.github.com/"),
+                        Timeout = TimeSpan.FromSeconds(10)
+                    };
+                    return client;
+                })
+                .Named<HttpClient>("GitHubApi")
+                .SingleInstance();
+            builder.Register(_ => new HttpClient
+                {
+                    Timeout = TimeSpan.FromMinutes(15)
+                })
+                .Named<HttpClient>("UpdateDownload")
+                .SingleInstance();
+            builder.Register(context => new GitHubReleaseSource(
+                    context.ResolveNamed<HttpClient>("GitHubApi"),
+                    context.Resolve<GitHubReleaseOptions>()))
+                .As<IReleaseSource>()
+                .SingleInstance();
+            builder.Register(context => new ApplicationUpdateInstaller(
+                    context.ResolveNamed<HttpClient>("UpdateDownload"),
+                    context.Resolve<IFileLauncherService>()))
+                .As<IApplicationUpdateInstaller>()
+                .SingleInstance();
+            builder.RegisterType<AssemblyApplicationVersionProvider>()
+                .As<IApplicationVersionProvider>()
+                .SingleInstance();
+            builder.RegisterType<ApplicationUpdateService>()
+                .As<IApplicationUpdateService>()
+                .SingleInstance();
+            builder.RegisterType<JsonUpdateCheckStateStore>()
+                .As<IUpdateCheckStateStore>()
+                .SingleInstance();
+            builder.RegisterType<ApplicationUpdateCoordinator>()
+                .As<IApplicationUpdateCoordinator>()
+                .SingleInstance();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
             builder.RegisterType<FileDisplayNameService>()
                 .As<IFileDisplayNameService>()

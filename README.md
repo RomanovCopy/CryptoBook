@@ -1,7 +1,7 @@
 # CryptoBook
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.0.9-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.0.9)
+[![Version](https://img.shields.io/badge/version-1.1.0-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.0)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 
@@ -32,7 +32,8 @@ CryptoBook — настольное Windows-приложение для рабо
 - системная, светлая, тёмная и сепия-темы;
 - шифрование отдельных файлов и каталогов с сохранением исходного расширения;
 - автоматическое восстановление несохранённого документа после сбоя;
-- атомарное сохранение с резервной копией предыдущей версии в файле `.bak`.
+- атомарное сохранение с резервной копией предыдущей версии в файле `.bak`;
+- фоновая и ручная проверка новых стабильных релизов CryptoBook на GitHub, загрузка обновления и автоматический запуск установщика.
 
 ## Поддерживаемые форматы
 
@@ -93,7 +94,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Автономная x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.0.9
+./installer/Build-Installer.ps1 -Version 1.1.0
 ```
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные NuGet-уязвимости считаются ошибками.
@@ -115,9 +116,12 @@ dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 CryptoBook/
 ├── favorites.json
 ├── pinned-documents.json
+├── update-check.json
 ├── Logs/
 └── Recovery/
 ```
+
+Проверка обновлений выполняется не чаще одного раза в сутки. Сетевые ошибки не влияют на запуск приложения; для конкретной версии доступны действия «Позже» и «Пропустить версию».
 
 Шифрование снижает риск чтения файла без пароля, но не заменяет резервное копирование и системные меры защиты. Утраченный пароль восстановить нельзя.
 

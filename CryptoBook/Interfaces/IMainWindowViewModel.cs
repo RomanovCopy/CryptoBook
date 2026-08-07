@@ -4,6 +4,8 @@ namespace CryptoBook.Interfaces
 {
     public interface IMainWindowViewModel: IViewModel,IWindowOptions, IWindowWithId
     {
+        IUpdateNotificationViewModel UpdateNotification { get; }
+
         /// <summary>
         /// скрыть окно в трее
         /// </summary>

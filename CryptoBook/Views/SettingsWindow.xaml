@@ -636,7 +636,7 @@
                     </StackPanel>
                 </Border>
 
-                <TextBlock Text="{Binding [Settings.About.Feedback], Source={StaticResource Res}}"
+                <TextBlock Text="{Binding [Settings.About.Updates], Source={StaticResource Res}}"
                            FontSize="15"
                            FontWeight="SemiBold"
                            Margin="0,22,0,10"/>
@@ -651,22 +651,73 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock FontFamily="Segoe MDL2 Assets"
-                                   Text="&#xE715;"
+                                   Text="&#xE895;"
                                    Foreground="{DynamicResource CurrentAccent}"
                                    FontSize="19"
                                    VerticalAlignment="Top"
                                    Margin="0,3,0,0"/>
                         <StackPanel Grid.Column="1">
-                            <TextBlock Text="{Binding [Settings.About.Feedback.Description], Source={StaticResource Res}}"
-                                       Foreground="{DynamicResource CurrentMutedForeground}"
-                                       TextWrapping="Wrap"/>
-                            <Button Content="{Binding FeedbackEmail}"
-                                    Command="{Binding SendFeedback}"
+                            <Button Content="{Binding [Settings.About.Updates.Check], Source={StaticResource Res}}"
+                                    Command="{Binding CheckForUpdates}"
                                     HorizontalAlignment="Left"
-                                    Margin="0,10,0,0"
                                     Padding="12,6"
-                                    ToolTip="{Binding [Settings.About.Feedback.ToolTip], Source={StaticResource Res}}"
-                                    AutomationProperties.Name="{Binding [Settings.About.Feedback.ToolTip], Source={StaticResource Res}}"/>
+                                    ToolTip="{Binding [Settings.About.Updates.ToolTip], Source={StaticResource Res}}"
+                                    AutomationProperties.Name="{Binding [Settings.About.Updates.ToolTip], Source={StaticResource Res}}"/>
+                            <TextBlock Text="{Binding UpdateCheckStatus}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Margin" Value="0,9,0,0"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <Border DataContext="{Binding UpdateNotification}"
+                                    Margin="0,10,0,0"
+                                    Padding="12,10"
+                                    CornerRadius="7"
+                                    Background="{DynamicResource CurrentControlHoverBackground}"
+                                    BorderBrush="{DynamicResource CurrentAccent}"
+                                    BorderThickness="1"
+                                    AutomationProperties.Name="{Binding Title}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Description}"
+                                               Foreground="{DynamicResource CurrentMutedForeground}"
+                                               TextWrapping="Wrap"
+                                               Margin="0,3,0,0"/>
+                                    <WrapPanel Margin="-5,8,0,0">
+                                        <Button Content="{Binding [Update.OpenRelease], Source={StaticResource Res}}"
+                                                Command="{Binding OpenRelease}"
+                                                Margin="5,0,0,5"
+                                                Padding="12,6"/>
+                                        <Button Content="{Binding [Update.Later], Source={StaticResource Res}}"
+                                                Command="{Binding RemindLater}"
+                                                Margin="5,0,0,5"
+                                                Padding="12,6"/>
+                                        <Button Content="{Binding [Update.Skip], Source={StaticResource Res}}"
+                                                Command="{Binding SkipVersion}"
+                                                Margin="5,0,0,5"
+                                                Padding="12,6"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -825,42 +876,6 @@
                     </Grid>
                 </Border>
 
-                <TextBlock Text="{Binding [Settings.Developers.Repository], Source={StaticResource Res}}"
-                           FontSize="15"
-                           FontWeight="SemiBold"
-                           Margin="0,22,0,10"/>
-                <Border Padding="16,14"
-                        CornerRadius="8"
-                        Background="{DynamicResource CurrentControlHoverBackground}"
-                        BorderBrush="{DynamicResource CurrentBorderColor}"
-                        BorderThickness="1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="36"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock FontFamily="Segoe MDL2 Assets"
-                                   Text="&#xE943;"
-                                   Foreground="{DynamicResource CurrentAccent}"
-                                   FontSize="19"
-                                   Margin="0,2,0,0"/>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="{Binding [Settings.Developers.Repository.Description], Source={StaticResource Res}}"
-                                       Foreground="{DynamicResource CurrentMutedForeground}"
-                                       TextWrapping="Wrap"/>
-                            <TextBlock Text="{Binding RepositoryUrl}"
-                                       TextWrapping="Wrap"
-                                       Margin="0,8,0,0"/>
-                            <Button Content="{Binding [Settings.Developers.Repository.Open], Source={StaticResource Res}}"
-                                    Command="{Binding OpenRepository}"
-                                    HorizontalAlignment="Left"
-                                    Margin="0,10,0,0"
-                                    Padding="12,6"
-                                    ToolTip="{Binding [Settings.Developers.Repository.ToolTip], Source={StaticResource Res}}"
-                                    AutomationProperties.Name="{Binding [Settings.Developers.Repository.ToolTip], Source={StaticResource Res}}"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
             </StackPanel>
         </ScrollViewer>
 

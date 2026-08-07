@@ -32,9 +32,15 @@ namespace CryptoBook.ViewModels
 
         public static Action Ready { get => MainWindowModel.Ready; set => MainWindowModel.Ready = value; }
 
-        public MainWindowViewModel(IMainWindowModel mainWindowModel)
+        public IUpdateNotificationViewModel UpdateNotification { get; }
+
+        public MainWindowViewModel(
+            IMainWindowModel mainWindowModel,
+            IUpdateNotificationViewModel updateNotification)
         {
             this.mainWindowModel = mainWindowModel ?? throw new ArgumentNullException(nameof(mainWindowModel));
+            UpdateNotification = updateNotification ??
+                throw new ArgumentNullException(nameof(updateNotification));
             this.mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -50,8 +56,14 @@ namespace CryptoBook.ViewModels
         private RelayCommand toggleMenuCommand;
 
 
-        public ICommand Loaded => loaded ??= new RelayCommand(mainWindowModel.Execute_Loaded, mainWindowModel.CanExecute_Loaded);
-        RelayCommand loaded;
+        public ICommand Loaded => loaded ??= new AsyncRelayCommand(
+            async (_, token) =>
+            {
+                mainWindowModel.Execute_Loaded(null);
+                await UpdateNotification.CheckAsync(token);
+            },
+            mainWindowModel.CanExecute_Loaded);
+        AsyncRelayCommand? loaded;
 
         public ICommand Close => close ??= new RelayCommand(mainWindowModel.Execute_Close, mainWindowModel.CanExecute_Close);
         RelayCommand close;
@@ -59,7 +71,11 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => closing ??= new RelayCommand(mainWindowModel.Execute_Closing, mainWindowModel.CanExecute_Closing);
         RelayCommand closing;
 
-        public ICommand Closed => closed ??= new RelayCommand(mainWindowModel.Execute_Closed, mainWindowModel.CanExecute_Closed);
+        public ICommand Closed => closed ??= new RelayCommand(parameter =>
+        {
+            loaded?.Cancel();
+            mainWindowModel.Execute_Closed(parameter);
+        }, mainWindowModel.CanExecute_Closed);
         private RelayCommand closed;
 
 
