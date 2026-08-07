@@ -25,11 +25,14 @@ namespace CryptoBook.Interfaces
         IReadOnlyList<WorkspaceSearchResult> SearchResults { get; }
         bool IsSearching { get; }
         string SearchStatus { get; }
+        IReadOnlyList<KeyResetIntervalOption> KeyResetIntervals { get; }
+        KeyResetIntervalOption SelectedKeyResetInterval { get; set; }
 
         ICommand ChooseWorkspace { get; }
         ICommand Search { get; }
         ICommand OpenSearchResult { get; }
         ICommand RevealSearchResult { get; }
         ICommand CheckForUpdates { get; }
+        ICommand OpenEncryptionKeyDialog { get; }
     }
 }

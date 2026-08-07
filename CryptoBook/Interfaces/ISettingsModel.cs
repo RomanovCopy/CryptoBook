@@ -20,6 +20,8 @@ namespace CryptoBook.Interfaces
         IReadOnlyList<WorkspaceSearchResult> SearchResults { get; }
         bool IsSearching { get; }
         string SearchStatus { get; }
+        IReadOnlyList<KeyResetIntervalOption> KeyResetIntervals { get; }
+        KeyResetIntervalOption SelectedKeyResetInterval { get; set; }
 
         Task ChooseWorkspaceAsync();
         Task SearchAsync();
@@ -27,6 +29,7 @@ namespace CryptoBook.Interfaces
             WorkspaceSearchResult? result,
             CancellationToken cancellationToken = default);
         void RevealSearchResult(WorkspaceSearchResult? result);
+        void OpenEncryptionKeyDialog();
         void Close();
         void Closing();
         void Closed();

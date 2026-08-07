@@ -12,6 +12,7 @@ namespace CryptoBook.ViewModels
     public class MainWindowViewModel: ViewModelBase, IMainWindowViewModel, ICloseable
     {
         private readonly IMainWindowModel mainWindowModel;
+        private readonly IKeyResetService? keyResetService;
 
         public Guid WindowId => mainWindowModel.WindowId;
 
@@ -36,11 +37,13 @@ namespace CryptoBook.ViewModels
 
         public MainWindowViewModel(
             IMainWindowModel mainWindowModel,
-            IUpdateNotificationViewModel updateNotification)
+            IUpdateNotificationViewModel updateNotification,
+            IKeyResetService? keyResetService = null)
         {
             this.mainWindowModel = mainWindowModel ?? throw new ArgumentNullException(nameof(mainWindowModel));
             UpdateNotification = updateNotification ??
                 throw new ArgumentNullException(nameof(updateNotification));
+            this.keyResetService = keyResetService;
             this.mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
@@ -54,6 +57,14 @@ namespace CryptoBook.ViewModels
         RelayCommand windowToNormal;
         public ICommand ToggleMenuCommand => toggleMenuCommand ??= new RelayCommand(mainWindowModel.Execute_ToggleMenuCommand, mainWindowModel.CanExecute_ToggleMenuCommand);
         private RelayCommand toggleMenuCommand;
+
+        public ICommand ResetEncryptionKey => resetEncryptionKey ??=
+            new AsyncRelayCommand(async (_, token) =>
+            {
+                if(keyResetService is not null)
+                    await keyResetService.ResetAsync(token);
+            });
+        private AsyncRelayCommand? resetEncryptionKey;
 
 
         public ICommand Loaded => loaded ??= new AsyncRelayCommand(

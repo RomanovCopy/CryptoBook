@@ -19,6 +19,9 @@
         BorderBrush="{DynamicResource CurrentBorderColor}"
         BorderThickness="1,0,1,1"
         d:DataContext="{x:Type viewmodels:MainWindowViewModel}">
+    <Window.InputBindings>
+        <KeyBinding Key="L" Modifiers="Control" Command="{Binding ResetEncryptionKey}"/>
+    </Window.InputBindings>
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMainWindowViewModel}"/>
     </Window.DataContext>

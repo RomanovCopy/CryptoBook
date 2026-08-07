@@ -319,6 +319,20 @@ namespace CryptoBook.Injections
                 .As<IApplicationUpdateCoordinator>()
                 .SingleInstance();
             builder.RegisterType<FlowDocumentSaveService>().As<IFlowDocumentSaveService>().InstancePerDependency();
+            builder.RegisterType<LockSnapshotService>()
+                .As<ILockSnapshotService>()
+                .SingleInstance();
+            builder.Register(context => new AutoKeyResetService(
+                    context.Resolve<IKeyProvider>(),
+                    context.Resolve<ILockSnapshotService>(),
+                    context.Resolve<IDocumentSession>(),
+                    context.Resolve<IRichTextBoxService>(),
+                    context.Resolve<IFileTemplateRegistry>(),
+                    context.Resolve<Lazy<IWorkspaceFileOpenService>>(),
+                    context.Resolve<IDispatcherService>(),
+                    context.Resolve<System.Windows.Application>()))
+                .As<IKeyResetService>()
+                .SingleInstance();
             builder.RegisterType<FileDisplayNameService>()
                 .As<IFileDisplayNameService>()
                 .SingleInstance();

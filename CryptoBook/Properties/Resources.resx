@@ -652,4 +652,9 @@
   <data name="Update.CheckFound" xml:space="preserve"><value>CryptoBook {0} is available.</value></data>
   <data name="Update.CheckFailed" xml:space="preserve"><value>Could not check for updates. Check your internet connection and try again.</value></data>
   <data name="Update.CheckCanceled" xml:space="preserve"><value>Update check canceled.</value></data>
+  <data name="Settings.Security" xml:space="preserve"><value>Security</value></data>
+  <data name="Settings.Security.Description" xml:space="preserve"><value>Configure automatic encryption-key reset.</value></data>
+  <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Reset key after inactivity</value></data>
+  <data name="Settings.EncryptionKey" xml:space="preserve"><value>Encryption key</value></data>
+  <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Enter or change key</value></data>
 </root>

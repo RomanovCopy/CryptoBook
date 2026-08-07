@@ -98,6 +98,15 @@ namespace CryptoBook.ViewModels
 
         public string SearchStatus => model.SearchStatus;
 
+        public IReadOnlyList<KeyResetIntervalOption> KeyResetIntervals =>
+            model.KeyResetIntervals;
+
+        public KeyResetIntervalOption SelectedKeyResetInterval
+        {
+            get => model.SelectedKeyResetInterval;
+            set => model.SelectedKeyResetInterval = value;
+        }
+
         public ICommand ChooseWorkspace => chooseWorkspace ??=
             new RelayCommand(async _ => await model.ChooseWorkspaceAsync());
         private RelayCommand? chooseWorkspace;
@@ -123,6 +132,10 @@ namespace CryptoBook.ViewModels
             new AsyncRelayCommand(
                 (_, token) => updateNotification.CheckNowAsync(token));
         private AsyncRelayCommand? checkForUpdates;
+
+        public ICommand OpenEncryptionKeyDialog => openEncryptionKeyDialog ??=
+            new RelayCommand(_ => model.OpenEncryptionKeyDialog());
+        private RelayCommand? openEncryptionKeyDialog;
 
         public ICommand Loaded => loaded ??=
             new RelayCommand(_ => { });
