@@ -220,7 +220,7 @@
   <data name="Settings.Language.AppliedImmediately" xml:space="preserve"><value>The language is applied immediately and saved for the next launch.</value></data>
   <data name="Settings.About" xml:space="preserve"><value>About</value></data>
   <data name="Settings.About.Description" xml:space="preserve"><value>Application details and version information.</value></data>
-  <data name="Settings.About.ProductDescription" xml:space="preserve"><value>A desktop application for local documents, files, and password-protected storage.</value></data>
+  <data name="Settings.About.ProductDescription" xml:space="preserve"><value>A desktop application for editing and searching local documents, managing files, and password-protected storage.</value></data>
   <data name="Settings.About.Version" xml:space="preserve"><value>Version</value></data>
   <data name="Settings.About.Highlights" xml:space="preserve"><value>Key features</value></data>
   <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Create and format documents with links and images, and print the current document.</value></data>
@@ -231,6 +231,10 @@
   <data name="Settings.About.Feedback" xml:space="preserve"><value>Feedback and suggestions</value></data>
   <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Send us your feedback, ideas, or suggestions for improving CryptoBook.</value></data>
   <data name="Settings.About.Feedback.ToolTip" xml:space="preserve"><value>Write to EncryptoBook@gmail.com</value></data>
+  <data name="Settings.About.Updates" xml:space="preserve"><value>Updates</value></data>
+  <data name="Settings.About.Updates.Description" xml:space="preserve"><value>Check stable releases in the background or on demand, download updates, and start the installer automatically.</value></data>
+  <data name="Settings.About.Updates.Check" xml:space="preserve"><value>Check for updates</value></data>
+  <data name="Settings.About.Updates.ToolTip" xml:space="preserve"><value>Check for the latest CryptoBook release</value></data>
   <data name="Settings.About.DevelopmentStatus" xml:space="preserve"><value>CryptoBook is under active development. Keep separate backups of important data.</value></data>
   <data name="Settings.Developers" xml:space="preserve"><value>For developers</value></data>
   <data name="Settings.Developers.Description" xml:space="preserve"><value>Technical overview of the project, its architecture, security, and development resources.</value></data>
@@ -242,11 +246,11 @@
   <data name="Settings.Developers.Security.Title" xml:space="preserve"><value>Data protection</value></data>
   <data name="Settings.Developers.Security.Description" xml:space="preserve"><value>Argon2id key derivation, authenticated AES-256-GCM encryption, and Windows DPAPI for recovery snapshots.</value></data>
   <data name="Settings.Developers.Quality.Title" xml:space="preserve"><value>Build quality</value></data>
-  <data name="Settings.Developers.Quality.Description" xml:space="preserve"><value>xUnit and WPF STA tests, deterministic builds, GitHub Actions CI, with warnings and security advisories treated as errors.</value></data>
+  <data name="Settings.Developers.Quality.Description" xml:space="preserve"><value>xUnit and WPF STA tests, deterministic builds and CI, with warnings and security advisories treated as errors.</value></data>
   <data name="Settings.Developers.Repository" xml:space="preserve"><value>Source repository</value></data>
-  <data name="Settings.Developers.Repository.Description" xml:space="preserve"><value>The source code, documentation, issue history, and current project development are available on GitHub.</value></data>
+  <data name="Settings.Developers.Repository.Description" xml:space="preserve"><value>The source code, documentation, issue history, and current project development are available in the project repository.</value></data>
   <data name="Settings.Developers.Repository.Open" xml:space="preserve"><value>Open repository</value></data>
-  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve"><value>Open the CryptoBook repository on GitHub</value></data>
+  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve"><value>Open the CryptoBook source repository</value></data>
   <data name="Settings.Workspace.ChooseFailed" xml:space="preserve"><value>Could not select the workspace directory: {0}</value></data>
   <data name="Settings.Search.EnterQuery" xml:space="preserve"><value>Enter part of a file name.</value></data>
   <data name="Settings.Search.InProgress" xml:space="preserve"><value>Searching...</value></data>
@@ -638,4 +642,14 @@
   <data name="PinnedDocuments.MoveUp" xml:space="preserve"><value>Move up</value></data>
   <data name="PinnedDocuments.MoveDown" xml:space="preserve"><value>Move down</value></data>
   <data name="PinnedDocuments.RenameSyncFailed" xml:space="preserve"><value>The file was renamed, but its pinned link could not be updated.</value></data>
+  <data name="Update.Available" xml:space="preserve"><value>CryptoBook {0} is available</value></data>
+  <data name="Update.Description" xml:space="preserve"><value>Download the update and the installer will start automatically.</value></data>
+  <data name="Update.OpenRelease" xml:space="preserve"><value>Download and install</value></data>
+  <data name="Update.Later" xml:space="preserve"><value>Later</value></data>
+  <data name="Update.Skip" xml:space="preserve"><value>Skip version</value></data>
+  <data name="Update.Checking" xml:space="preserve"><value>Checking for updates…</value></data>
+  <data name="Update.UpToDate" xml:space="preserve"><value>You have the latest version of CryptoBook.</value></data>
+  <data name="Update.CheckFound" xml:space="preserve"><value>CryptoBook {0} is available.</value></data>
+  <data name="Update.CheckFailed" xml:space="preserve"><value>Could not check for updates. Check your internet connection and try again.</value></data>
+  <data name="Update.CheckCanceled" xml:space="preserve"><value>Update check canceled.</value></data>
 </root>
