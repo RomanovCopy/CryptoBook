@@ -20,6 +20,8 @@ namespace CryptoBook.Interfaces
         IReadOnlyList<WorkspaceSearchResult> SearchResults { get; }
         bool IsSearching { get; }
         string SearchStatus { get; }
+        IReadOnlyList<KeyResetIntervalOption> KeyResetIntervals { get; }
+        KeyResetIntervalOption SelectedKeyResetInterval { get; set; }
 
         Task ChooseWorkspaceAsync();
         Task SearchAsync();

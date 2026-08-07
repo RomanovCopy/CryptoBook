@@ -730,5 +730,17 @@ namespace CryptoBook.Properties {
                 this["CurrentTheme"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int KeyResetTimeoutMinutes {
+            get {
+                return ((int)(this["KeyResetTimeoutMinutes"]));
+            }
+            set {
+                this["KeyResetTimeoutMinutes"] = value;
+            }
+        }
     }
 }

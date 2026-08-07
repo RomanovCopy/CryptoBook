@@ -33,6 +33,7 @@ namespace CryptoBook.Services
         private readonly IDocumentSession documentSession;
         private readonly IDocumentRecoveryService recoveryService;
         private readonly IDocumentDialogService dialogService;
+        private readonly IKeyResetService? keyResetService;
         private readonly string temporaryRoot;
         private bool disposed;
 
@@ -48,7 +49,8 @@ namespace CryptoBook.Services
             IUnsavedChangesGuard unsavedChangesGuard,
             IDocumentSession documentSession,
             IDocumentRecoveryService recoveryService,
-            IDocumentDialogService dialogService)
+            IDocumentDialogService dialogService,
+            IKeyResetService? keyResetService = null)
         {
             this.secureFileValidator = secureFileValidator ??
                 throw new ArgumentNullException(nameof(secureFileValidator));
@@ -74,6 +76,7 @@ namespace CryptoBook.Services
                 throw new ArgumentNullException(nameof(recoveryService));
             this.dialogService = dialogService ??
                 throw new ArgumentNullException(nameof(dialogService));
+            this.keyResetService = keyResetService;
 
             string externalRoot = Path.Combine(
                 Path.GetTempPath(),
@@ -94,6 +97,9 @@ namespace CryptoBook.Services
             string targetPath,
             CancellationToken cancellationToken = default)
         {
+            if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring)
+                return WorkspaceFileOpenResult.Fail("Выполняется безопасный сброс ключа.");
+            using IDisposable? timerPause = keyResetService?.Pause();
             if(string.IsNullOrWhiteSpace(targetPath))
                 return WorkspaceFileOpenResult.Fail("File path is empty.");
 

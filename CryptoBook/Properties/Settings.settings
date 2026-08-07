@@ -179,5 +179,8 @@
     <Setting Name="CurrentTheme" Type="System.String" Scope="User">
       <Value Profile="(Default)">SystemTheme</Value>
     </Setting>
+    <Setting Name="KeyResetTimeoutMinutes" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

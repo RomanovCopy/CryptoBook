@@ -31,6 +31,7 @@ namespace CryptoBook.Models
         private readonly ISecureFileProcessor secureFileProcessor;
         private readonly IDocumentContentInspector documentContentInspector;
         private readonly IDocumentPrintService documentPrintService;
+        private readonly IKeyResetService? keyResetService;
 
         public MenuFileModel(
             IWindowManager windowManager,
@@ -44,7 +45,8 @@ namespace CryptoBook.Models
             IDocumentDialogService documentDialogService,
             ISecureFileProcessor secureFileProcessor,
             IDocumentContentInspector documentContentInspector,
-            IDocumentPrintService documentPrintService)
+            IDocumentPrintService documentPrintService,
+            IKeyResetService? keyResetService = null)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
@@ -75,6 +77,7 @@ namespace CryptoBook.Models
             this.documentPrintService = documentPrintService
                 ?? throw new ArgumentNullException(
                     nameof(documentPrintService));
+            this.keyResetService = keyResetService;
 
             documentSession.PropertyChanged += (_, _) =>
                 OnPropertyChanged(nameof(documentSession));
@@ -96,13 +99,17 @@ namespace CryptoBook.Models
         }
         public void Execute_OpenFile(object? obj)
         {
+            if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring)
+                return;
+            keyResetService?.NotifyActivity();
             var id = windowManager.CreateWindow<FileExplorer>();
             windowManager.ShowWindow(id);
         }
 
         public bool CanExecute_SaveFile(object? obj)
         {
-            return !richTextBox.IsReadOnly &&
+            return keyResetService?.State is not (KeyResetState.Resetting or KeyResetState.Restoring) &&
+                !richTextBox.IsReadOnly &&
                 (documentSession.IsDirty ||
                  string.IsNullOrWhiteSpace(documentSession.FilePath));
         }
@@ -117,7 +124,8 @@ namespace CryptoBook.Models
 
         public bool CanExecute_SaveAsFile(object? obj)
         {
-            return !richTextBox.IsReadOnly;
+            return keyResetService?.State is not (KeyResetState.Resetting or KeyResetState.Restoring) &&
+                !richTextBox.IsReadOnly;
         }
         public Task Execute_SaveAsFileAsync(
             object? obj,
@@ -174,6 +182,7 @@ namespace CryptoBook.Models
             bool forceChooseTarget,
             CancellationToken cancellationToken)
         {
+            using IDisposable? timerPause = keyResetService?.Pause();
             try
             {
                 DocumentSaveTarget? target =

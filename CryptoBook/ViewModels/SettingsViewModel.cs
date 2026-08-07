@@ -98,6 +98,15 @@ namespace CryptoBook.ViewModels
 
         public string SearchStatus => model.SearchStatus;
 
+        public IReadOnlyList<KeyResetIntervalOption> KeyResetIntervals =>
+            model.KeyResetIntervals;
+
+        public KeyResetIntervalOption SelectedKeyResetInterval
+        {
+            get => model.SelectedKeyResetInterval;
+            set => model.SelectedKeyResetInterval = value;
+        }
+
         public ICommand ChooseWorkspace => chooseWorkspace ??=
             new RelayCommand(async _ => await model.ChooseWorkspaceAsync());
         private RelayCommand? chooseWorkspace;

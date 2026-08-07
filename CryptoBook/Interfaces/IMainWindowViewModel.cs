@@ -26,6 +26,7 @@ namespace CryptoBook.Interfaces
         /// закрытие бокового меню при клике вне его площади
         /// </summary>
         public ICommand SideMenuClose { get; }
+        public ICommand ResetEncryptionKey { get; }
 
     }
 }

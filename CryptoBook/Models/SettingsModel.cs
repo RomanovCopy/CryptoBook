@@ -20,6 +20,7 @@ namespace CryptoBook.Models
         private readonly IFolderPickerService? folderPickerService;
         private readonly IFileLauncherService? fileLauncherService;
         private readonly IWorkspaceFileOpenService? workspaceFileOpenService;
+        private readonly IKeyResetService? keyResetService;
         private ApplicationThemeOption selectedTheme;
         private ApplicationLanguageOption selectedLanguage;
         private GridLength navigationPaneWidth;
@@ -30,6 +31,7 @@ namespace CryptoBook.Models
             Array.Empty<WorkspaceSearchResult>();
         private bool isSearching;
         private string searchStatus = string.Empty;
+        private KeyResetIntervalOption selectedKeyResetInterval;
 
         public SettingsModel(
             IThemeManager themeManager,
@@ -37,6 +39,7 @@ namespace CryptoBook.Models
             : this(
                 themeManager,
                 windowManager,
+                null,
                 null,
                 null,
                 null,
@@ -50,7 +53,8 @@ namespace CryptoBook.Models
             IWorkspaceService? workspaceService,
             IFolderPickerService? folderPickerService,
             IFileLauncherService? fileLauncherService,
-            IWorkspaceFileOpenService? workspaceFileOpenService = null)
+            IWorkspaceFileOpenService? workspaceFileOpenService = null,
+            IKeyResetService? keyResetService = null)
         {
             this.themeManager = themeManager ??
                 throw new ArgumentNullException(nameof(themeManager));
@@ -60,6 +64,7 @@ namespace CryptoBook.Models
             this.folderPickerService = folderPickerService;
             this.fileLauncherService = fileLauncherService;
             this.workspaceFileOpenService = workspaceFileOpenService;
+            this.keyResetService = keyResetService;
 
             selectedTheme = Themes.First(
                 option => option.Theme == themeManager.CurrentTheme);
@@ -69,6 +74,10 @@ namespace CryptoBook.Models
             navigationPaneWidth = new GridLength(
                 NormalizeNavigationPaneWidth(
                     Properties.Settings.Default.SettingsNavigationPaneWidth));
+            int storedMinutes = Properties.Settings.Default.KeyResetTimeoutMinutes;
+            selectedKeyResetInterval = KeyResetIntervals.FirstOrDefault(
+                option => option.Minutes == storedMinutes)
+                ?? KeyResetIntervals.First(option => option.Minutes == 15);
         }
 
         public Guid WindowId { get; } = Guid.NewGuid();
@@ -171,6 +180,24 @@ namespace CryptoBook.Models
         {
             get => searchStatus;
             private set => SetProperty(ref searchStatus, value);
+        }
+
+        public IReadOnlyList<KeyResetIntervalOption> KeyResetIntervals =>
+            KeyResetIntervalOption.All;
+
+        public KeyResetIntervalOption SelectedKeyResetInterval
+        {
+            get => selectedKeyResetInterval;
+            set
+            {
+                if(value is null || !SetProperty(ref selectedKeyResetInterval, value))
+                    return;
+                Properties.Settings.Default.KeyResetTimeoutMinutes = value.Minutes;
+                Properties.Settings.Default.Save();
+                keyResetService?.UpdateTimeout(value.Minutes <= 0
+                    ? TimeSpan.Zero
+                    : TimeSpan.FromMinutes(value.Minutes));
+            }
         }
 
         public async Task ChooseWorkspaceAsync()
