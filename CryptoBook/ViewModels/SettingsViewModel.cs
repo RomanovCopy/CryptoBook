@@ -133,6 +133,10 @@ namespace CryptoBook.ViewModels
                 (_, token) => updateNotification.CheckNowAsync(token));
         private AsyncRelayCommand? checkForUpdates;
 
+        public ICommand OpenEncryptionKeyDialog => openEncryptionKeyDialog ??=
+            new RelayCommand(_ => model.OpenEncryptionKeyDialog());
+        private RelayCommand? openEncryptionKeyDialog;
+
         public ICommand Loaded => loaded ??=
             new RelayCommand(_ => { });
         private RelayCommand? loaded;

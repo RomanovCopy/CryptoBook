@@ -652,4 +652,9 @@
   <data name="Update.CheckFound" xml:space="preserve"><value>Доступна версия CryptoBook {0}.</value></data>
   <data name="Update.CheckFailed" xml:space="preserve"><value>Не удалось проверить обновления. Проверьте подключение к интернету и повторите попытку.</value></data>
   <data name="Update.CheckCanceled" xml:space="preserve"><value>Проверка обновлений отменена.</value></data>
+  <data name="Settings.Security" xml:space="preserve"><value>Безопасность</value></data>
+  <data name="Settings.Security.Description" xml:space="preserve"><value>Настройка автоматического сброса ключа шифрования.</value></data>
+  <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Сбрасывать ключ после бездействия</value></data>
+  <data name="Settings.EncryptionKey" xml:space="preserve"><value>Ключ шифрования</value></data>
+  <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Ввести или изменить ключ</value></data>
 </root>

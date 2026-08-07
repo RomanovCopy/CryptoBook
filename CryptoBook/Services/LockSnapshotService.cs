@@ -3,6 +3,7 @@ using CryptoBook.Interfaces;
 using CryptoBook.Security;
 
 using System.Security.Cryptography;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Documents;

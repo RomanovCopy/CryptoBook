@@ -141,6 +141,15 @@
                     <ListBoxItem>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets"
+                                       Text="&#xE72E;"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding [Settings.Security], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE774;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
@@ -268,15 +277,6 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <TextBlock Text="Сбрасывать ключ после бездействия"
-                           FontSize="15"
-                           FontWeight="SemiBold"
-                           Margin="0,24,0,8"/>
-                <ComboBox ItemsSource="{Binding KeyResetIntervals}"
-                          SelectedItem="{Binding SelectedKeyResetInterval, Mode=TwoWay}"
-                          DisplayMemberPath="DisplayName"
-                          MinWidth="180"
-                          HorizontalAlignment="Left"/>
                 <Border Margin="0,12,0,0"
                         Padding="12"
                         CornerRadius="7"
@@ -287,6 +287,79 @@
                                TextWrapping="Wrap"
                                Foreground="{DynamicResource CurrentMutedForeground}"/>
                 </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Style>
+                <Style TargetType="ScrollViewer">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSectionIndex}"
+                                     Value="2">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Style>
+            <StackPanel Margin="28,24">
+                <TextBlock Text="{Binding [Settings.Security], Source={StaticResource Res}}"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding [Settings.Security.Description], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           TextWrapping="Wrap"
+                           Margin="0,5,0,22"/>
+
+                <TextBlock Text="{Binding [Settings.KeyResetTimeout], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8"/>
+                <ComboBox Style="{StaticResource DropUpComboBoxStyle}"
+                          ItemsSource="{Binding KeyResetIntervals}"
+                          SelectedItem="{Binding SelectedKeyResetInterval, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayName"
+                          MinWidth="220"
+                          Height="34"
+                          Foreground="{DynamicResource CurrentInputForeground}"
+                          Background="{DynamicResource CurrentInputBackground}"
+                          HorizontalAlignment="Left">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="ComboBoxItem">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentInputForeground}"/>
+                            <Setter Property="Background"
+                                    Value="{DynamicResource CurrentInputBackground}"/>
+                            <Setter Property="Padding" Value="8,5"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsHighlighted" Value="True">
+                                    <Setter Property="Foreground"
+                                            Value="{DynamicResource CurrentSelectionForeground}"/>
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource CurrentSelectionBackground}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground"
+                                            Value="{DynamicResource CurrentSelectionForeground}"/>
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource CurrentSelectionBackground}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
+
+                <TextBlock Text="{Binding [Settings.EncryptionKey], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,24,0,8"/>
+                <Button Content="{Binding [Settings.EnterEncryptionKey], Source={StaticResource Res}}"
+                        Command="{Binding OpenEncryptionKeyDialog}"
+                        MinWidth="220"
+                        Height="34"
+                        HorizontalAlignment="Left"/>
             </StackPanel>
         </ScrollViewer>
 
@@ -441,7 +514,7 @@
                     <Setter Property="Visibility" Value="Collapsed"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SelectedSectionIndex}"
-                                     Value="2">
+                                     Value="3">
                             <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -507,7 +580,7 @@
                     <Setter Property="Visibility" Value="Collapsed"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SelectedSectionIndex}"
-                                     Value="3">
+                                     Value="4">
                             <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -758,7 +831,7 @@
                     <Setter Property="Visibility" Value="Collapsed"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SelectedSectionIndex}"
-                                     Value="4">
+                                     Value="5">
                             <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </Style.Triggers>

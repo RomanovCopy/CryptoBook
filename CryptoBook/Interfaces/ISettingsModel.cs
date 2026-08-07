@@ -29,6 +29,7 @@ namespace CryptoBook.Interfaces
             WorkspaceSearchResult? result,
             CancellationToken cancellationToken = default);
         void RevealSearchResult(WorkspaceSearchResult? result);
+        void OpenEncryptionKeyDialog();
         void Close();
         void Closing();
         void Closed();

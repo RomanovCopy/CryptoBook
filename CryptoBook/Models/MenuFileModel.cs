@@ -325,12 +325,14 @@ namespace CryptoBook.Models
 
         public bool CanExecute_CloseFile(object? obj)
         {
-            return documentSession.HasDocument;
+            return documentSession.HasDocument &&
+                keyResetService?.State is not (KeyResetState.Resetting or KeyResetState.Restoring);
         }
         public async Task Execute_CloseFileAsync(
             object? obj,
             CancellationToken cancellationToken)
         {
+            using IDisposable? timerPause = keyResetService?.Pause();
             if(!documentSession.HasDocument)
                 return;
 

@@ -1,6 +1,7 @@
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Views;
 
 using System.Windows;
 
@@ -332,6 +333,13 @@ namespace CryptoBook.Models
                 result,
                 item => fileLauncherService?.RevealInExplorer(item.FullPath),
                 LocalizationManager.GetString("Settings.Search.RevealFailed"));
+
+        public void OpenEncryptionKeyDialog()
+        {
+            Guid windowId = windowManager.CreateWindow<KeyInputWindow>();
+            windowManager.ShowWindowDialog(windowId);
+            keyResetService?.NotifyActivity();
+        }
 
         public void Close() => windowManager.CloseWindow(WindowId);
 

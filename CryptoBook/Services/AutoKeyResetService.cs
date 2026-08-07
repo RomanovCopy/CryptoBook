@@ -1,9 +1,13 @@
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
+using CryptoBook.DTO;
 
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Windows;
+using WpfApplication = System.Windows.Application;
+using ThreadingTimer = System.Threading.Timer;
 
 namespace CryptoBook.Services;
 
@@ -18,12 +22,12 @@ public sealed class AutoKeyResetService : IKeyResetService
     private readonly IDocumentSession documentSession;
     private readonly IRichTextBoxService richTextBox;
     private readonly IFileTemplateRegistry templates;
-    private readonly IWorkspaceFileOpenService fileOpenService;
+    private readonly Lazy<IWorkspaceFileOpenService> fileOpenService;
     private readonly IDispatcherService dispatcher;
-    private readonly Application application;
+    private readonly WpfApplication application;
     private readonly SemaphoreSlim transitionGate = new(1, 1);
     private readonly object timerSync = new();
-    private Timer? timer;
+    private ThreadingTimer? timer;
     private DateTimeOffset lastActivityUtc;
     private int pauseCount;
     private bool started;
@@ -37,9 +41,9 @@ public sealed class AutoKeyResetService : IKeyResetService
         IDocumentSession documentSession,
         IRichTextBoxService richTextBox,
         IFileTemplateRegistry templates,
-        IWorkspaceFileOpenService fileOpenService,
+        Lazy<IWorkspaceFileOpenService> fileOpenService,
         IDispatcherService dispatcher,
-        Application application)
+        WpfApplication application)
     {
         this.keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
         this.snapshotService = snapshotService ?? throw new ArgumentNullException(nameof(snapshotService));
@@ -52,6 +56,30 @@ public sealed class AutoKeyResetService : IKeyResetService
 
         Timeout = FromSettings(Properties.Settings.Default.KeyResetTimeoutMinutes);
         lastActivityUtc = DateTimeOffset.UtcNow;
+    }
+
+    // Совместимый конструктор для хостов и тестов, создающих сервис вручную.
+    // В контейнере используется ленивый вариант, чтобы разорвать цикл
+    // WorkspaceFileOpenService -> MenuFileModel -> AutoKeyResetService.
+    public AutoKeyResetService(
+        IKeyProvider keyProvider,
+        ILockSnapshotService snapshotService,
+        IDocumentSession documentSession,
+        IRichTextBoxService richTextBox,
+        IFileTemplateRegistry templates,
+        IWorkspaceFileOpenService fileOpenService,
+        IDispatcherService dispatcher,
+        WpfApplication application)
+        : this(
+            keyProvider,
+            snapshotService,
+            documentSession,
+            richTextBox,
+            templates,
+            new Lazy<IWorkspaceFileOpenService>(() => fileOpenService),
+            dispatcher,
+            application)
+    {
     }
 
     public KeyResetState State { get; private set; } = KeyResetState.Inactive;
@@ -68,7 +96,8 @@ public sealed class AutoKeyResetService : IKeyResetService
         {
             started = true;
             lastActivityUtc = DateTimeOffset.UtcNow;
-            timer ??= new Timer(OnTimer, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+            if(keyProvider.HasKey)
+                EnsureTimer();
         }
         RefreshIdleState();
     }
@@ -88,6 +117,11 @@ public sealed class AutoKeyResetService : IKeyResetService
     public void NotifyActivity()
     {
         lastActivityUtc = DateTimeOffset.UtcNow;
+        if(started && keyProvider.HasKey)
+        {
+            lock(timerSync)
+                EnsureTimer();
+        }
         RefreshIdleState();
     }
 
@@ -97,6 +131,19 @@ public sealed class AutoKeyResetService : IKeyResetService
             throw new ArgumentOutOfRangeException(nameof(timeout));
         Timeout = timeout;
         lastActivityUtc = DateTimeOffset.UtcNow;
+        if(started && keyProvider.HasKey && timeout > TimeSpan.Zero)
+        {
+            lock(timerSync)
+                EnsureTimer();
+        }
+        else if(timeout == TimeSpan.Zero)
+        {
+            lock(timerSync)
+            {
+                timer?.Dispose();
+                timer = null;
+            }
+        }
         RefreshIdleState();
     }
 
@@ -146,7 +193,13 @@ public sealed class AutoKeyResetService : IKeyResetService
             SetState(KeyResetState.KeyReset);
             return true;
         }
-        catch(Exception exception) when(exception is not OperationCanceledException)
+        catch(OperationCanceledException)
+        {
+            lastActivityUtc = DateTimeOffset.UtcNow;
+            SetState(keyProvider.HasKey ? KeyResetState.Active : KeyResetState.Inactive);
+            throw;
+        }
+        catch(Exception exception)
         {
             // До этой точки Clear не выполнялся: документ и ключ остаются доступны.
             lastActivityUtc = DateTimeOffset.UtcNow;
@@ -163,6 +216,8 @@ public sealed class AutoKeyResetService : IKeyResetService
     public async Task<bool> TryUnlockAsync(string key, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
+        if(key.Length == 0)
+            return false;
         if(DateTimeOffset.UtcNow < nextUnlockAttemptUtc)
             return false;
         if(!await transitionGate.WaitAsync(0, cancellationToken))
@@ -182,7 +237,13 @@ public sealed class AutoKeyResetService : IKeyResetService
             SetState(KeyResetState.Active);
             return true;
         }
-        catch(Exception exception) when(exception is not OperationCanceledException)
+        catch(OperationCanceledException)
+        {
+            keyProvider.Clear();
+            SetState(KeyResetState.KeyReset);
+            throw;
+        }
+        catch(Exception)
         {
             keyProvider.Clear();
             failedUnlockAttempts = Math.Min(failedUnlockAttempts + 1, 6);
@@ -214,7 +275,7 @@ public sealed class AutoKeyResetService : IKeyResetService
                !string.IsNullOrWhiteSpace(metadata.OriginalPath) &&
                File.Exists(metadata.OriginalPath))
             {
-                WorkspaceFileOpenResult result = await fileOpenService.OpenAsync(metadata.OriginalPath, cancellationToken);
+                WorkspaceFileOpenResult result = await fileOpenService.Value.OpenAsync(metadata.OriginalPath, cancellationToken);
                 if(!result.Success)
                     throw new IOException(result.Error ?? "Не удалось открыть исходный файл.");
             }
@@ -237,6 +298,12 @@ public sealed class AutoKeyResetService : IKeyResetService
             lastActivityUtc = DateTimeOffset.UtcNow;
             SetState(KeyResetState.Active);
         }
+        catch
+        {
+            lastActivityUtc = DateTimeOffset.UtcNow;
+            SetState(keyProvider.HasKey ? KeyResetState.Active : KeyResetState.KeyReset);
+            throw;
+        }
         finally
         {
             transitionGate.Release();
@@ -258,6 +325,11 @@ public sealed class AutoKeyResetService : IKeyResetService
             return;
         if(!keyProvider.HasKey)
         {
+            lock(timerSync)
+            {
+                timer?.Dispose();
+                timer = null;
+            }
             if(State == KeyResetState.Active)
                 SetState(KeyResetState.Inactive);
             return;
@@ -268,6 +340,15 @@ public sealed class AutoKeyResetService : IKeyResetService
             return;
         if(DateTimeOffset.UtcNow - lastActivityUtc >= Timeout)
             _ = ResetAsync();
+    }
+
+    private void EnsureTimer()
+    {
+        timer ??= new ThreadingTimer(
+            OnTimer,
+            null,
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromSeconds(1));
     }
 
     private void Resume()

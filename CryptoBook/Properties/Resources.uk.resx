@@ -1351,4 +1351,9 @@
   <data name="Update.CheckFound" xml:space="preserve"><value>Доступна версія CryptoBook {0}.</value></data>
   <data name="Update.CheckFailed" xml:space="preserve"><value>Не вдалося перевірити оновлення. Перевірте підключення до інтернету та повторіть спробу.</value></data>
   <data name="Update.CheckCanceled" xml:space="preserve"><value>Перевірку оновлень скасовано.</value></data>
+  <data name="Settings.Security" xml:space="preserve"><value>Безпека</value></data>
+  <data name="Settings.Security.Description" xml:space="preserve"><value>Налаштування автоматичного скидання ключа шифрування.</value></data>
+  <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Скидати ключ після бездіяльності</value></data>
+  <data name="Settings.EncryptionKey" xml:space="preserve"><value>Ключ шифрування</value></data>
+  <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Ввести або змінити ключ</value></data>
 </root>

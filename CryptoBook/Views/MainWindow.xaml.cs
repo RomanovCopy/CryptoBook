@@ -4,8 +4,13 @@ using CryptoBook.Services;
 
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using WpfApplication = System.Windows.Application;
+using WpfMessageBox = System.Windows.MessageBox;
+using WpfKeyEventArgs = System.Windows.Input.KeyEventArgs;
+using WpfMouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace CryptoBook.Views
 {
@@ -45,6 +50,7 @@ namespace CryptoBook.Views
             PreviewMouseDown += OnUserActivity;
             PreviewMouseMove += OnUserActivity;
             PreviewMouseWheel += OnUserActivity;
+            InputManager.Current.PreProcessInput += OnApplicationInput;
             if(richTextBox is not null)
                 richTextBox.Service.TextChanged += OnDocumentTextChanged;
             if(keyResetService is not null)
@@ -61,7 +67,7 @@ namespace CryptoBook.Views
             keyResetService?.Start();
             SystemEvents.SessionSwitch += OnSessionSwitch;
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
-            Application.Current.SessionEnding += OnSessionEnding;
+            WpfApplication.Current.SessionEnding += OnSessionEnding;
         }
 
         private void OnUserActivity(object sender, InputEventArgs args) =>
@@ -69,6 +75,12 @@ namespace CryptoBook.Views
 
         private void OnDocumentTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs args) =>
             keyResetService?.NotifyActivity();
+
+        private void OnApplicationInput(object sender, PreProcessInputEventArgs args)
+        {
+            if(args.StagingItem.Input is WpfKeyEventArgs or WpfMouseEventArgs)
+                keyResetService?.NotifyActivity();
+        }
 
         private void OnSessionSwitch(object sender, SessionSwitchEventArgs args)
         {
@@ -105,12 +117,16 @@ namespace CryptoBook.Views
 
         private void OnSnapshotFailed(object? sender, Exception exception)
         {
-            _ = Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(
-                this,
-                "Не удалось создать и проверить защищённый снимок. Ключ и документ не были очищены.",
-                "Сброс ключа",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error)));
+            _ = Dispatcher.BeginInvoke(new Action(() =>
+            {
+                using IDisposable? pause = keyResetService?.Pause();
+                WpfMessageBox.Show(
+                    this,
+                    "Не удалось создать и проверить защищённый снимок. Ключ и документ не были очищены.",
+                    "Сброс ключа",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }));
         }
 
         private async void ShowUnlockDialog()
@@ -129,30 +145,36 @@ namespace CryptoBook.Views
                     File.Exists(metadata.OriginalPath);
                 if(originalAvailable)
                 {
-                    MessageBoxResult choice = MessageBox.Show(
-                        this,
-                        $"Открыть последний файл «{metadata.DocumentName}»?\n\nДа — открыть исходный файл.\nНет — восстановить снимок.",
-                        "Восстановление документа",
-                        MessageBoxButton.YesNoCancel,
-                        MessageBoxImage.Question);
-                    if(choice == MessageBoxResult.Yes)
+                    var choiceWindow = new LockRecoveryChoiceWindow(
+                        metadata.DocumentName,
+                        metadata.OriginalPath,
+                        originalAvailable)
+                    {
+                        Owner = this
+                    };
+                    choiceWindow.ShowDialog();
+                    if(choiceWindow.Choice == LockRecoveryChoice.Open)
                         await keyResetService.RestoreSnapshotAsync(restoreAsUnsaved: false);
-                    else if(choice == MessageBoxResult.No)
+                    else if(choiceWindow.Choice == LockRecoveryChoice.Restore)
                         await keyResetService.RestoreSnapshotAsync(restoreAsUnsaved: true);
                 }
-                else if(MessageBox.Show(
-                    this,
-                    $"Исходный файл «{metadata.DocumentName}» недоступен. Восстановить защищённый снимок?",
-                    "Восстановление документа",
-                    MessageBoxButton.OKCancel,
-                    MessageBoxImage.Question) == MessageBoxResult.OK)
+                else
                 {
-                    await keyResetService.RestoreSnapshotAsync(restoreAsUnsaved: true);
+                    var choiceWindow = new LockRecoveryChoiceWindow(
+                        metadata.DocumentName,
+                        metadata.OriginalPath,
+                        originalAvailable)
+                    {
+                        Owner = this
+                    };
+                    choiceWindow.ShowDialog();
+                    if(choiceWindow.Choice == LockRecoveryChoice.Restore)
+                        await keyResetService.RestoreSnapshotAsync(restoreAsUnsaved: true);
                 }
             }
             catch(Exception)
             {
-                MessageBox.Show(this, "Не удалось восстановить документ.", "Восстановление документа",
+                WpfMessageBox.Show(this, "Не удалось восстановить документ.", "Восстановление документа",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -166,9 +188,10 @@ namespace CryptoBook.Views
             keyResetService?.Stop();
             SystemEvents.SessionSwitch -= OnSessionSwitch;
             SystemEvents.PowerModeChanged -= OnPowerModeChanged;
-            Application.Current.SessionEnding -= OnSessionEnding;
+            WpfApplication.Current.SessionEnding -= OnSessionEnding;
             if(richTextBox is not null)
                 richTextBox.Service.TextChanged -= OnDocumentTextChanged;
+            InputManager.Current.PreProcessInput -= OnApplicationInput;
             if(keyResetService is not null)
             {
                 keyResetService.StateChanged -= OnKeyResetStateChanged;

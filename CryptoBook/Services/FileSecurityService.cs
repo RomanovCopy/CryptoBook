@@ -11,11 +11,16 @@ namespace CryptoBook.Services
     public class FileSecurityService: IFileSecurityService
     {
         private readonly ISecureFileProcessor _secureFileProcessor;
+        private readonly IKeyResetService? keyResetService;
 
-        public FileSecurityService(ISystemItemCreateService createService, ISecureFileProcessor secureFileProcessor)
+        public FileSecurityService(
+            ISystemItemCreateService createService,
+            ISecureFileProcessor secureFileProcessor,
+            IKeyResetService? keyResetService = null)
         {
             ArgumentNullException.ThrowIfNull(createService);
             _secureFileProcessor = secureFileProcessor ?? throw new ArgumentNullException(nameof(secureFileProcessor));
+            this.keyResetService = keyResetService;
         }
 
         public Task<FileOperationResult> EncryptAsync( ISystemItem source, string destinationPath, EncryptionTargetMode mode, IProgressReporter? progress = null,
@@ -33,6 +38,9 @@ namespace CryptoBook.Services
         private async Task<FileOperationResult> ProcessAsync( ISystemItem source, string destinationPath, EncryptionTargetMode mode, bool decrypt, IProgressReporter? progress,
             CancellationToken cancellationToken)
         {
+            if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring)
+                return FileOperationResult.Fail("Выполняется безопасный сброс ключа.");
+            using IDisposable? timerPause = keyResetService?.Pause();
             try
             {
                 ArgumentNullException.ThrowIfNull(source);
