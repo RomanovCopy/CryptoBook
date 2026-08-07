@@ -39,7 +39,8 @@ namespace CryptoBook.Services
                 ? "0.0.0"
                 : $"{Math.Max(assemblyVersion.Major, 0)}." +
                   $"{Math.Max(assemblyVersion.Minor, 0)}." +
-                  $"{Math.Max(assemblyVersion.Build, 0)}";
+                  $"{Math.Max(assemblyVersion.Build, 0)}." +
+                  $"{Math.Max(assemblyVersion.Revision, 0)}";
             if(SemanticVersion.TryParse(fallback, out semanticVersion) &&
                semanticVersion is not null)
             {

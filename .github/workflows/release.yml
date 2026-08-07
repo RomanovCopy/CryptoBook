@@ -43,7 +43,7 @@ jobs:
             "${{ github.ref_name }}"
           }
           $version = $tag.TrimStart("v")
-          if ($version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') {
+          if ($version -notmatch '^\d+\.\d+\.\d+(\.\d+)?([-.][0-9A-Za-z.-]+)?$') {
             throw "Tag does not contain a valid release version."
           }
           "RELEASE_TAG=$tag" >> $env:GITHUB_ENV

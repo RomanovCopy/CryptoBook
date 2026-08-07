@@ -9,12 +9,33 @@ namespace CryptoBook.Tests;
 public sealed class ApplicationUpdateServiceTests
 {
     [Fact]
+    public void AssemblyVersionProvider_ReturnsCurrentFourComponentVersion()
+    {
+        var provider = new AssemblyApplicationVersionProvider();
+
+        Assert.Equal("1.1.0.1", provider.GetCurrentVersion().ToString());
+    }
+
+    [Fact]
     public async Task CheckAsync_ReturnsReleaseWhenItIsNewer()
     {
         ApplicationRelease release = CreateRelease("1.1.0");
         var service = new ApplicationUpdateService(
             new StubReleaseSource(release),
             new StubVersionProvider("1.0.7"));
+
+        ApplicationRelease? result = await service.CheckAsync();
+
+        Assert.Same(release, result);
+    }
+
+    [Fact]
+    public async Task CheckAsync_ComparesFourComponentReleaseVersions()
+    {
+        ApplicationRelease release = CreateRelease("1.1.0.2");
+        var service = new ApplicationUpdateService(
+            new StubReleaseSource(release),
+            new StubVersionProvider("1.1.0.1"));
 
         ApplicationRelease? result = await service.CheckAsync();
 

@@ -9,6 +9,7 @@ public sealed class SemanticVersionTests
     [Theory]
     [InlineData("1.0.7", "1.0.7")]
     [InlineData("v2.3.4", "2.3.4")]
+    [InlineData("v1.1.0.1", "1.1.0.1")]
     [InlineData("1.2.3-beta.2+build.9", "1.2.3-beta.2")]
     public void TryParse_AcceptsReleaseTag(string value, string expected)
     {
@@ -32,6 +33,8 @@ public sealed class SemanticVersionTests
 
     [Theory]
     [InlineData("1.0.1", "1.0.0")]
+    [InlineData("1.1.0.1", "1.1.0")]
+    [InlineData("1.1.0.2", "1.1.0.1")]
     [InlineData("2.0.0", "1.99.99")]
     [InlineData("1.0.0", "1.0.0-rc.1")]
     [InlineData("1.0.0-rc.10", "1.0.0-rc.2")]

@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
-    [ValidatePattern('^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$')]
-    [string] $Version = '1.1.0',
+    [ValidatePattern('^\d+\.\d+\.\d+(\.\d+)?([-.][0-9A-Za-z.-]+)?$')]
+    [string] $Version = '1.1.0.1',
 
     [ValidateSet('Debug', 'Release')]
     [string] $Configuration = 'Release',
@@ -100,7 +100,12 @@ if (-not $compilerPath) {
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 
 $numericVersion = $Version.Split('-', 2)[0].Split('+', 2)[0]
-$versionInfoVersion = "$numericVersion.0"
+$numericVersionParts = $numericVersion.Split('.')
+$versionInfoVersion = if ($numericVersionParts.Count -eq 3) {
+    "$numericVersion.0"
+} else {
+    $numericVersion
+}
 
 & $compilerPath `
     "/DSourceDir=$publishDirectory" `
