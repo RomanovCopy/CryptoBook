@@ -1,4 +1,5 @@
 using CryptoBook.Interfaces;
+using CryptoBook.Infrastructure;
 using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Accessors;
@@ -155,7 +156,12 @@ public sealed class BookmarkTests
 
         Assert.True(viewModel.NavigateTo.CanExecute(null));
         viewModel.NavigateTo.Execute(null);
-        Assert.Contains("переименована", viewModel.StatusMessage);
+        Assert.Equal(
+            LocalizationManager.Format(
+                "Bookmarks.Renamed",
+                "My bookmark",
+                "Renamed"),
+            viewModel.StatusMessage);
 
         Assert.True(viewModel.Remove.CanExecute(null));
         viewModel.Remove.Execute(null);

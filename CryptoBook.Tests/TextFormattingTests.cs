@@ -390,7 +390,9 @@ public sealed class TextFormattingTests
         viewModel.ToggleFitToWindow.Execute(null);
 
         Assert.False(viewModel.IsFitToWindow);
-        Assert.Equal("Вписать в окно", viewModel.FitToWindowText);
+        Assert.Equal(
+            LocalizationManager.GetString("Editor.FitToWindow"),
+            viewModel.FitToWindowText);
         Assert.Equal("\uE740", viewModel.FitToWindowGlyph);
 
         viewModel.ToggleView.Execute(null);
