@@ -5,6 +5,7 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Views;
 
+using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -23,6 +24,7 @@ namespace CryptoBook
 
         public App()
         {
+            MigrateUserSettings();
             LocalizationManager.InitializeFromSettings();
 
             DispatcherUnhandledException += OnDispatcherUnhandledException;
@@ -33,6 +35,23 @@ namespace CryptoBook
 
             var startup = new Startup();
             _container = startup.ConfigureServices(this);
+        }
+
+        private static void MigrateUserSettings()
+        {
+            try
+            {
+                UserSettingsMigrator.MigrateIfRequired();
+            }
+            catch(Exception exception) when(
+                exception is ConfigurationErrorsException or
+                IOException or
+                UnauthorizedAccessException)
+            {
+                // Повреждение или недоступность старого профиля не должны
+                // блокировать запуск с настройками новой версии по умолчанию.
+                WriteCrashLog(exception, "SettingsMigration");
+            }
         }
 
         protected override void OnStartup(StartupEventArgs e)
