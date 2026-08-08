@@ -1,4 +1,5 @@
 using CryptoBook.Interfaces;
+using CryptoBook.Infrastructure;
 
 using System.IO;
 using System.Windows;
@@ -12,7 +13,7 @@ namespace CryptoBook.Services
         {
             ArgumentNullException.ThrowIfNull(source);
 
-            using var stream = new MemoryStream();
+            using var stream = new PooledMemoryStream();
             var sourceRange = new TextRange(source.ContentStart, source.ContentEnd);
             sourceRange.Save(stream, System.Windows.DataFormats.XamlPackage);
             stream.Position = 0;

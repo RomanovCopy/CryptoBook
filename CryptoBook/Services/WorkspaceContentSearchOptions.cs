@@ -5,5 +5,6 @@ namespace CryptoBook.Services
         public int MaxResults { get; init; } = 200;
         public long MaxFileSizeBytes { get; init; } = 16 * 1024 * 1024;
         public int SnippetLength { get; init; } = 180;
+        public string? IndexDirectory { get; init; }
     }
 }

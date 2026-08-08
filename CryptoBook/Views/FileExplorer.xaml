@@ -45,7 +45,7 @@
         </Style>
 
         <HierarchicalDataTemplate DataType="{x:Type dto:DriveItem}"
-                                      ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding DirectoryChildren}">
             <StackPanel Orientation="Horizontal" Margin="2">
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
@@ -76,7 +76,7 @@
         </HierarchicalDataTemplate>
 
         <HierarchicalDataTemplate DataType="{x:Type dto:DirectoryItem}"
-                                      ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding DirectoryChildren}">
             <DockPanel LastChildFill="True">
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
@@ -353,8 +353,13 @@
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Pane (левая панель) -->
-            <TreeView x:Name="treeView" Grid.Column="0" ItemsSource="{Binding GetDrives, UpdateSourceTrigger=PropertyChanged}"
-                      VirtualizingPanel.IsContainerVirtualizable="True" HorizontalAlignment="Stretch">
+            <TreeView x:Name="treeView" Grid.Column="0"
+                      ItemsSource="{Binding GetDrives}"
+                      VirtualizingPanel.IsContainerVirtualizable="True"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
+                      ScrollViewer.CanContentScroll="True"
+                      HorizontalAlignment="Stretch">
 
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem"

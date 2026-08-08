@@ -1,4 +1,5 @@
 using CryptoBook.FileTemplates;
+using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
 using System.Diagnostics;
@@ -18,6 +19,8 @@ namespace CryptoBook.Services
     {
         private static readonly byte[] AdditionalEntropy =
             Encoding.UTF8.GetBytes("CryptoBook.DocumentRecovery.v1");
+        private static readonly byte[] RecoveryMagic =
+            Encoding.ASCII.GetBytes("CBRECV02");
         private static readonly TimeSpan SaveDelay = TimeSpan.FromSeconds(15);
         private static readonly TimeSpan FailureLogInterval =
             TimeSpan.FromMinutes(5);
@@ -149,6 +152,26 @@ namespace CryptoBook.Services
 
             try
             {
+                await using var binarySource = new MemoryStream(
+                    plaintext,
+                    writable: false);
+                RecoveryMetadata? metadata = await BinarySnapshotEnvelope
+                    .TryReadHeaderAsync<RecoveryMetadata>(
+                        binarySource,
+                        RecoveryMagic,
+                        cancellationToken);
+                if(metadata is not null)
+                {
+                    await using Stream documentSource =
+                        BinarySnapshotEnvelope.OpenPayloadStream(binarySource);
+                    await loadService.LoadAsync(
+                        richTextBox,
+                        documentSource,
+                        recoveryTemplate,
+                        cancellationToken);
+                }
+                else
+                {
                 RecoveryEnvelope envelope =
                     JsonSerializer.Deserialize<RecoveryEnvelope>(plaintext)
                     ?? throw new InvalidDataException(
@@ -173,22 +196,30 @@ namespace CryptoBook.Services
                     CryptographicOperations.ZeroMemory(documentBytes);
                 }
 
+                    metadata = new RecoveryMetadata(
+                        envelope.FilePath,
+                        envelope.DisplayName,
+                        envelope.TemplateId,
+                        envelope.Revision,
+                        envelope.SavedAt);
+                }
+
                 IFileTemplate? originalTemplate =
                     templateRegistry.GetById(
-                        envelope.TemplateId ?? string.Empty);
-                if(!string.IsNullOrWhiteSpace(envelope.FilePath) &&
+                        metadata.TemplateId ?? string.Empty);
+                if(!string.IsNullOrWhiteSpace(metadata.FilePath) &&
                    originalTemplate is not null)
                 {
                     documentSession.Open(
-                        envelope.FilePath,
+                        metadata.FilePath,
                         originalTemplate);
                 }
                 else
                 {
                     documentSession.SetDisplayName(
-                        string.IsNullOrWhiteSpace(envelope.DisplayName)
+                        string.IsNullOrWhiteSpace(metadata.DisplayName)
                             ? "Восстановленный документ.XamlPackage"
-                            : envelope.DisplayName);
+                            : metadata.DisplayName);
                 }
 
                 documentSession.MarkDirty();
@@ -325,22 +356,25 @@ namespace CryptoBook.Services
             // Версия инвалидируется при остановке и удалении снимка. Она не позволяет
             // уже начатому сохранению воскресить файл восстановления после очистки.
             long snapshotInvalidationVersion = invalidationVersion;
+            RecoveryMetadata metadata = new(
+                documentSession.FilePath,
+                documentSession.DisplayName,
+                documentSession.Template?.Id,
+                revision,
+                DateTimeOffset.UtcNow);
             await using MemoryStream document = new();
             await saveService.SaveToStreamAsync(
                 richTextBox,
                 document,
                 recoveryTemplate);
-
-            RecoveryEnvelope envelope = new(
-                1,
-                documentSession.FilePath,
-                documentSession.DisplayName,
-                documentSession.Template?.Id,
-                revision,
-                DateTimeOffset.UtcNow,
-                Convert.ToBase64String(document.ToArray()));
-            byte[] serialized =
-                JsonSerializer.SerializeToUtf8Bytes(envelope);
+            await using MemoryStream envelope = new();
+            await BinarySnapshotEnvelope.WriteHeaderAsync(
+                envelope,
+                RecoveryMagic,
+                metadata);
+            document.Position = 0;
+            await document.CopyToAsync(envelope);
+            byte[] serialized = envelope.ToArray();
             byte[] encrypted;
             try
             {
@@ -509,6 +543,13 @@ namespace CryptoBook.Services
             timer.Stop();
             documentSession.PropertyChanged -= OnSessionPropertyChanged;
         }
+
+        private sealed record RecoveryMetadata(
+            string? FilePath,
+            string DisplayName,
+            string? TemplateId,
+            long Revision,
+            DateTimeOffset SavedAt);
 
         private sealed record RecoveryEnvelope(
             int Version,

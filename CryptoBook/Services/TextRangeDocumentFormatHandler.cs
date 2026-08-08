@@ -2,6 +2,7 @@ using CryptoBook.Interfaces;
 
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Documents;
 
 namespace CryptoBook.Services
@@ -23,7 +24,8 @@ namespace CryptoBook.Services
         protected virtual bool PreserveTextElements => true;
         protected virtual string ResolveLoadDataFormat(
             ReadOnlySpan<byte> content) => DataFormat;
-        protected virtual byte[] PrepareLoadContent(byte[] content) =>
+        protected virtual ReadOnlyMemory<byte> PrepareLoadContent(
+            ReadOnlyMemory<byte> content) =>
             content;
 
         public bool CanHandle(IFileTemplate template) => template is TTemplate;
@@ -35,7 +37,7 @@ namespace CryptoBook.Services
         {
             ArgumentNullException.ThrowIfNull(document);
 
-            byte[] buffer = PrepareLoadContent(content.ToArray());
+            ReadOnlyMemory<byte> buffer = PrepareLoadContent(content);
 
             return dispatcher.InvokeAsync(() =>
             {
@@ -48,14 +50,14 @@ namespace CryptoBook.Services
                     return;
                 }
 
-                using var stream = new MemoryStream(buffer, writable: false);
+                using MemoryStream stream = CreateReadStream(buffer);
                 var loadedDocument = new FlowDocument();
                 var range = new TextRange(
                     loadedDocument.ContentStart,
                     loadedDocument.ContentEnd);
                 range.Load(
                     stream,
-                    ResolveLoadDataFormat(buffer));
+                    ResolveLoadDataFormat(buffer.Span));
 
                 document.Blocks.Clear();
                 foreach(Block block in loadedDocument.Blocks.ToList())
@@ -93,6 +95,22 @@ namespace CryptoBook.Services
                 DataFormat,
                 preserveTextElements: PreserveTextElements);
             return stream.ToArray();
+        }
+
+        private static MemoryStream CreateReadStream(
+            ReadOnlyMemory<byte> content)
+        {
+            if(MemoryMarshal.TryGetArray(content, out ArraySegment<byte> segment))
+            {
+                return new MemoryStream(
+                    segment.Array!,
+                    segment.Offset,
+                    segment.Count,
+                    writable: false,
+                    publiclyVisible: true);
+            }
+
+            return new MemoryStream(content.ToArray(), writable: false);
         }
     }
 }

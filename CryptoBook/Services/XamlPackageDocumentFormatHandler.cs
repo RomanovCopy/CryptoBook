@@ -25,15 +25,16 @@ namespace CryptoBook.Services
             System.Windows.DataFormats.XamlPackage;
         protected override bool PreserveTextElements => false;
 
-        protected override byte[] PrepareLoadContent(byte[] content)
+        protected override ReadOnlyMemory<byte> PrepareLoadContent(
+            ReadOnlyMemory<byte> content)
         {
-            if(!IsXamlPackage(content))
+            if(!IsXamlPackage(content.Span))
                 return content;
 
             // Работаем с копией пакета: исходный массив остаётся нетронутым,
             // а при отсутствии устаревших типов возвращается без изменений.
             using var package = new MemoryStream();
-            package.Write(content);
+            package.Write(content.Span);
             package.Position = 0;
 
             using(var archive = new ZipArchive(

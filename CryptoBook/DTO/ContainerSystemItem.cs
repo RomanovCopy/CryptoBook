@@ -92,7 +92,16 @@ namespace CryptoBook.DTO
         /// <remarks>Коллекция отражает текущий набор дочерних элементов и уведомляет наблюдателей об изменениях,
         /// таких как добавление или удаление. Коллекция пуста, если у элемента нет дочерних элементов.</remarks>
         public ReadOnlyObservableCollection<ISystemItem> Children { get; private set; }
-        protected ObservableCollection<ISystemItem> _children;
+        protected RangeObservableCollection<ISystemItem> _children;
+
+        /// <summary>
+        /// Дочерние каталоги для иерархической навигации.
+        /// </summary>
+        /// <remarks>
+        /// TreeView не должен создавать скрытые контейнеры для каждого файла из <see cref="Children"/>.
+        /// </remarks>
+        public ReadOnlyObservableCollection<IContainerSystemItem> DirectoryChildren { get; private set; }
+        private readonly RangeObservableCollection<IContainerSystemItem> _directoryChildren;
 
         public DateTime LastWriteTimeUtc { get => lastWriteTimeUtc; set => SetProperty(ref lastWriteTimeUtc, value); }
         DateTime lastWriteTimeUtc;
@@ -104,7 +113,9 @@ namespace CryptoBook.DTO
             _systemItemCreateService = systemItemCreateService;
             _systemItemSortService = systemItemSortService;
             _children = [];
+            _directoryChildren = [];
             Children = new ReadOnlyObservableCollection<ISystemItem>(_children);
+            DirectoryChildren = new ReadOnlyObservableCollection<IContainerSystemItem>(_directoryChildren);
         }
 
 
@@ -119,19 +130,36 @@ namespace CryptoBook.DTO
 
             ct.ThrowIfCancellationRequested();
 
-            bool exists = false;
-            // Решение принимаем снаружи UI-потока, но саму мутацию — только на UI
+            bool duplicateFound = false;
+            ISystemItem[] incoming = items.ToArray();
+            // Индекс ключей устраняет повторный линейный поиск для каждого элемента.
             await _dispatcherService.InvokeAsync(() =>
             {
-                foreach(var item in items)
+                var keys = new HashSet<string>(
+                    _children.Select(keySelector),
+                    StringComparer.OrdinalIgnoreCase);
+                var combined = new List<ISystemItem>(
+                    _children.Count + incoming.Length);
+                combined.AddRange(_children);
+
+                foreach(var item in incoming)
                 {
-                    var key = keySelector(item);
-                    exists = _children.Any(c => keySelector(c).Equals(key, StringComparison.OrdinalIgnoreCase));
-                    if(!exists)
-                        _children.Add(item);
+                    string key = keySelector(item);
+                    if(!keys.Add(key))
+                    {
+                        duplicateFound = true;
+                        continue;
+                    }
+
+                    combined.Add(item);
                 }
+
+                if(combined.Count != _children.Count)
+                    ReplaceChildren(combined);
             });
-            return exists ? FileOperationResult.Fail("Item already exists") : FileOperationResult.Ok();
+            return duplicateFound
+                ? FileOperationResult.Fail("Item already exists")
+                : FileOperationResult.Ok();
         }
 
         public async virtual Task<FileOperationResult> RenameChildAsync(ISystemItem item, string newName, CancellationToken ct = default)
@@ -172,23 +200,34 @@ namespace CryptoBook.DTO
                 return FileOperationResult.Fail("Items is null");
 
             ct.ThrowIfCancellationRequested();
+            ISystemItem[] requested = items.ToArray();
             bool removed = false;
-            ISystemItem? existing = null;
             await _dispatcherService.InvokeAsync(() =>
             {
-                foreach(var item in items)
-                {
-                    // передали тот же объект, что хранится в _children
-                    existing = _children.FirstOrDefault(c => ReferenceEquals(c, item));
-                    //Если объект другой инстанс, но описывает тот же элемент — пробуем по имени
-                    // (в пределах одной директории имя уникально в Windows)
-                    existing ??= _children.FirstOrDefault(c =>
-                        string.Equals(c.FullPath, item.FullPath, StringComparison.OrdinalIgnoreCase));
-                    removed = existing is not null && _children.Remove(existing);
-                }
+                var references = new HashSet<ISystemItem>(
+                    requested,
+                    ReferenceEqualityComparer.Instance);
+                var keys = new HashSet<string>(
+                    requested.Select(keySelector),
+                    StringComparer.OrdinalIgnoreCase);
+                var remaining = _children
+                    .Where(item =>
+                        !references.Contains(item) &&
+                        !keys.Contains(keySelector(item)))
+                    .OrderBy(
+                        item => item,
+                        _systemItemSortService.GetComparer(
+                            SystemItemSortType.Name,
+                            0))
+                    .ToArray();
+
+                removed = remaining.Length != _children.Count;
+                if(removed)
+                    ReplaceChildren(remaining);
             });
-            _=await SortingAsync(SystemItemSortType.Name, 0, ct);
-            return existing is null ? FileOperationResult.Fail("Item not found in the directory") : removed ? FileOperationResult.Ok() : FileOperationResult.Fail("Failed to remove item from the directory");
+            return removed
+                ? FileOperationResult.Ok()
+                : FileOperationResult.Fail("Item not found in the directory");
         }
 
         public async virtual Task<FileOperationResult> ClearChildrenAsync()
@@ -196,7 +235,7 @@ namespace CryptoBook.DTO
             IsLoaded = false;
             await _dispatcherService.InvokeAsync(() =>
             {
-                _children.Clear();
+                ReplaceChildren(Array.Empty<ISystemItem>());
             });
             if(_children.Count == 0)
                 return FileOperationResult.Ok();
@@ -212,7 +251,12 @@ namespace CryptoBook.DTO
 
             await _dispatcherService.InvokeAsync(() =>
             {
-                _systemItemSortService.Sort(_children, sortType, dir);
+                ISystemItem[] sorted = _children
+                    .OrderBy(
+                        item => item,
+                        _systemItemSortService.GetComparer(sortType, dir))
+                    .ToArray();
+                ReplaceChildren(sorted);
             });
             return FileOperationResult.Ok();
         }
@@ -220,8 +264,9 @@ namespace CryptoBook.DTO
         public async Task SyncCollectionsAsync(IEnumerable<ISystemItem> source, Func<ISystemItem, string> keySelector,
             Action<ISystemItem, ISystemItem>? updateExisting = null, CancellationToken ct = default)
         {
-            // Снимок цели на UI потоке (если _children привязан к UI)
-            var targetSnapshot = _children.ToList();
+            // Снимок цели берём на UI-потоке, сравнение выполняем по хеш-индексам.
+            var targetSnapshot = await _dispatcherService.InvokeAsync(
+                () => _children.ToList());
 
             // Тяжёлое сравнение — в фоне
             var plan = await Task.Run(() =>
@@ -245,7 +290,9 @@ namespace CryptoBook.DTO
                     targetMap[k] = t;
                 }
 
-                var toRemoveKeys = targetMap.Keys.Where(k => !sourceMap.ContainsKey(k)).ToList();
+                var toRemoveKeys = targetMap.Keys
+                    .Where(k => !sourceMap.ContainsKey(k))
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
                 var toAdd = sourceMap.Where(kv => !targetMap.ContainsKey(kv.Key))
                                      .Select(kv => kv.Value)
                                      .ToList();
@@ -259,12 +306,15 @@ namespace CryptoBook.DTO
 
             await _dispatcherService.InvokeAsync(new Action(() =>
             {
-                for(int i = _children.Count - 1; i >= 0; i--)
+                var currentKeys = new HashSet<string>(
+                    _children.Select(keySelector),
+                    StringComparer.OrdinalIgnoreCase);
+                var synchronized = new List<ISystemItem>(_children.Count + plan.toAdd.Count);
+                foreach(ISystemItem item in _children)
                 {
                     ct.ThrowIfCancellationRequested();
-                    var key = keySelector(_children[i]);
-                    if(plan.toRemoveKeys.Contains(key))
-                        _children.RemoveAt(i);
+                    if(!plan.toRemoveKeys.Contains(keySelector(item)))
+                        synchronized.Add(item);
                 }
 
                 foreach(var (existing, incoming) in plan.toUpdate)
@@ -272,19 +322,32 @@ namespace CryptoBook.DTO
 
                 foreach(var item in plan.toAdd)
                 {
-                    var itemKey = keySelector(item);
+                    string itemKey = keySelector(item);
                     // FileSystemWatcher мог добавить элемент после построения плана синхронизации.
-                    if(!_children.Any(existing =>
-                        string.Equals(
-                            keySelector(existing),
-                            itemKey,
-                            StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _children.Add(item);
-                    }
+                    if(currentKeys.Add(itemKey))
+                        synchronized.Add(item);
                 }
+
+                if(plan.toRemoveKeys.Count > 0 || synchronized.Count != _children.Count)
+                    ReplaceChildren(synchronized);
             }));
 
+        }
+
+        private void ReplaceChildren(IReadOnlyCollection<ISystemItem> items)
+        {
+            _children.ReplaceAll(items);
+
+            IContainerSystemItem[] directories = items
+                .OfType<IContainerSystemItem>()
+                .ToArray();
+            bool directorySetChanged = directories.Length != _directoryChildren.Count ||
+                !directories
+                    .Zip(_directoryChildren, ReferenceEquals)
+                    .All(same => same);
+
+            if(directorySetChanged)
+                _directoryChildren.ReplaceAll(directories);
         }
 
         private void StartMonitoring()
