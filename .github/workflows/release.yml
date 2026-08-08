@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to build and upload
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -17,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -29,10 +37,16 @@ jobs:
       - name: Resolve release version
         shell: pwsh
         run: |
-          $version = "${{ github.ref_name }}".TrimStart("v")
-          if ($version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') {
+          $tag = if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            "${{ inputs.tag }}"
+          } else {
+            "${{ github.ref_name }}"
+          }
+          $version = $tag.TrimStart("v")
+          if ($version -notmatch '^\d+\.\d+\.\d+(\.\d+)?([-.][0-9A-Za-z.-]+)?$') {
             throw "Tag does not contain a valid release version."
           }
+          "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
           "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
 
       - name: Restore locked dependencies
@@ -147,7 +161,7 @@ jobs:
             ForEach-Object { "$($_.Hash)  $($_.Path.Substring($env:GITHUB_WORKSPACE.Length + 1))" } |
             Set-Content artifacts/SHA256SUMS.txt
 
-      - name: Create GitHub release
+      - name: Publish GitHub release assets
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -157,16 +171,22 @@ jobs:
           } else {
             "⚠️ The Windows binaries are not digitally signed. Verify the SHA-256 checksums before use."
           }
-          gh release create "${{ github.ref_name }}" `
-            "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe" `
-            artifacts/CryptoBook-win-x64.zip `
-            artifacts/packages.lock.json `
-            artifacts/CryptoBook.spdx.json `
-            artifacts/SIGNING-STATUS.txt `
-            artifacts/SHA256SUMS.txt `
-            --generate-notes `
-            --notes $signingNote `
-            --verify-tag
+          $assets = @(
+            "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe",
+            "artifacts/CryptoBook-win-x64.zip",
+            "artifacts/packages.lock.json",
+            "artifacts/CryptoBook.spdx.json",
+            "artifacts/SIGNING-STATUS.txt",
+            "artifacts/SHA256SUMS.txt"
+          )
+          if (gh release view $env:RELEASE_TAG --json id 2>$null) {
+            gh release upload $env:RELEASE_TAG $assets --clobber
+          } else {
+            gh release create $env:RELEASE_TAG $assets `
+              --generate-notes `
+              --notes $signingNote `
+              --verify-tag
+          }
 
       - name: Remove signing certificate
         if: always() && steps.certificate.outputs.enabled == 'true'

@@ -1,7 +1,8 @@
 namespace CryptoBook.DTO
 {
     /// <summary>
-    /// Версия в формате SemVer 2.0.0 без учёта build metadata.
+    /// Версия релиза из трёх или четырёх числовых компонентов без учёта
+    /// build metadata.
     /// </summary>
     public sealed class SemanticVersion : IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
@@ -10,17 +11,23 @@ namespace CryptoBook.DTO
         public int Major { get; }
         public int Minor { get; }
         public int Patch { get; }
+        public int Revision { get; }
         public bool IsPreRelease => preReleaseIdentifiers.Count > 0;
+        private bool HasRevision { get; }
 
         private SemanticVersion(
             int major,
             int minor,
             int patch,
+            int revision,
+            bool hasRevision,
             IReadOnlyList<string> preReleaseIdentifiers)
         {
             Major = major;
             Minor = minor;
             Patch = patch;
+            Revision = revision;
+            HasRevision = hasRevision;
             this.preReleaseIdentifiers = preReleaseIdentifiers;
         }
 
@@ -51,13 +58,18 @@ namespace CryptoBook.DTO
             string coreAndPreRelease = normalized;
             string[] parts = coreAndPreRelease.Split('-', 2);
             string[] core = parts[0].Split('.');
-            if(core.Length != 3 ||
+            if(core.Length is not (3 or 4) ||
                !TryParseCorePart(core[0], out int major) ||
                !TryParseCorePart(core[1], out int minor) ||
-               !TryParseCorePart(core[2], out int patch))
+               !TryParseCorePart(core[2], out int patch) ||
+               (core.Length == 4 && !TryParseCorePart(core[3], out _)))
             {
                 return false;
             }
+
+            int revision = core.Length == 4
+                ? int.Parse(core[3])
+                : 0;
 
             var identifiers = new List<string>();
             if(parts.Length == 2)
@@ -71,7 +83,13 @@ namespace CryptoBook.DTO
                 }
             }
 
-            version = new SemanticVersion(major, minor, patch, identifiers);
+            version = new SemanticVersion(
+                major,
+                minor,
+                patch,
+                revision,
+                core.Length == 4,
+                identifiers);
             return true;
         }
 
@@ -87,6 +105,9 @@ namespace CryptoBook.DTO
             if(result != 0)
                 return result;
             result = Patch.CompareTo(other.Patch);
+            if(result != 0)
+                return result;
+            result = Revision.CompareTo(other.Revision);
             if(result != 0)
                 return result;
 
@@ -134,6 +155,7 @@ namespace CryptoBook.DTO
             hash.Add(Major);
             hash.Add(Minor);
             hash.Add(Patch);
+            hash.Add(Revision);
             foreach(string identifier in preReleaseIdentifiers)
                 hash.Add(identifier, StringComparer.Ordinal);
             return hash.ToHashCode();
@@ -142,6 +164,8 @@ namespace CryptoBook.DTO
         public override string ToString()
         {
             string value = $"{Major}.{Minor}.{Patch}";
+            if(HasRevision)
+                value += $".{Revision}";
             return IsPreRelease
                 ? $"{value}-{string.Join('.', preReleaseIdentifiers)}"
                 : value;
