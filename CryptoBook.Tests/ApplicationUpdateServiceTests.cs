@@ -13,7 +13,7 @@ public sealed class ApplicationUpdateServiceTests
     {
         var provider = new AssemblyApplicationVersionProvider();
 
-        Assert.Equal("1.1.0.2", provider.GetCurrentVersion().ToString());
+        Assert.Equal("1.1.0.3", provider.GetCurrentVersion().ToString());
     }
 
     [Fact]
