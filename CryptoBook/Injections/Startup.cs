@@ -356,6 +356,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentSaveTargetPicker>()
                 .As<IDocumentSaveTargetPicker>()
                 .SingleInstance();
+            builder.RegisterType<DocumentSaveEncryptionPolicy>()
+                .As<IDocumentSaveEncryptionPolicy>()
+                .SingleInstance();
             builder.RegisterType<ImageFilePickerService>().As<IImageFilePicker>().SingleInstance();
             builder.RegisterType<ImageContentLoader>().As<IImageContentLoader>().SingleInstance();
             builder.RegisterType<EmbeddedImageEditor>().As<IEmbeddedImageEditor>().SingleInstance();

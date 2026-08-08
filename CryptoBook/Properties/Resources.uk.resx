@@ -1104,6 +1104,18 @@
   <data name="Document.SaveError" xml:space="preserve">
     <value>Помилка збереження</value>
   </data>
+  <data name="Document.EncryptionSaveTitle" xml:space="preserve">
+    <value>Шифрування документа</value>
+  </data>
+  <data name="Document.EncryptionSaveOffer" xml:space="preserve">
+    <value>У застосунку встановлено ключ шифрування. Зашифрувати файл під час збереження? Натисніть «ОК», щоб зашифрувати його, або «Скасувати», щоб зберегти без шифрування. Після шифрування файл неможливо буде відкрити без ключа.</value>
+  </data>
+  <data name="Document.EncryptionSaveWarning" xml:space="preserve">
+    <value>Файл буде зашифровано, і без ключа відкрити його буде неможливо. Продовжити збереження?</value>
+  </data>
+  <data name="Document.EncryptionFormatUnavailable" xml:space="preserve">
+    <value>Формат зашифрованого документа недоступний.</value>
+  </data>
   <data name="Document.InsertImageError" xml:space="preserve">
     <value>Не вдалося вставити зображення</value>
   </data>
