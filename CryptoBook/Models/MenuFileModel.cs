@@ -31,6 +31,7 @@ namespace CryptoBook.Models
         private readonly ISecureFileProcessor secureFileProcessor;
         private readonly IDocumentContentInspector documentContentInspector;
         private readonly IDocumentPrintService documentPrintService;
+        private readonly IDocumentSaveEncryptionPolicy saveEncryptionPolicy;
         private readonly IKeyResetService? keyResetService;
 
         public MenuFileModel(
@@ -46,6 +47,7 @@ namespace CryptoBook.Models
             ISecureFileProcessor secureFileProcessor,
             IDocumentContentInspector documentContentInspector,
             IDocumentPrintService documentPrintService,
+            IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
             IKeyResetService? keyResetService = null)
         {
             this.windowManager = windowManager
@@ -77,6 +79,9 @@ namespace CryptoBook.Models
             this.documentPrintService = documentPrintService
                 ?? throw new ArgumentNullException(
                     nameof(documentPrintService));
+            this.saveEncryptionPolicy = saveEncryptionPolicy
+                ?? throw new ArgumentNullException(
+                    nameof(saveEncryptionPolicy));
             this.keyResetService = keyResetService;
 
             documentSession.PropertyChanged += (_, _) =>
@@ -187,6 +192,15 @@ namespace CryptoBook.Models
             {
                 DocumentSaveTarget? target =
                     GetSaveTarget(forceChooseTarget);
+                if(target is null)
+                    return false;
+
+                bool sourceIsPlaintextFile =
+                    !string.IsNullOrWhiteSpace(documentSession.FilePath) &&
+                    documentSession.Template is not SecureFileTemplate;
+                target = await saveEncryptionPolicy.ResolveAsync(
+                    target,
+                    sourceIsPlaintextFile);
                 if(target is null)
                     return false;
 

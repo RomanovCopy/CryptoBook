@@ -77,6 +77,9 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
+            bool preserveBackup = await DestinationIsEncryptedAsync(
+                outputFile,
+                cancellationToken);
             StagedEncryption staged = await EncryptToTemporaryFileAsync(
                 input,
                 originalExtension,
@@ -84,8 +87,50 @@ namespace CryptoBook.Security
                 progress,
                 cancellationToken);
 
-            CommitEncryptedFile(staged, preserveBackup: true);
+            // Первая защищённая запись не должна оставлять открытый текст
+            // в резервной копии. Для следующих записей .bak уже зашифрован.
+            CommitEncryptedFile(staged, preserveBackup);
         }
+
+        private static async Task<bool> DestinationIsEncryptedAsync(
+            string outputFile,
+            CancellationToken cancellationToken)
+        {
+            if(!File.Exists(outputFile))
+                return false;
+
+            await using FileStream stream = OpenRead(outputFile);
+            int requiredLength = Math.Max(
+                SecureFileFormat.MagicHeader.Length,
+                SecureFileFormat.V2MagicHeader.Length);
+            byte[] header = new byte[requiredLength];
+            int bytesRead = 0;
+            while(bytesRead < header.Length)
+            {
+                int read = await stream.ReadAsync(
+                    header.AsMemory(bytesRead),
+                    cancellationToken);
+                if(read == 0)
+                    break;
+                bytesRead += read;
+            }
+
+            return HasPrefix(
+                       header,
+                       bytesRead,
+                       SecureFileFormat.MagicHeader) ||
+                   HasPrefix(
+                       header,
+                       bytesRead,
+                       SecureFileFormat.V2MagicHeader);
+        }
+
+        private static bool HasPrefix(
+            byte[] content,
+            int contentLength,
+            byte[] expected) =>
+            contentLength >= expected.Length &&
+            content.AsSpan(0, expected.Length).SequenceEqual(expected);
 
         private async Task<StagedEncryption> EncryptToTemporaryFileAsync(
             Stream input,

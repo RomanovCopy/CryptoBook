@@ -62,6 +62,63 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
+        public async Task V2_EncryptStream_ReplacingPlaintext_DoesNotLeavePlaintextBackup()
+        {
+            byte[] content = Encoding.UTF8.GetBytes("protected document");
+            string target = CreateSource(
+                "document.XamlPackage",
+                Encoding.UTF8.GetBytes("previous plaintext"));
+            var (processor, _) = CreateProcessor("stream password");
+            await using var source = new MemoryStream(content, writable: false);
+
+            await processor.EncryptStreamAsync(
+                source,
+                ".XamlPackage",
+                target);
+
+            Assert.False(File.Exists(target + ".bak"));
+            await using DecryptedFileContent decrypted =
+                await processor.DecryptFileContentAsync(target);
+            using var restored = new MemoryStream();
+            await decrypted.Content.CopyToAsync(restored);
+            Assert.Equal(content, restored.ToArray());
+        }
+
+        [Fact]
+        public async Task V2_EncryptStream_ReplacingEncryptedFile_PreservesEncryptedBackup()
+        {
+            byte[] firstContent = Encoding.UTF8.GetBytes("first version");
+            byte[] secondContent = Encoding.UTF8.GetBytes("second version");
+            string target = Path.Combine(_directory, "document.cbook");
+            var (processor, _) = CreateProcessor("stream password");
+
+            await using(var first = new MemoryStream(firstContent, writable: false))
+            {
+                await processor.EncryptStreamAsync(
+                    first,
+                    ".XamlPackage",
+                    target);
+            }
+            await using(var second = new MemoryStream(secondContent, writable: false))
+            {
+                await processor.EncryptStreamAsync(
+                    second,
+                    ".XamlPackage",
+                    target);
+            }
+
+            string backup = target + ".bak";
+            Assert.True(File.Exists(backup));
+            Assert.True(await new SecureFileValidator()
+                .HasCryptoBookHeaderAsync(backup));
+            await using DecryptedFileContent decrypted =
+                await processor.DecryptFileContentAsync(backup);
+            using var restored = new MemoryStream();
+            await decrypted.Content.CopyToAsync(restored);
+            Assert.Equal(firstContent, restored.ToArray());
+        }
+
+        [Fact]
         public async Task V2_EncryptFile_CanReplaceSourceFile()
         {
             byte[] content = Encoding.UTF8.GetBytes(
