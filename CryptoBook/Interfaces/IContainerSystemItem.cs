@@ -16,6 +16,7 @@ namespace CryptoBook.Interfaces
         bool IsExpanded { get; set; }
         bool IsSelected { get; set; }
         ReadOnlyObservableCollection<ISystemItem> Children { get; }
+        ReadOnlyObservableCollection<IContainerSystemItem> DirectoryChildren { get; }
         Task<FileOperationResult> AddChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);
         Task<FileOperationResult> RenameChildAsync(ISystemItem item, string newName, CancellationToken ct = default);
         Task< FileOperationResult> RemoveChildAsync(IEnumerable<ISystemItem>  items, Func<ISystemItem, string> keySelector, CancellationToken ct = default);

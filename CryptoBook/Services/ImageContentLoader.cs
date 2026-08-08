@@ -37,18 +37,17 @@ namespace CryptoBook.Services
 
             using var buffer = new MemoryStream();
             await source.CopyToAsync(buffer, cancellationToken);
-            byte[] bytes = buffer.ToArray();
-            if(bytes.Length == 0)
+            if(buffer.Length == 0)
                 throw new InvalidDataException(
                     LocalizationManager.GetString("Image.EmptyFile"));
 
             cancellationToken.ThrowIfCancellationRequested();
-            using var imageStream = new MemoryStream(bytes, writable: false);
+            buffer.Position = 0;
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-            bitmap.StreamSource = imageStream;
+            bitmap.StreamSource = buffer;
             bitmap.EndInit();
             bitmap.Freeze();
             return bitmap;

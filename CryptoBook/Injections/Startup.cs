@@ -207,6 +207,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<EncryptionKeyRequestService>()
                 .As<IEncryptionKeyRequestService>()
                 .SingleInstance();
+            builder.RegisterType<WorkspaceSearchIndex>()
+                .As<IWorkspaceSearchIndex>()
+                .SingleInstance();
             builder.RegisterType<WorkspaceContentSearchService>()
                 .As<IWorkspaceContentSearchService>()
                 .SingleInstance();

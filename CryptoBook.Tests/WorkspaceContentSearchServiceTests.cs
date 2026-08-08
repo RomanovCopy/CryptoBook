@@ -18,6 +18,10 @@ namespace CryptoBook.Tests
             Path.GetTempPath(),
             "CryptoBook.ContentSearchTests",
             Guid.NewGuid().ToString("N"));
+        private readonly string indexDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "CryptoBook.ContentSearchIndexes",
+            Guid.NewGuid().ToString("N"));
 
         public WorkspaceContentSearchServiceTests()
         {
@@ -66,16 +70,20 @@ namespace CryptoBook.Tests
                 [new RichTextFileTemplate()]);
             var handlerRegistry = new DocumentFormatHandlerRegistry(
                 [new RtfDocumentFormatHandler(dispatcher)]);
-            var service = new WorkspaceContentSearchService(
-                new WorkspaceStub(testDirectory),
-                new NeverEncryptedValidator(),
-                new ProcessorStub(),
-                new KeyRequestStub(allowed: false),
+            var validator = new NeverEncryptedValidator();
+            var options = CreateOptions();
+            var index = new WorkspaceSearchIndex(
+                validator,
                 [new FlowDocumentTextExtractor(
                     handlerRegistry,
                     templateRegistry,
                     dispatcher)],
-                new WorkspaceContentSearchOptions());
+                options);
+            var service = new WorkspaceContentSearchService(
+                new WorkspaceStub(testDirectory),
+                index,
+                new ProcessorStub(),
+                new KeyRequestStub(allowed: false));
 
             WorkspaceContentSearchOutcome outcome =
                 await service.SearchAsync("needle");
@@ -154,27 +162,89 @@ namespace CryptoBook.Tests
                     cancellationToken: cancellation.Token));
         }
 
+        [Fact]
+        public async Task SearchAsync_ReusesIndexAndReextractsOnlyChangedFile()
+        {
+            string first = Path.Combine(testDirectory, "first.txt");
+            string second = Path.Combine(testDirectory, "second.txt");
+            await File.WriteAllTextAsync(first, "needle one");
+            await File.WriteAllTextAsync(second, "needle two");
+            var extractor = new CountingTextExtractor();
+            var validator = new NeverEncryptedValidator();
+            var index = new WorkspaceSearchIndex(
+                validator,
+                [extractor],
+                CreateOptions());
+            var service = new WorkspaceContentSearchService(
+                new WorkspaceStub(testDirectory),
+                index,
+                new ProcessorStub(),
+                new KeyRequestStub(allowed: false));
+
+            Assert.Equal(2, (await service.SearchAsync("needle")).Results.Count);
+            Assert.Equal(2, extractor.ExtractCount);
+
+            Assert.Equal(2, (await service.SearchAsync("needle")).Results.Count);
+            Assert.Equal(2, extractor.ExtractCount);
+
+            await File.WriteAllTextAsync(first, "changed needle content");
+            Assert.Equal(2, (await service.SearchAsync("needle")).Results.Count);
+            Assert.Equal(3, extractor.ExtractCount);
+
+            File.Delete(second);
+            Assert.Single((await service.SearchAsync("needle")).Results);
+            Assert.Equal(3, extractor.ExtractCount);
+        }
+
         private WorkspaceContentSearchService CreateService(
             ISecureFileValidator validator,
             ISecureFileProcessor processor,
-            IEncryptionKeyRequestService keyRequest) =>
-            new(
-                new WorkspaceStub(testDirectory),
+            IEncryptionKeyRequestService keyRequest)
+        {
+            var index = new WorkspaceSearchIndex(
                 validator,
-                processor,
-                keyRequest,
                 [new PlainTextDocumentTextExtractor()],
-                new WorkspaceContentSearchOptions
-                {
-                    MaxResults = 20,
-                    MaxFileSizeBytes = 1024 * 1024,
-                    SnippetLength = 80
-                });
+                CreateOptions());
+            return new WorkspaceContentSearchService(
+                new WorkspaceStub(testDirectory),
+                index,
+                processor,
+                keyRequest);
+        }
+
+        private WorkspaceContentSearchOptions CreateOptions() => new()
+        {
+            MaxResults = 20,
+            MaxFileSizeBytes = 1024 * 1024,
+            SnippetLength = 80,
+            IndexDirectory = indexDirectory
+        };
 
         public void Dispose()
         {
             if(Directory.Exists(testDirectory))
                 Directory.Delete(testDirectory, recursive: true);
+            if(Directory.Exists(indexDirectory))
+                Directory.Delete(indexDirectory, recursive: true);
+        }
+
+        private sealed class CountingTextExtractor: IDocumentTextExtractor
+        {
+            private readonly PlainTextDocumentTextExtractor inner = new();
+            public int ExtractCount { get; private set; }
+            public bool CanExtract(string extension) =>
+                inner.CanExtract(extension);
+            public async Task<string> ExtractAsync(
+                Stream source,
+                string extension,
+                CancellationToken cancellationToken = default)
+            {
+                ExtractCount++;
+                return await inner.ExtractAsync(
+                    source,
+                    extension,
+                    cancellationToken);
+            }
         }
 
         private sealed class WorkspaceStub(string directory): IWorkspaceService
