@@ -179,6 +179,9 @@
     <Setting Name="DocumentBackgroundColor" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="DocumentLineSpacingRatio" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1.2</Value>
+    </Setting>
     <Setting Name="CurrentTheme" Type="System.String" Scope="User">
       <Value Profile="(Default)">SystemTheme</Value>
     </Setting>

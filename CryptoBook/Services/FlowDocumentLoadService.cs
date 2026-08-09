@@ -19,6 +19,7 @@ namespace CryptoBook.Services
         private readonly IDispatcherService _dispatcherService;
         private readonly IBookmarkService _bookmarkService;
         private readonly IDocumentFormatHandlerRegistry _formatHandlers;
+        private readonly IDocumentLineSpacingPreferenceStore _lineSpacingPreferences;
 
         /// <summary>
         /// Сервис загрузки содержимого в FlowDocument (текст, RTF, изображения и т.д.).
@@ -27,11 +28,14 @@ namespace CryptoBook.Services
         public FlowDocumentLoadService(
             IDispatcherService dispatcherService,
             IBookmarkService bookmarkService,
-            IDocumentFormatHandlerRegistry formatHandlers)
+            IDocumentFormatHandlerRegistry formatHandlers,
+            IDocumentLineSpacingPreferenceStore lineSpacingPreferences)
         {
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
             _bookmarkService = bookmarkService ?? throw new ArgumentNullException(nameof(bookmarkService));
             _formatHandlers = formatHandlers ?? throw new ArgumentNullException(nameof(formatHandlers));
+            _lineSpacingPreferences = lineSpacingPreferences ??
+                throw new ArgumentNullException(nameof(lineSpacingPreferences));
         }
 
 
@@ -94,6 +98,10 @@ namespace CryptoBook.Services
                     document,
                     buffer,
                     cancellationToken);
+                await ApplyPreferredLineSpacingAsync(
+                    document,
+                    template,
+                    cancellationToken);
                 return document;
             }
 
@@ -116,7 +124,28 @@ namespace CryptoBook.Services
 
                 LoadDocument(document, buffer, template);
             });
+            await ApplyPreferredLineSpacingAsync(
+                document,
+                template,
+                cancellationToken);
             return document;
+        }
+
+        private Task ApplyPreferredLineSpacingAsync(
+            FlowDocument document,
+            IFileTemplate template,
+            CancellationToken cancellationToken)
+        {
+            if(template.OpenMode != FileOpenMode.Document)
+                return Task.CompletedTask;
+
+            return _dispatcherService.InvokeAsync(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                DocumentLineSpacing.Apply(
+                    document,
+                    _lineSpacingPreferences.Load());
+            });
         }
 
         /// <summary>

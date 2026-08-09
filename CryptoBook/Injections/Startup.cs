@@ -195,6 +195,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<UserDocumentBackgroundPreferenceStore>()
                 .As<IDocumentBackgroundPreferenceStore>()
                 .SingleInstance();
+            builder.RegisterType<UserDocumentLineSpacingPreferenceStore>()
+                .As<IDocumentLineSpacingPreferenceStore>()
+                .SingleInstance();
             builder.RegisterType<DocumentAppearanceDefaults>()
                 .As<IDocumentAppearanceDefaults>()
                 .SingleInstance();

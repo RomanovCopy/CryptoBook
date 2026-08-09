@@ -226,6 +226,36 @@ public sealed class FontTypingTests
     }
 
     [WpfFact]
+    public void ToolbarFormatting_RestoresSelectionCapturedWhenEditorLostFocus()
+    {
+        var (service, fonts) = CreateServices(new Run("ab"));
+        var run = GetOnlyRun(service);
+        var start = run.ContentStart;
+        var end = start.GetPositionAtOffset(1)!;
+        service.Selection.Select(start, end);
+
+        service.Service.RaiseEvent(
+            new RoutedEventArgs(UIElement.LostFocusEvent));
+        service.CaretPosition = run.ContentEnd;
+        service.Selection.Select(run.ContentEnd, run.ContentEnd);
+
+        fonts.SetFontWeight(FontWeights.Bold);
+
+        Assert.True(service.Service.IsInactiveSelectionHighlightEnabled);
+        Assert.False(service.Selection.IsEmpty);
+        AssertCharacterProperty(
+            service,
+            0,
+            TextElement.FontWeightProperty,
+            FontWeights.Bold);
+        AssertCharacterProperty(
+            service,
+            1,
+            TextElement.FontWeightProperty,
+            FontWeights.Normal);
+    }
+
+    [WpfFact]
     public void EveryFontProperty_IsAppliedExactlyToMixedSelection()
     {
         var (service, fonts) = CreateServices(

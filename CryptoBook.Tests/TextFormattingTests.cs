@@ -53,19 +53,90 @@ public sealed class TextFormattingTests
     }
 
     [WpfFact]
-    public void LineHeightButtons_AdjustCurrentParagraphWithinBounds()
+    public void LineHeightButtons_CanReduceBelowNaturalHeightWithinSafeBounds()
     {
-        var (richText, formatting) = CreateDocument("text");
+        var preferences = new LineSpacingPreferenceStoreStub();
+        var (richText, formatting) = CreateDocument(
+            preferences,
+            "text");
         var paragraph = (Paragraph)richText.Document.Blocks.FirstBlock!;
         paragraph.FontSize = 20;
         richText.CaretPosition = paragraph.ContentStart;
         richText.ClearSelection();
 
-        formatting.SetLineHeight(1);
-        Assert.Equal(26, paragraph.LineHeight, 5);
+        formatting.SetLineHeight(-1);
+        Assert.Equal(22, paragraph.LineHeight, 5);
+        Assert.Equal(
+            LineStackingStrategy.BlockLineHeight,
+            paragraph.LineStackingStrategy);
 
         formatting.SetLineHeight(-1);
+        Assert.Equal(20, paragraph.LineHeight, 5);
+
+        formatting.SetLineHeight(-1);
+        Assert.Equal(18, paragraph.LineHeight, 5);
+
+        formatting.SetLineHeight(-1);
+        formatting.SetLineHeight(-1);
+        Assert.Equal(16, paragraph.LineHeight, 5);
+        Assert.Equal(0.8, preferences.Ratio, 5);
+
+        formatting.SetLineHeight(1);
+        Assert.Equal(18, paragraph.LineHeight, 5);
+
+        formatting.SetLineHeight(1);
+        formatting.SetLineHeight(1);
+        Assert.Equal(22, paragraph.LineHeight, 5);
+
+        formatting.SetLineHeight(1);
         Assert.Equal(24, paragraph.LineHeight, 5);
+        Assert.Equal(
+            LineStackingStrategy.MaxHeight,
+            paragraph.LineStackingStrategy);
+
+        formatting.SetLineHeight(1);
+        Assert.Equal(26, paragraph.LineHeight, 5);
+    }
+
+    [WpfFact]
+    public void MinimumToolbarLineHeight_DoesNotOverlapAdjacentParagraphs()
+    {
+        var (richText, formatting) = CreateDocument("one", "two");
+        var first = (Paragraph)richText.Document.Blocks.FirstBlock!;
+        var second = (Paragraph)richText.Document.Blocks.LastBlock!;
+        first.FontSize = 20;
+        second.FontSize = 20;
+        richText.Selection.Select(first.ContentStart, second.ContentEnd);
+
+        for(var step = 0; step < 4; step++)
+            formatting.SetLineHeight(-1);
+
+        Assert.Equal(16, first.LineHeight, 5);
+        Assert.Equal(16, second.LineHeight, 5);
+
+        var host = new Window
+        {
+            Content = richText.Service,
+            Width = 400,
+            Height = 250
+        };
+        host.Show();
+        try
+        {
+            richText.Service.UpdateLayout();
+            var firstRect = first.ContentStart.GetCharacterRect(
+                LogicalDirection.Forward);
+            var secondRect = second.ContentStart.GetCharacterRect(
+                LogicalDirection.Forward);
+
+            Assert.True(
+                secondRect.Top >= firstRect.Bottom - 0.5,
+                $"Compact paragraph rectangles overlap: first={firstRect}, second={secondRect}.");
+        }
+        finally
+        {
+            host.Close();
+        }
     }
 
     [WpfFact]
@@ -179,6 +250,59 @@ public sealed class TextFormattingTests
         {
             host.Close();
         }
+    }
+
+    [WpfFact]
+    public void Escape_DismissesSelectionAndPreventsItsRestoration()
+    {
+        var (richText, _) = CreateDocument("text");
+        var paragraph = (Paragraph)richText.Document.Blocks.FirstBlock!;
+        richText.Selection.Select(paragraph.ContentStart, paragraph.ContentEnd);
+        richText.Service.RaiseEvent(
+            new RoutedEventArgs(UIElement.LostFocusEvent));
+
+        var host = new Window { Content = richText.Service };
+        host.Show();
+        try
+        {
+            richText.Focus();
+            var args = new KeyEventArgs(
+                Keyboard.PrimaryDevice,
+                PresentationSource.FromVisual(host),
+                Environment.TickCount,
+                Key.Escape)
+            {
+                RoutedEvent = Keyboard.PreviewKeyDownEvent
+            };
+
+            richText.Service.RaiseEvent(args);
+            richText.RestoreSelection();
+
+            Assert.True(args.Handled);
+            Assert.True(richText.Selection.IsEmpty);
+        }
+        finally
+        {
+            host.Close();
+        }
+    }
+
+    [WpfFact]
+    public void ClickPositionOutsideSelection_DismissesSavedSelection()
+    {
+        var (richText, _) = CreateDocument("text");
+        var editor = Assert.IsType<RichTextBoxService>(richText.Service);
+        var paragraph = (Paragraph)richText.Document.Blocks.FirstBlock!;
+        var selectedEnd = paragraph.ContentStart.GetPositionAtOffset(1)!;
+        richText.Selection.Select(paragraph.ContentStart, selectedEnd);
+        richText.Service.RaiseEvent(
+            new RoutedEventArgs(UIElement.LostFocusEvent));
+
+        var clickPosition = paragraph.ContentEnd;
+        editor.DismissSelectionIfOutside(clickPosition);
+        richText.RestoreSelection();
+
+        Assert.True(richText.Selection.IsEmpty);
     }
 
     [WpfFact]
@@ -434,6 +558,11 @@ public sealed class TextFormattingTests
 
     private static (IRichTextBoxService RichText, TextFormatService Formatting) CreateDocument(
         params string[] paragraphs)
+        => CreateDocument(new LineSpacingPreferenceStoreStub(), paragraphs);
+
+    private static (IRichTextBoxService RichText, TextFormatService Formatting) CreateDocument(
+        IDocumentLineSpacingPreferenceStore preferenceStore,
+        params string[] paragraphs)
     {
         IRichTextBoxService richText = new RichTextBoxService(
             new TestParagraphFactory(),
@@ -446,7 +575,17 @@ public sealed class TextFormattingTests
         var first = (Paragraph)richText.Document.Blocks.FirstBlock!;
         richText.CaretPosition = first.ContentStart;
         richText.ClearSelection();
-        return (richText, new TextFormatService(richText));
+        return (richText, new TextFormatService(richText, preferenceStore));
+    }
+
+    private sealed class LineSpacingPreferenceStoreStub:
+        IDocumentLineSpacingPreferenceStore
+    {
+        public double Ratio { get; private set; } = 1.2;
+
+        public double Load() => Ratio;
+
+        public void Save(double ratio) => Ratio = ratio;
     }
 
     private sealed class TestParagraphFactory: IParagraphFactory
