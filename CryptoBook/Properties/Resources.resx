@@ -661,4 +661,33 @@
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Reset key after inactivity</value></data>
   <data name="Settings.EncryptionKey" xml:space="preserve"><value>Encryption key</value></data>
   <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Enter or change key</value></data>
+  <data name="Home.StartTitle" xml:space="preserve"><value>Start working</value></data>
+  <data name="Home.StartDescription" xml:space="preserve"><value>Create a document, open a file, or return to a recent item.</value></data>
+  <data name="Home.CreateDocument" xml:space="preserve"><value>New document</value></data>
+  <data name="Home.OpenDocument" xml:space="preserve"><value>Open file</value></data>
+  <data name="Home.ChooseWorkspace" xml:space="preserve"><value>Choose workspace</value></data>
+  <data name="Home.Workspace" xml:space="preserve"><value>Workspace</value></data>
+  <data name="Home.WorkspaceNotSelected" xml:space="preserve"><value>Not selected</value></data>
+  <data name="Home.NoPinnedDocuments" xml:space="preserve"><value>No pinned documents yet.</value></data>
+  <data name="Home.FileUnavailable" xml:space="preserve"><value>File moved or unavailable</value></data>
+  <data name="Home.OpenErrorTitle" xml:space="preserve"><value>Open document</value></data>
+  <data name="Home.OpenFailed" xml:space="preserve"><value>Could not open “{0}”.</value></data>
+  <data name="Home.WorkspaceErrorTitle" xml:space="preserve"><value>Workspace</value></data>
+  <data name="RecentDocuments.Title" xml:space="preserve"><value>Recent documents</value></data>
+  <data name="RecentDocuments.Empty" xml:space="preserve"><value>Documents appear here only after they are opened or saved successfully.</value></data>
+  <data name="RecentDocuments.ErrorTitle" xml:space="preserve"><value>Recent documents</value></data>
+  <data name="RecentDocuments.LoadFailed" xml:space="preserve"><value>Could not load recent documents.</value></data>
+  <data name="RecentDocuments.SaveFailed" xml:space="preserve"><value>Could not update recent documents.</value></data>
+  <data name="RecentDocuments.OpenFailed" xml:space="preserve"><value>Could not open recent document “{0}”.</value></data>
+  <data name="RecentDocuments.OpenFailedGeneric" xml:space="preserve"><value>Could not open the recent document.</value></data>
+  <data name="RecentDocuments.MissingFile" xml:space="preserve"><value>The file “{0}” was moved or is unavailable. Choose its new location or remove it from history.</value></data>
+  <data name="RecentDocuments.RelocateShort" xml:space="preserve"><value>Locate…</value></data>
+  <data name="RecentDocuments.RelocateInvalid" xml:space="preserve"><value>The new location for “{0}” is unavailable.</value></data>
+  <data name="RecentDocuments.RelocateFailed" xml:space="preserve"><value>Could not update the document location.</value></data>
+  <data name="RecentDocuments.Remove" xml:space="preserve"><value>Remove from history</value></data>
+  <data name="DocumentLinks.RenameSyncFailed" xml:space="preserve"><value>The file was renamed, but one or more quick-access links could not be updated.</value></data>
+  <data name="File.NewDescription" xml:space="preserve"><value>Choose the document type, name, and destination.</value></data>
+  <data name="File.Attributes" xml:space="preserve"><value>File attributes</value></data>
+  <data name="File.ReadOnlyAttribute" xml:space="preserve"><value>Read-only</value></data>
+  <data name="File.HiddenAttribute" xml:space="preserve"><value>Hidden</value></data>
 </root>

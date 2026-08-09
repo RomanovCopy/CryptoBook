@@ -37,6 +37,7 @@ namespace CryptoBook.Models
         private readonly IWorkspaceFileOpenService _fileOpenService;
         private readonly IDocumentSession _documentSession;
         private readonly IPinnedDocumentService _pinnedDocumentService;
+        private readonly IRecentDocumentService? _recentDocumentService;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -67,7 +68,7 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileSecurityService fileSecurityService, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IWorkspaceFileOpenService fileOpenService, IDocumentSession documentSession, IPinnedDocumentService pinnedDocumentService)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileSecurityService fileSecurityService, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IWorkspaceFileOpenService fileOpenService, IDocumentSession documentSession, IPinnedDocumentService pinnedDocumentService, IRecentDocumentService? recentDocumentService = null)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -83,6 +84,7 @@ namespace CryptoBook.Models
             _fileOpenService = fileOpenService ?? throw new ArgumentNullException(nameof(fileOpenService));
             _documentSession = documentSession ?? throw new ArgumentNullException(nameof(documentSession));
             _pinnedDocumentService = pinnedDocumentService ?? throw new ArgumentNullException(nameof(pinnedDocumentService));
+            _recentDocumentService = recentDocumentService;
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -428,6 +430,13 @@ namespace CryptoBook.Models
                     oldPath,
                     newPath,
                     CancellationToken.None);
+                if(_recentDocumentService is not null)
+                {
+                    await _recentDocumentService.UpdatePathAsync(
+                        oldPath,
+                        newPath,
+                        CancellationToken.None);
+                }
             }
             catch(Exception exception)
             {
@@ -435,7 +444,7 @@ namespace CryptoBook.Models
                 _ = await _messageService.ShowMessage(
                     LocalizationManager.GetString("Explorer.RenameError"),
                     LocalizationManager.GetString(
-                        "PinnedDocuments.RenameSyncFailed"));
+                        "DocumentLinks.RenameSyncFailed"));
             }
         }
 

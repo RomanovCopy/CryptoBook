@@ -51,6 +51,7 @@ namespace CryptoBook.Models
         private readonly IMessageService messageService;
         private readonly IPageNavigationService pageNavigationService;
         private readonly IPinnedDocumentService pinnedDocumentService;
+        private readonly IRecentDocumentService recentDocumentService;
         private readonly AsyncRelayCommand renameBookCommand;
 
         public SideMenuModel(ILifetimeScope _scope)
@@ -67,6 +68,7 @@ namespace CryptoBook.Models
             messageService = _scope.Resolve<IMessageService>();
             pageNavigationService = _scope.Resolve<IPageNavigationService>();
             pinnedDocumentService = _scope.Resolve<IPinnedDocumentService>();
+            recentDocumentService = _scope.Resolve<IRecentDocumentService>();
             renameBookCommand = new AsyncRelayCommand(RenameBookAsync);
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
@@ -297,6 +299,10 @@ namespace CryptoBook.Models
                     oldPath,
                     newPath,
                     cancellationToken);
+                await recentDocumentService.UpdatePathAsync(
+                    oldPath,
+                    newPath,
+                    cancellationToken);
             }
             catch(OperationCanceledException)
             {
@@ -309,7 +315,7 @@ namespace CryptoBook.Models
                     LocalizationManager.GetString(
                         "SideMenu.RenameBook.ErrorTitle"),
                     LocalizationManager.GetString(
-                        "PinnedDocuments.RenameSyncFailed"));
+                        "DocumentLinks.RenameSyncFailed"));
             }
         }
 

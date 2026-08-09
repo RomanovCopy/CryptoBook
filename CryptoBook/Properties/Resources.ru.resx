@@ -661,4 +661,33 @@
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Сбрасывать ключ после бездействия</value></data>
   <data name="Settings.EncryptionKey" xml:space="preserve"><value>Ключ шифрования</value></data>
   <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Ввести или изменить ключ</value></data>
+  <data name="Home.StartTitle" xml:space="preserve"><value>Начало работы</value></data>
+  <data name="Home.StartDescription" xml:space="preserve"><value>Создайте документ, откройте файл или вернитесь к недавнему документу.</value></data>
+  <data name="Home.CreateDocument" xml:space="preserve"><value>Новый документ</value></data>
+  <data name="Home.OpenDocument" xml:space="preserve"><value>Открыть файл</value></data>
+  <data name="Home.ChooseWorkspace" xml:space="preserve"><value>Выбрать рабочее пространство</value></data>
+  <data name="Home.Workspace" xml:space="preserve"><value>Рабочее пространство</value></data>
+  <data name="Home.WorkspaceNotSelected" xml:space="preserve"><value>Не выбрано</value></data>
+  <data name="Home.NoPinnedDocuments" xml:space="preserve"><value>Закреплённых документов пока нет.</value></data>
+  <data name="Home.FileUnavailable" xml:space="preserve"><value>Файл перемещён или недоступен</value></data>
+  <data name="Home.OpenErrorTitle" xml:space="preserve"><value>Открытие документа</value></data>
+  <data name="Home.OpenFailed" xml:space="preserve"><value>Не удалось открыть «{0}».</value></data>
+  <data name="Home.WorkspaceErrorTitle" xml:space="preserve"><value>Рабочее пространство</value></data>
+  <data name="RecentDocuments.Title" xml:space="preserve"><value>Последние документы</value></data>
+  <data name="RecentDocuments.Empty" xml:space="preserve"><value>Документы появятся здесь только после успешного открытия или сохранения.</value></data>
+  <data name="RecentDocuments.ErrorTitle" xml:space="preserve"><value>Последние документы</value></data>
+  <data name="RecentDocuments.LoadFailed" xml:space="preserve"><value>Не удалось загрузить историю документов.</value></data>
+  <data name="RecentDocuments.SaveFailed" xml:space="preserve"><value>Не удалось обновить историю документов.</value></data>
+  <data name="RecentDocuments.OpenFailed" xml:space="preserve"><value>Не удалось открыть документ «{0}».</value></data>
+  <data name="RecentDocuments.OpenFailedGeneric" xml:space="preserve"><value>Не удалось открыть последний документ.</value></data>
+  <data name="RecentDocuments.MissingFile" xml:space="preserve"><value>Файл «{0}» перемещён или недоступен. Укажите новое расположение или удалите его из истории.</value></data>
+  <data name="RecentDocuments.RelocateShort" xml:space="preserve"><value>Найти…</value></data>
+  <data name="RecentDocuments.RelocateInvalid" xml:space="preserve"><value>Новое расположение файла «{0}» недоступно.</value></data>
+  <data name="RecentDocuments.RelocateFailed" xml:space="preserve"><value>Не удалось обновить расположение документа.</value></data>
+  <data name="RecentDocuments.Remove" xml:space="preserve"><value>Удалить из истории</value></data>
+  <data name="DocumentLinks.RenameSyncFailed" xml:space="preserve"><value>Файл переименован, но не удалось обновить одну или несколько ссылок быстрого доступа.</value></data>
+  <data name="File.NewDescription" xml:space="preserve"><value>Выберите тип документа, имя и папку для сохранения.</value></data>
+  <data name="File.Attributes" xml:space="preserve"><value>Атрибуты файла</value></data>
+  <data name="File.ReadOnlyAttribute" xml:space="preserve"><value>Только для чтения</value></data>
+  <data name="File.HiddenAttribute" xml:space="preserve"><value>Скрытый</value></data>
 </root>

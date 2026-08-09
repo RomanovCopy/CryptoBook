@@ -84,6 +84,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<PinnedDocumentsViewModel>()
                 .As<IPinnedDocumentsViewModel>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<RecentDocumentsViewModel>()
+                .As<IRecentDocumentsViewModel>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<FilePreviewViewModel>().As<IFilePreviewViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<TextInputDialogViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
@@ -243,6 +246,12 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<PinnedDocumentService>()
                 .As<IPinnedDocumentService>()
+                .SingleInstance();
+            builder.RegisterType<JsonRecentDocumentStore>()
+                .As<IRecentDocumentStore>()
+                .SingleInstance();
+            builder.RegisterType<RecentDocumentService>()
+                .As<IRecentDocumentService>()
                 .SingleInstance();
             builder.RegisterType<TextInputService>().As<ITextInputService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();

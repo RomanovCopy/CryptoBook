@@ -34,6 +34,7 @@ namespace CryptoBook.ViewModels
         private readonly AsyncRelayCommand moveUpCommand;
         private readonly AsyncRelayCommand moveDownCommand;
         private readonly RelayCommand refreshAvailabilityCommand;
+        private readonly SemaphoreSlim initializationGate = new(1, 1);
         private bool initialized;
         private bool disposed;
 
@@ -134,11 +135,12 @@ namespace CryptoBook.ViewModels
         public async Task InitializeAsync(
             CancellationToken cancellationToken = default)
         {
-            if(initialized)
-                return;
-
+            await initializationGate.WaitAsync(cancellationToken);
             try
             {
+                if(initialized)
+                    return;
+
                 await service.InitializeAsync(cancellationToken);
                 if(disposed)
                     return;
@@ -154,6 +156,10 @@ namespace CryptoBook.ViewModels
             catch(Exception exception)
             {
                 await ShowErrorAsync("PinnedDocuments.LoadFailed", exception);
+            }
+            finally
+            {
+                initializationGate.Release();
             }
         }
 
