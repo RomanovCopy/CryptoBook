@@ -1,8 +1,6 @@
 using CryptoBook.DTO;
 
 using System.Globalization;
-using System.IO;
-
 namespace CryptoBook.Infrastructure
 {
     /// <summary>
@@ -15,7 +13,7 @@ namespace CryptoBook.Infrastructure
         public const string DefaultCultureName = "en-US";
 
         private static readonly LocalizationCatalog languageCatalog =
-            LocalizationCatalog.Create(DiscoverResourceCultureNames());
+            LocalizationCatalog.Create(["ru", "uk"]);
 
         /// <summary>Событие, возникающее при смене текущей культуры.</summary>
         public static event EventHandler? CultureChanged;
@@ -89,40 +87,6 @@ namespace CryptoBook.Infrastructure
         /// <returns>Нормализованное имя культуры.</returns>
         public static string NormalizeCultureName(string? cultureName) =>
             languageCatalog.Normalize(cultureName);
-
-        private static IEnumerable<string> DiscoverResourceCultureNames()
-        {
-            string assemblyLocation = typeof(LocalizationManager).Assembly.Location;
-            string? baseDirectory = Path.GetDirectoryName(assemblyLocation);
-            if(string.IsNullOrWhiteSpace(baseDirectory))
-                yield break;
-
-            string satelliteAssemblyName =
-                $"{typeof(LocalizationManager).Assembly.GetName().Name}.resources.dll";
-            string[] cultureDirectories;
-            try
-            {
-                cultureDirectories = Directory.GetDirectories(baseDirectory);
-            }
-            catch(IOException)
-            {
-                yield break;
-            }
-            catch(UnauthorizedAccessException)
-            {
-                yield break;
-            }
-
-            foreach(string cultureDirectory in cultureDirectories)
-            {
-                if(File.Exists(Path.Combine(
-                    cultureDirectory,
-                    satelliteAssemblyName)))
-                {
-                    yield return Path.GetFileName(cultureDirectory);
-                }
-            }
-        }
 
         /// <summary>
         /// Применяет культуру к текущему потоку и ресурсам приложения.

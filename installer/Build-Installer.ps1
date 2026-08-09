@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidatePattern('^\d+\.\d+\.\d+(\.\d+)?([-.][0-9A-Za-z.-]+)?$')]
-    [string] $Version = '1.1.0.3',
+    [string] $Version = '1.1.1.0',
 
     [ValidateSet('Debug', 'Release')]
     [string] $Configuration = 'Release',
@@ -72,7 +72,9 @@ if (-not $SkipPublish) {
         -r win-x64 `
         --self-contained true `
         -p:Version=$Version `
-        -p:PublishSingleFile=false `
+        -p:PublishSingleFile=true `
+        -p:IncludeNativeLibrariesForSelfExtract=true `
+        -p:IncludeAllContentForSelfExtract=true `
         -p:PublishTrimmed=false `
         -o $publishDirectory
     if ($LASTEXITCODE -ne 0) {
@@ -83,6 +85,14 @@ if (-not $SkipPublish) {
 $applicationPath = Join-Path $publishDirectory 'CryptoBook.exe'
 if (-not (Test-Path -LiteralPath $applicationPath -PathType Leaf)) {
     throw "Published application not found: $applicationPath"
+}
+
+$unexpectedPublishFiles = @(
+    Get-ChildItem -LiteralPath $publishDirectory -File -Recurse |
+        Where-Object { $_.FullName -ne $applicationPath }
+)
+if ($unexpectedPublishFiles.Count -ne 0) {
+    throw "Single-file publish contains unexpected files: $($unexpectedPublishFiles.FullName -join ', ')"
 }
 
 $compilerCandidates = @(
