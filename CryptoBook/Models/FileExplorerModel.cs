@@ -7,17 +7,15 @@ using CryptoBook.Services;
 using CryptoBook.Views;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 
 namespace CryptoBook.Models
 {
@@ -34,10 +32,14 @@ namespace CryptoBook.Models
         private readonly IFileSecurityService _fileSecurityService;
         private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly IProgressDialogService _progressDialogService;
+        private readonly IFileOperationCoordinator _fileOperationCoordinator;
         private readonly IWorkspaceFileOpenService _fileOpenService;
+        private readonly IFileLauncherService _fileLauncherService;
         private readonly IDocumentSession _documentSession;
         private readonly IPinnedDocumentService _pinnedDocumentService;
         private readonly IRecentDocumentService? _recentDocumentService;
+        private readonly FileExplorerNavigationHistory _navigationHistory = new();
+        private INotifyCollectionChanged? _currentContainerAvailabilitySource;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -61,14 +63,53 @@ namespace CryptoBook.Models
         private bool _isHiddenFilesVisible;
         public ISystemItem? SelectedItem { get => _selectedItem; set => SetProperty(ref _selectedItem, value); }
         private ISystemItem? _selectedItem;
-        public string CurrentPath { get => _currentPath; set => SetProperty(ref _currentPath, value); }
-        private string _currentPath;
+        public ISystemItem? SelectedListItem { get => _selectedListItem; set => SetProperty(ref _selectedListItem, value); }
+        private ISystemItem? _selectedListItem;
+        public IReadOnlyList<ISystemItem> SelectedItemsSnapshot
+        {
+            get => _selectedItemsSnapshot;
+            set
+            {
+                IReadOnlyList<ISystemItem> snapshot =
+                    FileExplorerSelectionPolicy.CreateSnapshot(value);
+                if(SetProperty(ref _selectedItemsSnapshot, snapshot))
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+            }
+        }
+        private IReadOnlyList<ISystemItem> _selectedItemsSnapshot =
+            Array.Empty<ISystemItem>();
+        public string CurrentPath { get => _currentPath; private set => SetProperty(ref _currentPath, value); }
+        private string _currentPath = string.Empty;
+        public string AddressText { get => _addressText; set => SetProperty(ref _addressText, value); }
+        private string _addressText = string.Empty;
+        public bool IsCurrentDirectoryUnavailable
+        {
+            get => _isCurrentDirectoryUnavailable;
+            private set
+            {
+                if(SetProperty(ref _isCurrentDirectoryUnavailable, value))
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+            }
+        }
+        private bool _isCurrentDirectoryUnavailable;
+        public FileExplorerNavigationErrorKind? LastNavigationError
+        {
+            get => _lastNavigationError;
+            private set => SetProperty(ref _lastNavigationError, value);
+        }
+        private FileExplorerNavigationErrorKind? _lastNavigationError;
+        public string NavigationErrorMessage
+        {
+            get => _navigationErrorMessage;
+            private set => SetProperty(ref _navigationErrorMessage, value);
+        }
+        private string _navigationErrorMessage = string.Empty;
         public ReadOnlyObservableCollection<IDriveItem> GetDrives { get; private set; }
         private string _lastItemName;
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileSecurityService fileSecurityService, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IWorkspaceFileOpenService fileOpenService, IDocumentSession documentSession, IPinnedDocumentService pinnedDocumentService, IRecentDocumentService? recentDocumentService = null)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileSecurityService fileSecurityService, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IFileOperationCoordinator fileOperationCoordinator, IWorkspaceFileOpenService fileOpenService, IFileLauncherService fileLauncherService, IDocumentSession documentSession, IPinnedDocumentService pinnedDocumentService, IRecentDocumentService? recentDocumentService = null)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
@@ -81,7 +122,9 @@ namespace CryptoBook.Models
             _fileSecurityService = fileSecurityService ?? throw new ArgumentNullException(nameof(fileSecurityService));
             _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
             _progressDialogService = progressDialogService ?? throw new ArgumentNullException(nameof(progressDialogService));
+            _fileOperationCoordinator = fileOperationCoordinator ?? throw new ArgumentNullException(nameof(fileOperationCoordinator));
             _fileOpenService = fileOpenService ?? throw new ArgumentNullException(nameof(fileOpenService));
+            _fileLauncherService = fileLauncherService ?? throw new ArgumentNullException(nameof(fileLauncherService));
             _documentSession = documentSession ?? throw new ArgumentNullException(nameof(documentSession));
             _pinnedDocumentService = pinnedDocumentService ?? throw new ArgumentNullException(nameof(pinnedDocumentService));
             _recentDocumentService = recentDocumentService;
@@ -89,21 +132,50 @@ namespace CryptoBook.Models
         }
 
 
-        public bool CanExecute_BackCommand(object? obj) => SelectedItem?.Parent is not null;
-        public bool CanExecute_CutCommand(object? obj) => obj is IList { Count: > 0 };
-        public bool CanExecute_CopyCommand(object? obj) => obj is IList { Count: > 0 };
+        public bool CanExecute_BackCommand(object? obj) => _navigationHistory.CanGoBack;
+        public bool CanExecute_ForwardCommand(object? obj) => _navigationHistory.CanGoForward;
+        public bool CanExecute_UpCommand(object? obj) =>
+            !string.IsNullOrWhiteSpace(CurrentPath) &&
+            Path.GetDirectoryName(CurrentPath) is not null;
+        public bool CanExecute_ApplyAddressCommand(object? obj) =>
+            !string.IsNullOrWhiteSpace(AddressText);
+        public bool CanExecute_RetryNavigationCommand(object? obj) =>
+            IsCurrentDirectoryUnavailable &&
+            !string.IsNullOrWhiteSpace(CurrentPath);
+        public bool CanExecute_CurrentDocumentCommand(object? obj) =>
+            !string.IsNullOrWhiteSpace(_documentSession.FilePath) &&
+            Path.GetDirectoryName(_documentSession.FilePath) is not null;
+        public bool CanExecute_OpenCommand(object? obj) =>
+            !IsCurrentDirectoryUnavailable &&
+            FileExplorerSelectionPolicy.IsSingle(obj);
+        public bool CanExecute_OpenWithCommand(object? obj) =>
+            !IsCurrentDirectoryUnavailable &&
+            GetSingleSelection(obj) is IFileItem;
+        public bool CanExecute_RevealInExplorerCommand(object? obj) =>
+            !IsCurrentDirectoryUnavailable &&
+            FileExplorerSelectionPolicy.IsSingle(obj);
+        public bool CanExecute_CopyPathCommand(object? obj) =>
+            !IsCurrentDirectoryUnavailable &&
+            FileExplorerSelectionPolicy.NormalizeForOperation(obj).Count > 0;
+        public bool CanExecute_CutCommand(object? obj) =>
+            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(obj);
+        public bool CanExecute_CopyCommand(object? obj) =>
+            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(obj);
         public bool CanExecute_PasteCommand(object? obj)
         {
-            if(!string.IsNullOrEmpty(CurrentPath))
+            if(!IsCurrentDirectoryUnavailable &&
+               !string.IsNullOrEmpty(CurrentPath))
             {
                 return _fileClipboardService.GetData().SourcePaths.Count > 0;
             }
             return false;
         }
-        public bool CanExecute_DeleteCommand(object? obj) => obj is ISystemItem;
+        public bool CanExecute_DeleteCommand(object? obj) =>
+            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(obj);
         public bool CanExecute_SortedCommand(object? obj)
         {
-            return obj is string name && !string.IsNullOrWhiteSpace(name) &&
+            return !IsCurrentDirectoryUnavailable &&
+            obj is string name && !string.IsNullOrWhiteSpace(name) &&
             SelectedItem is IContainerSystemItem item && item.Children.Count > 1;
         }
         public bool CanExecute_EncryptingKeyCommand(object? obj)
@@ -112,23 +184,30 @@ namespace CryptoBook.Models
         }
         public bool CanExecute_DecryptCommand(object? obj)
         {
-            return _keyProvider.HasKey && obj is ISystemItem systemItem;
+            return !IsCurrentDirectoryUnavailable &&
+                _keyProvider.HasKey && CanExecuteMultiItemOperation(obj);
         }
         public bool CanExecute_EncryptCommand(object? obj)
         {
-            return _keyProvider.HasKey && obj is ISystemItem systemItem;
+            return !IsCurrentDirectoryUnavailable &&
+                _keyProvider.HasKey && CanExecuteMultiItemOperation(obj);
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
-            return SelectedItem is IContainerSystemItem;
+            return !IsCurrentDirectoryUnavailable &&
+                SelectedItem is IContainerSystemItem;
         }
         public bool CanExecute_CreateDirectoryCommand(object? obj)
         {
-            return SelectedItem is IContainerSystemItem;
+            return !IsCurrentDirectoryUnavailable &&
+                SelectedItem is IContainerSystemItem;
         }
         public bool CanExecute_RenameClickCommand(object? obj)
         {
-            return obj is ISystemItem item && !item.IsEditing;
+            return !IsCurrentDirectoryUnavailable &&
+                   GetSingleSelection(obj) is ISystemItem item &&
+                   item is not IDriveItem &&
+                   !item.IsEditing;
         }
         public bool CanExecute_RenameCommand(object? obj)
         {
@@ -136,13 +215,41 @@ namespace CryptoBook.Models
         }
         public bool CanExecute_MoveCommand(object? obj)
         {
-            return obj is ISystemItem item &&
-                   item.Parent is not null &&
-                   !string.IsNullOrWhiteSpace(item.FullPath);
+            return !IsCurrentDirectoryUnavailable &&
+                   CanExecuteMultiItemOperation(obj) &&
+                   FileExplorerSelectionPolicy.NormalizeForOperation(obj)
+                       .All(item => item.Parent is not null);
+        }
+        public bool CanExecute_DropCommand(object? obj)
+        {
+            if(obj is not FileDropRequest request ||
+               request.SourcePaths.Count == 0 ||
+               string.IsNullOrWhiteSpace(request.DestinationDirectory))
+            {
+                return false;
+            }
+
+            try
+            {
+                foreach(string sourcePath in request.SourcePaths)
+                {
+                    FileOperationCoordinator.ValidateDestination(
+                        sourcePath,
+                        request.DestinationDirectory,
+                        Directory.Exists(GetNativePath(sourcePath)));
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
         public bool CanExecure_RefreshCommand(object? obj)
         {
-            return obj is IContainerSystemItem;
+            return obj is IContainerSystemItem ||
+                   !string.IsNullOrWhiteSpace(CurrentPath);
         }
         public bool CanExecute_CancelRenameCommand(object? obj)
         {
@@ -154,7 +261,7 @@ namespace CryptoBook.Models
         }
         public bool CanExecute_ListViewItemDoubleClickCommand(object? obj)
         {
-            return obj is not null;
+            return FileExplorerSelectionPolicy.IsSingle(obj);
         }
         public bool CanExecute_ListViewSelectionChangedCommand(object? obj)
         {
@@ -168,79 +275,182 @@ namespace CryptoBook.Models
 
         public async void Execute_BackCommand(object? obj)
         {
-            _cancellationTokenSource = new CancellationTokenSource();
-            await _gate.WaitAsync(_cancellationTokenSource.Token);
-            try
-            {
-                if(SelectedItem is IContainerSystemItem currentItem && currentItem.Parent is IContainerSystemItem parentItem)
-                {
+            string? path = _navigationHistory.BackPath;
+            if(path is not null)
+                await NavigateAsync(path, FileExplorerNavigationMode.Back);
+        }
 
-                    SelectedItem = parentItem;
-                    CurrentPath = parentItem.FullPath;
-                    var res = await ContainerLoad(parentItem, _cancellationTokenSource.Token);
-                    parentItem.IsLoaded = res.Success;
-                    parentItem.IsExpanded = true;
-                    //currentItem.IsExpanded = false;
-                }
-            } catch
-            {
+        public async void Execute_ForwardCommand(object? obj)
+        {
+            string? path = _navigationHistory.ForwardPath;
+            if(path is not null)
+                await NavigateAsync(path, FileExplorerNavigationMode.Forward);
+        }
 
-                _cancellationTokenSource?.Cancel();
-            } finally
+        public async void Execute_UpCommand(object? obj)
+        {
+            string? parentPath = string.IsNullOrWhiteSpace(CurrentPath)
+                ? null
+                : Path.GetDirectoryName(CurrentPath);
+            if(parentPath is not null)
             {
-                _gate.Release();
+                await NavigateAsync(
+                    parentPath,
+                    FileExplorerNavigationMode.Standard);
             }
         }
+
+        public async void Execute_ApplyAddressCommand(object? obj)
+        {
+            await NavigateAsync(
+                AddressText,
+                FileExplorerNavigationMode.Standard);
+        }
+
+        public void Execute_CancelAddressCommand(object? obj)
+        {
+            AddressText = CurrentPath;
+        }
+
+        public async void Execute_RetryNavigationCommand(object? obj)
+        {
+            if(!string.IsNullOrWhiteSpace(CurrentPath))
+            {
+                await NavigateAsync(
+                    CurrentPath,
+                    FileExplorerNavigationMode.Standard);
+            }
+        }
+
+        public async void Execute_CurrentDocumentCommand(object? obj)
+        {
+            string? filePath = _documentSession.FilePath;
+            string? directoryPath = string.IsNullOrWhiteSpace(filePath)
+                ? null
+                : Path.GetDirectoryName(filePath);
+            if(filePath is null || directoryPath is null)
+                return;
+
+            bool navigated = await NavigateAsync(
+                directoryPath,
+                FileExplorerNavigationMode.Standard);
+            if(!navigated || SelectedItem is not IContainerSystemItem container)
+                return;
+
+            SelectedListItem = container.Children.FirstOrDefault(item =>
+                PathsEqual(item.FullPath, filePath));
+        }
+
+        public async void Execute_OpenCommand(object? obj)
+        {
+            ISystemItem? item = GetSingleSelection(obj);
+            if(item is null)
+                return;
+
+            await OpenSelectionAsync(item);
+        }
+
+        public async void Execute_OpenWithCommand(object? obj)
+        {
+            if(GetSingleSelection(obj) is not IFileItem file)
+                return;
+
+            LaunchResult result = _fileLauncherService.Open(file.FullPath, "openas");
+            if(!result.Success)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.FileOpenError"),
+                    result.Error);
+            }
+        }
+
+        public async void Execute_RevealInExplorerCommand(object? obj)
+        {
+            ISystemItem? item = GetSingleSelection(obj);
+            if(item is null)
+                return;
+
+            LaunchResult result = _fileLauncherService.RevealInExplorer(item.FullPath);
+            if(!result.Success)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.FileOpenError"),
+                    result.Error);
+            }
+        }
+
+        public async void Execute_CopyPathCommand(object? obj)
+        {
+            IReadOnlyList<ISystemItem> items =
+                FileExplorerSelectionPolicy.NormalizeForOperation(obj);
+            if(items.Count == 0)
+                return;
+
+            try
+            {
+                System.Windows.Clipboard.SetText(string.Join(
+                    Environment.NewLine,
+                    items.Select(item => item.FullPath)));
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.CopyPathError"),
+                    ex.Message);
+            }
+        }
+
         public void Execute_CutCommand(object? obj)
         {
-            if(obj is IList list && list.Count > 0)
-            {
-                var systemItems = list.OfType<ISystemItem>().Where(si => si.FullPath is not null).Select(si => si.FullPath!).ToList();
-                _fileClipboardService.SetMove(systemItems);
-            } else
-            {
-                throw new ArgumentException("Invalid argument for CutCommand", nameof(obj));
-            }
+            IReadOnlyList<ISystemItem> items = GetOperationSelection(obj);
+            if(items.Count == 0)
+                return;
+
+            _fileClipboardService.SetMove(items.Select(item => item.FullPath));
         }
         public void Execute_CopyCommand(object? obj)
         {
-            if(obj is IList list && list.Count > 0)
-            {
-                var systemItems = list.OfType<ISystemItem>().Where(si => si.FullPath is not null).Select(si => si.FullPath!).ToList();
-                _fileClipboardService.SetCopy(systemItems);
-            } else
-            {
-                throw new ArgumentException("Invalid argument for CopyCommand", nameof(obj));
-            }
+            IReadOnlyList<ISystemItem> items = GetOperationSelection(obj);
+            if(items.Count == 0)
+                return;
+
+            _fileClipboardService.SetCopy(items.Select(item => item.FullPath));
         }
         public async void Execute_PasteCommand(object? obj)
         {
-            if(!string.IsNullOrEmpty(CurrentPath) && _fileClipboardService.GetData().SourcePaths.Count > 0)
+            ClipboardData clipboard = _fileClipboardService.GetData();
+            if(!string.IsNullOrEmpty(CurrentPath) && !clipboard.IsEmpty)
             {
                 try
                 {
-                    IReadOnlyList<FileOperationResult> results =
-                        await _progressDialogService.RunAsync(
-                            LocalizationManager.GetString(
-                                "Explorer.Copying"),
-                            (progress, token) =>
-                                _fileClipboardService.PasteAsync(CurrentPath, progress, token));
-
-                    FileOperationResult? failure = results.FirstOrDefault(result => !result.Success);
-                    if(failure is not null)
+                    FileTransferKind operation = clipboard.Operation == ClipboardOperationKind.Copy
+                        ? FileTransferKind.Copy
+                        : FileTransferKind.Move;
+                    FileOperationBatchResult result = await _fileOperationCoordinator.TransferAsync(
+                        clipboard.SourcePaths,
+                        CurrentPath,
+                        operation);
+                    if(result.Failure is not null)
                     {
-                        _ = await _messageService.ShowMessage(
+                        await _messageService.ShowMessage(
                             LocalizationManager.GetString(
-                                "Explorer.CopyError"),
-                            failure.ErrorMessage);
-                        return;
+                                operation == FileTransferKind.Copy
+                                    ? "Explorer.CopyError"
+                                    : "Explorer.MoveError"),
+                            result.Failure.ErrorMessage);
                     }
 
-                    Execute_SortedCommand("Name");
-                } catch(OperationCanceledException)
+                    if(operation == FileTransferKind.Move && result.Success)
+                        _fileClipboardService.Clear();
+                    await RefreshOperationContainersAsync(
+                        clipboard.SourcePaths,
+                        CurrentPath,
+                        CancellationToken.None);
+                }
+                catch(OperationCanceledException)
                 {
-                    // Отмена пользователем не является ошибкой копирования.
-                } catch(Exception ex)
+                }
+                catch(Exception ex)
                 {
                     _ = await _messageService.ShowMessage(
                         LocalizationManager.GetString("Explorer.CopyError"),
@@ -251,27 +461,42 @@ namespace CryptoBook.Models
                 throw new ArgumentException("Invalid argument for PasteCommand", nameof(obj));
             }
         }
-        public void Execute_DeleteCommand(object? obj)
+        public async void Execute_DeleteCommand(object? obj)
         {
-            if(obj is ISystemItem systemItem)
+            IReadOnlyList<ISystemItem> items = GetOperationSelection(obj);
+            if(items.Count == 0)
+                return;
+
+            try
             {
-                if(systemItem is IContainerSystemItem container)
+                FileOperationBatchResult result = await _fileOperationCoordinator.DeleteAsync(
+                    items.Select(item => item.FullPath));
+                if(result.Failure is not null)
                 {
-                    _ = Task.Run(async () =>
-                    {
-                        await _fileManagerService.DeleteAsync(container.FullPath, CancellationToken.None);
-                    });
-                } else if(systemItem is IFileItem file)
+                    await _messageService.ShowMessage(
+                        LocalizationManager.GetString("Explorer.DeleteError"),
+                        result.Failure.ErrorMessage);
+                }
+                else if(result.Canceled && result.HasPartialChanges)
                 {
-                    _ = Task.Run(async () =>
-                    {
-                        await _fileManagerService.DeleteAsync(file.FullPath, CancellationToken.None);
-                    });
-                } else
-                    throw new ArgumentException("Invalid ISystemItem type for DeleteCommand", nameof(obj));
-            } else
+                    await _messageService.ShowMessage(
+                        LocalizationManager.GetString("Explorer.DeleteCanceledTitle"),
+                        LocalizationManager.GetString("Explorer.DeleteCanceledPartial"));
+                }
+
+                await RefreshOperationContainersAsync(
+                    items.Select(item => item.FullPath),
+                    null,
+                    CancellationToken.None);
+            }
+            catch(OperationCanceledException)
             {
-                throw new ArgumentException("Invalid argument for DeleteCommand", nameof(obj));
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.DeleteError"),
+                    ex.Message);
             }
         }
         public async void Execute_SortedCommand(object? obj)
@@ -365,10 +590,25 @@ namespace CryptoBook.Models
             await container.AddChildAsync( [directoryItem], item => item.FullPath, CancellationToken.None);
             await container.SortingAsync( SystemItemSortType.Name, 0, CancellationToken.None);
         }
-        public void Execute_RenameClickCommand(object? obj)
+        public async void Execute_RenameClickCommand(object? obj)
         {
-            if(obj is ISystemItem systemItem)
+            if(GetSingleSelection(obj) is ISystemItem systemItem &&
+               systemItem is not IDriveItem)
             {
+                if(systemItem.Parent is IContainerSystemItem parent &&
+                   !ReferenceEquals(SelectedItem, parent))
+                {
+                    bool navigated = await NavigateAsync(
+                        parent.FullPath,
+                        FileExplorerNavigationMode.Standard);
+                    if(!navigated)
+                        return;
+
+                    SelectedListItem = systemItem;
+                    SelectedItemsSnapshot =
+                        FileExplorerSelectionPolicy.CreateSnapshot(systemItem);
+                }
+
                 systemItem.IsEditing = true;
                 _lastItemName = systemItem.Name;
             }
@@ -468,52 +708,33 @@ namespace CryptoBook.Models
         }
         public async void Execute_MoveCommand(object? obj)
         {
-            if(obj is not ISystemItem item || !CanExecute_MoveCommand(item))
+            IReadOnlyList<ISystemItem> items = GetOperationSelection(obj);
+            if(items.Count == 0 || !CanExecute_MoveCommand(items))
                 return;
 
             try
             {
                 string? destinationDirectory = await _folderPickerService.PickFolderAsync(
-                    item.Parent?.FullPath ?? Path.GetDirectoryName(item.FullPath),
+                    items[0].Parent?.FullPath ?? Path.GetDirectoryName(items[0].FullPath),
                     CancellationToken.None);
                 if(string.IsNullOrWhiteSpace(destinationDirectory))
                     return;
 
-                string destinationPath = CombineManagerPath(
+                FileOperationBatchResult result = await _fileOperationCoordinator.TransferAsync(
+                    items.Select(item => item.FullPath),
                     destinationDirectory,
-                    item.Name);
-
-                FileOperationResult result = await _progressDialogService.RunAsync(
-                    LocalizationManager.GetString("Explorer.Moving"),
-                    (progress, token) => _fileManagerService.MoveAsync(
-                        item.FullPath,
-                        destinationPath,
-                        progress,
-                        token));
-
-                if(!result.Success)
+                    FileTransferKind.Move);
+                if(result.Failure is not null)
                 {
                     await _messageService.ShowMessage(
                         LocalizationManager.GetString("Explorer.MoveError"),
-                        result.ErrorMessage);
-                    return;
+                        result.Failure.ErrorMessage);
                 }
 
-                if(item.Parent is IContainerSystemItem sourceContainer)
-                    await RefreshContainerAsync(sourceContainer, CancellationToken.None);
-
-                string destinationNativePath = GetNativePath(destinationDirectory);
-                IContainerSystemItem? destinationContainer = EnumerateLoadedContainers()
-                    .FirstOrDefault(container =>
-                        string.Equals(
-                            NormalizePath(container.FullPath),
-                            NormalizePath(destinationNativePath),
-                            StringComparison.OrdinalIgnoreCase));
-                if(destinationContainer is not null &&
-                   !ReferenceEquals(destinationContainer, item.Parent))
-                {
-                    await RefreshContainerAsync(destinationContainer, CancellationToken.None);
-                }
+                await RefreshOperationContainersAsync(
+                    items.Select(item => item.FullPath),
+                    destinationDirectory,
+                    CancellationToken.None);
             } catch(OperationCanceledException)
             {
             } catch(Exception ex)
@@ -525,19 +746,43 @@ namespace CryptoBook.Models
         }
         public async void Execute_RefreshCommand(object? obj)
         {
-            if(obj is not IContainerSystemItem container)
+            if(IsCurrentDirectoryUnavailable)
+            {
+                Execute_RetryNavigationCommand(obj);
+                return;
+            }
+
+            IContainerSystemItem? container = obj as IContainerSystemItem ??
+                SelectedItem as IContainerSystemItem;
+            if(container is null)
                 return;
 
             try
             {
                 await RefreshContainerAsync(container, CancellationToken.None);
+                if(PathsEqual(container.FullPath, CurrentPath))
+                    ClearNavigationFailure();
             } catch(OperationCanceledException)
             {
+                SetNavigationFailure(
+                    FileExplorerNavigationErrorKind.OperationCanceled,
+                    false);
             } catch(Exception ex)
             {
-                await _messageService.ShowMessage(
-                    LocalizationManager.GetString("Explorer.RefreshError"),
-                    ex.Message);
+                if(PathsEqual(container.FullPath, CurrentPath))
+                {
+                    await HandleNavigationFailureAsync(
+                        CurrentPath,
+                        FileExplorerNavigationErrorClassifier.Classify(
+                            ex,
+                            CurrentPath));
+                }
+                else
+                {
+                    await _messageService.ShowMessage(
+                        LocalizationManager.GetString("Explorer.RefreshError"),
+                        ex.Message);
+                }
             }
         }
         public async void Execute_CancelRenameCommand(object? obj)
@@ -560,128 +805,105 @@ namespace CryptoBook.Models
                 return;
 
             // Выбор узла не меняет IsExpanded: раскрытием управляет сам TreeView.
-            var cancellationTokenSource = new CancellationTokenSource();
-            _cancellationTokenSource = cancellationTokenSource;
-            var lockTaken = false;
-
-            try
-            {
-                await _gate.WaitAsync(cancellationTokenSource.Token);
-                lockTaken = true;
-
-                SelectedItem = container;
-                CurrentPath = container.FullPath;
-
-                var result = await ContainerLoad(container, cancellationTokenSource.Token);
-                container.IsLoaded = result.Success;
-            } catch(OperationCanceledException)
-            {
-                // Отмена выбора не является ошибкой для UI.
-            } finally
-            {
-                if(lockTaken)
-                    _gate.Release();
-            }
-
+            await NavigateAsync(
+                container.FullPath,
+                FileExplorerNavigationMode.Standard);
         }
         public async void Execute_ListViewItemDoubleClickCommand(object? obj)
         {
-            var cancellationTokenSource = new CancellationTokenSource();
-            _cancellationTokenSource = cancellationTokenSource;
-            var lockTaken = false;
-
-            try
-            {
-                await _gate.WaitAsync(cancellationTokenSource.Token);
-                lockTaken = true;
-
-                switch(obj)
-                {
-                    case IContainerSystemItem container:
-                        await OpenContainerAsync(container, cancellationTokenSource.Token);
-                        break;
-                    case IFileItem file when !file.IsEditing:
-                        await OpenFileAsync(file, cancellationTokenSource.Token);
-                        break;
-                }
-            }
-            catch(OperationCanceledException)
-            {
-            }
-            catch(Exception ex)
-            {
-                var itemName = obj is ISystemItem item
-                    ? item.Name
-                    : LocalizationManager.GetString("Common.File");
-                _ = await _messageService.ShowMessage(
-                    LocalizationManager.GetString(
-                        "Explorer.FileOpenError"),
-                    LocalizationManager.Format(
-                        "Explorer.FileOpenFailed",
-                        itemName,
-                        Environment.NewLine,
-                        ex.Message));
-            }
-            finally
-            {
-                if(lockTaken)
-                    _gate.Release();
-            }
+            ISystemItem? item = GetSingleSelection(obj);
+            if(item is not null)
+                await OpenSelectionAsync(item);
         }
 
-        private async Task OpenContainerAsync(
-            IContainerSystemItem container,
-            CancellationToken cancellationToken)
-        {
-            SelectedItem = container;
-            CurrentPath = container.FullPath;
-
-            var result = await ContainerLoad(container, cancellationToken);
-            container.IsExpanded = true;
-            container.IsLoaded = result.Success;
-        }
-
-        public async Task OpenDirectoryAsync(
+        public async Task<bool> NavigateAsync(
             string path,
+            FileExplorerNavigationMode mode,
             CancellationToken cancellationToken = default)
         {
             if(string.IsNullOrWhiteSpace(path))
-                throw new ArgumentException(
+            {
+                await ShowNavigationErrorAsync(
+                    path,
                     LocalizationManager.GetString(
-                        "Explorer.DirectoryPathRequired"),
-                    nameof(path));
+                        "Explorer.DirectoryPathRequired"));
+                return false;
+            }
 
             string nativePath = GetNativePath(path);
             var lockTaken = false;
             try
             {
-                await _gate.WaitAsync(cancellationToken);
+                using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                    cancellationToken,
+                    _cancellationTokenSource.Token);
+                CancellationToken token = linkedCancellation.Token;
+
+                await _gate.WaitAsync(token);
                 lockTaken = true;
 
                 string targetPath = NormalizePath(nativePath);
-                IContainerSystemItem? container = EnumerateAllContainers()
-                    .FirstOrDefault(item =>
-                        string.Equals(
-                            NormalizePath(item.FullPath),
-                            targetPath,
-                            StringComparison.OrdinalIgnoreCase));
-                container ??= ResolveDirectoryContainer(nativePath);
-                await OpenContainerAsync(container, cancellationToken);
+                IContainerSystemItem container = await ResolveDirectoryContainerAsync(
+                    targetPath,
+                    token);
+                if(container.IsLoaded)
+                {
+                    // Повторная навигация обязана проверить каталог на диске,
+                    // иначе ранее загруженный снимок маскирует его исчезновение.
+                    await RefreshContainerAsync(container, token);
+                }
+                else
+                {
+                    FileOperationResult result = await ContainerLoad(container, token);
+                    if(!result.Success)
+                        throw new IOException(result.ErrorMessage);
+                }
+
+                string? previousPath = string.IsNullOrWhiteSpace(CurrentPath)
+                    ? null
+                    : CurrentPath;
+                _navigationHistory.Commit(previousPath, targetPath, mode);
+
+                if(SelectedItem is IContainerSystemItem previousContainer &&
+                   !ReferenceEquals(previousContainer, container))
+                {
+                    previousContainer.IsSelected = false;
+                }
+
+                SelectedItem = container;
+                SelectedListItem = null;
+                SelectedItemsSnapshot = Array.Empty<ISystemItem>();
+                CurrentPath = targetPath;
+                AddressText = targetPath;
+                ClearNavigationFailure();
+                container.IsSelected = true;
+                container.IsExpanded = true;
+                container.IsLoaded = true;
+                ObserveCurrentContainerAvailability(container);
+                Properties.Settings.Default.LastDirectory_FileExplorer = targetPath;
+                System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                return true;
             }
             catch(OperationCanceledException)
             {
-                throw;
+                if(!IsCurrentDirectoryUnavailable)
+                {
+                    SetNavigationFailure(
+                        FileExplorerNavigationErrorKind.OperationCanceled,
+                        false);
+                }
+                if(cancellationToken.IsCancellationRequested)
+                    throw;
+                return false;
             }
             catch(Exception ex)
             {
-                await _messageService.ShowMessage(
-                    LocalizationManager.GetString(
-                        "Explorer.OpenDirectoryError"),
-                    LocalizationManager.Format(
-                        "Explorer.OpenDirectoryFailed",
-                        nativePath,
-                        Environment.NewLine,
-                        ex.Message));
+                await HandleNavigationFailureAsync(
+                    nativePath,
+                    FileExplorerNavigationErrorClassifier.Classify(
+                        ex,
+                        nativePath));
+                return false;
             }
             finally
             {
@@ -690,7 +912,32 @@ namespace CryptoBook.Models
             }
         }
 
-        private IContainerSystemItem ResolveDirectoryContainer(string path)
+        public async Task RestoreLastDirectoryAsync(
+            CancellationToken cancellationToken = default)
+        {
+            string savedPath = Properties.Settings.Default.LastDirectory_FileExplorer;
+            if(!string.IsNullOrWhiteSpace(savedPath) &&
+               await NavigateAsync(
+                   savedPath,
+                   FileExplorerNavigationMode.Restore,
+                   cancellationToken))
+            {
+                return;
+            }
+
+            string? firstDrivePath = GetDrives.FirstOrDefault()?.FullPath;
+            if(!string.IsNullOrWhiteSpace(firstDrivePath))
+            {
+                await NavigateAsync(
+                    firstDrivePath,
+                    FileExplorerNavigationMode.Restore,
+                    cancellationToken);
+            }
+        }
+
+        private async Task<IContainerSystemItem> ResolveDirectoryContainerAsync(
+            string path,
+            CancellationToken cancellationToken)
         {
             string fullPath = Path.GetFullPath(path);
             string rootPath = Path.GetPathRoot(fullPath)
@@ -706,7 +953,7 @@ namespace CryptoBook.Models
                         NormalizePath(item.FullPath),
                         NormalizePath(rootPath),
                         StringComparison.OrdinalIgnoreCase))
-                ?? _systemItemCreateService.CreateRoot(rootPath);
+                ?? throw new DirectoryNotFoundException(rootPath);
 
             string relativePath = Path.GetRelativePath(rootPath, fullPath);
             if(relativePath == ".")
@@ -722,6 +969,14 @@ namespace CryptoBook.Models
                 },
                 StringSplitOptions.RemoveEmptyEntries))
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                FileOperationResult loadResult = await ContainerLoad(
+                    current,
+                    cancellationToken);
+                if(!loadResult.Success)
+                    throw new IOException(loadResult.ErrorMessage);
+
+                current.IsExpanded = true;
                 currentPath = Path.Combine(currentPath, segment);
                 IContainerSystemItem? existing = current.Children
                     .OfType<IContainerSystemItem>()
@@ -731,11 +986,169 @@ namespace CryptoBook.Models
                             NormalizePath(currentPath),
                             StringComparison.OrdinalIgnoreCase));
 
-                current = existing
-                    ?? _systemItemCreateService.CreateDirectory(currentPath, current);
+                if(existing is null)
+                {
+                    existing = _systemItemCreateService.CreateDirectory(
+                        currentPath,
+                        current);
+                    FileOperationResult addResult = await current.AddChildAsync(
+                        [existing],
+                        item => item.FullPath,
+                        cancellationToken);
+                    if(!addResult.Success)
+                    {
+                        // Наблюдатель мог добавить тот же каталог между
+                        // поиском и AddChildAsync — используем его экземпляр.
+                        existing = current.Children
+                            .OfType<IContainerSystemItem>()
+                            .FirstOrDefault(item =>
+                                string.Equals(
+                                    NormalizePath(item.FullPath),
+                                    NormalizePath(currentPath),
+                                    StringComparison.OrdinalIgnoreCase))
+                            ?? throw new IOException(addResult.ErrorMessage);
+                    }
+                }
+
+                current = existing;
             }
 
             return current;
+        }
+
+        private Task<Guid> ShowNavigationErrorAsync(
+            string path,
+            string error) =>
+            _messageService.ShowMessage(
+                LocalizationManager.GetString(
+                    "Explorer.OpenDirectoryError"),
+                LocalizationManager.Format(
+                    "Explorer.OpenDirectoryFailed",
+                    path,
+                    Environment.NewLine,
+                    error));
+
+        private async Task HandleNavigationFailureAsync(
+            string path,
+            FileExplorerNavigationErrorKind kind)
+        {
+            bool affectsCurrentDirectory =
+                !string.IsNullOrWhiteSpace(CurrentPath) &&
+                PathsEqual(path, CurrentPath) &&
+                kind != FileExplorerNavigationErrorKind.OperationCanceled;
+            string errorMessage = GetNavigationErrorMessage(kind);
+            if(affectsCurrentDirectory || !IsCurrentDirectoryUnavailable)
+                SetNavigationFailure(kind, affectsCurrentDirectory);
+
+            if(!affectsCurrentDirectory)
+                await ShowNavigationErrorAsync(path, errorMessage);
+        }
+
+        private void SetNavigationFailure(
+            FileExplorerNavigationErrorKind kind,
+            bool currentDirectoryUnavailable)
+        {
+            LastNavigationError = kind;
+            NavigationErrorMessage = GetNavigationErrorMessage(kind);
+            if(currentDirectoryUnavailable)
+            {
+                IsCurrentDirectoryUnavailable = true;
+                SelectedListItem = null;
+                SelectedItemsSnapshot = Array.Empty<ISystemItem>();
+            }
+        }
+
+        private static string GetNavigationErrorMessage(
+            FileExplorerNavigationErrorKind kind) =>
+            LocalizationManager.GetString(
+                kind switch
+                {
+                    FileExplorerNavigationErrorKind.AccessDenied =>
+                        "Explorer.Navigation.AccessDenied",
+                    FileExplorerNavigationErrorKind.DriveNotReady =>
+                        "Explorer.Navigation.DriveNotReady",
+                    FileExplorerNavigationErrorKind.NetworkResourceUnavailable =>
+                        "Explorer.Navigation.NetworkUnavailable",
+                    FileExplorerNavigationErrorKind.OperationCanceled =>
+                        "Explorer.Navigation.OperationCanceled",
+                    _ => "Explorer.Navigation.DirectoryNotFound"
+                });
+
+        private void ClearNavigationFailure()
+        {
+            LastNavigationError = null;
+            NavigationErrorMessage = string.Empty;
+            IsCurrentDirectoryUnavailable = false;
+        }
+
+        private void ObserveCurrentContainerAvailability(
+            IContainerSystemItem container)
+        {
+            if(_currentContainerAvailabilitySource is not null)
+            {
+                _currentContainerAvailabilitySource.CollectionChanged -=
+                    CurrentContainerAvailabilitySource_CollectionChanged;
+            }
+
+            _currentContainerAvailabilitySource = container.Parent is
+                IContainerSystemItem parent
+                    ? (INotifyCollectionChanged)parent.Children
+                    : (INotifyCollectionChanged)GetDrives;
+            _currentContainerAvailabilitySource.CollectionChanged +=
+                CurrentContainerAvailabilitySource_CollectionChanged;
+        }
+
+        private void CurrentContainerAvailabilitySource_CollectionChanged(
+            object? sender,
+            NotifyCollectionChangedEventArgs e)
+        {
+            if(SelectedItem is not IContainerSystemItem current ||
+               string.IsNullOrWhiteSpace(CurrentPath))
+            {
+                return;
+            }
+
+            IEnumerable<ISystemItem> siblings = current.Parent is
+                IContainerSystemItem parent
+                    ? parent.Children
+                    : GetDrives.Cast<ISystemItem>();
+            if(siblings.Any(item => PathsEqual(item.FullPath, CurrentPath)))
+                return;
+
+            SetNavigationFailure(
+                FileExplorerNavigationErrorKind.DirectoryNotFound,
+                true);
+        }
+
+        private async Task OpenSelectionAsync(ISystemItem item)
+        {
+            try
+            {
+                switch(item)
+                {
+                    case IContainerSystemItem container:
+                        await NavigateAsync(
+                            container.FullPath,
+                            FileExplorerNavigationMode.Standard);
+                        break;
+                    case IFileItem file when !file.IsEditing:
+                        await OpenFileAsync(file, _cancellationTokenSource.Token);
+                        break;
+                }
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.FileOpenError"),
+                    LocalizationManager.Format(
+                        "Explorer.FileOpenFailed",
+                        item.Name,
+                        Environment.NewLine,
+                        ex.Message));
+            }
         }
 
         private async Task OpenFileAsync(IFileItem file, CancellationToken cancellationToken)
@@ -823,6 +1236,12 @@ namespace CryptoBook.Models
         }
         public void Execute_Closed(object? obj)
         {
+            if(_currentContainerAvailabilitySource is not null)
+            {
+                _currentContainerAvailabilitySource.CollectionChanged -=
+                    CurrentContainerAvailabilitySource_CollectionChanged;
+                _currentContainerAvailabilitySource = null;
+            }
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource.Dispose();
         }
@@ -846,7 +1265,22 @@ namespace CryptoBook.Models
                 child.Parent = container;
             }
 
-            return await container.AddChildAsync(children, x => x.FullPath, token);
+            FileOperationResult result = await container.AddChildAsync(
+                children,
+                item => item.FullPath,
+                token);
+            if(result.Success)
+                return result;
+
+            // FileSystemWatcher может успеть добавить элементы между BrowseAsync
+            // и пакетным добавлением. Совпавший итоговый снимок считается успехом.
+            var currentPaths = new HashSet<string>(
+                container.Children.Select(item => NormalizePath(item.FullPath)),
+                StringComparer.OrdinalIgnoreCase);
+            return children.All(item =>
+                currentPaths.Contains(NormalizePath(item.FullPath)))
+                    ? FileOperationResult.Ok()
+                    : result;
         }
 
         private static bool TryValidateDirectoryName(string name, out string error)
@@ -923,7 +1357,7 @@ namespace CryptoBook.Models
 
             try
             {
-                if(obj is IDriveItem)
+                if(FileExplorerSelectionPolicy.ContainsDrive(obj))
                 {
                     await _messageService.ShowMessage(
                         errorTitle,
@@ -932,54 +1366,99 @@ namespace CryptoBook.Models
                     return;
                 }
 
-                if(obj is not IFileItem && obj is not IDirectoryItem)
+                IReadOnlyList<ISystemItem> items = GetOperationSelection(obj);
+                if(items.Count == 0)
                     return;
 
-                var systemItem = (ISystemItem)obj;
-                string sourcePath = systemItem.FullPath;
-                if(string.IsNullOrWhiteSpace(sourcePath) || !Path.Exists(sourcePath))
+                var plans = new List<FileSecurityPlan>(items.Count);
+                foreach(ISystemItem systemItem in items)
                 {
-                    await _messageService.ShowMessage(
-                        errorTitle,
-                        LocalizationManager.GetString(
-                            "Explorer.ItemDoesNotExist"));
-                    return;
+                    if(systemItem is not IFileItem && systemItem is not IDirectoryItem)
+                        return;
+
+                    string sourcePath = systemItem.FullPath;
+                    if(string.IsNullOrWhiteSpace(sourcePath) || !Path.Exists(sourcePath))
+                    {
+                        await _messageService.ShowMessage(
+                            errorTitle,
+                            LocalizationManager.GetString(
+                                "Explorer.ItemDoesNotExist"));
+                        return;
+                    }
+
+                    // Для групповой операции Save As неоднозначен, поэтому заменяем каждый источник.
+                    (EncryptionTargetMode mode, string? targetPath) = items.Count > 1
+                        ? (EncryptionTargetMode.ReplaceSource, sourcePath)
+                        : ResolveFileSecurityTarget(systemItem, sourcePath, decrypt);
+
+                    if(mode == EncryptionTargetMode.Cancels ||
+                       string.IsNullOrWhiteSpace(targetPath))
+                    {
+                        return;
+                    }
+
+                    if(mode == EncryptionTargetMode.ReplaceSource &&
+                       !await ConfirmSourceReplacementAsync(systemItem, sourcePath, decrypt))
+                    {
+                        return;
+                    }
+
+                    plans.Add(new FileSecurityPlan(systemItem, mode, targetPath));
                 }
 
-                (EncryptionTargetMode mode, string? targetPath) =
-                    ResolveFileSecurityTarget(systemItem, sourcePath, decrypt);
-
-                if(mode == EncryptionTargetMode.Cancels ||
-                   string.IsNullOrWhiteSpace(targetPath))
-                {
-                    return;
-                }
-
-                if(mode == EncryptionTargetMode.ReplaceSource &&
-                   !await ConfirmSourceReplacementAsync(systemItem, sourcePath, decrypt))
-                {
-                    return;
-                }
-
-                FileOperationResult result = await _progressDialogService.RunAsync(
+                IReadOnlyList<FileOperationResult> results = await _progressDialogService.RunAsync(
                     LocalizationManager.GetString(
                         decrypt
                             ? "Explorer.Decryption"
                             : "Explorer.Encryption"),
-                    (progress, token) => decrypt
-                        ? _fileSecurityService.DecryptAsync(systemItem, targetPath, mode, progress, token)
-                        : _fileSecurityService.EncryptAsync(systemItem, targetPath, mode, progress, token));
+                    async (progress, token) =>
+                    {
+                        var operationResults = new List<FileOperationResult>(plans.Count);
+                        for(int index = 0; index < plans.Count; index++)
+                        {
+                            FileSecurityPlan plan = plans[index];
+                            var itemProgress = new BatchItemProgressReporter(
+                                progress,
+                                index,
+                                plans.Count,
+                                plan.Item.FullPath);
+                            operationResults.Add(decrypt
+                                ? await _fileSecurityService.DecryptAsync(
+                                    plan.Item,
+                                    plan.TargetPath,
+                                    plan.Mode,
+                                    itemProgress,
+                                    token)
+                                : await _fileSecurityService.EncryptAsync(
+                                    plan.Item,
+                                    plan.TargetPath,
+                                    plan.Mode,
+                                    itemProgress,
+                                    token));
+                            if(!operationResults[^1].Success)
+                                break;
+                        }
 
-                if(!result.Success)
+                        return (IReadOnlyList<FileOperationResult>)operationResults;
+                    });
+
+                FileOperationResult? failure = results.FirstOrDefault(result => !result.Success);
+                if(failure is not null)
                 {
-                    await _messageService.ShowMessage(errorTitle, result.ErrorMessage);
+                    await _messageService.ShowMessage(errorTitle, failure.ErrorMessage);
                     return;
                 }
 
                 try
                 {
                     // Синхронизация нужна, если FileSystemWatcher пропустил быструю замену.
-                    await RefreshAffectedContainersAsync( systemItem, targetPath, CancellationToken.None);
+                    foreach(FileSecurityPlan plan in plans)
+                    {
+                        await RefreshAffectedContainersAsync(
+                            plan.Item,
+                            plan.TargetPath,
+                            CancellationToken.None);
+                    }
                 } catch(Exception ex)
                 {
                     await _messageService.ShowMessage(
@@ -1131,21 +1610,65 @@ namespace CryptoBook.Models
             }
         }
 
-        private IEnumerable<IContainerSystemItem> EnumerateAllContainers()
+        private async Task RefreshOperationContainersAsync(
+            IEnumerable<string> sourcePaths,
+            string? destinationDirectory,
+            CancellationToken token)
         {
-            var pending = new Stack<IContainerSystemItem>(
-                GetDrives.OfType<IContainerSystemItem>().Reverse());
-            var visited = new HashSet<IContainerSystemItem>();
-
-            while(pending.Count > 0)
+            var affectedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach(string sourcePath in sourcePaths)
             {
-                var container = pending.Pop();
-                if(!visited.Add(container))
-                    continue;
+                string? parentPath = Path.GetDirectoryName(GetNativePath(sourcePath));
+                if(!string.IsNullOrWhiteSpace(parentPath))
+                    affectedPaths.Add(NormalizePath(parentPath));
+            }
 
-                yield return container;
-                foreach(var child in container.Children.OfType<IContainerSystemItem>().Reverse())
-                    pending.Push(child);
+            if(!string.IsNullOrWhiteSpace(destinationDirectory))
+                affectedPaths.Add(NormalizePath(GetNativePath(destinationDirectory)));
+
+            foreach(IContainerSystemItem container in EnumerateLoadedContainers()
+                .Where(container => affectedPaths.Contains(
+                    NormalizePath(GetNativePath(container.FullPath))))
+                .Distinct())
+            {
+                await RefreshContainerAsync(container, token);
+            }
+        }
+
+        public async void Execute_DropCommand(object? obj)
+        {
+            if(obj is not FileDropRequest request)
+                return;
+
+            try
+            {
+                FileOperationBatchResult result = await _fileOperationCoordinator.TransferAsync(
+                    request.SourcePaths,
+                    request.DestinationDirectory,
+                    request.Operation);
+                if(result.Failure is not null)
+                {
+                    await _messageService.ShowMessage(
+                        LocalizationManager.GetString(
+                            request.Operation == FileTransferKind.Copy
+                                ? "Explorer.CopyError"
+                                : "Explorer.MoveError"),
+                        result.Failure.ErrorMessage);
+                }
+
+                await RefreshOperationContainersAsync(
+                    request.SourcePaths,
+                    request.DestinationDirectory,
+                    CancellationToken.None);
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.FileOperationError"),
+                    ex.Message);
             }
         }
 
@@ -1170,26 +1693,28 @@ namespace CryptoBook.Models
             return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
         }
 
-        private string CombineManagerPath(string directoryPath, string itemName)
-        {
-            string normalized = _fileManagerService.NormalizePath(directoryPath);
-            int separatorIndex = normalized.IndexOf("://", StringComparison.Ordinal);
-            if(separatorIndex <= 0)
-                return Path.Combine(normalized, itemName);
-
-            string scheme = normalized[..separatorIndex];
-            string nativePath = normalized[(separatorIndex + 3)..];
-            string combined = scheme.Equals("local", StringComparison.OrdinalIgnoreCase)
-                ? Path.Combine(nativePath, itemName)
-                : nativePath.TrimEnd('/', '\\') + "/" + itemName;
-            return $"{scheme}://{combined}";
-        }
-
         private static string GetNativePath(string path)
         {
             int separatorIndex = path.IndexOf("://", StringComparison.Ordinal);
             return separatorIndex > 0 ? path[(separatorIndex + 3)..] : path;
         }
+
+        private static ISystemItem? GetSingleSelection(object? selection)
+        {
+            IReadOnlyList<ISystemItem> snapshot =
+                FileExplorerSelectionPolicy.CreateSnapshot(selection);
+            return snapshot.Count == 1 ? snapshot[0] : null;
+        }
+
+        private static bool CanExecuteMultiItemOperation(object? selection) =>
+            !FileExplorerSelectionPolicy.ContainsDrive(selection) &&
+            FileExplorerSelectionPolicy.NormalizeForOperation(selection).Count > 0;
+
+        private static IReadOnlyList<ISystemItem> GetOperationSelection(
+            object? selection) =>
+            FileExplorerSelectionPolicy.ContainsDrive(selection)
+                ? Array.Empty<ISystemItem>()
+                : FileExplorerSelectionPolicy.NormalizeForOperation(selection);
 
         private static void UpdateSystemItem(ISystemItem existing, ISystemItem incoming)
         {
@@ -1228,6 +1753,39 @@ namespace CryptoBook.Models
             };
 
             return dialog.ShowDialog() == true ? dialog.FileName : null;
+        }
+
+        private readonly record struct FileSecurityPlan(
+            ISystemItem Item,
+            EncryptionTargetMode Mode,
+            string TargetPath);
+
+        private sealed class BatchItemProgressReporter: IProgressReporter
+        {
+            private readonly IProgressReporter parent;
+            private readonly int completedItems;
+            private readonly int totalItems;
+            private readonly string itemPath;
+
+            public BatchItemProgressReporter(
+                IProgressReporter parent,
+                int completedItems,
+                int totalItems,
+                string itemPath)
+            {
+                this.parent = parent;
+                this.completedItems = completedItems;
+                this.totalItems = Math.Max(1, totalItems);
+                this.itemPath = itemPath;
+            }
+
+            public void Report(double? value, string? currentInfo = null)
+            {
+                double? aggregate = value.HasValue
+                    ? (completedItems + Math.Clamp(value.Value, 0d, 1d)) / totalItems
+                    : null;
+                parent.Report(aggregate, currentInfo ?? itemPath);
+            }
         }
 
 

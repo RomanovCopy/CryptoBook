@@ -15,14 +15,32 @@ namespace CryptoBook.Interfaces
         double LeftColumnPercent { get; set; }
         double RightColumnPercent { get; set; }
         bool IsHiddenFilesVisible { get; set; } 
-        string CurrentPath { get; set; }
+        string CurrentPath { get; }
+        string AddressText { get; set; }
+        bool IsCurrentDirectoryUnavailable { get; }
+        FileExplorerNavigationErrorKind? LastNavigationError { get; }
+        string NavigationErrorMessage { get; }
         ISystemItem? SelectedItem { get; set; }
+        ISystemItem? SelectedListItem { get; set; }
+        IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
-        Task OpenDirectoryAsync(
+        Task<bool> NavigateAsync(
             string path,
+            FileExplorerNavigationMode mode,
+            CancellationToken cancellationToken = default);
+        Task RestoreLastDirectoryAsync(
             CancellationToken cancellationToken = default);
 
         bool CanExecute_BackCommand(object? obj);
+        bool CanExecute_ForwardCommand(object? obj);
+        bool CanExecute_UpCommand(object? obj);
+        bool CanExecute_ApplyAddressCommand(object? obj);
+        bool CanExecute_RetryNavigationCommand(object? obj);
+        bool CanExecute_CurrentDocumentCommand(object? obj);
+        bool CanExecute_OpenCommand(object? obj);
+        bool CanExecute_OpenWithCommand(object? obj);
+        bool CanExecute_RevealInExplorerCommand(object? obj);
+        bool CanExecute_CopyPathCommand(object? obj);
         bool CanExecute_CutCommand(object? obj);
         bool CanExecute_CopyCommand(object? obj);
         bool CanExecute_PasteCommand(object? obj);
@@ -36,6 +54,7 @@ namespace CryptoBook.Interfaces
         bool CanExecute_RenameClickCommand(object? obj);
         bool CanExecute_RenameCommand(object? obj);
         bool CanExecute_MoveCommand(object? obj);
+        bool CanExecute_DropCommand(object? obj);
         bool CanExecure_RefreshCommand(object? obj);
         bool CanExecute_CancelRenameCommand(object? obj);
         bool CanExecute_TreeViewItemSelectedCommand (object? obj);
@@ -45,6 +64,16 @@ namespace CryptoBook.Interfaces
 
 
         void Execute_BackCommand(object? obj);
+        void Execute_ForwardCommand(object? obj);
+        void Execute_UpCommand(object? obj);
+        void Execute_ApplyAddressCommand(object? obj);
+        void Execute_CancelAddressCommand(object? obj);
+        void Execute_RetryNavigationCommand(object? obj);
+        void Execute_CurrentDocumentCommand(object? obj);
+        void Execute_OpenCommand(object? obj);
+        void Execute_OpenWithCommand(object? obj);
+        void Execute_RevealInExplorerCommand(object? obj);
+        void Execute_CopyPathCommand(object? obj);
         void Execute_CutCommand(object? obj);
         void Execute_CopyCommand(object? obj);
         void Execute_PasteCommand(object? obj);
@@ -58,6 +87,7 @@ namespace CryptoBook.Interfaces
         void Execute_RenameClickCommand(object? obj);
         void Execute_RenameCommand(object? obj);
         void Execute_MoveCommand(object? obj);
+        void Execute_DropCommand(object? obj);
         void Execute_RefreshCommand(object? obj);
         void Execute_CancelRenameCommand(object? obj);
         void Execute_TreeViewItemSelectedCommand (object? obj);

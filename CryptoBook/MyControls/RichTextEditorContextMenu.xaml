@@ -6,6 +6,7 @@
              xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
              xmlns:dto="clr-namespace:CryptoBook.DTO"
              DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IRichTextContextMenuViewModel}}"
+             Style="{StaticResource RichTextContextMenuStyle}"
              Background="{DynamicResource CurrentControlBackground}"
              Foreground="{DynamicResource CurrentInputForeground}"
              BorderBrush="{DynamicResource CurrentBorderColor}"
@@ -53,7 +54,7 @@
         </Style>
 
         <Style TargetType="{x:Type MenuItem}"
-               BasedOn="{StaticResource ThemedMenuItemStyle}">
+               BasedOn="{StaticResource RichTextContextMenuItemStyle}">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="4,3"/>
             <Setter Property="MinHeight" Value="28"/>

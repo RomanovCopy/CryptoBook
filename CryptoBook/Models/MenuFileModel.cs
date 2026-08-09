@@ -20,6 +20,7 @@ namespace CryptoBook.Models
     public class MenuFileModel: ViewModelBase, IMenuFileModel
     {
         private readonly IWindowManager windowManager;
+        private readonly IFileExplorerService fileExplorerService;
         private readonly IFlowDocumentSaveService saveService;
         private readonly IRichTextBoxService richTextBox;
         private readonly IDocumentSession documentSession;
@@ -37,6 +38,7 @@ namespace CryptoBook.Models
 
         public MenuFileModel(
             IWindowManager windowManager,
+            IFileExplorerService fileExplorerService,
             IFlowDocumentSaveService saveService,
             IRichTextBoxService richTextBox,
             IDocumentSession documentSession,
@@ -54,6 +56,8 @@ namespace CryptoBook.Models
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
+            this.fileExplorerService = fileExplorerService
+                ?? throw new ArgumentNullException(nameof(fileExplorerService));
             this.saveService = saveService
                 ?? throw new ArgumentNullException(nameof(saveService));
             this.richTextBox = richTextBox
@@ -110,8 +114,7 @@ namespace CryptoBook.Models
             if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring)
                 return;
             keyResetService?.NotifyActivity();
-            var id = windowManager.CreateWindow<FileExplorer>();
-            windowManager.ShowWindow(id);
+            fileExplorerService.Show();
         }
 
         public bool CanExecute_SaveFile(object? obj)

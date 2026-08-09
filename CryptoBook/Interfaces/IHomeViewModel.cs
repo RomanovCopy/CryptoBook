@@ -13,6 +13,7 @@ namespace CryptoBook.Interfaces
 
         ICommand NewDocument { get; }
         ICommand OpenDocument { get; }
+        ICommand OpenMediaPlayer { get; }
         ICommand ChooseWorkspace { get; }
     }
 }

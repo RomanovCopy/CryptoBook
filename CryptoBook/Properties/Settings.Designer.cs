@@ -418,6 +418,18 @@ namespace CryptoBook.Properties {
                 this["IsHiddenFilesVisible_FileExplorer"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastDirectory_FileExplorer {
+            get {
+                return ((string)(this["LastDirectory_FileExplorer"]));
+            }
+            set {
+                this["LastDirectory_FileExplorer"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

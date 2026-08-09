@@ -14,7 +14,7 @@ namespace CryptoBook.ViewModels
         IRecentDocumentsViewModel
     {
         private readonly IRecentDocumentService service;
-        private readonly IDocumentSwitchCoordinator switchCoordinator;
+        private readonly IWorkspaceFileOpenService fileOpenService;
         private readonly IFilePickerService filePickerService;
         private readonly IMessageService messageService;
         private readonly ObservableCollection<RecentDocumentItemViewModel> items = [];
@@ -27,13 +27,13 @@ namespace CryptoBook.ViewModels
 
         public RecentDocumentsViewModel(
             IRecentDocumentService service,
-            IDocumentSwitchCoordinator switchCoordinator,
+            IWorkspaceFileOpenService fileOpenService,
             IFilePickerService filePickerService,
             IMessageService messageService)
         {
             this.service = service ?? throw new ArgumentNullException(nameof(service));
-            this.switchCoordinator = switchCoordinator
-                ?? throw new ArgumentNullException(nameof(switchCoordinator));
+            this.fileOpenService = fileOpenService
+                ?? throw new ArgumentNullException(nameof(fileOpenService));
             this.filePickerService = filePickerService
                 ?? throw new ArgumentNullException(nameof(filePickerService));
             this.messageService = messageService
@@ -120,7 +120,7 @@ namespace CryptoBook.ViewModels
             openCommand.RaiseCanExecuteChanged();
             try
             {
-                WorkspaceFileOpenResult result = await switchCoordinator.SwitchAsync(
+                WorkspaceFileOpenResult result = await fileOpenService.OpenAsync(
                     item.Path,
                     cancellationToken);
                 if(result.Cancelled)

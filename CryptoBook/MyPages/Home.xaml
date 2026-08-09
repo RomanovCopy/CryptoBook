@@ -64,6 +64,14 @@
                             <TextBlock Text="{Binding [Home.OpenDocument], Source={StaticResource Res}}"/>
                         </StackPanel>
                     </Button>
+                    <Button MinWidth="170" MinHeight="42" Margin="0,0,10,10"
+                            Command="{Binding OpenMediaPlayer}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE714;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="16" Margin="0,0,9,0"/>
+                            <TextBlock Text="{Binding [Home.OpenMediaPlayer], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </Button>
                     <Button MinWidth="190" MinHeight="42" Margin="0,0,10,10"
                             Command="{Binding ChooseWorkspace}">
                         <StackPanel Orientation="Horizontal">

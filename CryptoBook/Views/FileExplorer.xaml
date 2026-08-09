@@ -21,11 +21,13 @@
         d:DataContext="{x:Type viewmodels:FileExplorerViewModel}"
         MinHeight="400" MinWidth="600"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
-        Title="{Binding [Explorer.WindowTitle], Source={StaticResource Res}}">
+        Title="{Binding ExplorerTitle}">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IFileExplorerViewModel}" />
     </Window.DataContext>
     <Window.Resources>
+
+        <converters:SystemItemSelectionSnapshotConverter x:Key="SystemItemSelectionSnapshotConverter"/>
 
         <Style x:Key="FileExplorerToolBarButtonStyle"
                TargetType="{x:Type Button}"
@@ -144,6 +146,21 @@
                     AutomationProperties.Name="Назад"
                     Command="{Binding BackCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE72A;"
+                    ToolTip="{Binding [Common.Forward], Source={StaticResource Res}}"
+                    AutomationProperties.Name="Вперёд"
+                    Command="{Binding ForwardCommand}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE74A;"
+                    ToolTip="{Binding [Common.Up], Source={StaticResource Res}}"
+                    AutomationProperties.Name="Вверх"
+                    Command="{Binding UpCommand}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE8A5;"
+                    ToolTip="{Binding [Explorer.CurrentDocument], Source={StaticResource Res}}"
+                    AutomationProperties.Name="Текущий документ"
+                    Command="{Binding CurrentDocumentCommand}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
 
             <Button Content="&#xE7C3;"
@@ -177,13 +194,13 @@
                     AutomationProperties.Name="Вырезать"
                     Command="{Binding CutCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"
-                    CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
+                    CommandParameter="{Binding SelectedItemsSnapshot}"/>
             <Button Content="&#xE8C8;"
                     ToolTip="{Binding [Common.Copy], Source={StaticResource Res}}"
                     AutomationProperties.Name="Копировать"
                     Command="{Binding CopyCommand, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"
-                    CommandParameter="{Binding ElementName=listview, Path=SelectedItems, UpdateSourceTrigger=PropertyChanged}"/>
+                    CommandParameter="{Binding SelectedItemsSnapshot}"/>
             <Button Content="&#xE77F;"
                     ToolTip="{Binding [Common.Paste], Source={StaticResource Res}}"
                     AutomationProperties.Name="Вставить"
@@ -196,13 +213,13 @@
                     ToolTip="{Binding [Common.Rename], Source={StaticResource Res}}"
                     AutomationProperties.Name="Переименовать"
                     Command="{Binding RenameClickCommand, UpdateSourceTrigger=PropertyChanged}"
-                    CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                    CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE74D;"
                     ToolTip="{Binding [Common.Delete], Source={StaticResource Res}}"
                     AutomationProperties.Name="Удалить"
                     Command="{Binding DeleteCommand, UpdateSourceTrigger=PropertyChanged}"
-                    CommandParameter="{Binding ElementName=listview, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                    CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
 
@@ -215,13 +232,13 @@
                     ToolTip="{Binding [Explorer.EncryptSelected], Source={StaticResource Res}}"
                     AutomationProperties.Name="Зашифровать выбранный элемент"
                     Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"
-                    CommandParameter="{Binding SelectedItem, ElementName=listview}"
+                    CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE785;"
                     ToolTip="{Binding [Explorer.DecryptSelected], Source={StaticResource Res}}"
                     AutomationProperties.Name="Расшифровать выбранный элемент"
                     Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"
-                    CommandParameter="{Binding SelectedItem, ElementName=listview}"
+                    CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
         </ToolBar>
 
@@ -262,7 +279,13 @@
                                     Tag="{Binding DataContext.Favorites, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                     ToolTip="{Binding AvailabilityText}">
                                 <Border.ContextMenu>
-                                    <ContextMenu>
+                                    <ContextMenu Style="{StaticResource RichTextContextMenuStyle}">
+                                        <ContextMenu.Resources>
+                                            <Style TargetType="{x:Type MenuItem}"
+                                                   BasedOn="{StaticResource RichTextContextMenuItemStyle}"/>
+                                            <Style TargetType="{x:Type Separator}"
+                                                   BasedOn="{StaticResource RichTextContextMenuSeparatorStyle}"/>
+                                        </ContextMenu.Resources>
                                         <MenuItem Header="{Binding [Common.Open], Source={StaticResource Res}}"
                                                   Command="{Binding PlacementTarget.Tag.OpenCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                   CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
@@ -329,8 +352,36 @@
         </Grid>
 
         <!-- 3. Address Bar -->
-        <TextBox Grid.Row="2" Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged}" Margin="10,5" Height="22"
-                             VerticalAlignment="Center" Padding="10,0" FontSize="14" Background="Transparent"/>
+        <Grid Grid.Row="2" Margin="10,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="220"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Text="{Binding AddressText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Height="26"
+                     VerticalContentAlignment="Center"
+                     Padding="10,0"
+                     FontSize="14"
+                     Background="Transparent">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding ApplyAddressCommand}"/>
+                    <KeyBinding Key="Escape" Command="{Binding CancelAddressCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <TextBlock Grid.Column="1"
+                       Margin="12,0,6,0"
+                       VerticalAlignment="Center"
+                       Text="{Binding [Explorer.Filter], Source={StaticResource Res}}"/>
+            <TextBox Grid.Column="2"
+                     Height="26"
+                     Padding="8,0"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="{Binding [Explorer.FilterHint], Source={StaticResource Res}}"/>
+        </Grid>
 
         <!-- 4. Основная область: Navigation Pane слева + File View справа -->
         <Grid Grid.Row="3">
@@ -366,6 +417,55 @@
                            BasedOn="{StaticResource DiskTree_TreeViewItemStyle}">
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         <Setter Property="IsSelected" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type TreeView}}}"/>
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu Style="{StaticResource RichTextContextMenuStyle}">
+                                    <ContextMenu.Resources>
+                                        <Style TargetType="{x:Type MenuItem}"
+                                               BasedOn="{StaticResource RichTextContextMenuItemStyle}"/>
+                                        <Style TargetType="{x:Type Separator}"
+                                               BasedOn="{StaticResource RichTextContextMenuSeparatorStyle}"/>
+                                    </ContextMenu.Resources>
+                                    <MenuItem Header="{Binding [Common.Open], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.OpenCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <MenuItem Header="{Binding [Explorer.RevealInExplorer], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.RevealInExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <MenuItem Header="{Binding [Explorer.CopyPath], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.CopyPathCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{Binding [Common.Cut], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.CutCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <MenuItem Header="{Binding [Common.Copy], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <MenuItem Header="{Binding [Explorer.Move], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.MoveCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <MenuItem Header="{Binding [Common.Rename], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.RenameClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <MenuItem Header="{Binding [Common.Delete], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{Binding [Explorer.EncryptSelected], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.EncryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <MenuItem Header="{Binding [Explorer.DecryptSelected], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.DecryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{Binding [Common.Refresh], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.RefreshCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
                         <Style.Triggers>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
@@ -376,8 +476,13 @@
                         </Style.Triggers>
                     </Style>
                 </TreeView.ItemContainerStyle>
+                <i:Interaction.Behaviors>
+                    <behaviors:FileExplorerDragDropBehavior
+                        DropCommand="{Binding DropCommand}"
+                        DefaultDestinationPath="{Binding CurrentPath}"/>
+                </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                    <i:EventTrigger EventName="SelectedItemChanged">
                         <i:InvokeCommandAction Command="{Binding TreeViewItemSelectedCommand, UpdateSourceTrigger=PropertyChanged}"
                                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}},Path=SelectedValue}"/>
                     </i:EventTrigger>
@@ -394,10 +499,39 @@
             <!-- File List View (основная область файлов) -->
             <ListView x:Name="listview"
                       Grid.Column="2"
+                      SelectionMode="Extended"
                       Background="{DynamicResource CurrentInputBackground}"
                       Foreground="{DynamicResource CurrentInputForeground}"
-                      ItemsSource="{Binding Path=SelectedItem.Children, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedListItem, Mode=TwoWay}"
+                      ItemsSource="{Binding ChildrenView}"
                       VirtualizingPanel.IsContainerVirtualizable="True">
+                <ListView.ContextMenu>
+                    <ContextMenu Style="{StaticResource RichTextContextMenuStyle}">
+                        <ContextMenu.Resources>
+                            <Style TargetType="{x:Type MenuItem}"
+                                   BasedOn="{StaticResource RichTextContextMenuItemStyle}"/>
+                            <Style TargetType="{x:Type Separator}"
+                                   BasedOn="{StaticResource RichTextContextMenuSeparatorStyle}"/>
+                        </ContextMenu.Resources>
+                        <MenuItem Header="{Binding [Explorer.CreateFile], Source={StaticResource Res}}"
+                                  Command="{Binding PlacementTarget.DataContext.CreateFileCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                        <MenuItem Header="{Binding [Explorer.CreateFolder], Source={StaticResource Res}}"
+                                  Command="{Binding PlacementTarget.DataContext.CreateDirectoryCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                        <Separator/>
+                        <MenuItem Header="{Binding [Common.Paste], Source={StaticResource Res}}"
+                                  Command="{Binding PlacementTarget.DataContext.PasteCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                        <MenuItem Header="{Binding [Explorer.CopyPath], Source={StaticResource Res}}"
+                                  Command="{Binding PlacementTarget.DataContext.CopyPathCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                  CommandParameter="{Binding PlacementTarget.DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                        <MenuItem Header="{Binding [Explorer.RevealInExplorer], Source={StaticResource Res}}"
+                                  Command="{Binding PlacementTarget.DataContext.RevealInExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                  CommandParameter="{Binding PlacementTarget.DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                        <Separator/>
+                        <MenuItem Header="{Binding [Common.Refresh], Source={StaticResource Res}}"
+                                  Command="{Binding PlacementTarget.DataContext.RefreshCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                  CommandParameter="{Binding PlacementTarget.DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
                 <ListView.View>
                     <GridView>
                         <GridViewColumn >
@@ -495,9 +629,57 @@
                            BasedOn="{StaticResource FileExplorerListViewItemStyle}">
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="FontWeight" Value="Medium"/>
-                        <Setter Property="FontSize" Value="16"/>
+                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                         <Setter Property="FontWeight" Value="Medium"/>
+                         <Setter Property="FontSize" Value="16"/>
+                         <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
+                         <Setter Property="ContextMenu">
+                             <Setter.Value>
+                                 <ContextMenu Style="{StaticResource RichTextContextMenuStyle}">
+                                     <ContextMenu.Resources>
+                                         <Style TargetType="{x:Type MenuItem}"
+                                                BasedOn="{StaticResource RichTextContextMenuItemStyle}"/>
+                                         <Style TargetType="{x:Type Separator}"
+                                                BasedOn="{StaticResource RichTextContextMenuSeparatorStyle}"/>
+                                     </ContextMenu.Resources>
+                                     <MenuItem Header="{Binding [Common.Open], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.OpenCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Explorer.OpenWith], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.OpenWithCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Explorer.RevealInExplorer], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.RevealInExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Explorer.CopyPath], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.CopyPathCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <Separator/>
+                                     <MenuItem Header="{Binding [Common.Cut], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.CutCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Common.Copy], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Explorer.Move], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.MoveCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Common.Rename], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.RenameClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Common.Delete], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <Separator/>
+                                     <MenuItem Header="{Binding [Explorer.EncryptSelected], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.EncryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [Explorer.DecryptSelected], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.DecryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                 </ContextMenu>
+                             </Setter.Value>
+                         </Setter>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.InputBindings>
@@ -515,17 +697,65 @@
                         SaveDebounceMs="400"
                         Store="{markup:ResolveService ServiceType={x:Type interfaces:IColumnLayoutStore}}" />
                     <behaviors:ListViewSortedBehavior/>
+                    <behaviors:ListViewSelectionSnapshotBehavior
+                        SelectionSnapshot="{Binding SelectedItemsSnapshot, Mode=TwoWay}"/>
+                    <behaviors:FileExplorerDragDropBehavior
+                        DropCommand="{Binding DropCommand}"
+                        DefaultDestinationPath="{Binding CurrentPath}"/>
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding ListViewItemDoubleClickCommand, UpdateSourceTrigger=PropertyChanged}"
-                                               CommandParameter="{Binding SelectedItem, ElementName=listview}"/>
+                                               CommandParameter="{Binding SelectedItemsSnapshot}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding ListViewSelectionChangedCommand, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding SelectedValue, ElementName=listview}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListView>
+
+            <Border Grid.Column="2"
+                    Panel.ZIndex="10"
+                    Background="{DynamicResource CurrentInputBackground}"
+                    BorderBrush="{DynamicResource CurrentBorderColor}"
+                    BorderThickness="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCurrentDirectoryUnavailable}"
+                                         Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            MaxWidth="420"
+                            Margin="24">
+                    <TextBlock HorizontalAlignment="Center"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               Text="{Binding [Explorer.Navigation.Unavailable], Source={StaticResource Res}}"/>
+                    <TextBlock Margin="0,8,0,16"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource CurrentMutedForeground}"
+                               Text="{Binding NavigationErrorMessage}"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button Margin="0,0,8,0"
+                                Command="{Binding RetryNavigationCommand}"
+                                Content="{Binding [Explorer.Navigation.Retry], Source={StaticResource Res}}"
+                                Style="{StaticResource PrimaryButtonStyle}"/>
+                        <Button Command="{Binding UpCommand}"
+                                Content="{Binding [Common.Up], Source={StaticResource Res}}"
+                                Style="{StaticResource PrimaryButtonStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
             <GridSplitter Grid.Column="3"
                   HorizontalAlignment="Right"
@@ -668,6 +898,49 @@
                            Foreground="{DynamicResource CurrentWindowForeground}"
                            FontSize="16"
                            TextTrimming="CharacterEllipsis"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="5"
+                Margin="0,8,0,0"
+                Padding="10"
+                Background="{DynamicResource CurrentControlBackground}"
+                BorderBrush="{DynamicResource CurrentBorderColor}"
+                BorderThickness="1"
+                CornerRadius="5">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Margin="4,0,12,0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           Text="{Binding PickerSelectionPath}"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip="{Binding PickerSelectionPath}"/>
+                <Button Grid.Column="1"
+                        MinWidth="110"
+                        Margin="0,0,8,0"
+                        Command="{Binding ConfirmSelectionCommand}"
+                        Content="{Binding PickerActionText}"
+                        IsDefault="True"
+                        Style="{StaticResource PrimaryButtonStyle}"/>
+                <Button Grid.Column="2"
+                        MinWidth="90"
+                        Command="{Binding CancelSelectionCommand}"
+                        Content="{Binding [Common.Cancel], Source={StaticResource Res}}"/>
             </Grid>
         </Border>
 

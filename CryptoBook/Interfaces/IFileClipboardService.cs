@@ -22,10 +22,5 @@ namespace CryptoBook.Interfaces
         // Очистить буфер явно (например, после успешного Cut+Paste)
         void Clear();
 
-        // Вставить содержимое буфера в целевую папку
-        Task<IReadOnlyList<FileOperationResult>> PasteAsync(
-            string destinationDirectory,
-            IProgressReporter? progress,
-            CancellationToken cancellationToken);
     }
 }

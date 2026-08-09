@@ -80,7 +80,11 @@ namespace CryptoBook.Infrastructure
             {
                 if(window.DataContext is IDialogResult dialogResult)
                 {
-                    _results[host.Key] = dialogResult;
+                    if(dialogResult is not IConditionalDialogResult conditional ||
+                       conditional.HasResult)
+                    {
+                        _results[host.Key] = dialogResult;
+                    }
                 }
                 UnregisterWindow(host);
                 FocusWindowIfAvailable(window.Owner);

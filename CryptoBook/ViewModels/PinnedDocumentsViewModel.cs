@@ -19,7 +19,7 @@ namespace CryptoBook.ViewModels
         IPinnedDocumentsViewModel
     {
         private readonly IPinnedDocumentService service;
-        private readonly IDocumentSwitchCoordinator switchCoordinator;
+        private readonly IWorkspaceFileOpenService fileOpenService;
         private readonly IDocumentSession documentSession;
         private readonly IMessageService messageService;
         private readonly ICurrentDocumentSaver currentDocumentSaver;
@@ -40,7 +40,7 @@ namespace CryptoBook.ViewModels
 
         public PinnedDocumentsViewModel(
             IPinnedDocumentService service,
-            IDocumentSwitchCoordinator switchCoordinator,
+            IWorkspaceFileOpenService fileOpenService,
             IDocumentSession documentSession,
             IMessageService messageService,
             ICurrentDocumentSaver currentDocumentSaver,
@@ -48,8 +48,8 @@ namespace CryptoBook.ViewModels
             IFilePickerService filePickerService)
         {
             this.service = service ?? throw new ArgumentNullException(nameof(service));
-            this.switchCoordinator = switchCoordinator
-                ?? throw new ArgumentNullException(nameof(switchCoordinator));
+            this.fileOpenService = fileOpenService
+                ?? throw new ArgumentNullException(nameof(fileOpenService));
             this.documentSession = documentSession
                 ?? throw new ArgumentNullException(nameof(documentSession));
             this.messageService = messageService
@@ -221,7 +221,7 @@ namespace CryptoBook.ViewModels
             openCommand.RaiseCanExecuteChanged();
             try
             {
-                WorkspaceFileOpenResult result = await switchCoordinator.SwitchAsync(
+                WorkspaceFileOpenResult result = await fileOpenService.OpenAsync(
                     item.Path,
                     cancellationToken);
                 if(result.Cancelled)

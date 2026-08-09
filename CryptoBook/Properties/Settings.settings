@@ -101,6 +101,9 @@
     <Setting Name="IsHiddenFilesVisible_FileExplorer" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="LastDirectory_FileExplorer" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="GridViewColumnRatios" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

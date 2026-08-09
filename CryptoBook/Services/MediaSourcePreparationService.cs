@@ -11,15 +11,19 @@ namespace CryptoBook.Services
     {
         private readonly ISecureFileValidator _secureFileValidator;
         private readonly ISecureFileProcessor _secureFileProcessor;
+        private readonly IEncryptionKeyRequestService _keyRequestService;
 
         public MediaSourcePreparationService(
             ISecureFileValidator secureFileValidator,
-            ISecureFileProcessor secureFileProcessor)
+            ISecureFileProcessor secureFileProcessor,
+            IEncryptionKeyRequestService keyRequestService)
         {
             _secureFileValidator = secureFileValidator ??
                 throw new ArgumentNullException(nameof(secureFileValidator));
             _secureFileProcessor = secureFileProcessor ??
                 throw new ArgumentNullException(nameof(secureFileProcessor));
+            _keyRequestService = keyRequestService ??
+                throw new ArgumentNullException(nameof(keyRequestService));
         }
 
         public async Task<IPreparedMediaSource> PrepareAsync(
@@ -35,6 +39,9 @@ namespace CryptoBook.Services
             {
                 return new PreparedMediaSource(fullPath);
             }
+
+            if(!_keyRequestService.EnsureKeyAvailable())
+                throw new OperationCanceledException(cancellationToken);
 
             string temporaryDirectory = Path.Combine(
                 Path.GetTempPath(),
