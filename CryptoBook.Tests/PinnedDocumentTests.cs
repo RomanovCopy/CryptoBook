@@ -359,11 +359,11 @@ namespace CryptoBook.Tests
         }
 
         private sealed class DocumentSwitchCoordinatorStub:
-            IDocumentSwitchCoordinator
+            IWorkspaceFileOpenService
         {
             public string? LastPath { get; private set; }
 
-            public Task<WorkspaceFileOpenResult> SwitchAsync(
+            public Task<WorkspaceFileOpenResult> OpenAsync(
                 string targetPath,
                 CancellationToken cancellationToken = default)
             {

@@ -1,154 +1,242 @@
-﻿<Window x:Class="CryptoBook.Views.NewFileDialog"
+<Window x:Class="CryptoBook.Views.NewFileDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:markup="clr-namespace:CryptoBook.Markup"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CryptoBook.Views"
-        mc:Ignorable="d" Background="{DynamicResource CurrentWindowBackground}"
-        d:DataContext="{x:Type interfaces:INewFileDialogViewModel}"
+        mc:Ignorable="d"
+        Title="{Binding [File.NewTitle], Source={StaticResource Res}}"
+        Width="640"
+        Height="540"
+        MinWidth="560"
+        MinHeight="500"
         WindowStartupLocation="CenterOwner"
-        SizeToContent="WidthAndHeight" MinWidth="520" MinHeight="300"
-        Title="{Binding [File.NewTitle], Source={StaticResource Res}}" >
+        ResizeMode="NoResize"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}"
+        d:DataContext="{x:Type interfaces:INewFileDialogViewModel}">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:INewFileDialogViewModel}"/>
     </Window.DataContext>
+
     <Window.Resources>
-        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}"></Style>
-        <Style TargetType="TextBlock" >
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Medium"/>
-            <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
         </Style>
         <Style x:Key="NewFileDialogComboBoxItemStyle"
-               TargetType="ComboBoxItem">
-            <Setter Property="Foreground"
-                    Value="{DynamicResource CurrentInputForeground}"/>
-            <Setter Property="Background"
-                    Value="{DynamicResource CurrentInputBackground}"/>
-            <Setter Property="Padding" Value="8,5"/>
-            <Style.Triggers>
-                <Trigger Property="IsHighlighted" Value="True">
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource CurrentSelectionForeground}"/>
-                    <Setter Property="Background"
-                            Value="{DynamicResource CurrentSelectionBackground}"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource CurrentSelectionForeground}"/>
-                    <Setter Property="Background"
-                            Value="{DynamicResource CurrentSelectionBackground}"/>
-                </Trigger>
-            </Style.Triggers>
+               TargetType="ComboBoxItem"
+               BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+            <Setter Property="Padding" Value="10,6"/>
         </Style>
     </Window.Resources>
-    <Grid Margin="16"  >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
+
+    <Grid Margin="24" FocusManager.FocusedElement="{Binding ElementName=FileNameTextBox}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="14"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <!-- Директория -->
-        <TextBlock Text="{Binding [File.Folder], Source={StaticResource Res}}" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0"/>
-        <TextBlock Text="{Binding TargetDirectory, UpdateSourceTrigger=PropertyChanged}" 
-                   MinWidth="360" VerticalAlignment="Center" Margin="15,0,15,0" 
-                   TextAlignment="Center" Grid.Column="1" Grid.Row="0"/>
-        <Button Content="{Binding [Common.Browse], Source={StaticResource Res}}" HorizontalAlignment="Stretch" Margin="8,0,0,0" 
-                Command="{Binding Browse,UpdateSourceTrigger=PropertyChanged}" 
-                        Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0"/>
 
-        <!-- Только для чтения -->
-        <TextBlock Grid.Row="1" Text="{Binding [File.ReadOnly], Source={StaticResource Res}}" VerticalAlignment="Center"/>
-        <CheckBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="15,0,0,0"
-              IsChecked="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"/>
-        <!-- Скрытый -->
-        <TextBlock Grid.Row="2" Text="{Binding [File.Hidden], Source={StaticResource Res}}" VerticalAlignment="Center"/>
-        <CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="15,0,0,0"
-              IsChecked="{Binding IsHidden, UpdateSourceTrigger=PropertyChanged}"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Тип файла -->
-        <TextBlock Grid.Row="3" Text="{Binding [File.Type], Source={StaticResource Res}}" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="3" Grid.Column="1" Margin="15,5,15,5" VerticalAlignment="Center" Height="28"
-              Style="{StaticResource DropUpComboBoxStyle}" BorderThickness="0"
-              Foreground="{DynamicResource CurrentInputForeground}"
-              Background="{DynamicResource CurrentInputBackground}"
-              ItemContainerStyle="{StaticResource NewFileDialogComboBoxItemStyle}"
-              ItemsSource="{Binding Templates, UpdateSourceTrigger=PropertyChanged}"
-              DisplayMemberPath="DisplayName"
-              Grid.ColumnSpan="3" MaxDropDownHeight="500"
-              SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding SelectedNewTemplate, UpdateSourceTrigger=PropertyChanged}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </ComboBox>
+            <Border Width="48"
+                    Height="48"
+                    CornerRadius="10"
+                    Background="{DynamicResource CurrentSelectionBackground}">
+                <Viewbox Width="25" Height="25">
+                    <Path Data="M3,1 L11,1 L15,5 L15,19 L3,19 Z M11,1 L11,5 L15,5 M9,9 L9,15 M6,12 L12,12"
+                          Stroke="{DynamicResource CurrentSelectionForeground}"
+                          StrokeThickness="1.5"
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"
+                          StrokeLineJoin="Round"
+                          Fill="Transparent"/>
+                </Viewbox>
+            </Border>
 
-        <!-- Имя файла -->
-        <TextBlock Grid.Row="4" Text="{Binding [File.Name], Source={StaticResource Res}}" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Margin="15,0,15,0" BorderThickness="0"
-                 Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                <TextBlock Text="{Binding [File.NewTitle], Source={StaticResource Res}}"
+                           FontSize="22"
+                           FontWeight="SemiBold"/>
+                <TextBlock Margin="0,4,0,0"
+                           Text="{Binding [File.NewDescription], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentDisabledForeground}"/>
+            </StackPanel>
+        </Grid>
 
-        <!--Расширение файла-->
+        <Border Grid.Row="2"
+                Padding="18"
+                CornerRadius="10"
+                Background="{DynamicResource CurrentControlBackground}"
+                BorderBrush="{DynamicResource CurrentBorderColor}"
+                BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="34"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="34"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="34"/>
+                </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="5" Text="{Binding [File.Extension], Source={StaticResource Res}}" VerticalAlignment="Center"/>
-        <ComboBox Grid.Row="5" Grid.Column="1" Margin="15,5,15,5" VerticalAlignment="Center" Height="28"
-              Style="{StaticResource DropUpComboBoxStyle}"
-              Foreground="{DynamicResource CurrentInputForeground}"
-              Background="{DynamicResource CurrentInputBackground}" BorderThickness="0"
-              ItemContainerStyle="{StaticResource NewFileDialogComboBoxItemStyle}"
-              ItemsSource="{Binding SelectedTemplate.Extensions, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-              Grid.ColumnSpan="3"
-              SelectedItem="{Binding SelectedTemplate.DefaultExtension, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding SelectedNewExtension, UpdateSourceTrigger=PropertyChanged}"
-                                           CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}},Path=SelectedItem}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </ComboBox>
+                <TextBlock Style="{StaticResource FieldLabelStyle}"
+                           Text="{Binding [File.Folder], Source={StaticResource Res}}"/>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Padding="10,0"
+                            CornerRadius="5"
+                            Background="{DynamicResource CurrentInputBackground}"
+                            BorderBrush="{DynamicResource CurrentBorderColor}"
+                            BorderThickness="1">
+                        <TextBlock VerticalAlignment="Center"
+                                   Text="{Binding TargetDirectory}"
+                                   TextTrimming="CharacterEllipsis"
+                                   ToolTip="{Binding TargetDirectory}"/>
+                    </Border>
+                    <Button Grid.Column="2"
+                            Width="112"
+                            Content="{Binding [Common.Browse], Source={StaticResource Res}}"
+                            Command="{Binding Browse}"/>
+                </Grid>
 
-        <!--<TextBlock Grid.Row="5" Text="Расширение файла:" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="5" Grid.Column="1" 
-                   Text="{Binding SelectedTemplate.DefaultExtension,Mode=OneWay}" VerticalAlignment="Center"
-                   Margin="15,0,0,0"/>-->
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource FieldLabelStyle}"
+                               Text="{Binding [File.Type], Source={StaticResource Res}}"/>
+                    <TextBlock Grid.Column="2"
+                               Style="{StaticResource FieldLabelStyle}"
+                               Text="{Binding [File.Extension], Source={StaticResource Res}}"/>
+                </Grid>
 
-        <!-- Ошибка -->
-        <TextBlock Grid.Row="6"
-                   Grid.ColumnSpan="2"
-                   Foreground="{DynamicResource CurrentErrorForeground}"
-                   TextWrapping="Wrap"
-               Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                <Grid Grid.Row="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Height="34"
+                              Style="{StaticResource DropUpComboBoxStyle}"
+                              ItemContainerStyle="{StaticResource NewFileDialogComboBoxItemStyle}"
+                              ItemsSource="{Binding Templates}"
+                              DisplayMemberPath="DisplayName"
+                              MaxDropDownHeight="360"
+                              SelectedItem="{Binding SelectedTemplate, UpdateSourceTrigger=PropertyChanged}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding SelectedNewTemplate}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <ComboBox Grid.Column="2"
+                              Height="34"
+                              Style="{StaticResource DropUpComboBoxStyle}"
+                              ItemContainerStyle="{StaticResource NewFileDialogComboBoxItemStyle}"
+                              ItemsSource="{Binding SelectedTemplate.Extensions, Mode=OneWay}"
+                              SelectedItem="{Binding SelectedTemplate.DefaultExtension, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding SelectedNewExtension}"
+                                                       CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=SelectedItem}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </Grid>
 
-        <!-- Кнопки -->
-        <StackPanel Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" 
-                    HorizontalAlignment="Right" >
-            <Button Content="{Binding [Common.OK], Source={StaticResource Res}}" IsDefault="True" Margin="15,0,15,0"
-              Command="{Binding Create, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="{Binding [Common.Cancel], Source={StaticResource Res}}" IsCancel="True" Margin="0,0,15,0" 
-                    Command="{Binding Cancel, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Row="8"
+                           Style="{StaticResource FieldLabelStyle}"
+                           Text="{Binding [File.Name], Source={StaticResource Res}}"/>
+                <TextBox x:Name="FileNameTextBox"
+                         Grid.Row="10"
+                         MinHeight="34"
+                         Padding="9,5"
+                         VerticalContentAlignment="Center"
+                         Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="4"
+                Padding="18,14"
+                CornerRadius="10"
+                Background="{DynamicResource CurrentControlBackground}"
+                BorderBrush="{DynamicResource CurrentBorderColor}"
+                BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center"
+                           Style="{StaticResource FieldLabelStyle}"
+                           Text="{Binding [File.Attributes], Source={StaticResource Res}}"/>
+                <CheckBox Grid.Column="2"
+                          VerticalAlignment="Center"
+                          Content="{Binding [File.ReadOnlyAttribute], Source={StaticResource Res}}"
+                          IsChecked="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Column="4"
+                          VerticalAlignment="Center"
+                          Content="{Binding [File.HiddenAttribute], Source={StaticResource Res}}"
+                          IsChecked="{Binding IsHidden, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="5" Margin="0,10,0,10">
+            <TextBlock VerticalAlignment="Center"
+                       Foreground="{DynamicResource CurrentErrorForeground}"
+                       Text="{Binding ErrorMessage, Mode=OneWay}"
+                       TextWrapping="Wrap"/>
+        </Grid>
+
+        <StackPanel Grid.Row="6"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Width="112"
+                    Margin="0,0,10,0"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Content="{Binding [SideMenu.Create], Source={StaticResource Res}}"
+                    IsDefault="True"
+                    Command="{Binding Create}"/>
+            <Button Width="100"
+                    Content="{Binding [Common.Cancel], Source={StaticResource Res}}"
+                    IsCancel="True"
+                    Command="{Binding Cancel}"/>
         </StackPanel>
-
     </Grid>
+
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <i:InvokeCommandAction Command="{Binding Closing, UpdateSourceTrigger=PropertyChanged}"/>
+            <i:InvokeCommandAction Command="{Binding Closing}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-
 </Window>

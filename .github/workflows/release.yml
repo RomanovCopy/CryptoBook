@@ -58,8 +58,25 @@ jobs:
       - name: Verify Release
         run: dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
-      - name: Publish
-        run: dotnet publish CryptoBook/CryptoBook.csproj -c Release --no-restore -r win-x64 --self-contained true -p:Version=$env:RELEASE_VERSION -p:PublishSingleFile=false -p:PublishTrimmed=false -o artifacts/win-x64
+      - name: Publish self-contained single file
+        shell: pwsh
+        run: |
+          dotnet publish CryptoBook/CryptoBook.csproj `
+            -c Release `
+            --no-restore `
+            -r win-x64 `
+            --self-contained true `
+            -p:Version=$env:RELEASE_VERSION `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:IncludeAllContentForSelfExtract=true `
+            -p:PublishTrimmed=false `
+            -o artifacts/win-x64
+          $publishedFiles = @(Get-ChildItem artifacts/win-x64 -File -Recurse)
+          if ($publishedFiles.Count -ne 1 -or
+              $publishedFiles[0].Name -ne "CryptoBook.exe") {
+            throw "Expected exactly one published file: CryptoBook.exe. Found: $($publishedFiles.FullName -join ', ')"
+          }
 
       - name: Import signing certificate
         id: certificate
@@ -93,8 +110,7 @@ jobs:
         run: |
           $certificate = Get-Item "Cert:\CurrentUser\My\${{ steps.certificate.outputs.thumbprint }}"
           foreach ($path in @(
-              "artifacts/win-x64/CryptoBook.exe",
-              "artifacts/win-x64/CryptoBook.dll")) {
+              "artifacts/win-x64/CryptoBook.exe")) {
             $signature = Set-AuthenticodeSignature `
               -FilePath $path `
               -Certificate $certificate `

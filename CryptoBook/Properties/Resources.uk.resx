@@ -585,6 +585,18 @@
   <data name="Explorer.CreateFolder" xml:space="preserve">
     <value>Створити папку</value>
   </data>
+  <data name="Explorer.OpenWith" xml:space="preserve">
+    <value>Відкрити за допомогою</value>
+  </data>
+  <data name="Explorer.RevealInExplorer" xml:space="preserve">
+    <value>Показати у Провіднику</value>
+  </data>
+  <data name="Explorer.CopyPath" xml:space="preserve">
+    <value>Копіювати шлях</value>
+  </data>
+  <data name="Explorer.Move" xml:space="preserve">
+    <value>Перемістити</value>
+  </data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve">
     <value>Додати поточний каталог до вибраного</value>
   </data>
@@ -762,6 +774,12 @@
   <data name="Bookmarks.NeedLinkText" xml:space="preserve">
     <value>Введіть текст посилання або виділіть текст у документі.</value>
   </data>
+  <data name="Explorer.Picker.SelectFile" xml:space="preserve">
+    <value>Вибрати файл</value>
+  </data>
+  <data name="Explorer.Picker.SelectFolder" xml:space="preserve">
+    <value>Вибрати папку</value>
+  </data>
   <data name="Explorer.WindowTitle" xml:space="preserve">
     <value>Файловий провідник</value>
   </data>
@@ -788,6 +806,12 @@
   </data>
   <data name="Explorer.CopyError" xml:space="preserve">
     <value>Помилка копіювання</value>
+  </data>
+  <data name="Explorer.CopyPathError" xml:space="preserve">
+    <value>Помилка копіювання шляху</value>
+  </data>
+  <data name="Explorer.DeleteError" xml:space="preserve">
+    <value>Помилка видалення</value>
   </data>
   <data name="Explorer.SortError" xml:space="preserve">
     <value>Помилка сортування</value>
@@ -824,6 +848,33 @@
   </data>
   <data name="Explorer.OpenDirectoryFailed" xml:space="preserve">
     <value>Не вдалося відкрити «{0}»:{1}{2}</value>
+  </data>
+  <data name="Explorer.Filter" xml:space="preserve">
+    <value>Фільтр:</value>
+  </data>
+  <data name="Explorer.FilterHint" xml:space="preserve">
+    <value>Фільтр поточного каталогу за назвою</value>
+  </data>
+  <data name="Explorer.Navigation.Unavailable" xml:space="preserve">
+    <value>Недоступно</value>
+  </data>
+  <data name="Explorer.Navigation.Retry" xml:space="preserve">
+    <value>Повторити</value>
+  </data>
+  <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve">
+    <value>Каталог більше не існує.</value>
+  </data>
+  <data name="Explorer.Navigation.AccessDenied" xml:space="preserve">
+    <value>Доступ до каталогу заборонено.</value>
+  </data>
+  <data name="Explorer.Navigation.DriveNotReady" xml:space="preserve">
+    <value>Диск не готовий.</value>
+  </data>
+  <data name="Explorer.Navigation.NetworkUnavailable" xml:space="preserve">
+    <value>Мережевий ресурс недоступний.</value>
+  </data>
+  <data name="Explorer.Navigation.OperationCanceled" xml:space="preserve">
+    <value>Операцію скасовано.</value>
   </data>
   <data name="Explorer.OpenFileTitle" xml:space="preserve">
     <value>Відкрити файл</value>
@@ -1368,4 +1419,50 @@
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Скидати ключ після бездіяльності</value></data>
   <data name="Settings.EncryptionKey" xml:space="preserve"><value>Ключ шифрування</value></data>
   <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Ввести або змінити ключ</value></data>
+  <data name="Home.StartTitle" xml:space="preserve"><value>Початок роботи</value></data>
+  <data name="Home.StartDescription" xml:space="preserve"><value>Створіть документ, відкрийте файл або поверніться до нещодавнього документа.</value></data>
+  <data name="Home.CreateDocument" xml:space="preserve"><value>Новий документ</value></data>
+  <data name="Home.OpenDocument" xml:space="preserve"><value>Відкрити файл</value></data>
+  <data name="Home.OpenMediaPlayer" xml:space="preserve"><value>Відкрити медіаплеєр</value></data>
+  <data name="Home.ChooseWorkspace" xml:space="preserve"><value>Вибрати робочий простір</value></data>
+  <data name="Home.Workspace" xml:space="preserve"><value>Робочий простір</value></data>
+  <data name="Home.WorkspaceNotSelected" xml:space="preserve"><value>Не вибрано</value></data>
+  <data name="Home.NoPinnedDocuments" xml:space="preserve"><value>Закріплених документів поки немає.</value></data>
+  <data name="Home.FileUnavailable" xml:space="preserve"><value>Файл переміщено або він недоступний</value></data>
+  <data name="Home.OpenErrorTitle" xml:space="preserve"><value>Відкриття документа</value></data>
+  <data name="Home.OpenFailed" xml:space="preserve"><value>Не вдалося відкрити «{0}».</value></data>
+  <data name="Home.WorkspaceErrorTitle" xml:space="preserve"><value>Робочий простір</value></data>
+  <data name="RecentDocuments.Title" xml:space="preserve"><value>Останні документи</value></data>
+  <data name="RecentDocuments.Empty" xml:space="preserve"><value>Документи з’являться тут лише після успішного відкриття або збереження.</value></data>
+  <data name="RecentDocuments.ErrorTitle" xml:space="preserve"><value>Останні документи</value></data>
+  <data name="RecentDocuments.LoadFailed" xml:space="preserve"><value>Не вдалося завантажити історію документів.</value></data>
+  <data name="RecentDocuments.SaveFailed" xml:space="preserve"><value>Не вдалося оновити історію документів.</value></data>
+  <data name="RecentDocuments.OpenFailed" xml:space="preserve"><value>Не вдалося відкрити документ «{0}».</value></data>
+  <data name="RecentDocuments.OpenFailedGeneric" xml:space="preserve"><value>Не вдалося відкрити останній документ.</value></data>
+  <data name="RecentDocuments.MissingFile" xml:space="preserve"><value>Файл «{0}» переміщено або він недоступний. Укажіть нове розташування або видаліть його з історії.</value></data>
+  <data name="RecentDocuments.RelocateShort" xml:space="preserve"><value>Знайти…</value></data>
+  <data name="RecentDocuments.RelocateInvalid" xml:space="preserve"><value>Нове розташування файлу «{0}» недоступне.</value></data>
+  <data name="RecentDocuments.RelocateFailed" xml:space="preserve"><value>Не вдалося оновити розташування документа.</value></data>
+  <data name="RecentDocuments.Remove" xml:space="preserve"><value>Видалити з історії</value></data>
+  <data name="DocumentLinks.RenameSyncFailed" xml:space="preserve"><value>Файл перейменовано, але не вдалося оновити одне або кілька посилань швидкого доступу.</value></data>
+  <data name="File.NewDescription" xml:space="preserve"><value>Виберіть тип документа, ім’я та папку для збереження.</value></data>
+  <data name="File.Attributes" xml:space="preserve"><value>Атрибути файлу</value></data>
+  <data name="File.ReadOnlyAttribute" xml:space="preserve"><value>Лише для читання</value></data>
+  <data name="File.HiddenAttribute" xml:space="preserve"><value>Прихований</value></data>
+  <data name="Common.Forward" xml:space="preserve"><value>Уперед</value></data>
+  <data name="Common.Up" xml:space="preserve"><value>Вгору</value></data>
+  <data name="Explorer.CurrentDocument" xml:space="preserve"><value>Показати поточний документ</value></data>
+  <data name="Explorer.Deleting" xml:space="preserve"><value>Видалення</value></data>
+  <data name="Explorer.CalculatingSize" xml:space="preserve"><value>Обчислення загального розміру…</value></data>
+  <data name="Explorer.DeleteCanceledTitle" xml:space="preserve"><value>Видалення скасовано</value></data>
+  <data name="Explorer.DeleteCanceledPartial" xml:space="preserve"><value>Видалення не є транзакційною операцією. Частину файлів і папок уже могло бути видалено до скасування.</value></data>
+  <data name="Explorer.DropIntoSelfError" xml:space="preserve"><value>Не можна копіювати або переміщувати каталог у самого себе чи його підкаталог.</value></data>
+  <data name="Explorer.FileOperationError" xml:space="preserve"><value>Помилка файлової операції</value></data>
+  <data name="Explorer.Conflict.Title" xml:space="preserve"><value>Конфлікт імен</value></data>
+  <data name="Explorer.Conflict.FileMessage" xml:space="preserve"><value>У папці призначення вже є файл «{0}».</value></data>
+  <data name="Explorer.Conflict.DirectoryMessage" xml:space="preserve"><value>У папці призначення вже є каталог «{0}».</value></data>
+  <data name="Explorer.Conflict.ApplyToAll" xml:space="preserve"><value>Застосувати до всіх конфліктів</value></data>
+  <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Замінити</value></data>
+  <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Пропустити</value></data>
+  <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Зберегти обидва</value></data>
 </root>

@@ -16,6 +16,7 @@ namespace CryptoBook.FileTemplates
         public string SuggestedBaseName =>
             CryptoBook.Infrastructure.LocalizationManager.GetString(
                 "FileTemplate.NewVideo");
+        public bool CanCreate => false;
         public FileOpenMode OpenMode => FileOpenMode.Media;
 
         public IReadOnlyCollection<string> Extensions =>

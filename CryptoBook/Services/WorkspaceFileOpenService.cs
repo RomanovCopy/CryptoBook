@@ -34,6 +34,7 @@ namespace CryptoBook.Services
         private readonly IDocumentRecoveryService recoveryService;
         private readonly IDocumentDialogService dialogService;
         private readonly IKeyResetService? keyResetService;
+        private readonly IRecentDocumentService? recentDocumentService;
         private readonly string temporaryRoot;
         private bool disposed;
 
@@ -50,7 +51,8 @@ namespace CryptoBook.Services
             IDocumentSession documentSession,
             IDocumentRecoveryService recoveryService,
             IDocumentDialogService dialogService,
-            IKeyResetService? keyResetService = null)
+            IKeyResetService? keyResetService = null,
+            IRecentDocumentService? recentDocumentService = null)
         {
             this.secureFileValidator = secureFileValidator ??
                 throw new ArgumentNullException(nameof(secureFileValidator));
@@ -77,6 +79,7 @@ namespace CryptoBook.Services
             this.dialogService = dialogService ??
                 throw new ArgumentNullException(nameof(dialogService));
             this.keyResetService = keyResetService;
+            this.recentDocumentService = recentDocumentService;
 
             string externalRoot = Path.Combine(
                 Path.GetTempPath(),
@@ -137,6 +140,8 @@ namespace CryptoBook.Services
                     cancellationToken);
                 if(result.Success && IsCurrentDocument(normalizedPath))
                     await TryDeletePreviousRecoverySnapshotAsync();
+                if(result.Success)
+                    await TryRecordOpenedAsync(normalizedPath);
                 return result;
             }
             finally
@@ -298,6 +303,25 @@ namespace CryptoBook.Services
             catch(Exception exception)
             {
                 dialogService.ShowRecoveryCleanupError(exception);
+            }
+        }
+
+        private async Task TryRecordOpenedAsync(string path)
+        {
+            if(recentDocumentService is null)
+                return;
+
+            try
+            {
+                // Открытие уже завершено; сбой необязательной истории не должен
+                // превращать успешное открытие документа в ошибку.
+                await recentDocumentService.RecordOpenedAsync(
+                    path,
+                    CancellationToken.None);
+            }
+            catch(Exception exception)
+            {
+                Debug.WriteLine(exception);
             }
         }
 

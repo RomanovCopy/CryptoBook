@@ -29,6 +29,7 @@ namespace CryptoBook.FileTemplates
         public string SuggestedBaseName =>
             CryptoBook.Infrastructure.LocalizationManager.GetString(
                 "FileTemplate.NewImage");
+        public bool CanCreate => false;
         public FileOpenMode OpenMode => FileOpenMode.Media;
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct)

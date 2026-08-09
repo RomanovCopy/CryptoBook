@@ -431,6 +431,36 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
+        public async Task History_IsUpdatedOnlyAfterSuccessfulOpen()
+        {
+            string targetPath = Path.Combine(testDirectory, "target.txt");
+            await File.WriteAllTextAsync(targetPath, "target");
+            var session = new DocumentSessionStub();
+            var history = new RecentDocumentServiceStub();
+            var internalOpener = new InternalFileOpenServiceStub
+            {
+                OnOpen = (path, template) => session.Open(path, template)
+            };
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                new KeyRequestStub(),
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                session,
+                new RecoveryServiceStub(),
+                recentDocumentService: history);
+
+            WorkspaceFileOpenResult result = await service.SwitchAsync(targetPath);
+            await service.SwitchAsync(targetPath);
+            WorkspaceFileOpenResult failed = await service.SwitchAsync(
+                Path.Combine(testDirectory, "missing.txt"));
+
+            Assert.True(result.Success);
+            Assert.False(failed.Success);
+            Assert.Equal([Path.GetFullPath(targetPath)], history.OpenedPaths);
+        }
+
+        [Fact]
         public async Task ConcurrentSwitches_AreSerialized()
         {
             string firstPath = Path.Combine(testDirectory, "first.txt");
@@ -480,7 +510,8 @@ namespace CryptoBook.Tests
             IUnsavedChangesGuard guard,
             DocumentSessionStub session,
             RecoveryServiceStub recovery,
-            SecureFileProcessorStub? secureFileProcessor = null) =>
+            SecureFileProcessorStub? secureFileProcessor = null,
+            IRecentDocumentService? recentDocumentService = null) =>
             new(
                 validator,
                 secureFileProcessor ?? new SecureFileProcessorStub(".txt"),
@@ -493,7 +524,9 @@ namespace CryptoBook.Tests
                 guard,
                 session,
                 recovery,
-                new DocumentDialogServiceStub());
+                new DocumentDialogServiceStub(),
+                keyResetService: null,
+                recentDocumentService: recentDocumentService);
 
         private static IFileTemplateRegistry CreateTemplateRegistry() =>
             new FileTemplateRegistry(
@@ -714,6 +747,46 @@ namespace CryptoBook.Tests
             public void Dispose()
             {
             }
+        }
+
+        private sealed class RecentDocumentServiceStub: IRecentDocumentService
+        {
+            public event EventHandler? Changed
+            {
+                add { }
+                remove { }
+            }
+
+            public IReadOnlyList<RecentDocument> Items => [];
+            public List<string> OpenedPaths { get; } = [];
+
+            public Task InitializeAsync(
+                CancellationToken cancellationToken = default) =>
+                Task.CompletedTask;
+
+            public Task RecordOpenedAsync(
+                string path,
+                CancellationToken cancellationToken = default)
+            {
+                OpenedPaths.Add(path);
+                return Task.CompletedTask;
+            }
+
+            public Task RecordSavedAsync(
+                string path,
+                CancellationToken cancellationToken = default) =>
+                Task.CompletedTask;
+
+            public Task UpdatePathAsync(
+                string oldPath,
+                string newPath,
+                CancellationToken cancellationToken = default) =>
+                Task.CompletedTask;
+
+            public Task RemoveAsync(
+                string path,
+                CancellationToken cancellationToken = default) =>
+                Task.CompletedTask;
         }
 
         private sealed class DocumentDialogServiceStub: IDocumentDialogService

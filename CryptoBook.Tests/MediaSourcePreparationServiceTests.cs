@@ -26,7 +26,8 @@ namespace CryptoBook.Tests
             string source = CreateFile("video.mp4", [1, 2, 3]);
             var service = new MediaSourcePreparationService(
                 new StubValidator(encrypted: false),
-                new StubProcessor());
+                new StubProcessor(),
+                new StubKeyRequest(keyAvailable: false));
 
             using IPreparedMediaSource prepared = await service.PrepareAsync(source);
 
@@ -41,7 +42,8 @@ namespace CryptoBook.Tests
             var processor = new StubProcessor();
             var service = new MediaSourcePreparationService(
                 new StubValidator(encrypted: true),
-                processor);
+                processor,
+                new StubKeyRequest(keyAvailable: true));
 
             IPreparedMediaSource prepared = await service.PrepareAsync(source);
             string playbackPath = prepared.PlaybackPath;
@@ -55,6 +57,24 @@ namespace CryptoBook.Tests
             prepared.Dispose();
 
             Assert.False(Directory.Exists(temporaryDirectory));
+        }
+
+        [Fact]
+        public async Task EncryptedMedia_RequestsKeyBeforeDecrypting()
+        {
+            string source = CreateFile("video.cbook", [9, 8, 7]);
+            var keyRequest = new StubKeyRequest(keyAvailable: false);
+            var processor = new StubProcessor();
+            var service = new MediaSourcePreparationService(
+                new StubValidator(encrypted: true),
+                processor,
+                keyRequest);
+
+            await Assert.ThrowsAsync<OperationCanceledException>(
+                () => service.PrepareAsync(source));
+
+            Assert.True(keyRequest.WasRequested);
+            Assert.Null(processor.InputPath);
         }
 
         private string CreateFile(string name, byte[] content)
@@ -76,6 +96,18 @@ namespace CryptoBook.Tests
                 string filePath,
                 CancellationToken cancellationToken = default) =>
                 Task.FromResult(encrypted);
+        }
+
+        private sealed class StubKeyRequest(bool keyAvailable):
+            IEncryptionKeyRequestService
+        {
+            public bool WasRequested { get; private set; }
+
+            public bool EnsureKeyAvailable()
+            {
+                WasRequested = true;
+                return keyAvailable;
+            }
         }
 
         private sealed class StubProcessor: ISecureFileProcessor

@@ -84,8 +84,12 @@ namespace CryptoBook.Injections
             builder.RegisterType<PinnedDocumentsViewModel>()
                 .As<IPinnedDocumentsViewModel>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<RecentDocumentsViewModel>()
+                .As<IRecentDocumentsViewModel>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<FilePreviewViewModel>().As<IFilePreviewViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<TextInputDialogViewModel>().InstancePerDependency();
+            builder.RegisterType<FileConflictDialogViewModel>().InstancePerDependency();
             builder.RegisterType<MyMessageBox_ViewModel>().As<IMyMessageBox_ViewModel>().InstancePerDependency();
             builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
@@ -132,6 +136,7 @@ namespace CryptoBook.Injections
 
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
             builder.RegisterType<ProgressWindow>().InstancePerDependency();
+            builder.RegisterType<FileConflictDialog>().InstancePerDependency();
 
             builder.RegisterType<MyMessageBox>().InstancePerDependency();
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
@@ -244,12 +249,22 @@ namespace CryptoBook.Injections
             builder.RegisterType<PinnedDocumentService>()
                 .As<IPinnedDocumentService>()
                 .SingleInstance();
+            builder.RegisterType<JsonRecentDocumentStore>()
+                .As<IRecentDocumentStore>()
+                .SingleInstance();
+            builder.RegisterType<RecentDocumentService>()
+                .As<IRecentDocumentService>()
+                .SingleInstance();
             builder.RegisterType<TextInputService>().As<ITextInputService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();
             builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
             builder.RegisterType<FileCreationService>().As<IFileCreationService>().SingleInstance();
-            builder.RegisterType<FolderPickerService>().As<IFolderPickerService>().SingleInstance();
-            builder.RegisterType<FilePickerService>().As<IFilePickerService>().SingleInstance();
+            builder.RegisterType<FileExplorerService>()
+                .AsSelf()
+                .As<IFileExplorerService>()
+                .As<IFilePickerService>()
+                .As<IFolderPickerService>()
+                .SingleInstance();
             builder.RegisterType<DriveMonitoringService>().As<IDriveMonitoringService>().SingleInstance();
             builder.RegisterType<DriveManagerService>().As<IDriveManagerService>().SingleInstance();
             builder.RegisterType<SystemItemCreateService>().As<ISystemItemCreateService>().SingleInstance();
@@ -263,6 +278,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
             builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
+            builder.RegisterType<FileConflictResolver>().As<IFileConflictResolver>().SingleInstance();
+            builder.RegisterType<FileOperationCoordinator>().As<IFileOperationCoordinator>().SingleInstance();
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();

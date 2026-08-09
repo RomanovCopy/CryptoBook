@@ -360,6 +360,10 @@
   <data name="Common.Delete" xml:space="preserve"><value>Delete</value></data>
   <data name="Explorer.CreateFile" xml:space="preserve"><value>Create file</value></data>
   <data name="Explorer.CreateFolder" xml:space="preserve"><value>Create folder</value></data>
+  <data name="Explorer.OpenWith" xml:space="preserve"><value>Open with</value></data>
+  <data name="Explorer.RevealInExplorer" xml:space="preserve"><value>Show in File Explorer</value></data>
+  <data name="Explorer.CopyPath" xml:space="preserve"><value>Copy path</value></data>
+  <data name="Explorer.Move" xml:space="preserve"><value>Move</value></data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Add current directory to favorites</value></data>
   <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Set encryption key</value></data>
   <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Encrypt selected item</value></data>
@@ -419,6 +423,8 @@
   <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Only inline content within one paragraph is supported.</value></data>
   <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>The selection overlaps another hyperlink.</value></data>
   <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Enter link text or select text in the document.</value></data>
+  <data name="Explorer.Picker.SelectFile" xml:space="preserve"><value>Select file</value></data>
+  <data name="Explorer.Picker.SelectFolder" xml:space="preserve"><value>Select folder</value></data>
   <data name="Explorer.WindowTitle" xml:space="preserve"><value>File Explorer</value></data>
   <data name="Explorer.Column.Name" xml:space="preserve"><value>Name</value></data>
   <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Date modified</value></data>
@@ -428,6 +434,8 @@
   <data name="Explorer.Selected" xml:space="preserve"><value>Selected:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Copying files</value></data>
   <data name="Explorer.CopyError" xml:space="preserve"><value>Copy error</value></data>
+  <data name="Explorer.CopyPathError" xml:space="preserve"><value>Copy path error</value></data>
+  <data name="Explorer.DeleteError" xml:space="preserve"><value>Delete error</value></data>
   <data name="Explorer.SortError" xml:space="preserve"><value>Sorting error</value></data>
   <data name="Explorer.UnknownSortColumn" xml:space="preserve"><value>Could not recognize the column to sort.</value></data>
   <data name="Explorer.CreateDirectoryError" xml:space="preserve"><value>Directory creation error</value></data>
@@ -440,6 +448,15 @@
   <data name="Explorer.RenameCanceledConfirmation" xml:space="preserve"><value>Item renaming was canceled.{0}Are you sure?</value></data>
   <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Directory open error</value></data>
   <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Could not open “{0}”:{1}{2}</value></data>
+  <data name="Explorer.Filter" xml:space="preserve"><value>Filter:</value></data>
+  <data name="Explorer.FilterHint" xml:space="preserve"><value>Filter the current directory by name</value></data>
+  <data name="Explorer.Navigation.Unavailable" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="Explorer.Navigation.Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve"><value>The directory no longer exists.</value></data>
+  <data name="Explorer.Navigation.AccessDenied" xml:space="preserve"><value>Access to this directory is denied.</value></data>
+  <data name="Explorer.Navigation.DriveNotReady" xml:space="preserve"><value>The drive is not ready.</value></data>
+  <data name="Explorer.Navigation.NetworkUnavailable" xml:space="preserve"><value>The network resource is unavailable.</value></data>
+  <data name="Explorer.Navigation.OperationCanceled" xml:space="preserve"><value>The operation was canceled.</value></data>
   <data name="Explorer.OpenFileTitle" xml:space="preserve"><value>Open file</value></data>
   <data name="Explorer.FileOpenError" xml:space="preserve"><value>File open error</value></data>
   <data name="Explorer.FileOpenFailed" xml:space="preserve"><value>Failed to open {0}:{1}{2}</value></data>
@@ -661,4 +678,50 @@
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Reset key after inactivity</value></data>
   <data name="Settings.EncryptionKey" xml:space="preserve"><value>Encryption key</value></data>
   <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Enter or change key</value></data>
+  <data name="Home.StartTitle" xml:space="preserve"><value>Start working</value></data>
+  <data name="Home.StartDescription" xml:space="preserve"><value>Create a document, open a file, or return to a recent item.</value></data>
+  <data name="Home.CreateDocument" xml:space="preserve"><value>New document</value></data>
+  <data name="Home.OpenDocument" xml:space="preserve"><value>Open file</value></data>
+  <data name="Home.OpenMediaPlayer" xml:space="preserve"><value>Open media player</value></data>
+  <data name="Home.ChooseWorkspace" xml:space="preserve"><value>Choose workspace</value></data>
+  <data name="Home.Workspace" xml:space="preserve"><value>Workspace</value></data>
+  <data name="Home.WorkspaceNotSelected" xml:space="preserve"><value>Not selected</value></data>
+  <data name="Home.NoPinnedDocuments" xml:space="preserve"><value>No pinned documents yet.</value></data>
+  <data name="Home.FileUnavailable" xml:space="preserve"><value>File moved or unavailable</value></data>
+  <data name="Home.OpenErrorTitle" xml:space="preserve"><value>Open document</value></data>
+  <data name="Home.OpenFailed" xml:space="preserve"><value>Could not open “{0}”.</value></data>
+  <data name="Home.WorkspaceErrorTitle" xml:space="preserve"><value>Workspace</value></data>
+  <data name="RecentDocuments.Title" xml:space="preserve"><value>Recent documents</value></data>
+  <data name="RecentDocuments.Empty" xml:space="preserve"><value>Documents appear here only after they are opened or saved successfully.</value></data>
+  <data name="RecentDocuments.ErrorTitle" xml:space="preserve"><value>Recent documents</value></data>
+  <data name="RecentDocuments.LoadFailed" xml:space="preserve"><value>Could not load recent documents.</value></data>
+  <data name="RecentDocuments.SaveFailed" xml:space="preserve"><value>Could not update recent documents.</value></data>
+  <data name="RecentDocuments.OpenFailed" xml:space="preserve"><value>Could not open recent document “{0}”.</value></data>
+  <data name="RecentDocuments.OpenFailedGeneric" xml:space="preserve"><value>Could not open the recent document.</value></data>
+  <data name="RecentDocuments.MissingFile" xml:space="preserve"><value>The file “{0}” was moved or is unavailable. Choose its new location or remove it from history.</value></data>
+  <data name="RecentDocuments.RelocateShort" xml:space="preserve"><value>Locate…</value></data>
+  <data name="RecentDocuments.RelocateInvalid" xml:space="preserve"><value>The new location for “{0}” is unavailable.</value></data>
+  <data name="RecentDocuments.RelocateFailed" xml:space="preserve"><value>Could not update the document location.</value></data>
+  <data name="RecentDocuments.Remove" xml:space="preserve"><value>Remove from history</value></data>
+  <data name="DocumentLinks.RenameSyncFailed" xml:space="preserve"><value>The file was renamed, but one or more quick-access links could not be updated.</value></data>
+  <data name="File.NewDescription" xml:space="preserve"><value>Choose the document type, name, and destination.</value></data>
+  <data name="File.Attributes" xml:space="preserve"><value>File attributes</value></data>
+  <data name="File.ReadOnlyAttribute" xml:space="preserve"><value>Read-only</value></data>
+  <data name="File.HiddenAttribute" xml:space="preserve"><value>Hidden</value></data>
+  <data name="Common.Forward" xml:space="preserve"><value>Forward</value></data>
+  <data name="Common.Up" xml:space="preserve"><value>Up</value></data>
+  <data name="Explorer.CurrentDocument" xml:space="preserve"><value>Show current document</value></data>
+  <data name="Explorer.Deleting" xml:space="preserve"><value>Deleting</value></data>
+  <data name="Explorer.CalculatingSize" xml:space="preserve"><value>Calculating total size…</value></data>
+  <data name="Explorer.DeleteCanceledTitle" xml:space="preserve"><value>Deletion canceled</value></data>
+  <data name="Explorer.DeleteCanceledPartial" xml:space="preserve"><value>Deletion is not transactional. Some files and folders were already deleted before cancellation.</value></data>
+  <data name="Explorer.DropIntoSelfError" xml:space="preserve"><value>A folder cannot be copied or moved into itself or one of its subfolders.</value></data>
+  <data name="Explorer.FileOperationError" xml:space="preserve"><value>File operation error</value></data>
+  <data name="Explorer.Conflict.Title" xml:space="preserve"><value>Name conflict</value></data>
+  <data name="Explorer.Conflict.FileMessage" xml:space="preserve"><value>A file named “{0}” already exists at the destination.</value></data>
+  <data name="Explorer.Conflict.DirectoryMessage" xml:space="preserve"><value>A folder named “{0}” already exists at the destination.</value></data>
+  <data name="Explorer.Conflict.ApplyToAll" xml:space="preserve"><value>Apply to all conflicts</value></data>
+  <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Replace</value></data>
+  <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Skip</value></data>
+  <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Keep both</value></data>
 </root>

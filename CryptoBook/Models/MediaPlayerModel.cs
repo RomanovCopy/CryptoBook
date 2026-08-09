@@ -26,6 +26,7 @@ namespace CryptoBook.Models
         private readonly IFileManagerService _fileManagerService;
         private readonly IMessageService _messageService;
         private readonly IMediaSourcePreparationService _mediaSourcePreparationService;
+        private readonly IFilePickerService _filePickerService;
         private readonly List<IPreparedMediaSource> _retiredSources = [];
         private IPreparedMediaSource? _activeSource;
         private IReadOnlyList<string> _imagePaths = Array.Empty<string>();
@@ -49,7 +50,8 @@ namespace CryptoBook.Models
             IWindowContext windowContext,
             IFileManagerService fileManagerService,
             IMessageService messageService,
-            IMediaSourcePreparationService mediaSourcePreparationService)
+            IMediaSourcePreparationService mediaSourcePreparationService,
+            IFilePickerService filePickerService)
         {
             VideoService = videoService ?? throw new ArgumentNullException(nameof(videoService));
             ImageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
@@ -59,6 +61,8 @@ namespace CryptoBook.Models
                 throw new ArgumentNullException(nameof(messageService));
             _mediaSourcePreparationService = mediaSourcePreparationService ??
                 throw new ArgumentNullException(nameof(mediaSourcePreparationService));
+            _filePickerService = filePickerService ??
+                throw new ArgumentNullException(nameof(filePickerService));
 
             VideoService.MediaFailed += OnMediaFailed;
             LocalizationManager.CultureChanged += OnCultureChanged;
@@ -82,7 +86,7 @@ namespace CryptoBook.Models
         public string MediaTitle => _mediaTitle;
 
         public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing;
-        public void Execute_OpenFile(object? obj) => _ = OpenFileAsync();
+        public void Execute_OpenFile(object? obj) => _ = PickAndOpenFileAsync();
 
         public bool CanExecute_RotateImage(object? obj) =>
             !_disposed && !_isClosing && ImageService.ImageSource != null;
@@ -137,16 +141,28 @@ namespace CryptoBook.Models
         public bool CanExecute_Closed(object? obj) => !_disposed;
         public void Execute_Closed(object? obj) => Dispose();
 
-        private async Task OpenFileAsync()
+        private async Task PickAndOpenFileAsync()
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog
-            {
-                Title = LocalizationManager.GetString("Media.OpenDialogTitle"),
-                Filter = LocalizationManager.GetString("Media.Filter")
-            };
+            string? initialDirectory = _activeSource?.OriginalPath is { Length: > 0 } path
+                ? Path.GetDirectoryName(path)
+                : null;
 
-            if(dialog.ShowDialog() == true)
-                await OpenPathAsync(dialog.FileName);
+            try
+            {
+                string? selectedPath = await _filePickerService.PickFileAsync(
+                    initialDirectory,
+                    CancellationToken.None);
+                if(!string.IsNullOrWhiteSpace(selectedPath) && !_disposed && !_isClosing)
+                    await OpenPathAsync(selectedPath);
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception ex)
+            {
+                if(!_disposed && !_isClosing)
+                    SetEmpty(ex.Message);
+            }
         }
 
         private async Task OpenPathAsync(string path)

@@ -360,6 +360,10 @@
   <data name="Common.Delete" xml:space="preserve"><value>Удалить</value></data>
   <data name="Explorer.CreateFile" xml:space="preserve"><value>Создать файл</value></data>
   <data name="Explorer.CreateFolder" xml:space="preserve"><value>Создать папку</value></data>
+  <data name="Explorer.OpenWith" xml:space="preserve"><value>Открыть с помощью</value></data>
+  <data name="Explorer.RevealInExplorer" xml:space="preserve"><value>Показать в Проводнике</value></data>
+  <data name="Explorer.CopyPath" xml:space="preserve"><value>Копировать путь</value></data>
+  <data name="Explorer.Move" xml:space="preserve"><value>Переместить</value></data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Добавить текущую директорию в избранное</value></data>
   <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Задать ключ шифрования</value></data>
   <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Зашифровать выбранный элемент</value></data>
@@ -419,6 +423,8 @@
   <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Поддерживается только содержимое в пределах одного абзаца.</value></data>
   <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>Выделение пересекается с другой ссылкой.</value></data>
   <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Укажите текст ссылки или выделите текст в документе.</value></data>
+  <data name="Explorer.Picker.SelectFile" xml:space="preserve"><value>Выбрать файл</value></data>
+  <data name="Explorer.Picker.SelectFolder" xml:space="preserve"><value>Выбрать папку</value></data>
   <data name="Explorer.WindowTitle" xml:space="preserve"><value>Проводник</value></data>
   <data name="Explorer.Column.Name" xml:space="preserve"><value>Имя</value></data>
   <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Дата изменения</value></data>
@@ -428,6 +434,8 @@
   <data name="Explorer.Selected" xml:space="preserve"><value>Выбрано:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Копирование файлов</value></data>
   <data name="Explorer.CopyError" xml:space="preserve"><value>Ошибка копирования</value></data>
+  <data name="Explorer.CopyPathError" xml:space="preserve"><value>Ошибка копирования пути</value></data>
+  <data name="Explorer.DeleteError" xml:space="preserve"><value>Ошибка удаления</value></data>
   <data name="Explorer.SortError" xml:space="preserve"><value>Ошибка сортировки</value></data>
   <data name="Explorer.UnknownSortColumn" xml:space="preserve"><value>Не удалось определить колонку для сортировки.</value></data>
   <data name="Explorer.CreateDirectoryError" xml:space="preserve"><value>Ошибка создания директории</value></data>
@@ -440,6 +448,15 @@
   <data name="Explorer.RenameCanceledConfirmation" xml:space="preserve"><value>Переименование элемента отменено.{0}Вы уверены?</value></data>
   <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Ошибка открытия директории</value></data>
   <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Не удалось открыть «{0}»:{1}{2}</value></data>
+  <data name="Explorer.Filter" xml:space="preserve"><value>Фильтр:</value></data>
+  <data name="Explorer.FilterHint" xml:space="preserve"><value>Фильтр текущего каталога по имени</value></data>
+  <data name="Explorer.Navigation.Unavailable" xml:space="preserve"><value>Недоступно</value></data>
+  <data name="Explorer.Navigation.Retry" xml:space="preserve"><value>Повторить</value></data>
+  <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve"><value>Каталог больше не существует.</value></data>
+  <data name="Explorer.Navigation.AccessDenied" xml:space="preserve"><value>Доступ к каталогу запрещён.</value></data>
+  <data name="Explorer.Navigation.DriveNotReady" xml:space="preserve"><value>Диск не готов.</value></data>
+  <data name="Explorer.Navigation.NetworkUnavailable" xml:space="preserve"><value>Сетевой ресурс недоступен.</value></data>
+  <data name="Explorer.Navigation.OperationCanceled" xml:space="preserve"><value>Операция отменена.</value></data>
   <data name="Explorer.OpenFileTitle" xml:space="preserve"><value>Открытие файла</value></data>
   <data name="Explorer.FileOpenError" xml:space="preserve"><value>Ошибка открытия файла</value></data>
   <data name="Explorer.FileOpenFailed" xml:space="preserve"><value>Не удалось открыть {0}:{1}{2}</value></data>
@@ -661,4 +678,50 @@
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Сбрасывать ключ после бездействия</value></data>
   <data name="Settings.EncryptionKey" xml:space="preserve"><value>Ключ шифрования</value></data>
   <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Ввести или изменить ключ</value></data>
+  <data name="Home.StartTitle" xml:space="preserve"><value>Начало работы</value></data>
+  <data name="Home.StartDescription" xml:space="preserve"><value>Создайте документ, откройте файл или вернитесь к недавнему документу.</value></data>
+  <data name="Home.CreateDocument" xml:space="preserve"><value>Новый документ</value></data>
+  <data name="Home.OpenDocument" xml:space="preserve"><value>Открыть файл</value></data>
+  <data name="Home.OpenMediaPlayer" xml:space="preserve"><value>Открыть медиаплеер</value></data>
+  <data name="Home.ChooseWorkspace" xml:space="preserve"><value>Выбрать рабочее пространство</value></data>
+  <data name="Home.Workspace" xml:space="preserve"><value>Рабочее пространство</value></data>
+  <data name="Home.WorkspaceNotSelected" xml:space="preserve"><value>Не выбрано</value></data>
+  <data name="Home.NoPinnedDocuments" xml:space="preserve"><value>Закреплённых документов пока нет.</value></data>
+  <data name="Home.FileUnavailable" xml:space="preserve"><value>Файл перемещён или недоступен</value></data>
+  <data name="Home.OpenErrorTitle" xml:space="preserve"><value>Открытие документа</value></data>
+  <data name="Home.OpenFailed" xml:space="preserve"><value>Не удалось открыть «{0}».</value></data>
+  <data name="Home.WorkspaceErrorTitle" xml:space="preserve"><value>Рабочее пространство</value></data>
+  <data name="RecentDocuments.Title" xml:space="preserve"><value>Последние документы</value></data>
+  <data name="RecentDocuments.Empty" xml:space="preserve"><value>Документы появятся здесь только после успешного открытия или сохранения.</value></data>
+  <data name="RecentDocuments.ErrorTitle" xml:space="preserve"><value>Последние документы</value></data>
+  <data name="RecentDocuments.LoadFailed" xml:space="preserve"><value>Не удалось загрузить историю документов.</value></data>
+  <data name="RecentDocuments.SaveFailed" xml:space="preserve"><value>Не удалось обновить историю документов.</value></data>
+  <data name="RecentDocuments.OpenFailed" xml:space="preserve"><value>Не удалось открыть документ «{0}».</value></data>
+  <data name="RecentDocuments.OpenFailedGeneric" xml:space="preserve"><value>Не удалось открыть последний документ.</value></data>
+  <data name="RecentDocuments.MissingFile" xml:space="preserve"><value>Файл «{0}» перемещён или недоступен. Укажите новое расположение или удалите его из истории.</value></data>
+  <data name="RecentDocuments.RelocateShort" xml:space="preserve"><value>Найти…</value></data>
+  <data name="RecentDocuments.RelocateInvalid" xml:space="preserve"><value>Новое расположение файла «{0}» недоступно.</value></data>
+  <data name="RecentDocuments.RelocateFailed" xml:space="preserve"><value>Не удалось обновить расположение документа.</value></data>
+  <data name="RecentDocuments.Remove" xml:space="preserve"><value>Удалить из истории</value></data>
+  <data name="DocumentLinks.RenameSyncFailed" xml:space="preserve"><value>Файл переименован, но не удалось обновить одну или несколько ссылок быстрого доступа.</value></data>
+  <data name="File.NewDescription" xml:space="preserve"><value>Выберите тип документа, имя и папку для сохранения.</value></data>
+  <data name="File.Attributes" xml:space="preserve"><value>Атрибуты файла</value></data>
+  <data name="File.ReadOnlyAttribute" xml:space="preserve"><value>Только для чтения</value></data>
+  <data name="File.HiddenAttribute" xml:space="preserve"><value>Скрытый</value></data>
+  <data name="Common.Forward" xml:space="preserve"><value>Вперёд</value></data>
+  <data name="Common.Up" xml:space="preserve"><value>Вверх</value></data>
+  <data name="Explorer.CurrentDocument" xml:space="preserve"><value>Показать текущий документ</value></data>
+  <data name="Explorer.Deleting" xml:space="preserve"><value>Удаление</value></data>
+  <data name="Explorer.CalculatingSize" xml:space="preserve"><value>Подсчёт общего размера…</value></data>
+  <data name="Explorer.DeleteCanceledTitle" xml:space="preserve"><value>Удаление отменено</value></data>
+  <data name="Explorer.DeleteCanceledPartial" xml:space="preserve"><value>Удаление не является транзакционной операцией. Часть файлов и папок уже могла быть удалена до отмены.</value></data>
+  <data name="Explorer.DropIntoSelfError" xml:space="preserve"><value>Нельзя копировать или перемещать каталог внутрь самого себя или его подкаталога.</value></data>
+  <data name="Explorer.FileOperationError" xml:space="preserve"><value>Ошибка файловой операции</value></data>
+  <data name="Explorer.Conflict.Title" xml:space="preserve"><value>Конфликт имён</value></data>
+  <data name="Explorer.Conflict.FileMessage" xml:space="preserve"><value>В папке назначения уже есть файл «{0}».</value></data>
+  <data name="Explorer.Conflict.DirectoryMessage" xml:space="preserve"><value>В папке назначения уже есть каталог «{0}».</value></data>
+  <data name="Explorer.Conflict.ApplyToAll" xml:space="preserve"><value>Применить ко всем конфликтам</value></data>
+  <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Заменить</value></data>
+  <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Пропустить</value></data>
+  <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Сохранить оба</value></data>
 </root>

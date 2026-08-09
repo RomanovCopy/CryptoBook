@@ -360,6 +360,184 @@
     <Style TargetType="{x:Type MenuItem}"
            BasedOn="{StaticResource ThemedMenuItemStyle}"/>
 
+    <ControlTemplate x:Key="RichTextMenuSeparatorTemplate"
+                     TargetType="{x:Type MenuItem}">
+        <Grid Height="9"
+              Background="{DynamicResource CurrentControlBackground}">
+            <Border Height="1"
+                    Background="{DynamicResource CurrentBorderColor}"
+                    Opacity="0.4"
+                    VerticalAlignment="Center"/>
+        </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="RichTextContextMenuSeparatorStyle"
+           TargetType="{x:Type Separator}">
+        <Setter Property="Height" Value="9"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Separator}">
+                    <Grid Height="9"
+                          Background="{DynamicResource CurrentControlBackground}">
+                        <Border Height="1"
+                                Background="{DynamicResource CurrentBorderColor}"
+                                Opacity="0.4"
+                                VerticalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ThemedMenuGlyphStyle"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="RichTextContextMenuStyle"
+           TargetType="{x:Type ContextMenu}">
+        <Setter Property="Background"
+                Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CurrentInputForeground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CurrentBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="MinWidth" Value="245"/>
+        <Setter Property="HasDropShadow" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer CanContentScroll="True"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RichTextContextMenuItemStyle"
+           TargetType="{x:Type MenuItem}"
+           BasedOn="{StaticResource ThemedMenuItemStyle}">
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="4,3"/>
+        <Setter Property="MinHeight" Value="28"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="CommandTarget"
+                Value="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <Border x:Name="ItemBackground"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="12"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ContentPresenter x:Name="IconPresenter"
+                                              ContentSource="Icon"
+                                              Width="16"
+                                              Height="16"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                            <Path x:Name="CheckMark"
+                                  Data="M 1 5 L 4 8 L 10 1"
+                                  Stroke="{TemplateBinding Foreground}"
+                                  StrokeThickness="1.5"
+                                  Visibility="Collapsed"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                            <ContentPresenter Grid.Column="1"
+                                              Margin="8,0,12,0"
+                                              ContentSource="Header"
+                                              RecognizesAccessKey="True"
+                                              VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2"
+                                       Margin="8,0"
+                                       Text="{TemplateBinding InputGestureText}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Opacity="0.72"
+                                       VerticalAlignment="Center"/>
+                            <Path x:Name="SubmenuArrow"
+                                  Grid.Column="3"
+                                  Data="M 0 0 L 4 4 L 0 8 Z"
+                                  Fill="{TemplateBinding Foreground}"
+                                  Width="4"
+                                  Height="8"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Right"
+                                   HorizontalOffset="-1"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Fade"
+                                   IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                <Border MinWidth="210"
+                                        Padding="4"
+                                        Background="{DynamicResource CurrentControlBackground}"
+                                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                                        BorderThickness="1"
+                                        SnapsToDevicePixels="True">
+                                    <ScrollViewer CanContentScroll="True"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Role" Value="SubmenuItem">
+                            <Setter TargetName="SubmenuArrow"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="SubmenuArrow"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="IconPresenter"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                            <Setter TargetName="CheckMark"
+                                    Property="Visibility"
+                                    Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type ToolTip}">
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontSize" Value="12"/>

@@ -19,10 +19,15 @@ public sealed class FileTemplateTests
     }
 
     [Fact]
-    public void MediaTemplates_UseMediaOpenMode()
+    public void MediaTemplates_UseMediaOpenModeAndCannotBeCreated()
     {
-        Assert.Equal(FileOpenMode.Media, new ImageFileTemplate().OpenMode);
-        Assert.Equal(FileOpenMode.Media, new VideoFileTemplate().OpenMode);
+        IFileTemplate image = new ImageFileTemplate();
+        IFileTemplate video = new VideoFileTemplate();
+
+        Assert.Equal(FileOpenMode.Media, image.OpenMode);
+        Assert.False(image.CanCreate);
+        Assert.Equal(FileOpenMode.Media, video.OpenMode);
+        Assert.False(video.CanCreate);
     }
 
     [Fact]

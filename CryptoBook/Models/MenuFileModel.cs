@@ -20,6 +20,7 @@ namespace CryptoBook.Models
     public class MenuFileModel: ViewModelBase, IMenuFileModel
     {
         private readonly IWindowManager windowManager;
+        private readonly IFileExplorerService fileExplorerService;
         private readonly IFlowDocumentSaveService saveService;
         private readonly IRichTextBoxService richTextBox;
         private readonly IDocumentSession documentSession;
@@ -33,9 +34,11 @@ namespace CryptoBook.Models
         private readonly IDocumentPrintService documentPrintService;
         private readonly IDocumentSaveEncryptionPolicy saveEncryptionPolicy;
         private readonly IKeyResetService? keyResetService;
+        private readonly IRecentDocumentService? recentDocumentService;
 
         public MenuFileModel(
             IWindowManager windowManager,
+            IFileExplorerService fileExplorerService,
             IFlowDocumentSaveService saveService,
             IRichTextBoxService richTextBox,
             IDocumentSession documentSession,
@@ -48,10 +51,13 @@ namespace CryptoBook.Models
             IDocumentContentInspector documentContentInspector,
             IDocumentPrintService documentPrintService,
             IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
-            IKeyResetService? keyResetService = null)
+            IKeyResetService? keyResetService = null,
+            IRecentDocumentService? recentDocumentService = null)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
+            this.fileExplorerService = fileExplorerService
+                ?? throw new ArgumentNullException(nameof(fileExplorerService));
             this.saveService = saveService
                 ?? throw new ArgumentNullException(nameof(saveService));
             this.richTextBox = richTextBox
@@ -83,6 +89,7 @@ namespace CryptoBook.Models
                 ?? throw new ArgumentNullException(
                     nameof(saveEncryptionPolicy));
             this.keyResetService = keyResetService;
+            this.recentDocumentService = recentDocumentService;
 
             documentSession.PropertyChanged += (_, _) =>
                 OnPropertyChanged(nameof(documentSession));
@@ -107,8 +114,7 @@ namespace CryptoBook.Models
             if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring)
                 return;
             keyResetService?.NotifyActivity();
-            var id = windowManager.CreateWindow<FileExplorer>();
-            windowManager.ShowWindow(id);
+            fileExplorerService.Show();
         }
 
         public bool CanExecute_SaveFile(object? obj)
@@ -241,6 +247,7 @@ namespace CryptoBook.Models
                     target.FilePath,
                     target.Template,
                     savedRevision);
+                await TryRecordSavedAsync(target.FilePath);
                 if(!documentSession.IsDirty)
                     await recoveryService.DeleteSnapshotAsync();
                 return true;
@@ -255,6 +262,25 @@ namespace CryptoBook.Models
                     LocalizationManager.GetString("Document.SaveError"),
                     exception.Message);
                 return false;
+            }
+        }
+
+        private async Task TryRecordSavedAsync(string path)
+        {
+            if(recentDocumentService is null)
+                return;
+
+            try
+            {
+                // Файл уже опубликован и сессия подтверждена как сохранённая.
+                // История является вторичной и не должна менять результат Save.
+                await recentDocumentService.RecordSavedAsync(
+                    path,
+                    CancellationToken.None);
+            }
+            catch(Exception exception)
+            {
+                System.Diagnostics.Debug.WriteLine(exception);
             }
         }
 

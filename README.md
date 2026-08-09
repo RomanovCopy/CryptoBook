@@ -1,7 +1,7 @@
 # CryptoBook
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.0.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.0.3)
+[![Version](https://img.shields.io/badge/version-1.1.1.0-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.1.0)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 
@@ -70,6 +70,7 @@ CryptoBook — настольное Windows-приложение для рабо
 - 64-разрядная система.
 
 Официальный установщик содержит .NET 8 Desktop Runtime и не требует его отдельной установки.
+Приложение публикуется как self-contained single-file `CryptoBook.exe`; управляемые зависимости, локализации и native-компоненты Flyleaf/FFmpeg входят в этот файл и безопасно извлекаются средой .NET при запуске.
 
 Для разработки также понадобится [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Базовая разработка поддерживает SDK от `8.0.206`, а сборка установщика требует SDK `8.0.423`, включающий security patch .NET `8.0.29`. Для работы через Visual Studio установите workload **.NET desktop development**.
 
@@ -94,8 +95,8 @@ dotnet restore CryptoBook/CryptoBook.sln --locked-mode
 dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
-# Автономная x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.0.3
+# Self-contained single-file x64-публикация и установочный EXE (требуется Inno Setup 6)
+./installer/Build-Installer.ps1 -Version 1.1.1.0
 ```
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные NuGet-уязвимости считаются ошибками.

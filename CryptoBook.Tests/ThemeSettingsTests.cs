@@ -136,6 +136,37 @@ public sealed class ThemeSettingsTests
         Assert.IsType<Style>(styles[typeof(ProgressBar)]);
         Assert.IsType<Style>(styles[typeof(ContextMenu)]);
         Assert.IsType<Style>(styles[typeof(ToolTip)]);
+        Assert.IsType<Style>(styles["RichTextContextMenuStyle"]);
+        Assert.IsType<Style>(styles["RichTextContextMenuItemStyle"]);
+        Assert.IsType<Style>(styles["RichTextContextMenuSeparatorStyle"]);
+        Assert.IsType<ControlTemplate>(styles["RichTextMenuSeparatorTemplate"]);
+    }
+
+    [Fact]
+    public void FileExplorer_ContextMenusReuseRichTextMenuStyles()
+    {
+        string xamlPath = FindRepositoryFile(
+            "CryptoBook",
+            "Views",
+            "FileExplorer.xaml");
+        XDocument document = XDocument.Load(xamlPath);
+        XNamespace presentation =
+            "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+
+        XElement[] contextMenus = document
+            .Descendants(presentation + "ContextMenu")
+            .ToArray();
+
+        Assert.Equal(4, contextMenus.Length);
+        Assert.All(contextMenus, contextMenu => Assert.Equal(
+            "{StaticResource RichTextContextMenuStyle}",
+            (string?)contextMenu.Attribute("Style")));
+        Assert.All(contextMenus, contextMenu =>
+        {
+            string markup = contextMenu.ToString(SaveOptions.DisableFormatting);
+            Assert.Contains("RichTextContextMenuItemStyle", markup);
+            Assert.Contains("RichTextContextMenuSeparatorStyle", markup);
+        });
     }
 
     [WpfFact]
@@ -559,6 +590,9 @@ public sealed class ThemeSettingsTests
 
         Assert.NotNull(model);
         Assert.NotNull(scope.Resolve<IWorkspaceFileOpenService>());
+        IFileExplorerService explorer = scope.Resolve<IFileExplorerService>();
+        Assert.Same(explorer, scope.Resolve<IFilePickerService>());
+        Assert.Same(explorer, scope.Resolve<IFolderPickerService>());
     }
 
     [Fact]

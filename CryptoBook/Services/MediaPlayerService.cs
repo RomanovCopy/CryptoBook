@@ -180,17 +180,17 @@ namespace CryptoBook.Services
 
         internal static string ResolveFFmpegPath()
         {
-            // При RID-сборке/publish native assets копируются рядом с exe.
-            // В обычном NuGet layout они могут оставаться в runtimes/<rid>/native.
-            var candidates = new[]
-            {
-                AppContext.BaseDirectory,
-                Path.Combine(
-                    AppContext.BaseDirectory,
-                    "runtimes",
-                    "win-x64",
-                    "native")
-            };
+            // В single-file native assets извлекаются в каталог, переданный host
+            // через NATIVE_DLL_SEARCH_DIRECTORIES. При обычной сборке они лежат
+            // рядом с приложением или в стандартном NuGet RID layout.
+            string[] candidates = GetNativeSearchDirectories()
+                .SelectMany(directory => new[]
+                {
+                    directory,
+                    Path.Combine(directory, "runtimes", "win-x64", "native")
+                })
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
 
             foreach(var candidate in candidates)
             {
@@ -205,6 +205,21 @@ namespace CryptoBook.Services
                 LocalizationManager.Format(
                     "Media.FfmpegMissing",
                     string.Join(" | ", candidates)));
+        }
+
+        private static IEnumerable<string> GetNativeSearchDirectories()
+        {
+            yield return AppContext.BaseDirectory;
+
+            if(AppContext.GetData("NATIVE_DLL_SEARCH_DIRECTORIES") is not string searchDirectories)
+                yield break;
+
+            foreach(string directory in searchDirectories.Split(
+                Path.PathSeparator,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                yield return directory;
+            }
         }
 
         private void OnOpenCompleted( object? sender, FlyleafLib.MediaPlayer.OpenCompletedArgs e)
