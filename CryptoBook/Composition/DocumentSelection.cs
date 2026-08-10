@@ -18,6 +18,8 @@ namespace CryptoBook.Composition
 
         public IReadOnlyList<Paragraph> GetSelectedParagraphsOrCurrent()
         {
+            _rtb.RestoreSelection();
+
             if(Selection == null)
                 return Array.Empty<Paragraph>();
 

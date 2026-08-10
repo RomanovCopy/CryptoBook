@@ -197,6 +197,11 @@
   </data>
   <data name="App.StartupFailureMessage" xml:space="preserve"><value>Не удалось запустить CryptoBook. Подробности записаны в локальный журнал ошибок.</value></data>
   <data name="App.StartupFailureTitle" xml:space="preserve"><value>Ошибка запуска</value></data>
+  <data name="Activation.OpenErrorTitle" xml:space="preserve"><value>Не удалось открыть файл</value></data>
+  <data name="Activation.InvalidPath" xml:space="preserve"><value>Путь «{0}» задан неверно.</value></data>
+  <data name="Activation.FileUnavailable" xml:space="preserve"><value>Файл «{0}» не существует или недоступен.</value></data>
+  <data name="Activation.UnsupportedFile" xml:space="preserve"><value>Формат файла «{0}» не поддерживается. Из Windows CryptoBook открывает файлы .cbook и .cbox.</value></data>
+  <data name="Activation.OpenFailed" xml:space="preserve"><value>Не удалось открыть «{0}».{1}</value></data>
   <data name="Common.Browse" xml:space="preserve"><value>Выбрать...</value></data>
   <data name="Common.Close" xml:space="preserve"><value>Закрыть</value></data>
   <data name="Common.Open" xml:space="preserve"><value>Открыть</value></data>
@@ -361,6 +366,7 @@
   <data name="Explorer.CreateFile" xml:space="preserve"><value>Создать файл</value></data>
   <data name="Explorer.CreateFolder" xml:space="preserve"><value>Создать папку</value></data>
   <data name="Explorer.OpenWith" xml:space="preserve"><value>Открыть с помощью</value></data>
+  <data name="Common.Properties" xml:space="preserve"><value>Свойства</value></data>
   <data name="Explorer.RevealInExplorer" xml:space="preserve"><value>Показать в Проводнике</value></data>
   <data name="Explorer.CopyPath" xml:space="preserve"><value>Копировать путь</value></data>
   <data name="Explorer.Move" xml:space="preserve"><value>Переместить</value></data>
@@ -459,6 +465,7 @@
   <data name="Explorer.Navigation.OperationCanceled" xml:space="preserve"><value>Операция отменена.</value></data>
   <data name="Explorer.OpenFileTitle" xml:space="preserve"><value>Открытие файла</value></data>
   <data name="Explorer.FileOpenError" xml:space="preserve"><value>Ошибка открытия файла</value></data>
+  <data name="Explorer.PropertiesError" xml:space="preserve"><value>Не удалось открыть свойства</value></data>
   <data name="Explorer.FileOpenFailed" xml:space="preserve"><value>Не удалось открыть {0}:{1}{2}</value></data>
   <data name="Explorer.OpenFileDefaultFailed" xml:space="preserve"><value>Не удалось открыть {0} приложением по умолчанию.</value></data>
   <data name="Explorer.DirectoryPathRequired" xml:space="preserve"><value>Путь к директории не задан.</value></data>
@@ -673,6 +680,11 @@
   <data name="Update.CheckFound" xml:space="preserve"><value>Доступна версия CryptoBook {0}.</value></data>
   <data name="Update.CheckFailed" xml:space="preserve"><value>Не удалось проверить обновления. Проверьте подключение к интернету и повторите попытку.</value></data>
   <data name="Update.CheckCanceled" xml:space="preserve"><value>Проверка обновлений отменена.</value></data>
+  <data name="Update.InstallProgressTitle" xml:space="preserve"><value>Обновление CryptoBook</value></data>
+  <data name="Update.DownloadPreparing" xml:space="preserve"><value>Подготовка загрузки установщика…</value></data>
+  <data name="Update.DownloadingInstaller" xml:space="preserve"><value>Загрузка новой версии установщика…</value></data>
+  <data name="Update.RemovingOldInstallers" xml:space="preserve"><value>Удаление старых установщиков…</value></data>
+  <data name="Update.StartingInstaller" xml:space="preserve"><value>Запуск установщика…</value></data>
   <data name="Settings.Security" xml:space="preserve"><value>Безопасность</value></data>
   <data name="Settings.Security.Description" xml:space="preserve"><value>Настройка автоматического сброса ключа шифрования.</value></data>
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Сбрасывать ключ после бездействия</value></data>

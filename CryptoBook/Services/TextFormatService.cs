@@ -15,7 +15,10 @@ namespace CryptoBook.Services
     public sealed class TextFormatService: ITextFormatService
     {
         private readonly IRichTextBoxService service;
+        private readonly IDocumentLineSpacingPreferenceStore preferenceStore;
+        private readonly IDocumentLineSpacingService lineSpacingService;
         private double lineHeight;
+        private double lineSpacingRatio;
 
         public double LineHeight
         {
@@ -33,9 +36,18 @@ namespace CryptoBook.Services
         public bool CanUndo => service.CanUndo;
         public bool CanRedo => service.CanRedo;
 
-        public TextFormatService(IRichTextBoxService richTextBoxService)
+        public TextFormatService(
+            IRichTextBoxService richTextBoxService,
+            IDocumentLineSpacingPreferenceStore preferenceStore,
+            IDocumentLineSpacingService lineSpacingService)
         {
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
+            this.preferenceStore = preferenceStore ??
+                throw new ArgumentNullException(nameof(preferenceStore));
+            this.lineSpacingService = lineSpacingService ??
+                throw new ArgumentNullException(nameof(lineSpacingService));
+            lineSpacingRatio = lineSpacingService.Normalize(
+                preferenceStore.Load());
         }
 
         public void SetTextAlignment(TextAlignment? alignment)
@@ -80,11 +92,17 @@ namespace CryptoBook.Services
 
         public void SetLineSpacing(double spacing) => SetLineHeight(spacing);
 
-        public void ToggleBulletList() =>
+        public void ToggleBulletList()
+        {
+            service.RestoreSelection();
             EditingCommands.ToggleBullets.Execute(null, service.Service);
+        }
 
-        public void ToggleNumberedList() =>
+        public void ToggleNumberedList()
+        {
+            service.RestoreSelection();
             EditingCommands.ToggleNumbering.Execute(null, service.Service);
+        }
 
         public void InsertHyperlink(string url, string displayText)
         {
@@ -93,6 +111,7 @@ namespace CryptoBook.Services
                (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
                 return;
 
+            service.RestoreSelection();
             var selection = service.Selection;
             if(IsInsideHyperlink(selection.Start) ||
                IsInsideHyperlink(selection.End) ||
@@ -169,6 +188,7 @@ namespace CryptoBook.Services
 
         public void ClearAllFormatting()
         {
+            service.RestoreSelection();
             var selection = service.Selection;
             if(selection.IsEmpty)
                 return;
@@ -183,11 +203,15 @@ namespace CryptoBook.Services
             }
         }
 
-        public TextRange GetSelectedTextRange() =>
-            new(service.Selection.Start, service.Selection.End);
+        public TextRange GetSelectedTextRange()
+        {
+            service.RestoreSelection();
+            return new TextRange(service.Selection.Start, service.Selection.End);
+        }
 
         public void ReplaceSelectedText(string newText)
         {
+            service.RestoreSelection();
             service.Selection.Text = newText ?? string.Empty;
             service.CaretPosition = service.Selection.End;
             service.ClearSelection();
@@ -232,26 +256,27 @@ namespace CryptoBook.Services
 
         private void AdjustLineHeight(double direction)
         {
+            double updatedRatio = lineSpacingService.Adjust(
+                lineSpacingRatio,
+                Math.Sign(direction));
+
             foreach(var paragraph in GetTargetParagraphs())
             {
-                var fontSize = GetEffectiveFontSize(paragraph);
-                var naturalHeight = fontSize * 1.2;
-                var current = double.IsNaN(paragraph.LineHeight) || paragraph.LineHeight <= 0
-                    ? naturalHeight
-                    : paragraph.LineHeight;
-                var step = Math.Max(1, fontSize * 0.1);
-                var minimum = naturalHeight;
-                var maximum = Math.Max(minimum + 1, fontSize * 3);
-                var updated = Math.Clamp(current + direction * step, minimum, maximum);
+                lineSpacingService.Apply(paragraph, updatedRatio);
+                lineHeight = paragraph.LineHeight;
+            }
 
-                paragraph.LineStackingStrategy = LineStackingStrategy.MaxHeight;
-                paragraph.LineHeight = updated;
-                lineHeight = updated;
+            if(updatedRatio != lineSpacingRatio)
+            {
+                lineSpacingRatio = updatedRatio;
+                preferenceStore.Save(updatedRatio);
             }
         }
 
         private IReadOnlyList<Paragraph> GetTargetParagraphs()
         {
+            service.RestoreSelection();
+
             if(service.Selection.IsEmpty)
             {
                 var current = service.CaretPosition.Paragraph;
@@ -282,13 +307,5 @@ namespace CryptoBook.Services
             return position?.Paragraph;
         }
 
-        private double GetEffectiveFontSize(Paragraph paragraph)
-        {
-            var value = paragraph.GetValue(TextElement.FontSizeProperty);
-            if(value is double size && size > 0)
-                return size;
-
-            return service.Document.FontSize > 0 ? service.Document.FontSize : 12;
-        }
     }
 }

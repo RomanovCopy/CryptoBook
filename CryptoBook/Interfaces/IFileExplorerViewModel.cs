@@ -51,6 +51,7 @@ namespace CryptoBook.Interfaces
         ICommand OpenCommand { get; }
         ICommand OpenWithCommand { get; }
         ICommand RevealInExplorerCommand { get; }
+        ICommand PropertiesCommand { get; }
         ICommand CopyPathCommand { get; }
         ICommand CutCommand { get; }
         ICommand CopyCommand { get; }

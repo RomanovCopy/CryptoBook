@@ -313,6 +313,8 @@ namespace CryptoBook.Services
         }
         private void ApplyCharacterProperty(DependencyProperty property, object? value)
         {
+            Service.RestoreSelection();
+
             if(Service.Selection.IsEmpty)
                 SetTypingProperty(property, value);
             else

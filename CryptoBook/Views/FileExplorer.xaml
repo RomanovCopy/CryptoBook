@@ -460,6 +460,10 @@
                                               Command="{Binding PlacementTarget.Tag.DecryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
                                     <Separator/>
+                                    <MenuItem Header="{Binding [Common.Properties], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.PropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
+                                    <Separator/>
                                     <MenuItem Header="{Binding [Common.Refresh], Source={StaticResource Res}}"
                                               Command="{Binding PlacementTarget.Tag.RefreshCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
@@ -676,6 +680,10 @@
                                                CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                      <MenuItem Header="{Binding [Explorer.DecryptSelected], Source={StaticResource Res}}"
                                                Command="{Binding PlacementTarget.Tag.DecryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <Separator/>
+                                     <MenuItem Header="{Binding [Common.Properties], Source={StaticResource Res}}"
+                                               Command="{Binding PlacementTarget.Tag.PropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                  </ContextMenu>
                              </Setter.Value>
@@ -908,16 +916,6 @@
                 BorderBrush="{DynamicResource CurrentBorderColor}"
                 BorderThickness="1"
                 CornerRadius="5">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -933,14 +931,39 @@
                 <Button Grid.Column="1"
                         MinWidth="110"
                         Margin="0,0,8,0"
-                        Command="{Binding ConfirmSelectionCommand}"
-                        Content="{Binding PickerActionText}"
-                        IsDefault="True"
-                        Style="{StaticResource PrimaryButtonStyle}"/>
+                        IsDefault="True">
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource PrimaryButtonStyle}">
+                            <Setter Property="Command" Value="{Binding OpenCommand}"/>
+                            <Setter Property="CommandParameter" Value="{Binding SelectedItemsSnapshot}"/>
+                            <Setter Property="Content" Value="{Binding [Common.Open], Source={StaticResource Res}}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
+                                    <Setter Property="Command" Value="{Binding ConfirmSelectionCommand}"/>
+                                    <Setter Property="CommandParameter" Value="{x:Null}"/>
+                                    <Setter Property="Content" Value="{Binding PickerActionText}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <Button Grid.Column="2"
                         MinWidth="90"
                         Command="{Binding CancelSelectionCommand}"
-                        Content="{Binding [Common.Cancel], Source={StaticResource Res}}"/>
+                        Content="{Binding [Common.Cancel], Source={StaticResource Res}}">
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource PrimaryButtonStyle}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
         </Border>
 

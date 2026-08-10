@@ -217,15 +217,12 @@ namespace CryptoBook.Models
         }
 
 
-        private TextPointer caretposition;
         internal bool CanExecute_Open(object? obj)
         {
             return true;
         }
         internal void Execute_Open(object? obj)
         {
-            caretposition = richService.CaretPosition;
-
             //синхронизируем свойтсва в ToolBar со свойствами текста в позиции каретки
             var style=inlineService.GetEffectiveStyleAtCaret();
 
@@ -261,7 +258,7 @@ namespace CryptoBook.Models
         }
         internal void Execute_PopupClosed(object? obj)
         {
-            richService.CaretPosition = caretposition;
+            richService.RestoreSelection();
         }
 
 

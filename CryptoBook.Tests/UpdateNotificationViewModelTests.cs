@@ -58,16 +58,20 @@ public sealed class UpdateNotificationViewModelTests
         };
         var navigation = new TestUriNavigationService();
         var installer = new StubUpdateInstaller();
+        var progressDialog = new StubProgressDialogService();
         using var viewModel = new UpdateNotificationViewModel(
             new StubCoordinator(release),
             navigation,
-            installer);
+            installer,
+            progressDialog);
         await viewModel.CheckAsync();
 
         await Assert.IsAssignableFrom<IAsyncCommand>(viewModel.OpenRelease)
             .ExecuteAsync();
 
         Assert.Same(release, installer.Release);
+        Assert.NotNull(installer.Progress);
+        Assert.Equal(1, progressDialog.RunCount);
         Assert.Null(navigation.LastOpenedUri);
         Assert.False(viewModel.IsVisible);
     }
@@ -147,13 +151,36 @@ public sealed class UpdateNotificationViewModelTests
     private sealed class StubUpdateInstaller: IApplicationUpdateInstaller
     {
         public ApplicationRelease? Release { get; private set; }
+        public IProgressReporter? Progress { get; private set; }
 
         public Task InstallAsync(
             ApplicationRelease release,
+            IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
             Release = release;
+            Progress = progress;
             return Task.CompletedTask;
+        }
+    }
+
+    private sealed class StubProgressDialogService: IProgressDialogService
+    {
+        public int RunCount { get; private set; }
+
+        public Task<T> RunAsync<T>(
+            string operationName,
+            Func<IProgressReporter, CancellationToken, Task<T>> operation)
+        {
+            RunCount++;
+            return operation(new StubProgressReporter(), CancellationToken.None);
+        }
+    }
+
+    private sealed class StubProgressReporter: IProgressReporter
+    {
+        public void Report(double? value, string? currentInfo = null)
+        {
         }
     }
 }

@@ -197,7 +197,7 @@ namespace CryptoBook.Models
             return !IsCurrentDirectoryUnavailable &&
                 SelectedItem is IContainerSystemItem;
         }
-        public bool CanExecute_CreateDirectoryCommand(object? obj)                                                     
+        public bool CanExecute_CreateDirectoryCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
                 SelectedItem is IContainerSystemItem;

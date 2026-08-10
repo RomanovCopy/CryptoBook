@@ -20,6 +20,7 @@ namespace CryptoBook
     public partial class App: System.Windows.Application
     {
         private IDriveManagerService? _driveManagerService;
+        private IApplicationActivationService? _activationService;
         IContainer? _container;
 
         public App()
@@ -54,7 +55,7 @@ namespace CryptoBook
             }
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -62,6 +63,14 @@ namespace CryptoBook
             {
                 if(_container is null)
                     throw new InvalidOperationException("Container is null.");
+
+                _activationService = _container.Resolve<
+                    IApplicationActivationService>();
+                if(!await _activationService.StartAsync(e.Args))
+                {
+                    Shutdown();
+                    return;
+                }
 
                 _driveManagerService = _container.Resolve<IDriveManagerService>();
                 _driveManagerService.StartMonitoring();
@@ -87,6 +96,7 @@ namespace CryptoBook
         {
             try
             {
+                _activationService?.Dispose();
                 _container?.Dispose();
             } finally
             {

@@ -25,6 +25,7 @@ namespace CryptoBook.ViewModels
         private readonly IFileExplorerModel _fileExplorerModel;
         private readonly IMessageService _messageService;
         private readonly IWindowManager _windowManager;
+        private readonly IFilePropertiesService _filePropertiesService;
         private readonly FileExplorerMode _mode;
         private readonly string? _initialDirectory;
         private ISystemItem? _previewSelection;
@@ -98,6 +99,7 @@ namespace CryptoBook.ViewModels
             IFavoriteDirectoriesViewModel favorites,
             IFilePreviewViewModel preview,
             IMessageService messageService,
+            IFilePropertiesService filePropertiesService,
             IWindowManager windowManager,
             IWindowContext windowContext)
         {
@@ -105,6 +107,8 @@ namespace CryptoBook.ViewModels
             Favorites = favorites ?? throw new ArgumentNullException(nameof(favorites));
             Preview = preview ?? throw new ArgumentNullException(nameof(preview));
             _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            _filePropertiesService = filePropertiesService ??
+                throw new ArgumentNullException(nameof(filePropertiesService));
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             ArgumentNullException.ThrowIfNull(windowContext);
             _mode = windowContext.TryGet<FileExplorerMode>(
@@ -217,6 +221,31 @@ namespace CryptoBook.ViewModels
 
         public ICommand RevealInExplorerCommand => _revealInExplorerCommand ??= new RelayCommand(_fileExplorerModel.Execute_RevealInExplorerCommand, _fileExplorerModel.CanExecute_RevealInExplorerCommand);
         RelayCommand _revealInExplorerCommand;
+
+        public ICommand PropertiesCommand => _propertiesCommand ??=
+            new RelayCommand(ExecuteProperties, CanExecuteProperties);
+        RelayCommand _propertiesCommand;
+
+        private bool CanExecuteProperties(object? parameter) =>
+            !IsCurrentDirectoryUnavailable &&
+            FileExplorerSelectionPolicy.IsSingle(parameter);
+
+        private async void ExecuteProperties(object? parameter)
+        {
+            IReadOnlyList<ISystemItem> selection =
+                FileExplorerSelectionPolicy.CreateSnapshot(parameter);
+            if(selection.Count != 1)
+                return;
+
+            LaunchResult result = _filePropertiesService.Show(
+                selection[0].FullPath);
+            if(!result.Success)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.PropertiesError"),
+                    result.Error);
+            }
+        }
 
         public ICommand CopyPathCommand => _copyPathCommand ??= new RelayCommand(_fileExplorerModel.Execute_CopyPathCommand, _fileExplorerModel.CanExecute_CopyPathCommand);
         RelayCommand _copyPathCommand;

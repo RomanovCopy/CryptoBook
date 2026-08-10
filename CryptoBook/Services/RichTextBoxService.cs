@@ -26,7 +26,7 @@ namespace CryptoBook.Services
     public class RichTextBoxService: Controls.RichTextBox, IRichTextBoxService
     {
 
-        private TextRange last_Selection;
+        private TextRange? lastSelection;
         private IParagraphFactory paragraphFactory;
         private readonly IUriNavigationService uriNavigationService;
         private readonly IDocumentAppearanceDefaults appearanceDefaults;
@@ -90,6 +90,11 @@ namespace CryptoBook.Services
                 new Setter(Hyperlink.CursorProperty, System.Windows.Input.Cursors.Hand));
             this.Resources[typeof(Hyperlink)] = hyperlinkStyle;
 
+            // Formatting toolbars and their popups take keyboard focus away
+            // from the editor. Keep the selected range visible while those
+            // controls are being used.
+            this.IsInactiveSelectionHighlightEnabled = true;
+
             this.LostFocus += RichTextBoxService_LostFocus;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
             this.PreviewTextInput += RichTextBoxService_PreviewTextInput;
@@ -107,6 +112,12 @@ namespace CryptoBook.Services
         // не перехватываем: WPF сам создаёт новый Paragraph или ListItem.
         private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            if(e.Key == Key.Escape && TryDismissSelection())
+            {
+                e.Handled = true;
+                return;
+            }
+
             var isEnter = e.Key == Key.Enter || e.Key == Key.Return;
             if(!isEnter || !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
                 return;
@@ -123,20 +134,24 @@ namespace CryptoBook.Services
         void IRichTextBoxService.Cut() => this.Cut();
         void IRichTextBoxService.Paste() => this.Paste();
         void IRichTextBoxService.SelectAll() => this.SelectAll();
-        void IRichTextBoxService.ClearSelection() => this.Selection.Select(this.CaretPosition, this.CaretPosition);
+        void IRichTextBoxService.ClearSelection()
+        {
+            lastSelection = null;
+            this.Selection.Select(this.CaretPosition, this.CaretPosition);
+        }
         void IRichTextBoxService.RestoreSelection()
         {
-            if(last_Selection != null)
-            {
-                this.CaretPosition = last_Selection.End;
-                this.Selection.Select(last_Selection.Start, last_Selection.End);
+            // A toolbar control can collapse RichTextBox.Selection after the
+            // editor has lost focus. Restore only a collapsed selection: a
+            // non-empty live selection may have been set programmatically and
+            // must take precedence over an older snapshot.
+            if(!this.Selection.IsEmpty ||
+               lastSelection == null ||
+               lastSelection.Start.CompareTo(lastSelection.End) == 0)
+                return;
 
-            } else
-            {
-                this.CaretPosition = this.Selection.End;
-                this.Selection.Select(this.Selection.End, this.Selection.End);
-            }
-            this.Focus();
+            this.CaretPosition = lastSelection.End;
+            this.Selection.Select(lastSelection.Start, lastSelection.End);
         }
         void IRichTextBoxService.SetTypingProperty(DependencyProperty property, object? value)
         {
@@ -205,6 +220,8 @@ namespace CryptoBook.Services
                 this.CaretPosition = caret;
                 this.Selection.Select(caret, caret);
 
+                lastSelection = null;
+
                 typingProperties.Clear();
                 RememberTypingAnchor();
             } finally
@@ -234,6 +251,7 @@ namespace CryptoBook.Services
                 LogicalDirection.Forward);
             CaretPosition = caret;
             Selection.Select(caret, caret);
+            lastSelection = null;
             typingProperties.Clear();
             RememberTypingAnchor();
         }
@@ -403,7 +421,9 @@ namespace CryptoBook.Services
 
         private void RichTextBoxService_LostFocus(object sender, RoutedEventArgs e)
         {
-            last_Selection = new TextRange(Selection?.Start, Selection?.End);
+            lastSelection = Selection.IsEmpty
+                ? null
+                : new TextRange(Selection.Start, Selection.End);
         }
         private void RichTextBoxService_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -419,11 +439,61 @@ namespace CryptoBook.Services
             MouseButtonEventArgs e)
         {
             var position = GetPositionFromPoint(e.GetPosition(this), snapToText: true);
+            DismissSelectionIfOutside(position);
+
             var hyperlink = FindHyperlink(position);
             if(hyperlink?.NavigateUri == null)
                 return;
 
             e.Handled = TryNavigate(hyperlink.NavigateUri);
+        }
+
+        internal void DismissSelectionIfOutside(TextPointer? position)
+        {
+            if(position == null)
+                return;
+
+            TextRange? range = !Selection.IsEmpty
+                ? new TextRange(Selection.Start, Selection.End)
+                : lastSelection;
+            if(range == null)
+                return;
+
+            if(range.Start.CompareTo(range.End) == 0)
+            {
+                lastSelection = null;
+                return;
+            }
+
+            bool isInside = position.CompareTo(range.Start) >= 0 &&
+                            position.CompareTo(range.End) < 0;
+            if(isInside)
+            {
+                lastSelection = null;
+                return;
+            }
+
+            var caret = position.GetInsertionPosition(LogicalDirection.Forward);
+            this.CaretPosition = caret;
+            lastSelection = null;
+            this.Selection.Select(caret, caret);
+        }
+
+        private bool TryDismissSelection()
+        {
+            bool hasLiveSelection = !this.Selection.IsEmpty;
+            bool hasSavedSelection = lastSelection != null &&
+                lastSelection.Start.CompareTo(lastSelection.End) != 0;
+            if(!hasLiveSelection && !hasSavedSelection)
+                return false;
+
+            var caret = hasLiveSelection
+                ? this.CaretPosition
+                : lastSelection!.End;
+            this.CaretPosition = caret;
+            lastSelection = null;
+            this.Selection.Select(caret, caret);
+            return true;
         }
 
         private void RichTextBoxService_RequestNavigate(object sender, RequestNavigateEventArgs e)

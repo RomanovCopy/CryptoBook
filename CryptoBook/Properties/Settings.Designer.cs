@@ -730,6 +730,18 @@ namespace CryptoBook.Properties {
                 this["DocumentBackgroundColor"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.2")]
+        public double DocumentLineSpacingRatio {
+            get {
+                return ((double)(this["DocumentLineSpacingRatio"]));
+            }
+            set {
+                this["DocumentLineSpacingRatio"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
