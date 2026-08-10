@@ -1435,6 +1435,11 @@
   <data name="Update.CheckFound" xml:space="preserve"><value>Доступна версія CryptoBook {0}.</value></data>
   <data name="Update.CheckFailed" xml:space="preserve"><value>Не вдалося перевірити оновлення. Перевірте підключення до інтернету та повторіть спробу.</value></data>
   <data name="Update.CheckCanceled" xml:space="preserve"><value>Перевірку оновлень скасовано.</value></data>
+  <data name="Update.InstallProgressTitle" xml:space="preserve"><value>Оновлення CryptoBook</value></data>
+  <data name="Update.DownloadPreparing" xml:space="preserve"><value>Підготовка завантаження інсталятора…</value></data>
+  <data name="Update.DownloadingInstaller" xml:space="preserve"><value>Завантаження нової версії інсталятора…</value></data>
+  <data name="Update.RemovingOldInstallers" xml:space="preserve"><value>Видалення старих інсталяторів…</value></data>
+  <data name="Update.StartingInstaller" xml:space="preserve"><value>Запуск інсталятора…</value></data>
   <data name="Settings.Security" xml:space="preserve"><value>Безпека</value></data>
   <data name="Settings.Security.Description" xml:space="preserve"><value>Налаштування автоматичного скидання ключа шифрування.</value></data>
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Скидати ключ після бездіяльності</value></data>

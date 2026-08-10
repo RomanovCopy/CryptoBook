@@ -680,6 +680,11 @@
   <data name="Update.CheckFound" xml:space="preserve"><value>CryptoBook {0} is available.</value></data>
   <data name="Update.CheckFailed" xml:space="preserve"><value>Could not check for updates. Check your internet connection and try again.</value></data>
   <data name="Update.CheckCanceled" xml:space="preserve"><value>Update check canceled.</value></data>
+  <data name="Update.InstallProgressTitle" xml:space="preserve"><value>Updating CryptoBook</value></data>
+  <data name="Update.DownloadPreparing" xml:space="preserve"><value>Preparing the installer download…</value></data>
+  <data name="Update.DownloadingInstaller" xml:space="preserve"><value>Downloading the new installer…</value></data>
+  <data name="Update.RemovingOldInstallers" xml:space="preserve"><value>Removing old installers…</value></data>
+  <data name="Update.StartingInstaller" xml:space="preserve"><value>Starting the installer…</value></data>
   <data name="Settings.Security" xml:space="preserve"><value>Security</value></data>
   <data name="Settings.Security.Description" xml:space="preserve"><value>Configure automatic encryption-key reset.</value></data>
   <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Reset key after inactivity</value></data>

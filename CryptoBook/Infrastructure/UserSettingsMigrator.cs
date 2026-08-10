@@ -1,5 +1,7 @@
 namespace CryptoBook.Infrastructure;
 
+using System.Configuration;
+
 /// <summary>
 /// Однократно переносит пользовательские настройки из профиля предыдущей
 /// версии до того, как приложение впервые прочитает их при запуске.
@@ -43,7 +45,31 @@ internal sealed class UserSettingsMigrationStore: IUserSettingsMigrationStore
         set => Settings.SettingsUpgradeRequired = value;
     }
 
-    public void Upgrade() => Settings.Upgrade();
+    public void Upgrade()
+    {
+        string currentConfigPath = ConfigurationManager
+            .OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal)
+            .FilePath;
+        string[] settingNames = Settings.Properties
+            .Cast<SettingsProperty>()
+            .Select(property => property.Name)
+            .ToArray();
+
+        if(UserSettingsProfileMigrator.TryImport(
+            currentConfigPath,
+            settingNames))
+        {
+            // Settings.Default was already initialized when UpgradeRequired was
+            // read. Reload it so the values copied from another identity hash
+            // become visible before the application reads any preferences.
+            Settings.Reload();
+            return;
+        }
+
+        // Keep the framework migration as a fallback for non-standard hosts
+        // whose profile directory does not follow the normal version layout.
+        Settings.Upgrade();
+    }
 
     public void Save() => Settings.Save();
 }

@@ -7,6 +7,7 @@ namespace CryptoBook.Interfaces
     {
         Task InstallAsync(
             ApplicationRelease release,
+            IProgressReporter? progress = null,
             CancellationToken cancellationToken = default);
     }
 }

@@ -17,6 +17,7 @@ namespace CryptoBook.ViewModels
         private readonly IApplicationUpdateCoordinator updateCoordinator;
         private readonly IUriNavigationService uriNavigationService;
         private readonly IApplicationUpdateInstaller? updateInstaller;
+        private readonly IProgressDialogService? progressDialogService;
         private readonly AsyncRelayCommand openReleaseCommand;
         private readonly RelayCommand remindLaterCommand;
         private readonly AsyncRelayCommand skipVersionCommand;
@@ -28,13 +29,15 @@ namespace CryptoBook.ViewModels
         public UpdateNotificationViewModel(
             IApplicationUpdateCoordinator updateCoordinator,
             IUriNavigationService uriNavigationService,
-            IApplicationUpdateInstaller? updateInstaller = null)
+            IApplicationUpdateInstaller? updateInstaller = null,
+            IProgressDialogService? progressDialogService = null)
         {
             this.updateCoordinator = updateCoordinator ??
                 throw new ArgumentNullException(nameof(updateCoordinator));
             this.uriNavigationService = uriNavigationService ??
                 throw new ArgumentNullException(nameof(uriNavigationService));
             this.updateInstaller = updateInstaller;
+            this.progressDialogService = progressDialogService;
 
             openReleaseCommand = new AsyncRelayCommand(
                 (_, token) => InstallAvailableReleaseAsync(token),
@@ -163,7 +166,37 @@ namespace CryptoBook.ViewModels
                 return;
             }
 
-            await updateInstaller.InstallAsync(release, cancellationToken);
+            try
+            {
+                if(progressDialogService is null)
+                {
+                    await updateInstaller.InstallAsync(
+                        release,
+                        cancellationToken: cancellationToken);
+                }
+                else
+                {
+                    await progressDialogService.RunAsync(
+                        LocalizationManager.GetString("Update.InstallProgressTitle"),
+                        async (progress, dialogToken) =>
+                        {
+                            using var linkedCancellation =
+                                CancellationTokenSource.CreateLinkedTokenSource(
+                                    cancellationToken,
+                                    dialogToken);
+                            await updateInstaller.InstallAsync(
+                                release,
+                                progress,
+                                linkedCancellation.Token);
+                            return true;
+                        });
+                }
+            }
+            catch(OperationCanceledException)
+            {
+                return;
+            }
+
             Hide();
             ShutdownApplication();
         }
