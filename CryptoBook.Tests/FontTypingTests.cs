@@ -132,6 +132,87 @@ public sealed class FontTypingTests
     }
 
     [WpfFact]
+    public void EveryFontProperty_TypesForwardFromEmptyDocument()
+    {
+        foreach(var (name, apply) in FontPropertyChanges())
+        {
+            var (service, fonts) = CreateServices();
+            var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+
+            apply(fonts);
+            RaisePreviewTextInput(service, "A");
+
+            Assert.Equal("A", GetText(service));
+            Assert.Equal(
+                1,
+                GetTextOffset(paragraph, service.CaretPosition));
+
+            RaisePreviewTextInput(service, "B");
+
+            Assert.Equal("AB", GetText(service));
+            Assert.Equal(
+                2,
+                GetTextOffset(paragraph, service.CaretPosition));
+        }
+    }
+
+    [WpfFact]
+    public void EveryFontProperty_DoesNotRestoreStaleEmptyCaretAfterFirstCharacter()
+    {
+        foreach(var (name, apply) in FontPropertyChanges())
+        {
+            var (service, fonts) = CreateServices();
+            var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+            service.Service.RaiseEvent(
+                new RoutedEventArgs(UIElement.LostFocusEvent));
+
+            apply(fonts);
+            RaisePreviewTextInput(service, "A");
+            service.RestoreSelection();
+
+            Assert.True(
+                service.Selection.IsEmpty,
+                $"{name} unexpectedly restored a selection.");
+            Assert.Equal(
+                1,
+                GetTextOffset(paragraph, service.CaretPosition));
+
+            RaisePreviewTextInput(service, "B");
+
+            Assert.Equal("AB", GetText(service));
+            Assert.Equal(
+                2,
+                GetTextOffset(paragraph, service.CaretPosition));
+        }
+    }
+
+    [WpfFact]
+    public void EveryFontProperty_TypesForwardFromInitialEditorDocument()
+    {
+        foreach(var (name, apply) in FontPropertyChanges())
+        {
+            var (service, fonts) = CreateInitialServices();
+            var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+
+            apply(fonts);
+            service.InsertTextAtCaret("A");
+
+            Assert.Equal(
+                1,
+                GetTextOffset(paragraph, service.CaretPosition));
+
+            service.InsertTextAtCaret("B");
+
+            Assert.StartsWith("AB", new TextRange(
+                paragraph.ContentStart,
+                paragraph.ContentEnd).Text);
+            Assert.Equal(
+                2,
+                GetTextOffset(paragraph, service.CaretPosition));
+        }
+    }
+
+    [WpfFact]
     public void CombinedFontProperties_AreAppliedOnlyToNewAdjacentCharacter()
     {
         var (service, fonts) = CreateServices(
@@ -223,6 +304,110 @@ public sealed class FontTypingTests
         AssertCharacterProperty(service, 1, TextElement.FontWeightProperty, FontWeights.Bold);
         AssertCharacterProperty(service, 1, TextElement.FontStyleProperty, FontStyles.Italic);
         AssertCharacterBrush(service, 1, TextElement.ForegroundProperty, Colors.Red);
+    }
+
+    [WpfFact]
+    public void EveryFontProperty_PreservesCollapsedCaretPosition()
+    {
+        foreach(var (name, apply) in FontPropertyChanges())
+        {
+            var (service, fonts) = CreateServices(new Run("abcd"));
+            var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+            var caret = paragraph.ContentStart.GetPositionAtOffset(2)!;
+            service.CaretPosition = caret;
+            service.ClearSelection();
+            var caretOffset = GetTextOffset(paragraph, caret);
+
+            apply(fonts);
+
+            Assert.True(
+                service.Selection.IsEmpty,
+                $"{name} unexpectedly created a selection.");
+            Assert.Equal(caretOffset, GetTextOffset(paragraph, service.CaretPosition));
+            Assert.Equal(caretOffset, GetTextOffset(paragraph, service.Selection.Start));
+            Assert.Equal(caretOffset, GetTextOffset(paragraph, service.Selection.End));
+        }
+    }
+
+    [WpfFact]
+    public void EveryFontProperty_PreservesActiveSelectionAndCaret()
+    {
+        foreach(var (name, apply) in FontPropertyChanges())
+        {
+            var (service, fonts) = CreateServices(new Run("abcd"));
+            var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+            var start = paragraph.ContentStart.GetPositionAtOffset(1)!;
+            var end = paragraph.ContentStart.GetPositionAtOffset(3)!;
+            service.Selection.Select(start, end);
+            var startOffset = GetTextOffset(paragraph, service.Selection.Start);
+            var endOffset = GetTextOffset(paragraph, service.Selection.End);
+            var caretOffset = GetTextOffset(paragraph, service.CaretPosition);
+
+            apply(fonts);
+
+            Assert.False(
+                service.Selection.IsEmpty,
+                $"{name} unexpectedly collapsed the selection.");
+            Assert.Equal(startOffset, GetTextOffset(paragraph, service.Selection.Start));
+            Assert.Equal(endOffset, GetTextOffset(paragraph, service.Selection.End));
+            Assert.Equal(caretOffset, GetTextOffset(paragraph, service.CaretPosition));
+        }
+    }
+
+    [WpfFact]
+    public void EveryToolbarFontProperty_RestoresAndPreservesSelectionAfterLostFocus()
+    {
+        foreach(var (name, apply) in FontPropertyChanges())
+        {
+            var (service, fonts) = CreateServices(new Run("abcd"));
+            var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+            var start = paragraph.ContentStart.GetPositionAtOffset(1)!;
+            var end = paragraph.ContentStart.GetPositionAtOffset(3)!;
+            service.Selection.Select(start, end);
+            service.Service.RaiseEvent(
+                new RoutedEventArgs(UIElement.LostFocusEvent));
+            service.CaretPosition = paragraph.ContentEnd;
+            service.Selection.Select(paragraph.ContentEnd, paragraph.ContentEnd);
+            var startOffset = GetTextOffset(paragraph, start);
+            var endOffset = GetTextOffset(paragraph, end);
+
+            apply(fonts);
+
+            Assert.False(
+                service.Selection.IsEmpty,
+                $"{name} did not restore the selection.");
+            Assert.Equal(startOffset, GetTextOffset(paragraph, service.Selection.Start));
+            Assert.Equal(endOffset, GetTextOffset(paragraph, service.Selection.End));
+            Assert.Equal(endOffset, GetTextOffset(paragraph, service.CaretPosition));
+        }
+    }
+
+    [WpfFact]
+    public void FormattingAfterClickInsidePreviousSelection_DoesNotRestoreStaleSelection()
+    {
+        var (service, fonts) = CreateServices(new Run("abcd"));
+        var editor = Assert.IsType<RichTextBoxService>(service.Service);
+        var paragraph = (Paragraph)service.Document.Blocks.FirstBlock!;
+        var start = paragraph.ContentStart.GetPositionAtOffset(1)!;
+        var clickedPosition = paragraph.ContentStart.GetPositionAtOffset(2)!;
+        var end = paragraph.ContentStart.GetPositionAtOffset(3)!;
+        var clickedTextOffset = GetTextOffset(paragraph, clickedPosition);
+        service.Selection.Select(start, end);
+        service.Service.RaiseEvent(
+            new RoutedEventArgs(UIElement.LostFocusEvent));
+
+        // PreviewMouseLeftButtonDown runs before WPF collapses the selection
+        // to the clicked caret position.
+        editor.DismissSelectionIfOutside(clickedPosition);
+        service.CaretPosition = clickedPosition;
+        service.Selection.Select(clickedPosition, clickedPosition);
+
+        fonts.SetFontStyle(FontStyles.Italic);
+
+        Assert.True(service.Selection.IsEmpty);
+        Assert.Equal(
+            clickedTextOffset,
+            GetTextOffset(paragraph, service.CaretPosition));
     }
 
     [WpfFact]
@@ -410,6 +595,25 @@ public sealed class FontTypingTests
         return (service, fonts);
     }
 
+    private static (IRichTextBoxService Service, FontService Fonts) CreateInitialServices()
+    {
+        IRichTextBoxService service = new RichTextBoxService(
+            new TestParagraphFactory(),
+            new TestUriNavigationService(),
+            new DocumentAppearanceDefaults());
+        var inline = new InlineService(
+            service,
+            new ReflectionPropertyAccessor(),
+            new TestParagraphFactory());
+        var fonts = new FontService(
+            service,
+            inline,
+            new DocumentBackgroundPreferenceStoreStub(),
+            new DocumentAppearanceDefaults());
+
+        return (service, fonts);
+    }
+
     private static Run CloneRun(Run source) => new(source.Text)
     {
         FontFamily = source.FontFamily,
@@ -421,6 +625,18 @@ public sealed class FontTypingTests
         Background = source.Background,
         TextDecorations = source.TextDecorations
     };
+
+    private static (string Name, Action<FontService> Apply)[] FontPropertyChanges() =>
+    [
+        ("FontWeight", fonts => fonts.SetFontWeight(FontWeights.Bold)),
+        ("FontStyle", fonts => fonts.SetFontStyle(FontStyles.Italic)),
+        ("FontStretch", fonts => fonts.SetFontStretch(FontStretches.Expanded)),
+        ("FontFamily", fonts => fonts.SetFontFamily(new FontFamily("Arial"))),
+        ("FontSize", fonts => fonts.SetFontSize(22)),
+        ("Foreground", fonts => fonts.SetFontColor(DrawingColor.Red)),
+        ("Background", fonts => fonts.SetFontBackground(DrawingColor.Yellow)),
+        ("TextDecorations", fonts => fonts.SetTextDecoration(TextDecorations.Underline))
+    ];
 
     private static Run GetOnlyRun(IRichTextBoxService service) =>
         Assert.IsType<Run>(((Paragraph)service.Document.Blocks.FirstBlock!).Inlines.FirstInline);
@@ -474,6 +690,28 @@ public sealed class FontTypingTests
         }
 
         throw new ArgumentOutOfRangeException(nameof(offset));
+    }
+
+    private static int GetTextOffset(Paragraph paragraph, TextPointer position) =>
+        new TextRange(paragraph.ContentStart, position).Text.Length;
+
+    private static void RaisePreviewTextInput(
+        IRichTextBoxService service,
+        string text)
+    {
+        var composition = new System.Windows.Input.TextComposition(
+            System.Windows.Input.InputManager.Current,
+            service.Service,
+            text);
+        var args = new System.Windows.Input.TextCompositionEventArgs(
+            System.Windows.Input.Keyboard.PrimaryDevice,
+            composition)
+        {
+            RoutedEvent = System.Windows.Input.TextCompositionManager.PreviewTextInputEvent
+        };
+
+        service.Service.RaiseEvent(args);
+        Assert.True(args.Handled);
     }
 
     private sealed class TestParagraphFactory: IParagraphFactory

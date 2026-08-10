@@ -145,7 +145,9 @@ namespace CryptoBook.Services
             // editor has lost focus. Restore only a collapsed selection: a
             // non-empty live selection may have been set programmatically and
             // must take precedence over an older snapshot.
-            if(!this.Selection.IsEmpty || lastSelection == null)
+            if(!this.Selection.IsEmpty ||
+               lastSelection == null ||
+               lastSelection.Start.CompareTo(lastSelection.End) == 0)
                 return;
 
             this.CaretPosition = lastSelection.End;
@@ -419,7 +421,9 @@ namespace CryptoBook.Services
 
         private void RichTextBoxService_LostFocus(object sender, RoutedEventArgs e)
         {
-            lastSelection = new TextRange(Selection.Start, Selection.End);
+            lastSelection = Selection.IsEmpty
+                ? null
+                : new TextRange(Selection.Start, Selection.End);
         }
         private void RichTextBoxService_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -452,13 +456,22 @@ namespace CryptoBook.Services
             TextRange? range = !Selection.IsEmpty
                 ? new TextRange(Selection.Start, Selection.End)
                 : lastSelection;
-            if(range == null || range.Start.CompareTo(range.End) == 0)
+            if(range == null)
                 return;
+
+            if(range.Start.CompareTo(range.End) == 0)
+            {
+                lastSelection = null;
+                return;
+            }
 
             bool isInside = position.CompareTo(range.Start) >= 0 &&
                             position.CompareTo(range.End) < 0;
             if(isInside)
+            {
+                lastSelection = null;
                 return;
+            }
 
             var caret = position.GetInsertionPosition(LogicalDirection.Forward);
             this.CaretPosition = caret;
