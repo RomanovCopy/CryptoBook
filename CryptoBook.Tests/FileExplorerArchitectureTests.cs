@@ -1,4 +1,5 @@
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 using CryptoBook.ViewModels;
 
 using System.IO;
@@ -10,6 +11,20 @@ namespace CryptoBook.Tests;
 
 public sealed class FileExplorerArchitectureTests
 {
+    [Fact]
+    public void FilePropertiesService_RejectsMissingPathBeforeCallingShell()
+    {
+        string missingPath = Path.Combine(
+            Path.GetTempPath(),
+            $"cryptobook-missing-{Guid.NewGuid():N}");
+
+        var result = new WindowsFilePropertiesService().Show(missingPath);
+
+        Assert.False(result.Success);
+        Assert.Equal("shell:properties", result.Action);
+        Assert.Equal(missingPath, result.Target);
+    }
+
     [Fact]
     public void DocumentEntryPoints_DependOnWorkspaceFileOpenService()
     {
@@ -52,6 +67,59 @@ public sealed class FileExplorerArchitectureTests
 
         Assert.Contains("menuFileViewModel.OpenFile", source);
         Assert.DoesNotContain("IFilePickerService", source);
+    }
+
+    [Fact]
+    public void ManageMode_ExposesOpenButtonForCurrentSelection()
+    {
+        string source = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Views",
+            "FileExplorer.xaml"));
+
+        Assert.Contains("<Setter Property=\"Command\" Value=\"{Binding OpenCommand}\"/>", source);
+        Assert.Contains(
+            "<Setter Property=\"CommandParameter\" Value=\"{Binding SelectedItemsSnapshot}\"/>",
+            source);
+        Assert.Contains(
+            "<DataTrigger Binding=\"{Binding IsPickerMode}\" Value=\"True\">",
+            source);
+        Assert.Contains(
+            "<Setter Property=\"Command\" Value=\"{Binding ConfirmSelectionCommand}\"/>",
+            source);
+    }
+
+    [Fact]
+    public void PropertiesCommand_UsesNativeShellPropertySheet()
+    {
+        string viewSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Views",
+            "FileExplorer.xaml"));
+        string propertiesServiceSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Services",
+            "WindowsFilePropertiesService.cs"));
+        string launcherSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Services",
+            "FileLauncherService.cs"));
+        string modelSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Models",
+            "FileExplorerModel.cs"));
+        string viewModelSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "ViewModels",
+            "FileExplorerViewModel.cs"));
+
+        Assert.Contains("[Common.Properties]", viewSource);
+        Assert.Contains("PropertiesCommand", viewSource);
+        Assert.Contains("SeeMaskInvokeIdList", propertiesServiceSource);
+        Assert.Contains("ShellExecuteEx(ref info)", propertiesServiceSource);
+        Assert.DoesNotContain("ShellExecuteEx", launcherSource);
+        Assert.Contains("IFilePropertiesService", viewModelSource);
+        Assert.DoesNotContain("Execute_PropertiesCommand", modelSource);
     }
 
     [Fact]

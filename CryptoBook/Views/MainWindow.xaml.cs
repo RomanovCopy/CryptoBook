@@ -23,10 +23,11 @@ namespace CryptoBook.Views
         private readonly IKeyResetService? keyResetService;
         private readonly ILockSnapshotService? snapshotService;
         private readonly IRichTextBoxService? richTextBox;
+        private readonly IApplicationActivationService? activationService;
         private bool unlockDialogOpen;
 
         public MainWindow(DocumentCloseCoordinator closeCoordinator)
-            : this(closeCoordinator, null, null, null)
+            : this(closeCoordinator, null, null, null, null)
         {
         }
 
@@ -34,13 +35,15 @@ namespace CryptoBook.Views
             DocumentCloseCoordinator closeCoordinator,
             IKeyResetService? keyResetService,
             ILockSnapshotService? snapshotService,
-            IRichTextBoxService? richTextBox)
+            IRichTextBoxService? richTextBox,
+            IApplicationActivationService? activationService = null)
         {
             this.closeCoordinator = closeCoordinator
                 ?? throw new ArgumentNullException(nameof(closeCoordinator));
             this.keyResetService = keyResetService;
             this.snapshotService = snapshotService;
             this.richTextBox = richTextBox;
+            this.activationService = activationService;
 
             InitializeComponent();
             Loaded += OnLoaded;
@@ -68,6 +71,8 @@ namespace CryptoBook.Views
             SystemEvents.SessionSwitch += OnSessionSwitch;
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
             WpfApplication.Current.SessionEnding += OnSessionEnding;
+            if(activationService is not null && DataContext is IWindowWithId viewModel)
+                activationService.NotifyMainWindowReady(viewModel.WindowId);
         }
 
         private void OnUserActivity(object sender, InputEventArgs args) =>

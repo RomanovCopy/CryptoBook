@@ -17,6 +17,30 @@ namespace CryptoBook.Tests;
 
 public sealed class DocumentLineSpacingPreferenceTests
 {
+    [Theory]
+    [InlineData(double.NaN, 1.2)]
+    [InlineData(double.PositiveInfinity, 1.2)]
+    [InlineData(0.1, 0.8)]
+    [InlineData(4.0, 3.0)]
+    public void Service_NormalizesInvalidAndOutOfRangeRatios(
+        double ratio,
+        double expected)
+    {
+        var service = new DocumentLineSpacing();
+
+        Assert.Equal(expected, service.Normalize(ratio), 5);
+    }
+
+    [Fact]
+    public void Service_AdjustsRatioInStableSteps()
+    {
+        var service = new DocumentLineSpacing();
+
+        Assert.Equal(1.3, service.Adjust(1.2, 1), 5);
+        Assert.Equal(1.1, service.Adjust(1.2, -1), 5);
+        Assert.Equal(1.2, service.Adjust(1.2, 0), 5);
+    }
+
     [Fact]
     public void Store_RestoresRatioAcrossInstances()
     {
@@ -25,10 +49,11 @@ public sealed class DocumentLineSpacingPreferenceTests
 
         try
         {
-            new UserDocumentLineSpacingPreferenceStore().Save(0.8);
+            var lineSpacing = new DocumentLineSpacing();
+            new UserDocumentLineSpacingPreferenceStore(lineSpacing).Save(0.8);
 
             double restored =
-                new UserDocumentLineSpacingPreferenceStore().Load();
+                new UserDocumentLineSpacingPreferenceStore(lineSpacing).Load();
 
             Assert.Equal(0.8, restored, 5);
             Assert.Equal(
@@ -57,7 +82,8 @@ public sealed class DocumentLineSpacingPreferenceTests
             dispatcher,
             new BookmarkServiceStub(),
             registry,
-            preferences);
+            preferences,
+            new DocumentLineSpacing());
 
         using var plainStream = new MemoryStream(
             Encoding.UTF8.GetBytes("first\nsecond"));

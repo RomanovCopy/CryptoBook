@@ -96,6 +96,21 @@
   <data name="App.StartupFailureTitle" xml:space="preserve">
     <value>Помилка запуску</value>
   </data>
+  <data name="Activation.OpenErrorTitle" xml:space="preserve">
+    <value>Не вдалося відкрити файл</value>
+  </data>
+  <data name="Activation.InvalidPath" xml:space="preserve">
+    <value>Шлях «{0}» задано неправильно.</value>
+  </data>
+  <data name="Activation.FileUnavailable" xml:space="preserve">
+    <value>Файл «{0}» не існує або недоступний.</value>
+  </data>
+  <data name="Activation.UnsupportedFile" xml:space="preserve">
+    <value>Формат файлу «{0}» не підтримується. Із Windows CryptoBook відкриває файли .cbook і .cbox.</value>
+  </data>
+  <data name="Activation.OpenFailed" xml:space="preserve">
+    <value>Не вдалося відкрити «{0}».{1}</value>
+  </data>
   <data name="Common.Browse" xml:space="preserve">
     <value>Огляд...</value>
   </data>
@@ -588,6 +603,9 @@
   <data name="Explorer.OpenWith" xml:space="preserve">
     <value>Відкрити за допомогою</value>
   </data>
+  <data name="Common.Properties" xml:space="preserve">
+    <value>Властивості</value>
+  </data>
   <data name="Explorer.RevealInExplorer" xml:space="preserve">
     <value>Показати у Провіднику</value>
   </data>
@@ -881,6 +899,9 @@
   </data>
   <data name="Explorer.FileOpenError" xml:space="preserve">
     <value>Помилка відкриття файлу</value>
+  </data>
+  <data name="Explorer.PropertiesError" xml:space="preserve">
+    <value>Не вдалося відкрити властивості</value>
   </data>
   <data name="Explorer.FileOpenFailed" xml:space="preserve">
     <value>Не вдалося відкрити {0}:{1}{2}</value>

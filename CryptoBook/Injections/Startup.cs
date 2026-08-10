@@ -190,6 +190,9 @@ namespace CryptoBook.Injections
 
             // Сервисы.
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
+            builder.RegisterType<ApplicationActivationService>()
+                .As<IApplicationActivationService>()
+                .SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
             builder.RegisterType<UserThemePreferenceStore>().As<IThemePreferenceStore>().SingleInstance();
             builder.RegisterType<UserDocumentBackgroundPreferenceStore>()
@@ -197,6 +200,9 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<UserDocumentLineSpacingPreferenceStore>()
                 .As<IDocumentLineSpacingPreferenceStore>()
+                .SingleInstance();
+            builder.RegisterType<DocumentLineSpacing>()
+                .As<IDocumentLineSpacingService>()
                 .SingleInstance();
             builder.RegisterType<DocumentAppearanceDefaults>()
                 .As<IDocumentAppearanceDefaults>()
@@ -274,6 +280,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<SystemIconService>().As<ISystemIconService>().SingleInstance();
             builder.RegisterType<ColumnLayoutStoreService>().As<IColumnLayoutStore>().SingleInstance();
             builder.RegisterType<FileLauncherService>().As<IFileLauncherService>().SingleInstance();
+            builder.RegisterType<WindowsFilePropertiesService>()
+                .As<IFilePropertiesService>()
+                .SingleInstance();
             builder.RegisterType<FileSecurityService>().As<IFileSecurityService>().SingleInstance();
             builder.RegisterType<DirectoryMonitoringService>().As<IDirectoryMonitoringService>().SingleInstance();
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();

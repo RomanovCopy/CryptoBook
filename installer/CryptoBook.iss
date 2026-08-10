@@ -41,6 +41,7 @@ PrivilegesRequired=admin
 MinVersion=10.0.17763
 CloseApplications=yes
 RestartApplications=no
+ChangesAssociations=yes
 AppMutex=CryptoBook.Application
 VersionInfoVersion={#VersionInfoVersion}
 VersionInfoProductName={#MyAppName}
@@ -62,6 +63,18 @@ Source: "..\CryptoBook\Resources\Icons\AppIcon.ico"; DestDir: "{app}"; DestName:
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyShortcutIconName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyShortcutIconName}"; Tasks: desktopicon
+
+[Registry]
+Root: HKCR; Subkey: "CryptoBook.Document"; ValueType: string; ValueName: ""; ValueData: "CryptoBook document"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "CryptoBook.Document\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyShortcutIconName},0"
+Root: HKCR; Subkey: "CryptoBook.Document\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+Root: HKCR; Subkey: ".cbook\OpenWithProgids"; ValueType: none; ValueName: "CryptoBook.Document"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".cbox\OpenWithProgids"; ValueType: none; ValueName: "CryptoBook.Document"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Applications\{#MyAppExeName}"; ValueType: string; ValueName: "FriendlyAppName"; ValueData: "{#MyAppName}"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Applications\{#MyAppExeName}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyShortcutIconName},0"
+Root: HKCR; Subkey: "Applications\{#MyAppExeName}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+Root: HKCR; Subkey: "Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".cbook"; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".cbox"; ValueData: ""; Flags: uninsdeletevalue
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

@@ -16,6 +16,7 @@ namespace CryptoBook.Services
     {
         private readonly IRichTextBoxService service;
         private readonly IDocumentLineSpacingPreferenceStore preferenceStore;
+        private readonly IDocumentLineSpacingService lineSpacingService;
         private double lineHeight;
         private double lineSpacingRatio;
 
@@ -37,12 +38,15 @@ namespace CryptoBook.Services
 
         public TextFormatService(
             IRichTextBoxService richTextBoxService,
-            IDocumentLineSpacingPreferenceStore preferenceStore)
+            IDocumentLineSpacingPreferenceStore preferenceStore,
+            IDocumentLineSpacingService lineSpacingService)
         {
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
             this.preferenceStore = preferenceStore ??
                 throw new ArgumentNullException(nameof(preferenceStore));
-            lineSpacingRatio = DocumentLineSpacing.NormalizeRatio(
+            this.lineSpacingService = lineSpacingService ??
+                throw new ArgumentNullException(nameof(lineSpacingService));
+            lineSpacingRatio = lineSpacingService.Normalize(
                 preferenceStore.Load());
         }
 
@@ -252,12 +256,13 @@ namespace CryptoBook.Services
 
         private void AdjustLineHeight(double direction)
         {
-            double updatedRatio = DocumentLineSpacing.NormalizeRatio(
-                lineSpacingRatio + direction * DocumentLineSpacing.Step);
+            double updatedRatio = lineSpacingService.Adjust(
+                lineSpacingRatio,
+                Math.Sign(direction));
 
             foreach(var paragraph in GetTargetParagraphs())
             {
-                DocumentLineSpacing.Apply(paragraph, updatedRatio);
+                lineSpacingService.Apply(paragraph, updatedRatio);
                 lineHeight = paragraph.LineHeight;
             }
 

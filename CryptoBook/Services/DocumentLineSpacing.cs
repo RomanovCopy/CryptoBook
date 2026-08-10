@@ -1,33 +1,38 @@
 using System.Windows;
 using System.Windows.Documents;
 
+using CryptoBook.Interfaces;
+
 namespace CryptoBook.Services
 {
-    internal static class DocumentLineSpacing
+    public sealed class DocumentLineSpacing: IDocumentLineSpacingService
     {
         internal const double DefaultRatio = 1.2;
         internal const double MinimumRatio = 0.8;
         internal const double MaximumRatio = 3.0;
         internal const double Step = 0.1;
 
-        internal static double NormalizeRatio(double ratio) =>
+        public double Normalize(double ratio) =>
             double.IsNaN(ratio) || double.IsInfinity(ratio)
                 ? DefaultRatio
                 : Math.Clamp(ratio, MinimumRatio, MaximumRatio);
 
-        internal static void Apply(FlowDocument document, double ratio)
+        public double Adjust(double ratio, int direction) =>
+            Normalize(ratio + Math.Sign(direction) * Step);
+
+        public void Apply(FlowDocument document, double ratio)
         {
             ArgumentNullException.ThrowIfNull(document);
-            ratio = NormalizeRatio(ratio);
+            ratio = Normalize(ratio);
 
             foreach(Paragraph paragraph in EnumerateParagraphs(document.Blocks))
                 Apply(paragraph, ratio);
         }
 
-        internal static void Apply(Paragraph paragraph, double ratio)
+        public void Apply(Paragraph paragraph, double ratio)
         {
             ArgumentNullException.ThrowIfNull(paragraph);
-            ratio = NormalizeRatio(ratio);
+            ratio = Normalize(ratio);
             double fontSize = paragraph.FontSize > 0
                 ? paragraph.FontSize
                 : 12;

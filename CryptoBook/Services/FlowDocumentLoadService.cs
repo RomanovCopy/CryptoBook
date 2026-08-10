@@ -20,6 +20,7 @@ namespace CryptoBook.Services
         private readonly IBookmarkService _bookmarkService;
         private readonly IDocumentFormatHandlerRegistry _formatHandlers;
         private readonly IDocumentLineSpacingPreferenceStore _lineSpacingPreferences;
+        private readonly IDocumentLineSpacingService _lineSpacingService;
 
         /// <summary>
         /// Сервис загрузки содержимого в FlowDocument (текст, RTF, изображения и т.д.).
@@ -29,13 +30,16 @@ namespace CryptoBook.Services
             IDispatcherService dispatcherService,
             IBookmarkService bookmarkService,
             IDocumentFormatHandlerRegistry formatHandlers,
-            IDocumentLineSpacingPreferenceStore lineSpacingPreferences)
+            IDocumentLineSpacingPreferenceStore lineSpacingPreferences,
+            IDocumentLineSpacingService lineSpacingService)
         {
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
             _bookmarkService = bookmarkService ?? throw new ArgumentNullException(nameof(bookmarkService));
             _formatHandlers = formatHandlers ?? throw new ArgumentNullException(nameof(formatHandlers));
             _lineSpacingPreferences = lineSpacingPreferences ??
                 throw new ArgumentNullException(nameof(lineSpacingPreferences));
+            _lineSpacingService = lineSpacingService ??
+                throw new ArgumentNullException(nameof(lineSpacingService));
         }
 
 
@@ -142,7 +146,7 @@ namespace CryptoBook.Services
             return _dispatcherService.InvokeAsync(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                DocumentLineSpacing.Apply(
+                _lineSpacingService.Apply(
                     document,
                     _lineSpacingPreferences.Load());
             });

@@ -575,7 +575,10 @@ public sealed class TextFormattingTests
         var first = (Paragraph)richText.Document.Blocks.FirstBlock!;
         richText.CaretPosition = first.ContentStart;
         richText.ClearSelection();
-        return (richText, new TextFormatService(richText, preferenceStore));
+        return (richText, new TextFormatService(
+            richText,
+            preferenceStore,
+            new DocumentLineSpacing()));
     }
 
     private sealed class LineSpacingPreferenceStoreStub:
