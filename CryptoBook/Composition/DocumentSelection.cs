@@ -12,7 +12,15 @@ namespace CryptoBook.Composition
     public class DocumentSelection:IDocumentSelection
     {
         private readonly IRichTextBoxService _rtb;
-        public DocumentSelection(IRichTextBoxService rtb) => _rtb = rtb ?? throw new ArgumentNullException(nameof(rtb));
+        private readonly IDocumentSession? documentSession;
+
+        public DocumentSelection(
+            IRichTextBoxService rtb,
+            IDocumentSession? documentSession = null)
+        {
+            _rtb = rtb ?? throw new ArgumentNullException(nameof(rtb));
+            this.documentSession = documentSession;
+        }
 
         public TextSelection Selection => _rtb.Selection;
 
@@ -22,6 +30,17 @@ namespace CryptoBook.Composition
 
             if(Selection == null)
                 return Array.Empty<Paragraph>();
+
+            if(documentSession?.Template is { PreservesTextFormatting: false })
+            {
+                var first = _rtb.Document.ContentStart.Paragraph ??
+                    GetNextParagraph(_rtb.Document.ContentStart);
+                var last = _rtb.Document.ContentEnd.Paragraph ??
+                    GetPreviousParagraph(_rtb.Document.ContentEnd);
+                return first == null || last == null
+                    ? Array.Empty<Paragraph>()
+                    : [.. EnumerateParagraphs(first, last)];
+            }
 
             if(Selection.IsEmpty)
             {

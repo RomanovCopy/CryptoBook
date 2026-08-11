@@ -20,6 +20,13 @@ namespace CryptoBook.Interfaces
         bool CanCreate => true;
         FileOpenMode OpenMode => FileOpenMode.Document;
 
+        /// <summary>
+        /// Формат способен сохранять свойства отдельных символов и абзацев.
+        /// Для обычных текстовых форматов оформление является только общим
+        /// представлением документа и применяется ко всему документу.
+        /// </summary>
+        bool PreservesTextFormatting => true;
+
         Task<byte[]> GetInitialContentAsync(CancellationToken ct);
         // Опционально: кодировка подписи/комментария и т.п. Если null — оставим как есть.
         Encoding? DefaultEncoding => null;

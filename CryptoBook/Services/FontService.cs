@@ -16,6 +16,7 @@ namespace CryptoBook.Services
     {
         private readonly IDocumentBackgroundPreferenceStore documentBackgroundPreferenceStore;
         private readonly IDocumentAppearanceDefaults appearanceDefaults;
+        private readonly IDocumentSession? documentSession;
         private Drawing.Color? storedDocumentBackground;
 
         public IRichTextBoxService Service { get; set; }
@@ -53,7 +54,8 @@ namespace CryptoBook.Services
             IRichTextBoxService service,
             IInlineService inlineService,
             IDocumentBackgroundPreferenceStore documentBackgroundPreferenceStore,
-            IDocumentAppearanceDefaults appearanceDefaults)
+            IDocumentAppearanceDefaults appearanceDefaults,
+            IDocumentSession? documentSession = null)
         {
             Service = service ?? throw new ArgumentNullException(nameof(service));
             _ = inlineService ?? throw new ArgumentNullException(nameof(inlineService));
@@ -63,6 +65,7 @@ namespace CryptoBook.Services
                     nameof(documentBackgroundPreferenceStore));
             this.appearanceDefaults = appearanceDefaults ??
                 throw new ArgumentNullException(nameof(appearanceDefaults));
+            this.documentSession = documentSession;
             InitializeCollections();
             InitializeDefaultValues();
             SetDefaultValues();
@@ -99,7 +102,7 @@ namespace CryptoBook.Services
             {
                 var brush = new Media.SolidColorBrush(Media.Color.FromArgb(color.A, color.R, color.G, color.B));
                 ApplyCharacterProperty(System.Windows.Documents.TextElement.ForegroundProperty, brush);
-                if(Service.Selection.IsEmpty)
+                if(UsesWholeDocumentFormatting || Service.Selection.IsEmpty)
                     Service.CaretBrush = brush;
             }
         }
@@ -315,11 +318,23 @@ namespace CryptoBook.Services
         {
             Service.RestoreSelection();
 
+            if(UsesWholeDocumentFormatting)
+            {
+                var documentRange = new TextRange(
+                    Service.Document.ContentStart,
+                    Service.Document.ContentEnd);
+                documentRange.ApplyPropertyValue(property, value);
+                return;
+            }
+
             if(Service.Selection.IsEmpty)
                 SetTypingProperty(property, value);
             else
                 Service.Selection.ApplyPropertyValue(property, value);
         }
+
+        private bool UsesWholeDocumentFormatting =>
+            documentSession?.Template is { PreservesTextFormatting: false };
 
         private static Media.SolidColorBrush CreateBrush(Drawing.Color color) =>
             new(Media.Color.FromArgb(color.A, color.R, color.G, color.B));

@@ -1,10 +1,12 @@
 using CryptoBook.Composition;
 using CryptoBook.Behaviors;
+using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 using CryptoBook.Services;
 using CryptoBook.ViewModels;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -49,6 +51,42 @@ public sealed class TextFormattingTests
             Assert.Equal(15, paragraph.TextIndent);
             Assert.Equal(30, paragraph.LineHeight);
             Assert.Equal(LineStackingStrategy.MaxHeight, paragraph.LineStackingStrategy);
+        }
+    }
+
+    [WpfFact]
+    public void OrdinaryTextDocument_ParagraphFormattingIgnoresSelection()
+    {
+        foreach(IFileTemplate template in new IFileTemplate[]
+                {
+                    new PlainTextTemplate(),
+                    new XamlFileTemplate()
+                })
+        {
+            var (richText, _) = CreateDocument("first", "second");
+            var session = new DocumentSession(richText);
+            session.Open(
+                Path.Combine(Path.GetTempPath(), "document" + template.DefaultExtension),
+                template);
+            var formatting = new TextFormatService(
+                richText,
+                new LineSpacingPreferenceStoreStub(),
+                new DocumentLineSpacing(),
+                session);
+            var first = (Paragraph)richText.Document.Blocks.FirstBlock!;
+            var second = (Paragraph)richText.Document.Blocks.LastBlock!;
+            richText.Selection.Select(first.ContentStart, first.ContentEnd);
+
+            formatting.SetTextAlignment(TextAlignment.Right);
+            formatting.SetParagraphIndent(15);
+            formatting.SetLineHeight(30);
+
+            foreach(var paragraph in new[] { first, second })
+            {
+                Assert.Equal(TextAlignment.Right, paragraph.TextAlignment);
+                Assert.Equal(15, paragraph.TextIndent);
+                Assert.Equal(30, paragraph.LineHeight);
+            }
         }
     }
 
@@ -184,6 +222,26 @@ public sealed class TextFormattingTests
         lists.ToggleBulleted();
         Assert.Equal(2, richText.Document.Blocks.Count);
         Assert.All(richText.Document.Blocks.Cast<Block>(), block => Assert.IsType<Paragraph>(block));
+    }
+
+    [WpfFact]
+    public void OrdinaryTextDocument_ListFormattingIgnoresSelection()
+    {
+        var (richText, _) = CreateDocument("one", "two");
+        var session = new DocumentSession(richText);
+        session.Open(
+            Path.Combine(Path.GetTempPath(), "document.json"),
+            new PlainTextTemplate());
+        var first = (Paragraph)richText.Document.Blocks.FirstBlock!;
+        richText.Selection.Select(first.ContentStart, first.ContentEnd);
+        var lists = new ListService(
+            new DocumentSelection(richText, session),
+            new EditTransaction(richText));
+
+        lists.ToggleBulleted();
+
+        var list = Assert.IsType<List>(richText.Document.Blocks.FirstBlock);
+        Assert.Equal(2, list.ListItems.Count);
     }
 
     [WpfFact]
