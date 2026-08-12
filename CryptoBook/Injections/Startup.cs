@@ -377,6 +377,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentRecoveryService>()
                 .As<IDocumentRecoveryService>()
                 .SingleInstance();
+            builder.RegisterType<DocumentBackupRecoveryService>()
+                .As<IDocumentBackupRecoveryService>()
+                .SingleInstance();
             builder.RegisterType<WpfDocumentDialogService>()
                 .As<IDocumentDialogService>()
                 .SingleInstance();

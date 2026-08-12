@@ -17,6 +17,17 @@ namespace CryptoBook.Services
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes;
 
+        public bool ConfirmBackupRecovery(string backupPath) =>
+            Show(
+                LocalizationManager.Format(
+                    "Document.BackupRecoveryPrompt",
+                    Environment.NewLine,
+                    backupPath),
+                LocalizationManager.GetString(
+                    "Document.BackupRecoveryTitle"),
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning) == MessageBoxResult.Yes;
+
         public UnsavedChangesChoice ConfirmCloseWithUnsavedChanges() =>
             ConfirmUnsavedChanges("Document.UnsavedPrompt");
 

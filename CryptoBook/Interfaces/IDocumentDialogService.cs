@@ -10,6 +10,7 @@ namespace CryptoBook.Interfaces
     public interface IDocumentDialogService: IService
     {
         bool ConfirmRecovery();
+        bool ConfirmBackupRecovery(string backupPath) => ConfirmRecovery();
         UnsavedChangesChoice ConfirmCloseWithUnsavedChanges();
         UnsavedChangesChoice ConfirmSwitchWithUnsavedChanges() =>
             ConfirmCloseWithUnsavedChanges();

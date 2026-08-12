@@ -35,6 +35,8 @@ namespace CryptoBook.Models
         private readonly IDocumentSaveEncryptionPolicy saveEncryptionPolicy;
         private readonly IKeyResetService? keyResetService;
         private readonly IRecentDocumentService? recentDocumentService;
+        private readonly IDocumentBackupRecoveryService?
+            backupRecoveryService;
 
         public MenuFileModel(
             IWindowManager windowManager,
@@ -52,7 +54,8 @@ namespace CryptoBook.Models
             IDocumentPrintService documentPrintService,
             IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
             IKeyResetService? keyResetService = null,
-            IRecentDocumentService? recentDocumentService = null)
+            IRecentDocumentService? recentDocumentService = null,
+            IDocumentBackupRecoveryService? backupRecoveryService = null)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
@@ -90,6 +93,7 @@ namespace CryptoBook.Models
                     nameof(saveEncryptionPolicy));
             this.keyResetService = keyResetService;
             this.recentDocumentService = recentDocumentService;
+            this.backupRecoveryService = backupRecoveryService;
 
             documentSession.PropertyChanged += (_, _) =>
                 OnPropertyChanged(nameof(documentSession));
@@ -247,6 +251,14 @@ namespace CryptoBook.Models
                     target.FilePath,
                     target.Template,
                     savedRevision);
+                if(target.Template is SecureFileTemplate &&
+                   backupRecoveryService is not null)
+                {
+                    await backupRecoveryService
+                        .SynchronizeAfterEncryptedSaveAsync(
+                            target.FilePath,
+                            cancellationToken);
+                }
                 await TryRecordSavedAsync(target.FilePath);
                 if(!documentSession.IsDirty)
                     await recoveryService.DeleteSnapshotAsync();
