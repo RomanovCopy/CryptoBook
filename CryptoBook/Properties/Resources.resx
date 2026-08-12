@@ -561,6 +561,8 @@
   <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>An encryption key is configured. Encrypt this file when saving? Click OK to encrypt it, or Cancel to save it without encryption. After encryption, the file cannot be opened without the key.</value></data>
   <data name="Document.EncryptionSaveWarning" xml:space="preserve"><value>The file will be encrypted and cannot be opened without the key. Continue saving?</value></data>
   <data name="Document.EncryptionFormatUnavailable" xml:space="preserve"><value>The encrypted document format is unavailable.</value></data>
+  <data name="File.CreatedFilePathUnavailable" xml:space="preserve"><value>The file was created, but its path is unavailable.</value></data>
+  <data name="File.CreatedFileOpenFailed" xml:space="preserve"><value>The file was created, but could not be opened.</value></data>
   <data name="Document.InsertImageError" xml:space="preserve"><value>Could not insert the image</value></data>
   <data name="Document.RecoveryPrompt" xml:space="preserve"><value>An automatically saved copy from the previous session was found. Restore the document?</value></data>
   <data name="Document.RecoveryTitle" xml:space="preserve"><value>CryptoBook recovery</value></data>

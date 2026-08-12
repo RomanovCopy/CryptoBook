@@ -62,4 +62,25 @@ public sealed class FileTemplateTests
 
         Assert.NotEmpty(content);
     }
+
+    [Fact]
+    public void OrdinaryTextTemplates_DoNotPreservePerRangeFormatting()
+    {
+        IFileTemplate plainText = new PlainTextTemplate();
+        IFileTemplate xamlText = new XamlFileTemplate();
+
+        Assert.False(plainText.PreservesTextFormatting);
+        Assert.False(xamlText.PreservesTextFormatting);
+        Assert.All(
+            new[] { ".txt", ".log", ".md", ".cs", ".xaml", ".json", ".xml" },
+            extension => Assert.True(plainText.CanHandleExtension(extension)));
+    }
+
+    [Fact]
+    public void RichDocumentTemplates_PreservePerRangeFormatting()
+    {
+        Assert.True(((IFileTemplate)new RichTextFileTemplate()).PreservesTextFormatting);
+        Assert.True(((IFileTemplate)new XamlPackageFileTemplate()).PreservesTextFormatting);
+        Assert.True(((IFileTemplate)new SecureFileTemplate()).PreservesTextFormatting);
+    }
 }

@@ -25,13 +25,16 @@ namespace CryptoBook.Services
         private readonly IRichTextBoxService service;
         private readonly IPropertyAccessor accessor;
         private readonly IParagraphFactory paragraphFactory;
+        private readonly IDocumentSession? documentSession;
 
         public InlineService(IRichTextBoxService richTextBoxService, IPropertyAccessor accessor,
-            IParagraphFactory paragraphFactory)
+            IParagraphFactory paragraphFactory,
+            IDocumentSession? documentSession = null)
         {
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
             this.accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
             this.paragraphFactory = paragraphFactory ?? throw new ArgumentNullException(nameof(paragraphFactory));
+            this.documentSession = documentSession;
         }
 
 
@@ -396,7 +399,7 @@ namespace CryptoBook.Services
 
         public void ApplyStyleToSelection(InlineStyle style)
         {
-            var sel = service.Selection;
+            var sel = GetFormattingRange();
             if(sel is null || style is null)
                 return;
 
@@ -412,7 +415,7 @@ namespace CryptoBook.Services
 
         public void ToggleBoldOnSelection()
         {
-            var sel = service.Selection;
+            var sel = GetFormattingRange();
             var current = sel.GetPropertyValue(Inline.FontWeightProperty);
             var isBold = current is FontWeight fw && fw == FontWeights.Bold;
             sel.ApplyPropertyValue(Inline.FontWeightProperty, isBold ? FontWeights.Normal : FontWeights.Bold);
@@ -420,7 +423,7 @@ namespace CryptoBook.Services
 
         public void ToggleItalicOnSelection()
         {
-            var sel = service.Selection;
+            var sel = GetFormattingRange();
             var current = sel.GetPropertyValue(Inline.FontStyleProperty);
             var isItalic = current is System.Windows.FontStyle fs && fs == FontStyles.Italic;
             sel.ApplyPropertyValue(Inline.FontStyleProperty, isItalic ? FontStyles.Normal : FontStyles.Italic);
@@ -428,12 +431,19 @@ namespace CryptoBook.Services
 
         public void ToggleUnderlineOnSelection()
         {
-            var sel = service.Selection;
+            var sel = GetFormattingRange();
             var current = sel.GetPropertyValue(Inline.TextDecorationsProperty);
             bool hasUnderline = current is TextDecorationCollection tdc &&
                 tdc != null && tdc.Contains(TextDecorations.Underline[0]);
             sel.ApplyPropertyValue(Inline.TextDecorationsProperty, hasUnderline ? null : TextDecorations.Underline);
         }
+
+        private TextRange GetFormattingRange() =>
+            documentSession?.Template is { PreservesTextFormatting: false }
+                ? new TextRange(
+                    service.Document.ContentStart,
+                    service.Document.ContentEnd)
+                : service.Selection;
 
         public (Run? left, Run? right) SplitRunAt(TextPointer position)
         {

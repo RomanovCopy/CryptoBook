@@ -17,6 +17,7 @@ namespace CryptoBook.Services
         private readonly IRichTextBoxService service;
         private readonly IDocumentLineSpacingPreferenceStore preferenceStore;
         private readonly IDocumentLineSpacingService lineSpacingService;
+        private readonly IDocumentSession? documentSession;
         private double lineHeight;
         private double lineSpacingRatio;
 
@@ -39,13 +40,15 @@ namespace CryptoBook.Services
         public TextFormatService(
             IRichTextBoxService richTextBoxService,
             IDocumentLineSpacingPreferenceStore preferenceStore,
-            IDocumentLineSpacingService lineSpacingService)
+            IDocumentLineSpacingService lineSpacingService,
+            IDocumentSession? documentSession = null)
         {
             service = richTextBoxService ?? throw new ArgumentNullException(nameof(richTextBoxService));
             this.preferenceStore = preferenceStore ??
                 throw new ArgumentNullException(nameof(preferenceStore));
             this.lineSpacingService = lineSpacingService ??
                 throw new ArgumentNullException(nameof(lineSpacingService));
+            this.documentSession = documentSession;
             lineSpacingRatio = lineSpacingService.Normalize(
                 preferenceStore.Load());
         }
@@ -189,11 +192,15 @@ namespace CryptoBook.Services
         public void ClearAllFormatting()
         {
             service.RestoreSelection();
-            var selection = service.Selection;
-            if(selection.IsEmpty)
+            TextRange range = UsesWholeDocumentFormatting
+                ? new TextRange(
+                    service.Document.ContentStart,
+                    service.Document.ContentEnd)
+                : service.Selection;
+            if(range.IsEmpty && !UsesWholeDocumentFormatting)
                 return;
 
-            selection.ClearAllProperties();
+            range.ClearAllProperties();
             foreach(var paragraph in GetTargetParagraphs())
             {
                 paragraph.ClearValue(Block.TextAlignmentProperty);
@@ -277,6 +284,9 @@ namespace CryptoBook.Services
         {
             service.RestoreSelection();
 
+            if(UsesWholeDocumentFormatting)
+                return GetAllParagraphs();
+
             if(service.Selection.IsEmpty)
             {
                 var current = service.CaretPosition.Paragraph;
@@ -298,6 +308,28 @@ namespace CryptoBook.Services
 
             return result;
         }
+
+        private IReadOnlyList<Paragraph> GetAllParagraphs()
+        {
+            var result = new List<Paragraph>();
+            for(TextPointer? position = service.Document.ContentStart;
+                position != null &&
+                position.CompareTo(service.Document.ContentEnd) <= 0;
+                position = position.GetNextContextPosition(LogicalDirection.Forward))
+            {
+                Paragraph? paragraph = position.Paragraph;
+                if(paragraph != null &&
+                   (result.Count == 0 || !ReferenceEquals(result[^1], paragraph)))
+                {
+                    result.Add(paragraph);
+                }
+            }
+
+            return result;
+        }
+
+        private bool UsesWholeDocumentFormatting =>
+            documentSession?.Template is { PreservesTextFormatting: false };
 
         private static Paragraph? GetNextParagraph(Paragraph paragraph)
         {

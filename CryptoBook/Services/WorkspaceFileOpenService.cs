@@ -111,7 +111,8 @@ namespace CryptoBook.Services
             string normalizedPath;
             try
             {
-                normalizedPath = Path.GetFullPath(targetPath);
+                normalizedPath = Path.GetFullPath(
+                    GetLocalNativePath(targetPath));
             }
             catch(Exception exception) when(
                 exception is ArgumentException or NotSupportedException)
@@ -275,6 +276,16 @@ namespace CryptoBook.Services
                 Path.GetFullPath(documentSession.FilePath),
                 path,
                 StringComparison.OrdinalIgnoreCase);
+
+        private static string GetLocalNativePath(string path)
+        {
+            const string localPrefix = "local://";
+            return path.StartsWith(
+                localPrefix,
+                StringComparison.OrdinalIgnoreCase)
+                ? path[localPrefix.Length..]
+                : path;
+        }
 
         private static string? ValidateReadableFile(string path)
         {

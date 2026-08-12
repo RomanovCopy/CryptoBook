@@ -1,8 +1,10 @@
 using CryptoBook.Accessors;
 using CryptoBook.Behaviors;
+using CryptoBook.FileTemplates;
 using CryptoBook.Interfaces;
 using CryptoBook.Markup;
 using CryptoBook.Services;
+using System.IO;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -559,6 +561,49 @@ public sealed class FontTypingTests
         AssertCharacterBrush(service, 0, TextElement.ForegroundProperty, Colors.Black);
         AssertCharacterProperty(service, 1, TextElement.FontWeightProperty, FontWeights.Bold);
         AssertCharacterBrush(service, 1, TextElement.ForegroundProperty, Colors.Red);
+    }
+
+    [WpfFact]
+    public void OrdinaryTextDocument_CharacterFormattingIgnoresSelection()
+    {
+        IRichTextBoxService service = new RichTextBoxService(
+            new TestParagraphFactory(),
+            new TestUriNavigationService(),
+            new DocumentAppearanceDefaults());
+        var session = new DocumentSession(service);
+        session.Open(
+            Path.Combine(Path.GetTempPath(), "document.md"),
+            new PlainTextTemplate());
+        var inline = new InlineService(
+            service,
+            new ReflectionPropertyAccessor(),
+            new TestParagraphFactory(),
+            session);
+        var fonts = new FontService(
+            service,
+            inline,
+            new DocumentBackgroundPreferenceStoreStub(),
+            new DocumentAppearanceDefaults(),
+            session);
+        var paragraph = new Paragraph(new Run("ab"));
+        service.Document.Blocks.Clear();
+        service.Document.Blocks.Add(paragraph);
+        service.Selection.Select(
+            paragraph.ContentStart,
+            paragraph.ContentStart.GetPositionAtOffset(1)!);
+
+        fonts.SetFontWeight(FontWeights.Bold);
+
+        AssertCharacterProperty(
+            service,
+            0,
+            TextElement.FontWeightProperty,
+            FontWeights.Bold);
+        AssertCharacterProperty(
+            service,
+            1,
+            TextElement.FontWeightProperty,
+            FontWeights.Bold);
     }
 
     private static (IRichTextBoxService Service, FontService Fonts) CreateServices(params Run[] runs)

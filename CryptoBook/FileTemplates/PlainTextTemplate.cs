@@ -19,6 +19,7 @@ namespace CryptoBook.FileTemplates
             CryptoBook.Infrastructure.LocalizationManager.GetString(
                 "FileTemplate.NewFile");
         public Encoding? DefaultEncoding => new UTF8Encoding(encoderShouldEmitUTF8Identifier: true); // UTF-8 BOM
+        public bool PreservesTextFormatting => false;
 
         public Task<byte[]> GetInitialContentAsync(CancellationToken ct) => Task.FromResult(Array.Empty<byte>());
 
