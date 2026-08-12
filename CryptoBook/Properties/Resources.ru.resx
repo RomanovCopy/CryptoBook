@@ -561,6 +561,8 @@
   <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>В приложении установлен ключ шифрования. Зашифровать файл при сохранении? Нажмите «ОК», чтобы зашифровать его, или «Отмена», чтобы сохранить без шифрования. После шифрования файл нельзя будет открыть без ключа.</value></data>
   <data name="Document.EncryptionSaveWarning" xml:space="preserve"><value>Файл будет зашифрован, и без ключа открыть его будет невозможно. Продолжить сохранение?</value></data>
   <data name="Document.EncryptionFormatUnavailable" xml:space="preserve"><value>Формат зашифрованного документа недоступен.</value></data>
+  <data name="File.CreatedFilePathUnavailable" xml:space="preserve"><value>Файл создан, но не удалось определить его путь.</value></data>
+  <data name="File.CreatedFileOpenFailed" xml:space="preserve"><value>Файл создан, но его не удалось открыть.</value></data>
   <data name="Document.InsertImageError" xml:space="preserve"><value>Не удалось вставить изображение</value></data>
   <data name="Document.RecoveryPrompt" xml:space="preserve"><value>Обнаружена автоматически сохранённая копия после предыдущего завершения. Восстановить документ?</value></data>
   <data name="Document.RecoveryTitle" xml:space="preserve"><value>Восстановление CryptoBook</value></data>

@@ -1188,6 +1188,12 @@
   <data name="Document.EncryptionFormatUnavailable" xml:space="preserve">
     <value>Формат зашифрованого документа недоступний.</value>
   </data>
+  <data name="File.CreatedFilePathUnavailable" xml:space="preserve">
+    <value>Файл створено, але не вдалося визначити його шлях.</value>
+  </data>
+  <data name="File.CreatedFileOpenFailed" xml:space="preserve">
+    <value>Файл створено, але його не вдалося відкрити.</value>
+  </data>
   <data name="Document.InsertImageError" xml:space="preserve">
     <value>Не вдалося вставити зображення</value>
   </data>

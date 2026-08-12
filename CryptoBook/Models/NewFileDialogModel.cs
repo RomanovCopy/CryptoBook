@@ -1,4 +1,5 @@
 ﻿using CryptoBook.DTO;
+using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
@@ -21,6 +22,9 @@ namespace CryptoBook.Models
         private readonly ICommandService _commandService;
         private readonly IWindowManager _windowManager;
         private readonly IProgressDialogService _progressDialogService;
+        private readonly IEncryptionKeyRequestService _keyRequestService;
+        private readonly IDocumentSaveEncryptionPolicy _saveEncryptionPolicy;
+        private readonly IWorkspaceFileOpenService _workspaceFileOpenService;
 
         private CancellationTokenSource? _cts;
 
@@ -132,7 +136,17 @@ namespace CryptoBook.Models
         /// Инициализирует модель диалога создания нового файла.
         /// Загружает доступные шаблоны и выбирает первый по умолчанию.
         /// </summary>
-        public NewFileDialogModel(IFileTemplateRegistry registry, IFileCreationService creator, IFileManagerService fileManager, IFolderPickerService folderPicker, ICommandService commandService, IWindowManager windowManager, IProgressDialogService progressDialogService)
+        public NewFileDialogModel(
+            IFileTemplateRegistry registry,
+            IFileCreationService creator,
+            IFileManagerService fileManager,
+            IFolderPickerService folderPicker,
+            ICommandService commandService,
+            IWindowManager windowManager,
+            IProgressDialogService progressDialogService,
+            IEncryptionKeyRequestService keyRequestService,
+            IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
+            IWorkspaceFileOpenService workspaceFileOpenService)
         {
             WindowId = Guid.NewGuid();
             _registry = registry;
@@ -143,6 +157,12 @@ namespace CryptoBook.Models
             _commandService = commandService;
             _windowManager = windowManager;
             _progressDialogService = progressDialogService;
+            _keyRequestService = keyRequestService ??
+                throw new ArgumentNullException(nameof(keyRequestService));
+            _saveEncryptionPolicy = saveEncryptionPolicy ??
+                throw new ArgumentNullException(nameof(saveEncryptionPolicy));
+            _workspaceFileOpenService = workspaceFileOpenService ??
+                throw new ArgumentNullException(nameof(workspaceFileOpenService));
             Templates = _registry.GetAll()
                 .Where(template => template.CanCreate)
                 .ToArray();
@@ -262,14 +282,55 @@ namespace CryptoBook.Models
             var ct = _cts.Token;
             try
             {
+                if(SelectedTemplate is SecureFileTemplate)
+                {
+                    if(!_keyRequestService.EnsureKeyAvailable())
+                        return;
+
+                    DocumentSaveTarget? approvedTarget =
+                        await _saveEncryptionPolicy.ResolveAsync(
+                            new DocumentSaveTarget(
+                                FileName,
+                                SelectedTemplate),
+                            sourceIsPlaintextFile: false);
+                    if(approvedTarget is null)
+                        return;
+                }
+
                 FileOperationResult result = await CreateAsync(TargetDirectory, ct);
                 if(result.Success)
-                    _windowManager.CloseWindow(WindowId);
+                {
+                    if(string.IsNullOrWhiteSpace(result.AffectedPath))
+                    {
+                        ErrorMessage = LocalizationManager.GetString(
+                            "File.CreatedFilePathUnavailable");
+                        return;
+                    }
+
+                    WorkspaceFileOpenResult openResult =
+                        await _workspaceFileOpenService.OpenAsync(
+                            result.AffectedPath,
+                            ct);
+                    if(openResult.Success)
+                    {
+                        _windowManager.CloseWindow(WindowId);
+                    }
+                    else if(!openResult.Cancelled)
+                    {
+                        ErrorMessage = openResult.Error ??
+                            LocalizationManager.GetString(
+                                "File.CreatedFileOpenFailed");
+                    }
+                }
                 else
                     ErrorMessage = result.ErrorMessage;
             } catch(OperationCanceledException)
             {
                 // Отмена записи оставляет диалог открытым для повторной попытки.
+            }
+            catch(Exception exception)
+            {
+                ErrorMessage = exception.Message;
             }
         }
 

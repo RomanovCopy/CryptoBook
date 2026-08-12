@@ -95,6 +95,28 @@ namespace CryptoBook.Tests
             service.Dispose();
         }
 
+        [Fact]
+        public async Task LocalProviderPath_IsOpenedInsideCryptoBook()
+        {
+            string sourcePath = Path.Combine(testDirectory, "provider-path.txt");
+            await File.WriteAllTextAsync(sourcePath, "created file");
+            var internalOpener = new InternalFileOpenServiceStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                new KeyRequestStub(),
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub());
+
+            WorkspaceFileOpenResult result = await service.OpenAsync(
+                "local://" + sourcePath);
+
+            Assert.True(result.Success);
+            Assert.Equal(Path.GetFullPath(sourcePath), internalOpener.SourcePath);
+            service.Dispose();
+        }
+
         [Theory]
         [InlineData(".bin")]
         [InlineData(".pdf")]

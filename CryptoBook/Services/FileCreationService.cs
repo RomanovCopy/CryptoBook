@@ -2,11 +2,14 @@
 using CryptoBook.Interfaces;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.FileTemplates;
+using CryptoBook.Security;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,10 +18,19 @@ namespace CryptoBook.Services
     public sealed class FileCreationService: IFileCreationService
     {
         private readonly IFileManagerService _fs;
+        private readonly ISecureFileProcessor _secureFileProcessor;
+        private readonly IFileTemplateRegistry _templateRegistry;
 
-        public FileCreationService(IFileManagerService fs)
+        public FileCreationService(
+            IFileManagerService fs,
+            ISecureFileProcessor secureFileProcessor,
+            IFileTemplateRegistry templateRegistry)
         {
             _fs = fs ?? throw new ArgumentNullException(nameof(fs));
+            _secureFileProcessor = secureFileProcessor ??
+                throw new ArgumentNullException(nameof(secureFileProcessor));
+            _templateRegistry = templateRegistry ??
+                throw new ArgumentNullException(nameof(templateRegistry));
         }
 
         public async Task<string> SuggestUniqueNameAsync(
@@ -96,7 +108,15 @@ namespace CryptoBook.Services
             }
 
             // 4) Получаем контент шаблона
-            byte[] content = await template.GetInitialContentAsync(ct);
+            IFileTemplate contentTemplate = template is SecureFileTemplate
+                ? _templateRegistry.GetAll()
+                    .OfType<XamlPackageFileTemplate>()
+                    .SingleOrDefault()
+                    ?? throw new InvalidOperationException(
+                        LocalizationManager.GetString(
+                            "Document.EncryptionFormatUnavailable"))
+                : template;
+            byte[] content = await contentTemplate.GetInitialContentAsync(ct);
             if(template.DefaultEncoding is { } enc && content.Length > 0)
             {
                 // Если шаблон вернул строку не в этой кодировке — обычно контент уже в UTF-8.
@@ -107,6 +127,31 @@ namespace CryptoBook.Services
             // 5) Создаем файл через фасад
             try
             {
+                if(template is SecureFileTemplate)
+                {
+                    try
+                    {
+                        string nativePath = GetLocalNativePath(fullPath);
+                        await using var plaintext = new MemoryStream(
+                            content,
+                            writable: false);
+                        await _secureFileProcessor.EncryptStreamAsync(
+                            plaintext,
+                            contentTemplate.DefaultExtension,
+                            nativePath,
+                            progress,
+                            ct);
+                    }
+                    finally
+                    {
+                        CryptographicOperations.ZeroMemory(content);
+                    }
+
+                    await _fs.SetHiddenAsync(fullPath, isHidden, ct);
+                    await _fs.SetReadOnlyAsync(fullPath, isReadOnly, ct);
+                    return FileOperationResult.Ok(fullPath);
+                }
+
                 await using var stream = await _fs.OpenWriteAsync(fullPath, overwrite: exists && ifExists == IfExistsMode.Overwrite,
                     cancellationToken: ct);
 
@@ -131,7 +176,7 @@ namespace CryptoBook.Services
                 await _fs.SetHiddenAsync(fullPath, isHidden, ct);
                 await _fs.SetReadOnlyAsync(fullPath, isReadOnly, ct);
 
-                return FileOperationResult.Ok();
+                return FileOperationResult.Ok(fullPath);
             } catch(OperationCanceledException)
             {
                 throw;
@@ -194,6 +239,20 @@ namespace CryptoBook.Services
             string name = Path.GetFileNameWithoutExtension(fileNameWithExt);
             string ext = Path.GetExtension(fileNameWithExt);
             return name + suffix + ext;
+        }
+
+        private static string GetLocalNativePath(string normalizedPath)
+        {
+            const string localPrefix = "local://";
+            if(normalizedPath.StartsWith(
+                localPrefix,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return normalizedPath[localPrefix.Length..];
+            }
+
+            throw new NotSupportedException(
+                "Encrypted document creation is supported only for local files.");
         }
     }
 
