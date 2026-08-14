@@ -290,6 +290,8 @@
   <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Save changes to the current file</value></data>
   <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Choose a name, folder, and format</value></data>
   <data name="SideMenu.Print.Description" xml:space="preserve"><value>Print the current document</value></data>
+  <data name="SideMenu.RestoreBackup" xml:space="preserve"><value>Restore previous version</value></data>
+  <data name="SideMenu.RestoreBackup.Description" xml:space="preserve"><value>Load the previous version from the adjacent .bak file</value></data>
   <data name="SideMenu.CloseDocument.Description" xml:space="preserve"><value>Close the current document</value></data>
   <data name="SideMenu.RenameBook" xml:space="preserve"><value>Rename book</value></data>
   <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Change the name of the current book</value></data>
@@ -397,6 +399,10 @@
   <data name="Editor.ImageFloatLeft" xml:space="preserve"><value>Wrap: image on the _left</value></data>
   <data name="Editor.ImageFloatRight" xml:space="preserve"><value>Wrap: image on the _right</value></data>
   <data name="Editor.ImageLayoutCommand" xml:space="preserve"><value>Change image layout</value></data>
+  <data name="Editor.ImageMoveUp" xml:space="preserve"><value>Move image up</value></data>
+  <data name="Editor.ImageMoveDown" xml:space="preserve"><value>Move image down</value></data>
+  <data name="Editor.ImageMoveUpHint" xml:space="preserve"><value>Click ↑ or press Alt+↑ to move the image up</value></data>
+  <data name="Editor.ImageMoveDownHint" xml:space="preserve"><value>Click ↓ or press Alt+↓ to move the image down</value></data>
   <data name="Editor.PagedPreview" xml:space="preserve"><value>Paged preview</value></data>
   <data name="Editor.Editing" xml:space="preserve"><value>Editing</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Editor</value></data>
@@ -566,6 +572,10 @@
   <data name="Document.InsertImageError" xml:space="preserve"><value>Could not insert the image</value></data>
   <data name="Document.RecoveryPrompt" xml:space="preserve"><value>An automatically saved copy from the previous session was found. Restore the document?</value></data>
   <data name="Document.RecoveryTitle" xml:space="preserve"><value>CryptoBook recovery</value></data>
+  <data name="Document.BackupRecoveryTitle" xml:space="preserve"><value>Restore previous version</value></data>
+  <data name="Document.BackupRecoveryPrompt" xml:space="preserve"><value>Load the previous version from:{0}{1}{0}{0}Current unsaved changes will be lost. The .bak file itself will not be deleted.</value></data>
+  <data name="Document.BackupRecoveryUnavailable" xml:space="preserve"><value>No .bak file was found for the current document. A backup appears after an existing file is saved again.</value></data>
+  <data name="Document.BackupRecoveryErrorTitle" xml:space="preserve"><value>Backup recovery error</value></data>
   <data name="Document.UnsavedPrompt" xml:space="preserve"><value>The document has unsaved changes. Save them before closing?</value></data>
   <data name="Document.UnsavedSwitchPrompt" xml:space="preserve"><value>The document has unsaved changes. Save them before opening another file?</value></data>
   <data name="Document.RecoveryFailed" xml:space="preserve"><value>Could not restore the document:{0}{1}</value></data>

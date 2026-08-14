@@ -52,7 +52,10 @@ namespace CryptoBook.Models
         private readonly IPageNavigationService pageNavigationService;
         private readonly IPinnedDocumentService pinnedDocumentService;
         private readonly IRecentDocumentService recentDocumentService;
+        private readonly IDocumentDialogService documentDialogService;
+        private readonly IDocumentBackupRecoveryService backupRecoveryService;
         private readonly AsyncRelayCommand renameBookCommand;
+        private readonly AsyncRelayCommand restoreBackupCommand;
 
         public SideMenuModel(ILifetimeScope _scope)
         {
@@ -69,7 +72,11 @@ namespace CryptoBook.Models
             pageNavigationService = _scope.Resolve<IPageNavigationService>();
             pinnedDocumentService = _scope.Resolve<IPinnedDocumentService>();
             recentDocumentService = _scope.Resolve<IRecentDocumentService>();
+            documentDialogService = _scope.Resolve<IDocumentDialogService>();
+            backupRecoveryService =
+                _scope.Resolve<IDocumentBackupRecoveryService>();
             renameBookCommand = new AsyncRelayCommand(RenameBookAsync);
+            restoreBackupCommand = new AsyncRelayCommand(RestoreBackupAsync);
             Width = Properties.Settings.Default.SideMenuWidth;
             FontSizeHeader = Properties.Settings.Default.SideMenuFontSizeHeader;
             FontSize = Properties.Settings.Default.SideMenuFontSize;
@@ -158,6 +165,15 @@ namespace CryptoBook.Models
                 "\uE749",
                 LocalizationManager.GetString("SideMenu.Print.Description"),
                 CommandKey.menuFile_PrintFile));
+            file.Children.Add(new MenuItem(commandService)
+            {
+                Name = LocalizationManager.GetString("SideMenu.RestoreBackup"),
+                Glyph = "\uE777",
+                Description = LocalizationManager.GetString(
+                    "SideMenu.RestoreBackup.Description"),
+                IsEnabled = true,
+                Command = restoreBackupCommand
+            });
             file.Children.Add(new MenuItem(commandService)
             {
                 Name = LocalizationManager.GetString("SideMenu.RenameBook"),
@@ -295,6 +311,10 @@ namespace CryptoBook.Models
             documentSession.Rename(newPath);
             try
             {
+                await backupRecoveryService.SynchronizeAfterRenameAsync(
+                    oldPath,
+                    newPath,
+                    cancellationToken);
                 await pinnedDocumentService.UpdatePathAsync(
                     oldPath,
                     newPath,
@@ -316,6 +336,44 @@ namespace CryptoBook.Models
                         "SideMenu.RenameBook.ErrorTitle"),
                     LocalizationManager.GetString(
                         "DocumentLinks.RenameSyncFailed"));
+            }
+        }
+
+        private async Task RestoreBackupAsync(
+            object? parameter,
+            CancellationToken cancellationToken)
+        {
+            string? backupPath = backupRecoveryService.GetBackupPath();
+            if(backupPath is null)
+            {
+                await messageService.ShowMessage(
+                    LocalizationManager.GetString(
+                        "Document.BackupRecoveryTitle"),
+                    LocalizationManager.GetString(
+                        "Document.BackupRecoveryUnavailable"));
+                return;
+            }
+
+            if(!documentDialogService.ConfirmBackupRecovery(backupPath))
+                return;
+
+            try
+            {
+                if(await backupRecoveryService.RestoreAsync(
+                    cancellationToken))
+                {
+                    pageNavigationService.Navigate("Home");
+                }
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception exception)
+            {
+                await messageService.ShowMessage(
+                    LocalizationManager.GetString(
+                        "Document.BackupRecoveryErrorTitle"),
+                    exception.Message);
             }
         }
 

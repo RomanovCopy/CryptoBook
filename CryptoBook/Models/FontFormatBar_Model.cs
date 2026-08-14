@@ -19,6 +19,7 @@ namespace CryptoBook.Models
         private readonly IFontService fontService;
         private readonly IInlineService inlineService;
         private readonly IRichTextBoxService richService;
+        private bool isSynchronizingFromEditor;
 
         internal ObservableCollection<double> FontSizes => fontService.FontSizes ?? throw new ArgumentNullException(nameof(fontService.FontSizes));
         internal ObservableCollection<System.Windows.FontStyle> FontStyles => fontService.FontStyles ?? throw new ArgumentNullException(nameof(fontService.FontStyles));
@@ -74,6 +75,9 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontStyleCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not System.Windows.FontStyle fontStyle)
                 return false;
             // Проверяем, что стиль шрифта доступен в коллекции
@@ -82,6 +86,9 @@ namespace CryptoBook.Models
         }
         internal void Execute_SetFontStyleCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not System.Windows.FontStyle fontStyle)
                 throw new ArgumentException("obj must be of type FontStyle", nameof(obj));
             fontService.SetFontStyle(fontStyle);
@@ -89,12 +96,18 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontWeightCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not System.Windows.FontWeight fontWeight)
                 return false;
             return FontWeights.Contains(fontWeight);
         }
         internal void Execute_SetFontWeightCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not System.Windows.FontWeight fontweight)
                 throw new ArgumentException("obj must be of type FontWeight", nameof(obj));
             fontService.SetFontWeight(fontweight);
@@ -102,12 +115,18 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontStretchCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not System.Windows.FontStretch fontStretch)
                 return false;
             return FontStretches.Contains(fontStretch);
         }
         internal void Execute_SetFontStretchCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not System.Windows.FontStretch fontStretch)
                 throw new ArgumentException("obj must be of type FontStretch", nameof(obj));
             fontService.SetFontStretch(fontStretch);
@@ -115,12 +134,18 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontFamilyCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not Media.FontFamily fontFamily)
                 return false;
             return FontFamilyes.Contains(fontFamily);
         }
         internal void Execute_SetFontFamilyCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not Media.FontFamily fontFamily)
                 throw new ArgumentException("obj must be of type FontFamily", nameof(obj));
             fontService.SetFontFamily(fontFamily);
@@ -129,6 +154,9 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetTextDecorationCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not ITextDecorationItem textDecoration)
                 return false;
             return TextDecorations.Contains(textDecoration);
@@ -136,6 +164,9 @@ namespace CryptoBook.Models
 
         internal void Execute_SetTextDecorationCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not ITextDecorationItem item)
                 throw new ArgumentException("obj must be of type ITextDecorationItem", nameof(obj));
 
@@ -152,12 +183,18 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontColorCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not Drawing.Color fontColor)
                 return false;
             return FontColors.Contains(fontColor);
         }
         internal void Execute_SetFontColorCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not Drawing.Color fontColor)
                 throw new ArgumentException("obj must be of type Color", nameof(obj));
             fontService.SetFontColor(fontColor);
@@ -166,12 +203,18 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontBackgroundCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not Drawing.Color fontBackgroundColor)
                 return false;
             return FontColors.Contains(fontBackgroundColor);
         }
         internal void Execute_SetFontBackgroundCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not Drawing.Color fontBackgroundColor)
                 throw new ArgumentException("obj must be of type Color", nameof(obj));
             fontService.SetFontBackground(fontBackgroundColor);
@@ -179,11 +222,15 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetDocumentBackgroundCommand(object? obj)
         {
-            return obj is Drawing.Color color &&
+            return !isSynchronizingFromEditor &&
+                   obj is Drawing.Color color &&
                    FontColors.Contains(color);
         }
         internal void Execute_SetDocumentBackgroundCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not Drawing.Color color)
                 throw new ArgumentException("obj must be of type Color", nameof(obj));
 
@@ -192,12 +239,18 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_SetFontSizeCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return false;
+
             if(obj is not double fontSize)
                 return false;
             return FontSizes.Contains(fontSize);
         }
         internal void Execute_SetFontSizeCommand(object? obj)
         {
+            if(isSynchronizingFromEditor)
+                return;
+
             if(obj is not double fontSize)
                 throw new ArgumentException("obj must be of type double", nameof(obj));
             fontService.SetFontSize(fontSize);
@@ -224,31 +277,39 @@ namespace CryptoBook.Models
         internal void Execute_Open(object? obj)
         {
             //синхронизируем свойтсва в ToolBar со свойствами текста в позиции каретки
-            var style=inlineService.GetEffectiveStyleAtCaret();
-
-            FontSize = style.Get<double>(TextElement.FontSizeProperty);
-            FontFamily =style.Get<Media.FontFamily>(TextElement.FontFamilyProperty);
-            FontWeight=style.Get<FontWeight>(TextElement.FontWeightProperty);
-            FontStyle=style.Get<System.Windows.FontStyle>(TextElement.FontStyleProperty);
-            FontStretch=style.Get<FontStretch>(TextElement.FontStretchProperty);
-            var decor = style.Get<TextDecorationCollection>(Inline.TextDecorationsProperty);
-            if(decor != null && decor.Count>0)
-                TextDecoration = TextDecorations.FirstOrDefault(d => d.Decorations?.First() == decor.First());
-            else
-                TextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "None");
-
-            // Цвета: сначала точно, иначе ближайший
-            if(TryGetDrawingColor(style, TextElement.ForegroundProperty, out var fore))
+            richService.RestoreSelection();
+            isSynchronizingFromEditor = true;
+            try
             {
-                FontColor = FindColorInPalette(FontColors, fore, exactMatch: true)
-                            ?? FindNearestColor(FontColors, fore);
-            }
-            if(TryGetDrawingColor(style, TextElement.BackgroundProperty, out var back))
+                var style=inlineService.GetEffectiveStyleAtCaret();
+
+                FontSize = style.Get<double>(TextElement.FontSizeProperty);
+                FontFamily =style.Get<Media.FontFamily>(TextElement.FontFamilyProperty);
+                FontWeight=style.Get<FontWeight>(TextElement.FontWeightProperty);
+                FontStyle=style.Get<System.Windows.FontStyle>(TextElement.FontStyleProperty);
+                FontStretch=style.Get<FontStretch>(TextElement.FontStretchProperty);
+                var decor = style.Get<TextDecorationCollection>(Inline.TextDecorationsProperty);
+                if(decor != null && decor.Count>0)
+                    TextDecoration = TextDecorations.FirstOrDefault(d => d.Decorations?.First() == decor.First());
+                else
+                    TextDecoration = TextDecorations.FirstOrDefault(d => d.Name == "None");
+
+                // Цвета: сначала точно, иначе ближайший
+                if(TryGetDrawingColor(style, TextElement.ForegroundProperty, out var fore))
+                {
+                    FontColor = FindColorInPalette(FontColors, fore, exactMatch: true)
+                                ?? FindNearestColor(FontColors, fore);
+                }
+                if(TryGetDrawingColor(style, TextElement.BackgroundProperty, out var back))
+                {
+                    FontBackground = FindColorInPalette(FontColors, back, exactMatch: true)
+                                     ?? FindNearestColor(FontColors, back);
+                }
+                DocumentBackground = GetDocumentBackground();
+            } finally
             {
-                FontBackground = FindColorInPalette(FontColors, back, exactMatch: true)
-                                 ?? FindNearestColor(FontColors, back);
+                isSynchronizingFromEditor = false;
             }
-            DocumentBackground = GetDocumentBackground();
 
         }
 

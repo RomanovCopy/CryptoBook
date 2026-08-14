@@ -290,6 +290,8 @@
   <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Сохранить изменения в текущем файле</value></data>
   <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Выбрать имя, папку и формат</value></data>
   <data name="SideMenu.Print.Description" xml:space="preserve"><value>Вывести текущий документ на печать</value></data>
+  <data name="SideMenu.RestoreBackup" xml:space="preserve"><value>Восстановить предыдущую версию</value></data>
+  <data name="SideMenu.RestoreBackup.Description" xml:space="preserve"><value>Загрузить предыдущую версию из файла .bak рядом с документом</value></data>
   <data name="SideMenu.CloseDocument.Description" xml:space="preserve"><value>Закрыть текущий документ</value></data>
   <data name="SideMenu.RenameBook" xml:space="preserve"><value>Переименовать книгу</value></data>
   <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Изменить имя текущей книги</value></data>
@@ -397,6 +399,10 @@
   <data name="Editor.ImageFloatLeft" xml:space="preserve"><value>Обтекание: изображение _слева</value></data>
   <data name="Editor.ImageFloatRight" xml:space="preserve"><value>Обтекание: изображение с_права</value></data>
   <data name="Editor.ImageLayoutCommand" xml:space="preserve"><value>Изменить размещение изображения</value></data>
+  <data name="Editor.ImageMoveUp" xml:space="preserve"><value>Переместить изображение выше</value></data>
+  <data name="Editor.ImageMoveDown" xml:space="preserve"><value>Переместить изображение ниже</value></data>
+  <data name="Editor.ImageMoveUpHint" xml:space="preserve"><value>Нажмите ↑ или Alt+↑, чтобы переместить изображение выше</value></data>
+  <data name="Editor.ImageMoveDownHint" xml:space="preserve"><value>Нажмите ↓ или Alt+↓, чтобы переместить изображение ниже</value></data>
   <data name="Editor.PagedPreview" xml:space="preserve"><value>Постраничный просмотр</value></data>
   <data name="Editor.Editing" xml:space="preserve"><value>Редактирование</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Редактор</value></data>
@@ -566,6 +572,10 @@
   <data name="Document.InsertImageError" xml:space="preserve"><value>Не удалось вставить изображение</value></data>
   <data name="Document.RecoveryPrompt" xml:space="preserve"><value>Обнаружена автоматически сохранённая копия после предыдущего завершения. Восстановить документ?</value></data>
   <data name="Document.RecoveryTitle" xml:space="preserve"><value>Восстановление CryptoBook</value></data>
+  <data name="Document.BackupRecoveryTitle" xml:space="preserve"><value>Восстановление предыдущей версии</value></data>
+  <data name="Document.BackupRecoveryPrompt" xml:space="preserve"><value>Загрузить предыдущую версию из:{0}{1}{0}{0}Текущие несохранённые изменения будут потеряны. Сам файл .bak удалён не будет.</value></data>
+  <data name="Document.BackupRecoveryUnavailable" xml:space="preserve"><value>Для текущего документа файл .bak не найден. Резервная копия появляется после повторного сохранения уже существующего файла.</value></data>
+  <data name="Document.BackupRecoveryErrorTitle" xml:space="preserve"><value>Ошибка восстановления резервной копии</value></data>
   <data name="Document.UnsavedPrompt" xml:space="preserve"><value>В документе есть несохранённые изменения. Сохранить их перед закрытием?</value></data>
   <data name="Document.UnsavedSwitchPrompt" xml:space="preserve"><value>В документе есть несохранённые изменения. Сохранить их перед открытием другого файла?</value></data>
   <data name="Document.RecoveryFailed" xml:space="preserve"><value>Не удалось восстановить документ:{0}{1}</value></data>

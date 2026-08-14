@@ -10,6 +10,7 @@ using System.Windows.Media;
 using WpfCursor = System.Windows.Input.Cursor;
 using WpfCursors = System.Windows.Input.Cursors;
 using WpfBrushes = System.Windows.Media.Brushes;
+using WpfButton = System.Windows.Controls.Button;
 using WpfImage = System.Windows.Controls.Image;
 using WpfPen = System.Windows.Media.Pen;
 using WpfSize = System.Windows.Size;
@@ -23,6 +24,10 @@ namespace CryptoBook.Adorners
     public sealed class ImageResizeAdorner: Adorner
     {
         private const double ThumbSize = 10;
+        private const double MoveButtonWidth = 30;
+        private const double MoveButtonHeight = 26;
+        private const double MoveButtonGap = 4;
+        private const double MoveButtonOffset = 6;
         private const double MinimumImageWidth = 48;
 
         private readonly IEmbeddedImageEditor imageEditor;
@@ -32,6 +37,8 @@ namespace CryptoBook.Adorners
         private readonly Thumb topRight;
         private readonly Thumb bottomLeft;
         private readonly Thumb bottomRight;
+        private readonly WpfButton moveUpButton;
+        private readonly WpfButton moveDownButton;
 
         private bool isDragging;
         private double initialWidth;
@@ -47,13 +54,21 @@ namespace CryptoBook.Adorners
         public ImageResizeAdorner(
             WpfImage image,
             IEmbeddedImageEditor imageEditor,
-            Func<double> getMaximumWidth)
+            Func<double> getMaximumWidth,
+            ICommand moveUpCommand,
+            ICommand moveDownCommand,
+            IInputElement commandTarget,
+            string moveUpToolTip,
+            string moveDownToolTip)
             : base(image)
         {
             this.imageEditor = imageEditor
                 ?? throw new ArgumentNullException(nameof(imageEditor));
             this.getMaximumWidth = getMaximumWidth
                 ?? throw new ArgumentNullException(nameof(getMaximumWidth));
+            ArgumentNullException.ThrowIfNull(moveUpCommand);
+            ArgumentNullException.ThrowIfNull(moveDownCommand);
+            ArgumentNullException.ThrowIfNull(commandTarget);
 
             IsHitTestVisible = true;
             visuals = new VisualCollection(this);
@@ -74,11 +89,23 @@ namespace CryptoBook.Adorners
                 WpfCursors.SizeNWSE,
                 horizontalDirection: 1,
                 verticalDirection: 1);
+            moveUpButton = CreateMoveButton(
+                "↑",
+                moveUpToolTip,
+                moveUpCommand,
+                commandTarget);
+            moveDownButton = CreateMoveButton(
+                "↓",
+                moveDownToolTip,
+                moveDownCommand,
+                commandTarget);
 
             visuals.Add(topLeft);
             visuals.Add(topRight);
             visuals.Add(bottomLeft);
             visuals.Add(bottomRight);
+            visuals.Add(moveUpButton);
+            visuals.Add(moveDownButton);
         }
 
         private WpfImage Image => (WpfImage)AdornedElement;
@@ -113,6 +140,22 @@ namespace CryptoBook.Adorners
                 height - half,
                 ThumbSize,
                 ThumbSize));
+
+            double toolbarWidth =
+                MoveButtonWidth * 2 + MoveButtonGap;
+            double toolbarLeft = (width - toolbarWidth) / 2;
+            double toolbarTop =
+                -MoveButtonHeight - MoveButtonOffset;
+            moveUpButton.Arrange(new Rect(
+                toolbarLeft,
+                toolbarTop,
+                MoveButtonWidth,
+                MoveButtonHeight));
+            moveDownButton.Arrange(new Rect(
+                toolbarLeft + MoveButtonWidth + MoveButtonGap,
+                toolbarTop,
+                MoveButtonWidth,
+                MoveButtonHeight));
 
             return finalSize;
         }
@@ -159,6 +202,38 @@ namespace CryptoBook.Adorners
             thumb.DragCompleted += (_, args) =>
                 CompleteResize(args.Canceled);
             return thumb;
+        }
+
+        private static WpfButton CreateMoveButton(
+            string glyph,
+            string toolTip,
+            ICommand command,
+            IInputElement commandTarget)
+        {
+            var button = new WpfButton
+            {
+                Width = MoveButtonWidth,
+                Height = MoveButtonHeight,
+                Padding = new Thickness(0),
+                FontSize = 16,
+                FontWeight = FontWeights.SemiBold,
+                Content = glyph,
+                ToolTip = toolTip,
+                Command = command,
+                CommandTarget = commandTarget,
+                Cursor = WpfCursors.Hand,
+                Focusable = false
+            };
+            ToolTipService.SetInitialShowDelay(button, 200);
+            ToolTipService.SetShowDuration(button, 10_000);
+            ToolTipService.SetBetweenShowDelay(button, 0);
+            System.Windows.Automation.AutomationProperties.SetName(
+                button,
+                toolTip);
+            System.Windows.Automation.AutomationProperties.SetHelpText(
+                button,
+                toolTip);
+            return button;
         }
 
         private void BeginResize(
