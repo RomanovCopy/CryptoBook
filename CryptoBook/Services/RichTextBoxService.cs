@@ -31,8 +31,8 @@ namespace CryptoBook.Services
         private readonly IUriNavigationService uriNavigationService;
         private readonly IDocumentAppearanceDefaults appearanceDefaults;
         private readonly Dictionary<DependencyProperty, object?> typingProperties = new();
-        private Paragraph? typingAnchorParagraph;
-        private int typingAnchorTextOffset;
+        private readonly ConditionalWeakTable<Run, object> typingRuns = new();
+        private static readonly object typingRunMarker = new();
         private static readonly DependencyProperty[] inheritedTypingProperties =
         [
             TextElement.FontFamilyProperty,
@@ -53,7 +53,16 @@ namespace CryptoBook.Services
         TextPointer IRichTextBoxService.CaretPosition
         {
             get => this.CaretPosition;
-            set => this.CaretPosition = value;
+            set
+            {
+                if(typingProperties.Count > 0 &&
+                   !AreSamePosition(this.CaretPosition, value))
+                {
+                    typingProperties.Clear();
+                }
+
+                this.CaretPosition = value;
+            }
         }
 
         Media.Brush IRichTextBoxService.CaretBrush { get => this.CaretBrush; set => this.CaretBrush=value; }
@@ -112,8 +121,16 @@ namespace CryptoBook.Services
         // не перехватываем: WPF сам создаёт новый Paragraph или ListItem.
         private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            if(IsCaretNavigationKey(e.Key) ||
+               (e.Key == Key.A &&
+                Keyboard.Modifiers.HasFlag(ModifierKeys.Control)))
+            {
+                typingProperties.Clear();
+            }
+
             if(e.Key == Key.Escape && TryDismissSelection())
             {
+                typingProperties.Clear();
                 e.Handled = true;
                 return;
             }
@@ -133,7 +150,11 @@ namespace CryptoBook.Services
         void IRichTextBoxService.Copy() => this.Copy();
         void IRichTextBoxService.Cut() => this.Cut();
         void IRichTextBoxService.Paste() => this.Paste();
-        void IRichTextBoxService.SelectAll() => this.SelectAll();
+        void IRichTextBoxService.SelectAll()
+        {
+            typingProperties.Clear();
+            this.SelectAll();
+        }
         void IRichTextBoxService.ClearSelection()
         {
             lastSelection = null;
@@ -158,45 +179,58 @@ namespace CryptoBook.Services
             if(property == null)
                 throw new ArgumentNullException(nameof(property));
 
-            if(!IsTypingAnchorAtCaret())
-                typingProperties.Clear();
-
-            RememberTypingAnchor();
             typingProperties[property] = value;
         }
         void IRichTextBoxService.InsertTextAtCaret(string text)
         {
-            if(string.IsNullOrEmpty(text))
+            if(this.IsReadOnly || string.IsNullOrEmpty(text))
                 return;
 
-            var start = this.CaretPosition;
-            bool applyTypingProperties = typingProperties.Count > 0 && IsTypingAnchorAtCaret();
-
-            if(applyTypingProperties)
+            this.BeginChange();
+            try
             {
-                var inheritedValues = inheritedTypingProperties.ToDictionary(
-                    property => property,
-                    property => GetEffectiveValue(start, property));
-
-                var run = new Run(text, start);
-                foreach(var (property, value) in inheritedValues)
+                var start = this.CaretPosition;
+                if(!this.Selection.IsEmpty)
                 {
-                    if(!ReferenceEquals(value, DependencyProperty.UnsetValue))
-                        run.SetValue(property, value);
+                    this.Selection.Text = string.Empty;
+                    start = this.Selection.Start.GetInsertionPosition(
+                        LogicalDirection.Forward);
+                    this.CaretPosition = start;
+                    this.Selection.Select(start, start);
                 }
-                foreach(var (property, value) in typingProperties)
-                    run.SetValue(property, value);
 
-                this.CaretPosition = run.ContentEnd;
-            } else
+                bool applyTypingProperties = typingProperties.Count > 0;
+                if(applyTypingProperties)
+                {
+                    var inheritedValues = inheritedTypingProperties.ToDictionary(
+                        property => property,
+                        property => GetEffectiveValue(start, property));
+
+                    var run = new Run(text, start);
+                    foreach(var (property, value) in inheritedValues)
+                    {
+                        if(!ReferenceEquals(value, DependencyProperty.UnsetValue))
+                            run.SetValue(property, value);
+                    }
+                    foreach(var (property, value) in typingProperties)
+                        run.SetValue(property, value);
+
+                    typingRuns.Add(run, typingRunMarker);
+                    run = MergeWithPreviousTypingRun(run);
+                    this.CaretPosition = run.ContentEnd;
+                } else
+                {
+                    start.InsertTextInRun(text);
+                    this.CaretPosition = start.GetPositionAtOffset(
+                        text.Length,
+                        LogicalDirection.Forward) ?? start;
+                }
+
+                this.Selection.Select(this.CaretPosition, this.CaretPosition);
+            } finally
             {
-                typingProperties.Clear();
-                start.InsertTextInRun(text);
-                this.CaretPosition = start.GetPositionAtOffset(text.Length, LogicalDirection.Forward) ?? start;
+                this.EndChange();
             }
-
-            this.Selection.Select(this.CaretPosition, this.CaretPosition);
-            RememberTypingAnchor();
         }
         void IRichTextBoxService.ClearDocument()
         {
@@ -223,7 +257,6 @@ namespace CryptoBook.Services
                 lastSelection = null;
 
                 typingProperties.Clear();
-                RememberTypingAnchor();
             } finally
             {
                 this.EndChange();
@@ -253,7 +286,6 @@ namespace CryptoBook.Services
             Selection.Select(caret, caret);
             lastSelection = null;
             typingProperties.Clear();
-            RememberTypingAnchor();
         }
 
         bool IRichTextBoxService.HasEmptyParagraphs() =>
@@ -282,7 +314,6 @@ namespace CryptoBook.Services
                 }
 
                 typingProperties.Clear();
-                RememberTypingAnchor();
             } finally
             {
                 this.EndChange();
@@ -427,8 +458,12 @@ namespace CryptoBook.Services
         }
         private void RichTextBoxService_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if(string.IsNullOrEmpty(e.Text) || typingProperties.Count == 0 || !IsTypingAnchorAtCaret())
+            if(this.IsReadOnly ||
+               string.IsNullOrEmpty(e.Text) ||
+               typingProperties.Count == 0)
+            {
                 return;
+            }
 
             e.Handled = true;
             ((IRichTextBoxService)this).InsertTextAtCaret(e.Text);
@@ -438,6 +473,7 @@ namespace CryptoBook.Services
             object sender,
             MouseButtonEventArgs e)
         {
+            typingProperties.Clear();
             var position = GetPositionFromPoint(e.GetPosition(this), snapToText: true);
             DismissSelectionIfOutside(position);
 
@@ -570,25 +606,104 @@ namespace CryptoBook.Services
 
             return null;
         }
-        private bool IsTypingAnchorAtCaret()
+        private static bool IsCaretNavigationKey(Key key) => key is
+            Key.Left or
+            Key.Right or
+            Key.Up or
+            Key.Down or
+            Key.Home or
+            Key.End or
+            Key.PageUp or
+            Key.PageDown;
+
+        private static bool AreSamePosition(
+            TextPointer current,
+            TextPointer candidate)
         {
-            var paragraph = this.CaretPosition.Paragraph;
-            if(typingAnchorParagraph == null || !ReferenceEquals(typingAnchorParagraph, paragraph))
+            try
+            {
+                return current.CompareTo(candidate) == 0;
+            } catch(ArgumentException)
+            {
+                return false;
+            }
+        }
+
+        private Run MergeWithPreviousTypingRun(Run run)
+        {
+            if(run.PreviousInline is not Run previous ||
+               !typingRuns.TryGetValue(previous, out _) ||
+               !HaveEquivalentTypingFormatting(previous, run))
+            {
+                return run;
+            }
+
+            var text = run.Text;
+            RemoveInline(run);
+            typingRuns.Remove(run);
+            previous.Text += text;
+            return previous;
+        }
+
+        private static bool HaveEquivalentTypingFormatting(
+            Run left,
+            Run right)
+        {
+            var leftValues = GetComparableLocalValues(left);
+            var rightValues = GetComparableLocalValues(right);
+            if(leftValues.Count != rightValues.Count)
                 return false;
 
-            return GetTextOffset(paragraph, this.CaretPosition) == typingAnchorTextOffset;
-        }
-        private void RememberTypingAnchor()
-        {
-            typingAnchorParagraph = this.CaretPosition.Paragraph;
-            typingAnchorTextOffset = GetTextOffset(typingAnchorParagraph, this.CaretPosition);
-        }
-        private static int GetTextOffset(Paragraph? paragraph, TextPointer position)
-        {
-            if(paragraph == null)
-                return 0;
+            foreach(var (property, leftValue) in leftValues)
+            {
+                if(!rightValues.TryGetValue(property, out var rightValue) ||
+                   !AreEquivalentFormattingValues(leftValue, rightValue))
+                {
+                    return false;
+                }
+            }
 
-            return new TextRange(paragraph.ContentStart, position).Text.Length;
+            return true;
+        }
+
+        private static Dictionary<DependencyProperty, object?>
+            GetComparableLocalValues(Run run)
+        {
+            var values = new Dictionary<DependencyProperty, object?>();
+            var enumerator = run.GetLocalValueEnumerator();
+            while(enumerator.MoveNext())
+            {
+                var entry = enumerator.Current;
+                if(entry.Property != Run.TextProperty)
+                    values[entry.Property] = entry.Value;
+            }
+
+            return values;
+        }
+
+        private static bool AreEquivalentFormattingValues(
+            object? left,
+            object? right)
+        {
+            if(ReferenceEquals(left, right) || Equals(left, right))
+                return true;
+
+            return left is TextDecorationCollection leftDecorations &&
+                   right is TextDecorationCollection rightDecorations &&
+                   leftDecorations.SequenceEqual(rightDecorations);
+        }
+
+        private static void RemoveInline(Inline inline)
+        {
+            switch(inline.Parent)
+            {
+                case Paragraph paragraph:
+                    paragraph.Inlines.Remove(inline);
+                    break;
+                case Span span:
+                    span.Inlines.Remove(inline);
+                    break;
+            }
         }
         private object GetEffectiveValue(TextPointer position, DependencyProperty property)
         {
@@ -628,8 +743,6 @@ namespace CryptoBook.Services
             // MaxHeight не позволяет глифам и маркерам списка перекрывать соседнюю строку.
             document.LineStackingStrategy = LineStackingStrategy.MaxHeight;
             document.LineHeight = double.NaN;
-            Run newRun = new("     ");
-            newRun.Background= System.Windows.Media.Brushes.Transparent;
             var newParagraph = paragraphFactory.Create();
             newParagraph.Margin = new Thickness(0);
 
@@ -637,10 +750,8 @@ namespace CryptoBook.Services
             document.Blocks.Clear();
             document.Blocks.Add((Paragraph)newParagraph);
 
-            newParagraph.Inlines.Add(newRun);
-
-            // Устанавливаем каретку в начало нового Run
-            CaretPosition = newRun.ContentStart;
+            CaretPosition = newParagraph.Element.ContentStart
+                .GetInsertionPosition(LogicalDirection.Forward);
             Focus();
         }
 
