@@ -1,7 +1,7 @@
 # CryptoBook
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.1.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.1.3)
+[![Version](https://img.shields.io/badge/version-1.1.1.4-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.1.4)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 
@@ -98,7 +98,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.1.3
+./installer/Build-Installer.ps1 -Version 1.1.1.4
 ```
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные NuGet-уязвимости считаются ошибками.
