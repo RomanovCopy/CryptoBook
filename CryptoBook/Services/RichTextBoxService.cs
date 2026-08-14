@@ -23,7 +23,10 @@ using System.Runtime.CompilerServices;
 using System.CodeDom;
 namespace CryptoBook.Services
 {
-    public class RichTextBoxService: Controls.RichTextBox, IRichTextBoxService
+    public class RichTextBoxService:
+        Controls.RichTextBox,
+        IRichTextBoxService,
+        IDocumentReplacementNotifier
     {
 
         private TextRange? lastSelection;
@@ -81,6 +84,8 @@ namespace CryptoBook.Services
         }
         bool IRichTextBoxService.CanUndo => this.CanUndo;
         bool IRichTextBoxService.CanRedo => this.CanRedo;
+
+        public event EventHandler? DocumentReplaced;
 
 
         public RichTextBoxService(
@@ -286,6 +291,7 @@ namespace CryptoBook.Services
             Selection.Select(caret, caret);
             lastSelection = null;
             typingProperties.Clear();
+            DocumentReplaced?.Invoke(this, EventArgs.Empty);
         }
 
         bool IRichTextBoxService.HasEmptyParagraphs() =>

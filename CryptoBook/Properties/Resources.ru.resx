@@ -409,6 +409,14 @@
   <data name="Editor.Preview" xml:space="preserve"><value>Просмотр</value></data>
   <data name="Editor.Zoom100" xml:space="preserve"><value>Масштаб 100%</value></data>
   <data name="Editor.FitToWindow" xml:space="preserve"><value>Вписать в окно</value></data>
+  <data name="Editor.DocumentStructure" xml:space="preserve"><value>Структура</value></data>
+  <data name="Editor.ToggleDocumentStructure" xml:space="preserve"><value>Показать структуру документа</value></data>
+  <data name="Editor.DocumentStructureTextElements" xml:space="preserve"><value>Показывать текстовые элементы (Run, Span)</value></data>
+  <data name="Editor.DocumentStructurePreviewReadOnly" xml:space="preserve"><value>В режиме просмотра переход и удаление отключены.</value></data>
+  <data name="Editor.DocumentStructureEmpty" xml:space="preserve"><value>В документе нет структурных элементов.</value></data>
+  <data name="Editor.DocumentStructureNavigate" xml:space="preserve"><value>Перейти к элементу</value></data>
+  <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve"><value>Удаление элемента документа</value></data>
+  <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve"><value>Удалить «{0}» вместе со всем содержимым?</value></data>
   <data name="Bookmarks.Properties" xml:space="preserve"><value>Свойства закладки</value></data>
   <data name="Bookmarks.Name" xml:space="preserve"><value>Имя</value></data>
   <data name="Bookmarks.Note" xml:space="preserve"><value>Заметка</value></data>

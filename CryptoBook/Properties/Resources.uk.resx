@@ -728,6 +728,30 @@
   <data name="Editor.FitToWindow" xml:space="preserve">
     <value>Вписати у вікно</value>
   </data>
+  <data name="Editor.DocumentStructure" xml:space="preserve">
+    <value>Структура</value>
+  </data>
+  <data name="Editor.ToggleDocumentStructure" xml:space="preserve">
+    <value>Показати структуру документа</value>
+  </data>
+  <data name="Editor.DocumentStructureTextElements" xml:space="preserve">
+    <value>Показувати текстові елементи (Run, Span)</value>
+  </data>
+  <data name="Editor.DocumentStructurePreviewReadOnly" xml:space="preserve">
+    <value>У режимі перегляду перехід і видалення вимкнено.</value>
+  </data>
+  <data name="Editor.DocumentStructureEmpty" xml:space="preserve">
+    <value>У документі немає структурних елементів.</value>
+  </data>
+  <data name="Editor.DocumentStructureNavigate" xml:space="preserve">
+    <value>Перейти до елемента</value>
+  </data>
+  <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve">
+    <value>Видалення елемента документа</value>
+  </data>
+  <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve">
+    <value>Видалити «{0}» разом з усім вмістом?</value>
+  </data>
   <data name="Bookmarks.Properties" xml:space="preserve">
     <value>Властивості закладки</value>
   </data>

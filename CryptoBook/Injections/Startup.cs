@@ -63,6 +63,9 @@ namespace CryptoBook.Injections
 
             // Модели представления.
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<DocumentStructureViewModel>()
+                .As<IDocumentStructureViewModel>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MenuFileViewModel>().As<IMenuFileViewModel>().InstancePerLifetimeScope();
@@ -123,6 +126,9 @@ namespace CryptoBook.Injections
 
             // Вспомогательные компоненты.
             builder.RegisterType<FlowDocumentWalker>().As<IFlowDocumentWalker>().SingleInstance();
+            builder.RegisterType<FlowDocumentStructureBuilder>()
+                .As<IFlowDocumentStructureBuilder>()
+                .SingleInstance();
             builder.RegisterType<SecureFileValidator>().As<ISecureFileValidator>().SingleInstance();
             builder.RegisterType<SecureFileProcessor>().As<ISecureFileProcessor>().SingleInstance();
             builder.RegisterType<Argon2idKeyDeriver>().As<IPasswordKeyDeriver>().SingleInstance();
