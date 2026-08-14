@@ -417,6 +417,9 @@
   <data name="Editor.DocumentStructureNavigate" xml:space="preserve"><value>Перейти к элементу</value></data>
   <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve"><value>Удаление элемента документа</value></data>
   <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve"><value>Удалить «{0}» вместе со всем содержимым?</value></data>
+  <data name="Editor.DocumentStructureMoveUp" xml:space="preserve"><value>Переместить выше</value></data>
+  <data name="Editor.DocumentStructureMoveDown" xml:space="preserve"><value>Переместить ниже</value></data>
+  <data name="Editor.DocumentStructureMoveHint" xml:space="preserve"><value>Перетащите элемент до, внутрь или после совместимого элемента. Alt+↑/↓ изменяет порядок.</value></data>
   <data name="Bookmarks.Properties" xml:space="preserve"><value>Свойства закладки</value></data>
   <data name="Bookmarks.Name" xml:space="preserve"><value>Имя</value></data>
   <data name="Bookmarks.Note" xml:space="preserve"><value>Заметка</value></data>

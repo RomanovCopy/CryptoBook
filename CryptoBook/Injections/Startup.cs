@@ -129,6 +129,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<FlowDocumentStructureBuilder>()
                 .As<IFlowDocumentStructureBuilder>()
                 .SingleInstance();
+            builder.RegisterType<FlowDocumentMoveService>()
+                .As<IFlowDocumentMoveService>()
+                .SingleInstance();
             builder.RegisterType<SecureFileValidator>().As<ISecureFileValidator>().SingleInstance();
             builder.RegisterType<SecureFileProcessor>().As<ISecureFileProcessor>().SingleInstance();
             builder.RegisterType<Argon2idKeyDeriver>().As<IPasswordKeyDeriver>().SingleInstance();

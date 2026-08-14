@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
       xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
       xmlns:controls="clr-namespace:CryptoBook.MyControls"
       xmlns:dto="clr-namespace:CryptoBook.DTO"
@@ -490,7 +491,6 @@
                         <CheckBox Grid.Row="1"
                                   Margin="0,9,0,7"
                                   IsChecked="{Binding DocumentStructure.IncludeTextElements, Mode=TwoWay}"
-                                  Foreground="{DynamicResource CurrentWindowForeground}"
                                   Content="{Binding [Editor.DocumentStructureTextElements], Source={StaticResource Res}}"/>
 
                         <TextBlock Grid.Row="2"
@@ -505,6 +505,24 @@
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding DocumentView.IsPreviewMode}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBlock Grid.Row="2"
+                                   Margin="0,0,0,7"
+                                   Text="{Binding [Editor.DocumentStructureMoveHint], Source={StaticResource Res}}"
+                                   Foreground="{DynamicResource CurrentMutedForeground}"
+                                   FontSize="11"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DocumentView.IsPreviewMode}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -563,6 +581,14 @@
                                                     <MenuItem Header="{Binding [Editor.DocumentStructureNavigate], Source={StaticResource Res}}"
                                                               Command="{Binding PlacementTarget.Tag.NavigateCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureMoveUp], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.MoveUpCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureMoveDown], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.MoveDownCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
                                                     <MenuItem Header="{Binding [Common.Delete], Source={StaticResource Res}}"
                                                               Command="{Binding PlacementTarget.Tag.DeleteCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
@@ -571,6 +597,20 @@
                                         </Setter>
                                     </Style>
                                 </TreeView.ItemContainerStyle>
+                                <TreeView.InputBindings>
+                                    <KeyBinding Key="Up"
+                                                Modifiers="Alt"
+                                                Command="{Binding MoveUpCommand}"
+                                                CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"/>
+                                    <KeyBinding Key="Down"
+                                                Modifiers="Alt"
+                                                Command="{Binding MoveDownCommand}"
+                                                CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"/>
+                                </TreeView.InputBindings>
+                                <i:Interaction.Behaviors>
+                                    <behaviors:DocumentStructureDragDropBehavior
+                                        DropCommand="{Binding MoveCommand}"/>
+                                </i:Interaction.Behaviors>
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="SelectedItemChanged">
                                         <i:InvokeCommandAction Command="{Binding NavigateCommand}"

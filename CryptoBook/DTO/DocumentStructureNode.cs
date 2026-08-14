@@ -13,6 +13,7 @@ namespace CryptoBook.DTO
     public sealed class DocumentStructureNode: INotifyPropertyChanged
     {
         private bool isExpanded;
+        private bool isSelected;
 
         public DocumentStructureNode(
             FrameworkContentElement source,
@@ -49,6 +50,18 @@ namespace CryptoBook.DTO
                 if(isExpanded == value)
                     return;
                 isExpanded = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSelected
+        {
+            get => isSelected;
+            set
+            {
+                if(isSelected == value)
+                    return;
+                isSelected = value;
                 OnPropertyChanged();
             }
         }

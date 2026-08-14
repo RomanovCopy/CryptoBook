@@ -4,6 +4,7 @@ using CryptoBook.Interfaces;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -27,6 +28,7 @@ namespace CryptoBook.ViewModels
 
         private readonly IFlowDocumentStructureBuilder structureBuilder;
         private readonly IFlowDocumentWalker documentWalker;
+        private readonly IFlowDocumentMoveService moveService;
         private readonly IRichTextBoxService richTextBox;
         private readonly IRichtextboxViewModel documentView;
         private readonly IEmbeddedImageLayoutService imageLayoutService;
@@ -39,6 +41,9 @@ namespace CryptoBook.ViewModels
         private readonly RelayCommand toggleCommand;
         private readonly RelayCommand refreshCommand;
         private readonly RelayCommand navigateCommand;
+        private readonly RelayCommand moveCommand;
+        private readonly RelayCommand moveUpCommand;
+        private readonly RelayCommand moveDownCommand;
         private readonly AsyncRelayCommand deleteCommand;
         private readonly RelayCommand noOperationCommand = new(_ => { });
         private bool isOpen;
@@ -48,6 +53,7 @@ namespace CryptoBook.ViewModels
         public DocumentStructureViewModel(
             IFlowDocumentStructureBuilder structureBuilder,
             IFlowDocumentWalker documentWalker,
+            IFlowDocumentMoveService moveService,
             IRichTextBoxService richTextBox,
             IRichtextboxViewModel documentView,
             IEmbeddedImageLayoutService imageLayoutService,
@@ -60,6 +66,8 @@ namespace CryptoBook.ViewModels
                 throw new ArgumentNullException(nameof(structureBuilder));
             this.documentWalker = documentWalker ??
                 throw new ArgumentNullException(nameof(documentWalker));
+            this.moveService = moveService ??
+                throw new ArgumentNullException(nameof(moveService));
             this.richTextBox = richTextBox ??
                 throw new ArgumentNullException(nameof(richTextBox));
             this.documentView = documentView ??
@@ -84,6 +92,15 @@ namespace CryptoBook.ViewModels
             navigateCommand = new RelayCommand(
                 NavigateTo,
                 CanNavigateTo);
+            moveCommand = new RelayCommand(
+                MoveElement,
+                CanMoveElement);
+            moveUpCommand = new RelayCommand(
+                parameter => MoveAdjacent(parameter, -1),
+                parameter => CanMoveAdjacent(parameter, -1));
+            moveDownCommand = new RelayCommand(
+                parameter => MoveAdjacent(parameter, 1),
+                parameter => CanMoveAdjacent(parameter, 1));
             deleteCommand = new AsyncRelayCommand(
                 DeleteAsync,
                 CanDelete);
@@ -149,6 +166,9 @@ namespace CryptoBook.ViewModels
         public ICommand ToggleCommand => toggleCommand;
         public ICommand RefreshCommand => refreshCommand;
         public ICommand NavigateCommand => navigateCommand;
+        public ICommand MoveCommand => moveCommand;
+        public ICommand MoveUpCommand => moveUpCommand;
+        public ICommand MoveDownCommand => moveDownCommand;
         public ICommand DeleteCommand => deleteCommand;
 
         public ICommand Loaded => noOperationCommand;
@@ -156,15 +176,23 @@ namespace CryptoBook.ViewModels
         public ICommand Closing => noOperationCommand;
         public ICommand Closed => noOperationCommand;
 
-        private void RefreshNow()
+        private void RefreshNow(
+            FrameworkContentElement? preferredSelection = null)
         {
             refreshTimer.Stop();
             bool hadSnapshot = Nodes.Count > 0;
-            HashSet<string> expandedPaths = Nodes
+            DocumentStructureNode[] previousNodes = Nodes
                 .SelectMany(Flatten)
-                .Where(node => node.IsExpanded)
-                .Select(node => node.Path)
-                .ToHashSet(StringComparer.Ordinal);
+                .ToArray();
+            Dictionary<FrameworkContentElement, string> expandedLocations =
+                new(ReferenceEqualityComparer.Instance);
+            foreach(DocumentStructureNode node in previousNodes
+                .Where(node => node.IsExpanded))
+            {
+                expandedLocations[node.Source] = node.Path;
+            }
+            FrameworkContentElement? selectedSource = preferredSelection ??
+                previousNodes.FirstOrDefault(node => node.IsSelected)?.Source;
             Nodes.Clear();
 
             if(!IsOpen || !documentSession.HasDocument)
@@ -176,10 +204,22 @@ namespace CryptoBook.ViewModels
             DocumentStructureNode root = structureBuilder.Build(
                 richTextBox.Document,
                 IncludeTextElements);
-            foreach(DocumentStructureNode node in Flatten(root))
+            DocumentStructureNode[] currentNodes = Flatten(root).ToArray();
+            HashSet<FrameworkContentElement> currentSources = new(
+                currentNodes.Select(node => node.Source),
+                ReferenceEqualityComparer.Instance);
+            HashSet<string> fallbackExpandedPaths = expandedLocations
+                .Where(pair => !currentSources.Contains(pair.Key))
+                .Select(pair => pair.Value)
+                .ToHashSet(StringComparer.Ordinal);
+            foreach(DocumentStructureNode node in currentNodes)
             {
-                node.IsExpanded = expandedPaths.Contains(node.Path) ||
+                node.IsExpanded = expandedLocations.ContainsKey(node.Source) ||
+                    fallbackExpandedPaths.Contains(node.Path) ||
                     !hadSnapshot && ReferenceEquals(node, root);
+                node.IsSelected = ReferenceEquals(
+                    node.Source,
+                    selectedSource);
             }
             Nodes.Add(root);
             HasNodes = root.Children.Count > 0;
@@ -274,6 +314,147 @@ namespace CryptoBook.ViewModels
             richTextBox.Selection.Select(insertion, insertion);
             richTextBox.Focus();
             richTextBox.ScrollToCaret();
+        }
+
+        private bool CanMoveElement(object? parameter) =>
+            parameter is DocumentStructureMoveRequest request &&
+            request.Source.Element is TextElement source &&
+            IsEditingEnabled &&
+            IsAttached(source) &&
+            IsAttached(request.Target.Source) &&
+            moveService.CanMove(
+                richTextBox.Document,
+                source,
+                request.Target.Source,
+                request.Position);
+
+        private void MoveElement(object? parameter)
+        {
+            if(parameter is not DocumentStructureMoveRequest request ||
+               request.Source.Element is not TextElement source ||
+               !CanMoveElement(request))
+            {
+                return;
+            }
+
+            if(request.Position == DocumentStructureDropPosition.Inside)
+                request.Target.IsExpanded = true;
+
+            long revisionBefore = documentSession.Revision;
+            bool moved = false;
+            richTextBox.BeginChange();
+            try
+            {
+                moved = moveService.Move(
+                    richTextBox.Document,
+                    source,
+                    request.Target.Source,
+                    request.Position);
+            }
+            catch(Exception exception) when(
+                exception is InvalidOperationException or ArgumentException)
+            {
+                Debug.WriteLine(exception);
+            }
+            finally
+            {
+                richTextBox.EndChange();
+            }
+
+            if(!moved)
+            {
+                RefreshNow();
+                return;
+            }
+
+            bookmarkService.RebuildIndexFromDocument(richTextBox);
+            if(documentSession.Revision == revisionBefore)
+                documentSession.MarkDirty();
+            NavigateTo(request.Source);
+            RefreshNow(source);
+        }
+
+        private bool CanMoveAdjacent(object? parameter, int direction) =>
+            TryCreateAdjacentMove(
+                parameter,
+                direction,
+                out DocumentStructureMoveRequest request) &&
+            CanMoveElement(request);
+
+        private void MoveAdjacent(object? parameter, int direction)
+        {
+            if(TryCreateAdjacentMove(
+                parameter,
+                direction,
+                out DocumentStructureMoveRequest request))
+            {
+                MoveElement(request);
+            }
+        }
+
+        private bool TryCreateAdjacentMove(
+            object? parameter,
+            int direction,
+            out DocumentStructureMoveRequest request)
+        {
+            request = null!;
+            if(parameter is not DocumentStructureNode sourceNode ||
+               sourceNode.Element is not TextElement source)
+            {
+                return false;
+            }
+
+            TextElement? adjacent = GetAdjacent(source, direction);
+            if(adjacent is null)
+                return false;
+
+            DocumentStructureNode? targetNode = Nodes
+                .SelectMany(Flatten)
+                .FirstOrDefault(node => ReferenceEquals(node.Source, adjacent));
+            if(targetNode is null)
+                return false;
+
+            request = new DocumentStructureMoveRequest(
+                sourceNode,
+                targetNode,
+                direction < 0
+                    ? DocumentStructureDropPosition.Before
+                    : DocumentStructureDropPosition.After);
+            return true;
+        }
+
+        private static TextElement? GetAdjacent(
+            TextElement source,
+            int direction)
+        {
+            switch(source)
+            {
+                case Block block:
+                    return direction < 0
+                        ? block.PreviousBlock
+                        : block.NextBlock;
+
+                case ListItem item
+                    when item.Parent is System.Windows.Documents.List list:
+                {
+                    ListItem[] items = list.ListItems.Cast<ListItem>().ToArray();
+                    int index = Array.IndexOf(items, item) + direction;
+                    return index >= 0 && index < items.Length
+                        ? items[index]
+                        : null;
+                }
+
+                case TableRow row when row.Parent is TableRowGroup group:
+                {
+                    int index = group.Rows.IndexOf(row) + direction;
+                    return index >= 0 && index < group.Rows.Count
+                        ? group.Rows[index]
+                        : null;
+                }
+
+                default:
+                    return null;
+            }
         }
 
         private bool CanDelete(object? parameter) =>
@@ -526,6 +707,9 @@ namespace CryptoBook.ViewModels
         {
             refreshCommand.RaiseCanExecuteChanged();
             navigateCommand.RaiseCanExecuteChanged();
+            moveCommand.RaiseCanExecuteChanged();
+            moveUpCommand.RaiseCanExecuteChanged();
+            moveDownCommand.RaiseCanExecuteChanged();
             deleteCommand.RaiseCanExecuteChanged();
         }
     }

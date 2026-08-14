@@ -207,6 +207,246 @@ public sealed class DocumentStructureTests
             block => block is System.Windows.Documents.List);
     }
 
+    [WpfFact]
+    public void MoveCommand_MovesBlockIntoSectionAndPreservesSelection()
+    {
+        TestContext context = CreateContext();
+        var paragraph = new Paragraph(new Run("move me"));
+        var section = new Section(new Paragraph(new Run("target")));
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(paragraph);
+        context.RichTextBox.Document.Blocks.Add(section);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode root = Assert.Single(context.ViewModel.Nodes);
+        DocumentStructureNode source = Assert.Single(
+            Flatten(root),
+            node => ReferenceEquals(node.Source, paragraph));
+        DocumentStructureNode target = Assert.Single(
+            Flatten(root),
+            node => ReferenceEquals(node.Source, section));
+        long revisionBefore = context.DocumentSession.Revision;
+        var request = new DocumentStructureMoveRequest(
+            source,
+            target,
+            DocumentStructureDropPosition.Inside);
+
+        Assert.True(context.ViewModel.MoveCommand.CanExecute(request));
+        context.ViewModel.MoveCommand.Execute(request);
+
+        Assert.Same(section, context.RichTextBox.Document.Blocks.FirstBlock);
+        Assert.Same(paragraph, section.Blocks.LastBlock);
+        Assert.Equal(revisionBefore + 1, context.DocumentSession.Revision);
+        DocumentStructureNode refreshedRoot = Assert.Single(
+            context.ViewModel.Nodes);
+        Assert.True(Assert.Single(
+            Flatten(refreshedRoot),
+            node => ReferenceEquals(node.Source, section)).IsExpanded);
+        Assert.True(Assert.Single(
+            Flatten(refreshedRoot),
+            node => ReferenceEquals(node.Source, paragraph)).IsSelected);
+    }
+
+    [WpfFact]
+    public void MoveCommand_RejectsCyclesAndNoOpDrops()
+    {
+        TestContext context = CreateContext();
+        var child = new Section(new Paragraph(new Run("child")));
+        var parent = new Section(child);
+        var sibling = new Paragraph(new Run("sibling"));
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(parent);
+        context.RichTextBox.Document.Blocks.Add(sibling);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode root = Assert.Single(context.ViewModel.Nodes);
+        DocumentStructureNode parentNode = FindNode(root, parent);
+        DocumentStructureNode childNode = FindNode(root, child);
+        DocumentStructureNode siblingNode = FindNode(root, sibling);
+
+        Assert.False(context.ViewModel.MoveCommand.CanExecute(
+            new DocumentStructureMoveRequest(
+                parentNode,
+                childNode,
+                DocumentStructureDropPosition.Inside)));
+        Assert.False(context.ViewModel.MoveCommand.CanExecute(
+            new DocumentStructureMoveRequest(
+                parentNode,
+                siblingNode,
+                DocumentStructureDropPosition.Before)));
+    }
+
+    [WpfFact]
+    public void MoveCommand_MovesLastListItemAndRemovesEmptyList()
+    {
+        TestContext context = CreateContext();
+        var sourceItem = new ListItem(new Paragraph(new Run("source")));
+        var sourceList = new System.Windows.Documents.List(sourceItem);
+        var targetItem = new ListItem(new Paragraph(new Run("target")));
+        var targetList = new System.Windows.Documents.List(targetItem);
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(sourceList);
+        context.RichTextBox.Document.Blocks.Add(targetList);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode root = Assert.Single(context.ViewModel.Nodes);
+        var request = new DocumentStructureMoveRequest(
+            FindNode(root, sourceItem),
+            FindNode(root, targetList),
+            DocumentStructureDropPosition.Inside);
+
+        context.ViewModel.MoveCommand.Execute(request);
+
+        Assert.Single(context.RichTextBox.Document.Blocks);
+        Assert.Same(targetList, context.RichTextBox.Document.Blocks.FirstBlock);
+        Assert.Equal(2, targetList.ListItems.Count);
+        Assert.Same(sourceItem, targetList.ListItems.LastListItem);
+    }
+
+    [WpfFact]
+    public void MoveCommand_PreservesExpansionByElementInsteadOfOldPath()
+    {
+        TestContext context = CreateContext();
+        var first = new Section(new Paragraph(new Run("first")));
+        var second = new Section(new Paragraph(new Run("second")));
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(first);
+        context.RichTextBox.Document.Blocks.Add(second);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode root = Assert.Single(context.ViewModel.Nodes);
+        DocumentStructureNode firstNode = FindNode(root, first);
+        DocumentStructureNode secondNode = FindNode(root, second);
+        firstNode.IsExpanded = true;
+        secondNode.IsExpanded = false;
+
+        context.ViewModel.MoveCommand.Execute(
+            new DocumentStructureMoveRequest(
+                firstNode,
+                secondNode,
+                DocumentStructureDropPosition.After));
+
+        DocumentStructureNode refreshed = Assert.Single(
+            context.ViewModel.Nodes);
+        Assert.True(FindNode(refreshed, first).IsExpanded);
+        Assert.False(FindNode(refreshed, second).IsExpanded);
+    }
+
+    [WpfFact]
+    public void MoveUpAndDownCommands_ReorderOnlyCompatibleSiblings()
+    {
+        TestContext context = CreateContext();
+        var first = new Paragraph(new Run("first"));
+        var second = new Paragraph(new Run("second"));
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(first);
+        context.RichTextBox.Document.Blocks.Add(second);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode root = Assert.Single(context.ViewModel.Nodes);
+        DocumentStructureNode firstNode = FindNode(root, first);
+        Assert.False(context.ViewModel.MoveUpCommand.CanExecute(firstNode));
+        Assert.True(context.ViewModel.MoveDownCommand.CanExecute(firstNode));
+
+        context.ViewModel.MoveDownCommand.Execute(firstNode);
+
+        Assert.Same(second, context.RichTextBox.Document.Blocks.FirstBlock);
+        DocumentStructureNode refreshed = Assert.Single(
+            context.ViewModel.Nodes);
+        DocumentStructureNode movedNode = FindNode(refreshed, first);
+        Assert.True(context.ViewModel.MoveUpCommand.CanExecute(movedNode));
+        Assert.False(context.ViewModel.MoveDownCommand.CanExecute(movedNode));
+
+        context.RichTextBox.IsReadOnly = true;
+        Assert.False(context.ViewModel.MoveUpCommand.CanExecute(movedNode));
+    }
+
+    [WpfFact]
+    public void MoveCommand_ReordersTableRows()
+    {
+        TestContext context = CreateContext();
+        var first = new TableRow();
+        first.Cells.Add(new TableCell(new Paragraph(new Run("first"))));
+        var second = new TableRow();
+        second.Cells.Add(new TableCell(new Paragraph(new Run("second"))));
+        var group = new TableRowGroup();
+        group.Rows.Add(first);
+        group.Rows.Add(second);
+        var table = new Table();
+        table.RowGroups.Add(group);
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(table);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode root = Assert.Single(context.ViewModel.Nodes);
+        var request = new DocumentStructureMoveRequest(
+            FindNode(root, second),
+            FindNode(root, first),
+            DocumentStructureDropPosition.Before);
+
+        context.ViewModel.MoveCommand.Execute(request);
+
+        Assert.Same(second, group.Rows[0]);
+        Assert.Same(first, group.Rows[1]);
+    }
+
+    [WpfFact]
+    public void MoveCommand_UndoAndRedoRestoreOrderAsOneUnit()
+    {
+        TestContext context = CreateContext();
+        var host = new Window
+        {
+            Content = context.RichTextBox.Service,
+            Width = 320,
+            Height = 200,
+            ShowInTaskbar = false,
+            WindowStyle = WindowStyle.None
+        };
+        host.Show();
+        try
+        {
+            var first = new Paragraph(new Run("first"));
+            var second = new Paragraph(new Run("second"));
+            context.RichTextBox.Document.Blocks.Clear();
+            context.RichTextBox.Document.Blocks.Add(first);
+            context.RichTextBox.Document.Blocks.Add(second);
+            context.ViewModel.ToggleCommand.Execute(null);
+            context.RichTextBox.Service.IsUndoEnabled = false;
+            context.RichTextBox.Service.IsUndoEnabled = true;
+
+            DocumentStructureNode root = Assert.Single(
+                context.ViewModel.Nodes);
+            var request = new DocumentStructureMoveRequest(
+                FindNode(root, second),
+                FindNode(root, first),
+                DocumentStructureDropPosition.Before);
+            context.ViewModel.MoveCommand.Execute(request);
+
+            Assert.Same(
+                second,
+                context.RichTextBox.Document.Blocks.FirstBlock);
+            Assert.True(context.RichTextBox.CanUndo);
+
+            context.RichTextBox.Undo();
+
+            Assert.Equal(
+                "first",
+                GetBlockText(context.RichTextBox.Document.Blocks.FirstBlock!));
+            Assert.False(context.RichTextBox.CanUndo);
+            Assert.True(context.RichTextBox.CanRedo);
+
+            context.RichTextBox.Redo();
+
+            Assert.Equal(
+                "second",
+                GetBlockText(context.RichTextBox.Document.Blocks.FirstBlock!));
+        }
+        finally
+        {
+            host.Close();
+        }
+    }
+
     private static IEnumerable<DocumentStructureNode> Flatten(
         DocumentStructureNode root)
     {
@@ -217,6 +457,16 @@ public sealed class DocumentStructureTests
                 yield return descendant;
         }
     }
+
+    private static DocumentStructureNode FindNode(
+        DocumentStructureNode root,
+        FrameworkContentElement source) =>
+        Assert.Single(
+            Flatten(root),
+            node => ReferenceEquals(node.Source, source));
+
+    private static string GetBlockText(Block block) =>
+        new TextRange(block.ContentStart, block.ContentEnd).Text.Trim();
 
     private static TestContext CreateContext()
     {
@@ -232,6 +482,7 @@ public sealed class DocumentStructureTests
         var viewModel = new DocumentStructureViewModel(
             new FlowDocumentStructureBuilder(),
             new FlowDocumentWalker(),
+            new FlowDocumentMoveService(paragraphFactory),
             richTextBox,
             documentView,
             new EmbeddedImageLayoutService(documentSession),

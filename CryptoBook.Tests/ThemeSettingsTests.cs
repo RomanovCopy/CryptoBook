@@ -126,6 +126,11 @@ public sealed class ThemeSettingsTests
         Assert.IsType<Style>(styles[typeof(ComboBox)]);
         Assert.IsType<Style>(styles[typeof(ComboBoxItem)]);
         Assert.IsType<Style>(styles[typeof(ToggleButton)]);
+        Style checkBoxStyle = Assert.IsType<Style>(styles[typeof(CheckBox)]);
+        Assert.Contains(
+            checkBoxStyle.Setters.OfType<Setter>(),
+            setter => setter.Property == Control.TemplateProperty &&
+                setter.Value is ControlTemplate);
         Assert.IsType<Style>(styles[typeof(ListBoxItem)]);
         Assert.IsType<Style>(styles[typeof(ListViewItem)]);
         Assert.IsType<Style>(styles[typeof(TabControl)]);

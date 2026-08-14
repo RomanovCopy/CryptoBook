@@ -16,6 +16,9 @@ namespace CryptoBook.Interfaces
         ICommand ToggleCommand { get; }
         ICommand RefreshCommand { get; }
         ICommand NavigateCommand { get; }
+        ICommand MoveCommand { get; }
+        ICommand MoveUpCommand { get; }
+        ICommand MoveDownCommand { get; }
         ICommand DeleteCommand { get; }
     }
 }
