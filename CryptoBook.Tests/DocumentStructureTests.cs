@@ -208,6 +208,133 @@ public sealed class DocumentStructureTests
     }
 
     [WpfFact]
+    public void AddParagraphBeforeAndAfter_InsertsSelectsAndFocusesNewParagraph()
+    {
+        TestContext context = CreateContext();
+        var first = new Paragraph(new Run("first"));
+        var second = new Paragraph(new Run("second"));
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(first);
+        context.RichTextBox.Document.Blocks.Add(second);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode firstNode = FindNode(
+            Assert.Single(context.ViewModel.Nodes),
+            first);
+        context.ViewModel.AddParagraphBeforeCommand.Execute(firstNode);
+
+        Paragraph insertedBefore = Assert.IsAssignableFrom<Paragraph>(
+            context.RichTextBox.Document.Blocks.FirstBlock);
+        Assert.NotSame(first, insertedBefore);
+        Assert.Same(insertedBefore, context.RichTextBox.CaretPosition.Paragraph);
+        Assert.True(context.DocumentSession.IsDirty);
+        DocumentStructureNode selectedBefore = Assert.Single(
+            Flatten(Assert.Single(context.ViewModel.Nodes)),
+            node => node.IsSelected);
+        Assert.Same(insertedBefore, selectedBefore.Source);
+        Assert.StartsWith("Paragraph 1", selectedBefore.DisplayName);
+
+        firstNode = FindNode(
+            Assert.Single(context.ViewModel.Nodes),
+            first);
+        context.ViewModel.AddParagraphAfterCommand.Execute(firstNode);
+
+        Block[] blocks = context.RichTextBox.Document.Blocks.Cast<Block>().ToArray();
+        Assert.Equal(4, blocks.Length);
+        Assert.Same(insertedBefore, blocks[0]);
+        Assert.Same(first, blocks[1]);
+        Paragraph insertedAfter = Assert.IsAssignableFrom<Paragraph>(blocks[2]);
+        Assert.Same(second, blocks[3]);
+        Assert.Same(insertedAfter, context.RichTextBox.CaretPosition.Paragraph);
+        Assert.Same(
+            insertedAfter,
+            Assert.Single(
+                Flatten(Assert.Single(context.ViewModel.Nodes)),
+                node => node.IsSelected).Source);
+    }
+
+    [WpfFact]
+    public void AddParagraphInside_AppendsToEverySupportedOwnerAndExpandsSelection()
+    {
+        TestContext context = CreateContext();
+        var section = new Section(new Paragraph(new Run("section")));
+        var item = new ListItem(new Paragraph(new Run("item")));
+        var list = new System.Windows.Documents.List(item);
+        var cell = new TableCell(new Paragraph(new Run("cell")));
+        var row = new TableRow();
+        row.Cells.Add(cell);
+        var group = new TableRowGroup();
+        group.Rows.Add(row);
+        var table = new Table();
+        table.RowGroups.Add(group);
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(section);
+        context.RichTextBox.Document.Blocks.Add(list);
+        context.RichTextBox.Document.Blocks.Add(table);
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        ExecuteAddInside(context, context.RichTextBox.Document);
+        Assert.IsAssignableFrom<Paragraph>(
+            context.RichTextBox.Document.Blocks.LastBlock);
+
+        ExecuteAddInside(context, section);
+        Assert.Equal(2, section.Blocks.Count);
+
+        ExecuteAddInside(context, item);
+        Assert.Equal(2, item.Blocks.Count);
+
+        ExecuteAddInside(context, cell);
+        Assert.Equal(2, cell.Blocks.Count);
+        Paragraph inserted = Assert.IsAssignableFrom<Paragraph>(
+            cell.Blocks.LastBlock);
+        DocumentStructureNode root = Assert.Single(context.ViewModel.Nodes);
+        DocumentStructureNode selected = Assert.Single(
+            Flatten(root),
+            node => node.IsSelected);
+        Assert.Same(inserted, selected.Source);
+        Assert.True(root.IsExpanded);
+        Assert.True(FindNode(root, table).IsExpanded);
+        Assert.True(FindNode(root, row).IsExpanded);
+        Assert.True(FindNode(root, cell).IsExpanded);
+        Assert.Same(inserted, context.RichTextBox.CaretPosition.Paragraph);
+    }
+
+    [WpfFact]
+    public void AddParagraphCommand_UsesContainingBlockAndFallsBackToDocument()
+    {
+        TestContext context = CreateContext();
+        var run = new Run("first");
+        var first = new Paragraph(run);
+        var second = new Paragraph(new Run("second"));
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(first);
+        context.RichTextBox.Document.Blocks.Add(second);
+        context.ViewModel.IncludeTextElements = true;
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode runNode = FindNode(
+            Assert.Single(context.ViewModel.Nodes),
+            run);
+        context.ViewModel.AddParagraphCommand.Execute(runNode);
+
+        Block[] blocks = context.RichTextBox.Document.Blocks.Cast<Block>().ToArray();
+        Assert.Equal(3, blocks.Length);
+        Assert.Same(first, blocks[0]);
+        Paragraph insertedAfterFirst = Assert.IsAssignableFrom<Paragraph>(blocks[1]);
+        Assert.Same(second, blocks[2]);
+        Assert.Same(
+            insertedAfterFirst,
+            context.RichTextBox.CaretPosition.Paragraph);
+
+        context.ViewModel.AddParagraphCommand.Execute(null);
+
+        Assert.Equal(4, context.RichTextBox.Document.Blocks.Count);
+        Assert.Same(
+            context.RichTextBox.Document.Blocks.LastBlock,
+            context.RichTextBox.CaretPosition.Paragraph);
+    }
+
+    [WpfFact]
     public void MoveCommand_MovesBlockIntoSectionAndPreservesSelection()
     {
         TestContext context = CreateContext();
@@ -468,6 +595,17 @@ public sealed class DocumentStructureTests
     private static string GetBlockText(Block block) =>
         new TextRange(block.ContentStart, block.ContentEnd).Text.Trim();
 
+    private static void ExecuteAddInside(
+        TestContext context,
+        FrameworkContentElement source)
+    {
+        DocumentStructureNode node = FindNode(
+            Assert.Single(context.ViewModel.Nodes),
+            source);
+        Assert.True(context.ViewModel.AddParagraphInsideCommand.CanExecute(node));
+        context.ViewModel.AddParagraphInsideCommand.Execute(node);
+    }
+
     private static TestContext CreateContext()
     {
         var paragraphFactory = new TestParagraphFactory();
@@ -479,16 +617,17 @@ public sealed class DocumentStructureTests
         documentSession.SetDisplayName("Untitled.cbook");
         var bookmarks = new BookmarksService(richTextBox);
         var documentView = new DocumentViewStub();
+        var walker = new FlowDocumentWalker();
         var viewModel = new DocumentStructureViewModel(
             new FlowDocumentStructureBuilder(),
-            new FlowDocumentWalker(),
+            walker,
+            new FlowDocumentContentService(walker, paragraphFactory),
             new FlowDocumentMoveService(paragraphFactory),
             richTextBox,
             documentView,
             new EmbeddedImageLayoutService(documentSession),
             bookmarks,
             documentSession,
-            paragraphFactory,
             new ConfirmationMessageService());
 
         return new TestContext(

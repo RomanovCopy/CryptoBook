@@ -66,9 +66,19 @@ namespace CryptoBook.DTO
             }
         }
 
-        public string DisplayName => string.IsNullOrWhiteSpace(Summary)
-            ? TypeName
-            : $"{TypeName} — {Summary}";
+        public string DisplayName
+        {
+            get
+            {
+                string label = Source is Paragraph &&
+                    TryGetPathIndex(Path, out int index)
+                    ? $"{TypeName} {index}"
+                    : TypeName;
+                return string.IsNullOrWhiteSpace(Summary)
+                    ? label
+                    : $"{label} — {Summary}";
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -77,5 +87,24 @@ namespace CryptoBook.DTO
             PropertyChanged?.Invoke(
                 this,
                 new PropertyChangedEventArgs(propertyName));
+
+        private static bool TryGetPathIndex(
+            string path,
+            out int index)
+        {
+            index = 0;
+            int closingBracket = path.LastIndexOf(']');
+            if(closingBracket != path.Length - 1)
+                return false;
+
+            int openingBracket = path.LastIndexOf('[', closingBracket);
+            return openingBracket >= 0 &&
+                closingBracket == path.Length - 1 &&
+                int.TryParse(
+                    path.AsSpan(
+                        openingBracket + 1,
+                        closingBracket - openingBracket - 1),
+                    out index);
+        }
     }
 }

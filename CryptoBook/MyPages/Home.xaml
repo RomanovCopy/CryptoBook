@@ -465,6 +465,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding [Editor.DocumentStructure], Source={StaticResource Res}}"
                                        Foreground="{DynamicResource CurrentWindowForeground}"
@@ -472,6 +473,15 @@
                                        FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
                             <Button Grid.Column="1"
+                                    Width="28" Height="28" Margin="4,0,0,0"
+                                    Padding="0"
+                                    Command="{Binding DocumentStructure.AddParagraphCommand}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"
+                                    ToolTip="{Binding [Editor.DocumentStructureAddParagraph], Source={StaticResource Res}}">
+                                <TextBlock Text="&#xE710;"
+                                           FontFamily="Segoe MDL2 Assets"/>
+                            </Button>
+                            <Button Grid.Column="2"
                                     Width="28" Height="28" Margin="4,0"
                                     Padding="0"
                                     Command="{Binding DocumentStructure.RefreshCommand}"
@@ -479,7 +489,7 @@
                                 <TextBlock Text="&#xE72C;"
                                            FontFamily="Segoe MDL2 Assets"/>
                             </Button>
-                            <Button Grid.Column="2"
+                            <Button Grid.Column="3"
                                     Width="28" Height="28" Padding="0"
                                     Command="{Binding DocumentStructure.ToggleCommand}"
                                     ToolTip="{Binding [Common.Close], Source={StaticResource Res}}">
@@ -573,6 +583,8 @@
                                            BasedOn="{StaticResource DiskTree_TreeViewItemStyle}">
                                         <Setter Property="IsExpanded"
                                                 Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                        <Setter Property="IsSelected"
+                                                Value="{Binding IsSelected, Mode=TwoWay}"/>
                                         <Setter Property="Tag"
                                                 Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=TreeView}}"/>
                                         <Setter Property="ContextMenu">
@@ -580,6 +592,16 @@
                                                 <ContextMenu Style="{StaticResource RichTextContextMenuStyle}">
                                                     <MenuItem Header="{Binding [Editor.DocumentStructureNavigate], Source={StaticResource Res}}"
                                                               Command="{Binding PlacementTarget.Tag.NavigateCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureAddParagraphBefore], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.AddParagraphBeforeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureAddParagraphInside], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.AddParagraphInsideCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureAddParagraphAfter], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.AddParagraphAfterCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                                     <Separator/>
                                                     <MenuItem Header="{Binding [Editor.DocumentStructureMoveUp], Source={StaticResource Res}}"
@@ -598,6 +620,10 @@
                                     </Style>
                                 </TreeView.ItemContainerStyle>
                                 <TreeView.InputBindings>
+                                    <KeyBinding Key="Enter"
+                                                Modifiers="Control"
+                                                Command="{Binding AddParagraphCommand}"
+                                                CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"/>
                                     <KeyBinding Key="Up"
                                                 Modifiers="Alt"
                                                 Command="{Binding MoveUpCommand}"

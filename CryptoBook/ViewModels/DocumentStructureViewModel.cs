@@ -17,7 +17,8 @@ namespace CryptoBook.ViewModels
 {
     /// <summary>
     /// Синхронизирует раскрываемую панель структуры с текущим FlowDocument и
-    /// выполняет навигацию/удаление только после проверки живой WPF-ссылки.
+    /// выполняет навигацию и изменение структуры только после проверки живой
+    /// WPF-ссылки.
     /// </summary>
     public sealed class DocumentStructureViewModel:
         ViewModelBase,
@@ -28,19 +29,23 @@ namespace CryptoBook.ViewModels
 
         private readonly IFlowDocumentStructureBuilder structureBuilder;
         private readonly IFlowDocumentWalker documentWalker;
+        private readonly IFlowDocumentContentService contentService;
         private readonly IFlowDocumentMoveService moveService;
         private readonly IRichTextBoxService richTextBox;
         private readonly IRichtextboxViewModel documentView;
         private readonly IEmbeddedImageLayoutService imageLayoutService;
         private readonly IBookmarkService bookmarkService;
         private readonly IDocumentSession documentSession;
-        private readonly IParagraphFactory paragraphFactory;
         private readonly IMessageService messageService;
         private readonly DispatcherTimer refreshTimer;
         private readonly IDocumentReplacementNotifier? documentNotifier;
         private readonly RelayCommand toggleCommand;
         private readonly RelayCommand refreshCommand;
         private readonly RelayCommand navigateCommand;
+        private readonly RelayCommand addParagraphCommand;
+        private readonly RelayCommand addParagraphBeforeCommand;
+        private readonly RelayCommand addParagraphInsideCommand;
+        private readonly RelayCommand addParagraphAfterCommand;
         private readonly RelayCommand moveCommand;
         private readonly RelayCommand moveUpCommand;
         private readonly RelayCommand moveDownCommand;
@@ -53,19 +58,21 @@ namespace CryptoBook.ViewModels
         public DocumentStructureViewModel(
             IFlowDocumentStructureBuilder structureBuilder,
             IFlowDocumentWalker documentWalker,
+            IFlowDocumentContentService contentService,
             IFlowDocumentMoveService moveService,
             IRichTextBoxService richTextBox,
             IRichtextboxViewModel documentView,
             IEmbeddedImageLayoutService imageLayoutService,
             IBookmarkService bookmarkService,
             IDocumentSession documentSession,
-            IParagraphFactory paragraphFactory,
             IMessageService messageService)
         {
             this.structureBuilder = structureBuilder ??
                 throw new ArgumentNullException(nameof(structureBuilder));
             this.documentWalker = documentWalker ??
                 throw new ArgumentNullException(nameof(documentWalker));
+            this.contentService = contentService ??
+                throw new ArgumentNullException(nameof(contentService));
             this.moveService = moveService ??
                 throw new ArgumentNullException(nameof(moveService));
             this.richTextBox = richTextBox ??
@@ -78,8 +85,6 @@ namespace CryptoBook.ViewModels
                 throw new ArgumentNullException(nameof(bookmarkService));
             this.documentSession = documentSession ??
                 throw new ArgumentNullException(nameof(documentSession));
-            this.paragraphFactory = paragraphFactory ??
-                throw new ArgumentNullException(nameof(paragraphFactory));
             this.messageService = messageService ??
                 throw new ArgumentNullException(nameof(messageService));
 
@@ -92,6 +97,30 @@ namespace CryptoBook.ViewModels
             navigateCommand = new RelayCommand(
                 NavigateTo,
                 CanNavigateTo);
+            addParagraphCommand = new RelayCommand(
+                AddNextParagraph,
+                CanAddNextParagraph);
+            addParagraphBeforeCommand = new RelayCommand(
+                parameter => AddParagraph(
+                    parameter,
+                    DocumentStructureDropPosition.Before),
+                parameter => CanAddParagraph(
+                    parameter,
+                    DocumentStructureDropPosition.Before));
+            addParagraphInsideCommand = new RelayCommand(
+                parameter => AddParagraph(
+                    parameter,
+                    DocumentStructureDropPosition.Inside),
+                parameter => CanAddParagraph(
+                    parameter,
+                    DocumentStructureDropPosition.Inside));
+            addParagraphAfterCommand = new RelayCommand(
+                parameter => AddParagraph(
+                    parameter,
+                    DocumentStructureDropPosition.After),
+                parameter => CanAddParagraph(
+                    parameter,
+                    DocumentStructureDropPosition.After));
             moveCommand = new RelayCommand(
                 MoveElement,
                 CanMoveElement);
@@ -166,6 +195,10 @@ namespace CryptoBook.ViewModels
         public ICommand ToggleCommand => toggleCommand;
         public ICommand RefreshCommand => refreshCommand;
         public ICommand NavigateCommand => navigateCommand;
+        public ICommand AddParagraphCommand => addParagraphCommand;
+        public ICommand AddParagraphBeforeCommand => addParagraphBeforeCommand;
+        public ICommand AddParagraphInsideCommand => addParagraphInsideCommand;
+        public ICommand AddParagraphAfterCommand => addParagraphAfterCommand;
         public ICommand MoveCommand => moveCommand;
         public ICommand MoveUpCommand => moveUpCommand;
         public ICommand MoveDownCommand => moveDownCommand;
@@ -217,9 +250,13 @@ namespace CryptoBook.ViewModels
                 node.IsExpanded = expandedLocations.ContainsKey(node.Source) ||
                     fallbackExpandedPaths.Contains(node.Path) ||
                     !hadSnapshot && ReferenceEquals(node, root);
-                node.IsSelected = ReferenceEquals(
-                    node.Source,
-                    selectedSource);
+            }
+            DocumentStructureNode? selectedNode = currentNodes.FirstOrDefault(
+                node => ReferenceEquals(node.Source, selectedSource));
+            if(selectedNode is not null)
+            {
+                selectedNode.IsSelected = true;
+                ExpandAncestors(root, selectedNode);
             }
             Nodes.Add(root);
             HasNodes = root.Children.Count > 0;
@@ -303,7 +340,12 @@ namespace CryptoBook.ViewModels
                 return;
             }
 
-            TextPointer position = node.Element?.ContentStart ??
+            NavigateTo(node.Source);
+        }
+
+        private void NavigateTo(FrameworkContentElement source)
+        {
+            TextPointer position = (source as TextElement)?.ContentStart ??
                 richTextBox.Document.ContentStart;
             TextPointer insertion =
                 position.GetInsertionPosition(LogicalDirection.Forward) ??
@@ -314,6 +356,134 @@ namespace CryptoBook.ViewModels
             richTextBox.Selection.Select(insertion, insertion);
             richTextBox.Focus();
             richTextBox.ScrollToCaret();
+        }
+
+        private bool CanAddNextParagraph(object? parameter) =>
+            TryResolveNextParagraphTarget(
+                parameter,
+                out FrameworkContentElement target,
+                out DocumentStructureDropPosition position) &&
+            CanAddParagraph(target, position);
+
+        private void AddNextParagraph(object? parameter)
+        {
+            if(TryResolveNextParagraphTarget(
+                parameter,
+                out FrameworkContentElement target,
+                out DocumentStructureDropPosition position))
+            {
+                AddParagraph(target, position);
+            }
+        }
+
+        private bool CanAddParagraph(
+            object? parameter,
+            DocumentStructureDropPosition position) =>
+            parameter switch
+            {
+                DocumentStructureNode node =>
+                    CanAddParagraph(node.Source, position),
+                FrameworkContentElement target =>
+                    CanAddParagraph(target, position),
+                _ => false
+            };
+
+        private bool CanAddParagraph(
+            FrameworkContentElement target,
+            DocumentStructureDropPosition position) =>
+            IsEditingEnabled &&
+            IsAttached(target) &&
+            contentService.CanInsertParagraph(target, position);
+
+        private void AddParagraph(
+            object? parameter,
+            DocumentStructureDropPosition position)
+        {
+            FrameworkContentElement? target = parameter switch
+            {
+                DocumentStructureNode node => node.Source,
+                FrameworkContentElement element => element,
+                _ => null
+            };
+            if(target is null)
+                return;
+
+            AddParagraph(target, position);
+        }
+
+        private void AddParagraph(
+            FrameworkContentElement target,
+            DocumentStructureDropPosition position)
+        {
+            if(!CanAddParagraph(target, position))
+                return;
+
+            long revisionBefore = documentSession.Revision;
+            Paragraph? paragraph = null;
+            richTextBox.BeginChange();
+            try
+            {
+                paragraph = contentService.InsertParagraph(target, position);
+            }
+            catch(Exception exception) when(
+                exception is InvalidOperationException or ArgumentException)
+            {
+                Debug.WriteLine(exception);
+            }
+            finally
+            {
+                richTextBox.EndChange();
+            }
+
+            if(paragraph is null)
+                return;
+
+            if(documentSession.Revision == revisionBefore)
+                documentSession.MarkDirty();
+
+            RefreshNow(paragraph);
+            NavigateTo(paragraph);
+        }
+
+        private bool TryResolveNextParagraphTarget(
+            object? parameter,
+            out FrameworkContentElement target,
+            out DocumentStructureDropPosition position)
+        {
+            FrameworkContentElement source = parameter switch
+            {
+                DocumentStructureNode node => node.Source,
+                FrameworkContentElement element => element,
+                _ => richTextBox.Document
+            };
+
+            if(contentService.CanInsertParagraph(
+                source,
+                DocumentStructureDropPosition.Inside))
+            {
+                target = source;
+                position = DocumentStructureDropPosition.Inside;
+                return IsAttached(target);
+            }
+
+            FrameworkContentElement? current = source;
+            while(current is not null)
+            {
+                if(contentService.CanInsertParagraph(
+                    current,
+                    DocumentStructureDropPosition.After))
+                {
+                    target = current;
+                    position = DocumentStructureDropPosition.After;
+                    return IsAttached(target);
+                }
+
+                current = current.Parent as FrameworkContentElement;
+            }
+
+            target = null!;
+            position = default;
+            return false;
         }
 
         private bool CanMoveElement(object? parameter) =>
@@ -547,15 +717,15 @@ namespace CryptoBook.ViewModels
             switch(owner)
             {
                 case ListItem item when item.Blocks.Count == 0:
-                    item.Blocks.Add(CreateParagraph());
+                    item.Blocks.Add(contentService.CreateParagraph());
                     break;
 
                 case TableCell cell when cell.Blocks.Count == 0:
-                    cell.Blocks.Add(CreateParagraph());
+                    cell.Blocks.Add(contentService.CreateParagraph());
                     break;
 
                 case Section section when section.Blocks.Count == 0:
-                    section.Blocks.Add(CreateParagraph());
+                    section.Blocks.Add(contentService.CreateParagraph());
                     break;
 
                 case AnchoredBlock anchoredBlock
@@ -601,19 +771,9 @@ namespace CryptoBook.ViewModels
                 }
 
                 case FlowDocument when document.Blocks.Count == 0:
-                    document.Blocks.Add(CreateParagraph());
+                    document.Blocks.Add(contentService.CreateParagraph());
                     break;
             }
-        }
-
-        private Paragraph CreateParagraph()
-        {
-            IParagraphService paragraph = paragraphFactory.Create();
-            paragraph.Margin = new Thickness(0);
-            paragraph.Element.ClearValue(Paragraph.LineHeightProperty);
-            paragraph.LineStackingStrategy =
-                LineStackingStrategy.MaxHeight;
-            return paragraph.Element;
         }
 
         private void RestoreCaret(FlowDocument document, int offset)
@@ -703,10 +863,33 @@ namespace CryptoBook.ViewModels
             }
         }
 
+        private static bool ExpandAncestors(
+            DocumentStructureNode current,
+            DocumentStructureNode selected)
+        {
+            if(ReferenceEquals(current, selected))
+                return true;
+
+            foreach(DocumentStructureNode child in current.Children)
+            {
+                if(!ExpandAncestors(child, selected))
+                    continue;
+
+                current.IsExpanded = true;
+                return true;
+            }
+
+            return false;
+        }
+
         private void RaiseCommandStates()
         {
             refreshCommand.RaiseCanExecuteChanged();
             navigateCommand.RaiseCanExecuteChanged();
+            addParagraphCommand.RaiseCanExecuteChanged();
+            addParagraphBeforeCommand.RaiseCanExecuteChanged();
+            addParagraphInsideCommand.RaiseCanExecuteChanged();
+            addParagraphAfterCommand.RaiseCanExecuteChanged();
             moveCommand.RaiseCanExecuteChanged();
             moveUpCommand.RaiseCanExecuteChanged();
             moveDownCommand.RaiseCanExecuteChanged();

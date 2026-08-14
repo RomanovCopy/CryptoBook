@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
+using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
 namespace CryptoBook.Services
@@ -14,51 +15,110 @@ namespace CryptoBook.Services
     public sealed class FlowDocumentContentService: IFlowDocumentContentService
     {
         private readonly IFlowDocumentWalker _walker;
+        private readonly IParagraphFactory _paragraphFactory;
 
-        public FlowDocumentContentService( IFlowDocumentWalker walker)
+        public FlowDocumentContentService(
+            IFlowDocumentWalker walker,
+            IParagraphFactory paragraphFactory)
         {
             _walker = walker ?? throw new ArgumentNullException(nameof(walker));
+            _paragraphFactory = paragraphFactory ??
+                throw new ArgumentNullException(nameof(paragraphFactory));
+        }
+
+        public Paragraph CreateParagraph(string text = "")
+        {
+            IParagraphService paragraph = _paragraphFactory.Create();
+            paragraph.Margin = new Thickness(0);
+            paragraph.Element.ClearValue(Paragraph.LineHeightProperty);
+            paragraph.LineStackingStrategy = LineStackingStrategy.MaxHeight;
+
+            if(!string.IsNullOrEmpty(text))
+                paragraph.Inlines.Add(new Run(text));
+
+            return paragraph.Element;
+        }
+
+        public bool CanInsertParagraph(
+            FrameworkContentElement target,
+            DocumentStructureDropPosition position)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+
+            return position switch
+            {
+                DocumentStructureDropPosition.Before or
+                DocumentStructureDropPosition.After =>
+                    target is Block block && CanOwnBlocks(block.Parent),
+
+                DocumentStructureDropPosition.Inside =>
+                    CanOwnBlocks(target),
+
+                _ => false
+            };
+        }
+
+        public Paragraph InsertParagraph(
+            FrameworkContentElement target,
+            DocumentStructureDropPosition position,
+            string text = "")
+        {
+            ArgumentNullException.ThrowIfNull(target);
+
+            if(!CanInsertParagraph(target, position))
+            {
+                throw new InvalidOperationException(
+                    "Невозможно вставить Paragraph в указанную позицию.");
+            }
+
+            Paragraph paragraph = CreateParagraph(text);
+            bool inserted = position switch
+            {
+                DocumentStructureDropPosition.Before when target is TextElement element =>
+                    _walker.InsertBefore(element, paragraph),
+                DocumentStructureDropPosition.After when target is TextElement element =>
+                    _walker.InsertAfter(element, paragraph),
+                DocumentStructureDropPosition.Inside =>
+                    InsertInside(target, paragraph),
+                _ => false
+            };
+
+            if(!inserted)
+            {
+                throw new InvalidOperationException(
+                    "Не удалось вставить Paragraph в указанную позицию.");
+            }
+
+            return paragraph;
         }
 
         public Paragraph AddParagraph( FlowDocument document, string text = "")
         {
             ArgumentNullException.ThrowIfNull(document);
-
-            var paragraph = CreateParagraph(text);
-
-            document.Blocks.Add(paragraph);
-
-            return paragraph;
+            return InsertParagraph(
+                document,
+                DocumentStructureDropPosition.Inside,
+                text);
         }
 
         public Paragraph AddParagraphAfter( TextElement target, string text = "")
         {
             ArgumentNullException.ThrowIfNull(target);
 
-            var paragraph = CreateParagraph(text);
-
-            if(!_walker.InsertAfter(target, paragraph))
-            {
-                throw new InvalidOperationException(
-                    "Не удалось вставить Paragraph после указанного элемента.");
-            }
-
-            return paragraph;
+            return InsertParagraph(
+                target,
+                DocumentStructureDropPosition.After,
+                text);
         }
 
         public Paragraph AddParagraphBefore( TextElement target, string text = "")
         {
             ArgumentNullException.ThrowIfNull(target);
 
-            var paragraph = CreateParagraph(text);
-
-            if(!_walker.InsertBefore(target, paragraph))
-            {
-                throw new InvalidOperationException(
-                    "Не удалось вставить Paragraph перед указанным элементом.");
-            }
-
-            return paragraph;
+            return InsertParagraph(
+                target,
+                DocumentStructureDropPosition.Before,
+                text);
         }
 
         public Run AddRun( Paragraph paragraph, string text)
@@ -170,7 +230,7 @@ namespace CryptoBook.Services
                 for(var c = 0; c < columns; c++)
                 {
                     var cell = new TableCell(
-                        new Paragraph());
+                        CreateParagraph());
 
                     row.Cells.Add(cell);
                 }
@@ -200,18 +260,30 @@ namespace CryptoBook.Services
             document.Blocks.Clear();
         }
 
-        private static Paragraph CreateParagraph(
-            string text)
+        private static bool CanOwnBlocks(DependencyObject? owner) =>
+            owner is FlowDocument or Section or ListItem or TableCell;
+
+        private static bool InsertInside(
+            FrameworkContentElement target,
+            Paragraph paragraph)
         {
-            var paragraph = new Paragraph();
-
-            if(!string.IsNullOrEmpty(text))
+            switch(target)
             {
-                paragraph.Inlines.Add(
-                    new Run(text));
+                case FlowDocument document:
+                    document.Blocks.Add(paragraph);
+                    return true;
+                case Section section:
+                    section.Blocks.Add(paragraph);
+                    return true;
+                case ListItem item:
+                    item.Blocks.Add(paragraph);
+                    return true;
+                case TableCell cell:
+                    cell.Blocks.Add(paragraph);
+                    return true;
+                default:
+                    return false;
             }
-
-            return paragraph;
         }
     }
 }

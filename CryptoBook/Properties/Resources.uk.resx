@@ -738,13 +738,25 @@
     <value>Показувати текстові елементи (Run, Span)</value>
   </data>
   <data name="Editor.DocumentStructurePreviewReadOnly" xml:space="preserve">
-    <value>У режимі перегляду перехід і видалення вимкнено.</value>
+    <value>У режимі перегляду навігацію та зміну структури вимкнено.</value>
   </data>
   <data name="Editor.DocumentStructureEmpty" xml:space="preserve">
     <value>У документі немає структурних елементів.</value>
   </data>
   <data name="Editor.DocumentStructureNavigate" xml:space="preserve">
     <value>Перейти до елемента</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraph" xml:space="preserve">
+    <value>Додати абзац (Ctrl+Enter)</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraphBefore" xml:space="preserve">
+    <value>Додати абзац перед</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraphInside" xml:space="preserve">
+    <value>Додати абзац усередину</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraphAfter" xml:space="preserve">
+    <value>Додати абзац після</value>
   </data>
   <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve">
     <value>Видалення елемента документа</value>
@@ -759,7 +771,7 @@
     <value>Перемістити нижче</value>
   </data>
   <data name="Editor.DocumentStructureMoveHint" xml:space="preserve">
-    <value>Перетягніть елемент до, всередину або після сумісного елемента. Alt+↑/↓ змінює порядок.</value>
+    <value>Перетягніть елемент до, всередину або після сумісного елемента. Alt+↑/↓ змінює порядок; Ctrl+Enter додає наступний абзац.</value>
   </data>
   <data name="Bookmarks.Properties" xml:space="preserve">
     <value>Властивості закладки</value>

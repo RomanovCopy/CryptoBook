@@ -6,10 +6,23 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
+using CryptoBook.DTO;
+
 namespace CryptoBook.Interfaces
 {
     public interface IFlowDocumentContentService: IService
     {
+        Paragraph CreateParagraph(string text = "");
+
+        bool CanInsertParagraph(
+            FrameworkContentElement target,
+            DocumentStructureDropPosition position);
+
+        Paragraph InsertParagraph(
+            FrameworkContentElement target,
+            DocumentStructureDropPosition position,
+            string text = "");
+
         Paragraph AddParagraph( FlowDocument document, string text = "");
 
         Paragraph AddParagraphAfter( TextElement target, string text = "");
