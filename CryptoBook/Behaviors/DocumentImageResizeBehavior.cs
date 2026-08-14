@@ -34,6 +34,18 @@ namespace CryptoBook.Behaviors
                 nameof(SetImageLayoutCommand),
                 typeof(DocumentImageResizeBehavior));
 
+        public static RoutedUICommand MoveImageUpCommand { get; } =
+            new(
+                LocalizationManager.GetString("Editor.ImageMoveUp"),
+                nameof(MoveImageUpCommand),
+                typeof(DocumentImageResizeBehavior));
+
+        public static RoutedUICommand MoveImageDownCommand { get; } =
+            new(
+                LocalizationManager.GetString("Editor.ImageMoveDown"),
+                nameof(MoveImageDownCommand),
+                typeof(DocumentImageResizeBehavior));
+
         public static readonly DependencyProperty IsEnabledProperty =
             DependencyProperty.RegisterAttached(
                 "IsEnabled",
@@ -127,6 +139,10 @@ namespace CryptoBook.Behaviors
             private double originalImageOpacity;
             private bool isDraggingImage;
             private readonly CommandBinding setLayoutCommandBinding;
+            private readonly CommandBinding moveImageUpCommandBinding;
+            private readonly CommandBinding moveImageDownCommandBinding;
+            private readonly KeyBinding moveImageUpKeyBinding;
+            private readonly KeyBinding moveImageDownKeyBinding;
             private bool disposed;
 
             public BehaviorState(WpfRichTextBox richTextBox)
@@ -149,6 +165,26 @@ namespace CryptoBook.Behaviors
                     OnSetImageLayout,
                     OnCanSetImageLayout);
                 richTextBox.CommandBindings.Add(setLayoutCommandBinding);
+
+                moveImageUpCommandBinding = new CommandBinding(
+                    MoveImageUpCommand,
+                    OnMoveImageUp,
+                    OnCanMoveImageUp);
+                moveImageDownCommandBinding = new CommandBinding(
+                    MoveImageDownCommand,
+                    OnMoveImageDown,
+                    OnCanMoveImageDown);
+                richTextBox.CommandBindings.Add(moveImageUpCommandBinding);
+                richTextBox.CommandBindings.Add(moveImageDownCommandBinding);
+
+                moveImageUpKeyBinding = new KeyBinding(
+                    MoveImageUpCommand,
+                    new KeyGesture(Key.Up, ModifierKeys.Alt));
+                moveImageDownKeyBinding = new KeyBinding(
+                    MoveImageDownCommand,
+                    new KeyGesture(Key.Down, ModifierKeys.Alt));
+                richTextBox.InputBindings.Add(moveImageUpKeyBinding);
+                richTextBox.InputBindings.Add(moveImageDownKeyBinding);
             }
 
             public void Dispose()
@@ -171,6 +207,12 @@ namespace CryptoBook.Behaviors
                 richTextBox.Unloaded -= OnUnloaded;
                 richTextBox.CommandBindings.Remove(
                     setLayoutCommandBinding);
+                richTextBox.CommandBindings.Remove(
+                    moveImageUpCommandBinding);
+                richTextBox.CommandBindings.Remove(
+                    moveImageDownCommandBinding);
+                richTextBox.InputBindings.Remove(moveImageUpKeyBinding);
+                richTextBox.InputBindings.Remove(moveImageDownKeyBinding);
             }
 
             private void OnPreviewMouseLeftButtonDown(
@@ -180,7 +222,7 @@ namespace CryptoBook.Behaviors
                 bool insideAdorner =
                     IsInsideActiveAdorner(args.OriginalSource);
                 if(insideAdorner &&
-                   IsInsideResizeThumb(args.OriginalSource))
+                   IsInsideAdornerControl(args.OriginalSource))
                 {
                     return;
                 }
@@ -344,6 +386,95 @@ namespace CryptoBook.Behaviors
                     DispatcherPriority.Loaded);
             }
 
+            private void OnCanMoveImageUp(
+                object sender,
+                CanExecuteRoutedEventArgs args) =>
+                CanMoveSelectedImage(args, moveUp: true);
+
+            private void OnCanMoveImageDown(
+                object sender,
+                CanExecuteRoutedEventArgs args) =>
+                CanMoveSelectedImage(args, moveUp: false);
+
+            private void CanMoveSelectedImage(
+                CanExecuteRoutedEventArgs args,
+                bool moveUp)
+            {
+                IEmbeddedImageLayoutService? layoutService =
+                    GetImageLayoutService(richTextBox);
+                args.CanExecute =
+                    !richTextBox.IsReadOnly &&
+                    selectedImage is { } image &&
+                    layoutService is not null &&
+                    (moveUp
+                        ? layoutService.CanMoveUp(image)
+                        : layoutService.CanMoveDown(image));
+                args.Handled = true;
+            }
+
+            private void OnMoveImageUp(
+                object sender,
+                ExecutedRoutedEventArgs args) =>
+                MoveSelectedImage(args, moveUp: true);
+
+            private void OnMoveImageDown(
+                object sender,
+                ExecutedRoutedEventArgs args) =>
+                MoveSelectedImage(args, moveUp: false);
+
+            private void MoveSelectedImage(
+                ExecutedRoutedEventArgs args,
+                bool moveUp)
+            {
+                if(selectedImage is not { } image ||
+                   GetImageLayoutService(richTextBox) is not
+                       { } layoutService)
+                {
+                    return;
+                }
+
+                args.Handled = true;
+                ImageLayoutMode mode = layoutService.GetLayout(image);
+                ClearSelection();
+
+                bool moved;
+                richTextBox.BeginChange();
+                try
+                {
+                    moved = moveUp
+                        ? layoutService.MoveUp(image)
+                        : layoutService.MoveDown(image);
+                    if(moved)
+                    {
+                        richTextBox.CaretPosition =
+                            layoutService.GetTextInsertionPosition(
+                                image,
+                                mode);
+                    }
+                } finally
+                {
+                    richTextBox.EndChange();
+                }
+
+                richTextBox.Focus();
+                if(!moved)
+                {
+                    Select(image);
+                    return;
+                }
+
+                richTextBox.Dispatcher.BeginInvoke(
+                    () =>
+                    {
+                        if(!IsInDocument(image, richTextBox.Document))
+                            return;
+
+                        Select(image);
+                        image.BringIntoView();
+                    },
+                    DispatcherPriority.Loaded);
+            }
+
             private void OnTextChanged(
                 object sender,
                 TextChangedEventArgs args)
@@ -482,8 +613,14 @@ namespace CryptoBook.Behaviors
                 adorner = new ImageResizeAdorner(
                     image,
                     imageEditor,
-                    () => GetAvailableWidth(richTextBox, image));
+                    () => GetAvailableWidth(richTextBox, image),
+                    MoveImageUpCommand,
+                    MoveImageDownCommand,
+                    richTextBox,
+                    LocalizationManager.GetString("Editor.ImageMoveUpHint"),
+                    LocalizationManager.GetString("Editor.ImageMoveDownHint"));
                 adornerLayer.Add(adorner);
+                CommandManager.InvalidateRequerySuggested();
             }
 
             private void ClearSelection()
@@ -494,6 +631,7 @@ namespace CryptoBook.Behaviors
                 adorner = null;
                 adornerLayer = null;
                 selectedImage = null;
+                CommandManager.InvalidateRequerySuggested();
             }
 
             private bool IsInsideActiveAdorner(object? source)
@@ -513,12 +651,13 @@ namespace CryptoBook.Behaviors
                 return false;
             }
 
-            private static bool IsInsideResizeThumb(object? source)
+            private static bool IsInsideAdornerControl(object? source)
             {
                 DependencyObject? current = source as DependencyObject;
                 while(current is not null)
                 {
-                    if(current is System.Windows.Controls.Primitives.Thumb)
+                    if(current is System.Windows.Controls.Primitives.Thumb or
+                       System.Windows.Controls.Primitives.ButtonBase)
                         return true;
 
                     current = GetParent(current);

@@ -399,6 +399,10 @@
   <data name="Editor.ImageFloatLeft" xml:space="preserve"><value>Обтекание: изображение _слева</value></data>
   <data name="Editor.ImageFloatRight" xml:space="preserve"><value>Обтекание: изображение с_права</value></data>
   <data name="Editor.ImageLayoutCommand" xml:space="preserve"><value>Изменить размещение изображения</value></data>
+  <data name="Editor.ImageMoveUp" xml:space="preserve"><value>Переместить изображение выше</value></data>
+  <data name="Editor.ImageMoveDown" xml:space="preserve"><value>Переместить изображение ниже</value></data>
+  <data name="Editor.ImageMoveUpHint" xml:space="preserve"><value>Нажмите ↑ или Alt+↑, чтобы переместить изображение выше</value></data>
+  <data name="Editor.ImageMoveDownHint" xml:space="preserve"><value>Нажмите ↓ или Alt+↓, чтобы переместить изображение ниже</value></data>
   <data name="Editor.PagedPreview" xml:space="preserve"><value>Постраничный просмотр</value></data>
   <data name="Editor.Editing" xml:space="preserve"><value>Редактирование</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Редактор</value></data>

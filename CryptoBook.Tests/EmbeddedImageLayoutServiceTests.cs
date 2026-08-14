@@ -350,6 +350,96 @@ namespace CryptoBook.Tests
                 figure.PreviousInline).Text);
         }
 
+        [WpfTheory]
+        [InlineData(ImageLayoutMode.Inline)]
+        [InlineData(ImageLayoutMode.CenteredBlock)]
+        [InlineData(ImageLayoutMode.FloatLeft)]
+        [InlineData(ImageLayoutMode.FloatRight)]
+        public void MoveUpAndDown_MovesBetweenAdjacentParagraphs(
+            ImageLayoutMode mode)
+        {
+            var paragraphFactory = new TestParagraphFactory();
+            IRichTextBoxService richTextBox = new RichTextBoxService(
+                paragraphFactory,
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
+            var inlineService = new InlineService(
+                richTextBox,
+                new ReflectionPropertyAccessor(),
+                paragraphFactory);
+            var service = new EmbeddedImageLayoutService(
+                inlineService: inlineService);
+            var image = new Image
+            {
+                Width = 120,
+                Height = 80
+            };
+            var first = new Paragraph(new Run("первый"));
+            var second = new Paragraph();
+            second.Inlines.Add(new InlineUIContainer(image));
+            second.Inlines.Add(new Run("второй"));
+            var third = new Paragraph(new Run("третий"));
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(first);
+            richTextBox.Document.Blocks.Add(second);
+            richTextBox.Document.Blocks.Add(third);
+            service.SetLayout(image, mode);
+
+            Assert.True(service.CanMoveUp(image));
+            Assert.True(service.CanMoveDown(image));
+
+            Assert.True(service.MoveUp(image));
+            Assert.Contains(
+                first.Inlines,
+                inline => ContainsImage(inline, image));
+            Assert.Equal(mode, service.GetLayout(image));
+            Assert.False(service.CanMoveUp(image));
+
+            Assert.True(service.MoveDown(image));
+            Assert.Contains(
+                second.Inlines,
+                inline => ContainsImage(inline, image));
+            Assert.True(service.MoveDown(image));
+            Assert.Contains(
+                third.Inlines,
+                inline => ContainsImage(inline, image));
+            Assert.Equal(mode, service.GetLayout(image));
+            Assert.False(service.CanMoveDown(image));
+        }
+
+        [WpfFact]
+        public void MoveUpAndDown_SingleParagraph_DoNothing()
+        {
+            var paragraphFactory = new TestParagraphFactory();
+            IRichTextBoxService richTextBox = new RichTextBoxService(
+                paragraphFactory,
+                new TestUriNavigationService(),
+                new DocumentAppearanceDefaults());
+            var inlineService = new InlineService(
+                richTextBox,
+                new ReflectionPropertyAccessor(),
+                paragraphFactory);
+            var service = new EmbeddedImageLayoutService(
+                inlineService: inlineService);
+            var image = new Image
+            {
+                Width = 120,
+                Height = 80
+            };
+            var paragraph = new Paragraph(
+                new InlineUIContainer(image));
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(paragraph);
+
+            Assert.False(service.CanMoveUp(image));
+            Assert.False(service.CanMoveDown(image));
+            Assert.False(service.MoveUp(image));
+            Assert.False(service.MoveDown(image));
+            Assert.Contains(
+                paragraph.Inlines,
+                inline => ContainsImage(inline, image));
+        }
+
         private static bool ContainsImage(
             Inline inline,
             Image image) =>

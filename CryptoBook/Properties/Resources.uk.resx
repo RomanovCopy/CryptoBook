@@ -698,6 +698,18 @@
   <data name="Editor.ImageLayoutCommand" xml:space="preserve">
     <value>Змінити розміщення зображення</value>
   </data>
+  <data name="Editor.ImageMoveUp" xml:space="preserve">
+    <value>Перемістити зображення вище</value>
+  </data>
+  <data name="Editor.ImageMoveDown" xml:space="preserve">
+    <value>Перемістити зображення нижче</value>
+  </data>
+  <data name="Editor.ImageMoveUpHint" xml:space="preserve">
+    <value>Натисніть ↑ або Alt+↑, щоб перемістити зображення вище</value>
+  </data>
+  <data name="Editor.ImageMoveDownHint" xml:space="preserve">
+    <value>Натисніть ↓ або Alt+↓, щоб перемістити зображення нижче</value>
+  </data>
   <data name="Editor.PagedPreview" xml:space="preserve">
     <value>Посторінковий перегляд</value>
   </data>

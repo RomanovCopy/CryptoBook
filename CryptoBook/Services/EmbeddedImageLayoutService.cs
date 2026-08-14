@@ -99,6 +99,32 @@ namespace CryptoBook.Services
                 ?? figure.ElementEnd;
         }
 
+        public bool CanMoveUp(WpfImage image)
+        {
+            ArgumentNullException.ThrowIfNull(image);
+            return FindAdjacentParagraph(
+                image,
+                LogicalDirection.Backward) is not null;
+        }
+
+        public bool CanMoveDown(WpfImage image)
+        {
+            ArgumentNullException.ThrowIfNull(image);
+            return FindAdjacentParagraph(
+                image,
+                LogicalDirection.Forward) is not null;
+        }
+
+        public bool MoveUp(WpfImage image) =>
+            MoveToAdjacentParagraph(
+                image,
+                LogicalDirection.Backward);
+
+        public bool MoveDown(WpfImage image) =>
+            MoveToAdjacentParagraph(
+                image,
+                LogicalDirection.Forward);
+
         public bool Move(WpfImage image, TextPointer destination)
         {
             ArgumentNullException.ThrowIfNull(image);
@@ -141,6 +167,23 @@ namespace CryptoBook.Services
 
             SetLayout(image, mode);
             return true;
+        }
+
+        private bool MoveToAdjacentParagraph(
+            WpfImage image,
+            LogicalDirection direction)
+        {
+            ArgumentNullException.ThrowIfNull(image);
+
+            Paragraph? destinationParagraph =
+                FindAdjacentParagraph(image, direction);
+            if(destinationParagraph is null)
+                return false;
+
+            TextPointer destination =
+                destinationParagraph.ContentStart.GetInsertionPosition(
+                    LogicalDirection.Forward);
+            return Move(image, destination);
         }
 
         public bool Remove(WpfImage image)
@@ -369,6 +412,41 @@ namespace CryptoBook.Services
             image.Parent is BlockUIContainer blockContainer
                 ? blockContainer.Parent as Figure
                 : null;
+
+        private static Paragraph? FindAdjacentParagraph(
+            WpfImage image,
+            LogicalDirection direction)
+        {
+            Paragraph? sourceParagraph = image.Parent switch
+            {
+                InlineUIContainer inlineContainer =>
+                    inlineContainer.Parent as Paragraph,
+                BlockUIContainer { Parent: Figure figure } =>
+                    figure.Parent as Paragraph,
+                _ => null
+            };
+            if(sourceParagraph is null)
+                return null;
+
+            TextPointer? position = direction == LogicalDirection.Backward
+                ? sourceParagraph.ElementStart
+                : sourceParagraph.ElementEnd;
+            while(position is not null)
+            {
+                position = position.GetNextInsertionPosition(direction);
+                if(position is null)
+                    break;
+
+                Paragraph? paragraph = position.Paragraph;
+                if(paragraph is not null &&
+                   !ReferenceEquals(paragraph, sourceParagraph))
+                {
+                    return paragraph;
+                }
+            }
+
+            return null;
+        }
 
         private static bool IsInsideImage(
             TextPointer position,

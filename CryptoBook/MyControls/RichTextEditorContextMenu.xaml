@@ -368,6 +368,15 @@
                       StrokeLineJoin="Round"/>
             </Viewbox>
         </MenuItem.Icon>
+        <MenuItem Header="{Binding [Editor.ImageMoveUp], Source={StaticResource Res}}"
+                  InputGestureText="Alt+↑"
+                  Command="{x:Static behaviors:DocumentImageResizeBehavior.MoveImageUpCommand}"/>
+        <MenuItem Header="{Binding [Editor.ImageMoveDown], Source={StaticResource Res}}"
+                  InputGestureText="Alt+↓"
+                  Command="{x:Static behaviors:DocumentImageResizeBehavior.MoveImageDownCommand}"/>
+        <MenuItem Height="9" MinHeight="0" Padding="0" Focusable="False"
+                  IsEnabled="False"
+                  Template="{StaticResource RichTextMenuSeparatorTemplate}"/>
         <MenuItem Header="{Binding [Editor.ImageInline], Source={StaticResource Res}}"
                   Command="{x:Static behaviors:DocumentImageResizeBehavior.SetImageLayoutCommand}"
                   CommandParameter="{x:Static dto:ImageLayoutMode.Inline}"/>

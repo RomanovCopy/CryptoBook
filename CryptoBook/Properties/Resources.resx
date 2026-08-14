@@ -399,6 +399,10 @@
   <data name="Editor.ImageFloatLeft" xml:space="preserve"><value>Wrap: image on the _left</value></data>
   <data name="Editor.ImageFloatRight" xml:space="preserve"><value>Wrap: image on the _right</value></data>
   <data name="Editor.ImageLayoutCommand" xml:space="preserve"><value>Change image layout</value></data>
+  <data name="Editor.ImageMoveUp" xml:space="preserve"><value>Move image up</value></data>
+  <data name="Editor.ImageMoveDown" xml:space="preserve"><value>Move image down</value></data>
+  <data name="Editor.ImageMoveUpHint" xml:space="preserve"><value>Click ↑ or press Alt+↑ to move the image up</value></data>
+  <data name="Editor.ImageMoveDownHint" xml:space="preserve"><value>Click ↓ or press Alt+↓ to move the image down</value></data>
   <data name="Editor.PagedPreview" xml:space="preserve"><value>Paged preview</value></data>
   <data name="Editor.Editing" xml:space="preserve"><value>Editing</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Editor</value></data>

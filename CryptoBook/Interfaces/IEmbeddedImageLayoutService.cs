@@ -13,6 +13,10 @@ namespace CryptoBook.Interfaces
         TextPointer GetTextInsertionPosition(
             WpfImage image,
             ImageLayoutMode mode);
+        bool CanMoveUp(WpfImage image);
+        bool CanMoveDown(WpfImage image);
+        bool MoveUp(WpfImage image);
+        bool MoveDown(WpfImage image);
         bool Move(WpfImage image, TextPointer destination);
         bool Remove(WpfImage image);
     }
