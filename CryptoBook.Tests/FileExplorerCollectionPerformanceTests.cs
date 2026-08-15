@@ -94,6 +94,104 @@ public sealed class FileExplorerCollectionPerformanceTests
     }
 
     [Fact]
+    public async Task SingleWatcherAdd_UsesIncrementalNotification()
+    {
+        DirectoryItem container = CreateContainer();
+        await container.AddChildAsync(
+            CreateItems(0, 3),
+            item => item.FullPath);
+        var actions = new List<NotifyCollectionChangedAction>();
+        ((INotifyCollectionChanged)container.Children).CollectionChanged +=
+            (_, args) => actions.Add(args.Action);
+
+        ISystemItem added = CreateItems(3, 1)[0];
+        FileOperationResult result = await container.AddChildAsync(
+            [added],
+            item => item.FullPath);
+
+        Assert.True(result.Success);
+        Assert.Equal([NotifyCollectionChangedAction.Add], actions);
+        Assert.Same(added, container.Children[^1]);
+    }
+
+    [Fact]
+    public async Task SingleWatcherDelete_PreservesRemainingItemsWithoutReset()
+    {
+        DirectoryItem container = CreateContainer();
+        ISystemItem[] original = CreateItems(0, 3);
+        await container.AddChildAsync(original, item => item.FullPath);
+        var actions = new List<NotifyCollectionChangedAction>();
+        ((INotifyCollectionChanged)container.Children).CollectionChanged +=
+            (_, args) => actions.Add(args.Action);
+
+        FileOperationResult result = await container.RemoveChildAsync(
+            [original[1]],
+            item => item.FullPath);
+
+        Assert.True(result.Success);
+        Assert.Equal([NotifyCollectionChangedAction.Remove], actions);
+        Assert.Equal<ISystemItem>(
+            [original[0], original[2]],
+            container.Children);
+    }
+
+    [Fact]
+    public async Task WatcherRename_UpdatesExistingItemWithoutCollectionReset()
+    {
+        string directory = Path.Combine(
+            Path.GetTempPath(),
+            "CryptoBook.Tests",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+
+        try
+        {
+            string oldPath = Path.Combine(directory, "before.txt");
+            string newPath = Path.Combine(directory, "after.txt");
+            await File.WriteAllTextAsync(oldPath, "content");
+            var monitoring = new MonitoringStub();
+            DirectoryItem container = CreateContainer(
+                monitoring,
+                new LocalItemFactoryStub());
+            container.FullPath = directory;
+            var original = new FileItem
+            {
+                Name = Path.GetFileName(oldPath),
+                FullPath = oldPath,
+                Extension = ".txt",
+                Parent = container
+            };
+            await container.AddChildAsync([original], item => item.FullPath);
+            var actions = new List<NotifyCollectionChangedAction>();
+            ((INotifyCollectionChanged)container.Children).CollectionChanged +=
+                (_, args) => actions.Add(args.Action);
+            container.IsSelected = true;
+
+            File.Move(oldPath, newPath);
+            monitoring.Renamed?.Invoke(new RenamedEventArgs(
+                WatcherChangeTypes.Renamed,
+                directory,
+                Path.GetFileName(newPath),
+                Path.GetFileName(oldPath)));
+
+            await WaitUntilAsync(() =>
+                string.Equals(
+                    original.FullPath,
+                    newPath,
+                    StringComparison.OrdinalIgnoreCase));
+
+            Assert.Empty(actions);
+            Assert.Same(original, Assert.Single(container.Children));
+            Assert.Equal("after.txt", original.Name);
+        }
+        finally
+        {
+            if(Directory.Exists(directory))
+                Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
     public async Task DirectoryChildren_ExcludesFiles_AndIgnoresFileOnlyUpdates()
     {
         DirectoryItem container = CreateContainer();
@@ -124,11 +222,20 @@ public sealed class FileExplorerCollectionPerformanceTests
         Assert.Equal(1, treeResetEvents);
     }
 
-    private static DirectoryItem CreateContainer() => new(
-        new ImmediateDispatcher(),
-        new MonitoringStub(),
-        new ItemFactoryStub(),
-        new SystemItemSortService());
+    private static DirectoryItem CreateContainer(
+        MonitoringStub? monitoring = null,
+        ISystemItemCreateService? itemFactory = null) => new(
+            new ImmediateDispatcher(),
+            monitoring ?? new MonitoringStub(),
+            itemFactory ?? new ItemFactoryStub(),
+            new SystemItemSortService());
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        while(!condition())
+            await Task.Delay(20, timeout.Token);
+    }
 
     private static ISystemItem[] CreateItems(int start, int count) =>
         Enumerable.Range(start, count)
@@ -164,6 +271,8 @@ public sealed class FileExplorerCollectionPerformanceTests
 
     private sealed class MonitoringStub: IDirectoryMonitoringService
     {
+        public Action<RenamedEventArgs>? Renamed { get; private set; }
+
         public bool StartMonitoring(
             string directoryPath,
             Action<FileSystemEventArgs>? onCreated = null,
@@ -175,7 +284,11 @@ public sealed class FileExplorerCollectionPerformanceTests
             NotifyFilters notifyFilters = NotifyFilters.FileName |
                 NotifyFilters.DirectoryName |
                 NotifyFilters.LastWrite,
-            int internalBufferSize = 64 * 1024) => true;
+            int internalBufferSize = 64 * 1024)
+        {
+            Renamed = onRenamed;
+            return true;
+        }
         public bool StopMonitoring(string directoryPath) => true;
         public void Dispose()
         {
@@ -192,5 +305,31 @@ public sealed class FileExplorerCollectionPerformanceTests
         public IFileItem CreateFile(
             string path,
             ISystemItem? parent) => throw new NotSupportedException();
+    }
+
+    private sealed class LocalItemFactoryStub: ISystemItemCreateService
+    {
+        public IDriveItem CreateRoot(string rootPath) =>
+            throw new NotSupportedException();
+
+        public IDirectoryItem CreateDirectory(
+            string path,
+            ISystemItem? parent) =>
+            throw new NotSupportedException();
+
+        public IFileItem CreateFile(string path, ISystemItem? parent)
+        {
+            var info = new FileInfo(path);
+            return new FileItem
+            {
+                Name = info.Name,
+                FullPath = info.FullName,
+                RootDirectory = info.DirectoryName ?? string.Empty,
+                Extension = info.Extension,
+                Size = info.Length,
+                LastWriteTimeUtc = info.LastWriteTimeUtc,
+                Parent = parent
+            };
+        }
     }
 }

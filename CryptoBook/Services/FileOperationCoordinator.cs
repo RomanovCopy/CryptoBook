@@ -26,7 +26,8 @@ namespace CryptoBook.Services
             IEnumerable<string> sourcePaths,
             string destinationDirectory,
             FileTransferKind operation,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            Func<Task>? synchronizeViewAsync = null)
         {
             ArgumentNullException.ThrowIfNull(sourcePaths);
             if(string.IsNullOrWhiteSpace(destinationDirectory))
@@ -60,95 +61,102 @@ namespace CryptoBook.Services
                     operationName,
                     async (progress, dialogToken) =>
                     {
-                        using var operationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
-                            linkedCancellation.Token,
-                            dialogToken);
-                        CancellationToken token = operationCancellation.Token;
-                        progress.Report(
-                            null,
-                            LocalizationManager.GetString("Explorer.CalculatingSize"));
-                        long[] itemSizes = await Task.Run(
-                            () => plans.Items
-                                .Select(item => GetItemSize(item.SourcePath, token))
-                                .ToArray(),
-                            token);
-                        long totalBytes = itemSizes.Sum();
-                        long completedBytes = 0;
-
-                        for(int index = 0; index < plans.Items.Count; index++)
+                        try
                         {
-                            TransferPlan plan = plans.Items[index];
-                            long itemSize = itemSizes[index];
-                            token.ThrowIfCancellationRequested();
-                            if(plan.ReplaceExisting)
-                            {
-                                FileOperationResult deleteResult = await _fileManager.DeleteAsync(
-                                    plan.DestinationPath,
-                                    token);
-                                if(!deleteResult.Success)
-                                {
-                                    results.Add(deleteResult);
-                                    break;
-                                }
-                            }
+                            using var operationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                                linkedCancellation.Token,
+                                dialogToken);
+                            CancellationToken token = operationCancellation.Token;
+                            progress.Report(
+                                null,
+                                LocalizationManager.GetString("Explorer.CalculatingSize"));
+                            long[] itemSizes = await Task.Run(
+                                () => plans.Items
+                                    .Select(item => GetItemSize(item.SourcePath, token))
+                                    .ToArray(),
+                                token);
+                            long totalBytes = itemSizes.Sum();
+                            long completedBytes = 0;
 
-                            var itemProgress = new AggregateProgressReporter(
-                                progress,
-                                completedBytes,
-                                itemSize,
-                                totalBytes,
-                                plan.SourcePath);
-                            FileOperationResult result;
-                            if(operation == FileTransferKind.Copy)
+                            for(int index = 0; index < plans.Items.Count; index++)
                             {
-                                result = await _fileManager.CopyAsync(
-                                    plan.SourcePath,
-                                    plan.DestinationPath,
-                                    itemProgress,
-                                    token);
-                            }
-                            else if(IsCrossVolumeLocalMove(
-                                plan.SourcePath,
-                                plan.DestinationPath))
-                            {
-                                result = await _fileManager.CopyAsync(
-                                    plan.SourcePath,
-                                    plan.DestinationPath,
-                                    itemProgress,
-                                    token);
-                                if(result.Success)
+                                TransferPlan plan = plans.Items[index];
+                                long itemSize = itemSizes[index];
+                                token.ThrowIfCancellationRequested();
+                                if(plan.ReplaceExisting)
                                 {
-                                    token.ThrowIfCancellationRequested();
-                                    result = await _fileManager.DeleteAsync(
+                                    FileOperationResult deleteResult = await _fileManager.DeleteAsync(
+                                        plan.DestinationPath,
+                                        token);
+                                    if(!deleteResult.Success)
+                                    {
+                                        results.Add(deleteResult);
+                                        break;
+                                    }
+                                }
+
+                                var itemProgress = new AggregateProgressReporter(
+                                    progress,
+                                    completedBytes,
+                                    itemSize,
+                                    totalBytes,
+                                    plan.SourcePath);
+                                FileOperationResult result;
+                                if(operation == FileTransferKind.Copy)
+                                {
+                                    result = await _fileManager.CopyAsync(
                                         plan.SourcePath,
+                                        plan.DestinationPath,
+                                        itemProgress,
                                         token);
                                 }
-                            }
-                            else
-                            {
-                                result = await _fileManager.MoveAsync(
+                                else if(IsCrossVolumeLocalMove(
                                     plan.SourcePath,
-                                    plan.DestinationPath,
-                                    itemProgress,
-                                    token);
+                                    plan.DestinationPath))
+                                {
+                                    result = await _fileManager.CopyAsync(
+                                        plan.SourcePath,
+                                        plan.DestinationPath,
+                                        itemProgress,
+                                        token);
+                                    if(result.Success)
+                                    {
+                                        token.ThrowIfCancellationRequested();
+                                        result = await _fileManager.DeleteAsync(
+                                            plan.SourcePath,
+                                            token);
+                                    }
+                                }
+                                else
+                                {
+                                    result = await _fileManager.MoveAsync(
+                                        plan.SourcePath,
+                                        plan.DestinationPath,
+                                        itemProgress,
+                                        token);
+                                }
+                                results.Add(result);
+                                if(!result.Success)
+                                    break;
+
+                                completed++;
+                                completedBytes += itemSize;
+                                progress.Report(
+                                    CalculateOverall(completedBytes, totalBytes, completed, plans.Items.Count),
+                                    plan.SourcePath);
                             }
-                            results.Add(result);
-                            if(!result.Success)
-                                break;
 
-                            completed++;
-                            completedBytes += itemSize;
-                            progress.Report(
-                                CalculateOverall(completedBytes, totalBytes, completed, plans.Items.Count),
-                                plan.SourcePath);
+                            return new FileOperationBatchResult(
+                                results,
+                                completed,
+                                plans.SkippedCount,
+                                false,
+                                completed > 0);
                         }
-
-                        return new FileOperationBatchResult(
-                            results,
-                            completed,
-                            plans.SkippedCount,
-                            false,
-                            completed > 0);
+                        finally
+                        {
+                            await SynchronizeViewAsync(progress, synchronizeViewAsync);
+                        }
                     });
             }
             catch(OperationCanceledException)
@@ -164,7 +172,8 @@ namespace CryptoBook.Services
 
         public async Task<FileOperationBatchResult> DeleteAsync(
             IEnumerable<string> sourcePaths,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            Func<Task>? synchronizeViewAsync = null)
         {
             ArgumentNullException.ThrowIfNull(sourcePaths);
             string[] sources = NormalizeTopLevelSources(sourcePaths);
@@ -181,41 +190,48 @@ namespace CryptoBook.Services
                     LocalizationManager.GetString("Explorer.Deleting"),
                     async (progress, dialogToken) =>
                     {
-                        using var operationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
-                            linkedCancellation.Token,
-                            dialogToken);
-                        CancellationToken token = operationCancellation.Token;
-                        progress.Report(
-                            null,
-                            LocalizationManager.GetString("Explorer.CalculatingSize"));
-                        IReadOnlyList<DeletionEntry> entries = await Task.Run(
-                            () => BuildDeletionPlan(sources, token),
-                            token);
-                        long totalBytes = entries.Sum(entry => entry.Size);
-                        long completedBytes = 0;
-
-                        // Удаление намеренно не транзакционно: отмена сохраняет уже удалённые элементы.
-                        foreach(DeletionEntry entry in entries)
+                        try
                         {
-                            token.ThrowIfCancellationRequested();
-                            FileOperationResult result = await _fileManager.DeleteAsync(entry.Path, token);
-                            results.Add(result);
-                            if(!result.Success)
-                                break;
-
-                            completed++;
-                            completedBytes += entry.Size;
+                            using var operationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                                linkedCancellation.Token,
+                                dialogToken);
+                            CancellationToken token = operationCancellation.Token;
                             progress.Report(
-                                CalculateOverall(completedBytes, totalBytes, completed, entries.Count),
-                                entry.Path);
-                        }
+                                null,
+                                LocalizationManager.GetString("Explorer.CalculatingSize"));
+                            IReadOnlyList<DeletionEntry> entries = await Task.Run(
+                                () => BuildDeletionPlan(sources, token),
+                                token);
+                            long totalBytes = entries.Sum(entry => entry.Size);
+                            long completedBytes = 0;
 
-                        return new FileOperationBatchResult(
-                            results,
-                            completed,
-                            0,
-                            false,
-                            completed > 0);
+                            // Удаление намеренно не транзакционно: отмена сохраняет уже удалённые элементы.
+                            foreach(DeletionEntry entry in entries)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                FileOperationResult result = await _fileManager.DeleteAsync(entry.Path, token);
+                                results.Add(result);
+                                if(!result.Success)
+                                    break;
+
+                                completed++;
+                                completedBytes += entry.Size;
+                                progress.Report(
+                                    CalculateOverall(completedBytes, totalBytes, completed, entries.Count),
+                                    entry.Path);
+                            }
+
+                            return new FileOperationBatchResult(
+                                results,
+                                completed,
+                                0,
+                                false,
+                                completed > 0);
+                        }
+                        finally
+                        {
+                            await SynchronizeViewAsync(progress, synchronizeViewAsync);
+                        }
                     });
             }
             catch(OperationCanceledException)
@@ -227,6 +243,19 @@ namespace CryptoBook.Services
                 results.Add(FileOperationResult.Fail(exception.Message));
                 return new FileOperationBatchResult(results, completed, 0, false, completed > 0);
             }
+        }
+
+        private static async Task SynchronizeViewAsync(
+            IProgressReporter progress,
+            Func<Task>? synchronizeViewAsync)
+        {
+            if(synchronizeViewAsync is null)
+                return;
+
+            progress.Report(
+                null,
+                LocalizationManager.GetString("Explorer.RefreshingAfterOperation"));
+            await synchronizeViewAsync();
         }
 
         private async Task<TransferPlanSet> CreateTransferPlansAsync(

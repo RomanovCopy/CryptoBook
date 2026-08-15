@@ -141,10 +141,78 @@ public sealed class ThemeSettingsTests
         Assert.IsType<Style>(styles[typeof(ProgressBar)]);
         Assert.IsType<Style>(styles[typeof(ContextMenu)]);
         Assert.IsType<Style>(styles[typeof(ToolTip)]);
+        Style columnHeaderStyle = Assert.IsType<Style>(
+            styles[typeof(GridViewColumnHeader)]);
+        Assert.Contains(
+            columnHeaderStyle.Setters.OfType<Setter>(),
+            setter => setter.Property == Control.TemplateProperty &&
+                setter.Value is ControlTemplate);
         Assert.IsType<Style>(styles["RichTextContextMenuStyle"]);
         Assert.IsType<Style>(styles["RichTextContextMenuItemStyle"]);
         Assert.IsType<Style>(styles["RichTextContextMenuSeparatorStyle"]);
         Assert.IsType<ControlTemplate>(styles["RichTextMenuSeparatorTemplate"]);
+    }
+
+    [WpfTheory]
+    [InlineData("LightTheme")]
+    [InlineData("DarkTheme")]
+    [InlineData("SepiaTheme")]
+    public void GridViewColumnHeader_TemplateUsesThemeBrushesAndKeepsResizeGrip(
+        string resourceName)
+    {
+        Application app = Application.Current ?? new Application();
+        ResourceDictionary previousResources = app.Resources;
+        ResourceDictionary theme = LoadDictionary(
+            $"/CryptoBook;component/Themes/{resourceName}.xaml");
+        ResourceDictionary styles = LoadDictionary(
+            "/CryptoBook;component/Styles/ThemedControls.xaml");
+
+        try
+        {
+            app.Resources = new ResourceDictionary();
+            app.Resources.MergedDictionaries.Add(theme);
+            app.Resources.MergedDictionaries.Add(styles);
+            var header = new GridViewColumnHeader
+            {
+                Content = "Name",
+                Style = Assert.IsType<Style>(
+                    styles[typeof(GridViewColumnHeader)])
+            };
+
+            Assert.True(header.ApplyTemplate());
+            header.Measure(new Size(180, 40));
+            header.Arrange(new Rect(header.DesiredSize));
+            header.UpdateLayout();
+
+            Border border = Assert.IsType<Border>(
+                header.Template.FindName("HeaderBorder", header));
+            Assert.IsType<Thumb>(
+                header.Template.FindName("PART_HeaderGripper", header));
+            AssertBrushEquals(
+                theme["CurrentControlBackground"],
+                border.Background);
+            AssertBrushEquals(
+                theme["CurrentInputForeground"],
+                header.Foreground);
+            AssertBrushEquals(
+                theme["CurrentBorderColor"],
+                border.BorderBrush);
+            Assert.Equal(
+                HorizontalAlignment.Center,
+                header.HorizontalContentAlignment);
+            Assert.Contains(
+                header.Template.Triggers.OfType<Trigger>(),
+                trigger => trigger.Property ==
+                    GridViewColumnHeader.IsPressedProperty);
+            Assert.Contains(
+                header.Template.Triggers.OfType<Trigger>(),
+                trigger => trigger.Property ==
+                    GridViewColumnHeader.RoleProperty);
+        }
+        finally
+        {
+            app.Resources = previousResources;
+        }
     }
 
     [Fact]

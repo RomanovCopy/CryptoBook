@@ -1,6 +1,7 @@
 ﻿using CryptoBook.Interfaces;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.Services;
 
 using System.IO;
 using System.Security.Cryptography;
@@ -38,7 +39,7 @@ namespace CryptoBook.Security
                         return new FileStream(tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None);
                     }, leaveOutputOpen: false, progress, cancellationToken);
 
-                File.Move(tempFile!, finalFile!, overwrite: true);
+                AtomicFileCommit.CommitWithoutBackup(tempFile!, finalFile!);
             } catch
             {
                 if(tempFile is not null && File.Exists(tempFile))
@@ -91,7 +92,10 @@ namespace CryptoBook.Security
 
             try
             {
-                using FileStream inputStream = new(inputFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using FileStream inputStream = SharedFileReadStream.Open(
+                    inputFile,
+                    SecureFileFormat.BufferSize,
+                    asynchronous: false);
 
                 await ValidateHeaderAsync(inputStream, cancellationToken);
 

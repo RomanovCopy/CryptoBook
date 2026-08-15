@@ -485,10 +485,34 @@ namespace CryptoBook.ViewModels
                 await Preview.SelectAsync(_previewSelection);
         }
 
-        public ICommand DecryptCommand => _decryptCommand ??= new RelayCommand(_fileExplorerModel.Execute_DecryptCommand, _fileExplorerModel.CanExecute_DecryptCommand);
+        public ICommand DecryptCommand => _decryptCommand ??= new RelayCommand(
+            ExecuteDecryptCommand,
+            _fileExplorerModel.CanExecute_DecryptCommand);
         RelayCommand _decryptCommand;
 
-        public ICommand EncryptCommand => _encryptCommand ??= new RelayCommand(_fileExplorerModel.Execute_EncryptCommand, _fileExplorerModel.CanExecute_EncryptCommand);
+        private void ExecuteDecryptCommand(object? parameter)
+        {
+            ClearPreviewBeforeFileMutation();
+            _fileExplorerModel.Execute_DecryptCommand(parameter);
+        }
+
+        public ICommand EncryptCommand => _encryptCommand ??= new RelayCommand(
+            ExecuteEncryptCommand,
+            _fileExplorerModel.CanExecute_EncryptCommand);
         RelayCommand _encryptCommand;
+
+        private void ExecuteEncryptCommand(object? parameter)
+        {
+            ClearPreviewBeforeFileMutation();
+            _fileExplorerModel.Execute_EncryptCommand(parameter);
+        }
+
+        private void ClearPreviewBeforeFileMutation()
+        {
+            // Не оставляем устаревший preview для файла, который сейчас будет
+            // атомарно заменён или удалён при расшифровке.
+            _previewSelection = null;
+            Preview.Clear();
+        }
     }
 }

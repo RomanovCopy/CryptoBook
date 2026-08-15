@@ -230,13 +230,13 @@
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE72E;"
                     ToolTip="{Binding [Explorer.EncryptSelected], Source={StaticResource Res}}"
-                    AutomationProperties.Name="Зашифровать выбранный элемент"
+                    AutomationProperties.Name="Зашифровать выбранные элементы"
                     Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE785;"
                     ToolTip="{Binding [Explorer.DecryptSelected], Source={StaticResource Res}}"
-                    AutomationProperties.Name="Расшифровать выбранный элемент"
+                    AutomationProperties.Name="Расшифровать выбранные элементы"
                     Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>

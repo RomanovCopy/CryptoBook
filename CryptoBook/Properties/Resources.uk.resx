@@ -624,10 +624,10 @@
     <value>Встановити ключ шифрування</value>
   </data>
   <data name="Explorer.EncryptSelected" xml:space="preserve">
-    <value>Зашифрувати вибраний елемент</value>
+    <value>Зашифрувати вибрані елементи</value>
   </data>
   <data name="Explorer.DecryptSelected" xml:space="preserve">
-    <value>Розшифрувати вибраний елемент</value>
+    <value>Розшифрувати вибрані елементи</value>
   </data>
   <data name="Explorer.Favorites" xml:space="preserve">
     <value>Вибране</value>
@@ -1024,6 +1024,9 @@
   </data>
   <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve">
     <value>Замінити вихідні файли {0} копіями?</value>
+  </data>
+  <data name="Explorer.OverwriteBatchPrompt" xml:space="preserve">
+    <value>Замінити {0} вибраних елементів {1} копіями?</value>
   </data>
   <data name="Explorer.EncryptedAdjective" xml:space="preserve">
     <value>зашифрованою</value>
@@ -1439,6 +1442,15 @@
   </data>
   <data name="Security.SourceFileNotFound" xml:space="preserve">
     <value>Вихідний файл не знайдено.</value>
+  </data>
+  <data name="Security.OperationFailedForPath" xml:space="preserve">
+    <value>Не вдалося обробити «{1}»:{0}{2}</value>
+  </data>
+  <data name="Explorer.BatchOperationFailed" xml:space="preserve">
+    <value>Не вдалося обробити такі файли:{0}{0}{1}</value>
+  </data>
+  <data name="Explorer.RefreshingAfterOperation" xml:space="preserve">
+    <value>Оновлення списку файлів…</value>
   </data>
   <data name="Security.SourceDirectoryNotFound" xml:space="preserve">
     <value>Вихідний каталог «{0}» не знайдено.</value>

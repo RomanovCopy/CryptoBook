@@ -675,11 +675,81 @@
     </Style>
 
     <Style TargetType="{x:Type GridViewColumnHeader}">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentInputForeground}"/>
         <Setter Property="Background"
                 Value="{DynamicResource CurrentControlBackground}"/>
         <Setter Property="BorderBrush"
                 Value="{DynamicResource CurrentBorderColor}"/>
+        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                    <Grid x:Name="Root"
+                          Background="{TemplateBinding Background}"
+                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <Border x:Name="HeaderBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter x:Name="HeaderContent"
+                                              Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <!-- Имя части обязательно для штатного изменения ширины GridViewColumn. -->
+                        <Thumb x:Name="PART_HeaderGripper"
+                               Width="8"
+                               Margin="0,0,-4,0"
+                               HorizontalAlignment="Right"
+                               Background="Transparent"
+                               Cursor="SizeWE"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HeaderBorder"
+                                    Property="Background"
+                                    Value="{DynamicResource CurrentControlHoverBackground}"/>
+                            <Setter TargetName="HeaderBorder"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource CurrentAccent}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="HeaderBorder"
+                                    Property="Background"
+                                    Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentSelectionForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource CurrentDisabledForeground}"/>
+                            <Setter Property="Opacity" Value="0.72"/>
+                        </Trigger>
+                        <Trigger Property="Role" Value="Padding">
+                            <Setter TargetName="HeaderContent"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                            <Setter TargetName="PART_HeaderGripper"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="Role" Value="Floating">
+                            <Setter TargetName="PART_HeaderGripper"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>

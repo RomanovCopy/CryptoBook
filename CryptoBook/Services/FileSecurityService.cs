@@ -35,12 +35,154 @@ namespace CryptoBook.Services
             return ProcessAsync( source, destinationPath, mode, decrypt: true, progress, cancellationToken);
         }
 
-        private async Task<FileOperationResult> ProcessAsync( ISystemItem source, string destinationPath, EncryptionTargetMode mode, bool decrypt, IProgressReporter? progress,
+        public Task<FileOperationBatchResult> EncryptAsync(
+            IReadOnlyList<ISystemItem> sources,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            return ProcessBatchAsync(
+                sources,
+                decrypt: false,
+                progress,
+                cancellationToken);
+        }
+
+        public Task<FileOperationBatchResult> DecryptAsync(
+            IReadOnlyList<ISystemItem> sources,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            return ProcessBatchAsync(
+                sources,
+                decrypt: true,
+                progress,
+                cancellationToken);
+        }
+
+        private async Task<FileOperationBatchResult> ProcessBatchAsync(
+            IReadOnlyList<ISystemItem> sources,
+            bool decrypt,
+            IProgressReporter? progress,
             CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(sources);
+
+            if(sources.Count == 0)
+                return new FileOperationBatchResult([], 0, 0, false, false);
+
+            var work = new List<BatchSourceWork>(sources.Count);
+            foreach(ISystemItem source in sources)
+            {
+                try
+                {
+                    work.Add(MeasureSourceWork(source, cancellationToken));
+                }
+                catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch(Exception ex)
+                {
+                    work.Add(new BatchSourceWork(
+                        source,
+                        1,
+                        FormatPathError(source.FullPath, ex.Message)));
+                }
+            }
+
+            long totalWorkUnits = work.Aggregate(
+                0L,
+                (total, item) => SaturatingAdd(total, item.WorkUnits));
+            long completedWorkUnits = 0;
+            int completedCount = 0;
+            bool hasFailures = false;
+            var results = new List<FileOperationResult>(work.Count);
+
+            progress?.Report(0.0, work[0].Source.FullPath);
+
+            foreach(BatchSourceWork item in work)
+            {
+                var itemProgress = progress is null
+                    ? null
+                    : new BatchSourceProgressReporter(
+                        progress,
+                        completedWorkUnits,
+                        item.WorkUnits,
+                        totalWorkUnits,
+                        item.Source.FullPath);
+
+                FileOperationResult result;
+                if(item.PreparationError is not null)
+                {
+                    result = FileOperationResult.Fail(item.PreparationError);
+                }
+                else
+                {
+                    try
+                    {
+                        result = await ProcessAsync(
+                            item.Source,
+                            item.Source.FullPath,
+                            EncryptionTargetMode.ReplaceSource,
+                        decrypt,
+                        itemProgress,
+                        cancellationToken,
+                        continueAfterFileError: true);
+                    }
+                    catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
+                    {
+                        results.Add(new FileOperationResult
+                        {
+                            Success = false,
+                            ErrorMessage = LocalizationManager.GetString(
+                                "Error.OperationCanceled"),
+                            AffectedPath = item.Source.FullPath
+                        });
+                        return new FileOperationBatchResult(
+                            results,
+                            completedCount,
+                            0,
+                            true,
+                            true);
+                    }
+                }
+
+                results.Add(new FileOperationResult
+                {
+                    Success = result.Success,
+                    ErrorMessage = result.ErrorMessage,
+                    AffectedPath = item.Source.FullPath
+                });
+
+                if(!result.Success)
+                    hasFailures = true;
+                else
+                    completedCount++;
+
+                completedWorkUnits = SaturatingAdd(
+                    completedWorkUnits,
+                    item.WorkUnits);
+                progress?.Report(
+                    CalculateBatchProgress(completedWorkUnits, totalWorkUnits),
+                    item.Source.FullPath);
+            }
+
+            progress?.Report(1.0, work[^1].Source.FullPath);
+            return new FileOperationBatchResult(
+                results,
+                completedCount,
+                0,
+                false,
+                hasFailures);
+        }
+
+        private async Task<FileOperationResult> ProcessAsync( ISystemItem source, string destinationPath, EncryptionTargetMode mode, bool decrypt, IProgressReporter? progress,
+            CancellationToken cancellationToken, bool continueAfterFileError = false)
         {
             if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring)
                 return FileOperationResult.Fail("Выполняется безопасный сброс ключа.");
             using IDisposable? timerPause = keyResetService?.Pause();
+            string? currentPath = null;
             try
             {
                 ArgumentNullException.ThrowIfNull(source);
@@ -61,6 +203,7 @@ namespace CryptoBook.Services
                 cancellationToken.ThrowIfCancellationRequested();
 
                 string sourcePath = Path.GetFullPath(source.FullPath);
+                currentPath = sourcePath;
                 string normalizedDestinationPath = Path.GetFullPath(destinationPath);
 
                 IReadOnlyList<FileWorkItem> files;
@@ -94,31 +237,44 @@ namespace CryptoBook.Services
                 long totalBytes = files.Sum(file => file.Size);
                 long processedBytes = 0;
                 int processedFiles = 0;
+                var fileErrors = new List<string>();
 
                 progress?.Report(files.Count == 0 ? 1.0 : 0.0, sourcePath);
 
                 foreach(FileWorkItem file in files)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
+                    currentPath = file.SourcePath;
 
-                    string? destinationDirectory = Path.GetDirectoryName(file.DestinationPath);
-                    if(string.IsNullOrWhiteSpace(destinationDirectory))
-                        throw new IOException(
-                            LocalizationManager.Format(
-                                "Security.DestinationDirectoryUnknown",
-                                file.DestinationPath));
-
-                    Directory.CreateDirectory(destinationDirectory);
-
-                    IProgressReporter? fileProgress = progress is null? null:
-                    new WeightedProgressReporter( progress, processedBytes, processedFiles, file.Size, totalBytes, files.Count, file.SourcePath);
-
-                    if(decrypt)
+                    try
                     {
-                        await DecryptFileAsync( file, mode, fileProgress, cancellationToken);
-                    } else
+                        string? destinationDirectory = Path.GetDirectoryName(file.DestinationPath);
+                        if(string.IsNullOrWhiteSpace(destinationDirectory))
+                            throw new IOException(
+                                LocalizationManager.Format(
+                                    "Security.DestinationDirectoryUnknown",
+                                    file.DestinationPath));
+
+                        Directory.CreateDirectory(destinationDirectory);
+
+                        IProgressReporter? fileProgress = progress is null? null:
+                        new WeightedProgressReporter( progress, processedBytes, processedFiles, file.Size, totalBytes, files.Count, file.SourcePath);
+
+                        if(decrypt)
+                        {
+                            await DecryptFileAsync( file, mode, fileProgress, cancellationToken);
+                        } else
+                        {
+                            await _secureFileProcessor.EncryptFileAsync( file.SourcePath, file.DestinationPath, fileProgress, cancellationToken);
+                        }
+                    }
+                    catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
                     {
-                        await _secureFileProcessor.EncryptFileAsync( file.SourcePath, file.DestinationPath, fileProgress, cancellationToken);
+                        throw;
+                    }
+                    catch(Exception ex) when(continueAfterFileError)
+                    {
+                        fileErrors.Add(FormatPathError(file.SourcePath, ex.Message));
                     }
 
                     processedBytes += file.Size;
@@ -127,6 +283,13 @@ namespace CryptoBook.Services
                 }
 
                 progress?.Report(1.0, sourcePath);
+                if(fileErrors.Count > 0)
+                {
+                    return FileOperationResult.Fail(string.Join(
+                        Environment.NewLine + Environment.NewLine,
+                        fileErrors));
+                }
+
                 return FileOperationResult.Ok();
             } catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
             {
@@ -137,7 +300,10 @@ namespace CryptoBook.Services
                     LocalizationManager.GetString("Error.OperationCanceled"));
             } catch(Exception ex)
             {
-                return FileOperationResult.Fail(ex.Message);
+                return FileOperationResult.Fail(
+                    string.IsNullOrWhiteSpace(currentPath)
+                        ? ex.Message
+                        : FormatPathError(currentPath, ex.Message));
             }
         }
 
@@ -176,10 +342,10 @@ namespace CryptoBook.Services
 
                 string finalPath = Path.Combine( sourceDirectory, Path.GetFileName(stagedFiles[0]));
 
-                File.Move(stagedFiles[0], finalPath, overwrite: true);
+                AtomicFileCommit.CommitWithoutBackup(stagedFiles[0], finalPath);
 
                 if(!PathsEqual(finalPath, file.SourcePath) && File.Exists(file.SourcePath))
-                    File.Delete(file.SourcePath);
+                    AtomicFileCommit.DeleteIfExists(file.SourcePath);
             } finally
             {
                 if(Directory.Exists(stagingDirectory))
@@ -256,23 +422,11 @@ namespace CryptoBook.Services
             // находится внутри исходного дерева.
             FileInfo[] sourceFiles = sourceDirectory.GetFiles(
                 "*",
-                new EnumerationOptions
-                {
-                    RecurseSubdirectories = true,
-                    IgnoreInaccessible = false,
-                    AttributesToSkip = FileAttributes.ReparsePoint,
-                    ReturnSpecialDirectories = false
-                });
+                CreateRecursiveEnumerationOptions());
 
             DirectoryInfo[] sourceDirectories = sourceDirectory.GetDirectories(
                 "*",
-                new EnumerationOptions
-                {
-                    RecurseSubdirectories = true,
-                    IgnoreInaccessible = false,
-                    AttributesToSkip = FileAttributes.ReparsePoint,
-                    ReturnSpecialDirectories = false
-                });
+                CreateRecursiveEnumerationOptions());
 
             List<FileWorkItem> result = new(sourceFiles.Length);
 
@@ -340,6 +494,88 @@ namespace CryptoBook.Services
                 : Math.Clamp((double)processedFiles / fileCount, 0.0, 1.0);
         }
 
+        private static BatchSourceWork MeasureSourceWork(
+            ISystemItem source,
+            CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            switch(source)
+            {
+                case IFileItem:
+                    FileInfo file = new(source.FullPath);
+                    if(!file.Exists)
+                        throw new FileNotFoundException(
+                            LocalizationManager.GetString(
+                                "Security.SourceFileNotFound"),
+                            source.FullPath);
+                    return new BatchSourceWork(
+                        source,
+                        Math.Max(1L, file.Length));
+
+                case IDirectoryItem:
+                    DirectoryInfo directory = new(source.FullPath);
+                    if(!directory.Exists)
+                        throw new DirectoryNotFoundException(
+                            LocalizationManager.Format(
+                                "Security.SourceDirectoryNotFound",
+                                source.FullPath));
+
+                    long totalBytes = 0;
+                    long fileCount = 0;
+                    foreach(FileInfo child in directory.EnumerateFiles(
+                        "*",
+                        CreateRecursiveEnumerationOptions()))
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        totalBytes = SaturatingAdd(totalBytes, child.Length);
+                        fileCount = SaturatingAdd(fileCount, 1);
+                    }
+
+                    return new BatchSourceWork(
+                        source,
+                        totalBytes > 0
+                            ? totalBytes
+                            : Math.Max(1L, fileCount));
+
+                default:
+                    throw new NotSupportedException(
+                        LocalizationManager.Format(
+                            "Security.UnsupportedItemType",
+                            source.GetType().Name));
+            }
+        }
+
+        private static EnumerationOptions CreateRecursiveEnumerationOptions() =>
+            new()
+            {
+                RecurseSubdirectories = true,
+                IgnoreInaccessible = false,
+                AttributesToSkip = FileAttributes.ReparsePoint,
+                ReturnSpecialDirectories = false
+            };
+
+        private static long SaturatingAdd(long left, long right) =>
+            left > long.MaxValue - right ? long.MaxValue : left + right;
+
+        private static double CalculateBatchProgress(
+            long completedWorkUnits,
+            long totalWorkUnits) =>
+            totalWorkUnits <= 0
+                ? 1.0
+                : Math.Clamp(
+                    (double)completedWorkUnits / totalWorkUnits,
+                    0.0,
+                    1.0);
+
+        private static string FormatPathError(string path, string message) =>
+            LocalizationManager.Format(
+                "Security.OperationFailedForPath",
+                Environment.NewLine,
+                path,
+                message);
+
         private static bool PathsEqual(string firstPath, string secondPath)
         {
             return string.Equals(
@@ -371,6 +607,52 @@ namespace CryptoBook.Services
         private sealed record DirectoryWorkPlan(
             IReadOnlyList<FileWorkItem> Files,
             IReadOnlyList<string> DestinationDirectories);
+
+        private sealed record BatchSourceWork(
+            ISystemItem Source,
+            long WorkUnits,
+            string? PreparationError = null);
+
+        private sealed class BatchSourceProgressReporter: IProgressReporter
+        {
+            private readonly IProgressReporter outerProgress;
+            private readonly long completedWorkUnits;
+            private readonly long currentWorkUnits;
+            private readonly long totalWorkUnits;
+            private readonly string currentPath;
+
+            public BatchSourceProgressReporter(
+                IProgressReporter outerProgress,
+                long completedWorkUnits,
+                long currentWorkUnits,
+                long totalWorkUnits,
+                string currentPath)
+            {
+                this.outerProgress = outerProgress;
+                this.completedWorkUnits = completedWorkUnits;
+                this.currentWorkUnits = currentWorkUnits;
+                this.totalWorkUnits = totalWorkUnits;
+                this.currentPath = currentPath;
+            }
+
+            public void Report(double? value, string? currentInfo = null)
+            {
+                if(value is null)
+                {
+                    outerProgress.Report(null, currentInfo ?? currentPath);
+                    return;
+                }
+
+                double currentProgress = Math.Clamp(value.Value, 0.0, 1.0);
+                double aggregate = totalWorkUnits <= 0
+                    ? 1.0
+                    : (completedWorkUnits + currentWorkUnits * currentProgress) /
+                        totalWorkUnits;
+                outerProgress.Report(
+                    Math.Clamp(aggregate, 0.0, 1.0),
+                    currentInfo ?? currentPath);
+            }
+        }
 
         private sealed class WeightedProgressReporter: IProgressReporter
         {

@@ -297,6 +297,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
             builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().InstancePerLifetimeScope();
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
+            builder.RegisterType<WpfViewRenderSynchronizationService>()
+                .As<IViewRenderSynchronizationService>()
+                .SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
             builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
             builder.RegisterType<FileConflictResolver>().As<IFileConflictResolver>().SingleInstance();

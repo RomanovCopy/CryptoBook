@@ -121,10 +121,11 @@ namespace CryptoBook.Services
 
                 } else
                 {
-                    // FileStream в async-режиме (useAsync: true) позволяет читать неблокирующе.
-                    Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
+                    // Preview не должен блокировать атомарную замену, удаление или
+                    // перемещение файла другой командой/программой.
+                    Stream stream = SharedFileReadStream.Open(path, 4096);
 
-                    return Task.FromResult(stream).Result;
+                    return stream;
                 }
 
             } catch(OperationCanceledException) { throw; } catch(FileNotFoundException)

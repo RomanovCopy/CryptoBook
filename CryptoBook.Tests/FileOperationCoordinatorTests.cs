@@ -59,6 +59,39 @@ public sealed class FileOperationCoordinatorTests
     }
 
     [Fact]
+    public async Task TransferAsync_WaitsForViewSynchronizationBeforeProgressCompletes()
+    {
+        using var temp = new TempDirectory();
+        string sourceDirectory = Directory.CreateDirectory(
+            Path.Combine(temp.Path, "source")).FullName;
+        string destinationDirectory = Directory.CreateDirectory(
+            Path.Combine(temp.Path, "destination")).FullName;
+        string source = Path.Combine(sourceDirectory, "data.bin");
+        File.WriteAllBytes(source, new byte[16]);
+
+        var progress = new ProgressDialogStub();
+        var coordinator = new FileOperationCoordinator(
+            new FileManagerStub(),
+            progress,
+            new ConflictResolverStub(FileConflictAction.Skip));
+        bool synchronizationSawOpenProgress = false;
+
+        FileOperationBatchResult result = await coordinator.TransferAsync(
+            [source],
+            destinationDirectory,
+            FileTransferKind.Copy,
+            synchronizeViewAsync: () =>
+            {
+                synchronizationSawOpenProgress = progress.IsOperationActive;
+                return Task.CompletedTask;
+            });
+
+        Assert.True(result.Success);
+        Assert.True(synchronizationSawOpenProgress);
+        Assert.False(progress.IsOperationActive);
+    }
+
+    [Fact]
     public async Task TransferAsync_KeepBoth_UsesUniqueDestinationName()
     {
         using var temp = new TempDirectory();
@@ -162,12 +195,20 @@ public sealed class FileOperationCoordinatorTests
             progress,
             new ConflictResolverStub(FileConflictAction.Skip));
 
-        FileOperationBatchResult result = await coordinator.DeleteAsync([first, second]);
+        int synchronizationCount = 0;
+        FileOperationBatchResult result = await coordinator.DeleteAsync(
+            [first, second],
+            synchronizeViewAsync: () =>
+            {
+                synchronizationCount++;
+                return Task.CompletedTask;
+            });
 
         Assert.True(result.Canceled);
         Assert.True(result.HasPartialChanges);
         Assert.Equal(1, result.CompletedCount);
         Assert.Single(manager.DeletedPaths);
+        Assert.Equal(1, synchronizationCount);
     }
 
     [Fact]
@@ -231,13 +272,26 @@ public sealed class FileOperationCoordinatorTests
     {
         private readonly CancellationTokenSource _cancellation = new();
         public List<double> Values { get; } = [];
+        public bool IsOperationActive { get; private set; }
 
         public void Cancel() => _cancellation.Cancel();
 
-        public Task<T> RunAsync<T>(
+        public async Task<T> RunAsync<T>(
             string operationName,
-            Func<IProgressReporter, CancellationToken, Task<T>> operation) =>
-            operation(new ProgressReporter(Values), _cancellation.Token);
+            Func<IProgressReporter, CancellationToken, Task<T>> operation)
+        {
+            IsOperationActive = true;
+            try
+            {
+                return await operation(
+                    new ProgressReporter(Values),
+                    _cancellation.Token);
+            }
+            finally
+            {
+                IsOperationActive = false;
+            }
+        }
 
         private sealed class ProgressReporter: IProgressReporter
         {

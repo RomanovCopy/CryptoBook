@@ -23,6 +23,14 @@ namespace CryptoBook.Interfaces
         IProgressReporter? progress = null, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Шифрует несколько файлов и каталогов с заменой исходных элементов.
+        /// </summary>
+        Task<FileOperationBatchResult> EncryptAsync(
+            IReadOnlyList<ISystemItem> sources,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Деифрование файла/каталога
         /// </summary>
         /// <param name="source">Источник</param>
@@ -32,6 +40,14 @@ namespace CryptoBook.Interfaces
         /// <returns>Результат операции в виде <see cref="FileOperationResult"/>.</returns>
         Task<FileOperationResult> DecryptAsync(ISystemItem source, string destinationPath, EncryptionTargetMode mode, 
         IProgressReporter? progress = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Расшифровывает несколько файлов и каталогов с заменой исходных элементов.
+        /// </summary>
+        Task<FileOperationBatchResult> DecryptAsync(
+            IReadOnlyList<ISystemItem> sources,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default);
 
     }
 }

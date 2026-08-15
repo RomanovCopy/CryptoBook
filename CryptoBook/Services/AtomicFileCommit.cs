@@ -30,6 +30,8 @@ namespace CryptoBook.Services
             string preservedBackupPath =
                 $"{backupPath}.{Guid.NewGuid():N}.tmp";
             bool preservedBackup = false;
+            FileAttributes? originalTargetAttributes =
+                PrepareTargetForReplacement(targetPath);
 
             // Существующую .bak временно отодвигаем: File.Replace перезапишет её.
             // При ошибке прежняя резервная копия должна вернуться на место.
@@ -53,6 +55,10 @@ namespace CryptoBook.Services
 
                 throw;
             }
+            finally
+            {
+                RestoreAttributes(targetPath, originalTargetAttributes);
+            }
 
             if(preservedBackup)
                 TryDelete(preservedBackupPath);
@@ -68,11 +74,62 @@ namespace CryptoBook.Services
                 return;
             }
 
-            File.Replace(
-                temporaryPath,
-                targetPath,
-                destinationBackupFileName: null,
-                ignoreMetadataErrors: true);
+            FileAttributes? originalTargetAttributes =
+                PrepareTargetForReplacement(targetPath);
+            try
+            {
+                File.Replace(
+                    temporaryPath,
+                    targetPath,
+                    destinationBackupFileName: null,
+                    ignoreMetadataErrors: true);
+            }
+            finally
+            {
+                RestoreAttributes(targetPath, originalTargetAttributes);
+            }
+        }
+
+        internal static void DeleteIfExists(string path)
+        {
+            if(!File.Exists(path))
+                return;
+
+            FileAttributes originalAttributes = File.GetAttributes(path);
+            if((originalAttributes & FileAttributes.ReadOnly) != 0)
+            {
+                File.SetAttributes(
+                    path,
+                    originalAttributes & ~FileAttributes.ReadOnly);
+            }
+
+            try
+            {
+                File.Delete(path);
+            }
+            catch
+            {
+                RestoreAttributes(path, originalAttributes);
+                throw;
+            }
+        }
+
+        private static FileAttributes? PrepareTargetForReplacement(string path)
+        {
+            FileAttributes attributes = File.GetAttributes(path);
+            if((attributes & FileAttributes.ReadOnly) == 0)
+                return null;
+
+            File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+            return attributes;
+        }
+
+        private static void RestoreAttributes(
+            string path,
+            FileAttributes? attributes)
+        {
+            if(attributes is not null && File.Exists(path))
+                File.SetAttributes(path, attributes.Value);
         }
 
         private static void TryDelete(string path)

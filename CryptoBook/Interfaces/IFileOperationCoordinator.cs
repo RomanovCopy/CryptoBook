@@ -8,10 +8,12 @@ namespace CryptoBook.Interfaces
             IEnumerable<string> sourcePaths,
             string destinationDirectory,
             FileTransferKind operation,
-            CancellationToken cancellationToken = default);
+            CancellationToken cancellationToken = default,
+            Func<Task>? synchronizeViewAsync = null);
 
         Task<FileOperationBatchResult> DeleteAsync(
             IEnumerable<string> sourcePaths,
-            CancellationToken cancellationToken = default);
+            CancellationToken cancellationToken = default,
+            Func<Task>? synchronizeViewAsync = null);
     }
 }

@@ -90,6 +90,8 @@ namespace CryptoBook.ViewModels
         public void Clear()
         {
             _selectionCancellation?.Cancel();
+            _selectionCancellation?.Dispose();
+            _selectionCancellation = null;
             FileName = string.Empty;
             FileDetails = string.Empty;
             Text = string.Empty;
