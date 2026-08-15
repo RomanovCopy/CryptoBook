@@ -70,4 +70,27 @@ public class WindowLayoutDefaultsTests
             Properties.Settings.Default.GridViewColumnRatios = original;
         }
     }
+
+    [Fact]
+    public void FileExplorer_FlatViewDefaultColumnsFillAvailableWidth()
+    {
+        string? original = Properties.Settings.Default.GridViewColumnRatios;
+        try
+        {
+            Properties.Settings.Default.GridViewColumnRatios = string.Empty;
+            var store = new ColumnLayoutStoreService();
+
+            bool loaded = store.TryLoad(
+                "FileExplorer.MainGrid|Name,RelativeDirectory,LastWriteTimeUtc,Extension,Size",
+                out IReadOnlyList<double> ratios);
+
+            Assert.True(loaded);
+            Assert.Equal([0.30, 0.28, 0.20, 0.12, 0.10], ratios);
+            Assert.Equal(1d, ratios.Sum(), precision: 12);
+        }
+        finally
+        {
+            Properties.Settings.Default.GridViewColumnRatios = original;
+        }
+    }
 }

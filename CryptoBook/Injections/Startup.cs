@@ -256,6 +256,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
             builder.RegisterType<FileClipboardService>().As<IFileClipboardService>().SingleInstance();
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
+            builder.RegisterType<FileExplorerFlatViewService>()
+                .As<IFileExplorerFlatViewService>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<FilePreviewService>().As<IFilePreviewService>().SingleInstance();
             builder.RegisterType<FilePreviewContentSource>().As<IFilePreviewContentSource>().SingleInstance();
             builder.RegisterType<JsonFavoriteDirectoryStore>().As<IFavoriteDirectoryStore>().SingleInstance();

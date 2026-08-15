@@ -457,6 +457,7 @@
   <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Date modified</value></data>
   <data name="Explorer.Column.Type" xml:space="preserve"><value>Type</value></data>
   <data name="Explorer.Column.Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Explorer.Column.Folder" xml:space="preserve"><value>Folder</value></data>
   <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Selected: {0}</value></data>
   <data name="Explorer.Selected" xml:space="preserve"><value>Selected:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Copying files</value></data>
@@ -476,7 +477,13 @@
   <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Directory open error</value></data>
   <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Could not open “{0}”:{1}{2}</value></data>
   <data name="Explorer.Filter" xml:space="preserve"><value>Filter:</value></data>
-  <data name="Explorer.FilterHint" xml:space="preserve"><value>Filter the current directory by name</value></data>
+  <data name="Explorer.FilterHint" xml:space="preserve"><value>Filter the current view by name or folder</value></data>
+  <data name="Explorer.FlatView.Toggle" xml:space="preserve"><value>All files</value></data>
+  <data name="Explorer.FlatView.ToolTip" xml:space="preserve"><value>Show files from the current folder and all subfolders</value></data>
+  <data name="Explorer.FlatView.Scanning" xml:space="preserve"><value>Scanning files…</value></data>
+  <data name="Explorer.FlatView.Canceled" xml:space="preserve"><value>Scanning canceled.</value></data>
+  <data name="Explorer.FlatView.Result" xml:space="preserve"><value>Files: {0}. Skipped folders: {1}.</value></data>
+  <data name="Explorer.FlatView.Error" xml:space="preserve"><value>Could not build the file list: {0}</value></data>
   <data name="Explorer.Navigation.Unavailable" xml:space="preserve"><value>Unavailable</value></data>
   <data name="Explorer.Navigation.Retry" xml:space="preserve"><value>Retry</value></data>
   <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve"><value>The directory no longer exists.</value></data>

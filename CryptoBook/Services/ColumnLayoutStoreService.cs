@@ -14,8 +14,12 @@ namespace CryptoBook.Services
 
         private const string SettingName = "GridViewColumnRatios";
         private const string FileExplorerViewId = "FileExplorer.MainGrid";
+        private const string FileExplorerFlatViewId =
+            "FileExplorer.MainGrid|Name,RelativeDirectory,LastWriteTimeUtc,Extension,Size";
         private static readonly double[] FileExplorerDefaultRatios =
             [0.46, 0.27, 0.15, 0.12];
+        private static readonly double[] FileExplorerFlatDefaultRatios =
+            [0.30, 0.28, 0.20, 0.12, 0.10];
 
         private sealed class Model
         {
@@ -57,6 +61,14 @@ namespace CryptoBook.Services
                 StringComparison.Ordinal))
             {
                 ratios = FileExplorerDefaultRatios;
+                return true;
+            }
+            if(string.Equals(
+                viewId,
+                FileExplorerFlatViewId,
+                StringComparison.Ordinal))
+            {
+                ratios = FileExplorerFlatDefaultRatios;
                 return true;
             }
 

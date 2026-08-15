@@ -457,6 +457,7 @@
   <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Дата изменения</value></data>
   <data name="Explorer.Column.Type" xml:space="preserve"><value>Тип</value></data>
   <data name="Explorer.Column.Size" xml:space="preserve"><value>Размер</value></data>
+  <data name="Explorer.Column.Folder" xml:space="preserve"><value>Папка</value></data>
   <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Выбрано: {0}</value></data>
   <data name="Explorer.Selected" xml:space="preserve"><value>Выбрано:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Копирование файлов</value></data>
@@ -476,7 +477,13 @@
   <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Ошибка открытия директории</value></data>
   <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Не удалось открыть «{0}»:{1}{2}</value></data>
   <data name="Explorer.Filter" xml:space="preserve"><value>Фильтр:</value></data>
-  <data name="Explorer.FilterHint" xml:space="preserve"><value>Фильтр текущего каталога по имени</value></data>
+  <data name="Explorer.FilterHint" xml:space="preserve"><value>Фильтр текущего представления по имени или папке</value></data>
+  <data name="Explorer.FlatView.Toggle" xml:space="preserve"><value>Все файлы</value></data>
+  <data name="Explorer.FlatView.ToolTip" xml:space="preserve"><value>Показать файлы из текущей папки и всех вложенных папок</value></data>
+  <data name="Explorer.FlatView.Scanning" xml:space="preserve"><value>Поиск файлов…</value></data>
+  <data name="Explorer.FlatView.Canceled" xml:space="preserve"><value>Поиск отменён.</value></data>
+  <data name="Explorer.FlatView.Result" xml:space="preserve"><value>Файлов: {0}. Пропущено папок: {1}.</value></data>
+  <data name="Explorer.FlatView.Error" xml:space="preserve"><value>Не удалось построить список файлов: {0}</value></data>
   <data name="Explorer.Navigation.Unavailable" xml:space="preserve"><value>Недоступно</value></data>
   <data name="Explorer.Navigation.Retry" xml:space="preserve"><value>Повторить</value></data>
   <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve"><value>Каталог больше не существует.</value></data>

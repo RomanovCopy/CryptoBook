@@ -62,6 +62,12 @@ namespace CryptoBook.Models
         private Guid _windowId;
         public bool IsHiddenFilesVisible { get => _isHiddenFilesVisible; set => SetProperty(ref _isHiddenFilesVisible, value); }
         private bool _isHiddenFilesVisible;
+        public bool IsFlatViewEnabled
+        {
+            get => _isFlatViewEnabled;
+            set => SetProperty(ref _isFlatViewEnabled, value);
+        }
+        private bool _isFlatViewEnabled;
         public ISystemItem? SelectedItem { get => _selectedItem; set => SetProperty(ref _selectedItem, value); }
         private ISystemItem? _selectedItem;
         public ISystemItem? SelectedListItem { get => _selectedListItem; set => SetProperty(ref _selectedListItem, value); }
@@ -597,7 +603,8 @@ namespace CryptoBook.Models
             if(GetSingleSelection(obj) is ISystemItem systemItem &&
                systemItem is not IDriveItem)
             {
-                if(systemItem.Parent is IContainerSystemItem parent &&
+                if(!IsFlatViewEnabled &&
+                   systemItem.Parent is IContainerSystemItem parent &&
                    !ReferenceEquals(SelectedItem, parent))
                 {
                     bool navigated = await NavigateAsync(
@@ -635,22 +642,33 @@ namespace CryptoBook.Models
                 var res = await _fileManagerService.RenameAsync(oldPath, systemItem.Name, CancellationToken.None);
                 if(res.Success)
                 {
-                    systemItem.Parent = SelectedItem;
-                    if(systemItem.Parent is IContainerSystemItem parentSystemItem)
+                    if(IsFlatViewEnabled)
                     {
-                        res = await parentSystemItem.RenameChildAsync(systemItem, systemItem.Name, CancellationToken.None);
+                        if(!string.IsNullOrWhiteSpace(newPath))
+                            systemItem.FullPath = newPath;
                     }
-                    if(!res.Success)
+                    else
                     {
-                        _ = await _messageService.ShowMessage(
-                            LocalizationManager.GetString(
-                                "Explorer.RenameError"),
-                            res.ErrorMessage);
-                        systemItem.Name = _lastItemName;
+                        systemItem.Parent = SelectedItem;
+                        if(systemItem.Parent is IContainerSystemItem parentSystemItem)
+                        {
+                            res = await parentSystemItem.RenameChildAsync(
+                                systemItem,
+                                systemItem.Name,
+                                CancellationToken.None);
+                        }
                     }
 
                     if(res.Success && !string.IsNullOrWhiteSpace(newPath))
                         await SynchronizeRenamedDocumentAsync(oldPath, newPath);
+                }
+                if(!res.Success)
+                {
+                    _ = await _messageService.ShowMessage(
+                        LocalizationManager.GetString(
+                            "Explorer.RenameError"),
+                        res.ErrorMessage);
+                    systemItem.Name = _lastItemName;
                 }
                 systemItem.IsEditing = false;
             } else

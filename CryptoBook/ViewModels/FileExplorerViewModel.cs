@@ -21,16 +21,26 @@ namespace CryptoBook.ViewModels
     public class FileExplorerViewModel: ViewModelBase, IFileExplorerViewModel
     {
         public const int FilterDebounceMilliseconds = 200;
+        public const int FlatViewRefreshDebounceMilliseconds = 500;
 
         private readonly IFileExplorerModel _fileExplorerModel;
         private readonly IMessageService _messageService;
         private readonly IWindowManager _windowManager;
         private readonly IFilePropertiesService _filePropertiesService;
+        private readonly IFileExplorerFlatViewService _flatViewService;
         private readonly FileExplorerMode _mode;
         private readonly string? _initialDirectory;
         private ISystemItem? _previewSelection;
         private readonly ObservableCollection<ISystemItem> _emptyChildren = [];
+        private readonly RangeObservableCollection<IFileItem> _flatFiles = [];
         private readonly DispatcherTimer _filterDebounceTimer;
+        private readonly DispatcherTimer _flatViewRefreshTimer;
+        private readonly Dispatcher _dispatcher;
+        private CancellationTokenSource? _flatViewCancellationSource;
+        private bool _isClosed;
+        private int _flatViewFileCount;
+        private int _flatViewSkippedDirectoryCount;
+        private bool _flatViewHasResult;
 
         public double WindowWidth { get =>_fileExplorerModel.WindowWidth; set => _fileExplorerModel.WindowWidth=value; }
         public double WindowHeight { get => _fileExplorerModel.WindowHeight; set => _fileExplorerModel.WindowHeight=value; }
@@ -43,6 +53,33 @@ namespace CryptoBook.ViewModels
         public double RightColumnPercent { get => _fileExplorerModel.RightColumnPercent; set => _fileExplorerModel.RightColumnPercent = value; }
 
         public bool IsHiddenFilesVisible { get => _fileExplorerModel.IsHiddenFilesVisible; set => _fileExplorerModel.IsHiddenFilesVisible=value; }
+        public bool IsFlatViewEnabled
+        {
+            get => _fileExplorerModel.IsFlatViewEnabled;
+            set
+            {
+                if(!CanUseFlatView && value)
+                    return;
+                _fileExplorerModel.IsFlatViewEnabled = value;
+            }
+        }
+        public bool CanUseFlatView => _mode != FileExplorerMode.SelectFolder;
+        public bool IsFlatViewLoading
+        {
+            get => _isFlatViewLoading;
+            private set
+            {
+                if(SetProperty(ref _isFlatViewLoading, value))
+                    _cancelFlatViewScanCommand?.RaiseCanExecuteChanged();
+            }
+        }
+        private bool _isFlatViewLoading;
+        public string FlatViewStatus
+        {
+            get => _flatViewStatus;
+            private set => SetProperty(ref _flatViewStatus, value);
+        }
+        private string _flatViewStatus = string.Empty;
         public ISystemItem? SelectedItem { get => _fileExplorerModel.SelectedItem; set => _fileExplorerModel.SelectedItem=value; }
         public ISystemItem? SelectedListItem { get => _fileExplorerModel.SelectedListItem; set => _fileExplorerModel.SelectedListItem=value; }
         public IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get => _fileExplorerModel.SelectedItemsSnapshot; set => _fileExplorerModel.SelectedItemsSnapshot=value; }
@@ -98,6 +135,7 @@ namespace CryptoBook.ViewModels
             IFileExplorerModel fileExplorerModel,
             IFavoriteDirectoriesViewModel favorites,
             IFilePreviewViewModel preview,
+            IFileExplorerFlatViewService flatViewService,
             IMessageService messageService,
             IFilePropertiesService filePropertiesService,
             IWindowManager windowManager,
@@ -106,6 +144,8 @@ namespace CryptoBook.ViewModels
             _fileExplorerModel = fileExplorerModel ?? throw new ArgumentNullException(nameof(fileExplorerModel));
             Favorites = favorites ?? throw new ArgumentNullException(nameof(favorites));
             Preview = preview ?? throw new ArgumentNullException(nameof(preview));
+            _flatViewService = flatViewService ??
+                throw new ArgumentNullException(nameof(flatViewService));
             _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
             _filePropertiesService = filePropertiesService ??
                 throw new ArgumentNullException(nameof(filePropertiesService));
@@ -121,12 +161,19 @@ namespace CryptoBook.ViewModels
                 out string initialDirectory)
                 ? initialDirectory
                 : null;
+            _dispatcher = Dispatcher.CurrentDispatcher;
             _filterDebounceTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(FilterDebounceMilliseconds),
                 DispatcherPriority.Background,
                 FilterDebounceTimer_Tick,
-                Dispatcher.CurrentDispatcher);
+                _dispatcher);
+            _flatViewRefreshTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(FlatViewRefreshDebounceMilliseconds),
+                DispatcherPriority.Background,
+                FlatViewRefreshTimer_Tick,
+                _dispatcher);
             _fileExplorerModel.PropertyChanged += FileExplorerModel_PropertyChanged;
+            _flatViewService.FilesChanged += FlatViewService_FilesChanged;
             Favorites.OpenRequested += Favorites_OpenRequested;
             LocalizationManager.CultureChanged += OnCultureChanged;
             RebuildChildrenView();
@@ -139,6 +186,23 @@ namespace CryptoBook.ViewModels
             OnPropertyChanged(e.PropertyName);
             if(e.PropertyName == nameof(SelectedItem))
                 RebuildChildrenView();
+            if(e.PropertyName == nameof(IsFlatViewEnabled))
+            {
+                OnPropertyChanged(nameof(CanUseFlatView));
+                RebuildChildrenView();
+                SelectedListItem = null;
+                SelectedItemsSnapshot = Array.Empty<ISystemItem>();
+                if(IsFlatViewEnabled)
+                    _ = RefreshFlatViewAsync();
+                else
+                    DeactivateFlatView();
+            }
+            else if(e.PropertyName is nameof(CurrentPath) or
+                nameof(IsHiddenFilesVisible))
+            {
+                if(IsFlatViewEnabled)
+                    _ = RefreshFlatViewAsync();
+            }
             if(e.PropertyName is nameof(SelectedItem) or
                 nameof(SelectedListItem) or
                 nameof(SelectedItemsSnapshot) or
@@ -155,13 +219,18 @@ namespace CryptoBook.ViewModels
             if(_childrenView is not null)
                 _childrenView.Filter = null;
 
-            object source = SelectedItem is IContainerSystemItem container
-                ? container.Children
-                : _emptyChildren;
+            object source = IsFlatViewEnabled
+                ? _flatFiles
+                : SelectedItem is IContainerSystemItem container
+                    ? container.Children
+                    : _emptyChildren;
             ICollectionView view = CollectionViewSource.GetDefaultView(source);
             view.Filter = item =>
                 item is ISystemItem systemItem &&
-                FileExplorerItemFilter.Matches(systemItem, FilterText);
+                FileExplorerItemFilter.Matches(
+                    systemItem,
+                    FilterText,
+                    IsFlatViewEnabled ? CurrentPath : null);
             ChildrenView = view;
         }
 
@@ -169,6 +238,159 @@ namespace CryptoBook.ViewModels
         {
             _filterDebounceTimer.Stop();
             ChildrenView.Refresh();
+        }
+
+        private void FlatViewService_FilesChanged(object? sender, EventArgs e)
+        {
+            if(_isClosed)
+                return;
+
+            try
+            {
+                _dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if(!IsFlatViewEnabled || _isClosed)
+                        return;
+
+                    _flatViewRefreshTimer.Stop();
+                    _flatViewRefreshTimer.Start();
+                }));
+            }
+            catch(InvalidOperationException)
+            {
+            }
+        }
+
+        private async void FlatViewRefreshTimer_Tick(object? sender, EventArgs e)
+        {
+            _flatViewRefreshTimer.Stop();
+            await RefreshFlatViewAsync();
+        }
+
+        private async Task RefreshFlatViewAsync()
+        {
+            if(_isClosed ||
+               !IsFlatViewEnabled ||
+               IsCurrentDirectoryUnavailable ||
+               string.IsNullOrWhiteSpace(CurrentPath))
+            {
+                return;
+            }
+
+            string rootPath = CurrentPath;
+            var nextCancellation = new CancellationTokenSource();
+            CancellationTokenSource? previousCancellation =
+                _flatViewCancellationSource;
+            _flatViewCancellationSource = nextCancellation;
+            previousCancellation?.Cancel();
+            previousCancellation?.Dispose();
+
+            IsFlatViewLoading = true;
+            FlatViewStatus = LocalizationManager.GetString(
+                "Explorer.FlatView.Scanning");
+
+            try
+            {
+                _flatViewService.StartMonitoring(rootPath);
+                FileExplorerFlatScanResult result =
+                    await _flatViewService.ScanAsync(
+                        rootPath,
+                        IsHiddenFilesVisible,
+                        nextCancellation.Token);
+                nextCancellation.Token.ThrowIfCancellationRequested();
+                if(!IsFlatViewEnabled ||
+                   !PathsEqual(rootPath, CurrentPath) ||
+                   !ReferenceEquals(
+                       _flatViewCancellationSource,
+                       nextCancellation))
+                {
+                    return;
+                }
+
+                SelectedListItem = null;
+                SelectedItemsSnapshot = Array.Empty<ISystemItem>();
+                _previewSelection = null;
+                Preview.Clear();
+                _flatFiles.ReplaceAll(result.Files);
+                _flatViewFileCount = result.Files.Count;
+                _flatViewSkippedDirectoryCount =
+                    result.SkippedDirectoryCount;
+                _flatViewHasResult = true;
+                UpdateFlatViewStatus();
+            }
+            catch(OperationCanceledException)
+            {
+                if(IsFlatViewEnabled &&
+                   ReferenceEquals(
+                       _flatViewCancellationSource,
+                       nextCancellation))
+                {
+                    FlatViewStatus = LocalizationManager.GetString(
+                        "Explorer.FlatView.Canceled");
+                }
+            }
+            catch(Exception exception)
+            {
+                if(ReferenceEquals(
+                    _flatViewCancellationSource,
+                    nextCancellation))
+                {
+                    FlatViewStatus = LocalizationManager.Format(
+                        "Explorer.FlatView.Error",
+                        exception.Message);
+                }
+            }
+            finally
+            {
+                if(ReferenceEquals(
+                    _flatViewCancellationSource,
+                    nextCancellation))
+                {
+                    IsFlatViewLoading = false;
+                }
+            }
+        }
+
+        private void DeactivateFlatView()
+        {
+            _flatViewRefreshTimer.Stop();
+            CancellationTokenSource? cancellation =
+                _flatViewCancellationSource;
+            _flatViewCancellationSource = null;
+            cancellation?.Cancel();
+            cancellation?.Dispose();
+            _flatViewService.StopMonitoring();
+            _flatFiles.ReplaceAll(Array.Empty<IFileItem>());
+            _flatViewHasResult = false;
+            IsFlatViewLoading = false;
+            FlatViewStatus = string.Empty;
+        }
+
+        private void UpdateFlatViewStatus()
+        {
+            if(!_flatViewHasResult)
+                return;
+
+            FlatViewStatus = LocalizationManager.Format(
+                "Explorer.FlatView.Result",
+                _flatViewFileCount,
+                _flatViewSkippedDirectoryCount);
+        }
+
+        private static bool PathsEqual(string left, string right)
+        {
+            try
+            {
+                return string.Equals(
+                    Path.TrimEndingDirectorySeparator(Path.GetFullPath(left)),
+                    Path.TrimEndingDirectorySeparator(Path.GetFullPath(right)),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            catch(Exception exception) when(
+                exception is ArgumentException or NotSupportedException)
+            {
+                return false;
+            }
         }
 
         private async void Favorites_OpenRequested(
@@ -287,8 +509,23 @@ namespace CryptoBook.ViewModels
             _fileExplorerModel.CanExecute_DropCommand);
         RelayCommand _dropCommand;
 
-        public ICommand RefreshCommand => _refreshCommand ??= new RelayCommand(_fileExplorerModel.Execute_RefreshCommand, _fileExplorerModel.CanExecure_RefreshCommand);
+        public ICommand RefreshCommand => _refreshCommand ??= new RelayCommand(
+            ExecuteRefresh,
+            _fileExplorerModel.CanExecure_RefreshCommand);
         RelayCommand _refreshCommand;
+
+        public ICommand CancelFlatViewScanCommand =>
+            _cancelFlatViewScanCommand ??= new RelayCommand(
+                _ => _flatViewCancellationSource?.Cancel(),
+                _ => IsFlatViewLoading);
+        RelayCommand? _cancelFlatViewScanCommand;
+
+        private void ExecuteRefresh(object? parameter)
+        {
+            _fileExplorerModel.Execute_RefreshCommand(parameter);
+            if(IsFlatViewEnabled)
+                _ = RefreshFlatViewAsync();
+        }
 
         public ICommand CancelRenameCommand => _cancelRenameCommand ??= new RelayCommand(_fileExplorerModel.Execute_CancelRenameCommand, _fileExplorerModel.CanExecute_CancelRenameCommand);
         RelayCommand _cancelRenameCommand;
@@ -353,8 +590,17 @@ namespace CryptoBook.ViewModels
 
         private void ExecuteClosed(object? parameter)
         {
+            _isClosed = true;
             _filterDebounceTimer.Stop();
+            _flatViewRefreshTimer.Stop();
+            CancellationTokenSource? cancellation =
+                _flatViewCancellationSource;
+            _flatViewCancellationSource = null;
+            cancellation?.Cancel();
+            cancellation?.Dispose();
             _fileExplorerModel.PropertyChanged -= FileExplorerModel_PropertyChanged;
+            _flatViewService.FilesChanged -= FlatViewService_FilesChanged;
+            _flatViewService.StopMonitoring();
             Favorites.OpenRequested -= Favorites_OpenRequested;
             LocalizationManager.CultureChanged -= OnCultureChanged;
             if(_childrenView is not null)
@@ -470,6 +716,15 @@ namespace CryptoBook.ViewModels
         {
             OnPropertyChanged(nameof(ExplorerTitle));
             OnPropertyChanged(nameof(PickerActionText));
+            if(IsFlatViewLoading)
+            {
+                FlatViewStatus = LocalizationManager.GetString(
+                    "Explorer.FlatView.Scanning");
+            }
+            else
+            {
+                UpdateFlatViewStatus();
+            }
         }
 
         public ICommand EncryptingKeyCommand => _encryptingKeyCommand

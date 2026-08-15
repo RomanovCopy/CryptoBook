@@ -85,6 +85,8 @@ namespace CryptoBook.Behaviors
         private bool _applying;              // чтобы не ловить собственные изменения
         private bool _restoredOnce;
         private IReadOnlyList<double>? _lastRatios;
+        private DependencyPropertyDescriptor? _viewPropertyDescriptor;
+        private string? _activeLayoutId;
 
         private ScrollViewer? _scrollViewer;
         private double _lastViewportWidth;
@@ -101,6 +103,12 @@ namespace CryptoBook.Behaviors
 
             AssociatedObject.Loaded += OnLoaded;
             AssociatedObject.Unloaded += OnUnloaded;
+            _viewPropertyDescriptor = DependencyPropertyDescriptor.FromProperty(
+                System.Windows.Controls.ListView.ViewProperty,
+                typeof(System.Windows.Controls.ListView));
+            _viewPropertyDescriptor?.AddValueChanged(
+                AssociatedObject,
+                OnViewChanged);
 
             // drag-resize заголовков колонок
             AssociatedObject.AddHandler(FrameworkElement.SizeChangedEvent, new SizeChangedEventHandler(OnAnySizeChanged),
@@ -137,6 +145,10 @@ namespace CryptoBook.Behaviors
 
             AssociatedObject.Loaded -= OnLoaded;
             AssociatedObject.Unloaded -= OnUnloaded;
+            _viewPropertyDescriptor?.RemoveValueChanged(
+                AssociatedObject,
+                OnViewChanged);
+            _viewPropertyDescriptor = null;
 
             AssociatedObject.RemoveHandler(FrameworkElement.SizeChangedEvent,
                 new SizeChangedEventHandler(OnAnySizeChanged));
@@ -159,10 +171,92 @@ namespace CryptoBook.Behaviors
             // восстановление после layout
             AssociatedObject.Dispatcher.BeginInvoke(new Action(() =>
             {
-                TryRestore();
-                // зафиксируем viewport после восстановления
-                _lastViewportWidth = GetViewportWidth();
+                InitializeCurrentLayout(GetLayoutId());
             }), DispatcherPriority.Loaded);
+        }
+
+        private void OnViewChanged(object? sender, EventArgs e)
+        {
+            if(Store is not null &&
+               !string.IsNullOrWhiteSpace(_activeLayoutId) &&
+               _lastRatios is not null)
+            {
+                Store.Save(_activeLayoutId, _lastRatios);
+            }
+
+            _saveTimer?.Stop();
+            _lastRatios = null;
+            string layoutId = GetLayoutId();
+            _activeLayoutId = layoutId;
+
+            AssociatedObject.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if(!AssociatedObject.IsLoaded ||
+                   !string.Equals(
+                       layoutId,
+                       GetLayoutId(),
+                       StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                InitializeCurrentLayout(layoutId);
+            }), DispatcherPriority.Loaded);
+        }
+
+        private void InitializeCurrentLayout(string layoutId)
+        {
+            if(!string.Equals(
+                layoutId,
+                GetLayoutId(),
+                StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _activeLayoutId = layoutId;
+            _lastRatios = null;
+            TryRestore();
+            if(_lastRatios is null)
+                NormalizeFromCurrentWidthsAndApply();
+            if(_lastRatios is null)
+                CreateUniformRatios();
+
+            ApplyCurrentRatios(layoutId);
+            _lastViewportWidth = GetViewportWidth();
+
+            // При первом Loaded WPF может ещё не рассчитать ViewportWidth.
+            // Повтор после layout гарантирует заполнение всей доступной ширины.
+            AssociatedObject.Dispatcher.BeginInvoke(
+                new Action(() => ApplyCurrentRatios(layoutId)),
+                DispatcherPriority.ContextIdle);
+        }
+
+        private void CreateUniformRatios()
+        {
+            var columns = GetColumns();
+            if(columns is null || columns.Length == 0)
+                return;
+
+            _lastRatios = Enumerable
+                .Repeat(1d / columns.Length, columns.Length)
+                .ToArray();
+        }
+
+        private void ApplyCurrentRatios(string layoutId)
+        {
+            if(_lastRatios is null ||
+               !AssociatedObject.IsLoaded ||
+               !string.Equals(
+                   layoutId,
+                   GetLayoutId(),
+                   StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            ApplyRatios_NoGaps(_lastRatios);
+            _lastViewportWidth = GetViewportWidth();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -376,11 +470,23 @@ namespace CryptoBook.Behaviors
             if(cols == null || cols.Length == 0)
                 return;
 
-            if(!Store.TryLoad(ViewId, out var ratios))
-                return;
+            string layoutId = GetLayoutId();
+            if(!Store.TryLoad(layoutId, out var ratios))
+            {
+                if(IsStandardLayout() &&
+                   Store.TryLoad(ViewId, out IReadOnlyList<double> legacyRatios))
+                {
+                    ratios = legacyRatios;
+                }
+                else
+                {
+                    return;
+                }
+            }
             if(ratios.Count != cols.Length)
                 return;
 
+            _activeLayoutId = layoutId;
             _lastRatios = ratios;
             ApplyRatios_NoGaps(ratios);
         }
@@ -403,8 +509,35 @@ namespace CryptoBook.Behaviors
             // ratios сохраняем "как есть"
             var ratios = widths.Select(w => w / total).ToArray();
 
+            string layoutId = GetLayoutId();
+            _activeLayoutId = layoutId;
             _lastRatios = ratios;
-            Store.Save(ViewId, ratios);
+            Store.Save(layoutId, ratios);
+        }
+
+        private string GetLayoutId()
+        {
+            var columns = GetColumns();
+            if(columns is null || columns.Length == 0)
+                return ViewId;
+
+            string signature = string.Join(
+                ",",
+                columns.Select(column =>
+                    (column.Header as GridViewColumnHeader)?.Tag?.ToString() ??
+                    column.Header?.ToString() ??
+                    "Column"));
+            return string.Concat(ViewId, "|", signature);
+        }
+
+        private bool IsStandardLayout()
+        {
+            var columns = GetColumns();
+            return columns is not null &&
+                !columns.Any(column => string.Equals(
+                    (column.Header as GridViewColumnHeader)?.Tag?.ToString(),
+                    "RelativeDirectory",
+                    StringComparison.Ordinal));
         }
 
         private GridViewColumn[]? GetColumns()

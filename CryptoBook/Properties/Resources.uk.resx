@@ -872,6 +872,9 @@
   <data name="Explorer.Column.Size" xml:space="preserve">
     <value>Розмір</value>
   </data>
+  <data name="Explorer.Column.Folder" xml:space="preserve">
+    <value>Папка</value>
+  </data>
   <data name="Explorer.SelectedFormat" xml:space="preserve">
     <value>Вибрано: {0}</value>
   </data>
@@ -930,7 +933,25 @@
     <value>Фільтр:</value>
   </data>
   <data name="Explorer.FilterHint" xml:space="preserve">
-    <value>Фільтр поточного каталогу за назвою</value>
+    <value>Фільтр поточного подання за назвою або папкою</value>
+  </data>
+  <data name="Explorer.FlatView.Toggle" xml:space="preserve">
+    <value>Усі файли</value>
+  </data>
+  <data name="Explorer.FlatView.ToolTip" xml:space="preserve">
+    <value>Показати файли з поточної папки та всіх вкладених папок</value>
+  </data>
+  <data name="Explorer.FlatView.Scanning" xml:space="preserve">
+    <value>Пошук файлів…</value>
+  </data>
+  <data name="Explorer.FlatView.Canceled" xml:space="preserve">
+    <value>Пошук скасовано.</value>
+  </data>
+  <data name="Explorer.FlatView.Result" xml:space="preserve">
+    <value>Файлів: {0}. Пропущено папок: {1}.</value>
+  </data>
+  <data name="Explorer.FlatView.Error" xml:space="preserve">
+    <value>Не вдалося побудувати список файлів: {0}</value>
   </data>
   <data name="Explorer.Navigation.Unavailable" xml:space="preserve">
     <value>Недоступно</value>
