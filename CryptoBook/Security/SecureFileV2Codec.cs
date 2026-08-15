@@ -233,7 +233,7 @@ namespace CryptoBook.Security
                     progress,
                     cancellationToken);
 
-                File.Move(tempFile!, finalFile!, overwrite: true);
+                AtomicFileCommit.CommitWithoutBackup(tempFile!, finalFile!);
             } catch
             {
                 if(tempFile is not null)
@@ -652,13 +652,8 @@ namespace CryptoBook.Security
             return total;
         }
 
-        private static FileStream OpenRead(string path) => new(
-            path,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.Read,
-            SecureFileFormat.BufferSize,
-            FileOptions.Asynchronous | FileOptions.SequentialScan);
+        private static FileStream OpenRead(string path) =>
+            SharedFileReadStream.Open(path, SecureFileFormat.BufferSize);
 
         private static void TryDelete(string path)
         {

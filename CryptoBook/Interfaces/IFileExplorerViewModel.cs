@@ -23,6 +23,10 @@ namespace CryptoBook.Interfaces
         double LeftColumnPercent { get; set; }
         double RightColumnPercent { get; set; }
         bool IsHiddenFilesVisible { get; set; }
+        bool IsFlatViewEnabled { get; set; }
+        bool CanUseFlatView { get; }
+        bool IsFlatViewLoading { get; }
+        string FlatViewStatus { get; }
         string CurrentPath { get; }
         string AddressText { get; set; }
         string FilterText { get; set; }
@@ -64,6 +68,7 @@ namespace CryptoBook.Interfaces
         ICommand MoveCommand { get; }
         ICommand DropCommand { get; }
         ICommand RefreshCommand { get; }
+        ICommand CancelFlatViewScanCommand { get; }
         ICommand CancelRenameCommand { get; }
         ICommand TreeViewItemSelectedCommand { get; }
         ICommand ListViewItemDoubleClickCommand { get; }

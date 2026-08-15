@@ -374,8 +374,8 @@
   <data name="Explorer.Move" xml:space="preserve"><value>Move</value></data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Add current directory to favorites</value></data>
   <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Set encryption key</value></data>
-  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Encrypt selected item</value></data>
-  <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Decrypt selected item</value></data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Encrypt selected items</value></data>
+  <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Decrypt selected items</value></data>
   <data name="Explorer.Favorites" xml:space="preserve"><value>Favorites</value></data>
   <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Remove from favorites</value></data>
   <data name="Explorer.Favorites.Empty" xml:space="preserve"><value>Add the current folder using the ★ button</value></data>
@@ -409,6 +409,21 @@
   <data name="Editor.Preview" xml:space="preserve"><value>Preview</value></data>
   <data name="Editor.Zoom100" xml:space="preserve"><value>100% zoom</value></data>
   <data name="Editor.FitToWindow" xml:space="preserve"><value>Fit to window</value></data>
+  <data name="Editor.DocumentStructure" xml:space="preserve"><value>Structure</value></data>
+  <data name="Editor.ToggleDocumentStructure" xml:space="preserve"><value>Show document structure</value></data>
+  <data name="Editor.DocumentStructureTextElements" xml:space="preserve"><value>Show text elements (Run, Span)</value></data>
+  <data name="Editor.DocumentStructurePreviewReadOnly" xml:space="preserve"><value>Navigation and structure editing are disabled in preview mode.</value></data>
+  <data name="Editor.DocumentStructureEmpty" xml:space="preserve"><value>The document has no structural elements.</value></data>
+  <data name="Editor.DocumentStructureNavigate" xml:space="preserve"><value>Go to element</value></data>
+  <data name="Editor.DocumentStructureAddParagraph" xml:space="preserve"><value>Add paragraph (Ctrl+Enter)</value></data>
+  <data name="Editor.DocumentStructureAddParagraphBefore" xml:space="preserve"><value>Add paragraph before</value></data>
+  <data name="Editor.DocumentStructureAddParagraphInside" xml:space="preserve"><value>Add paragraph inside</value></data>
+  <data name="Editor.DocumentStructureAddParagraphAfter" xml:space="preserve"><value>Add paragraph after</value></data>
+  <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve"><value>Delete document element</value></data>
+  <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve"><value>Delete “{0}” and all of its contents?</value></data>
+  <data name="Editor.DocumentStructureMoveUp" xml:space="preserve"><value>Move up</value></data>
+  <data name="Editor.DocumentStructureMoveDown" xml:space="preserve"><value>Move down</value></data>
+  <data name="Editor.DocumentStructureMoveHint" xml:space="preserve"><value>Drag an element to move it before, into, or after a compatible element. Alt+↑/↓ changes its order; Ctrl+Enter adds the next paragraph.</value></data>
   <data name="Bookmarks.Properties" xml:space="preserve"><value>Bookmark properties</value></data>
   <data name="Bookmarks.Name" xml:space="preserve"><value>Name</value></data>
   <data name="Bookmarks.Note" xml:space="preserve"><value>Note</value></data>
@@ -442,6 +457,7 @@
   <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Date modified</value></data>
   <data name="Explorer.Column.Type" xml:space="preserve"><value>Type</value></data>
   <data name="Explorer.Column.Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Explorer.Column.Folder" xml:space="preserve"><value>Folder</value></data>
   <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Selected: {0}</value></data>
   <data name="Explorer.Selected" xml:space="preserve"><value>Selected:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Copying files</value></data>
@@ -461,7 +477,13 @@
   <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Directory open error</value></data>
   <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Could not open “{0}”:{1}{2}</value></data>
   <data name="Explorer.Filter" xml:space="preserve"><value>Filter:</value></data>
-  <data name="Explorer.FilterHint" xml:space="preserve"><value>Filter the current directory by name</value></data>
+  <data name="Explorer.FilterHint" xml:space="preserve"><value>Filter the current view by name or folder</value></data>
+  <data name="Explorer.FlatView.Toggle" xml:space="preserve"><value>All files</value></data>
+  <data name="Explorer.FlatView.ToolTip" xml:space="preserve"><value>Show files from the current folder and all subfolders</value></data>
+  <data name="Explorer.FlatView.Scanning" xml:space="preserve"><value>Scanning files…</value></data>
+  <data name="Explorer.FlatView.Canceled" xml:space="preserve"><value>Scanning canceled.</value></data>
+  <data name="Explorer.FlatView.Result" xml:space="preserve"><value>Files: {0}. Skipped folders: {1}.</value></data>
+  <data name="Explorer.FlatView.Error" xml:space="preserve"><value>Could not build the file list: {0}</value></data>
   <data name="Explorer.Navigation.Unavailable" xml:space="preserve"><value>Unavailable</value></data>
   <data name="Explorer.Navigation.Retry" xml:space="preserve"><value>Retry</value></data>
   <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve"><value>The directory no longer exists.</value></data>
@@ -493,6 +515,7 @@
   <data name="Explorer.OverwriteTitle" xml:space="preserve"><value>Overwrite source item</value></data>
   <data name="Explorer.OverwriteFilePrompt" xml:space="preserve"><value>Replace the source file with the {0} copy?</value></data>
   <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve"><value>Replace the source files with the {0} copies?</value></data>
+  <data name="Explorer.OverwriteBatchPrompt" xml:space="preserve"><value>Replace {0} selected items with {1} copies?</value></data>
   <data name="Explorer.EncryptedAdjective" xml:space="preserve"><value>encrypted</value></data>
   <data name="Explorer.DecryptedAdjective" xml:space="preserve"><value>decrypted</value></data>
   <data name="Explorer.EncryptedCopiesAdjective" xml:space="preserve"><value>encrypted</value></data>
@@ -650,6 +673,9 @@
   <data name="Security.SourceDirectoryUnknown" xml:space="preserve"><value>Could not determine the directory of “{0}”.</value></data>
   <data name="Security.DecryptionResultUnknown" xml:space="preserve"><value>Could not determine the decryption result.</value></data>
   <data name="Security.SourceFileNotFound" xml:space="preserve"><value>The source file was not found.</value></data>
+  <data name="Security.OperationFailedForPath" xml:space="preserve"><value>Could not process “{1}”:{0}{2}</value></data>
+  <data name="Explorer.BatchOperationFailed" xml:space="preserve"><value>The following files could not be processed:{0}{0}{1}</value></data>
+  <data name="Explorer.RefreshingAfterOperation" xml:space="preserve"><value>Updating the file list…</value></data>
   <data name="Security.SourceDirectoryNotFound" xml:space="preserve"><value>Source directory “{0}” was not found.</value></data>
   <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve"><value>In Save As mode, the destination directory must differ from the source directory.</value></data>
   <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve"><value>The file is not an encrypted CryptoBook file.</value></data>

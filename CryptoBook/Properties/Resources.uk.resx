@@ -624,10 +624,10 @@
     <value>Встановити ключ шифрування</value>
   </data>
   <data name="Explorer.EncryptSelected" xml:space="preserve">
-    <value>Зашифрувати вибраний елемент</value>
+    <value>Зашифрувати вибрані елементи</value>
   </data>
   <data name="Explorer.DecryptSelected" xml:space="preserve">
-    <value>Розшифрувати вибраний елемент</value>
+    <value>Розшифрувати вибрані елементи</value>
   </data>
   <data name="Explorer.Favorites" xml:space="preserve">
     <value>Вибране</value>
@@ -728,6 +728,51 @@
   <data name="Editor.FitToWindow" xml:space="preserve">
     <value>Вписати у вікно</value>
   </data>
+  <data name="Editor.DocumentStructure" xml:space="preserve">
+    <value>Структура</value>
+  </data>
+  <data name="Editor.ToggleDocumentStructure" xml:space="preserve">
+    <value>Показати структуру документа</value>
+  </data>
+  <data name="Editor.DocumentStructureTextElements" xml:space="preserve">
+    <value>Показувати текстові елементи (Run, Span)</value>
+  </data>
+  <data name="Editor.DocumentStructurePreviewReadOnly" xml:space="preserve">
+    <value>У режимі перегляду навігацію та зміну структури вимкнено.</value>
+  </data>
+  <data name="Editor.DocumentStructureEmpty" xml:space="preserve">
+    <value>У документі немає структурних елементів.</value>
+  </data>
+  <data name="Editor.DocumentStructureNavigate" xml:space="preserve">
+    <value>Перейти до елемента</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraph" xml:space="preserve">
+    <value>Додати абзац (Ctrl+Enter)</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraphBefore" xml:space="preserve">
+    <value>Додати абзац перед</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraphInside" xml:space="preserve">
+    <value>Додати абзац усередину</value>
+  </data>
+  <data name="Editor.DocumentStructureAddParagraphAfter" xml:space="preserve">
+    <value>Додати абзац після</value>
+  </data>
+  <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve">
+    <value>Видалення елемента документа</value>
+  </data>
+  <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve">
+    <value>Видалити «{0}» разом з усім вмістом?</value>
+  </data>
+  <data name="Editor.DocumentStructureMoveUp" xml:space="preserve">
+    <value>Перемістити вище</value>
+  </data>
+  <data name="Editor.DocumentStructureMoveDown" xml:space="preserve">
+    <value>Перемістити нижче</value>
+  </data>
+  <data name="Editor.DocumentStructureMoveHint" xml:space="preserve">
+    <value>Перетягніть елемент до, всередину або після сумісного елемента. Alt+↑/↓ змінює порядок; Ctrl+Enter додає наступний абзац.</value>
+  </data>
   <data name="Bookmarks.Properties" xml:space="preserve">
     <value>Властивості закладки</value>
   </data>
@@ -827,6 +872,9 @@
   <data name="Explorer.Column.Size" xml:space="preserve">
     <value>Розмір</value>
   </data>
+  <data name="Explorer.Column.Folder" xml:space="preserve">
+    <value>Папка</value>
+  </data>
   <data name="Explorer.SelectedFormat" xml:space="preserve">
     <value>Вибрано: {0}</value>
   </data>
@@ -885,7 +933,25 @@
     <value>Фільтр:</value>
   </data>
   <data name="Explorer.FilterHint" xml:space="preserve">
-    <value>Фільтр поточного каталогу за назвою</value>
+    <value>Фільтр поточного подання за назвою або папкою</value>
+  </data>
+  <data name="Explorer.FlatView.Toggle" xml:space="preserve">
+    <value>Усі файли</value>
+  </data>
+  <data name="Explorer.FlatView.ToolTip" xml:space="preserve">
+    <value>Показати файли з поточної папки та всіх вкладених папок</value>
+  </data>
+  <data name="Explorer.FlatView.Scanning" xml:space="preserve">
+    <value>Пошук файлів…</value>
+  </data>
+  <data name="Explorer.FlatView.Canceled" xml:space="preserve">
+    <value>Пошук скасовано.</value>
+  </data>
+  <data name="Explorer.FlatView.Result" xml:space="preserve">
+    <value>Файлів: {0}. Пропущено папок: {1}.</value>
+  </data>
+  <data name="Explorer.FlatView.Error" xml:space="preserve">
+    <value>Не вдалося побудувати список файлів: {0}</value>
   </data>
   <data name="Explorer.Navigation.Unavailable" xml:space="preserve">
     <value>Недоступно</value>
@@ -979,6 +1045,9 @@
   </data>
   <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve">
     <value>Замінити вихідні файли {0} копіями?</value>
+  </data>
+  <data name="Explorer.OverwriteBatchPrompt" xml:space="preserve">
+    <value>Замінити {0} вибраних елементів {1} копіями?</value>
   </data>
   <data name="Explorer.EncryptedAdjective" xml:space="preserve">
     <value>зашифрованою</value>
@@ -1394,6 +1463,15 @@
   </data>
   <data name="Security.SourceFileNotFound" xml:space="preserve">
     <value>Вихідний файл не знайдено.</value>
+  </data>
+  <data name="Security.OperationFailedForPath" xml:space="preserve">
+    <value>Не вдалося обробити «{1}»:{0}{2}</value>
+  </data>
+  <data name="Explorer.BatchOperationFailed" xml:space="preserve">
+    <value>Не вдалося обробити такі файли:{0}{0}{1}</value>
+  </data>
+  <data name="Explorer.RefreshingAfterOperation" xml:space="preserve">
+    <value>Оновлення списку файлів…</value>
   </data>
   <data name="Security.SourceDirectoryNotFound" xml:space="preserve">
     <value>Вихідний каталог «{0}» не знайдено.</value>

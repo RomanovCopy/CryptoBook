@@ -15,6 +15,7 @@ namespace CryptoBook.Interfaces
         double LeftColumnPercent { get; set; }
         double RightColumnPercent { get; set; }
         bool IsHiddenFilesVisible { get; set; } 
+        bool IsFlatViewEnabled { get; set; }
         string CurrentPath { get; }
         string AddressText { get; set; }
         bool IsCurrentDirectoryUnavailable { get; }

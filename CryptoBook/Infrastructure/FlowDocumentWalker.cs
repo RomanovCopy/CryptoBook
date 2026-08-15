@@ -169,6 +169,17 @@ namespace CryptoBook.Infrastructure
                     }
                 }
             }
+
+            if(inline is AnchoredBlock anchoredBlock)
+            {
+                foreach(var block in anchoredBlock.Blocks)
+                {
+                    foreach(var item in TraverseBlock(block))
+                    {
+                        yield return item;
+                    }
+                }
+            }
         }
 
         private static bool RemoveBlock(Block block)

@@ -138,6 +138,24 @@ namespace CryptoBook.DTO
                 var keys = new HashSet<string>(
                     _children.Select(keySelector),
                     StringComparer.OrdinalIgnoreCase);
+
+                if(incoming.Length == 1)
+                {
+                    ISystemItem item = incoming[0];
+                    if(!keys.Add(keySelector(item)))
+                    {
+                        duplicateFound = true;
+                        return;
+                    }
+
+                    // Одиночное событие FileSystemWatcher не должно сбрасывать
+                    // весь ListView и тем самым уничтожать текущее выделение.
+                    _children.Add(item);
+                    if(item is IContainerSystemItem directory)
+                        _directoryChildren.Add(directory);
+                    return;
+                }
+
                 var combined = new List<ISystemItem>(
                     _children.Count + incoming.Length);
                 combined.AddRange(_children);
@@ -210,20 +228,20 @@ namespace CryptoBook.DTO
                 var keys = new HashSet<string>(
                     requested.Select(keySelector),
                     StringComparer.OrdinalIgnoreCase);
-                var remaining = _children
-                    .Where(item =>
-                        !references.Contains(item) &&
-                        !keys.Contains(keySelector(item)))
-                    .OrderBy(
-                        item => item,
-                        _systemItemSortService.GetComparer(
-                            SystemItemSortType.Name,
-                            0))
-                    .ToArray();
+                for(int index = _children.Count - 1; index >= 0; index--)
+                {
+                    ISystemItem child = _children[index];
+                    if(!references.Contains(child) &&
+                       !keys.Contains(keySelector(child)))
+                    {
+                        continue;
+                    }
 
-                removed = remaining.Length != _children.Count;
-                if(removed)
-                    ReplaceChildren(remaining);
+                    _children.RemoveAt(index);
+                    if(child is IContainerSystemItem directory)
+                        _directoryChildren.Remove(directory);
+                    removed = true;
+                }
             });
             return removed
                 ? FileOperationResult.Ok()
@@ -386,9 +404,9 @@ namespace CryptoBook.DTO
                 // Атомарная запись создаёт краткоживущий *.tmp. Даём операции
                 // завершить Move/Delete и добавляем только существующий результат.
                 await Task.Delay(75);
-                var items = SystemItemCreate("Created", fullPath);
-                if(items.Count > 0)
-                    await AddChildAsync(items, item => item.FullPath);
+                ISystemItem? item = CreateItemIfExists(fullPath);
+                if(item is not null)
+                    await AddChildAsync([item], child => child.FullPath);
             }
             finally
             {
@@ -401,9 +419,14 @@ namespace CryptoBook.DTO
             await _monitorEventGate.WaitAsync();
             try
             {
-                var items = SystemItemCreate("Deleted", fullPath);
-                if(items.Count > 0)
-                    await RemoveChildAsync(items, item => item.FullPath);
+                ISystemItem? existing = await _dispatcherService.InvokeAsync(
+                    () => _children.FirstOrDefault(item =>
+                        string.Equals(
+                            item.FullPath,
+                            fullPath,
+                            StringComparison.OrdinalIgnoreCase)));
+                if(existing is not null)
+                    await RemoveChildAsync([existing], item => item.FullPath);
             }
             finally
             {
@@ -416,14 +439,32 @@ namespace CryptoBook.DTO
             await _monitorEventGate.WaitAsync();
             try
             {
-                var removedItems = SystemItemCreate("Deleted", oldFullPath);
-                if(removedItems.Count > 0)
-                    await RemoveChildAsync(removedItems, item => item.FullPath);
-
                 await Task.Delay(75);
-                var addedItems = SystemItemCreate("Created", newFullPath);
-                if(addedItems.Count > 0)
-                    await AddChildAsync(addedItems, item => item.FullPath);
+                ISystemItem? incoming = CreateItemIfExists(newFullPath);
+                ISystemItem? existing = await _dispatcherService.InvokeAsync(
+                    () => _children.FirstOrDefault(item =>
+                        string.Equals(
+                            item.FullPath,
+                            oldFullPath,
+                            StringComparison.OrdinalIgnoreCase)));
+
+                if(existing is null)
+                {
+                    if(incoming is not null)
+                        await AddChildAsync([incoming], item => item.FullPath);
+                    return;
+                }
+
+                if(incoming is null)
+                {
+                    await RemoveChildAsync([existing], item => item.FullPath);
+                    return;
+                }
+
+                // Rename обновляет существующий объект на месте. ListView сохраняет
+                // выделение, preview и позицию прокрутки.
+                await _dispatcherService.InvokeAsync(
+                    () => ApplyRenamedItem(existing, incoming));
             }
             finally
             {
@@ -437,37 +478,60 @@ namespace CryptoBook.DTO
                 _monitor = !_directoryMonitoringService.StopMonitoring(FullPath);
         }
 
-        private List<ISystemItem> SystemItemCreate(string changeType, string fullPath)
+        private ISystemItem? CreateItemIfExists(string fullPath)
         {
-            var items = new List<ISystemItem>();
             if(string.IsNullOrWhiteSpace(fullPath))
-                return items;
-            var path = Path.GetFullPath(fullPath);
+                return null;
 
-            switch(changeType)
+            var path = Path.GetFullPath(fullPath);
+            try
             {
-                case "Deleted":
-                {
-                    var existing = Children.FirstOrDefault(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase));
-                    if(existing != null)
-                        items.Add(existing);
-                    break;
-                }
-                case "Created":
-                {
-                    if(Directory.Exists(path) && !Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var dirItem = _systemItemCreateService.CreateDirectory(path, this);
-                        items.Add(dirItem);
-                    } else if(File.Exists(path) && !Children.Any(x => string.Equals(x.FullPath, path, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var fileItem = _systemItemCreateService.CreateFile(path, this);
-                        items.Add(fileItem);
-                    }
-                    break;
-                }
+                if(Directory.Exists(path))
+                    return _systemItemCreateService.CreateDirectory(path, this);
+                if(File.Exists(path))
+                    return _systemItemCreateService.CreateFile(path, this);
+                return null;
             }
-            return items;
+            catch(Exception exception) when(
+                exception is IOException or UnauthorizedAccessException)
+            {
+                // Между Exists и чтением метаданных внешний процесс мог снова
+                // переместить или удалить элемент.
+                return null;
+            }
+        }
+
+        private void ApplyRenamedItem(
+            ISystemItem existing,
+            ISystemItem incoming)
+        {
+            ContainerSystemItem? monitoredContainer =
+                existing as ContainerSystemItem;
+            bool restartMonitoring = monitoredContainer?._monitor == true;
+            if(restartMonitoring)
+            {
+                monitoredContainer!._directoryMonitoringService.StopMonitoring(
+                    existing.FullPath);
+                monitoredContainer._monitor = false;
+            }
+
+            existing.Name = incoming.Name;
+            existing.FullPath = incoming.FullPath;
+            existing.RootDirectory = incoming.RootDirectory;
+            existing.Size = incoming.Size;
+            existing.LastWriteTimeUtc = incoming.LastWriteTimeUtc;
+            existing.Parent = this;
+
+            if(existing is IFileItem existingFile &&
+               incoming is IFileItem incomingFile)
+            {
+                existingFile.Extension = incomingFile.Extension;
+                existingFile.IsHidden = incomingFile.IsHidden;
+                existingFile.IsReadOnly = incomingFile.IsReadOnly;
+            }
+
+            if(restartMonitoring)
+                monitoredContainer!.StartMonitoring();
         }
 
     }

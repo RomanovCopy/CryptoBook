@@ -63,6 +63,9 @@ namespace CryptoBook.Injections
 
             // Модели представления.
             builder.RegisterType<HomeViewModel>().As<IHomeViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<DocumentStructureViewModel>()
+                .As<IDocumentStructureViewModel>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<TitleBarViewModel>().As<ITitleBarViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MyFrameViewModel>().As<IMyFrameViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MenuFileViewModel>().As<IMenuFileViewModel>().InstancePerLifetimeScope();
@@ -123,6 +126,12 @@ namespace CryptoBook.Injections
 
             // Вспомогательные компоненты.
             builder.RegisterType<FlowDocumentWalker>().As<IFlowDocumentWalker>().SingleInstance();
+            builder.RegisterType<FlowDocumentStructureBuilder>()
+                .As<IFlowDocumentStructureBuilder>()
+                .SingleInstance();
+            builder.RegisterType<FlowDocumentMoveService>()
+                .As<IFlowDocumentMoveService>()
+                .SingleInstance();
             builder.RegisterType<SecureFileValidator>().As<ISecureFileValidator>().SingleInstance();
             builder.RegisterType<SecureFileProcessor>().As<ISecureFileProcessor>().SingleInstance();
             builder.RegisterType<Argon2idKeyDeriver>().As<IPasswordKeyDeriver>().SingleInstance();
@@ -247,6 +256,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
             builder.RegisterType<FileClipboardService>().As<IFileClipboardService>().SingleInstance();
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
+            builder.RegisterType<FileExplorerFlatViewService>()
+                .As<IFileExplorerFlatViewService>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<FilePreviewService>().As<IFilePreviewService>().SingleInstance();
             builder.RegisterType<FilePreviewContentSource>().As<IFilePreviewContentSource>().SingleInstance();
             builder.RegisterType<JsonFavoriteDirectoryStore>().As<IFavoriteDirectoryStore>().SingleInstance();
@@ -288,6 +300,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
             builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().InstancePerLifetimeScope();
             builder.RegisterType<WpfDispatcherService>().As<IDispatcherService>().SingleInstance();
+            builder.RegisterType<WpfViewRenderSynchronizationService>()
+                .As<IViewRenderSynchronizationService>()
+                .SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
             builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
             builder.RegisterType<FileConflictResolver>().As<IFileConflictResolver>().SingleInstance();

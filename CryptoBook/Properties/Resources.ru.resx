@@ -374,8 +374,8 @@
   <data name="Explorer.Move" xml:space="preserve"><value>Переместить</value></data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Добавить текущую директорию в избранное</value></data>
   <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Задать ключ шифрования</value></data>
-  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Зашифровать выбранный элемент</value></data>
-  <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Расшифровать выбранный элемент</value></data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Зашифровать выбранные элементы</value></data>
+  <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Расшифровать выбранные элементы</value></data>
   <data name="Explorer.Favorites" xml:space="preserve"><value>Избранное</value></data>
   <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Удалить из избранного</value></data>
   <data name="Explorer.Favorites.Empty" xml:space="preserve"><value>Добавьте текущую папку кнопкой ★</value></data>
@@ -409,6 +409,21 @@
   <data name="Editor.Preview" xml:space="preserve"><value>Просмотр</value></data>
   <data name="Editor.Zoom100" xml:space="preserve"><value>Масштаб 100%</value></data>
   <data name="Editor.FitToWindow" xml:space="preserve"><value>Вписать в окно</value></data>
+  <data name="Editor.DocumentStructure" xml:space="preserve"><value>Структура</value></data>
+  <data name="Editor.ToggleDocumentStructure" xml:space="preserve"><value>Показать структуру документа</value></data>
+  <data name="Editor.DocumentStructureTextElements" xml:space="preserve"><value>Показывать текстовые элементы (Run, Span)</value></data>
+  <data name="Editor.DocumentStructurePreviewReadOnly" xml:space="preserve"><value>В режиме просмотра навигация и изменение структуры отключены.</value></data>
+  <data name="Editor.DocumentStructureEmpty" xml:space="preserve"><value>В документе нет структурных элементов.</value></data>
+  <data name="Editor.DocumentStructureNavigate" xml:space="preserve"><value>Перейти к элементу</value></data>
+  <data name="Editor.DocumentStructureAddParagraph" xml:space="preserve"><value>Добавить абзац (Ctrl+Enter)</value></data>
+  <data name="Editor.DocumentStructureAddParagraphBefore" xml:space="preserve"><value>Добавить абзац перед</value></data>
+  <data name="Editor.DocumentStructureAddParagraphInside" xml:space="preserve"><value>Добавить абзац внутрь</value></data>
+  <data name="Editor.DocumentStructureAddParagraphAfter" xml:space="preserve"><value>Добавить абзац после</value></data>
+  <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve"><value>Удаление элемента документа</value></data>
+  <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve"><value>Удалить «{0}» вместе со всем содержимым?</value></data>
+  <data name="Editor.DocumentStructureMoveUp" xml:space="preserve"><value>Переместить выше</value></data>
+  <data name="Editor.DocumentStructureMoveDown" xml:space="preserve"><value>Переместить ниже</value></data>
+  <data name="Editor.DocumentStructureMoveHint" xml:space="preserve"><value>Перетащите элемент до, внутрь или после совместимого элемента. Alt+↑/↓ изменяет порядок; Ctrl+Enter добавляет следующий абзац.</value></data>
   <data name="Bookmarks.Properties" xml:space="preserve"><value>Свойства закладки</value></data>
   <data name="Bookmarks.Name" xml:space="preserve"><value>Имя</value></data>
   <data name="Bookmarks.Note" xml:space="preserve"><value>Заметка</value></data>
@@ -442,6 +457,7 @@
   <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Дата изменения</value></data>
   <data name="Explorer.Column.Type" xml:space="preserve"><value>Тип</value></data>
   <data name="Explorer.Column.Size" xml:space="preserve"><value>Размер</value></data>
+  <data name="Explorer.Column.Folder" xml:space="preserve"><value>Папка</value></data>
   <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Выбрано: {0}</value></data>
   <data name="Explorer.Selected" xml:space="preserve"><value>Выбрано:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Копирование файлов</value></data>
@@ -461,7 +477,13 @@
   <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Ошибка открытия директории</value></data>
   <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>Не удалось открыть «{0}»:{1}{2}</value></data>
   <data name="Explorer.Filter" xml:space="preserve"><value>Фильтр:</value></data>
-  <data name="Explorer.FilterHint" xml:space="preserve"><value>Фильтр текущего каталога по имени</value></data>
+  <data name="Explorer.FilterHint" xml:space="preserve"><value>Фильтр текущего представления по имени или папке</value></data>
+  <data name="Explorer.FlatView.Toggle" xml:space="preserve"><value>Все файлы</value></data>
+  <data name="Explorer.FlatView.ToolTip" xml:space="preserve"><value>Показать файлы из текущей папки и всех вложенных папок</value></data>
+  <data name="Explorer.FlatView.Scanning" xml:space="preserve"><value>Поиск файлов…</value></data>
+  <data name="Explorer.FlatView.Canceled" xml:space="preserve"><value>Поиск отменён.</value></data>
+  <data name="Explorer.FlatView.Result" xml:space="preserve"><value>Файлов: {0}. Пропущено папок: {1}.</value></data>
+  <data name="Explorer.FlatView.Error" xml:space="preserve"><value>Не удалось построить список файлов: {0}</value></data>
   <data name="Explorer.Navigation.Unavailable" xml:space="preserve"><value>Недоступно</value></data>
   <data name="Explorer.Navigation.Retry" xml:space="preserve"><value>Повторить</value></data>
   <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve"><value>Каталог больше не существует.</value></data>
@@ -493,6 +515,7 @@
   <data name="Explorer.OverwriteTitle" xml:space="preserve"><value>Перезапись исходного элемента</value></data>
   <data name="Explorer.OverwriteFilePrompt" xml:space="preserve"><value>Заменить исходный файл {0} копией?</value></data>
   <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve"><value>Заменить исходные файлы {0} копиями?</value></data>
+  <data name="Explorer.OverwriteBatchPrompt" xml:space="preserve"><value>Заменить {0} выбранных элементов {1} копиями?</value></data>
   <data name="Explorer.EncryptedAdjective" xml:space="preserve"><value>зашифрованной</value></data>
   <data name="Explorer.DecryptedAdjective" xml:space="preserve"><value>расшифрованной</value></data>
   <data name="Explorer.EncryptedCopiesAdjective" xml:space="preserve"><value>зашифрованными</value></data>
@@ -650,6 +673,9 @@
   <data name="Security.SourceDirectoryUnknown" xml:space="preserve"><value>Не удалось определить каталог файла «{0}».</value></data>
   <data name="Security.DecryptionResultUnknown" xml:space="preserve"><value>Не удалось определить результат расшифрования.</value></data>
   <data name="Security.SourceFileNotFound" xml:space="preserve"><value>Исходный файл не найден.</value></data>
+  <data name="Security.OperationFailedForPath" xml:space="preserve"><value>Не удалось обработать «{1}»:{0}{2}</value></data>
+  <data name="Explorer.BatchOperationFailed" xml:space="preserve"><value>Не удалось обработать следующие файлы:{0}{0}{1}</value></data>
+  <data name="Explorer.RefreshingAfterOperation" xml:space="preserve"><value>Обновление списка файлов…</value></data>
   <data name="Security.SourceDirectoryNotFound" xml:space="preserve"><value>Исходный каталог «{0}» не найден.</value></data>
   <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve"><value>Для режима «Сохранить как» каталог назначения должен отличаться от исходного.</value></data>
   <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve"><value>Файл не является зашифрованным файлом CryptoBook.</value></data>

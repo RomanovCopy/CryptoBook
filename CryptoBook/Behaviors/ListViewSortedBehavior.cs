@@ -70,6 +70,16 @@ namespace CryptoBook.Behaviors
                             view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
                             break;
                         }
+                        case "RelativeDirectory":
+                        {
+                            view.SortDescriptions.Add(new SortDescription(
+                                "FullPath",
+                                ListSortDirection.Ascending));
+                            view.SortDescriptions.Add(new SortDescription(
+                                "Name",
+                                ListSortDirection.Ascending));
+                            break;
+                        }
                     }
                 }
             }

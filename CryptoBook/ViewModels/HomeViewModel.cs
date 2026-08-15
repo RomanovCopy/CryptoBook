@@ -26,6 +26,7 @@ namespace CryptoBook.ViewModels
 
         public HomeViewModel(
             IRichtextboxViewModel documentView,
+            IDocumentStructureViewModel documentStructure,
             IDocumentSession documentSession,
             IMenuFileViewModel menuFileViewModel,
             IMenuContentViewModel menuContentViewModel,
@@ -37,6 +38,8 @@ namespace CryptoBook.ViewModels
         {
             DocumentView = documentView
                 ?? throw new ArgumentNullException(nameof(documentView));
+            DocumentStructure = documentStructure
+                ?? throw new ArgumentNullException(nameof(documentStructure));
             this.documentSession = documentSession
                 ?? throw new ArgumentNullException(nameof(documentSession));
             this.menuFileViewModel = menuFileViewModel
@@ -63,6 +66,7 @@ namespace CryptoBook.ViewModels
 
         public Action<object> BehaviorReady { get; set; } = _ => { };
         public IRichtextboxViewModel DocumentView { get; }
+        public IDocumentStructureViewModel DocumentStructure { get; }
         public IRecentDocumentsViewModel RecentDocuments { get; }
         public IPinnedDocumentsViewModel PinnedDocuments { get; }
 

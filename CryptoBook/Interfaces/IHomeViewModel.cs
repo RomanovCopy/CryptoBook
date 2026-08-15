@@ -6,6 +6,7 @@ namespace CryptoBook.Interfaces
     {
         Action<object> BehaviorReady { get; set; }
         IRichtextboxViewModel DocumentView { get; }
+        IDocumentStructureViewModel DocumentStructure { get; }
         IRecentDocumentsViewModel RecentDocuments { get; }
         IPinnedDocumentsViewModel PinnedDocuments { get; }
         bool HasDocument { get; }

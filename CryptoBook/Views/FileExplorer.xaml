@@ -28,6 +28,137 @@
     <Window.Resources>
 
         <converters:SystemItemSelectionSnapshotConverter x:Key="SystemItemSelectionSnapshotConverter"/>
+        <converters:RelativeDirectoryConverter x:Key="RelativeDirectoryConverter"/>
+
+        <DataTemplate x:Key="FileExplorerNameCellTemplate">
+            <DockPanel LastChildFill="True">
+                <Image Width="16"
+                       Height="16"
+                       Margin="0,0,6,0"
+                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+                <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileExplorerFolderCellTemplate">
+            <TextBlock TextTrimming="CharacterEllipsis">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource RelativeDirectoryConverter}">
+                        <Binding Path="FullPath"/>
+                        <Binding Path="DataContext.CurrentPath"
+                                 RelativeSource="{RelativeSource AncestorType={x:Type ListView}}"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileExplorerDateCellTemplate">
+            <TextBlock Text="{Binding LastWriteTimeUtc, StringFormat={}{0:dd.MM.yyyy HH:mm:ss}, UpdateSourceTrigger=PropertyChanged}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileExplorerTypeCellTemplate">
+            <TextBlock Text="{Binding Extension, UpdateSourceTrigger=PropertyChanged}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileExplorerSizeCellTemplate">
+            <TextBlock Text="{Binding Size, UpdateSourceTrigger=PropertyChanged, Converter={markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ., Converter={markup:ResolveConverter ConverterType={x:Type converters:TypeCheckConverter}}, ConverterParameter={x:Type interfaces:IDirectoryItem}, UpdateSourceTrigger=PropertyChanged}"
+                                         Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </DataTemplate>
+
+        <GridView x:Key="FileExplorerStandardGridView" x:Shared="False">
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerNameCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="Name"
+                                          Content="{Binding [Explorer.Column.Name], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerDateCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="LastWriteTimeUtc"
+                                          Content="{Binding [Explorer.Column.DateModified], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerTypeCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="Extension"
+                                          Content="{Binding [Explorer.Column.Type], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerSizeCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="Size"
+                                          Content="{Binding [Explorer.Column.Size], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+        </GridView>
+
+        <GridView x:Key="FileExplorerFlatGridView" x:Shared="False">
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerNameCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="Name"
+                                          Content="{Binding [Explorer.Column.Name], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerFolderCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="RelativeDirectory"
+                                          Content="{Binding [Explorer.Column.Folder], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerDateCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="LastWriteTimeUtc"
+                                          Content="{Binding [Explorer.Column.DateModified], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerTypeCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="Extension"
+                                          Content="{Binding [Explorer.Column.Type], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+            <GridViewColumn CellTemplate="{StaticResource FileExplorerSizeCellTemplate}">
+                <GridViewColumn.Header>
+                    <GridViewColumnHeader Tag="Size"
+                                          Content="{Binding [Explorer.Column.Size], Source={StaticResource Res}}"/>
+                </GridViewColumn.Header>
+            </GridViewColumn>
+        </GridView>
 
         <Style x:Key="FileExplorerToolBarButtonStyle"
                TargetType="{x:Type Button}"
@@ -230,13 +361,13 @@
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE72E;"
                     ToolTip="{Binding [Explorer.EncryptSelected], Source={StaticResource Res}}"
-                    AutomationProperties.Name="Зашифровать выбранный элемент"
+                    AutomationProperties.Name="Зашифровать выбранные элементы"
                     Command="{Binding EncryptCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Button Content="&#xE785;"
                     ToolTip="{Binding [Explorer.DecryptSelected], Source={StaticResource Res}}"
-                    AutomationProperties.Name="Расшифровать выбранный элемент"
+                    AutomationProperties.Name="Расшифровать выбранные элементы"
                     Command="{Binding DecryptCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
@@ -356,6 +487,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="220"/>
             </Grid.ColumnDefinitions>
 
@@ -371,11 +503,31 @@
                 </TextBox.InputBindings>
             </TextBox>
 
-            <TextBlock Grid.Column="1"
+            <ToggleButton Grid.Column="1"
+                          Height="26"
+                          MinWidth="104"
+                          Margin="12,0,0,0"
+                          Padding="10,0"
+                          IsChecked="{Binding IsFlatViewEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Content="{Binding [Explorer.FlatView.Toggle], Source={StaticResource Res}}"
+                          ToolTip="{Binding [Explorer.FlatView.ToolTip], Source={StaticResource Res}}">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton"
+                           BasedOn="{StaticResource RoundedToggleButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CanUseFlatView}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+
+            <TextBlock Grid.Column="2"
                        Margin="12,0,6,0"
                        VerticalAlignment="Center"
                        Text="{Binding [Explorer.Filter], Source={StaticResource Res}}"/>
-            <TextBox Grid.Column="2"
+            <TextBox Grid.Column="3"
                      Height="26"
                      Padding="8,0"
                      VerticalContentAlignment="Center"
@@ -536,98 +688,20 @@
                                   CommandParameter="{Binding PlacementTarget.DataContext.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                     </ContextMenu>
                 </ListView.ContextMenu>
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn >
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Name" Content="{Binding [Explorer.Column.Name], Source={StaticResource Res}}" />
-                            </GridViewColumn.Header>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <DockPanel LastChildFill="True">
-                                        <Image Width="16" Height="16" Margin="0,0,6,0"
-                                               Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
-                                        <TextBlock Text="{Binding Name,UpdateSourceTrigger=PropertyChanged}">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
-                                            <TextBox.Style>
-                                                <Style TargetType="TextBox">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                            <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                            <Setter Property="BorderThickness" Value="0"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBox.Style>
-                                        </TextBox>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn >
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="LastWriteTimeUtc" Content="{Binding [Explorer.Column.DateModified], Source={StaticResource Res}}" />
-                            </GridViewColumn.Header>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <DockPanel LastChildFill="True">
-                                        <TextBlock Text="{Binding LastWriteTimeUtc,StringFormat={}{0:dd.MM.yyyy HH:mm:ss}, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn >
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Extension" Content="{Binding [Explorer.Column.Type], Source={StaticResource Res}}" />
-                            </GridViewColumn.Header>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <DockPanel LastChildFill="True">
-                                        <TextBlock Text="{Binding Extension, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn>
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Size" Content="{Binding [Explorer.Column.Size], Source={StaticResource Res}}" />
-                            </GridViewColumn.Header>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <DockPanel LastChildFill="True">
-                                        <TextBlock Text="{Binding Size, UpdateSourceTrigger=PropertyChanged, 
-                                            Converter={markup:ResolveConverter ConverterType={x:Type converters:BytesToGbConverter}}}" >
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ., Converter={markup:ResolveConverter 
-                                                            ConverterType={x:Type converters:TypeCheckConverter}},ConverterParameter={x:Type interfaces:IDirectoryItem}, UpdateSourceTrigger=PropertyChanged}"
-                                                                     Value="True">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
+                <ListView.Style>
+                    <Style TargetType="ListView"
+                           BasedOn="{StaticResource {x:Type ListView}}">
+                        <Setter Property="View"
+                                Value="{StaticResource FileExplorerStandardGridView}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFlatViewEnabled}"
+                                         Value="True">
+                                <Setter Property="View"
+                                        Value="{StaticResource FileExplorerFlatGridView}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.Style>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem"
                            BasedOn="{StaticResource FileExplorerListViewItemStyle}">
@@ -896,6 +970,9 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding [Explorer.Selected], Source={StaticResource Res}}"
                            Foreground="{DynamicResource CurrentWindowForeground}"
@@ -906,6 +983,56 @@
                            Foreground="{DynamicResource CurrentWindowForeground}"
                            FontSize="16"
                            TextTrimming="CharacterEllipsis"/>
+                <ProgressBar Grid.Column="2"
+                             Width="64"
+                             Height="3"
+                             Margin="12,0,8,0"
+                             VerticalAlignment="Center"
+                             IsIndeterminate="{Binding IsFlatViewLoading}">
+                    <ProgressBar.Style>
+                        <Style TargetType="ProgressBar">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFlatViewLoading}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ProgressBar.Style>
+                </ProgressBar>
+                <TextBlock Grid.Column="3"
+                           Margin="4,0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource CurrentMutedForeground}"
+                           Text="{Binding FlatViewStatus}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFlatViewEnabled}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <Button Grid.Column="4"
+                        MinWidth="76"
+                        Margin="8,0,0,0"
+                        Command="{Binding CancelFlatViewScanCommand}"
+                        Content="{Binding [Common.Cancel], Source={StaticResource Res}}">
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource PrimaryButtonStyle}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFlatViewLoading}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
         </Border>
 

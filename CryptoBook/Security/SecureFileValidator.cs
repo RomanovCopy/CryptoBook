@@ -1,3 +1,5 @@
+using CryptoBook.Infrastructure;
+
 using System.IO;
 
 namespace CryptoBook.Security
@@ -8,13 +10,9 @@ namespace CryptoBook.Security
             string filePath,
             CancellationToken cancellationToken = default)
         {
-            await using FileStream stream = new(
+            await using FileStream stream = SharedFileReadStream.Open(
                 filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.Read,
-                bufferSize: 4096,
-                FileOptions.Asynchronous | FileOptions.SequentialScan);
+                4096);
 
             int requiredLength = Math.Max(
                 SecureFileFormat.MagicHeader.Length,

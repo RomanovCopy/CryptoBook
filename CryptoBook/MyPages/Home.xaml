@@ -4,8 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
       xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
       xmlns:controls="clr-namespace:CryptoBook.MyControls"
+      xmlns:dto="clr-namespace:CryptoBook.DTO"
       xmlns:markup="clr-namespace:CryptoBook.Markup"
       mc:Ignorable="d"
       d:DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IHomeViewModel}}"
@@ -14,6 +16,50 @@
     <Page.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IHomeViewModel}"/>
     </Page.DataContext>
+    <Page.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type dto:DocumentStructureNode}"
+                                  ItemsSource="{Binding Children}">
+            <Grid MinHeight="25" ToolTip="{Binding Path}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="24"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Glyph}"
+                           FontFamily="Segoe MDL2 Assets"
+                           FontSize="14"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           VerticalAlignment="Center"
+                           Opacity="0.72"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding DisplayName}"
+                           Foreground="{DynamicResource CurrentWindowForeground}"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center"/>
+                <Button Grid.Column="2"
+                        Width="22" Height="22" Padding="0"
+                        Background="Transparent" BorderThickness="0"
+                        Foreground="{DynamicResource CurrentWindowForeground}"
+                        Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=TreeView}}"
+                        CommandParameter="{Binding}"
+                        ToolTip="{Binding [Common.Delete], Source={StaticResource Res}}">
+                    <TextBlock Text="&#xE74D;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="12"/>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanDelete}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </HierarchicalDataTemplate>
+    </Page.Resources>
 
     <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Auto"
@@ -318,6 +364,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:FontFormatBar}}"
                                 Grid.Column="0" Margin="{StaticResource CurrentMargin}"/>
@@ -362,12 +409,245 @@
                         <TextBlock Text="{Binding DocumentView.ToggleViewText}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </ToggleButton>
+                <ToggleButton Grid.Column="5" Margin="{StaticResource CurrentMargin}"
+                              Style="{StaticResource EditorPanelToggleStyle}"
+                              IsChecked="{Binding DocumentStructure.IsOpen, Mode=OneWay}"
+                              Command="{Binding DocumentStructure.ToggleCommand}"
+                              ToolTip="{Binding [Editor.ToggleDocumentStructure], Source={StaticResource Res}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE8FD;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="16"
+                                   Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding [Editor.DocumentStructure], Source={StaticResource Res}}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ToggleButton>
             </Grid>
-            <ContentControl Grid.Row="1"
-                            Content="{markup:ResolveUserControl UserControlType={x:Type controls:Richtextbox}}"
-                            Margin="{StaticResource CurrentMargin}"
-                            VerticalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ContentControl Grid.Column="0"
+                                Content="{markup:ResolveUserControl UserControlType={x:Type controls:Richtextbox}}"
+                                Margin="{StaticResource CurrentMargin}"
+                                VerticalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"/>
+
+                <Border Grid.Column="1"
+                        Width="320"
+                        MinWidth="260"
+                        Margin="4,4,4,0"
+                        Background="{DynamicResource CurrentWindowBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="1,1,1,0">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DocumentStructure.IsOpen}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding [Editor.DocumentStructure], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentWindowForeground}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="1"
+                                    Width="28" Height="28" Margin="4,0,0,0"
+                                    Padding="0"
+                                    Command="{Binding DocumentStructure.AddParagraphCommand}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"
+                                    ToolTip="{Binding [Editor.DocumentStructureAddParagraph], Source={StaticResource Res}}">
+                                <TextBlock Text="&#xE710;"
+                                           FontFamily="Segoe MDL2 Assets"/>
+                            </Button>
+                            <Button Grid.Column="2"
+                                    Width="28" Height="28" Margin="4,0"
+                                    Padding="0"
+                                    Command="{Binding DocumentStructure.RefreshCommand}"
+                                    ToolTip="{Binding [Common.Refresh], Source={StaticResource Res}}">
+                                <TextBlock Text="&#xE72C;"
+                                           FontFamily="Segoe MDL2 Assets"/>
+                            </Button>
+                            <Button Grid.Column="3"
+                                    Width="28" Height="28" Padding="0"
+                                    Command="{Binding DocumentStructure.ToggleCommand}"
+                                    ToolTip="{Binding [Common.Close], Source={StaticResource Res}}">
+                                <TextBlock Text="&#xE711;"
+                                           FontFamily="Segoe MDL2 Assets"/>
+                            </Button>
+                        </Grid>
+
+                        <CheckBox Grid.Row="1"
+                                  Margin="0,9,0,7"
+                                  IsChecked="{Binding DocumentStructure.IncludeTextElements, Mode=TwoWay}"
+                                  Content="{Binding [Editor.DocumentStructureTextElements], Source={StaticResource Res}}"/>
+
+                        <TextBlock Grid.Row="2"
+                                   Margin="0,0,0,7"
+                                   Text="{Binding [Editor.DocumentStructurePreviewReadOnly], Source={StaticResource Res}}"
+                                   Foreground="{DynamicResource CurrentMutedForeground}"
+                                   FontSize="11"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DocumentView.IsPreviewMode}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBlock Grid.Row="2"
+                                   Margin="0,0,0,7"
+                                   Text="{Binding [Editor.DocumentStructureMoveHint], Source={StaticResource Res}}"
+                                   Foreground="{DynamicResource CurrentMutedForeground}"
+                                   FontSize="11"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DocumentView.IsPreviewMode}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <Grid Grid.Row="3">
+                            <TextBlock Text="{Binding [Editor.DocumentStructureEmpty], Source={StaticResource Res}}"
+                                       Foreground="{DynamicResource CurrentMutedForeground}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DocumentStructure.HasNodes}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <TreeView x:Name="DocumentStructureTree"
+                                      DataContext="{Binding DocumentStructure}"
+                                      ItemsSource="{Binding Nodes}"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      VirtualizingStackPanel.IsVirtualizing="True"
+                                      VirtualizingStackPanel.VirtualizationMode="Recycling">
+                                <TreeView.Style>
+                                    <Style TargetType="TreeView"
+                                           BasedOn="{StaticResource DiskTree_TreeViewStyle}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasNodes}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TreeView.Style>
+                                <TreeView.ItemContainerStyle>
+                                    <Style TargetType="TreeViewItem"
+                                           BasedOn="{StaticResource DiskTree_TreeViewItemStyle}">
+                                        <Setter Property="IsExpanded"
+                                                Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                        <Setter Property="IsSelected"
+                                                Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                        <Setter Property="Tag"
+                                                Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=TreeView}}"/>
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu Style="{StaticResource RichTextContextMenuStyle}">
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureNavigate], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.NavigateCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureAddParagraphBefore], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.AddParagraphBeforeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureAddParagraphInside], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.AddParagraphInsideCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureAddParagraphAfter], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.AddParagraphAfterCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureMoveUp], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.MoveUpCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <MenuItem Header="{Binding [Editor.DocumentStructureMoveDown], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.MoveDownCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="{Binding [Common.Delete], Source={StaticResource Res}}"
+                                                              Command="{Binding PlacementTarget.Tag.DeleteCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TreeView.ItemContainerStyle>
+                                <TreeView.InputBindings>
+                                    <KeyBinding Key="Enter"
+                                                Modifiers="Control"
+                                                Command="{Binding AddParagraphCommand}"
+                                                CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"/>
+                                    <KeyBinding Key="Up"
+                                                Modifiers="Alt"
+                                                Command="{Binding MoveUpCommand}"
+                                                CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"/>
+                                    <KeyBinding Key="Down"
+                                                Modifiers="Alt"
+                                                Command="{Binding MoveDownCommand}"
+                                                CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"/>
+                                </TreeView.InputBindings>
+                                <i:Interaction.Behaviors>
+                                    <behaviors:DocumentStructureDragDropBehavior
+                                        DropCommand="{Binding MoveCommand}"/>
+                                </i:Interaction.Behaviors>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectedItemChanged">
+                                        <i:InvokeCommandAction Command="{Binding NavigateCommand}"
+                                                               CommandParameter="{Binding SelectedItem, ElementName=DocumentStructureTree}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TreeView>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 

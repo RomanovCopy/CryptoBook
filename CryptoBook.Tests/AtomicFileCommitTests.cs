@@ -1,3 +1,4 @@
+using CryptoBook.Infrastructure;
 using CryptoBook.Services;
 
 using System.IO;
@@ -79,10 +80,58 @@ namespace CryptoBook.Tests
                 Directory.EnumerateFiles(_directory));
         }
 
+        [Fact]
+        public void ReplaceReadOnlyTarget_PreservesReadOnlyAttribute()
+        {
+            string target = Path.Combine(_directory, "readonly.test");
+            string temporary = Path.Combine(_directory, "readonly.tmp");
+            File.WriteAllText(target, "current");
+            File.WriteAllText(temporary, "new");
+            File.SetAttributes(
+                target,
+                File.GetAttributes(target) | FileAttributes.ReadOnly);
+
+            AtomicFileCommit.CommitWithoutBackup(temporary, target);
+
+            Assert.Equal("new", File.ReadAllText(target));
+            Assert.True(
+                (File.GetAttributes(target) & FileAttributes.ReadOnly) != 0);
+        }
+
+        [Fact]
+        public void SharedPreviewRead_DoesNotBlockAtomicReplaceOrMove()
+        {
+            string target = Path.Combine(_directory, "previewed.txt");
+            string temporary = Path.Combine(_directory, "replacement.tmp");
+            string moved = Path.Combine(_directory, "moved.txt");
+            File.WriteAllText(target, "old content");
+            File.WriteAllText(temporary, "new content");
+
+            using FileStream preview = SharedFileReadStream.Open(target, 4096);
+
+            AtomicFileCommit.CommitWithoutBackup(temporary, target);
+            File.Move(target, moved);
+
+            Assert.Equal("new content", File.ReadAllText(moved));
+            using var reader = new StreamReader(preview, leaveOpen: true);
+            Assert.Equal("old content", reader.ReadToEnd());
+        }
+
         public void Dispose()
         {
             if(Directory.Exists(_directory))
+            {
+                foreach(string file in Directory.EnumerateFiles(
+                    _directory,
+                    "*",
+                    SearchOption.AllDirectories))
+                {
+                    File.SetAttributes(
+                        file,
+                        File.GetAttributes(file) & ~FileAttributes.ReadOnly);
+                }
                 Directory.Delete(_directory, recursive: true);
+            }
         }
     }
 }
