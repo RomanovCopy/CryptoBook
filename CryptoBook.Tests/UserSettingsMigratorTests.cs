@@ -84,10 +84,10 @@ public sealed class UserSettingsMigratorTests
         using var directory = new TemporaryDirectory();
         string currentConfig = directory.GetConfigPath(
             "CryptoBook_Url_new",
-            "1.1.1.6");
+            "1.1.1.7");
         string previousConfig = directory.WriteConfig(
             "CryptoBook_Url_old",
-            "1.1.1.6",
+            "1.1.1.7",
             ("CurrentTheme", "Dark"));
 
         bool imported = UserSettingsProfileMigrator.TryImport(
