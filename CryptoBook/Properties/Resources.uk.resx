@@ -758,6 +758,12 @@
   <data name="Editor.DocumentStructureAddParagraphAfter" xml:space="preserve">
     <value>Додати абзац після</value>
   </data>
+  <data name="Editor.InsertLineBreak" xml:space="preserve">
+    <value>Вставити перенесення рядка</value>
+  </data>
+  <data name="Editor.InsertParagraph" xml:space="preserve">
+    <value>Вставити абзац</value>
+  </data>
   <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve">
     <value>Видалення елемента документа</value>
   </data>
@@ -771,7 +777,7 @@
     <value>Перемістити нижче</value>
   </data>
   <data name="Editor.DocumentStructureMoveHint" xml:space="preserve">
-    <value>Перетягніть елемент до, всередину або після сумісного елемента. Alt+↑/↓ змінює порядок; Ctrl+Enter додає наступний абзац.</value>
+    <value>Enter вставляє перенесення рядка; Ctrl+Enter створює абзац. Перетягування переміщує елементи; Alt+↑/↓ змінює порядок.</value>
   </data>
   <data name="Bookmarks.Properties" xml:space="preserve">
     <value>Властивості закладки</value>

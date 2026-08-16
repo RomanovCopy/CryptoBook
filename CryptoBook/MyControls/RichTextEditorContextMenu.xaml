@@ -5,6 +5,7 @@
              xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
              xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
              xmlns:dto="clr-namespace:CryptoBook.DTO"
+             xmlns:documents="clr-namespace:System.Windows.Documents;assembly=PresentationFramework"
              DataContext="{markup:ResolveViewModel ViewModelType={x:Type interfaces:IRichTextContextMenuViewModel}}"
              Style="{StaticResource RichTextContextMenuStyle}"
              Background="{DynamicResource CurrentControlBackground}"
@@ -231,6 +232,17 @@
             </Viewbox>
         </MenuItem.Icon>
     </MenuItem>
+
+    <MenuItem Height="9" MinHeight="0" Padding="0" Focusable="False"
+              IsEnabled="False"
+              Template="{StaticResource RichTextMenuSeparatorTemplate}"/>
+
+    <MenuItem Header="{Binding [Editor.InsertLineBreak], Source={StaticResource Res}}"
+              Command="{x:Static documents:EditingCommands.EnterLineBreak}"
+              InputGestureText="Enter"/>
+    <MenuItem Header="{Binding [Editor.InsertParagraph], Source={StaticResource Res}}"
+              Command="{x:Static documents:EditingCommands.EnterParagraphBreak}"
+              InputGestureText="Ctrl+Enter"/>
 
     <MenuItem Height="9" MinHeight="0" Padding="0" Focusable="False"
               IsEnabled="False"
