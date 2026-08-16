@@ -122,8 +122,9 @@ namespace CryptoBook.Services
         }
 
 
-        // Shift+Enter — перенос строки внутри текущего абзаца. Обычный Enter
-        // не перехватываем: WPF сам создаёт новый Paragraph или ListItem.
+        // Enter создаёт перенос строки внутри текущего абзаца. Новый абзац
+        // создаётся только явно через Ctrl+Enter; внутри списка штатная команда
+        // WPF создаёт следующий ListItem.
         private void RichTextBoxService_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if(IsCaretNavigationKey(e.Key) ||
@@ -140,12 +141,25 @@ namespace CryptoBook.Services
                 return;
             }
 
-            var isEnter = e.Key == Key.Enter || e.Key == Key.Return;
-            if(!isEnter || !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-                return;
+            if(TryExecuteEnterCommand(e.Key, Keyboard.Modifiers))
+                e.Handled = true;
+        }
 
-            e.Handled = true;
-            EditingCommands.EnterLineBreak.Execute(null, this);
+        internal bool TryExecuteEnterCommand(
+            Key key,
+            ModifierKeys modifiers)
+        {
+            var isEnter = key == Key.Enter || key == Key.Return;
+            if(!isEnter)
+                return false;
+
+            RoutedCommand command = modifiers.HasFlag(ModifierKeys.Control)
+                ? EditingCommands.EnterParagraphBreak
+                : EditingCommands.EnterLineBreak;
+            if(command.CanExecute(null, this))
+                command.Execute(null, this);
+
+            return true;
         }
 
         void IRichTextBoxService.Focus() => this.Focus();

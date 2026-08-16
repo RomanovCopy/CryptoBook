@@ -419,11 +419,13 @@
   <data name="Editor.DocumentStructureAddParagraphBefore" xml:space="preserve"><value>Add paragraph before</value></data>
   <data name="Editor.DocumentStructureAddParagraphInside" xml:space="preserve"><value>Add paragraph inside</value></data>
   <data name="Editor.DocumentStructureAddParagraphAfter" xml:space="preserve"><value>Add paragraph after</value></data>
+  <data name="Editor.InsertLineBreak" xml:space="preserve"><value>Insert line break</value></data>
+  <data name="Editor.InsertParagraph" xml:space="preserve"><value>Insert paragraph</value></data>
   <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve"><value>Delete document element</value></data>
   <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve"><value>Delete “{0}” and all of its contents?</value></data>
   <data name="Editor.DocumentStructureMoveUp" xml:space="preserve"><value>Move up</value></data>
   <data name="Editor.DocumentStructureMoveDown" xml:space="preserve"><value>Move down</value></data>
-  <data name="Editor.DocumentStructureMoveHint" xml:space="preserve"><value>Drag an element to move it before, into, or after a compatible element. Alt+↑/↓ changes its order; Ctrl+Enter adds the next paragraph.</value></data>
+  <data name="Editor.DocumentStructureMoveHint" xml:space="preserve"><value>Enter inserts a line break; Ctrl+Enter creates a paragraph. Drag an element to move it; Alt+↑/↓ changes its order.</value></data>
   <data name="Bookmarks.Properties" xml:space="preserve"><value>Bookmark properties</value></data>
   <data name="Bookmarks.Name" xml:space="preserve"><value>Name</value></data>
   <data name="Bookmarks.Note" xml:space="preserve"><value>Note</value></data>

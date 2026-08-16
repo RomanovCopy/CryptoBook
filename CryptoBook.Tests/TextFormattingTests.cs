@@ -245,7 +245,7 @@ public sealed class TextFormattingTests
     }
 
     [WpfFact]
-    public void EnterInsideList_CreatesNextListItem()
+    public void ControlEnterInsideList_CreatesNextListItem()
     {
         var (richText, _) = CreateDocument("first");
         var host = new Window { Content = richText.Service };
@@ -267,8 +267,10 @@ public sealed class TextFormattingTests
         richText.ClearSelection();
         richText.Focus();
 
-        Assert.True(EditingCommands.EnterParagraphBreak.CanExecute(null, richText.Service));
-        EditingCommands.EnterParagraphBreak.Execute(null, richText.Service);
+        var editor = Assert.IsType<RichTextBoxService>(richText.Service);
+        Assert.True(editor.TryExecuteEnterCommand(
+            Key.Enter,
+            ModifierKeys.Control));
 
         var list = Assert.IsType<List>(richText.Document.Blocks.FirstBlock);
         Assert.Equal(2, list.ListItems.Count);
@@ -283,26 +285,126 @@ public sealed class TextFormattingTests
     }
 
     [WpfFact]
-    public void PlainEnter_IsLeftToTheStandardRichTextBoxListHandling()
+    public void EnterInsideList_InsertsLineBreakWithoutCreatingListItem()
+    {
+        var (richText, _) = CreateDocument("first");
+        var host = new Window { Content = richText.Service };
+        host.Show();
+        try
+        {
+            var lists = new ListService(
+                new DocumentSelection(richText),
+                new EditTransaction(richText));
+            lists.ToggleBulleted();
+            var list = Assert.IsType<List>(
+                richText.Document.Blocks.FirstBlock);
+            var item = Assert.IsType<ListItem>(list.ListItems.FirstListItem);
+            var paragraph = Assert.IsType<Paragraph>(item.Blocks.FirstBlock);
+            richText.CaretPosition = paragraph.ContentEnd;
+            richText.ClearSelection();
+            richText.Focus();
+            var editor = Assert.IsType<RichTextBoxService>(richText.Service);
+
+            Assert.True(editor.TryExecuteEnterCommand(
+                Key.Enter,
+                ModifierKeys.None));
+
+            Assert.Single(list.ListItems);
+            Assert.Single(paragraph.Inlines.OfType<LineBreak>());
+            Assert.Same(item, richText.CaretPosition.Paragraph?.Parent);
+        }
+        finally
+        {
+            host.Close();
+        }
+    }
+
+    [WpfTheory]
+    [InlineData(ModifierKeys.None)]
+    [InlineData(ModifierKeys.Shift)]
+    public void Enter_InsertsLineBreakInsideCurrentParagraph(
+        ModifierKeys modifiers)
     {
         var (richText, _) = CreateDocument("item");
         var host = new Window { Content = richText.Service };
         host.Show();
         try
         {
+            var paragraph = Assert.IsType<Paragraph>(
+                richText.Document.Blocks.FirstBlock);
+            richText.CaretPosition = paragraph.ContentEnd;
+            richText.ClearSelection();
             richText.Focus();
-            var args = new KeyEventArgs(
-                Keyboard.PrimaryDevice,
-                PresentationSource.FromVisual(host),
-                Environment.TickCount,
-                Key.Enter)
-            {
-                RoutedEvent = Keyboard.PreviewKeyDownEvent
-            };
+            var editor = Assert.IsType<RichTextBoxService>(richText.Service);
 
-            richText.Service.RaiseEvent(args);
+            Assert.True(editor.TryExecuteEnterCommand(Key.Enter, modifiers));
 
-            Assert.False(args.Handled);
+            Assert.Single(richText.Document.Blocks);
+            Assert.Single(paragraph.Inlines.OfType<LineBreak>());
+            Assert.Equal(
+                "item\r\n",
+                new TextRange(
+                    paragraph.ContentStart,
+                    paragraph.ContentEnd).Text);
+            Assert.Same(paragraph, richText.CaretPosition.Paragraph);
+        }
+        finally
+        {
+            host.Close();
+        }
+    }
+
+    [WpfFact]
+    public void ControlEnter_SplitsParagraphAndUndoRedoRestoresStructure()
+    {
+        var (richText, _) = CreateDocument("firstsecond");
+        var host = new Window { Content = richText.Service };
+        host.Show();
+        try
+        {
+            var paragraph = Assert.IsType<Paragraph>(
+                richText.Document.Blocks.FirstBlock);
+            var run = Assert.IsType<Run>(paragraph.Inlines.FirstInline);
+            richText.CaretPosition = run.ContentStart.GetPositionAtOffset(5)!;
+            richText.ClearSelection();
+            richText.Focus();
+            richText.Service.IsUndoEnabled = false;
+            richText.Service.IsUndoEnabled = true;
+            var editor = Assert.IsType<RichTextBoxService>(richText.Service);
+
+            Assert.True(editor.TryExecuteEnterCommand(
+                Key.Enter,
+                ModifierKeys.Control));
+
+            Paragraph[] paragraphs = richText.Document.Blocks
+                .OfType<Paragraph>()
+                .ToArray();
+            Assert.Equal(2, paragraphs.Length);
+            Assert.Equal(
+                "first",
+                new TextRange(
+                    paragraphs[0].ContentStart,
+                    paragraphs[0].ContentEnd).Text);
+            Assert.Equal(
+                "second",
+                new TextRange(
+                    paragraphs[1].ContentStart,
+                    paragraphs[1].ContentEnd).Text);
+            Assert.Same(paragraphs[1], richText.CaretPosition.Paragraph);
+
+            richText.Undo();
+
+            paragraph = Assert.IsType<Paragraph>(
+                Assert.Single(richText.Document.Blocks));
+            Assert.Equal(
+                "firstsecond",
+                new TextRange(
+                    paragraph.ContentStart,
+                    paragraph.ContentEnd).Text);
+
+            richText.Redo();
+
+            Assert.Equal(2, richText.Document.Blocks.Count);
         }
         finally
         {

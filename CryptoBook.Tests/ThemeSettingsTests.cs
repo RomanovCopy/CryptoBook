@@ -308,6 +308,55 @@ public sealed class ThemeSettingsTests
     }
 
     [Fact]
+    public void DocumentStructureTree_NodeContentInheritsContainerStateColors()
+    {
+        string xamlPath = FindRepositoryFile(
+            "CryptoBook",
+            "MyPages",
+            "Home.xaml");
+        XDocument document = XDocument.Load(xamlPath);
+        XNamespace presentation =
+            "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+        XElement template = Assert.Single(
+            document.Descendants(presentation + "HierarchicalDataTemplate"),
+            element => ((string?)element.Attribute("DataType"))?.Contains(
+                "DocumentStructureNode",
+                StringComparison.Ordinal) == true);
+        XElement glyph = Assert.Single(
+            template.Descendants(presentation + "TextBlock"),
+            element => string.Equals(
+                (string?)element.Attribute("Text"),
+                "{Binding Glyph}",
+                StringComparison.Ordinal));
+        XElement displayName = Assert.Single(
+            template.Descendants(presentation + "TextBlock"),
+            element => string.Equals(
+                (string?)element.Attribute("Text"),
+                "{Binding DisplayName}",
+                StringComparison.Ordinal));
+        XElement deleteButton = Assert.Single(
+            template.Descendants(presentation + "Button"));
+        XElement deleteButtonStyle = Assert.Single(
+            deleteButton.Descendants(presentation + "Style"));
+
+        Assert.Null(glyph.Attribute("Foreground"));
+        Assert.Null(displayName.Attribute("Foreground"));
+        Assert.Null(deleteButton.Attribute("Foreground"));
+        Assert.Equal(
+            "{StaticResource {x:Type Button}}",
+            (string?)deleteButtonStyle.Attribute("BasedOn"));
+        Assert.Contains(
+            deleteButtonStyle.Elements(presentation + "Setter"),
+            setter => string.Equals(
+                (string?)setter.Attribute("Property"),
+                "Foreground",
+                StringComparison.Ordinal) &&
+                ((string?)setter.Attribute("Value"))?.Contains(
+                    "AncestorType=TreeViewItem",
+                    StringComparison.Ordinal) == true);
+    }
+
+    [Fact]
     public void SideMenu_PinnedStatesUseSemanticThemeResourcesAndCommands()
     {
         string xamlPath = FindRepositoryFile(

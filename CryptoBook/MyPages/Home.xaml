@@ -28,18 +28,14 @@
                 <TextBlock Text="{Binding Glyph}"
                            FontFamily="Segoe MDL2 Assets"
                            FontSize="14"
-                           Foreground="{DynamicResource CurrentWindowForeground}"
                            VerticalAlignment="Center"
                            Opacity="0.72"/>
                 <TextBlock Grid.Column="1"
                            Text="{Binding DisplayName}"
-                           Foreground="{DynamicResource CurrentWindowForeground}"
                            TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Center"/>
                 <Button Grid.Column="2"
                         Width="22" Height="22" Padding="0"
-                        Background="Transparent" BorderThickness="0"
-                        Foreground="{DynamicResource CurrentWindowForeground}"
                         Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=TreeView}}"
                         CommandParameter="{Binding}"
                         ToolTip="{Binding [Common.Delete], Source={StaticResource Res}}">
@@ -47,7 +43,12 @@
                                FontFamily="Segoe MDL2 Assets"
                                FontSize="12"/>
                     <Button.Style>
-                        <Style TargetType="Button">
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Foreground"
+                                    Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
                             <Setter Property="Visibility" Value="Visible"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding CanDelete}" Value="False">
