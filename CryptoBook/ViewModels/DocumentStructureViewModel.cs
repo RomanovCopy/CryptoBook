@@ -634,7 +634,8 @@ namespace CryptoBook.ViewModels
                 Element: not null
             } node &&
             IsEditingEnabled &&
-            IsAttached(node.Source);
+            node.RepresentedSources.All(source =>
+                source is TextElement && IsAttached(source));
 
         private async Task DeleteAsync(
             object? parameter,
@@ -654,14 +655,57 @@ namespace CryptoBook.ViewModels
                     node.DisplayName),
                 isCanceled: true);
             cancellationToken.ThrowIfCancellationRequested();
-            if(!messageService.ShowConfirmation(dialogId) ||
-               node.Element is not TextElement element ||
-               !IsAttached(element))
+            if(!messageService.ShowConfirmation(dialogId))
             {
                 return;
             }
 
-            RemoveElement(element);
+            TextElement[] elements = node.RepresentedSources
+                .OfType<TextElement>()
+                .ToArray();
+            if(elements.Length != node.RepresentedSources.Count ||
+               elements.Any(element => !IsAttached(element)))
+            {
+                return;
+            }
+
+            if(elements.Length == 1)
+                RemoveElement(elements[0]);
+            else
+                RemoveElements(elements);
+        }
+
+        private void RemoveElements(IReadOnlyList<TextElement> elements)
+        {
+            FlowDocument document = richTextBox.Document;
+            DependencyObject? owner = elements[0].Parent;
+            int caretOffset = GetElementOffset(document, elements[0]);
+            long revisionBefore = documentSession.Revision;
+            bool removed = false;
+
+            richTextBox.BeginChange();
+            try
+            {
+                foreach(TextElement element in elements)
+                    removed |= documentWalker.Remove(element);
+
+                if(removed)
+                    EnsureEditableOwner(owner, document);
+            }
+            finally
+            {
+                richTextBox.EndChange();
+            }
+
+            if(!removed)
+                return;
+
+            bookmarkService.RebuildIndexFromDocument(richTextBox);
+            if(documentSession.Revision == revisionBefore)
+                documentSession.MarkDirty();
+
+            RestoreCaret(document, caretOffset);
+            RefreshNow();
         }
 
         private void RemoveElement(TextElement element)

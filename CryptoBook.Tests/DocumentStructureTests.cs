@@ -105,6 +105,107 @@ public sealed class DocumentStructureTests
     }
 
     [WpfFact]
+    public void DetailedTree_GroupsAdjacentRunsWithMatchingPropertiesWithoutChangingDocument()
+    {
+        var first = new Run("first ")
+        {
+            FontWeight = FontWeights.Bold,
+            Foreground = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Colors.DarkRed)
+        };
+        var second = new Run("second")
+        {
+            FontWeight = FontWeights.Bold,
+            Foreground = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Colors.DarkRed)
+        };
+        var different = new Run("third")
+        {
+            FontStyle = FontStyles.Italic
+        };
+        var paragraph = new Paragraph();
+        paragraph.Inlines.Add(first);
+        paragraph.Inlines.Add(second);
+        paragraph.Inlines.Add(different);
+        var document = new FlowDocument(paragraph);
+        Inline[] originalInlines = paragraph.Inlines.Cast<Inline>().ToArray();
+
+        DocumentStructureNode root =
+            new FlowDocumentStructureBuilder().Build(
+                document,
+                includeTextElements: true);
+
+        DocumentStructureNode[] runNodes = Flatten(root)
+            .Where(node => node.Source is Run)
+            .ToArray();
+        Assert.Equal(2, runNodes.Length);
+        DocumentStructureNode grouped = runNodes[0];
+        Assert.Same(first, grouped.Source);
+        Assert.True(grouped.IsVisualGroup);
+        Assert.Equal(
+            new FrameworkContentElement[] { first, second },
+            grouped.RepresentedSources);
+        Assert.Equal("Run — “first second”", grouped.DisplayName);
+        Assert.True(grouped.CanDelete);
+        Assert.Same(different, runNodes[1].Source);
+
+        Assert.Equal(3, paragraph.Inlines.Count);
+        Assert.Equal(originalInlines, paragraph.Inlines.Cast<Inline>());
+        Assert.Equal("first ", first.Text);
+        Assert.Equal("second", second.Text);
+        Assert.Equal("third", different.Text);
+    }
+
+    [WpfFact]
+    public async Task DeleteCommand_RemovesAllRunsRepresentedByVisualGroup()
+    {
+        TestContext context = CreateContext();
+        var first = new Run("first ") { FontWeight = FontWeights.Bold };
+        var second = new Run("second") { FontWeight = FontWeights.Bold };
+        var survivor = new Run("survivor") { FontStyle = FontStyles.Italic };
+        var paragraph = new Paragraph();
+        paragraph.Inlines.Add(first);
+        paragraph.Inlines.Add(second);
+        paragraph.Inlines.Add(survivor);
+        context.RichTextBox.Document.Blocks.Clear();
+        context.RichTextBox.Document.Blocks.Add(paragraph);
+        context.ViewModel.IncludeTextElements = true;
+        context.ViewModel.ToggleCommand.Execute(null);
+
+        DocumentStructureNode grouped = Assert.Single(
+            Flatten(Assert.Single(context.ViewModel.Nodes)),
+            node => node.IsVisualGroup);
+        await ((IAsyncCommand)context.ViewModel.DeleteCommand)
+            .ExecuteAsync(grouped);
+
+        Run remaining = Assert.IsType<Run>(paragraph.Inlines.FirstInline);
+        Assert.Same(survivor, remaining);
+        Assert.Same(remaining, paragraph.Inlines.LastInline);
+    }
+
+    [WpfFact]
+    public void DetailedTree_DoesNotGroupRunsSeparatedByAnotherInline()
+    {
+        var first = new Run("first");
+        var second = new Run("second");
+        var paragraph = new Paragraph();
+        paragraph.Inlines.Add(first);
+        paragraph.Inlines.Add(new LineBreak());
+        paragraph.Inlines.Add(second);
+
+        DocumentStructureNode root =
+            new FlowDocumentStructureBuilder().Build(
+                new FlowDocument(paragraph),
+                includeTextElements: true);
+
+        DocumentStructureNode[] runNodes = Flatten(root)
+            .Where(node => node.Source is Run)
+            .ToArray();
+        Assert.Equal(2, runNodes.Length);
+        Assert.All(runNodes, node => Assert.False(node.IsVisualGroup));
+    }
+
+    [WpfFact]
     public void Walker_TraversesBlocksInsideFigure()
     {
         var nestedParagraph = new Paragraph(new Run("inside"));

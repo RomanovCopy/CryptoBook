@@ -22,7 +22,8 @@ namespace CryptoBook.DTO
             string summary,
             string glyph,
             bool canDelete,
-            IReadOnlyList<DocumentStructureNode> children)
+            IReadOnlyList<DocumentStructureNode> children,
+            IReadOnlyList<FrameworkContentElement>? representedSources = null)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Path = path ?? throw new ArgumentNullException(nameof(path));
@@ -31,6 +32,14 @@ namespace CryptoBook.DTO
             Glyph = glyph ?? string.Empty;
             CanDelete = canDelete;
             Children = children ?? throw new ArgumentNullException(nameof(children));
+            RepresentedSources = representedSources ?? [source];
+            if(RepresentedSources.Count == 0 ||
+               !ReferenceEquals(RepresentedSources[0], source))
+            {
+                throw new ArgumentException(
+                    "The primary source must be the first represented source.",
+                    nameof(representedSources));
+            }
         }
 
         public FrameworkContentElement Source { get; }
@@ -41,6 +50,8 @@ namespace CryptoBook.DTO
         public string Glyph { get; }
         public bool CanDelete { get; }
         public IReadOnlyList<DocumentStructureNode> Children { get; }
+        public IReadOnlyList<FrameworkContentElement> RepresentedSources { get; }
+        public bool IsVisualGroup => RepresentedSources.Count > 1;
 
         public bool IsExpanded
         {
