@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidatePattern('^\d+\.\d+\.\d+(\.\d+)?([-.][0-9A-Za-z.-]+)?$')]
-    [string] $Version = '1.1.1.5',
+    [string] $Version = '1.1.1.6',
 
     [ValidateSet('Debug', 'Release')]
     [string] $Configuration = 'Release',
