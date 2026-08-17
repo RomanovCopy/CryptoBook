@@ -15,6 +15,27 @@ cd CryptoBook
 dotnet restore CryptoBook/CryptoBook.sln --locked-mode
 ```
 
+## Branch workflow
+
+`master` is the stable integration branch. Ongoing project updates are developed on
+`updates` and merged into `master` through pull requests.
+
+For a normal project update:
+
+```powershell
+git switch updates
+git pull --ff-only origin updates
+# make and commit the change
+git push origin updates
+```
+
+Then open a pull request from `updates` into `master`.
+
+For isolated external contributions, fixes or automated changes, use a focused branch and
+target `master` with the pull request.
+
+CI runs on pushes to `updates` and `master`, and on pull requests targeting `master`.
+
 ## Build and test
 
 Before opening a pull request, run:
@@ -29,7 +50,6 @@ vulnerabilities are treated as errors in the release workflow.
 
 ## Pull requests
 
-- create a focused branch from the current development base;
 - keep each pull request limited to one coherent change;
 - add or update tests when behavior changes;
 - describe behavior before and after the change;
