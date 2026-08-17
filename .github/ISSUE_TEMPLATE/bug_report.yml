@@ -1,0 +1,88 @@
+name: Bug report
+description: Report a reproducible problem in CryptoBook.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem. Please avoid posting passwords,
+        encryption keys, private documents, or other sensitive data.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem
+      description: What happened, and what were you trying to do?
+      placeholder: Describe the problem clearly and concisely.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest sequence of steps that reproduces the problem.
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. Click ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect CryptoBook to do?
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: CryptoBook version
+      description: Use the version shown in the application or release name.
+      placeholder: e.g. 1.1.1.8
+    validations:
+      required: true
+
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: e.g. Windows 11 24H2 x64
+    validations:
+      required: true
+
+  - type: dropdown
+    id: distribution
+    attributes:
+      label: Distribution
+      options:
+        - Installer
+        - Portable ZIP
+        - Built from source
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: |
+        Optional. Attach only information that is safe to publish. Remove file contents,
+        passwords, keys, personal paths, and other sensitive data when possible.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: This report does not contain passwords, encryption keys, or private document contents.
+          required: true
