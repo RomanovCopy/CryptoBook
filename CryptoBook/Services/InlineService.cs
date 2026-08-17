@@ -26,6 +26,23 @@ namespace CryptoBook.Services
         private readonly IPropertyAccessor accessor;
         private readonly IParagraphFactory paragraphFactory;
         private readonly IDocumentSession? documentSession;
+        private static readonly HashSet<DependencyProperty> ComparedRunProperties =
+        [
+            Run.TextProperty,
+            TextElement.FontFamilyProperty,
+            TextElement.FontSizeProperty,
+            TextElement.FontWeightProperty,
+            TextElement.FontStyleProperty,
+            TextElement.FontStretchProperty,
+            TextElement.ForegroundProperty,
+            TextElement.BackgroundProperty,
+            TextElement.TextEffectsProperty,
+            Inline.TextDecorationsProperty,
+            Inline.BaselineAlignmentProperty,
+            FrameworkContentElement.LanguageProperty,
+            FrameworkElement.FlowDirectionProperty,
+            FrameworkContentElement.TagProperty
+        ];
 
         public InlineService(IRichTextBoxService richTextBoxService, IPropertyAccessor accessor,
             IParagraphFactory paragraphFactory,
@@ -681,12 +698,21 @@ namespace CryptoBook.Services
                 applyValue(v);
         }
 
-        private bool CanMerge(Run a, Run b)
+        private static bool CanMerge(Run a, Run b)
         {
             if(a == null || b == null)
                 return false;
             if(!ReferenceEquals(a.Parent, b.Parent))
                 return false;     // на всякий случай
+
+            return HaveEquivalentRunProperties(a, b);
+        }
+
+        internal static bool HaveEquivalentRunProperties(Run a, Run b)
+        {
+            ArgumentNullException.ThrowIfNull(a);
+            ArgumentNullException.ThrowIfNull(b);
+
             if(a.TextEffects != null || b.TextEffects != null)
             {
                 if(!TextEffectsEqual(a.TextEffects, b.TextEffects))
@@ -724,13 +750,38 @@ namespace CryptoBook.Services
                 return false;
 
             // 5) (Опционально) служебная метка
-            if(!Equals(a.Tag, b.Tag))
-                return false;
+            return Equals(a.Tag, b.Tag) &&
+                HaveEquivalentAdditionalLocalProperties(a, b);
+        }
+
+        private static bool HaveEquivalentAdditionalLocalProperties(
+            Run a,
+            Run b)
+        {
+            var properties = new HashSet<DependencyProperty>();
+            LocalValueEnumerator firstValues = a.GetLocalValueEnumerator();
+            while(firstValues.MoveNext())
+                properties.Add(firstValues.Current.Property);
+            LocalValueEnumerator secondValues = b.GetLocalValueEnumerator();
+            while(secondValues.MoveNext())
+                properties.Add(secondValues.Current.Property);
+
+            foreach(DependencyProperty property in properties)
+            {
+                if(ComparedRunProperties.Contains(property))
+                    continue;
+                if(!Equals(
+                    a.ReadLocalValue(property),
+                    b.ReadLocalValue(property)))
+                {
+                    return false;
+                }
+            }
 
             return true;
         }
         /* ---------- Brushes ---------- */
-        private bool BrushesEqual(System.Windows.Media.Brush a, System.Windows.Media.Brush b)
+        private static bool BrushesEqual(System.Windows.Media.Brush a, System.Windows.Media.Brush b)
         {
             if(ReferenceEquals(a, b))
                 return true;
@@ -756,7 +807,7 @@ namespace CryptoBook.Services
             // Для остальных (ImageBrush/VisualBrush/…): лучшая эвристика — ReferenceEquals или Equals
             return a.Equals(b);
         }
-        private bool GradientBrushEqual(GradientBrush a, GradientBrush b)
+        private static bool GradientBrushEqual(GradientBrush a, GradientBrush b)
         {
             // Общие для всех градиентов
             if(!a.ColorInterpolationMode.Equals(b.ColorInterpolationMode))
@@ -788,7 +839,7 @@ namespace CryptoBook.Services
             // Разные подклассы градиента — точно не равны визуально
             return false;
         }
-        private bool GradientStopsEqual(GradientStopCollection a, GradientStopCollection b)
+        private static bool GradientStopsEqual(GradientStopCollection a, GradientStopCollection b)
         {
             if(a == null || b == null)
                 return a == null && b == null;
@@ -805,7 +856,7 @@ namespace CryptoBook.Services
             }
             return true;
         }
-        private bool TransformsEqual(Transform a, Transform b)
+        private static bool TransformsEqual(Transform a, Transform b)
         {
             if(ReferenceEquals(a, b))
                 return true;
@@ -818,9 +869,9 @@ namespace CryptoBook.Services
                    DoubleEquals(ma.M21, mb.M21) && DoubleEquals(ma.M22, mb.M22) &&
                    DoubleEquals(ma.OffsetX, mb.OffsetX) && DoubleEquals(ma.OffsetY, mb.OffsetY);
         }
-        private bool PointEquals(Point a, Point b) => DoubleEquals(a.X, b.X) && DoubleEquals(a.Y, b.Y);
+        private static bool PointEquals(Point a, Point b) => DoubleEquals(a.X, b.X) && DoubleEquals(a.Y, b.Y);
         /* ---------- TextDecorations ---------- */
-        private bool TextDecorationsEqual(TextDecorationCollection a, TextDecorationCollection b)
+        private static bool TextDecorationsEqual(TextDecorationCollection a, TextDecorationCollection b)
         {
             // null и пустая коллекция форматирования эквивалентны.
             if(a == null || a.Count == 0)
@@ -848,7 +899,7 @@ namespace CryptoBook.Services
             static (TextDecorationLocation Location, TextDecorationUnit Unit, Pen Pen) Norm(TextDecoration d)
                 => (d.Location, d.PenThicknessUnit, d.Pen);
         }
-        private bool PensEqual(Pen a, Pen b)
+        private static bool PensEqual(Pen a, Pen b)
         {
             if(ReferenceEquals(a, b))
                 return true;
@@ -889,7 +940,7 @@ namespace CryptoBook.Services
             return true;
         }
         /* ---------- TextEffects ---------- */
-        private bool TextEffectsEqual(TextEffectCollection a, TextEffectCollection b)
+        private static bool TextEffectsEqual(TextEffectCollection a, TextEffectCollection b)
         {
             // null и пустая коллекция считаем эквивалентными
             if(a == null || a.Count == 0)
@@ -919,7 +970,7 @@ namespace CryptoBook.Services
             }
             return true;
         }
-        private bool GeometriesEqual(Geometry a, Geometry b)
+        private static bool GeometriesEqual(Geometry a, Geometry b)
         {
             if(ReferenceEquals(a, b))
                 return true;
@@ -931,7 +982,7 @@ namespace CryptoBook.Services
             return ga.ToString(CultureInfo.InvariantCulture) == gb.ToString(CultureInfo.InvariantCulture);
         }
         /* ---------- числовая погрешность ---------- */
-        private bool DoubleEquals(double a, double b, double eps = 1e-9) => Math.Abs(a - b) <= eps;
+        private static bool DoubleEquals(double a, double b, double eps = 1e-9) => Math.Abs(a - b) <= eps;
 
 
     }

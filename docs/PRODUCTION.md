@@ -23,6 +23,17 @@ builds are not production artifacts.
 - Sign the executable or installer with an Authenticode certificate when the
   signing secrets are configured.
 - Publish SHA-256 checksums and an SBOM with the release.
+- Include `LICENSE`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`,
+  `SOURCE_CODE.md`, `ASSET_PROVENANCE.md`, `LICENSES/`, and `compliance/` in
+  both the installer and portable ZIP.
+- Run `tools/compliance/Test-FfmpegProvenance.ps1` after locked restore; any
+  native hash, version, license, or configure-string mismatch blocks release.
+- Publish `CryptoBook-ffmpeg-provenance.zip` as supporting evidence. It contains
+  the exact FFmpeg tree and BtbN recipe, but does not replace the required
+  complete source bundle for all linked libraries.
+- Publish the matching tagged CryptoBook source and the exact corresponding
+  source/build materials for the bundled GPL-covered FFmpeg libraries beside
+  every binary release.
 - Publish an explicit signing-status file and warning for unsigned releases.
 - Retain the previous version for rollback.
 

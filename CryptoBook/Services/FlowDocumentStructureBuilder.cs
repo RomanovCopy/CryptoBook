@@ -51,6 +51,7 @@ namespace CryptoBook.Services
             bool includeTextElements)
         {
             var result = new List<DocumentStructureNode>();
+            var children = new List<(FrameworkContentElement Source, string Path)>();
             var typeIndexes = new Dictionary<string, int>(
                 StringComparer.Ordinal);
 
@@ -62,6 +63,38 @@ namespace CryptoBook.Services
                 typeIndexes[typeName] = index;
                 string path = $"{parentPath}/{typeName}[{index}]";
 
+                children.Add((child, path));
+            }
+
+            for(int childIndex = 0; childIndex < children.Count; childIndex++)
+            {
+                (FrameworkContentElement child, string path) = children[childIndex];
+
+                if(includeTextElements &&
+                   child is Run firstRun &&
+                   !IsCaretAnchor(firstRun))
+                {
+                    var runs = new List<Run> { firstRun };
+                    int nextIndex = childIndex + 1;
+                    while(nextIndex < children.Count &&
+                          children[nextIndex].Source is Run nextRun &&
+                          !IsCaretAnchor(nextRun) &&
+                          InlineService.HaveEquivalentRunProperties(
+                              runs[^1],
+                              nextRun))
+                    {
+                        runs.Add(nextRun);
+                        nextIndex++;
+                    }
+
+                    if(runs.Count > 1)
+                    {
+                        result.Add(CreateRunGroupNode(runs, path));
+                        childIndex = nextIndex - 1;
+                        continue;
+                    }
+                }
+
                 foreach(DocumentStructureNode node in BuildNode(
                     child,
                     path,
@@ -72,6 +105,23 @@ namespace CryptoBook.Services
             }
 
             return result;
+        }
+
+        private static DocumentStructureNode CreateRunGroupNode(
+            IReadOnlyList<Run> runs,
+            string path)
+        {
+            Run firstRun = runs[0];
+            string text = string.Concat(runs.Select(run => run.Text));
+            return new DocumentStructureNode(
+                firstRun,
+                path,
+                nameof(Run),
+                Quote(CreatePreview(text)),
+                GetGlyph(firstRun),
+                canDelete: true,
+                [],
+                runs.Cast<FrameworkContentElement>().ToArray());
         }
 
         private static IEnumerable<DocumentStructureNode> BuildNode(
