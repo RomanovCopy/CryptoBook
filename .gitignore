@@ -312,7 +312,7 @@ node_modules/
 **/*.DesktopClient/GeneratedArtifacts
 **/*.DesktopClient/ModelManifest.xml
 **/*.Server/GeneratedArtifacts
-**/*.ServerClient/ModelManifest.xml
+**/*.Server/ModelManifest.xml
 _Pvt_Extensions
 
 # Paket dependency manager
