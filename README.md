@@ -1,189 +1,178 @@
 # CryptoBook
 
+[Русский](README.ru.md)
+
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.1.7-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.1.7)
+[![Release](https://img.shields.io/github/v/release/RomanovCopy/CryptoBook)](https://github.com/RomanovCopy/CryptoBook/releases/latest)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
+[![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
 
-CryptoBook — настольное Windows-приложение для работы с локальными документами и файлами. Оно объединяет форматированный текстовый редактор, файловый менеджер, предпросмотр медиафайлов и защищённое паролем хранилище.
+**A local-first encrypted document workspace for Windows.**
 
-> Проект находится в активной разработке. Перед работой с важными данными сохраняйте отдельные резервные копии.
+CryptoBook combines rich-text editing, local file management, full-text search, media preview,
+and password-protected documents in one WPF desktop application. Documents stay on your
+machine unless you explicitly move or share them.
 
-## Скриншоты
+[![Download latest release](https://img.shields.io/badge/Download-Latest%20release-2ea44f?style=for-the-badge&logo=github)](https://github.com/RomanovCopy/CryptoBook/releases/latest)
 
-| Редактор | Боковое меню |
+> CryptoBook is under active development. Keep independent backups of important data.
+> Current Windows binaries may be distributed without Authenticode signing; release assets
+> include SHA-256 checksums and an explicit signing-status file.
+
+![CryptoBook editor](docs/screenshots/editor.png)
+
+## Why CryptoBook?
+
+- **Local-first workflow** — documents and application state are stored locally.
+- **Encrypted documents** — `.cbook` files use password-derived authenticated encryption.
+- **Rich-text editing** — formatting, lists, links, images, bookmarks and printing.
+- **File workspace** — browsing, favorites, Quick Access, sorting and clipboard operations.
+- **Search** — file-name and full-text search, including supported encrypted documents.
+- **Recovery** — crash recovery, `.bak` backups and atomic file replacement.
+- **Media preview** — text, images and video playback through Flyleaf/FFmpeg.
+- **Windows integration** — system dialogs, themes and self-contained x64 releases.
+
+## Screenshots
+
+| File workspace | Themes |
 | --- | --- |
-| ![Редактор CryptoBook](docs/screenshots/editor.png) | ![Боковое меню CryptoBook](docs/screenshots/side-menu.png) |
-| **Настройки тем** | **Режим чтения Sepia** |
-| ![Настройки тем CryptoBook](docs/screenshots/settings-themes.png) | ![CryptoBook в теме Sepia](docs/screenshots/sepia-reading.png) |
+| ![CryptoBook side menu](docs/screenshots/side-menu.png) | ![CryptoBook theme settings](docs/screenshots/settings-themes.png) |
+| **Sepia reading mode** | **Editor** |
+| ![CryptoBook Sepia mode](docs/screenshots/sepia-reading.png) | ![CryptoBook editor](docs/screenshots/editor.png) |
 
-## Возможности
+## Main features
 
-- создание и редактирование текстовых, RTF, XAML и XamlPackage-документов;
-- форматирование текста, абзацев и списков, вставка ссылок и изображений;
-- изменение размера и способа размещения изображений внутри документа;
-- файловый менеджер с избранными каталогами, сортировкой, буфером обмена и отслеживанием изменений;
-- Quick Access в боковом меню: закрепление часто используемых документов, безопасное переключение и настраиваемый порядок ссылок;
-- поиск файлов по имени внутри выбранной рабочей директории;
-- полнотекстовый поиск по поддерживаемым документам рабочего пространства, включая зашифрованные файлы;
-- предпросмотр текста и изображений, воспроизведение видео через Flyleaf/FFmpeg;
-- закладки и навигация по документу;
-- печать текущего документа через системный диалог печати Windows;
-- системная, светлая, тёмная и сепия-темы;
-- шифрование отдельных файлов и каталогов с сохранением исходного расширения;
-- автоматический сброс ключа шифрования после заданного периода бездействия с защищённым восстановлением открытого документа;
-- автоматическое восстановление несохранённого документа после сбоя;
-- атомарное сохранение с резервной копией предыдущей версии в файле `.bak`;
-- ручное открытие `.bak` через **Файл → Восстановить предыдущую версию** без удаления резервной копии;
-- синхронизация имени `.bak` при переименовании книги и замена несовместимой зашифрованной копии после смены ключа;
-- фоновая и ручная проверка новых стабильных релизов CryptoBook на GitHub, загрузка обновления и автоматический запуск установщика.
+- create and edit TXT, RTF, XAML and XamlPackage documents;
+- format text and paragraphs, create lists, insert links and images;
+- resize and position images inside documents;
+- browse folders and files with sorting, favorites and change monitoring;
+- pin frequently used documents with Quick Access;
+- search file names inside the selected workspace;
+- perform full-text search across supported documents, including `.cbook` files after unlock;
+- preview text and images and play video through Flyleaf/FFmpeg;
+- use bookmarks and document navigation;
+- print the current document through the Windows print dialog;
+- choose system, light, dark and Sepia themes;
+- encrypt individual files and directories;
+- automatically clear the in-memory encryption key after a configurable idle period;
+- recover unsaved document state after a crash;
+- save atomically and keep the previous version as a `.bak` file;
+- check GitHub for stable releases and launch downloaded installers.
 
-## Поддерживаемые форматы
+## Supported formats
 
-| Назначение | Форматы |
+| Purpose | Formats |
 | --- | --- |
-| Редактирование документов | `.txt`, `.log`, `.md`, `.cs`, `.json`, `.xml`, `.rtf`, `.xaml`, `.XamlPackage` |
-| Изображения | `.png`, `.jpg`, `.jpeg`, `.bmp`, `.gif`, `.webp` |
-| Видео | `.mp4`, `.mkv`, `.avi`, `.mov`, `.webm`, `.wmv` и другие контейнеры, поддерживаемые Flyleaf/FFmpeg |
-| Защищённые файлы | `.cbook`, устаревший `.cbox` |
-| Внешнее открытие | `.pdf` |
+| Editable documents | `.txt`, `.log`, `.md`, `.cs`, `.json`, `.xml`, `.rtf`, `.xaml`, `.XamlPackage` |
+| Images | `.png`, `.jpg`, `.jpeg`, `.bmp`, `.gif`, `.webp` |
+| Video | `.mp4`, `.mkv`, `.avi`, `.mov`, `.webm`, `.wmv` and other Flyleaf/FFmpeg-supported containers |
+| Protected files | `.cbook`, legacy `.cbox` |
+| External opening | `.pdf` |
 
-Поддержка конкретного видеокодека зависит от медиадвижка. PDF открывается системным приложением и не редактируется внутри CryptoBook.
+PDF files are opened by the system application and are not edited inside CryptoBook.
+Video-codec support depends on the bundled media engine.
 
-## Поиск по документам
+## Security overview
 
-Страница **«Поиск в документах»** доступна в разделе **«Рабочее пространство»** бокового меню. Поиск выполняется рекурсивно по содержимому `.txt`, `.log`, `.md`, `.cs`, `.json`, `.xml`, `.rtf`, `.xaml` и `.XamlPackage` в выбранной рабочей директории. Для каждого результата отображаются относительный путь и фрагмент найденного текста.
+The current `.cbook` format uses:
 
-Зашифрованные документы `.cbook` также участвуют в поиске после ввода пароля. Из списка результатов документ можно открыть во встроенном редакторе или удалить после подтверждения. Кнопки навигации в строке заголовка позволяют вернуться к результатам поиска, не запуская поиск повторно.
+- Argon2id for password-based 256-bit key derivation;
+- AES-256-GCM for authenticated encryption;
+- random salts and nonces;
+- atomic file replacement after successful operations.
 
-## Quick Access — закреплённые документы
+The encryption key is kept in process memory only for the active session and can be cleared
+automatically after inactivity. Recovery snapshots use Windows DPAPI for the current user.
+Legacy `.cbox` files remain readable for backward compatibility.
 
-Раздел **«Закреплённые»** в боковом меню позволяет сохранять ссылки на часто используемые документы и быстро переключаться между ними. Для нового документа CryptoBook сначала предлагает выбрать имя, папку и формат, а затем добавляет успешно сохранённый файл в Quick Access.
+Encryption reduces the risk of reading a protected file without its password, but it is not a
+backup mechanism. A lost password cannot be recovered.
 
-Перед переходом к другому документу приложение проверяет несохранённые изменения. Изменённый документ сохраняется, а отмена Save As, ошибка записи, неверный пароль или неудачная загрузка оставляют текущий документ открытым. Чистый документ повторно на диск не записывается.
+For vulnerability reporting and the supported security scope, see [SECURITY.md](SECURITY.md).
 
-Закреплённые ссылки сохраняются между запусками приложения. Их можно перемещать выше или ниже, показывать в Проводнике и откреплять, не удаляя сам файл. Если документ был перемещён или удалён вне CryptoBook, ссылка остаётся в списке со статусом **«Файл недоступен»** — для неё можно указать новое расположение. Переименование файла внутри CryptoBook автоматически обновляет закреплённый путь.
+## System requirements
 
-## Системные требования
+For official builds:
 
-Для запуска готовой сборки:
+- Windows 10 version 1809 or later;
+- 64-bit Windows.
 
-- Windows 10 версии 1809 или новее;
-- 64-разрядная система.
+The installer is self-contained and does not require a separate .NET Desktop Runtime install.
 
-Официальный установщик содержит .NET 8 Desktop Runtime и не требует его отдельной установки.
-Приложение публикуется как self-contained single-file `CryptoBook.exe`; управляемые зависимости, локализации и native-компоненты Flyleaf/FFmpeg входят в этот файл и безопасно извлекаются средой .NET при запуске.
+## Download and run
 
-Для разработки также понадобится [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Базовая разработка поддерживает SDK от `8.0.206`, а сборка установщика требует SDK `8.0.423`, включающий security patch .NET `8.0.29`. Для работы через Visual Studio установите workload **.NET desktop development**.
+For most users, download the installer from the
+[latest release](https://github.com/RomanovCopy/CryptoBook/releases/latest).
+A portable `win-x64` ZIP is also published with release assets.
 
-## Быстрый старт
+Release assets include SHA-256 checksums, SPDX SBOM data and signing-status information.
+
+## Build from source
+
+Development requires the .NET 8 SDK. Visual Studio users should install the
+**.NET desktop development** workload.
 
 ```powershell
 git clone https://github.com/RomanovCopy/CryptoBook.git
 cd CryptoBook
 dotnet restore CryptoBook/CryptoBook.sln --locked-mode
-dotnet run --project CryptoBook/CryptoBook.csproj
-```
-
-Или откройте `CryptoBook/CryptoBook.sln` в Visual Studio и запустите проект `CryptoBook`.
-
-## Сборка и тесты
-
-```powershell
-# Восстановление строго по packages.lock.json
-dotnet restore CryptoBook/CryptoBook.sln --locked-mode
-
-# Сборка и все тесты
 dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
-
-# Self-contained single-file x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.1.7
 ```
 
-В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные NuGet-уязвимости считаются ошибками.
+To build a self-contained x64 package and installer, install Inno Setup 6 and run:
 
-## Защита данных
+```powershell
+./installer/Build-Installer.ps1 -Version 1.2.3
+```
 
-Актуальный формат `.cbook` использует:
+The project uses xUnit and STA tests for WPF. Compiler warnings and detected NuGet
+vulnerabilities are treated as errors in the release workflow.
 
-- Argon2id для получения 256-битного ключа из пароля;
-- AES-256-GCM для блочного аутентифицированного шифрования;
-- случайные salt и nonce;
-- атомарную замену файла после успешного завершения операции.
-
-Пароль хранится только в памяти процесса и очищается при освобождении провайдера ключа. Старый формат `.cbox` доступен для обратной совместимости при расшифровке.
-
-### Автоматический сброс ключа
-
-В разделе **«Настройки» → «Безопасность»** можно выбрать период бездействия — 1, 5, 10, 15 или 30 минут — либо отключить автоматический сброс вариантом **«Никогда»**. Там же доступен ввод или замена ключа шифрования.
-
-Перед сбросом ключа CryptoBook создаёт и проверяет зашифрованный снимок открытого документа, после чего удаляет ключ из памяти и запрашивает его повторно. После разблокировки можно открыть актуальный исходный файл или восстановить сохранённый снимок; если исходный файл был перемещён или удалён, остаётся доступно восстановление снимка. Во время шифрования, расшифровки, сохранения и других критических операций таймер приостанавливается, чтобы сброс не прервал запись данных.
-
-Снимок аварийного восстановления создаётся спустя 15 секунд после изменения документа и защищается Windows DPAPI для текущего пользователя. Локальные данные приложения находятся в `%LOCALAPPDATA%\CryptoBook`:
+## Project structure
 
 ```text
 CryptoBook/
-├── favorites.json
-├── pinned-documents.json
-├── update-check.json
-├── Lock/
-├── Logs/
-└── Recovery/
+├── CryptoBook/          # WPF application
+│   ├── Views/
+│   ├── ViewModels/
+│   ├── Models/
+│   ├── Services/
+│   ├── Security/
+│   ├── FileTemplates/
+│   └── Themes/
+├── CryptoBook.Tests/    # unit and WPF STA tests
+├── CryptoBook.Performance/
+├── docs/
+├── installer/
+├── compliance/
+└── .github/workflows/   # CI and release automation
 ```
 
-Проверка обновлений выполняется не чаще одного раза в сутки. Сетевые ошибки не влияют на запуск приложения; для конкретной версии доступны действия «Позже» и «Пропустить версию».
+CryptoBook is built with WPF and .NET 8, follows MVVM, and uses Autofac for dependency
+injection.
 
-Шифрование снижает риск чтения файла без пароля, но не заменяет резервное копирование и системные меры защиты. Утраченный пароль восстановить нельзя.
+## CI and releases
 
-## Структура проекта
+GitHub Actions restores locked dependencies, runs Release tests and builds the Windows x64
+installer. Production releases are created from tags such as `v1.2.3` or `v1.2.3.4` and include
+an installer, portable ZIP, SHA-256 checksums, an SPDX SBOM and signing status.
 
-```text
-CryptoBook/
-├── CryptoBook/          # WPF-приложение
-│   ├── Views/           # окна и представления
-│   ├── ViewModels/      # логика представления
-│   ├── Models/          # модели состояния
-│   ├── Services/        # документы, файлы, навигация и восстановление
-│   ├── Security/        # защищённые форматы и криптография
-│   ├── FileTemplates/   # реестр поддерживаемых типов файлов
-│   └── Themes/          # темы интерфейса
-├── CryptoBook.Tests/    # модульные и WPF STA-тесты
-├── docs/                # эксплуатационная документация
-└── .github/workflows/   # CI и выпуск релизов
-```
+Operational release details are documented in [docs/PRODUCTION.md](docs/PRODUCTION.md).
 
-Приложение построено на WPF и .NET 8, использует MVVM, Autofac для внедрения зависимостей и отдельные обработчики форматов документов.
+## Contributing
 
-## CI и релизы
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the build, test and PR
+workflow. Changes to cryptography, recovery or release automation require extra review.
 
-GitHub Actions восстанавливает зафиксированные зависимости, запускает Release-тесты и собирает автономный x64-установщик. Производственные релизы создаются по тегам вида `v1.2.3` или `v1.2.3.4` и включают установочный EXE, ZIP-архив, SHA-256-контрольные суммы, SPDX SBOM и явный статус цифровой подписи. До подключения production-сертификата сборки выпускаются без Authenticode; перед запуском сверяйте контрольные суммы.
+## License and third-party notices
 
-Подробные требования к выпуску и восстановлению описаны в [docs/PRODUCTION.md](docs/PRODUCTION.md).
+CryptoBook is licensed under [GNU GPL version 3 only](LICENSE) (`GPL-3.0-only`).
+Copyright information is in [COPYRIGHT.md](COPYRIGHT.md), third-party notices are in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), and corresponding-source information is in
+[SOURCE_CODE.md](SOURCE_CODE.md).
 
-## Участие в разработке
-
-1. Создайте отдельную ветку от актуальной ветки разработки.
-2. Внесите небольшое, связное изменение.
-3. Добавьте или обновите тесты.
-4. Восстановите зависимости через `dotnet restore CryptoBook/CryptoBook.sln --locked-mode`, затем выполните `dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore`.
-5. Откройте pull request с описанием поведения до и после изменения.
-
-Изменения в `Security`, механизме восстановления и GitHub Actions требуют особенно внимательного ревью.
-
-## Лицензия
-
-CryptoBook распространяется на условиях [GNU GPL версии 3](LICENSE), только
-версия 3 (`GPL-3.0-only`). Сведения об авторских правах приведены в
-[COPYRIGHT.md](COPYRIGHT.md), уведомления о сторонних компонентах — в
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), а порядок получения
-соответствующего исходного кода — в [SOURCE_CODE.md](SOURCE_CODE.md).
-
-Реестр происхождения графических материалов находится в
-[ASSET_PROVENANCE.md](ASSET_PROVENANCE.md). До подтверждения отмеченных там
-прав не используйте эти материалы отдельно от проекта.
-
-Точное соответствие нативного пакета FFmpeg, его DLL, commit исходников,
-параметры сборки и закреплённые источники зависимостей описаны в
-[`compliance/ffmpeg/PROVENANCE.md`](compliance/ffmpeg/PROVENANCE.md). Проверка:
-`pwsh -File tools/compliance/Test-FfmpegProvenance.ps1`.
+Asset provenance is documented in [ASSET_PROVENANCE.md](ASSET_PROVENANCE.md). FFmpeg provenance,
+build parameters and pinned source references are documented in
+[`compliance/ffmpeg/PROVENANCE.md`](compliance/ffmpeg/PROVENANCE.md).
