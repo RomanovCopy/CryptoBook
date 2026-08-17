@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest a new capability or an improvement to CryptoBook.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What user problem would this change solve?
+      placeholder: Describe the workflow or limitation, not only the proposed UI.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior you would like to see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. Describe workarounds or other approaches you considered.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Optional screenshots, mockups, examples, or technical notes.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for the same or a closely related request.
+          required: true
