@@ -55,6 +55,10 @@ jobs:
       - name: Restore Windows x64 runtime
         run: dotnet restore CryptoBook/CryptoBook.csproj --locked-mode -r win-x64
 
+      - name: Verify FFmpeg binary provenance
+        shell: pwsh
+        run: ./tools/compliance/Test-FfmpegProvenance.ps1
+
       - name: Verify Release
         run: dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
@@ -160,16 +164,51 @@ jobs:
           upload-artifact: false
           upload-release-assets: false
 
+      - name: Snapshot exact FFmpeg core source and build recipe
+        shell: pwsh
+        run: ./tools/compliance/New-FfmpegCoreSourceSnapshot.ps1
+
       - name: Create release manifest
         shell: pwsh
         run: |
           Copy-Item CryptoBook/packages.lock.json artifacts/packages.lock.json
+          $licenseDocuments = @(
+            "LICENSE",
+            "COPYRIGHT.md",
+            "THIRD_PARTY_NOTICES.md",
+            "SOURCE_CODE.md",
+            "ASSET_PROVENANCE.md"
+          )
+          $packageDirectory = "artifacts/release-package"
+          $licenseDirectory = "artifacts/license-package"
+          $ffmpegDirectory = "artifacts/ffmpeg-provenance-package"
+          New-Item -ItemType Directory -Path $packageDirectory, $licenseDirectory, $ffmpegDirectory -Force |
+            Out-Null
+          Copy-Item artifacts/win-x64/CryptoBook.exe $packageDirectory
+          Copy-Item $licenseDocuments $packageDirectory
+          Copy-Item LICENSES "$packageDirectory/LICENSES" -Recurse
+          Copy-Item compliance "$packageDirectory/compliance" -Recurse
+          Copy-Item $licenseDocuments $licenseDirectory
+          Copy-Item LICENSES "$licenseDirectory/LICENSES" -Recurse
+          Copy-Item compliance "$licenseDirectory/compliance" -Recurse
+          New-Item -ItemType Directory -Path "$ffmpegDirectory/compliance" -Force |
+            Out-Null
+          Copy-Item compliance/ffmpeg "$ffmpegDirectory/compliance/ffmpeg" -Recurse
+          Copy-Item artifacts/ffmpeg-core-source/* $ffmpegDirectory
           Compress-Archive `
-            -Path artifacts/win-x64/* `
+            -Path "$packageDirectory/*" `
             -DestinationPath artifacts/CryptoBook-win-x64.zip
+          Compress-Archive `
+            -Path "$licenseDirectory/*" `
+            -DestinationPath artifacts/CryptoBook-licenses.zip
+          Compress-Archive `
+            -Path "$ffmpegDirectory/*" `
+            -DestinationPath artifacts/CryptoBook-ffmpeg-provenance.zip
           Get-Item `
               "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe", `
               artifacts/CryptoBook-win-x64.zip, `
+              artifacts/CryptoBook-licenses.zip, `
+              artifacts/CryptoBook-ffmpeg-provenance.zip, `
               artifacts/packages.lock.json, `
               artifacts/CryptoBook.spdx.json, `
               artifacts/SIGNING-STATUS.txt |
@@ -190,6 +229,8 @@ jobs:
           $assets = @(
             "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe",
             "artifacts/CryptoBook-win-x64.zip",
+            "artifacts/CryptoBook-licenses.zip",
+            "artifacts/CryptoBook-ffmpeg-provenance.zip",
             "artifacts/packages.lock.json",
             "artifacts/CryptoBook.spdx.json",
             "artifacts/SIGNING-STATUS.txt",

@@ -1,0 +1,989 @@
+{
+  "schemaVersion": 1,
+  "scope": "Git-tracked raster and vector image files",
+  "assetCount": 48,
+  "assets": [
+    {
+      "path": "AppIcon.BlueYellow.v1.png",
+      "size": 1444049,
+      "sha256": "948C12BF6F76B096D4C6D2BD710D6B4F096D4AF6A857134DB6BA4FEE359C3950",
+      "format": "PNG",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "3d4425fde8b8d3ea33b984cb3f3b9663f9a82193",
+        "date": "2026-08-02T20:25:35+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Добавлена иконка"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Icons/AppIcon.ico",
+      "size": 128004,
+      "sha256": "72D4805119D0FBAD5AE3C55C8732BA641B1E43FE183991EEBFBC34EAB457D3E7",
+      "format": "ICO",
+      "width": 256,
+      "height": 256,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "sizes": "{(16, 16), (20, 20), (32, 32), (64, 64), (128, 128), (48, 48), (256, 256), (40, 40), (24, 24)}"
+      },
+      "firstAdded": {
+        "commit": "3d4425fde8b8d3ea33b984cb3f3b9663f9a82193",
+        "date": "2026-08-02T20:25:35+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Добавлена иконка"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/001_align_center.png",
+      "size": 115,
+      "sha256": "CDC8C06D22C44596B086B3489DDB02DADF8FFBE73F63D735DAB46A6C450CE2F5",
+      "format": "PNG",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "69cf462750065506a64ea35b195d5673ddffc6e2",
+        "date": "2025-08-09T21:46:36+03:00",
+        "author": "AsusVivobook",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "0908252146"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/002_align_left.png",
+      "size": 111,
+      "sha256": "5AEB6DD80ECFB20029D03D668D05CEF359968AB7E0B9E6FA3926B7AE03BA3127",
+      "format": "PNG",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "69cf462750065506a64ea35b195d5673ddffc6e2",
+        "date": "2025-08-09T21:46:36+03:00",
+        "author": "AsusVivobook",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "0908252146"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/003_align_right.png",
+      "size": 118,
+      "sha256": "0E4CFA1757258EAF865D0C9DD59919878FD2FA12FA56E68B9A0B3FB3912D29A5",
+      "format": "PNG",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "69cf462750065506a64ea35b195d5673ddffc6e2",
+        "date": "2025-08-09T21:46:36+03:00",
+        "author": "AsusVivobook",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "0908252146"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/004_back.png",
+      "size": 889,
+      "sha256": "1360CD19C0DCC58195BED510AAB6F290E9DEBEBB2D6CC290341D83B2799104A9",
+      "format": "PNG",
+      "width": 29,
+      "height": 32,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(6.5024, 6.5024)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/004_justify.png",
+      "size": 99,
+      "sha256": "4E40B84097B97DD36469889CE2DD58324DFFBE32EF24A0B70FF91791A31641BB",
+      "format": "PNG",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "69cf462750065506a64ea35b195d5673ddffc6e2",
+        "date": "2025-08-09T21:46:36+03:00",
+        "author": "AsusVivobook",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "0908252146"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/005_codeblock.png",
+      "size": 240,
+      "sha256": "EFECD3CE3E239BBF06CA39DF2BBF97E4F2002241A546507A8750A6BF178A72E2",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.9358, 95.9358)",
+        "gamma": "0.45455"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/005_new_paragraph.png",
+      "size": 108,
+      "sha256": "C0F2633D10F55F1A4423CBCD9424584DCB8184465DA11729D3FFC1F72CED2D40",
+      "format": "PNG",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "69cf462750065506a64ea35b195d5673ddffc6e2",
+        "date": "2025-08-09T21:46:36+03:00",
+        "author": "AsusVivobook",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "0908252146"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/006_codeinline.png",
+      "size": 1228,
+      "sha256": "BA02D1F3CC83C4F492CE0E895D7C333F106534B6DECBFE8C29E8DA2B42325B0D",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "P",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.96119999999999, 95.96119999999999)",
+        "gamma": "0.45455",
+        "transparency": "255"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/007_editcopy.png",
+      "size": 408,
+      "sha256": "A30ECEBDBE39E0378C18E0E14436AF47EB1FD9332BEB1B24BF2B63E4DD2BE542",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/008_editcut.png",
+      "size": 392,
+      "sha256": "34FCDE156CDC6B38DE8DF232F3D2E56D84329E82EA3E1DCFC0FE03252142EE56",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/009_editpaste.png",
+      "size": 471,
+      "sha256": "D92DF747C0C303502BBF2106408C57CB8BD3FFF202290FCE57D311C50EBAB112",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/010_editredo.png",
+      "size": 671,
+      "sha256": "672BD8A90F85EB60D528C2017D43528F6FC35C8388DD8165AE1EBAE3B5E864D5",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/011_editundo.png",
+      "size": 701,
+      "sha256": "73A6CFB0BA3055B059771403D2379F354065FB310ACF6DCF3B06142955644559",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/012_filesave.png",
+      "size": 433,
+      "sha256": "B932CC19AD3D2E6297D1D26480CAFDC3BE09CD86FA90CD8067546E9BC26F4040",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/013_fontbold.png",
+      "size": 123,
+      "sha256": "638DB29446178FE310BA5B89C23A8257343FBB2290F71CAD15511CB747A8EC36",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/014_fontgrow.png",
+      "size": 551,
+      "sha256": "95E41EC05BEA353E389E437807C6FEA680D604C6D7858F15F2C97501C924C5EE",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/015_fontitalic.png",
+      "size": 156,
+      "sha256": "77A9D8744860A01EBE8D085CC11E5F361BF2260066D8F1073E8FC956A1CFF95C",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/016_fontshrink.png",
+      "size": 442,
+      "sha256": "E50C1CCB34ABE070A66EF8B7079F8CDFE0AD5DE954F5B59CF19C936CEC333915",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/017_fontunderline.png",
+      "size": 152,
+      "sha256": "59A6C85B619C7225CEA6979F15D9A7110C5644C73DDAA3097F596A54C4A0FC39",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/018_forward.png",
+      "size": 893,
+      "sha256": "792BD64C45BA3FA2C28D27D679823D37857952CBFA1814F4AC77C0BC925CE649",
+      "format": "PNG",
+      "width": 29,
+      "height": 32,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(6.5024, 6.5024)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/019_icon.png",
+      "size": 3673,
+      "sha256": "4DFCD7C18D999805936B066AA1D30AA41152847056427F49E062068ABAB4643E",
+      "format": "PNG",
+      "width": 48,
+      "height": 48,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(12.6238, 12.6238)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/020_indentdecrease.png",
+      "size": 160,
+      "sha256": "AA245ADFA4278A44152609685108BB4AE31152B823178A501F588CDB7919405F",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/021_indentincrease.png",
+      "size": 163,
+      "sha256": "C8DF66B81EFB24159DFC24557034CE038938C24E46BE9DC8DF50C99F120EB447",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/022_listbullets.png",
+      "size": 425,
+      "sha256": "292532AD413FCE1B5D5A16A0F04034C9F6BCD243A106523516740B7BD5E93562",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.96119999999999, 95.96119999999999)",
+        "gamma": "0.45"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/023_listnumbers.png",
+      "size": 472,
+      "sha256": "B5B7543DDE550F08235173675E1825F2918AE73C916F3CC617DB425F0CD3B35C",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.96119999999999, 95.96119999999999)",
+        "gamma": "0.45"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/024_normaltext.png",
+      "size": 304,
+      "sha256": "A4B4FDD099D2C8E0E14237BA2219E42AB8589F6D919E20289A8A7EDDB2222FC6",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/025_pause.png",
+      "size": 1597,
+      "sha256": "3EB28F45CB5F19257993F18B9F64E646537682FCEDEBB92333DDE94CD8C963E5",
+      "format": "PNG",
+      "width": 48,
+      "height": 48,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/026_reload.png",
+      "size": 48418,
+      "sha256": "AA3C8CEBBA500587199244E901CB980DE3AA06CBDF578DC02D119F4ECDDF2F34",
+      "format": "PNG",
+      "width": 445,
+      "height": 445,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/027_separator.png",
+      "size": 1196,
+      "sha256": "1F4D46AE004A855E8239F43D355239D35369EE1D04A516C43A68DDE25E2676B2",
+      "format": "PNG",
+      "width": 9,
+      "height": 16,
+      "mode": "P",
+      "frames": 1,
+      "metadata": {
+        "Software": "Paint.NET v3.5.4",
+        "dpi": "(95.96119999999999, 95.96119999999999)",
+        "gamma": "0.45455",
+        "transparency": "255"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/028_start.png",
+      "size": 1753,
+      "sha256": "A0FE3D373D287CD9802B4FE9141AA94C5FCAA75155D549F16176323C059279A0",
+      "format": "PNG",
+      "width": 48,
+      "height": 48,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/029_stop.png",
+      "size": 1525,
+      "sha256": "45CA394CC63B6AC68347CD5926757E4BB7E026FE3B5EFB64A623031C1CBB436F",
+      "format": "PNG",
+      "width": 48,
+      "height": 48,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/030_reload_mini.png",
+      "size": 4371,
+      "sha256": "86AC8EF41F9AF76DDE528F68E615D0BC87EE9DDA5E1B59F8D52588CB81ADAF4F",
+      "format": "PNG",
+      "width": 64,
+      "height": 64,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(13.7922, 13.7922)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/031linespacingdecrease.png",
+      "size": 391,
+      "sha256": "C23A548B7BBB75C7CA38611EF43246BF826140716272C3A92906CFFF63A3BAFC",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(85.725, 85.725)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/032linespacingincrease .png",
+      "size": 409,
+      "sha256": "E223A0D532FC6DA5128EAB5A357766ABD73EDF0471DFE66AC6112B6E15E389A2",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(85.725, 85.725)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/033UpFileOverview.png",
+      "size": 299,
+      "sha256": "15FA1ADCDB9B114B203D4960732B69E31902E7C7D2D9FA5567D30BF21CA8AA46",
+      "format": "PNG",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(73.1266, 73.1266)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/034CatalogV001.png",
+      "size": 641,
+      "sha256": "5D446E6CF46860D1B322A353C315C3EA750C4357D4AD3A9DD6CDBBE0669DDEB3",
+      "format": "PNG",
+      "width": 30,
+      "height": 25,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "Software": "www.inkscape.org",
+        "dpi": "(95.9866, 95.9866)"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/035FileV001.png",
+      "size": 649,
+      "sha256": "18C86B0593F33C68C0AE168133D5F200A915AAC27EFC712509E0AA9681FFACC9",
+      "format": "PNG",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": {
+        "commit": "cad47b2882db633eb31fcea223f5f9df9abf82cf",
+        "date": "2024-11-15T10:51:33+03:00",
+        "author": "Сергей Романов",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1511241051"
+      }
+    },
+    {
+      "path": "CryptoBook/Resources/Images/AppIcon.BlueYellow.v1.png",
+      "size": 1444049,
+      "sha256": "948C12BF6F76B096D4C6D2BD710D6B4F096D4AF6A857134DB6BA4FEE359C3950",
+      "format": "PNG",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "3d4425fde8b8d3ea33b984cb3f3b9663f9a82193",
+        "date": "2026-08-02T20:25:35+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Добавлена иконка"
+      }
+    },
+    {
+      "path": "docs/screenshots/editor.png",
+      "size": 24974,
+      "sha256": "77C296310C8DD0A73E4AA60B3C3AC37F99E84BA587AD7DE1E4B1B9462B73ACA7",
+      "format": "PNG",
+      "width": 1200,
+      "height": 800,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": {
+        "commit": "3ae6f0ef855578d2efb2966bd94c4e1b3193a4c4",
+        "date": "2026-07-31T19:24:08+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Add application screenshots to README"
+      }
+    },
+    {
+      "path": "docs/screenshots/sepia-reading.png",
+      "size": 44133,
+      "sha256": "CE0CC868AD6621A33B5797D03DBE4E28C67C2DAE1B962FF08A74174801E35F7C",
+      "format": "PNG",
+      "width": 1200,
+      "height": 800,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": {
+        "commit": "3ae6f0ef855578d2efb2966bd94c4e1b3193a4c4",
+        "date": "2026-07-31T19:24:08+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Add application screenshots to README"
+      }
+    },
+    {
+      "path": "docs/screenshots/settings-themes.png",
+      "size": 32577,
+      "sha256": "E31D1DF0E9BF91E911E3D6A3D34AB07604991C3717DDC120EB9E70DB6BB8E49F",
+      "format": "PNG",
+      "width": 760,
+      "height": 520,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": {
+        "commit": "3ae6f0ef855578d2efb2966bd94c4e1b3193a4c4",
+        "date": "2026-07-31T19:24:08+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Add application screenshots to README"
+      }
+    },
+    {
+      "path": "docs/screenshots/side-menu.png",
+      "size": 43895,
+      "sha256": "BFF35D8039680D19796DF7460376EAF77D8CC4D054BAF14628B70D85651719BF",
+      "format": "PNG",
+      "width": 1200,
+      "height": 800,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": {
+        "commit": "3ae6f0ef855578d2efb2966bd94c4e1b3193a4c4",
+        "date": "2026-07-31T19:24:08+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Add application screenshots to README"
+      }
+    },
+    {
+      "path": "marketing/vk/cryptobook-vk-avatar-1000.png",
+      "size": 851345,
+      "sha256": "4A69D777DA85C1E651C60F8AF86A806112A8DDAF5986F667690DE6BA53A41EE8",
+      "format": "PNG",
+      "width": 1000,
+      "height": 1000,
+      "mode": "RGB",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "5e3ab60f36b40e5d4a8cfd3d2704aab254a3a464",
+        "date": "2026-08-10T15:38:25+03:00",
+        "author": "msi_work",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1008261536"
+      }
+    },
+    {
+      "path": "marketing/vk/cryptobook-vk-cover-1920x768.png",
+      "size": 1155164,
+      "sha256": "9FC9B374344492777FB540AA60BE32188155C769518B9E9692C16BCE0F950929",
+      "format": "PNG",
+      "width": 1920,
+      "height": 768,
+      "mode": "RGB",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "5e3ab60f36b40e5d4a8cfd3d2704aab254a3a464",
+        "date": "2026-08-10T15:38:25+03:00",
+        "author": "msi_work",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1008261536"
+      }
+    },
+    {
+      "path": "marketing/vk/cryptobook-vk-welcome-1080x1350.png",
+      "size": 429464,
+      "sha256": "6F47EDCAA722AD633FC85483363478F2B078DD211E69C37CBD9B2221007BBB13",
+      "format": "PNG",
+      "width": 1080,
+      "height": 1350,
+      "mode": "RGB",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "5e3ab60f36b40e5d4a8cfd3d2704aab254a3a464",
+        "date": "2026-08-10T15:38:25+03:00",
+        "author": "msi_work",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1008261536"
+      }
+    },
+    {
+      "path": "marketing/vk/source/cryptobook-vk-background.png",
+      "size": 1290289,
+      "sha256": "5FBC8E9B7F7860D522E0D117B90EF2FE7015DB5E783DF950670E72996D447A34",
+      "format": "PNG",
+      "width": 1983,
+      "height": 793,
+      "mode": "RGB",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "5e3ab60f36b40e5d4a8cfd3d2704aab254a3a464",
+        "date": "2026-08-10T15:38:25+03:00",
+        "author": "msi_work",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "1008261536"
+      }
+    }
+  ]
+}
