@@ -12,12 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\Icons\AppIcon.ico</ApplicationIcon>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <VersionPrefix>1.1.1.3</VersionPrefix>
-    <Authors>Романов Сергей</Authors>
-    <Company>Романов Сергей</Company>
-    <Copyright>Copyright © 2024–2026 Романов Сергей</Copyright>
-    <RepositoryUrl>https://github.com/RomanovCopy/CryptoBook</RepositoryUrl>
-    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <VersionPrefix>1.1.1.7</VersionPrefix>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
