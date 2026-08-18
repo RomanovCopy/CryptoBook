@@ -716,8 +716,8 @@ namespace CryptoBook.Models
             try
             {
                 return string.Equals(
-                    Path.GetFullPath(left),
-                    Path.GetFullPath(right),
+                    NormalizePath(left),
+                    NormalizePath(right),
                     StringComparison.OrdinalIgnoreCase);
             }
             catch(Exception exception) when(
@@ -824,11 +824,33 @@ namespace CryptoBook.Models
             if(obj is not IContainerSystemItem container)
                 return;
 
+            // List/address navigation selects the matching tree node after
+            // CurrentPath has already changed. SelectedItemChanged must not
+            // start the same navigation and collection refresh a second time.
+            if(IsRedundantTreeSelection(
+                container,
+                SelectedItem,
+                CurrentPath,
+                IsCurrentDirectoryUnavailable))
+            {
+                return;
+            }
+
             // Выбор узла не меняет IsExpanded: раскрытием управляет сам TreeView.
             await NavigateAsync(
                 container.FullPath,
                 FileExplorerNavigationMode.Standard);
         }
+
+        internal static bool IsRedundantTreeSelection(
+            IContainerSystemItem candidate,
+            ISystemItem? selectedItem,
+            string currentPath,
+            bool isCurrentDirectoryUnavailable) =>
+            !isCurrentDirectoryUnavailable &&
+            ReferenceEquals(selectedItem, candidate) &&
+            PathsEqual(candidate.FullPath, currentPath);
+
         public async void Execute_ListViewItemDoubleClickCommand(object? obj)
         {
             ISystemItem? item = GetSingleSelection(obj);
