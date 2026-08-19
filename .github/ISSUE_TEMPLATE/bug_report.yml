@@ -45,7 +45,7 @@ body:
     attributes:
       label: CryptoBook version
       description: Use the version shown in the application or release name.
-      placeholder: e.g. 1.1.1.8
+      placeholder: e.g. 1.1.1.9
     validations:
       required: true
 
