@@ -1,0 +1,33 @@
+name: Question
+description: Ask about using, building, or contributing to CryptoBook.
+title: "[Question]: "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For suspected security vulnerabilities, do not use this form. Follow the repository
+        Security Policy instead.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What are you trying to understand or accomplish?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Include relevant version, workflow, code, or screenshots if useful.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the README, documentation, and existing issues first.
+          required: true

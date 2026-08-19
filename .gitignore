@@ -132,7 +132,7 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
-# TeamCity is a build add-in
+# TeamCity build folder
 _TeamCity*
 
 # DotCover is a Code Coverage Tool
@@ -188,7 +188,7 @@ publish/
 *.publishproj
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
-# checkin your Azure Web App publish settings, but sensitive information contained
+# checkin your web deploy settings, but sensitive information contained
 # in these scripts will be unencrypted
 PublishScripts/
 
@@ -398,3 +398,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Local .NET/NuGet working directories
+.appdata/
+.dotnet-home/
