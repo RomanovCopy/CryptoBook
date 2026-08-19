@@ -36,6 +36,8 @@ namespace CryptoBook.ViewModels
         private readonly DispatcherTimer _filterDebounceTimer;
         private readonly DispatcherTimer _flatViewRefreshTimer;
         private readonly Dispatcher _dispatcher;
+        private readonly FlatViewRefreshCoordinator _flatViewRefreshCoordinator =
+            new();
         private CancellationTokenSource? _flatViewCancellationSource;
         private bool _isClosed;
         private int _flatViewFileCount;
@@ -252,8 +254,11 @@ namespace CryptoBook.ViewModels
                     if(!IsFlatViewEnabled || _isClosed)
                         return;
 
-                    _flatViewRefreshTimer.Stop();
-                    _flatViewRefreshTimer.Start();
+                    if(_flatViewRefreshCoordinator.RequestRefresh(
+                        IsFlatViewLoading))
+                    {
+                        ScheduleFlatViewRefresh();
+                    }
                 }));
             }
             catch(InvalidOperationException)
@@ -267,6 +272,12 @@ namespace CryptoBook.ViewModels
             await RefreshFlatViewAsync();
         }
 
+        private void ScheduleFlatViewRefresh()
+        {
+            _flatViewRefreshTimer.Stop();
+            _flatViewRefreshTimer.Start();
+        }
+
         private async Task RefreshFlatViewAsync()
         {
             if(_isClosed ||
@@ -278,16 +289,18 @@ namespace CryptoBook.ViewModels
             }
 
             string rootPath = CurrentPath;
+            _flatViewRefreshTimer.Stop();
+            _flatViewRefreshCoordinator.Reset();
             var nextCancellation = new CancellationTokenSource();
             CancellationTokenSource? previousCancellation =
                 _flatViewCancellationSource;
             _flatViewCancellationSource = nextCancellation;
             previousCancellation?.Cancel();
-            previousCancellation?.Dispose();
 
             IsFlatViewLoading = true;
             FlatViewStatus = LocalizationManager.GetString(
                 "Explorer.FlatView.Scanning");
+            bool resultApplied = false;
 
             try
             {
@@ -316,6 +329,7 @@ namespace CryptoBook.ViewModels
                 _flatViewSkippedDirectoryCount =
                     result.SkippedDirectoryCount;
                 _flatViewHasResult = true;
+                resultApplied = true;
                 UpdateFlatViewStatus();
             }
             catch(OperationCanceledException)
@@ -346,19 +360,29 @@ namespace CryptoBook.ViewModels
                     _flatViewCancellationSource,
                     nextCancellation))
                 {
+                    _flatViewCancellationSource = null;
                     IsFlatViewLoading = false;
+                    if(_flatViewRefreshCoordinator.CompleteScan(
+                        resultApplied) &&
+                       IsFlatViewEnabled &&
+                       !_isClosed)
+                    {
+                        ScheduleFlatViewRefresh();
+                    }
                 }
+
+                nextCancellation.Dispose();
             }
         }
 
         private void DeactivateFlatView()
         {
             _flatViewRefreshTimer.Stop();
+            _flatViewRefreshCoordinator.Reset();
             CancellationTokenSource? cancellation =
                 _flatViewCancellationSource;
             _flatViewCancellationSource = null;
             cancellation?.Cancel();
-            cancellation?.Dispose();
             _flatViewService.StopMonitoring();
             _flatFiles.ReplaceAll(Array.Empty<IFileItem>());
             _flatViewHasResult = false;
@@ -516,9 +540,16 @@ namespace CryptoBook.ViewModels
 
         public ICommand CancelFlatViewScanCommand =>
             _cancelFlatViewScanCommand ??= new RelayCommand(
-                _ => _flatViewCancellationSource?.Cancel(),
+                _ => CancelFlatViewScan(),
                 _ => IsFlatViewLoading);
         RelayCommand? _cancelFlatViewScanCommand;
+
+        private void CancelFlatViewScan()
+        {
+            _flatViewRefreshTimer.Stop();
+            _flatViewRefreshCoordinator.Reset();
+            _flatViewCancellationSource?.Cancel();
+        }
 
         private void ExecuteRefresh(object? parameter)
         {
@@ -593,11 +624,11 @@ namespace CryptoBook.ViewModels
             _isClosed = true;
             _filterDebounceTimer.Stop();
             _flatViewRefreshTimer.Stop();
+            _flatViewRefreshCoordinator.Reset();
             CancellationTokenSource? cancellation =
                 _flatViewCancellationSource;
             _flatViewCancellationSource = null;
             cancellation?.Cancel();
-            cancellation?.Dispose();
             _fileExplorerModel.PropertyChanged -= FileExplorerModel_PropertyChanged;
             _flatViewService.FilesChanged -= FlatViewService_FilesChanged;
             _flatViewService.StopMonitoring();
@@ -769,5 +800,28 @@ namespace CryptoBook.ViewModels
             _previewSelection = null;
             Preview.Clear();
         }
+    }
+
+    internal sealed class FlatViewRefreshCoordinator
+    {
+        private bool refreshPending;
+
+        public bool RequestRefresh(bool scanInProgress)
+        {
+            if(!scanInProgress)
+                return true;
+
+            refreshPending = true;
+            return false;
+        }
+
+        public bool CompleteScan(bool resultApplied)
+        {
+            bool shouldRefresh = resultApplied && refreshPending;
+            refreshPending = false;
+            return shouldRefresh;
+        }
+
+        public void Reset() => refreshPending = false;
     }
 }

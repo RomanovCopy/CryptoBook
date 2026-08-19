@@ -136,7 +136,9 @@
                         </Trigger>
 
                         <!-- hover -->
-                        <Trigger Property="IsMouseOver" Value="True">
+                        <Trigger SourceName="Row"
+                                 Property="IsMouseOver"
+                                 Value="True">
                             <Setter TargetName="Row" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
                             <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
                             <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>

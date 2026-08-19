@@ -2,6 +2,7 @@ using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
 using System.IO;
+using System.Security;
 
 namespace CryptoBook.Services;
 
@@ -57,7 +58,10 @@ public sealed class FileExplorerFlatViewService:
             {
                 throw;
             }
-            catch(IOException) when(!PathsEqual(directory, normalizedRoot))
+            catch(Exception exception) when(
+                !PathsEqual(directory, normalizedRoot) &&
+                exception is IOException or UnauthorizedAccessException or
+                    SecurityException)
             {
                 skippedDirectoryCount++;
                 continue;
@@ -128,13 +132,16 @@ public sealed class FileExplorerFlatViewService:
                 nextWatcher.Changed += Watcher_Changed;
                 nextWatcher.Renamed += Watcher_Renamed;
                 nextWatcher.Error += Watcher_Error;
-                nextWatcher.EnableRaisingEvents = true;
                 watcher = nextWatcher;
+                nextWatcher.EnableRaisingEvents = true;
             }
             catch(Exception exception) when(
                 exception is ArgumentException or IOException or
-                UnauthorizedAccessException or PlatformNotSupportedException)
+                UnauthorizedAccessException or PlatformNotSupportedException or
+                SecurityException)
             {
+                if(ReferenceEquals(watcher, nextWatcher))
+                    watcher = null;
                 nextWatcher?.Dispose();
             }
         }
@@ -159,13 +166,24 @@ public sealed class FileExplorerFlatViewService:
     }
 
     private void Watcher_Changed(object sender, FileSystemEventArgs e) =>
-        FilesChanged?.Invoke(this, EventArgs.Empty);
+        NotifyFilesChanged(sender);
 
     private void Watcher_Renamed(object sender, RenamedEventArgs e) =>
-        FilesChanged?.Invoke(this, EventArgs.Empty);
+        NotifyFilesChanged(sender);
 
     private void Watcher_Error(object sender, ErrorEventArgs e) =>
+        NotifyFilesChanged(sender);
+
+    private void NotifyFilesChanged(object sender)
+    {
+        lock(monitorGate)
+        {
+            if(disposed || !ReferenceEquals(watcher, sender))
+                return;
+        }
+
         FilesChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     private void StopMonitoringCore()
     {
@@ -199,6 +217,10 @@ public sealed class FileExplorerFlatViewService:
             return true;
         }
         catch(IOException)
+        {
+            return true;
+        }
+        catch(SecurityException)
         {
             return true;
         }

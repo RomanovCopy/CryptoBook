@@ -1,6 +1,7 @@
 using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
+using CryptoBook.ViewModels;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -79,6 +80,47 @@ public sealed class FileExplorerFlatViewTests
                 temporaryDirectory.Path,
                 includeHidden: true,
                 cancellationToken: cancellation.Token));
+    }
+
+    [Fact]
+    public async Task ScanAsync_SkipsDirectoryThatBecomesInaccessible()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        string accessibleDirectory = Directory.CreateDirectory(
+            Path.Combine(temporaryDirectory.Path, "accessible")).FullName;
+        string inaccessibleDirectory = Directory.CreateDirectory(
+            Path.Combine(temporaryDirectory.Path, "inaccessible")).FullName;
+        string visibleFile = Path.Combine(accessibleDirectory, "visible.txt");
+        await File.WriteAllTextAsync(visibleFile, "visible");
+        await File.WriteAllTextAsync(
+            Path.Combine(inaccessibleDirectory, "hidden-by-error.txt"),
+            "unavailable");
+
+        using var service = new FileExplorerFlatViewService(
+            new LocalBrowseFileManager(inaccessibleDirectory));
+
+        FileExplorerFlatScanResult result = await service.ScanAsync(
+            temporaryDirectory.Path,
+            includeHidden: false);
+
+        Assert.Equal([visibleFile], result.Files.Select(file => file.FullPath));
+        Assert.Equal(1, result.SkippedDirectoryCount);
+    }
+
+    [Fact]
+    public void RefreshCoordinator_CoalescesChangesDuringActiveScan()
+    {
+        var coordinator = new FlatViewRefreshCoordinator();
+
+        Assert.False(coordinator.RequestRefresh(scanInProgress: true));
+        Assert.False(coordinator.RequestRefresh(scanInProgress: true));
+        Assert.True(coordinator.CompleteScan(resultApplied: true));
+        Assert.False(coordinator.CompleteScan(resultApplied: true));
+
+        Assert.False(coordinator.RequestRefresh(scanInProgress: true));
+        coordinator.Reset();
+        Assert.False(coordinator.CompleteScan(resultApplied: true));
+        Assert.True(coordinator.RequestRefresh(scanInProgress: false));
     }
 
     [Fact]
@@ -192,6 +234,11 @@ public sealed class FileExplorerFlatViewTests
 
     private sealed class LocalBrowseFileManager: IFileManagerService
     {
+        private readonly string? inaccessiblePath;
+
+        public LocalBrowseFileManager(string? inaccessiblePath = null) =>
+            this.inaccessiblePath = inaccessiblePath;
+
         public Task<List<ISystemItem>> BrowseAsync(
             string path,
             IProgressReporter? progress = null,
@@ -199,6 +246,15 @@ public sealed class FileExplorerFlatViewTests
             bool includeHidden = false)
         {
             ct.ThrowIfCancellationRequested();
+            if(!string.IsNullOrWhiteSpace(inaccessiblePath) &&
+               string.Equals(
+                   Path.GetFullPath(path),
+                   Path.GetFullPath(inaccessiblePath),
+                   StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException(path);
+            }
+
             var parent = new TestDirectoryItem(path, null);
             var items = new List<ISystemItem>();
             foreach(string directory in Directory.EnumerateDirectories(path))

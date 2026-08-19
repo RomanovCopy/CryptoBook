@@ -26,6 +26,15 @@ function Assert-Equal {
     }
 }
 
+function Get-NormalizedTextSha256 {
+    param([string] $Path)
+
+    $content = (Get-Content -LiteralPath $Path -Raw).Replace("`r`n", "`n")
+    $bytes = [Text.Encoding]::UTF8.GetBytes($content)
+    return [Convert]::ToHexString(
+        [Security.Cryptography.SHA256]::HashData($bytes))
+}
+
 $archive = Get-Item -LiteralPath $nupkg
 Assert-Equal 'NuGet package size' ([long] $archive.Length) ([long] $manifest.package.size)
 Assert-Equal 'NuGet package SHA-256' `
@@ -49,7 +58,7 @@ Assert-Equal 'NuGet package SHA-512' $archiveSha512 ([string] $manifest.package.
 
 $sourcePins = Get-Content -LiteralPath $sourcePinsPath -Raw | ConvertFrom-Json
 Assert-Equal 'BtbN generated recipe SHA-256' `
-    (Get-FileHash -LiteralPath $recipePath -Algorithm SHA256).Hash `
+    (Get-NormalizedTextSha256 -Path $recipePath) `
     ([string] $sourcePins.recipe.generatedDockerfileSha256)
 $recipeConfigureLine = Get-Content -LiteralPath $recipePath |
     Where-Object { $_ -match '^\s*FF_CONFIGURE="(?<value>.+)" \\$' } |

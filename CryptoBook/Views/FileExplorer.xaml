@@ -633,6 +633,7 @@
                     </Style>
                 </TreeView.ItemContainerStyle>
                 <i:Interaction.Behaviors>
+                    <behaviors:FileExplorerTreeInteractionBehavior/>
                     <behaviors:FileExplorerDragDropBehavior
                         DropCommand="{Binding DropCommand}"
                         DefaultDestinationPath="{Binding CurrentPath}"/>

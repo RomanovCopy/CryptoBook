@@ -156,22 +156,8 @@ namespace CryptoBook.Services
 
             try
             {
-                if(_keyProvider.HasKey)
-                {
-                    //_secureFileProcessor.EncryptFileAsync(path, overwrite, progress, cancellationToken);
-
-
-                }
-                else
-                {
-
-                }
-
-
                 Stream stream = new FileStream(path, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None,
                 bufferSize: 4096, useAsync: true);
-                
-
                 return Task.FromResult(stream);
             } catch(OperationCanceledException) { throw; } catch(Exception ex)
             {

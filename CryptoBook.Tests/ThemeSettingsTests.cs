@@ -308,6 +308,39 @@ public sealed class ThemeSettingsTests
     }
 
     [Fact]
+    public void TitleBar_SurfaceAndDocumentTitleUseDynamicThemeResources()
+    {
+        string xamlPath = FindRepositoryFile(
+            "CryptoBook",
+            "MyControls",
+            "TitleBar.xaml");
+        XDocument document = XDocument.Load(xamlPath);
+        XElement titleBar = Assert.IsType<XElement>(document.Root);
+        XNamespace presentation =
+            "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+        XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
+        XElement documentTitle = Assert.Single(
+            document.Descendants(presentation + "TextBlock"),
+            element => string.Equals(
+                (string?)element.Attribute(x + "Name"),
+                "otherContent",
+                StringComparison.Ordinal));
+
+        Assert.Equal(
+            "{DynamicResource CurrentTitleBarBackground}",
+            (string?)titleBar.Attribute("Background"));
+        Assert.Equal(
+            "{DynamicResource CurrentTitleBarForeground}",
+            (string?)titleBar.Attribute("Foreground"));
+        Assert.Equal(
+            "{DynamicResource CurrentBorderColor}",
+            (string?)titleBar.Attribute("BorderBrush"));
+        Assert.Equal(
+            "{DynamicResource CurrentTitleBarForeground}",
+            (string?)documentTitle.Attribute("Foreground"));
+    }
+
+    [Fact]
     public void DocumentStructureTree_NodeContentInheritsContainerStateColors()
     {
         string xamlPath = FindRepositoryFile(
