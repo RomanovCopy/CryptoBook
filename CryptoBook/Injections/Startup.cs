@@ -419,6 +419,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<DocumentImageInserter>().As<IDocumentImageInserter>().SingleInstance();
             builder.RegisterType<ImageService>().As<IImageService>().InstancePerDependency();
             builder.RegisterType<MediaPlayerService>().As<IMediaPlayerService>().InstancePerDependency();
+            builder.RegisterType<MediaPlaybackCoordinator>()
+                .As<IMediaPlaybackCoordinator>()
+                .SingleInstance();
             builder.RegisterType<MediaSourcePreparationService>()
                 .As<IMediaSourcePreparationService>()
                 .InstancePerDependency();

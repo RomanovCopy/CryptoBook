@@ -12,7 +12,7 @@ the distributor must also satisfy the source-code requirements of GNU GPL v3
 section 6; a link to an unrelated or moving branch is not a substitute for the
 corresponding source of the conveyed binary.
 
-CryptoBook 1.1.1.9 currently consumes the native package
+CryptoBook 1.1.2.0 currently consumes the native package
 `Sdcb.FFmpeg.runtime.windows-x64` 7.1.0, which declares `GPL-3.0-only`. Binary
 inspection fixed the exact FFmpeg tree at commit
 `10aaf84f855dbcedb8ee2e3fce307e9b98320946`, the matching BtbN recipe at

@@ -22,5 +22,23 @@ namespace CryptoBook.Tests
                 expected,
                 MediaPlayerModel.IsImageSequenceCandidate(path, includeSecureFiles));
         }
+
+        [Theory]
+        [InlineData("clip.mp4", false, true)]
+        [InlineData("clip.mkv", false, true)]
+        [InlineData("clip.webm", true, true)]
+        [InlineData("clip.cbook", true, true)]
+        [InlineData("clip.cbox", true, true)]
+        [InlineData("clip.cbook", false, false)]
+        [InlineData("photo.jpg", true, false)]
+        public void IsVideoSequenceCandidate_IncludesSecureContainersOnlyForEncryptedSequence(
+            string path,
+            bool includeSecureFiles,
+            bool expected)
+        {
+            Assert.Equal(
+                expected,
+                MediaPlayerModel.IsVideoSequenceCandidate(path, includeSecureFiles));
+        }
     }
 }

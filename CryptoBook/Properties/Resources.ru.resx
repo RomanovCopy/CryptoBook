@@ -546,6 +546,12 @@
   <data name="Media.PlayerTitle" xml:space="preserve"><value>Медиаплеер</value></data>
   <data name="Media.DefaultStatus" xml:space="preserve"><value>Откройте изображение или видео</value></data>
   <data name="Media.OpenFile" xml:space="preserve"><value>Открыть файл</value></data>
+  <data name="Media.OpenFileCurrent" xml:space="preserve"><value>Открыть в этом плеере</value></data>
+  <data name="Media.OpenFileNew" xml:space="preserve"><value>Открыть в новом плеере</value></data>
+  <data name="Media.PauseAll" xml:space="preserve"><value>Приостановить все плееры</value></data>
+  <data name="Media.SynchronizeExperimental" xml:space="preserve"><value>Синхронизировать воспроизведение (экспериментально)</value></data>
+  <data name="Media.PlayerTitleNumbered" xml:space="preserve"><value>Медиаплеер {0}</value></data>
+  <data name="Media.WindowTitle" xml:space="preserve"><value>{0} — Медиаплеер {1}</value></data>
   <data name="Media.PreviousImage" xml:space="preserve"><value>Предыдущее изображение</value></data>
   <data name="Media.NextImage" xml:space="preserve"><value>Следующее изображение</value></data>
   <data name="Media.Rotate" xml:space="preserve"><value>Повернуть</value></data>

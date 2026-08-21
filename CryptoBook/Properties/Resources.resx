@@ -546,6 +546,12 @@
   <data name="Media.PlayerTitle" xml:space="preserve"><value>Media player</value></data>
   <data name="Media.DefaultStatus" xml:space="preserve"><value>Open an image or video</value></data>
   <data name="Media.OpenFile" xml:space="preserve"><value>Open file</value></data>
+  <data name="Media.OpenFileCurrent" xml:space="preserve"><value>Open in this player</value></data>
+  <data name="Media.OpenFileNew" xml:space="preserve"><value>Open in a new player</value></data>
+  <data name="Media.PauseAll" xml:space="preserve"><value>Pause all players</value></data>
+  <data name="Media.SynchronizeExperimental" xml:space="preserve"><value>Synchronize playback (experimental)</value></data>
+  <data name="Media.PlayerTitleNumbered" xml:space="preserve"><value>Media player {0}</value></data>
+  <data name="Media.WindowTitle" xml:space="preserve"><value>{0} — Media player {1}</value></data>
   <data name="Media.PreviousImage" xml:space="preserve"><value>Previous image</value></data>
   <data name="Media.NextImage" xml:space="preserve"><value>Next image</value></data>
   <data name="Media.Rotate" xml:space="preserve"><value>Rotate</value></data>

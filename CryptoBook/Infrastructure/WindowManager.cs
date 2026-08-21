@@ -2,9 +2,15 @@
 
 using CryptoBook.Styles;
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 using CryptoBook.Views;
 
 using System.Windows;
+using System.Windows.Interop;
+
+using VisualTreeHelper = System.Windows.Media.VisualTreeHelper;
+using Point = System.Windows.Point;
+using Size = System.Windows.Size;
 using CryptoBook.DTO;
 using CryptoBook.Injections;
 
@@ -50,7 +56,21 @@ namespace CryptoBook.Infrastructure
             _results = [];
         }
 
-        public Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window
+        public Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null)
+            where T: Window => CreateWindow<T>(args, GetOwner());
+
+        public Guid CreateSiblingWindow<T>(
+            IReadOnlyDictionary<string, object?>? args = null)
+            where T: Window
+        {
+            Window? activeWindow = GetOwner();
+            return CreateWindow<T>(args, activeWindow?.Owner ?? activeWindow);
+        }
+
+        private Guid CreateWindow<T>(
+            IReadOnlyDictionary<string, object?>? args,
+            Window? owner)
+            where T: Window
         {
             var scope = _root.BeginLifetimeScope(b =>
             {
@@ -65,7 +85,7 @@ namespace CryptoBook.Infrastructure
                 {
                     window = scope.Resolve<T>();
                     DiScope.SetScope(window, scope);
-                    window.Owner = GetOwner();
+                    window.Owner = owner;
                 }
             } catch
             {
@@ -102,7 +122,11 @@ namespace CryptoBook.Infrastructure
                 return;
 
             if(!winHost.Window.IsVisible)
+            {
+                if(winHost.Window is MediaPlayer mediaPlayer)
+                    PlaceMediaPlayerWindow(mediaPlayer);
                 winHost.Window.Show();
+            }
         }
 
         public void ShowWindowDialog(Guid windowId)
@@ -185,6 +209,89 @@ namespace CryptoBook.Infrastructure
             if(window is { IsLoaded: true, IsVisible: true })
                 window.Focus();
         }
+
+        private void PlaceMediaPlayerWindow(MediaPlayer window)
+        {
+            MediaPlayer[] visiblePlayers = _windowHosts.Values
+                .Select(host => host.Window)
+                .OfType<MediaPlayer>()
+                .Where(player =>
+                    !ReferenceEquals(player, window) &&
+                    player.IsVisible)
+                .ToArray();
+            if(visiblePlayers.Length == 0)
+                return;
+
+            MediaPlayer anchor = visiblePlayers.FirstOrDefault(player =>
+                    ReferenceEquals(player, window.Owner)) ??
+                visiblePlayers.FirstOrDefault(player => player.IsActive) ??
+                visiblePlayers[^1];
+            Rect anchorBounds = GetWindowBounds(anchor);
+            Rect workArea = GetWorkArea(anchor);
+            var windowSize = new Size(
+                GetWindowWidth(window),
+                GetWindowHeight(window));
+            Point placement = WindowLayoutDefaults.CreateMediaPlayerCascade(
+                workArea,
+                anchorBounds,
+                windowSize,
+                visiblePlayers.Select(GetWindowBounds).ToArray());
+
+            window.WindowStartupLocation = WindowStartupLocation.Manual;
+            window.Left = placement.X;
+            window.Top = placement.Y;
+        }
+
+        private static Rect GetWindowBounds(Window window)
+        {
+            if(window.WindowState != WindowState.Normal &&
+               !window.RestoreBounds.IsEmpty)
+            {
+                return window.RestoreBounds;
+            }
+
+            return new Rect(
+                window.Left,
+                window.Top,
+                GetWindowWidth(window),
+                GetWindowHeight(window));
+        }
+
+        private static double GetWindowWidth(Window window) =>
+            IsFinitePositive(window.ActualWidth)
+                ? window.ActualWidth
+                : IsFinitePositive(window.Width)
+                    ? window.Width
+                    : window.MinWidth;
+
+        private static double GetWindowHeight(Window window) =>
+            IsFinitePositive(window.ActualHeight)
+                ? window.ActualHeight
+                : IsFinitePositive(window.Height)
+                    ? window.Height
+                    : window.MinHeight;
+
+        private static Rect GetWorkArea(Window window)
+        {
+            try
+            {
+                var screen = System.Windows.Forms.Screen.FromHandle(
+                    new WindowInteropHelper(window).Handle);
+                var dpi = VisualTreeHelper.GetDpi(window);
+                return new Rect(
+                    screen.WorkingArea.Left / dpi.DpiScaleX,
+                    screen.WorkingArea.Top / dpi.DpiScaleY,
+                    screen.WorkingArea.Width / dpi.DpiScaleX,
+                    screen.WorkingArea.Height / dpi.DpiScaleY);
+            }
+            catch(InvalidOperationException)
+            {
+                return SystemParameters.WorkArea;
+            }
+        }
+
+        private static bool IsFinitePositive(double value) =>
+            value > 0 && !double.IsNaN(value) && !double.IsInfinity(value);
 
         public void Dispose()
         {

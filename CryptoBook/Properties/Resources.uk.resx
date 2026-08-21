@@ -1139,6 +1139,12 @@
   <data name="Media.OpenFile" xml:space="preserve">
     <value>Відкрити файл</value>
   </data>
+  <data name="Media.OpenFileCurrent" xml:space="preserve"><value>Відкрити в цьому програвачі</value></data>
+  <data name="Media.OpenFileNew" xml:space="preserve"><value>Відкрити в новому програвачі</value></data>
+  <data name="Media.PauseAll" xml:space="preserve"><value>Призупинити всі програвачі</value></data>
+  <data name="Media.SynchronizeExperimental" xml:space="preserve"><value>Синхронізувати відтворення (експериментально)</value></data>
+  <data name="Media.PlayerTitleNumbered" xml:space="preserve"><value>Медіапрогравач {0}</value></data>
+  <data name="Media.WindowTitle" xml:space="preserve"><value>{0} — Медіапрогравач {1}</value></data>
   <data name="Media.PreviousImage" xml:space="preserve">
     <value>Попереднє зображення</value>
   </data>

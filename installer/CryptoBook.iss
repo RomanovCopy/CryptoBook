@@ -7,11 +7,11 @@
 #endif
 
 #ifndef MyAppVersion
-  #define MyAppVersion "1.1.1.9"
+  #define MyAppVersion "1.1.2.0"
 #endif
 
 #ifndef VersionInfoVersion
-  #define VersionInfoVersion "1.1.1.9"
+  #define VersionInfoVersion "1.1.2.0"
 #endif
 
 #define MyAppName "CryptoBook"
