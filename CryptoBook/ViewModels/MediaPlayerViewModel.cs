@@ -50,6 +50,18 @@ namespace CryptoBook.ViewModels
                 _model.CanExecute_NextImage);
         private RelayCommand? _nextImageCommand;
 
+        public ICommand PreviousVideoCommand => _previousVideoCommand ??=
+            new RelayCommand(
+                _model.Execute_PreviousVideo,
+                _model.CanExecute_PreviousVideo);
+        private RelayCommand? _previousVideoCommand;
+
+        public ICommand NextVideoCommand => _nextVideoCommand ??=
+            new RelayCommand(
+                _model.Execute_NextVideo,
+                _model.CanExecute_NextVideo);
+        private RelayCommand? _nextVideoCommand;
+
         public ICommand DeleteCurrentImageCommand => _deleteCurrentImageCommand ??=
             new RelayCommand(
                 _model.Execute_DeleteCurrentImage,

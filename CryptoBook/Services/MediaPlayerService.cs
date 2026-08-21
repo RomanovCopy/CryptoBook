@@ -228,6 +228,11 @@ namespace CryptoBook.Services
 
             if(e.Success)
             {
+                // Flyleaf leaves a non-autoplay video paused without rendering a frame.
+                // Render the first frame explicitly so the player has a poster before Play.
+                if(!player.Config.Player.AutoPlay && player.Video.IsOpened)
+                    player.ShowFrame(0);
+
                 openCompletion?.TrySetResult(true);
                 MediaOpened?.Invoke(this, EventArgs.Empty);
             }

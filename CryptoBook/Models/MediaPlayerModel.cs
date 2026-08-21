@@ -16,6 +16,12 @@ namespace CryptoBook.Models
                 ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".webp"
             };
 
+        private static readonly HashSet<string> VideoExtensions =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                ".avi", ".mkv", ".mov", ".mp4", ".m4v", ".mpeg", ".mpg", ".ts", ".webm", ".wmv"
+            };
+
         private static readonly HashSet<string> SecureFileExtensions =
             new(StringComparer.OrdinalIgnoreCase)
             {
@@ -31,6 +37,8 @@ namespace CryptoBook.Models
         private IPreparedMediaSource? _activeSource;
         private IReadOnlyList<string> _imagePaths = Array.Empty<string>();
         private int _currentImageIndex = -1;
+        private IReadOnlyList<string> _videoPaths = Array.Empty<string>();
+        private int _currentVideoIndex = -1;
         private bool _isClosing;
         private bool _disposed;
         private bool _isVideoVisible;
@@ -112,6 +120,22 @@ namespace CryptoBook.Models
 
         public void Execute_NextImage(object? obj) => _ = NavigateImageAsync(1);
 
+        public bool CanExecute_PreviousVideo(object? obj) =>
+            !_disposed && !_isClosing && _isVideoVisible && _currentVideoIndex > 0;
+
+        public void Execute_PreviousVideo(object? obj) =>
+            _ = NavigateVideoAsync(-1, autoPlay: VideoService.IsPlaying);
+
+        public bool CanExecute_NextVideo(object? obj) =>
+            !_disposed &&
+            !_isClosing &&
+            _isVideoVisible &&
+            _currentVideoIndex >= 0 &&
+            _currentVideoIndex < _videoPaths.Count - 1;
+
+        public void Execute_NextVideo(object? obj) =>
+            _ = NavigateVideoAsync(1, autoPlay: VideoService.IsPlaying);
+
         public bool CanExecute_DeleteCurrentImage(object? obj) =>
             !_disposed &&
             !_isClosing &&
@@ -165,7 +189,7 @@ namespace CryptoBook.Models
             }
         }
 
-        private async Task OpenPathAsync(string path)
+        private async Task OpenPathAsync(string path, bool autoPlay = false)
         {
             if(_disposed || _isClosing)
                 return;
@@ -187,6 +211,7 @@ namespace CryptoBook.Models
                 if(ImageExtensions.Contains(Path.GetExtension(playbackPath)))
                 {
                     VideoService.Stop();
+                    ClearVideoSequence();
                     await ImageService.LoadImageAsync(playbackPath, token);
                     token.ThrowIfCancellationRequested();
                     if(_disposed || _isClosing)
@@ -204,10 +229,12 @@ namespace CryptoBook.Models
                     ClearImageSequence();
                     ImageService.Clear();
                     SetMode(isImage: false);
-                    await VideoService.OpenAsync(playbackPath, autoPlay: true, token);
+                    await VideoService.OpenAsync(playbackPath, autoPlay, token);
                     token.ThrowIfCancellationRequested();
                     if(_disposed || _isClosing)
                         return;
+
+                    UpdateVideoSequence(path, preparedSource.IsTemporary);
                 }
 
                 ReplaceActiveSource(preparedSource);
@@ -247,6 +274,7 @@ namespace CryptoBook.Models
         private void SetEmpty(string message)
         {
             ClearImageSequence();
+            ClearVideoSequence();
             _isImageVisible = false;
             _isVideoVisible = false;
             _isEmptyVisible = true;
@@ -284,6 +312,15 @@ namespace CryptoBook.Models
                 return;
 
             await OpenPathAsync(_imagePaths[targetIndex]);
+        }
+
+        private async Task NavigateVideoAsync(int offset, bool autoPlay)
+        {
+            var targetIndex = _currentVideoIndex + offset;
+            if(targetIndex < 0 || targetIndex >= _videoPaths.Count)
+                return;
+
+            await OpenPathAsync(_videoPaths[targetIndex], autoPlay);
         }
 
         private async Task DeleteCurrentImageAsync()
@@ -377,12 +414,53 @@ namespace CryptoBook.Models
                 includeSecureFiles && SecureFileExtensions.Contains(extension);
         }
 
-        private int FindImageIndex(string fullPath)
+        private void UpdateVideoSequence(string path, bool isEncrypted)
         {
-            for(var index = 0; index < _imagePaths.Count; index++)
+            var fullPath = Path.GetFullPath(path);
+            var directory = Path.GetDirectoryName(fullPath);
+
+            try
+            {
+                _videoPaths = string.IsNullOrWhiteSpace(directory)
+                    ? [fullPath]
+                    : Directory.EnumerateFiles(directory)
+                        .Where(file => IsVideoSequenceCandidate(file, isEncrypted))
+                        .OrderBy(
+                            file => Path.GetFileName(file),
+                            StringComparer.CurrentCultureIgnoreCase)
+                        .ToArray();
+            }
+            catch(IOException)
+            {
+                _videoPaths = [fullPath];
+            }
+            catch(UnauthorizedAccessException)
+            {
+                _videoPaths = [fullPath];
+            }
+
+            _currentVideoIndex = FindMediaIndex(_videoPaths, fullPath);
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        internal static bool IsVideoSequenceCandidate(string path, bool includeSecureFiles)
+        {
+            string extension = Path.GetExtension(path);
+            return VideoExtensions.Contains(extension) ||
+                includeSecureFiles && SecureFileExtensions.Contains(extension);
+        }
+
+        private int FindImageIndex(string fullPath)
+            => FindMediaIndex(_imagePaths, fullPath);
+
+        private static int FindMediaIndex(
+            IReadOnlyList<string> paths,
+            string fullPath)
+        {
+            for(var index = 0; index < paths.Count; index++)
             {
                 if(string.Equals(
-                    Path.GetFullPath(_imagePaths[index]),
+                    Path.GetFullPath(paths[index]),
                     fullPath,
                     StringComparison.OrdinalIgnoreCase))
                 {
@@ -397,6 +475,13 @@ namespace CryptoBook.Models
         {
             _imagePaths = Array.Empty<string>();
             _currentImageIndex = -1;
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private void ClearVideoSequence()
+        {
+            _videoPaths = Array.Empty<string>();
+            _currentVideoIndex = -1;
             CommandManager.InvalidateRequerySuggested();
         }
 

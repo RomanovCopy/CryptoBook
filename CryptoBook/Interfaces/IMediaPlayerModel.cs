@@ -20,6 +20,10 @@ namespace CryptoBook.Interfaces
         void Execute_PreviousImage(object? obj);
         bool CanExecute_NextImage(object? obj);
         void Execute_NextImage(object? obj);
+        bool CanExecute_PreviousVideo(object? obj);
+        void Execute_PreviousVideo(object? obj);
+        bool CanExecute_NextVideo(object? obj);
+        void Execute_NextVideo(object? obj);
         bool CanExecute_DeleteCurrentImage(object? obj);
         void Execute_DeleteCurrentImage(object? obj);
     }

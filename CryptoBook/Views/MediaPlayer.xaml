@@ -27,7 +27,11 @@
         <!-- FlyleafME создаёт собственные окна рендеринга, поэтому он не должен
              существовать в визуальном дереве при просмотре изображения. -->
         <DataTemplate x:Key="VideoPlayerTemplate">
-            <fl:FlyleafME Player="{Binding}"/>
+            <fl:FlyleafME Player="{Binding}">
+                <i:Interaction.Behaviors>
+                    <behaviors:VideoNavigationBehavior/>
+                </i:Interaction.Behaviors>
+            </fl:FlyleafME>
         </DataTemplate>
         <Style x:Key="ImageNavigationButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="34"/>
@@ -111,6 +115,14 @@
             <i:InvokeCommandAction Command="{Binding Closing}" PassEventArgsToCommand="True"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding Key="Left"
+                    Modifiers="Alt"
+                    Command="{Binding PreviousVideoCommand}"/>
+        <KeyBinding Key="Right"
+                    Modifiers="Alt"
+                    Command="{Binding NextVideoCommand}"/>
+    </Window.InputBindings>
 
     <Grid>
         <!-- Пустое состояние и ошибки остаются видимыми до успешной загрузки. -->
