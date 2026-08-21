@@ -6,6 +6,7 @@ using Microsoft.Xaml.Behaviors;
 
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -73,11 +74,53 @@ namespace CryptoBook.Behaviors
                 return;
 
             if(current is not null)
+            {
                 current.PreviewKeyDown -= OnPreviewKeyDown;
+                current.Activated -= OnPlayerWindowActivated;
+                current.Deactivated -= OnPlayerWindowDeactivated;
+            }
 
             current = replacement;
             if(current is not null)
+            {
                 current.PreviewKeyDown += OnPreviewKeyDown;
+                current.Activated += OnPlayerWindowActivated;
+                current.Deactivated += OnPlayerWindowDeactivated;
+            }
+        }
+
+        private void OnPlayerWindowActivated(object? sender, EventArgs args) =>
+            ExecuteFocusCommand(activated: true);
+
+        private void OnPlayerWindowDeactivated(object? sender, EventArgs args)
+        {
+            AssociatedObject.Dispatcher.BeginInvoke(
+                DispatcherPriority.Input,
+                new Action(() =>
+                {
+                    if(!IsAnyPlayerWindowActive())
+                        ExecuteFocusCommand(activated: false);
+                }));
+        }
+
+        private bool IsAnyPlayerWindowActive() =>
+            Window.GetWindow(AssociatedObject)?.IsActive == true ||
+            AssociatedObject.Surface?.IsActive == true ||
+            AssociatedObject.Overlay?.IsActive == true;
+
+        private void ExecuteFocusCommand(bool activated)
+        {
+            if(Window.GetWindow(AssociatedObject)?.DataContext is not
+                IMediaPlayerViewModel viewModel)
+            {
+                return;
+            }
+
+            var command = activated
+                ? viewModel.ActivatedCommand
+                : viewModel.DeactivatedCommand;
+            if(command.CanExecute(null))
+                command.Execute(null);
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs args)

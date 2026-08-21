@@ -1,5 +1,6 @@
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Views;
 
 using System.ComponentModel;
 using System.IO;
@@ -33,6 +34,9 @@ namespace CryptoBook.Models
         private readonly IMessageService _messageService;
         private readonly IMediaSourcePreparationService _mediaSourcePreparationService;
         private readonly IFilePickerService _filePickerService;
+        private readonly IWindowManager _windowManager;
+        private readonly IMediaPlaybackCoordinator _playbackCoordinator;
+        private readonly int _instanceNumber;
         private readonly List<IPreparedMediaSource> _retiredSources = [];
         private IPreparedMediaSource? _activeSource;
         private IReadOnlyList<string> _imagePaths = Array.Empty<string>();
@@ -51,6 +55,7 @@ namespace CryptoBook.Models
         private string? _statusResourceKey = "Media.DefaultStatus";
         private object?[] _statusArguments = [];
         private bool _usesDefaultTitle = true;
+        private string? _currentDisplayName;
 
         public MediaPlayerModel(
             IMediaPlayerService videoService,
@@ -59,7 +64,9 @@ namespace CryptoBook.Models
             IFileManagerService fileManagerService,
             IMessageService messageService,
             IMediaSourcePreparationService mediaSourcePreparationService,
-            IFilePickerService filePickerService)
+            IFilePickerService filePickerService,
+            IWindowManager windowManager,
+            IMediaPlaybackCoordinator playbackCoordinator)
         {
             VideoService = videoService ?? throw new ArgumentNullException(nameof(videoService));
             ImageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
@@ -71,16 +78,23 @@ namespace CryptoBook.Models
                 throw new ArgumentNullException(nameof(mediaSourcePreparationService));
             _filePickerService = filePickerService ??
                 throw new ArgumentNullException(nameof(filePickerService));
+            _windowManager = windowManager ??
+                throw new ArgumentNullException(nameof(windowManager));
+            _playbackCoordinator = playbackCoordinator ??
+                throw new ArgumentNullException(nameof(playbackCoordinator));
 
             VideoService.MediaFailed += OnMediaFailed;
+            _playbackCoordinator.PropertyChanged += OnPlaybackCoordinatorPropertyChanged;
             LocalizationManager.CultureChanged += OnCultureChanged;
+            _instanceNumber = _playbackCoordinator.Register(WindowId, VideoService);
+            UpdateMediaTitle();
 
             if(windowContext.TryGet<string>("path", out var initialPath) &&
                 !string.IsNullOrWhiteSpace(initialPath))
             {
                 // Flyleaf должен получить полностью созданное визуальное дерево окна.
                 System.Windows.Application.Current.Dispatcher.BeginInvoke(
-                    async () => await OpenPathAsync(initialPath));
+                    async () => await OpenPathAsync(initialPath, autoPlay: true));
             }
         }
 
@@ -92,9 +106,36 @@ namespace CryptoBook.Models
         public bool IsEmptyVisible => _isEmptyVisible;
         public string StatusText => _statusText;
         public string MediaTitle => _mediaTitle;
+        public bool IsSynchronizationEnabled
+        {
+            get => _playbackCoordinator.IsSynchronizationEnabled;
+            set => _playbackCoordinator.IsSynchronizationEnabled = value;
+        }
 
         public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing;
         public void Execute_OpenFile(object? obj) => _ = PickAndOpenFileAsync();
+
+        public bool CanExecute_OpenFileInNewWindow(object? obj) =>
+            !_disposed && !_isClosing;
+
+        public void Execute_OpenFileInNewWindow(object? obj) =>
+            _ = PickAndOpenFileInNewWindowAsync();
+
+        public bool CanExecute_PauseAll(object? obj) => !_disposed;
+        public void Execute_PauseAll(object? obj) =>
+            _playbackCoordinator.PauseAll();
+
+        public bool CanExecute_ToggleSynchronization(object? obj) => !_disposed;
+        public void Execute_ToggleSynchronization(object? obj) =>
+            IsSynchronizationEnabled = !IsSynchronizationEnabled;
+
+        public bool CanExecute_Activated(object? obj) => !_disposed && !_isClosing;
+        public void Execute_Activated(object? obj) =>
+            _playbackCoordinator.Activate(WindowId);
+
+        public bool CanExecute_Deactivated(object? obj) => !_disposed;
+        public void Execute_Deactivated(object? obj) =>
+            _playbackCoordinator.Deactivate(WindowId);
 
         public bool CanExecute_RotateImage(object? obj) =>
             !_disposed && !_isClosing && ImageService.ImageSource != null;
@@ -167,17 +208,13 @@ namespace CryptoBook.Models
 
         private async Task PickAndOpenFileAsync()
         {
-            string? initialDirectory = _activeSource?.OriginalPath is { Length: > 0 } path
-                ? Path.GetDirectoryName(path)
-                : null;
-
             try
             {
                 string? selectedPath = await _filePickerService.PickFileAsync(
-                    initialDirectory,
+                    GetInitialDirectory(),
                     CancellationToken.None);
                 if(!string.IsNullOrWhiteSpace(selectedPath) && !_disposed && !_isClosing)
-                    await OpenPathAsync(selectedPath);
+                    await OpenPathAsync(selectedPath, autoPlay: true);
             }
             catch(OperationCanceledException)
             {
@@ -188,6 +225,38 @@ namespace CryptoBook.Models
                     SetEmpty(ex.Message);
             }
         }
+
+        private async Task PickAndOpenFileInNewWindowAsync()
+        {
+            try
+            {
+                string? selectedPath = await _filePickerService.PickFileAsync(
+                    GetInitialDirectory(),
+                    CancellationToken.None);
+                if(string.IsNullOrWhiteSpace(selectedPath) || _disposed || _isClosing)
+                    return;
+
+                var context = new Dictionary<string, object?>
+                {
+                    ["path"] = selectedPath
+                };
+                Guid windowId = _windowManager.CreateSiblingWindow<MediaPlayer>(context);
+                _windowManager.ShowWindow(windowId);
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception ex)
+            {
+                if(!_disposed && !_isClosing)
+                    SetEmpty(ex.Message);
+            }
+        }
+
+        private string? GetInitialDirectory() =>
+            _activeSource?.OriginalPath is { Length: > 0 } path
+                ? Path.GetDirectoryName(path)
+                : null;
 
         private async Task OpenPathAsync(string path, bool autoPlay = false)
         {
@@ -200,7 +269,8 @@ namespace CryptoBook.Models
 
             SetLocalizedStatus("Media.Loading", Path.GetFileName(path));
             _usesDefaultTitle = false;
-            SetProperty(ref _mediaTitle, Path.GetFileName(path), nameof(MediaTitle));
+            _currentDisplayName = Path.GetFileName(path);
+            UpdateMediaTitle();
 
             IPreparedMediaSource? preparedSource = null;
             try
@@ -365,10 +435,8 @@ namespace CryptoBook.Models
                 ImageService.Clear();
                 ClearImageSequence();
                 _usesDefaultTitle = true;
-                SetProperty(
-                    ref _mediaTitle,
-                    LocalizationManager.GetString("Media.PlayerTitle"),
-                    nameof(MediaTitle));
+                _currentDisplayName = null;
+                UpdateMediaTitle();
                 SetEmpty(LocalizationManager.GetString("Media.NoMoreImages"));
                 SetLocalizedStatus("Media.NoMoreImages");
                 return;
@@ -534,7 +602,9 @@ namespace CryptoBook.Models
             _disposed = true;
             CancelPendingOpen();
             VideoService.MediaFailed -= OnMediaFailed;
+            _playbackCoordinator.PropertyChanged -= OnPlaybackCoordinatorPropertyChanged;
             LocalizationManager.CultureChanged -= OnCultureChanged;
+            _playbackCoordinator.Unregister(WindowId);
             ImageService.Clear();
             VideoService.Dispose();
             _activeSource?.Dispose();
@@ -556,13 +626,32 @@ namespace CryptoBook.Models
                     nameof(StatusText));
             }
 
-            if(_usesDefaultTitle)
+            UpdateMediaTitle();
+        }
+
+        private void OnPlaybackCoordinatorPropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(
+                IMediaPlaybackCoordinator.IsSynchronizationEnabled))
             {
-                SetProperty(
-                    ref _mediaTitle,
-                    LocalizationManager.GetString("Media.PlayerTitle"),
-                    nameof(MediaTitle));
+                OnPropertyChanged(nameof(IsSynchronizationEnabled));
             }
+        }
+
+        private void UpdateMediaTitle()
+        {
+            string title = _usesDefaultTitle ||
+                           string.IsNullOrWhiteSpace(_currentDisplayName)
+                ? LocalizationManager.Format(
+                    "Media.PlayerTitleNumbered",
+                    _instanceNumber)
+                : LocalizationManager.Format(
+                    "Media.WindowTitle",
+                    _currentDisplayName,
+                    _instanceNumber);
+            SetProperty(ref _mediaTitle, title, nameof(MediaTitle));
         }
     }
 }

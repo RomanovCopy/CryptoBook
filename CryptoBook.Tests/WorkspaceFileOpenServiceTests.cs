@@ -95,6 +95,44 @@ namespace CryptoBook.Tests
             service.Dispose();
         }
 
+        [Theory]
+        [InlineData(".png")]
+        [InlineData(".mp4")]
+        public async Task PlainMedia_IsOpenedInBuiltInViewer(string extension)
+        {
+            string sourcePath = Path.Combine(testDirectory, "media" + extension);
+            await File.WriteAllBytesAsync(sourcePath, [1, 2, 3]);
+            var launcher = new FileLauncherStub();
+            var internalOpener = new InternalFileOpenServiceStub();
+            var windowManager = new WindowManagerStub();
+            var service = new WorkspaceFileOpenService(
+                new SecureFileValidatorStub(encrypted: false),
+                new SecureFileProcessorStub(extension),
+                new KeyRequestStub(),
+                windowManager,
+                new ProgressDialogServiceStub(),
+                launcher,
+                CreateTemplateRegistry(),
+                internalOpener,
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                new DocumentDialogServiceStub());
+
+            WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
+
+            Assert.True(result.Success);
+            Assert.True(result.OpenedInternally);
+            Assert.Equal(typeof(Views.MediaPlayer), windowManager.CreatedWindowType);
+            Assert.Equal(Path.GetFullPath(sourcePath), windowManager.CreatedArguments?["path"]);
+            Assert.True(windowManager.CreatedAsSibling);
+            Assert.Equal(1, windowManager.ShowCount);
+            Assert.Null(launcher.OpenedPath);
+            Assert.Equal(0, internalOpener.OpenCount);
+
+            service.Dispose();
+        }
+
         [Fact]
         public async Task LocalProviderPath_IsOpenedInsideCryptoBook()
         {
@@ -184,6 +222,7 @@ namespace CryptoBook.Tests
             Assert.True(result.Success);
             Assert.True(result.OpenedInternally);
             Assert.Equal(typeof(Views.MediaPlayer), windowManager.CreatedWindowType);
+            Assert.True(windowManager.CreatedAsSibling);
             Assert.Equal(1, windowManager.ShowCount);
             Assert.True(File.Exists(playbackPath));
             Assert.Null(launcher.OpenedPath);
@@ -556,6 +595,7 @@ namespace CryptoBook.Tests
                 new PlainTextTemplate(),
                 new SecureFileTemplate(),
                 new ImageFileTemplate(),
+                new VideoFileTemplate(),
                 new PdfFileTemplate()
             ]);
 
@@ -891,6 +931,7 @@ namespace CryptoBook.Tests
         {
             public Type? CreatedWindowType { get; private set; }
             public IReadOnlyDictionary<string, object?>? CreatedArguments { get; private set; }
+            public bool CreatedAsSibling { get; private set; }
             public int ShowCount { get; private set; }
 
             public Guid CreateWindow<T>(
@@ -900,6 +941,13 @@ namespace CryptoBook.Tests
                 CreatedWindowType = typeof(T);
                 CreatedArguments = args;
                 return Guid.NewGuid();
+            }
+            public Guid CreateSiblingWindow<T>(
+                IReadOnlyDictionary<string, object?>? args = null)
+                where T: Window
+            {
+                CreatedAsSibling = true;
+                return CreateWindow<T>(args);
             }
             public TResult? GetResult<TResult>(Guid guid) => default;
             public void ShowWindow(Guid windowId)

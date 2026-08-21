@@ -111,6 +111,12 @@
         </Style>
     </Window.Resources>
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Deactivated">
+            <i:InvokeCommandAction Command="{Binding DeactivatedCommand}"/>
+        </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding Closing}" PassEventArgsToCommand="True"/>
         </i:EventTrigger>
@@ -125,8 +131,47 @@
     </Window.InputBindings>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Background="{DynamicResource CurrentWindowBackground}"
+                BorderBrush="{DynamicResource CurrentWindowForeground}"
+                BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="6,3">
+                <Button Content="&#xE8E5;"
+                        Command="{Binding OpenFileCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="{Binding [Media.OpenFileCurrent], Source={StaticResource Res}}"/>
+                <Button Content="&#xE8B7;"
+                        Command="{Binding OpenFileInNewWindowCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="{Binding [Media.OpenFileNew], Source={StaticResource Res}}"/>
+                <Button Content="&#xE769;"
+                        Command="{Binding PauseAllCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="{Binding [Media.PauseAll], Source={StaticResource Res}}"/>
+                <ToggleButton Content="&#xE895;"
+                              Command="{Binding ToggleSynchronizationCommand}"
+                              IsChecked="{Binding IsSynchronizationEnabled, Mode=OneWay}"
+                              Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
+                              Width="42"
+                              Height="36"
+                              Margin="4"
+                              FontFamily="Segoe MDL2 Assets"
+                              FontSize="20"
+                              Foreground="{DynamicResource CurrentWindowForeground}"
+                              ToolTip="{Binding [Media.SynchronizeExperimental], Source={StaticResource Res}}"/>
+            </StackPanel>
+        </Border>
+
         <!-- Пустое состояние и ошибки остаются видимыми до успешной загрузки. -->
-        <Grid Visibility="{Binding IsEmptyVisible,
+        <Grid Grid.Row="1"
+              Visibility="{Binding IsEmptyVisible,
                                    Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="{Binding [Media.EmptyTitle], Source={StaticResource Res}}" Foreground="{DynamicResource CurrentWindowForeground}" FontSize="26" HorizontalAlignment="Center"/>
@@ -137,7 +182,8 @@
             </StackPanel>
         </Grid>
 
-        <Grid Visibility="{Binding IsVideoVisible,
+        <Grid Grid.Row="1"
+              Visibility="{Binding IsVideoVisible,
                                    Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">
             <ContentControl ContentTemplate="{StaticResource VideoPlayerTemplate}">
                 <ContentControl.Style>
@@ -155,6 +201,7 @@
         </Grid>
 
         <Grid x:Name="ImageArea"
+              Grid.Row="1"
               Background="Transparent"
               Visibility="{Binding IsImageVisible,
                                    Converter={markup:ResolveConverter ConverterType={x:Type converters:VisibilityConverter}}}">

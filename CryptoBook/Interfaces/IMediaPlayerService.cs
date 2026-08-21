@@ -36,6 +36,7 @@ namespace CryptoBook.Interfaces
         void Play();
         void Pause();
         void Stop();
+        void Seek(TimeSpan position);
 
         // Покадровая перемотка (Вперед / Назад)
         void FrameForward();

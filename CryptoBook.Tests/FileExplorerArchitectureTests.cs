@@ -90,6 +90,27 @@ public sealed class FileExplorerArchitectureTests
     }
 
     [Fact]
+    public void ManageMode_KeepsFileExplorerOpenAfterOpeningFile()
+    {
+        string source = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Models",
+            "FileExplorerModel.cs"));
+        int methodStart = source.IndexOf(
+            "private async Task OpenFileAsync(",
+            StringComparison.Ordinal);
+        int methodEnd = source.IndexOf(
+            "public void Execute_ListViewSelectionChangedCommand",
+            methodStart,
+            StringComparison.Ordinal);
+
+        Assert.True(methodStart >= 0);
+        Assert.True(methodEnd > methodStart);
+        string methodSource = source[methodStart..methodEnd];
+        Assert.DoesNotContain("CloseWindow(WindowId)", methodSource);
+    }
+
+    [Fact]
     public void PropertiesCommand_UsesNativeShellPropertySheet()
     {
         string viewSource = File.ReadAllText(FindRepositoryFile(
@@ -155,7 +176,12 @@ public sealed class FileExplorerArchitectureTests
         Assert.Contains(typeof(IFilePickerService), parameterTypes);
         Assert.DoesNotContain(typeof(IFileExplorerService), parameterTypes);
         Assert.Contains("_filePickerService.PickFileAsync(", source);
-        Assert.Contains("await OpenPathAsync(selectedPath);", source);
+        Assert.Contains(
+            "OpenPathAsync(initialPath, autoPlay: true)",
+            source);
+        Assert.Contains(
+            "await OpenPathAsync(selectedPath, autoPlay: true);",
+            source);
 
         string pickerSource = File.ReadAllText(FindRepositoryFile(
             "CryptoBook",

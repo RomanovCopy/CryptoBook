@@ -2,6 +2,9 @@ using CryptoBook.Services;
 
 using System.Windows;
 
+using Point = System.Windows.Point;
+using Size = System.Windows.Size;
+
 using Xunit;
 
 namespace CryptoBook.Tests;
@@ -50,6 +53,50 @@ public class WindowLayoutDefaultsTests
     }
 
     [Fact]
+    public void MediaPlayer_CascadesFromPreviousWindow()
+    {
+        var previous = new Rect(480, 220, 960, 600);
+
+        Point placement = WindowLayoutDefaults.CreateMediaPlayerCascade(
+            new Rect(0, 0, 1920, 1040),
+            previous,
+            new Size(960, 600),
+            [previous]);
+
+        Assert.Equal(new Point(516, 256), placement);
+        Assert.False(Contains(previous, new Rect(placement, new Size(960, 600))));
+    }
+
+    [Fact]
+    public void MediaPlayer_CascadeWrapsAtWorkAreaEdge()
+    {
+        var previous = new Rect(960, 440, 960, 600);
+
+        Point placement = WindowLayoutDefaults.CreateMediaPlayerCascade(
+            new Rect(0, 0, 1920, 1040),
+            previous,
+            new Size(960, 600),
+            [previous]);
+
+        Assert.Equal(new Point(36, 36), placement);
+    }
+
+    [Fact]
+    public void MediaPlayer_CascadeAvoidsCompleteContainment()
+    {
+        var previous = new Rect(100, 100, 1200, 800);
+        var size = new Size(680, 420);
+
+        Point placement = WindowLayoutDefaults.CreateMediaPlayerCascade(
+            new Rect(0, 0, 1920, 1040),
+            previous,
+            size,
+            [previous]);
+
+        Assert.False(Contains(previous, new Rect(placement, size)));
+    }
+
+    [Fact]
     public void FileExplorer_DefaultColumnsFavorNamesAndDates()
     {
         string? original = Properties.Settings.Default.GridViewColumnRatios;
@@ -93,4 +140,10 @@ public class WindowLayoutDefaultsTests
             Properties.Settings.Default.GridViewColumnRatios = original;
         }
     }
+
+    private static bool Contains(Rect outer, Rect inner) =>
+        outer.Left <= inner.Left &&
+        outer.Top <= inner.Top &&
+        outer.Right >= inner.Right &&
+        outer.Bottom >= inner.Bottom;
 }

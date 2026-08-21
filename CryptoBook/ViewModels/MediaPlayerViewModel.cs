@@ -23,10 +23,41 @@ namespace CryptoBook.ViewModels
         public bool IsEmptyVisible => _model.IsEmptyVisible;
         public string StatusText => _model.StatusText;
         public string MediaTitle => _model.MediaTitle;
+        public bool IsSynchronizationEnabled
+        {
+            get => _model.IsSynchronizationEnabled;
+            set => _model.IsSynchronizationEnabled = value;
+        }
 
         public ICommand OpenFileCommand => _openFileCommand ??=
             new RelayCommand(_model.Execute_OpenFile, _model.CanExecute_OpenFile);
         private RelayCommand? _openFileCommand;
+
+        public ICommand OpenFileInNewWindowCommand =>
+            _openFileInNewWindowCommand ??= new RelayCommand(
+                _model.Execute_OpenFileInNewWindow,
+                _model.CanExecute_OpenFileInNewWindow);
+        private RelayCommand? _openFileInNewWindowCommand;
+
+        public ICommand PauseAllCommand => _pauseAllCommand ??=
+            new RelayCommand(_model.Execute_PauseAll, _model.CanExecute_PauseAll);
+        private RelayCommand? _pauseAllCommand;
+
+        public ICommand ToggleSynchronizationCommand =>
+            _toggleSynchronizationCommand ??= new RelayCommand(
+                _model.Execute_ToggleSynchronization,
+                _model.CanExecute_ToggleSynchronization);
+        private RelayCommand? _toggleSynchronizationCommand;
+
+        public ICommand ActivatedCommand => _activatedCommand ??=
+            new RelayCommand(_model.Execute_Activated, _model.CanExecute_Activated);
+        private RelayCommand? _activatedCommand;
+
+        public ICommand DeactivatedCommand => _deactivatedCommand ??=
+            new RelayCommand(
+                _model.Execute_Deactivated,
+                _model.CanExecute_Deactivated);
+        private RelayCommand? _deactivatedCommand;
 
         public ICommand RotateImageCommand => _rotateImageCommand ??=
             new RelayCommand(_model.Execute_RotateImage, _model.CanExecute_RotateImage);

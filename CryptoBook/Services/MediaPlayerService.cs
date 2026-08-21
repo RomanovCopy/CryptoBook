@@ -281,6 +281,9 @@ namespace CryptoBook.Services
                 case nameof(FlyleafPlayer.IsPlaying):
                     OnPropertyChanged(nameof(IsPlaying));
                     break;
+                case nameof(FlyleafPlayer.Speed):
+                    OnPropertyChanged(nameof(PlaybackSpeed));
+                    break;
                 case nameof(FlyleafPlayer.Status):
                 case nameof(FlyleafPlayer.CanPlay):
                     OnPropertyChanged(nameof(IsMediaLoaded));

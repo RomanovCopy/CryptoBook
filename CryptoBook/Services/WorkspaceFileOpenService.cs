@@ -171,6 +171,9 @@ namespace CryptoBook.Services
                     return WorkspaceFileOpenResult.InternalSuccess();
                 }
 
+                if(template?.OpenMode == FileOpenMode.Media)
+                    return OpenMedia(filePath);
+
                 LaunchResult launchResult = fileLauncherService.Open(filePath);
                 return launchResult.Success
                     ? WorkspaceFileOpenResult.ExternalSuccess()
@@ -234,14 +237,7 @@ namespace CryptoBook.Services
                 {
                     // Медиаплеер читает файл после возврата из метода, поэтому каталог
                     // остаётся жить до Dispose сервиса вместе с окном приложения.
-                    var context = new Dictionary<string, object?>
-                    {
-                        ["path"] = decryptedPath
-                    };
-                    Guid mediaWindowId = windowManager.CreateWindow<MediaPlayer>(
-                        context);
-                    windowManager.ShowWindow(mediaWindowId);
-                    return WorkspaceFileOpenResult.InternalSuccess();
+                    return OpenMedia(decryptedPath);
                 }
 
                 LaunchResult launchResult = fileLauncherService.Open(decryptedPath);
@@ -258,6 +254,21 @@ namespace CryptoBook.Services
                 TryDeleteDirectory(operationDirectory);
                 throw;
             }
+        }
+
+        private WorkspaceFileOpenResult OpenMedia(string filePath)
+        {
+            var context = new Dictionary<string, object?>
+            {
+                ["path"] = filePath
+            };
+            // FileExplorer и другие окна-источники могут закрыться
+            // сразу после открытия. MediaPlayer должен принадлежать их
+            // владельцу, а не самому временному окну.
+            Guid mediaWindowId =
+                windowManager.CreateSiblingWindow<MediaPlayer>(context);
+            windowManager.ShowWindow(mediaWindowId);
+            return WorkspaceFileOpenResult.InternalSuccess();
         }
 
         public void Dispose()
