@@ -511,6 +511,9 @@
   <data name="Explorer.DecryptionError" xml:space="preserve"><value>Ошибка дешифрования</value></data>
   <data name="Explorer.Encryption" xml:space="preserve"><value>Шифрование</value></data>
   <data name="Explorer.Decryption" xml:space="preserve"><value>Дешифрование</value></data>
+  <data name="Explorer.SavingDecryptedCopy" xml:space="preserve"><value>Сохранение расшифрованной копии</value></data>
+  <data name="Explorer.DecryptionResultTitle" xml:space="preserve"><value>Расшифровка завершена</value></data>
+  <data name="Explorer.DecryptionBatchResult" xml:space="preserve"><value>Расшифровано файлов: {0}. Пропущено незащищённых файлов: {1}. Существующие файлы сохранены, конфликтующим копиям присвоены уникальные имена.</value></data>
   <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve"><value>Нельзя зашифровать или расшифровать весь диск. Выберите файл или директорию.</value></data>
   <data name="Explorer.ItemDoesNotExist" xml:space="preserve"><value>Выбранный файл или директория не существует.</value></data>
   <data name="Explorer.RefreshAfterOperationFailed" xml:space="preserve"><value>Операция завершена успешно, но не удалось обновить представление файлов:{0}{1}</value></data>
@@ -578,6 +581,11 @@
   <data name="EncryptionMode.Prompt" xml:space="preserve"><value>Выберите способ сохранения файла:</value></data>
   <data name="EncryptionMode.SaveAs" xml:space="preserve"><value>Сохранить файл как...</value></data>
   <data name="EncryptionMode.ReplaceSource" xml:space="preserve"><value>Заменить исходный файл</value></data>
+  <data name="EncryptionMode.DecryptionTitle" xml:space="preserve"><value>Расшифровка защищённых файлов</value></data>
+  <data name="EncryptionMode.DecryptionPrompt" xml:space="preserve"><value>Выберите, как сохранить результат расшифровки:</value></data>
+  <data name="EncryptionMode.SaveDecryptedCopy" xml:space="preserve"><value>Сохранить расшифрованную копию и оставить защищённый исходник</value></data>
+  <data name="EncryptionMode.ReplaceEncryptedSource" xml:space="preserve"><value>Заменить защищённый исходник расшифрованным файлом</value></data>
+  <data name="EncryptionMode.DecryptionWarning" xml:space="preserve"><value>Расшифрованный результат будет храниться без защиты.</value></data>
   <data name="Progress.Canceling" xml:space="preserve"><value>Отмена операции…</value></data>
   <data name="Favorites.ErrorTitle" xml:space="preserve"><value>Ошибка избранного</value></data>
   <data name="Favorites.AddFailed" xml:space="preserve"><value>Не удалось добавить директорию:{0}{1}</value></data>

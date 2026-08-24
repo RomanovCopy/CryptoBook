@@ -202,7 +202,7 @@ namespace CryptoBook.Tests
         {
             const string password = "legacy password";
             byte[] content = Encoding.UTF8.GetBytes("legacy content");
-            string encrypted = Path.Combine(_directory, "legacy.cbook");
+            string encrypted = Path.Combine(_directory, "legacy.cbox");
             await CreateLegacyFileAsync(encrypted, ".txt", content, password);
             var (processor, _) = CreateProcessor(password);
 

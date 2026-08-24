@@ -1034,6 +1034,9 @@
   <data name="Explorer.Decryption" xml:space="preserve">
     <value>Розшифрування</value>
   </data>
+  <data name="Explorer.SavingDecryptedCopy" xml:space="preserve"><value>Збереження розшифрованої копії</value></data>
+  <data name="Explorer.DecryptionResultTitle" xml:space="preserve"><value>Розшифрування завершено</value></data>
+  <data name="Explorer.DecryptionBatchResult" xml:space="preserve"><value>Розшифровано файлів: {0}. Пропущено незахищених файлів: {1}. Наявні файли збережено, конфліктним копіям надано унікальні імена.</value></data>
   <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve">
     <value>Неможливо зашифрувати або розшифрувати весь диск. Виберіть файл або каталог.</value>
   </data>
@@ -1223,6 +1226,11 @@
   <data name="EncryptionMode.ReplaceSource" xml:space="preserve">
     <value>Замінити вихідний файл</value>
   </data>
+  <data name="EncryptionMode.DecryptionTitle" xml:space="preserve"><value>Розшифрування захищених файлів</value></data>
+  <data name="EncryptionMode.DecryptionPrompt" xml:space="preserve"><value>Виберіть, як зберегти результат розшифрування:</value></data>
+  <data name="EncryptionMode.SaveDecryptedCopy" xml:space="preserve"><value>Зберегти розшифровану копію та залишити захищений оригінал</value></data>
+  <data name="EncryptionMode.ReplaceEncryptedSource" xml:space="preserve"><value>Замінити захищений оригінал розшифрованим файлом</value></data>
+  <data name="EncryptionMode.DecryptionWarning" xml:space="preserve"><value>Розшифрований результат зберігатиметься без захисту.</value></data>
   <data name="Progress.Canceling" xml:space="preserve">
     <value>Скасування операції…</value>
   </data>

@@ -15,10 +15,31 @@ namespace CryptoBook.DTO
         public string? ErrorMessage { get => errorMessage; init => errorMessage=value; }
         string? errorMessage;
         public string? AffectedPath { get; init; }
+        public int ProcessedFileCount { get; init; }
+        public int SkippedFileCount { get; init; }
 
-        public static FileOperationResult Ok(string? affectedPath = null) =>
-            new() { Success = true, AffectedPath = affectedPath };
-        public static FileOperationResult Fail(string message) => new() { Success = false, ErrorMessage = message };
+        public static FileOperationResult Ok(
+            string? affectedPath = null,
+            int processedFileCount = 0,
+            int skippedFileCount = 0) =>
+            new()
+            {
+                Success = true,
+                AffectedPath = affectedPath,
+                ProcessedFileCount = processedFileCount,
+                SkippedFileCount = skippedFileCount
+            };
+        public static FileOperationResult Fail(
+            string message,
+            int processedFileCount = 0,
+            int skippedFileCount = 0) =>
+            new()
+            {
+                Success = false,
+                ErrorMessage = message,
+                ProcessedFileCount = processedFileCount,
+                SkippedFileCount = skippedFileCount
+            };
 
     }
 }

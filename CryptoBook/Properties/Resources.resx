@@ -511,6 +511,9 @@
   <data name="Explorer.DecryptionError" xml:space="preserve"><value>Decryption error</value></data>
   <data name="Explorer.Encryption" xml:space="preserve"><value>Encryption</value></data>
   <data name="Explorer.Decryption" xml:space="preserve"><value>Decryption</value></data>
+  <data name="Explorer.SavingDecryptedCopy" xml:space="preserve"><value>Saving decrypted copy</value></data>
+  <data name="Explorer.DecryptionResultTitle" xml:space="preserve"><value>Decryption complete</value></data>
+  <data name="Explorer.DecryptionBatchResult" xml:space="preserve"><value>Decrypted files: {0}. Unprotected files skipped: {1}. Existing files were preserved; conflicting copies received unique names.</value></data>
   <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve"><value>An entire drive cannot be encrypted or decrypted. Select a file or directory.</value></data>
   <data name="Explorer.ItemDoesNotExist" xml:space="preserve"><value>The selected file or directory does not exist.</value></data>
   <data name="Explorer.RefreshAfterOperationFailed" xml:space="preserve"><value>The operation completed successfully, but the file view could not be refreshed:{0}{1}</value></data>
@@ -578,6 +581,11 @@
   <data name="EncryptionMode.Prompt" xml:space="preserve"><value>Choose how to save the file:</value></data>
   <data name="EncryptionMode.SaveAs" xml:space="preserve"><value>Save file as...</value></data>
   <data name="EncryptionMode.ReplaceSource" xml:space="preserve"><value>Replace source file</value></data>
+  <data name="EncryptionMode.DecryptionTitle" xml:space="preserve"><value>Decrypt protected files</value></data>
+  <data name="EncryptionMode.DecryptionPrompt" xml:space="preserve"><value>Choose how to save the decrypted result:</value></data>
+  <data name="EncryptionMode.SaveDecryptedCopy" xml:space="preserve"><value>Keep the protected source and save a decrypted copy</value></data>
+  <data name="EncryptionMode.ReplaceEncryptedSource" xml:space="preserve"><value>Replace the protected source with the decrypted file</value></data>
+  <data name="EncryptionMode.DecryptionWarning" xml:space="preserve"><value>The decrypted result will be stored without encryption.</value></data>
   <data name="Progress.Canceling" xml:space="preserve"><value>Canceling operation…</value></data>
   <data name="Favorites.ErrorTitle" xml:space="preserve"><value>Favorites error</value></data>
   <data name="Favorites.AddFailed" xml:space="preserve"><value>Could not add the directory:{0}{1}</value></data>

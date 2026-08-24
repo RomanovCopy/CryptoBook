@@ -136,6 +136,8 @@ namespace CryptoBook.Models
             _documentSession = documentSession ?? throw new ArgumentNullException(nameof(documentSession));
             _pinnedDocumentService = pinnedDocumentService ?? throw new ArgumentNullException(nameof(pinnedDocumentService));
             _recentDocumentService = recentDocumentService;
+            CleanupOrphanedDecryptionDirectories(
+                GetDecryptionTemporaryRoot());
             GetDrives = _driveManagerService.WritableDrives;
         }
 
@@ -1428,9 +1430,15 @@ namespace CryptoBook.Models
 
                 if(items.Count > 1)
                 {
+                    if(decrypt)
+                    {
+                        await ExecuteBatchDecryptionAsync(items, errorTitle);
+                        return;
+                    }
+
                     // Пакетная операция заменяет элементы на месте: единый Save As
                     // не может однозначно задать назначения для разных источников.
-                    if(!await ConfirmBatchSourceReplacementAsync(items.Count, decrypt))
+                    if(!await ConfirmBatchSourceReplacementAsync(items.Count, decrypt: false))
                         return;
 
                     FileOperationBatchResult batchResult = await _progressDialogService.RunAsync(
@@ -1440,9 +1448,11 @@ namespace CryptoBook.Models
                                 : "Explorer.Encryption"),
                         async (progress, token) =>
                         {
-                            FileOperationBatchResult operationResult = decrypt
-                                ? await _fileSecurityService.DecryptAsync(items, progress, token)
-                                : await _fileSecurityService.EncryptAsync(items, progress, token);
+                            FileOperationBatchResult operationResult =
+                                await _fileSecurityService.EncryptAsync(
+                                    items,
+                                    progress,
+                                    token);
 
                             progress.Report(
                                 null,
@@ -1483,6 +1493,12 @@ namespace CryptoBook.Models
                 if(mode == EncryptionTargetMode.Cancels ||
                    string.IsNullOrWhiteSpace(targetPath))
                 {
+                    return;
+                }
+
+                if(decrypt && mode == EncryptionTargetMode.SaveAs)
+                {
+                    await ExecuteDecryptionCopyAsync(item, itemPath, errorTitle);
                     return;
                 }
 
@@ -1537,6 +1553,331 @@ namespace CryptoBook.Models
                 await _messageService.ShowMessage(errorTitle, ex.Message);
             }
         }
+
+        private async Task ExecuteDecryptionCopyAsync(
+            ISystemItem item,
+            string sourcePath,
+            string errorTitle)
+        {
+            if(item is IDirectoryItem)
+            {
+                string? destinationDirectory = await _folderPickerService
+                    .PickFolderAsync(
+                        Path.GetDirectoryName(sourcePath),
+                        CancellationToken.None);
+                if(string.IsNullOrWhiteSpace(destinationDirectory))
+                    return;
+
+                FileOperationBatchResult directoryResult =
+                    await _progressDialogService.RunAsync(
+                        LocalizationManager.GetString(
+                            "Explorer.Decryption"),
+                        (progress, token) =>
+                            _fileSecurityService.DecryptAsync(
+                                [item],
+                                destinationDirectory,
+                                progress,
+                                token));
+                if(!directoryResult.Success)
+                {
+                    string failures = string.Join(
+                        Environment.NewLine + Environment.NewLine,
+                        directoryResult.Results
+                            .Where(result => !result.Success)
+                            .Select(result => result.ErrorMessage));
+                    await _messageService.ShowMessage(
+                        errorTitle,
+                        LocalizationManager.Format(
+                            "Explorer.BatchOperationFailed",
+                            Environment.NewLine,
+                            failures));
+                }
+
+                await RefreshFileSecurityItemsAsync(
+                    [item],
+                    destinationDirectory);
+                await ShowDecryptionSummaryAsync(directoryResult);
+                return;
+            }
+
+            string temporaryDirectory = Path.Combine(
+                GetDecryptionTemporaryRoot(),
+                $"{Environment.ProcessId}-{Guid.NewGuid():N}");
+            Directory.CreateDirectory(temporaryDirectory);
+
+            try
+            {
+                FileOperationResult result =
+                    await _progressDialogService.RunAsync(
+                        LocalizationManager.GetString(
+                            "Explorer.Decryption"),
+                        (progress, token) =>
+                            _fileSecurityService.DecryptAsync(
+                                item,
+                                Path.Combine(
+                                    temporaryDirectory,
+                                    "payload"),
+                                EncryptionTargetMode.SaveAs,
+                                progress,
+                                token));
+
+                if(!result.Success ||
+                   string.IsNullOrWhiteSpace(result.AffectedPath) ||
+                   !File.Exists(result.AffectedPath))
+                {
+                    await _messageService.ShowMessage(
+                        errorTitle,
+                        result.ErrorMessage ??
+                            LocalizationManager.GetString(
+                                "Security.DecryptionResultUnknown"));
+                    return;
+                }
+
+                string? destinationPath = GetNewDecryptedFilePath(
+                    sourcePath,
+                    result.AffectedPath);
+                if(string.IsNullOrWhiteSpace(destinationPath))
+                    return;
+
+                await _progressDialogService.RunAsync(
+                    LocalizationManager.GetString(
+                        "Explorer.SavingDecryptedCopy"),
+                    async (progress, token) =>
+                    {
+                        await PublishDecryptedCopyAsync(
+                            result.AffectedPath,
+                            destinationPath,
+                            progress,
+                            token);
+                        return true;
+                    });
+
+                await RefreshFileSecurityItemsAsync(
+                    [item],
+                    destinationPath);
+            }
+            finally
+            {
+                TryDeleteDecryptionDirectory(temporaryDirectory);
+            }
+        }
+
+        private static string GetDecryptionTemporaryRoot() =>
+            Path.Combine(
+                Path.GetTempPath(),
+                "CryptoBook",
+                "Decrypt");
+
+        private static void CleanupOrphanedDecryptionDirectories(
+            string temporaryRoot)
+        {
+            if(!Directory.Exists(temporaryRoot))
+                return;
+
+            foreach(string directory in Directory.GetDirectories(
+                temporaryRoot))
+            {
+                string name = Path.GetFileName(directory);
+                int separator = name.IndexOf('-');
+                if(separator <= 0 ||
+                   !int.TryParse(
+                       name.AsSpan(0, separator),
+                       out int processId) ||
+                   IsProcessRunning(processId))
+                {
+                    continue;
+                }
+
+                TryDeleteDecryptionDirectory(directory);
+            }
+        }
+
+        private static bool IsProcessRunning(int processId)
+        {
+            try
+            {
+                using Process process = Process.GetProcessById(processId);
+                return !process.HasExited;
+            }
+            catch(ArgumentException)
+            {
+                return false;
+            }
+        }
+
+        private static void TryDeleteDecryptionDirectory(string path)
+        {
+            try
+            {
+                if(Directory.Exists(path))
+                    Directory.Delete(path, recursive: true);
+            }
+            catch(IOException)
+            {
+                // Следующий запуск повторит очистку каталога осиротевшего
+                // процесса. Ошибка очистки не должна удалить сохранённую копию.
+            }
+            catch(UnauthorizedAccessException)
+            {
+            }
+        }
+
+        private static async Task PublishDecryptedCopyAsync(
+            string sourcePath,
+            string destinationPath,
+            IProgressReporter? progress,
+            CancellationToken cancellationToken)
+        {
+            string? destinationDirectory = Path.GetDirectoryName(
+                destinationPath);
+            if(string.IsNullOrWhiteSpace(destinationDirectory))
+                throw new IOException(
+                    LocalizationManager.Format(
+                        "Security.DestinationDirectoryUnknown",
+                        destinationPath));
+            Directory.CreateDirectory(destinationDirectory);
+
+            string stagingPath = Path.Combine(
+                destinationDirectory,
+                $".{Path.GetFileName(destinationPath)}.{Guid.NewGuid():N}.tmp");
+            try
+            {
+                await using FileStream input = new(
+                    sourcePath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    81920,
+                    FileOptions.Asynchronous | FileOptions.SequentialScan);
+                await using(FileStream output = new(
+                    stagingPath,
+                    FileMode.CreateNew,
+                    FileAccess.Write,
+                    FileShare.None,
+                    81920,
+                    FileOptions.Asynchronous | FileOptions.SequentialScan))
+                {
+                    byte[] buffer = new byte[81920];
+                    long copied = 0;
+                    int read;
+                    while((read = await input.ReadAsync(
+                        buffer,
+                        cancellationToken)) > 0)
+                    {
+                        await output.WriteAsync(
+                            buffer.AsMemory(0, read),
+                            cancellationToken);
+                        copied += read;
+                        progress?.Report(
+                            input.Length == 0
+                                ? 1.0
+                                : (double)copied / input.Length,
+                            destinationPath);
+                    }
+                    await output.FlushAsync(cancellationToken);
+                }
+
+                AtomicFileCommit.CommitWithoutBackup(
+                    stagingPath,
+                    destinationPath);
+                progress?.Report(1.0, destinationPath);
+            }
+            finally
+            {
+                if(File.Exists(stagingPath))
+                    File.Delete(stagingPath);
+            }
+        }
+
+        private async Task ExecuteBatchDecryptionAsync(
+            IReadOnlyList<ISystemItem> items,
+            string errorTitle)
+        {
+            ISystemItem firstItem = items[0];
+            (EncryptionTargetMode mode, _) = ResolveFileSecurityTarget(
+                firstItem,
+                firstItem.FullPath,
+                decrypt: true);
+            if(mode == EncryptionTargetMode.Cancels)
+                return;
+
+            string? destinationDirectory = null;
+            if(mode == EncryptionTargetMode.ReplaceSource)
+            {
+                if(!await ConfirmBatchSourceReplacementAsync(
+                    items.Count,
+                    decrypt: true))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                destinationDirectory = await _folderPickerService
+                    .PickFolderAsync(
+                        Path.GetDirectoryName(firstItem.FullPath),
+                        CancellationToken.None);
+                if(string.IsNullOrWhiteSpace(destinationDirectory))
+                    return;
+            }
+
+            FileOperationBatchResult batchResult =
+                await _progressDialogService.RunAsync(
+                    LocalizationManager.GetString("Explorer.Decryption"),
+                    async (progress, token) =>
+                    {
+                        FileOperationBatchResult operationResult =
+                            destinationDirectory is null
+                                ? await _fileSecurityService.DecryptAsync(
+                                    items,
+                                    progress,
+                                    token)
+                                : await _fileSecurityService.DecryptAsync(
+                                    items,
+                                    destinationDirectory,
+                                    progress,
+                                    token);
+
+                        progress.Report(
+                            null,
+                            LocalizationManager.GetString(
+                                "Explorer.RefreshingAfterOperation"));
+                        await RefreshFileSecurityItemsAsync(
+                            items.Take(operationResult.Results.Count),
+                            destinationDirectory);
+                        return operationResult;
+                    });
+
+            if(batchResult.Canceled)
+                return;
+
+            if(!batchResult.Success)
+            {
+                string failures = string.Join(
+                    Environment.NewLine + Environment.NewLine,
+                    batchResult.Results
+                        .Where(result => !result.Success)
+                        .Select(result => result.ErrorMessage));
+                await _messageService.ShowMessage(
+                    errorTitle,
+                    LocalizationManager.Format(
+                        "Explorer.BatchOperationFailed",
+                        Environment.NewLine,
+                        failures));
+            }
+
+            await ShowDecryptionSummaryAsync(batchResult);
+        }
+
+        private Task<Guid> ShowDecryptionSummaryAsync(
+            FileOperationBatchResult result) =>
+            _messageService.ShowMessage(
+                LocalizationManager.GetString(
+                    "Explorer.DecryptionResultTitle"),
+                LocalizationManager.Format(
+                    "Explorer.DecryptionBatchResult",
+                    result.Results.Sum(item => item.ProcessedFileCount),
+                    result.SkippedCount));
 
         private async Task<bool> ConfirmBatchSourceReplacementAsync(
             int itemCount,
@@ -1615,12 +1956,16 @@ namespace CryptoBook.Models
 
         private (EncryptionTargetMode Mode, string? TargetPath) ResolveFileSecurityTarget( ISystemItem systemItem, string sourcePath, bool decrypt)
         {
-            // Для каталога текущий интерфейс поддерживает только замену файлов на месте.
-            if(systemItem is IDirectoryItem)
+            // Шифрование каталога по-прежнему выполняется только на месте.
+            if(systemItem is IDirectoryItem && !decrypt)
                 return (EncryptionTargetMode.ReplaceSource, sourcePath);
 
             var context = new ReadOnlyDictionary<string, object?>(
-                new Dictionary<string, object?> { ["path"] = systemItem });
+                new Dictionary<string, object?>
+                {
+                    ["path"] = systemItem,
+                    ["decrypt"] = decrypt
+                });
 
             Guid windowId = _windowManager.CreateWindow<EncryptionModeWindow>(context);
             _windowManager.ShowWindowDialog(windowId);
@@ -1633,12 +1978,12 @@ namespace CryptoBook.Models
             string? targetPath = mode switch
             {
                 EncryptionTargetMode.ReplaceSource => sourcePath,
-                EncryptionTargetMode.SaveAs when decrypt => GetNewDecryptedFilePath(sourcePath),
+                EncryptionTargetMode.SaveAs when decrypt => sourcePath,
                 EncryptionTargetMode.SaveAs => GetNewFilePath(sourcePath),
                 _ => null
             };
 
-            if(!string.IsNullOrWhiteSpace(targetPath))
+            if(!decrypt && !string.IsNullOrWhiteSpace(targetPath))
             {
                 Settings.Default.EncryptionTargetMode = mode;
                 Settings.Default.Save();
@@ -1861,17 +2206,25 @@ namespace CryptoBook.Models
             }
         }
 
-        private string? GetNewDecryptedFilePath(string sourcePath)
+        private string? GetNewDecryptedFilePath(
+            string sourcePath,
+            string decryptedPath)
         {
+            string extension = Path.GetExtension(decryptedPath);
+            string extensionPattern = string.IsNullOrWhiteSpace(extension)
+                ? "*.*"
+                : $"*{extension}";
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
                 InitialDirectory = Path.GetDirectoryName(sourcePath),
                 FileName = Path.GetFileNameWithoutExtension(sourcePath) +
                     "_" + LocalizationManager.GetString(
-                        "Explorer.DecryptedSuffix"),
-                AddExtension = false,
-                Filter = LocalizationManager.GetString(
-                    "Explorer.AllFilesFilter"),
+                        "Explorer.DecryptedSuffix") + extension,
+                DefaultExt = extension,
+                AddExtension = !string.IsNullOrWhiteSpace(extension),
+                Filter = $"{extensionPattern}|{extensionPattern}|" +
+                    LocalizationManager.GetString(
+                        "Explorer.AllFilesFilter"),
                 FilterIndex = 1,
                 OverwritePrompt = true,
                 CheckPathExists = true,

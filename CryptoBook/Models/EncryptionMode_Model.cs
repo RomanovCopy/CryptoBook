@@ -151,13 +151,37 @@ namespace CryptoBook.Models
             WindowHeight = Settings.Default.EncryptionModeHeight;
             WindowLeft = Settings.Default.EncryptionModeLeft;
             WindowTop = Settings.Default.EncryptionModeTop;
-            Title = LocalizationManager.GetString("EncryptionMode.Title");
-            MessageMode = LocalizationManager.GetString("EncryptionMode.Prompt");
-            MessageModeTop = LocalizationManager.GetString("EncryptionMode.SaveAs");
-            MessageModeBottom = LocalizationManager.GetString("EncryptionMode.ReplaceSource");
-            SelectedMode = Settings.Default.EncryptionTargetMode is EncryptionTargetMode.SaveAs or EncryptionTargetMode.ReplaceSource
-                ? Settings.Default.EncryptionTargetMode
-                : EncryptionTargetMode.SaveAs;
+            bool decrypt = context.Items.TryGetValue(
+                "decrypt",
+                out object? decryptValue) &&
+                decryptValue is true;
+            Title = LocalizationManager.GetString(
+                decrypt
+                    ? "EncryptionMode.DecryptionTitle"
+                    : "EncryptionMode.Title");
+            MessageMode = LocalizationManager.GetString(
+                decrypt
+                    ? "EncryptionMode.DecryptionPrompt"
+                    : "EncryptionMode.Prompt");
+            MessageModeTop = LocalizationManager.GetString(
+                decrypt
+                    ? "EncryptionMode.SaveDecryptedCopy"
+                    : "EncryptionMode.SaveAs");
+            MessageModeBottom = LocalizationManager.GetString(
+                decrypt
+                    ? "EncryptionMode.ReplaceEncryptedSource"
+                    : "EncryptionMode.ReplaceSource");
+            WarningMessage = decrypt
+                ? LocalizationManager.GetString(
+                    "EncryptionMode.DecryptionWarning")
+                : string.Empty;
+            SelectedMode = decrypt
+                ? EncryptionTargetMode.SaveAs
+                : Settings.Default.EncryptionTargetMode is
+                    EncryptionTargetMode.SaveAs or
+                    EncryptionTargetMode.ReplaceSource
+                        ? Settings.Default.EncryptionTargetMode
+                        : EncryptionTargetMode.SaveAs;
             ProcessedItem = GetProcessedItem(context) ??
                 throw new InvalidOperationException(
                     "Контекст окна не содержит обрабатываемый элемент 'path'.");

@@ -15,7 +15,7 @@
         Background="{DynamicResource CurrentWindowBackground}"
         Foreground="{DynamicResource CurrentWindowForeground}"
         WindowStartupLocation="CenterOwner"
-        MinHeight="280" MinWidth="450">
+        MinHeight="340" MinWidth="560">
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IEncryptionMode_ViewModel}" />
     </Window.DataContext>
@@ -92,7 +92,7 @@
 
 
     <Window.Title>
-        <Binding Path="[EncryptionMode.Title]" Source="{StaticResource Res}"/>
+        <Binding Path="Title"/>
     </Window.Title>
 
     <Window.Width>
@@ -119,37 +119,48 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0"
-                   Text="{Binding [EncryptionMode.Prompt], Source={StaticResource Res}}"
+                   Text="{Binding MessageMode}"
                    Foreground="{DynamicResource CurrentWindowForeground}"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
+                   TextWrapping="Wrap"
                    FontSize="16"
                    FontWeight="DemiBold"/>
         <StackPanel Margin="10" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <!-- Свойство GroupName объединяет кнопки в один переключатель -->
             <RadioButton x:Name="SaveAsRadioButton"
-                         Content="{Binding [EncryptionMode.SaveAs], Source={StaticResource Res}}"
                          Style="{StaticResource EncryptionModeRadioButtonStyle}"
                          GroupName="EncriptedMode" Margin="10,10,10,5" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
                          VerticalContentAlignment="Center"
                          IsChecked="{Binding SelectedMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                 Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
-                ConverterParameter={x:Static security:EncryptionTargetMode.SaveAs}}" />
+                ConverterParameter={x:Static security:EncryptionTargetMode.SaveAs}}">
+                <TextBlock Text="{Binding MessageModeTop}"
+                           TextWrapping="Wrap"/>
+            </RadioButton>
 
             <RadioButton x:Name="ReplaceSourceRadioButton"
-                         Content="{Binding [EncryptionMode.ReplaceSource], Source={StaticResource Res}}"
                          Style="{StaticResource EncryptionModeRadioButtonStyle}"
                          GroupName="EncriptedMode" Margin="10,5,10,20" FontSize="16" FontWeight="DemiBold" FontStyle="Italic"
                          VerticalContentAlignment="Center"
                          IsChecked="{Binding SelectedMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                 Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}}, 
-                ConverterParameter={x:Static security:EncryptionTargetMode.ReplaceSource}}" />
+                ConverterParameter={x:Static security:EncryptionTargetMode.ReplaceSource}}">
+                <TextBlock Text="{Binding MessageModeBottom}"
+                           TextWrapping="Wrap"/>
+            </RadioButton>
 
         </StackPanel>
-        <TextBlock Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="NoWrap" 
-                   Text="{Binding ProcessedItem.FullPath, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" 
-                   Foreground="{DynamicResource CurrentMutedForeground}"
-                   FontSize="16" FontWeight="DemiBold" FontStyle="Italic" Margin="20,10,20,10"/>
+        <StackPanel Grid.Row="2" Margin="20,4,20,10">
+            <TextBlock HorizontalAlignment="Stretch" TextWrapping="NoWrap"
+                       Text="{Binding ProcessedItem.FullPath, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
+                       Foreground="{DynamicResource CurrentMutedForeground}"
+                       FontSize="16" FontWeight="DemiBold" FontStyle="Italic"/>
+            <TextBlock HorizontalAlignment="Stretch" TextWrapping="Wrap"
+                       Text="{Binding WarningMessage}"
+                       Foreground="{DynamicResource CurrentErrorForeground}"
+                       Margin="0,8,0,0"/>
+        </StackPanel>
         
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                 
