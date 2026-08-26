@@ -94,11 +94,31 @@ namespace CryptoBook.Services
         public Task<WorkspaceFileOpenResult> OpenAsync(
             string filePath,
             CancellationToken cancellationToken = default) =>
-            SwitchAsync(filePath, cancellationToken);
+            SwitchAsync(
+                filePath,
+                requestEncryptionKey: false,
+                cancellationToken);
+
+        public Task<WorkspaceFileOpenResult> OpenFromShellAsync(
+            string filePath,
+            CancellationToken cancellationToken = default) =>
+            SwitchAsync(
+                filePath,
+                requestEncryptionKey: true,
+                cancellationToken);
 
         public async Task<WorkspaceFileOpenResult> SwitchAsync(
             string targetPath,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default) =>
+            await SwitchAsync(
+                targetPath,
+                requestEncryptionKey: false,
+                cancellationToken);
+
+        private async Task<WorkspaceFileOpenResult> SwitchAsync(
+            string targetPath,
+            bool requestEncryptionKey,
+            CancellationToken cancellationToken)
         {
             // В состоянии Restoring сервис сам вызывает штатное открытие
             // исходного файла; блокируем только внешний Resetting.
@@ -123,8 +143,20 @@ namespace CryptoBook.Services
             await switchGate.WaitAsync(cancellationToken);
             try
             {
-                if(IsCurrentDocument(normalizedPath))
-                    return WorkspaceFileOpenResult.InternalSuccess();
+                bool isCurrentDocument = IsCurrentDocument(normalizedPath);
+                bool? knownEncryptionState = null;
+                if(isCurrentDocument)
+                {
+                    if(!requestEncryptionKey)
+                        return WorkspaceFileOpenResult.InternalSuccess();
+
+                    knownEncryptionState = await secureFileValidator
+                        .HasCryptoBookHeaderAsync(
+                            normalizedPath,
+                            cancellationToken);
+                    if(!knownEncryptionState.Value)
+                        return WorkspaceFileOpenResult.InternalSuccess();
+                }
 
                 string? accessError = ValidateReadableFile(normalizedPath);
                 if(accessError is not null)
@@ -138,6 +170,8 @@ namespace CryptoBook.Services
 
                 WorkspaceFileOpenResult result = await OpenCoreAsync(
                     normalizedPath,
+                    requestEncryptionKey,
+                    knownEncryptionState,
                     cancellationToken);
                 if(result.Success && IsCurrentDocument(normalizedPath))
                     await TryDeletePreviousRecoverySnapshotAsync();
@@ -153,10 +187,14 @@ namespace CryptoBook.Services
 
         private async Task<WorkspaceFileOpenResult> OpenCoreAsync(
             string filePath,
+            bool requestEncryptionKey,
+            bool? knownEncryptionState,
             CancellationToken cancellationToken)
         {
-            bool isEncrypted = await secureFileValidator
-                .HasCryptoBookHeaderAsync(filePath, cancellationToken);
+            bool isEncrypted = knownEncryptionState ??
+                await secureFileValidator.HasCryptoBookHeaderAsync(
+                    filePath,
+                    cancellationToken);
             if(!isEncrypted)
             {
                 IFileTemplate? template = FindTemplate(filePath);
@@ -180,7 +218,10 @@ namespace CryptoBook.Services
                     : WorkspaceFileOpenResult.Fail(launchResult.Error);
             }
 
-            if(!keyRequestService.EnsureKeyAvailable())
+            bool keyAvailable = requestEncryptionKey
+                ? keyRequestService.RequestKey()
+                : keyRequestService.EnsureKeyAvailable();
+            if(!keyAvailable)
                 return WorkspaceFileOpenResult.Cancel();
 
             // Отдельный каталог на операцию упрощает проверку результата и позволяет

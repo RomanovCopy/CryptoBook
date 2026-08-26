@@ -27,12 +27,15 @@ namespace CryptoBook.ViewModels
         public string Title { get => _model.Title; }
         public string Message { get => _model.Message; }
         public bool ShowRepeatPassword { get => _model.ShowRepeatPassword; }
+        public bool Result { get; private set; }
 
 
         public KeyInputViewModel(IKeyInputModel model)
         {
             _model = model ?? throw new ArgumentNullException(nameof(model));
         }
+
+        public void SetResult(bool accepted) => Result = accepted;
 
 
 

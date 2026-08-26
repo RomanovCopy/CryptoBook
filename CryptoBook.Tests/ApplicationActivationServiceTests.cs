@@ -76,6 +76,7 @@ public sealed class ApplicationActivationServiceTests
             Assert.Equal(
                 paths.Order(StringComparer.OrdinalIgnoreCase),
                 opener.OpenedPaths.Order(StringComparer.OrdinalIgnoreCase));
+            Assert.Equal(paths.Length, opener.ShellOpenCount);
             Assert.Equal(1, opener.MaximumConcurrency);
             Assert.True(windowManager.Activations >= 2);
             Assert.All(
@@ -194,6 +195,7 @@ public sealed class ApplicationActivationServiceTests
         private readonly List<string> openedPaths = [];
         private int concurrency;
         private int maximumConcurrency;
+        private int shellOpenCount;
 
         public RecordingFileOpenService(int expectedCount)
         {
@@ -211,9 +213,24 @@ public sealed class ApplicationActivationServiceTests
 
         public int MaximumConcurrency => Volatile.Read(ref maximumConcurrency);
 
+        public int ShellOpenCount => Volatile.Read(ref shellOpenCount);
+
         public Task Completed => completed.Task;
 
         public async Task<WorkspaceFileOpenResult> OpenAsync(
+            string filePath,
+            CancellationToken cancellationToken = default) =>
+            await OpenCoreAsync(filePath, cancellationToken);
+
+        public async Task<WorkspaceFileOpenResult> OpenFromShellAsync(
+            string filePath,
+            CancellationToken cancellationToken = default)
+        {
+            Interlocked.Increment(ref shellOpenCount);
+            return await OpenCoreAsync(filePath, cancellationToken);
+        }
+
+        private async Task<WorkspaceFileOpenResult> OpenCoreAsync(
             string filePath,
             CancellationToken cancellationToken = default)
         {

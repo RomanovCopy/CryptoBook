@@ -97,6 +97,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MessageWindowViewModel>().As<IMessageWindowViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionMode_ViewModel>().As<IEncryptionMode_ViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<DecryptionOptionsViewModel>().AsSelf().InstancePerDependency();
             builder.RegisterType<MediaPlayerViewModel>().As<IMediaPlayerViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<WorkspaceSearchViewModel>()
@@ -142,6 +143,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MainWindow>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionModeWindow>().InstancePerDependency();
+            builder.RegisterType<DecryptionOptionsWindow>().InstancePerDependency();
 
             builder.RegisterType<ProgressViewModel>().As<IProgressViewModel>().InstancePerDependency();
             builder.RegisterType<ProgressWindow>().InstancePerDependency();
@@ -296,6 +298,12 @@ namespace CryptoBook.Injections
                 .As<IFilePropertiesService>()
                 .SingleInstance();
             builder.RegisterType<FileSecurityService>().As<IFileSecurityService>().SingleInstance();
+            builder.RegisterType<DecryptedDocumentConversionService>()
+                .As<IDecryptedDocumentConversionService>()
+                .SingleInstance();
+            builder.RegisterType<DecryptionExportService>()
+                .As<IDecryptionExportService>()
+                .SingleInstance();
             builder.RegisterType<DirectoryMonitoringService>().As<IDirectoryMonitoringService>().SingleInstance();
             builder.RegisterType<StockIconService>().As<IStockIconService>().SingleInstance();
             builder.RegisterType<PageNavigationService>().As<IPageNavigationService>().InstancePerLifetimeScope();

@@ -1034,6 +1034,9 @@
   <data name="Explorer.Decryption" xml:space="preserve">
     <value>Розшифрування</value>
   </data>
+  <data name="Explorer.SavingDecryptedCopy" xml:space="preserve"><value>Збереження розшифрованої копії</value></data>
+  <data name="Explorer.DecryptionResultTitle" xml:space="preserve"><value>Розшифрування завершено</value></data>
+  <data name="Explorer.DecryptionBatchResult" xml:space="preserve"><value>Розшифровано файлів: {0}. Пропущено незахищених файлів: {1}. Наявні файли збережено, конфліктним копіям надано унікальні імена.</value></data>
   <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve">
     <value>Неможливо зашифрувати або розшифрувати весь диск. Виберіть файл або каталог.</value>
   </data>
@@ -1223,6 +1226,11 @@
   <data name="EncryptionMode.ReplaceSource" xml:space="preserve">
     <value>Замінити вихідний файл</value>
   </data>
+  <data name="EncryptionMode.DecryptionTitle" xml:space="preserve"><value>Розшифрування захищених файлів</value></data>
+  <data name="EncryptionMode.DecryptionPrompt" xml:space="preserve"><value>Виберіть, як зберегти результат розшифрування:</value></data>
+  <data name="EncryptionMode.SaveDecryptedCopy" xml:space="preserve"><value>Зберегти розшифровану копію та залишити захищений оригінал</value></data>
+  <data name="EncryptionMode.ReplaceEncryptedSource" xml:space="preserve"><value>Замінити захищений оригінал розшифрованим файлом</value></data>
+  <data name="EncryptionMode.DecryptionWarning" xml:space="preserve"><value>Розшифрований результат зберігатиметься без захисту.</value></data>
   <data name="Progress.Canceling" xml:space="preserve">
     <value>Скасування операції…</value>
   </data>
@@ -1605,4 +1613,23 @@
   <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Замінити</value></data>
   <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Пропустити</value></data>
   <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Зберегти обидва</value></data>
+  <data name="DecryptionOptions.Title" xml:space="preserve"><value>Розшифрування документа</value></data>
+  <data name="DecryptionOptions.FormatSectionTitle" xml:space="preserve"><value>Формат результату</value></data>
+  <data name="DecryptionOptions.TargetSectionTitle" xml:space="preserve"><value>Спосіб збереження</value></data>
+  <data name="DecryptionOptions.FormatRtf" xml:space="preserve"><value>RTF — для відкриття в інших програмах (рекомендовано)</value></data>
+  <data name="DecryptionOptions.FormatPlainText" xml:space="preserve"><value>Звичайний текст TXT — лише текст</value></data>
+  <data name="DecryptionOptions.FormatOriginalXamlPackage" xml:space="preserve"><value>XAML Package — точне збереження, внутрішній технічний формат CryptoBook</value></data>
+  <data name="DecryptionOptions.FormatOriginal" xml:space="preserve"><value>Початковий формат {0} — точне збереження</value></data>
+  <data name="DecryptionOptions.FormatOriginalOnly" xml:space="preserve"><value>Початковий формат — єдиний доступний варіант</value></data>
+  <data name="DecryptionOptions.RtfWarning" xml:space="preserve"><value>Деякі специфічні можливості CryptoBook можуть бути перетворені або втрачені в RTF.</value></data>
+  <data name="DecryptionOptions.PlainTextWarning" xml:space="preserve"><value>Під час збереження у TXT безповоротно втрачаються:
+• форматування;
+• зображення та вбудовані об’єкти;
+• структура таблиць і списків;
+• адреси гіперпосилань і закладки.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceWarning" xml:space="preserve"><value>У разі заміни захищеного джерела на TXT ці втрати стануть незворотними.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceTitle" xml:space="preserve"><value>Підтвердження незворотного експорту</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>Захищене джерело буде видалено лише після успішного збереження TXT. Форматування, зображення, вбудовані об’єкти, структура таблиць і списків, адреси гіперпосилань і закладки не підлягають відновленню.{0}{0}{1}{0}{0}Продовжити?</value></data>
+  <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>Цей вміст неможливо перетворити. Відновіть його в початковому форматі.</value></data>
+  <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не вдалося перетворити й опублікувати розшифрований документ: {0}</value></data>
 </root>

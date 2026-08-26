@@ -350,7 +350,7 @@ namespace CryptoBook.Services
                 try
                 {
                     WorkspaceFileOpenResult result = await fileOpenService.Value
-                        .OpenAsync(path, cancellationToken);
+                        .OpenFromShellAsync(path, cancellationToken);
                     if(!result.Success && !result.Cancelled)
                     {
                         string details = string.IsNullOrWhiteSpace(result.Error)

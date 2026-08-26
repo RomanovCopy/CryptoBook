@@ -49,5 +49,15 @@ namespace CryptoBook.Interfaces
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Расшифровывает несколько файлов и каталогов в выбранный каталог,
+        /// сохраняя защищённые исходники. Конфликтующие имена не перезаписываются.
+        /// </summary>
+        Task<FileOperationBatchResult> DecryptAsync(
+            IReadOnlyList<ISystemItem> sources,
+            string destinationDirectory,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default);
+
     }
 }

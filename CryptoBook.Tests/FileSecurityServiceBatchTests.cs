@@ -84,6 +84,152 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
     }
 
     [Fact]
+    public async Task DecryptBatch_SkipsFilesWithoutCryptoBookHeader()
+    {
+        string encrypted = CreateFile("protected.cbook", [1, 2, 3]);
+        string plaintext = CreateFile("notes.txt", [4, 5, 6]);
+        var processor = new RecordingSecureFileProcessor();
+        var validator = new PredicateEncryptedValidator(path =>
+            path.EndsWith(".cbook", StringComparison.OrdinalIgnoreCase));
+        FileSecurityService service = CreateService(processor, validator);
+
+        FileOperationBatchResult result = await service.DecryptAsync(
+            [CreateFileItem(encrypted), CreateFileItem(plaintext)]);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.CompletedCount);
+        Assert.Equal(1, result.SkippedCount);
+        Assert.Equal([encrypted], processor.DecryptedInputs);
+        Assert.True(File.Exists(plaintext));
+        Assert.Equal([4, 5, 6], await File.ReadAllBytesAsync(plaintext));
+    }
+
+    [Fact]
+    public async Task DecryptDirectory_SaveAsCopiesOnlyProtectedBranches()
+    {
+        string sourceDirectory = Path.Combine(testDirectory, "vault");
+        string protectedDirectory = Path.Combine(sourceDirectory, "protected");
+        string plainDirectory = Path.Combine(sourceDirectory, "plain-only");
+        Directory.CreateDirectory(protectedDirectory);
+        Directory.CreateDirectory(plainDirectory);
+        string encrypted = Path.Combine(protectedDirectory, "item.cbook");
+        string plaintext = Path.Combine(plainDirectory, "notes.txt");
+        await File.WriteAllBytesAsync(encrypted, [1, 2, 3]);
+        await File.WriteAllBytesAsync(plaintext, [4, 5, 6]);
+        string destination = Path.Combine(testDirectory, "output");
+        var processor = new RecordingSecureFileProcessor();
+        FileSecurityService service = CreateService(
+            processor,
+            new PredicateEncryptedValidator(path =>
+                path.EndsWith(".cbook", StringComparison.OrdinalIgnoreCase)));
+
+        FileOperationBatchResult result = await service.DecryptAsync(
+            [new DirectoryStub(sourceDirectory)],
+            destination);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.SkippedCount);
+        Assert.Equal(
+            [1, 2, 3],
+            await File.ReadAllBytesAsync(Path.Combine(
+                destination,
+                "vault",
+                "protected",
+                "item.txt")));
+        Assert.False(Directory.Exists(Path.Combine(
+            destination,
+            "vault",
+            "plain-only")));
+        Assert.True(File.Exists(plaintext));
+    }
+
+    [Fact]
+    public async Task DecryptBatch_SaveAsPreservesSourcesAndRenamesConflict()
+    {
+        string encrypted = CreateFile("report.cbook", [1, 2, 3]);
+        string destination = Path.Combine(testDirectory, "decrypted");
+        Directory.CreateDirectory(destination);
+        string existing = Path.Combine(destination, "report.txt");
+        await File.WriteAllBytesAsync(existing, [9, 9, 9]);
+        var processor = new RecordingSecureFileProcessor();
+        FileSecurityService service = CreateService(processor);
+
+        FileOperationBatchResult result = await service.DecryptAsync(
+            [CreateFileItem(encrypted)],
+            destination);
+
+        Assert.True(result.Success);
+        Assert.True(File.Exists(encrypted));
+        Assert.Equal([9, 9, 9], await File.ReadAllBytesAsync(existing));
+        Assert.Equal(
+            [1, 2, 3],
+            await File.ReadAllBytesAsync(
+                Path.Combine(destination, "report (2).txt")));
+    }
+
+    [Fact]
+    public async Task DecryptSingle_ReplaceSourcePreservesConflictingPlaintext()
+    {
+        string encrypted = CreateFile("draft.cbook", [1, 2, 3]);
+        string existing = CreateFile("draft.txt", [9, 9, 9]);
+        var processor = new RecordingSecureFileProcessor();
+        FileSecurityService service = CreateService(processor);
+
+        FileOperationResult result = await service.DecryptAsync(
+            CreateFileItem(encrypted),
+            encrypted,
+            EncryptionTargetMode.ReplaceSource);
+
+        Assert.True(result.Success);
+        Assert.False(File.Exists(encrypted));
+        Assert.Equal([9, 9, 9], await File.ReadAllBytesAsync(existing));
+        string uniqueCopy = Path.Combine(testDirectory, "draft (2).txt");
+        Assert.Equal(uniqueCopy, result.AffectedPath);
+        Assert.Equal([1, 2, 3], await File.ReadAllBytesAsync(uniqueCopy));
+    }
+
+    [Fact]
+    public async Task DecryptSingle_RejectsFileWithoutCryptoBookHeader()
+    {
+        string plaintext = CreateFile("plain.cbook", [1, 2, 3]);
+        var processor = new RecordingSecureFileProcessor();
+        FileSecurityService service = CreateService(
+            processor,
+            new PredicateEncryptedValidator(_ => false));
+
+        FileOperationResult result = await service.DecryptAsync(
+            CreateFileItem(plaintext),
+            Path.Combine(testDirectory, "output"),
+            EncryptionTargetMode.SaveAs);
+
+        Assert.False(result.Success);
+        Assert.Empty(processor.DecryptedInputs);
+        Assert.True(File.Exists(plaintext));
+    }
+
+    [Fact]
+    public async Task DecryptSingle_CancellationRemovesStagingPlaintext()
+    {
+        string encrypted = CreateFile("cancel.cbook", [1, 2, 3]);
+        using var cancellation = new CancellationTokenSource();
+        var processor = new CancelingSecureFileProcessor(cancellation);
+        FileSecurityService service = CreateService(processor);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            service.DecryptAsync(
+                CreateFileItem(encrypted),
+                encrypted,
+                EncryptionTargetMode.ReplaceSource,
+                cancellationToken: cancellation.Token));
+
+        Assert.True(File.Exists(encrypted));
+        Assert.Empty(Directory.GetDirectories(
+            testDirectory,
+            ".cryptobook-*"));
+        Assert.False(File.Exists(Path.Combine(testDirectory, "cancel.txt")));
+    }
+
+    [Fact]
     public async Task EncryptBatch_ContinuesAfterFailureAndReportsCompletedItems()
     {
         string first = CreateFile("first.bin", [1]);
@@ -223,8 +369,13 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
     }
 
     private FileSecurityService CreateService(
-        ISecureFileProcessor processor) =>
-        new(new CreateServiceStub(), processor);
+        ISecureFileProcessor processor,
+        ISecureFileValidator? validator = null) =>
+        new(
+            new CreateServiceStub(),
+            processor,
+            secureFileValidator: validator ??
+                new AlwaysEncryptedValidator());
 
     private FileSecurityService CreateRealService()
     {
@@ -241,7 +392,10 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
         var processor = new SecureFileProcessor(
             new SecureFileV2Codec(keyProvider, options),
             new LegacySecureFileCodec(keyProvider));
-        return CreateService(processor);
+        return new FileSecurityService(
+            new CreateServiceStub(),
+            processor,
+            secureFileValidator: new SecureFileValidator());
     }
 
     private string CreateFile(string name, byte[] content)
@@ -359,6 +513,89 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default) =>
             Task.FromException<Stream>(new NotSupportedException());
+    }
+
+    private sealed class AlwaysEncryptedValidator: ISecureFileValidator
+    {
+        public Task<bool> HasCryptoBookHeaderAsync(
+            string filePath,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(true);
+        }
+    }
+
+    private sealed class PredicateEncryptedValidator:
+        ISecureFileValidator
+    {
+        private readonly Func<string, bool> predicate;
+
+        public PredicateEncryptedValidator(Func<string, bool> predicate)
+        {
+            this.predicate = predicate;
+        }
+
+        public Task<bool> HasCryptoBookHeaderAsync(
+            string filePath,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(predicate(filePath));
+        }
+    }
+
+    private sealed class CancelingSecureFileProcessor:
+        ISecureFileProcessor
+    {
+        private readonly CancellationTokenSource cancellation;
+
+        public CancelingSecureFileProcessor(
+            CancellationTokenSource cancellation)
+        {
+            this.cancellation = cancellation;
+        }
+
+        public Task EncryptFileAsync(
+            string inputFile,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task EncryptStreamAsync(
+            Stream input,
+            string originalExtension,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public async Task DecryptFileAsyncToFile(
+            string inputFile,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            await File.WriteAllTextAsync(
+                outputFile + ".txt",
+                "temporary plaintext",
+                CancellationToken.None);
+            cancellation.Cancel();
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        public Task<DecryptedFileContent> DecryptFileContentAsync(
+            string inputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task<Stream> DecryptFileAsyncToStream(
+            string inputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 
     private sealed class CreateServiceStub: ISystemItemCreateService

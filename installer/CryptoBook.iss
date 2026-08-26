@@ -7,11 +7,11 @@
 #endif
 
 #ifndef MyAppVersion
-  #define MyAppVersion "1.1.2.0"
+  #define MyAppVersion "1.1.2.1"
 #endif
 
 #ifndef VersionInfoVersion
-  #define VersionInfoVersion "1.1.2.0"
+  #define VersionInfoVersion "1.1.2.1"
 #endif
 
 #define MyAppName "CryptoBook"
@@ -56,6 +56,9 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[InstallDelete]
+Type: files; Name: "{app}\CryptoBook-*.ico"
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs

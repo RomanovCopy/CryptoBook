@@ -511,6 +511,9 @@
   <data name="Explorer.DecryptionError" xml:space="preserve"><value>Ошибка дешифрования</value></data>
   <data name="Explorer.Encryption" xml:space="preserve"><value>Шифрование</value></data>
   <data name="Explorer.Decryption" xml:space="preserve"><value>Дешифрование</value></data>
+  <data name="Explorer.SavingDecryptedCopy" xml:space="preserve"><value>Сохранение расшифрованной копии</value></data>
+  <data name="Explorer.DecryptionResultTitle" xml:space="preserve"><value>Расшифровка завершена</value></data>
+  <data name="Explorer.DecryptionBatchResult" xml:space="preserve"><value>Расшифровано файлов: {0}. Пропущено незащищённых файлов: {1}. Существующие файлы сохранены, конфликтующим копиям присвоены уникальные имена.</value></data>
   <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve"><value>Нельзя зашифровать или расшифровать весь диск. Выберите файл или директорию.</value></data>
   <data name="Explorer.ItemDoesNotExist" xml:space="preserve"><value>Выбранный файл или директория не существует.</value></data>
   <data name="Explorer.RefreshAfterOperationFailed" xml:space="preserve"><value>Операция завершена успешно, но не удалось обновить представление файлов:{0}{1}</value></data>
@@ -578,6 +581,11 @@
   <data name="EncryptionMode.Prompt" xml:space="preserve"><value>Выберите способ сохранения файла:</value></data>
   <data name="EncryptionMode.SaveAs" xml:space="preserve"><value>Сохранить файл как...</value></data>
   <data name="EncryptionMode.ReplaceSource" xml:space="preserve"><value>Заменить исходный файл</value></data>
+  <data name="EncryptionMode.DecryptionTitle" xml:space="preserve"><value>Расшифровка защищённых файлов</value></data>
+  <data name="EncryptionMode.DecryptionPrompt" xml:space="preserve"><value>Выберите, как сохранить результат расшифровки:</value></data>
+  <data name="EncryptionMode.SaveDecryptedCopy" xml:space="preserve"><value>Сохранить расшифрованную копию и оставить защищённый исходник</value></data>
+  <data name="EncryptionMode.ReplaceEncryptedSource" xml:space="preserve"><value>Заменить защищённый исходник расшифрованным файлом</value></data>
+  <data name="EncryptionMode.DecryptionWarning" xml:space="preserve"><value>Расшифрованный результат будет храниться без защиты.</value></data>
   <data name="Progress.Canceling" xml:space="preserve"><value>Отмена операции…</value></data>
   <data name="Favorites.ErrorTitle" xml:space="preserve"><value>Ошибка избранного</value></data>
   <data name="Favorites.AddFailed" xml:space="preserve"><value>Не удалось добавить директорию:{0}{1}</value></data>
@@ -782,4 +790,23 @@
   <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Заменить</value></data>
   <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Пропустить</value></data>
   <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Сохранить оба</value></data>
+  <data name="DecryptionOptions.Title" xml:space="preserve"><value>Расшифровка документа</value></data>
+  <data name="DecryptionOptions.FormatSectionTitle" xml:space="preserve"><value>Формат результата</value></data>
+  <data name="DecryptionOptions.TargetSectionTitle" xml:space="preserve"><value>Способ сохранения</value></data>
+  <data name="DecryptionOptions.FormatRtf" xml:space="preserve"><value>RTF — для открытия в других приложениях (рекомендуется)</value></data>
+  <data name="DecryptionOptions.FormatPlainText" xml:space="preserve"><value>Обычный текст TXT — только текст</value></data>
+  <data name="DecryptionOptions.FormatOriginalXamlPackage" xml:space="preserve"><value>XAML Package — точное сохранение, внутренний технический формат CryptoBook</value></data>
+  <data name="DecryptionOptions.FormatOriginal" xml:space="preserve"><value>Исходный формат {0} — точное сохранение</value></data>
+  <data name="DecryptionOptions.FormatOriginalOnly" xml:space="preserve"><value>Исходный формат — единственный доступный вариант</value></data>
+  <data name="DecryptionOptions.RtfWarning" xml:space="preserve"><value>Некоторые специфичные возможности CryptoBook могут быть преобразованы или утрачены в RTF.</value></data>
+  <data name="DecryptionOptions.PlainTextWarning" xml:space="preserve"><value>При сохранении в TXT безвозвратно теряются:
+• форматирование;
+• изображения и встроенные объекты;
+• структура таблиц и списков;
+• адреса гиперссылок и закладки.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceWarning" xml:space="preserve"><value>При замене защищённого источника на TXT эти потери станут необратимыми.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceTitle" xml:space="preserve"><value>Подтверждение необратимого экспорта</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>Защищённый источник будет удалён только после успешного сохранения TXT. Форматирование, изображения, встроенные объекты, структура таблиц и списков, адреса гиперссылок и закладки не подлежат восстановлению.{0}{0}{1}{0}{0}Продолжить?</value></data>
+  <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>Это содержимое нельзя преобразовать. Восстановите его в исходном формате.</value></data>
+  <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не удалось преобразовать и опубликовать расшифрованный документ: {0}</value></data>
 </root>
