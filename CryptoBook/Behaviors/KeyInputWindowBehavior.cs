@@ -251,6 +251,7 @@ namespace CryptoBook.Behaviors
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
             ClearPasswordBoxes();
+            SetDialogResult(accepted: false);
             AssociatedObject.DialogResult = false;
             AssociatedObject.Close();
         }
@@ -359,6 +360,7 @@ namespace CryptoBook.Behaviors
 
                 KeyProvider.SetKey(password);
 
+                SetDialogResult(accepted: true);
                 AssociatedObject.DialogResult = true;
                 AssociatedObject.Close();
             } finally
@@ -370,6 +372,17 @@ namespace CryptoBook.Behaviors
 
                 ClearPasswordBoxes();
             }
+        }
+
+        private void SetDialogResult(bool accepted)
+        {
+            if(AssociatedObject.DataContext is not IKeyInputViewModel viewModel)
+            {
+                throw new InvalidOperationException(
+                    "Окно ввода ключа не содержит IKeyInputViewModel.");
+            }
+
+            viewModel.SetResult(accepted);
         }
 
         /// <summary>

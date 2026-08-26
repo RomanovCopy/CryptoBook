@@ -25,9 +25,15 @@ namespace CryptoBook.Services
             if(keyProvider.HasKey)
                 return true;
 
+            return RequestKey();
+        }
+
+        public bool RequestKey()
+        {
             Guid windowId = windowManager.CreateWindow<KeyInputWindow>();
             windowManager.ShowWindowDialog(windowId);
-            return keyProvider.HasKey;
+            return windowManager.GetResult<bool>(windowId) == true &&
+                keyProvider.HasKey;
         }
     }
 }

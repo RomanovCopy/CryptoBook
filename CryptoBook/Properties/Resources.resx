@@ -790,4 +790,23 @@
   <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Replace</value></data>
   <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Skip</value></data>
   <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Keep both</value></data>
+  <data name="DecryptionOptions.Title" xml:space="preserve"><value>Decrypt document</value></data>
+  <data name="DecryptionOptions.FormatSectionTitle" xml:space="preserve"><value>Result format</value></data>
+  <data name="DecryptionOptions.TargetSectionTitle" xml:space="preserve"><value>Save method</value></data>
+  <data name="DecryptionOptions.FormatRtf" xml:space="preserve"><value>RTF — for opening in other applications (recommended)</value></data>
+  <data name="DecryptionOptions.FormatPlainText" xml:space="preserve"><value>Plain text TXT — text only</value></data>
+  <data name="DecryptionOptions.FormatOriginalXamlPackage" xml:space="preserve"><value>XAML Package — exact preservation, CryptoBook internal technical format</value></data>
+  <data name="DecryptionOptions.FormatOriginal" xml:space="preserve"><value>Original {0} format — exact preservation</value></data>
+  <data name="DecryptionOptions.FormatOriginalOnly" xml:space="preserve"><value>Original format — the only available option</value></data>
+  <data name="DecryptionOptions.RtfWarning" xml:space="preserve"><value>Some CryptoBook-specific features may be converted or lost in RTF.</value></data>
+  <data name="DecryptionOptions.PlainTextWarning" xml:space="preserve"><value>TXT permanently removes:
+• formatting;
+• images and embedded objects;
+• table and list structure;
+• hyperlink addresses and bookmarks.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceWarning" xml:space="preserve"><value>Replacing the protected source with TXT makes these losses irreversible.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceTitle" xml:space="preserve"><value>Confirm irreversible text export</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>The protected source will be deleted only after TXT is saved successfully. Formatting, images, embedded objects, table and list structure, hyperlink addresses, and bookmarks cannot be recovered.{0}{0}{1}{0}{0}Continue?</value></data>
+  <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>This content cannot be converted. Restore it in its original format.</value></data>
+  <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Could not convert and publish the decrypted document: {0}</value></data>
 </root>

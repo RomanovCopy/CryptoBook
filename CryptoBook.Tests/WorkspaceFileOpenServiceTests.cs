@@ -95,6 +95,50 @@ namespace CryptoBook.Tests
             service.Dispose();
         }
 
+        [Fact]
+        public async Task ShellActivation_EncryptedFileAlwaysRequestsKey()
+        {
+            string sourcePath = Path.Combine(testDirectory, "secret.cbook");
+            await File.WriteAllBytesAsync(sourcePath, [9, 8, 7]);
+            var keyRequest = new KeyRequestStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(),
+                keyRequest,
+                new InternalFileOpenServiceStub(),
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub());
+
+            WorkspaceFileOpenResult result = await service
+                .OpenFromShellAsync(sourcePath);
+
+            Assert.True(result.Success);
+            Assert.Equal(0, keyRequest.CallCount);
+            Assert.Equal(1, keyRequest.RequestCallCount);
+        }
+
+        [Fact]
+        public async Task ShellActivation_PlainFileDoesNotRequestKey()
+        {
+            string sourcePath = Path.Combine(testDirectory, "notes.txt");
+            await File.WriteAllTextAsync(sourcePath, "plain");
+            var keyRequest = new KeyRequestStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                keyRequest,
+                new InternalFileOpenServiceStub(),
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub());
+
+            WorkspaceFileOpenResult result = await service
+                .OpenFromShellAsync(sourcePath);
+
+            Assert.True(result.Success);
+            Assert.Equal(0, keyRequest.CallCount);
+            Assert.Equal(0, keyRequest.RequestCallCount);
+        }
+
         [Theory]
         [InlineData(".png")]
         [InlineData(".mp4")]
@@ -709,10 +753,18 @@ namespace CryptoBook.Tests
             public Action? OnCall { get; init; }
             public bool Available { get; init; } = true;
             public int CallCount { get; private set; }
+            public int RequestCallCount { get; private set; }
 
             public bool EnsureKeyAvailable()
             {
                 CallCount++;
+                OnCall?.Invoke();
+                return Available;
+            }
+
+            public bool RequestKey()
+            {
+                RequestCallCount++;
                 OnCall?.Invoke();
                 return Available;
             }

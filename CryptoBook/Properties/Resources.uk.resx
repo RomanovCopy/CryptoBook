@@ -1613,4 +1613,23 @@
   <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Замінити</value></data>
   <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Пропустити</value></data>
   <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Зберегти обидва</value></data>
+  <data name="DecryptionOptions.Title" xml:space="preserve"><value>Розшифрування документа</value></data>
+  <data name="DecryptionOptions.FormatSectionTitle" xml:space="preserve"><value>Формат результату</value></data>
+  <data name="DecryptionOptions.TargetSectionTitle" xml:space="preserve"><value>Спосіб збереження</value></data>
+  <data name="DecryptionOptions.FormatRtf" xml:space="preserve"><value>RTF — для відкриття в інших програмах (рекомендовано)</value></data>
+  <data name="DecryptionOptions.FormatPlainText" xml:space="preserve"><value>Звичайний текст TXT — лише текст</value></data>
+  <data name="DecryptionOptions.FormatOriginalXamlPackage" xml:space="preserve"><value>XAML Package — точне збереження, внутрішній технічний формат CryptoBook</value></data>
+  <data name="DecryptionOptions.FormatOriginal" xml:space="preserve"><value>Початковий формат {0} — точне збереження</value></data>
+  <data name="DecryptionOptions.FormatOriginalOnly" xml:space="preserve"><value>Початковий формат — єдиний доступний варіант</value></data>
+  <data name="DecryptionOptions.RtfWarning" xml:space="preserve"><value>Деякі специфічні можливості CryptoBook можуть бути перетворені або втрачені в RTF.</value></data>
+  <data name="DecryptionOptions.PlainTextWarning" xml:space="preserve"><value>Під час збереження у TXT безповоротно втрачаються:
+• форматування;
+• зображення та вбудовані об’єкти;
+• структура таблиць і списків;
+• адреси гіперпосилань і закладки.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceWarning" xml:space="preserve"><value>У разі заміни захищеного джерела на TXT ці втрати стануть незворотними.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceTitle" xml:space="preserve"><value>Підтвердження незворотного експорту</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>Захищене джерело буде видалено лише після успішного збереження TXT. Форматування, зображення, вбудовані об’єкти, структура таблиць і списків, адреси гіперпосилань і закладки не підлягають відновленню.{0}{0}{1}{0}{0}Продовжити?</value></data>
+  <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>Цей вміст неможливо перетворити. Відновіть його в початковому форматі.</value></data>
+  <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не вдалося перетворити й опублікувати розшифрований документ: {0}</value></data>
 </root>
