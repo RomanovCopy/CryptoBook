@@ -64,6 +64,60 @@ namespace CryptoBook.Tests
                 result.Message);
         }
 
+        [Fact]
+        public async Task RemoteTextFile_IsPreviewedThroughContentSource()
+        {
+            var source = new StubContentSource(
+                encrypted: false,
+                hasKey: false,
+                content: "текст с Android");
+            var service = new FilePreviewService(source);
+            var file = new FileItem
+            {
+                Name = "notes",
+                FullPath = "mtp://opaque-object-id",
+                DisplayPath = @"Shared storage\Download\notes.txt",
+                Extension = ".txt",
+                Size = 32,
+                LastWriteTimeUtc = DateTime.UtcNow
+            };
+
+            FilePreviewContent result = await service.LoadAsync(file);
+
+            Assert.Equal(FilePreviewKind.Text, result.Kind);
+            Assert.Contains("Android", result.Text);
+            Assert.Same(file, source.LastFile);
+            Assert.Equal(1, source.OpenCount);
+        }
+
+        [Fact]
+        public async Task RemoteReadFailure_ReturnsDeviceSpecificMessage()
+        {
+            var source = new StubContentSource(
+                encrypted: false,
+                hasKey: false,
+                error: new IOException("device disconnected"));
+            var service = new FilePreviewService(source);
+            var file = new FileItem
+            {
+                Name = "photo",
+                FullPath = "mtp://opaque-object-id",
+                Extension = ".jpg",
+                Size = 1024,
+                LastWriteTimeUtc = DateTime.UtcNow
+            };
+
+            FilePreviewContent result = await service.LoadAsync(file);
+
+            Assert.Equal(FilePreviewKind.Error, result.Kind);
+            Assert.Equal(
+                LocalizationManager.Format(
+                    "Preview.RemoteDisplayFailed",
+                    Environment.NewLine,
+                    "device disconnected"),
+                result.Message);
+        }
+
         private static FileItem CreateEncryptedFile() => new()
         {
             Name = "secret.cbook",
@@ -93,16 +147,21 @@ namespace CryptoBook.Tests
 
             public bool HasDecryptionKey { get; }
             public int OpenCount { get; private set; }
+            public IFileItem? LastFile { get; private set; }
 
             public Task<bool> IsEncryptedAsync(
-                string path,
-                CancellationToken cancellationToken = default) =>
-                Task.FromResult(_encrypted);
-
-            public Task<Stream> OpenReadAsync(
-                string path,
+                IFileItem file,
                 CancellationToken cancellationToken = default)
             {
+                LastFile = file;
+                return Task.FromResult(_encrypted);
+            }
+
+            public Task<Stream> OpenReadAsync(
+                IFileItem file,
+                CancellationToken cancellationToken = default)
+            {
+                LastFile = file;
                 OpenCount++;
                 if(_error is not null)
                     throw _error;

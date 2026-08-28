@@ -13,6 +13,12 @@ namespace CryptoBook.DTO
     {
         public string FullPath { get => fullPath; set => SetProperty(ref fullPath, value); }
         string fullPath;
+        public string DisplayPath
+        {
+            get => string.IsNullOrWhiteSpace(displayPath) ? FullPath : displayPath;
+            set => SetProperty(ref displayPath, value);
+        }
+        string displayPath = string.Empty;
         public string RootDirectory { get => _rootDirectory; set => SetProperty(ref _rootDirectory, value); }
         string _rootDirectory;
 

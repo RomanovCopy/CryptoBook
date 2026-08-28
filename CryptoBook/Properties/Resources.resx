@@ -624,6 +624,7 @@
   <data name="Preview.SelectFile" xml:space="preserve"><value>Select a file to preview.</value></data>
   <data name="Preview.Creating" xml:space="preserve"><value>Creating preview…</value></data>
   <data name="Preview.DisplayFailed" xml:space="preserve"><value>Could not display the file:{0}{1}</value></data>
+  <data name="Preview.RemoteDisplayFailed" xml:space="preserve"><value>Could not load the file from the connected device for preview:{0}{1}</value></data>
   <data name="Preview.EncryptedNeedsKey" xml:space="preserve"><value>The file is encrypted. Enter the key to enable preview.</value></data>
   <data name="Preview.PdfUnsupported" xml:space="preserve"><value>Built-in PDF preview is not supported yet.</value></data>
   <data name="Preview.DetailsOnly" xml:space="preserve"><value>Only file details are available for this file type.</value></data>
@@ -809,4 +810,6 @@
   <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>The protected source will be deleted only after TXT is saved successfully. Formatting, images, embedded objects, table and list structure, hyperlink addresses, and bookmarks cannot be recovered.{0}{0}{1}{0}{0}Continue?</value></data>
   <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>This content cannot be converted. Restore it in its original format.</value></data>
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Could not convert and publish the decrypted document: {0}</value></data>
+  <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Permanent deletion</value></data>
+  <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Android deletion is usually irreversible and does not use the Recycle Bin. Permanently delete the selected items?</value></data>
 </root>

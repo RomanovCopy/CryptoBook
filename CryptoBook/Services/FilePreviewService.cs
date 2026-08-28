@@ -42,7 +42,7 @@ namespace CryptoBook.Services
             try
             {
                 bool encrypted = await _contentSource.IsEncryptedAsync(
-                    file.FullPath,
+                    file,
                     cancellationToken);
                 if(encrypted)
                 {
@@ -80,7 +80,9 @@ namespace CryptoBook.Services
                 return new FilePreviewContent(
                     FilePreviewKind.Error,
                     Message: LocalizationManager.Format(
-                        "Preview.DisplayFailed",
+                        file.Location.IsLocal
+                            ? "Preview.DisplayFailed"
+                            : "Preview.RemoteDisplayFailed",
                         Environment.NewLine,
                         ex.Message));
             }
@@ -102,7 +104,7 @@ namespace CryptoBook.Services
             {
                 // FileManager возвращает расшифрованный поток, если ключ уже установлен.
                 await using Stream stream = await _contentSource.OpenReadAsync(
-                    file.FullPath,
+                    file,
                     cancellationToken);
                 byte[] bytes = await ReadLimitedAsync(
                     stream,
@@ -170,7 +172,7 @@ namespace CryptoBook.Services
             CancellationToken cancellationToken)
         {
             await using Stream stream = await _contentSource.OpenReadAsync(
-                file.FullPath,
+                file,
                 cancellationToken);
             byte[] bytes = await ReadLimitedAsync(
                 stream,
@@ -199,7 +201,7 @@ namespace CryptoBook.Services
             }
 
             await using Stream stream = await _contentSource.OpenReadAsync(
-                file.FullPath,
+                file,
                 cancellationToken);
             byte[] bytes = await ReadLimitedAsync(
                 stream,

@@ -624,6 +624,7 @@
   <data name="Preview.SelectFile" xml:space="preserve"><value>Выберите файл для предварительного просмотра.</value></data>
   <data name="Preview.Creating" xml:space="preserve"><value>Создание предварительного просмотра…</value></data>
   <data name="Preview.DisplayFailed" xml:space="preserve"><value>Не удалось отобразить файл:{0}{1}</value></data>
+  <data name="Preview.RemoteDisplayFailed" xml:space="preserve"><value>Не удалось загрузить файл с подключённого устройства для предварительного просмотра:{0}{1}</value></data>
   <data name="Preview.EncryptedNeedsKey" xml:space="preserve"><value>Файл зашифрован. Введите ключ, чтобы включить предварительный просмотр.</value></data>
   <data name="Preview.PdfUnsupported" xml:space="preserve"><value>Встроенный просмотр PDF пока не поддерживается.</value></data>
   <data name="Preview.DetailsOnly" xml:space="preserve"><value>Для этого типа файла доступен только просмотр сведений.</value></data>
@@ -809,4 +810,6 @@
   <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>Защищённый источник будет удалён только после успешного сохранения TXT. Форматирование, изображения, встроенные объекты, структура таблиц и списков, адреса гиперссылок и закладки не подлежат восстановлению.{0}{0}{1}{0}{0}Продолжить?</value></data>
   <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>Это содержимое нельзя преобразовать. Восстановите его в исходном формате.</value></data>
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не удалось преобразовать и опубликовать расшифрованный документ: {0}</value></data>
+  <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Необратимое удаление</value></data>
+  <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Удаление через Android обычно необратимо и не использует Корзину. Навсегда удалить выбранные элементы?</value></data>
 </root>
