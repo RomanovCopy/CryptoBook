@@ -1337,6 +1337,9 @@
   <data name="Preview.DisplayFailed" xml:space="preserve">
     <value>Не вдалося відобразити файл:{0}{1}</value>
   </data>
+  <data name="Preview.RemoteDisplayFailed" xml:space="preserve">
+    <value>Не вдалося завантажити файл із підключеного пристрою для попереднього перегляду:{0}{1}</value>
+  </data>
   <data name="Preview.EncryptedNeedsKey" xml:space="preserve">
     <value>Файл зашифрований. Введіть ключ, щоб увімкнути попередній перегляд.</value>
   </data>
@@ -1632,4 +1635,6 @@
   <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>Захищене джерело буде видалено лише після успішного збереження TXT. Форматування, зображення, вбудовані об’єкти, структура таблиць і списків, адреси гіперпосилань і закладки не підлягають відновленню.{0}{0}{1}{0}{0}Продовжити?</value></data>
   <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>Цей вміст неможливо перетворити. Відновіть його в початковому форматі.</value></data>
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не вдалося перетворити й опублікувати розшифрований документ: {0}</value></data>
+  <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Незворотне видалення</value></data>
+  <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Видалення через Android зазвичай незворотне й не використовує Кошик. Назавжди видалити вибрані елементи?</value></data>
 </root>

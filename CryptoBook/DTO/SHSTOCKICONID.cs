@@ -14,6 +14,7 @@ namespace CryptoBook.DTO
         SIID_FOLDER = 3,
         SIID_FOLDEROPEN = 4,
 
+        SIID_DRIVEREMOVE = 7,
         SIID_DRIVEFIXED = 8,
         SIID_DRIVECD = 11,
 
@@ -23,5 +24,7 @@ namespace CryptoBook.DTO
 
         SIID_RENAME = 83,
         SIID_DELETE = 84,
+
+        SIID_DEVICECELLPHONE = 99,
     }
 }

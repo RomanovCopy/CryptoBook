@@ -190,6 +190,59 @@ public sealed class FileExplorerArchitectureTests
         Assert.Contains("normalizedPath[localPrefix.Length..]", pickerSource);
     }
 
+    [Fact]
+    public void ExplorerAndCoordinator_DoNotInterpretProviderLocatorsAsNativePaths()
+    {
+        string modelSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Models",
+            "FileExplorerModel.cs"));
+        string coordinatorSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Services",
+            "FileOperationCoordinator.cs"));
+
+        foreach(string source in new[] { modelSource, coordinatorSource })
+        {
+            Assert.DoesNotContain("Path.Get", source);
+            Assert.DoesNotContain("Path.Combine", source);
+            Assert.DoesNotContain("Path.Exists", source);
+            Assert.DoesNotContain("File.Exists", source);
+            Assert.DoesNotContain("Directory.Exists", source);
+        }
+        Assert.Contains("IStorageFacade", modelSource);
+        Assert.Contains("IStorageFacade", coordinatorSource);
+    }
+
+    [Fact]
+    public void AndroidDeletion_RequiresExplicitPermanentDeleteConfirmation()
+    {
+        string modelSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Models",
+            "FileExplorerModel.cs"));
+
+        Assert.Contains("item => !item.Location.IsLocal", modelSource);
+        Assert.Contains("Explorer.PermanentDeleteAndroidWarning", modelSource);
+        Assert.Contains("ShowConfirmation(confirmationId)", modelSource);
+    }
+
+    [Fact]
+    public void SelectedStatus_UsesHumanReadableDisplayPath()
+    {
+        string viewSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Views",
+            "FileExplorer.xaml"));
+
+        Assert.Contains(
+            "SelectedItem.DisplayPath, ElementName=listview",
+            viewSource);
+        Assert.DoesNotContain(
+            "SelectedItem.FullPath, ElementName=listview",
+            viewSource);
+    }
+
     private static void AssertConstructorUsesWorkspaceOpener(Type type)
     {
         ConstructorInfo constructor = Assert.Single(type.GetConstructors());

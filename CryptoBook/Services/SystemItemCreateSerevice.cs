@@ -39,6 +39,7 @@ namespace CryptoBook.Services
             root.RootDirectory = sourceDrive.RootDirectory.ToString();
             root.TotalSize = sourceDrive.TotalSize;
             root.FullPath = sourceDrive.RootDirectory.FullName;
+            root.DisplayPath = root.FullPath;
             root.LastWriteTimeUtc = sourceDrive.RootDirectory.LastWriteTimeUtc.ToLocalTime();
             return root;
         }
@@ -54,6 +55,7 @@ namespace CryptoBook.Services
             var dir = _scope.Resolve<IDirectoryItem>();
             dir.Name = dirInfo.Name;
             dir.FullPath = dirInfo.FullName;
+            dir.DisplayPath = dir.FullPath;
             dir.Parent = parent;
             dir.LastWriteTimeUtc = dirInfo.LastWriteTimeUtc.ToLocalTime();
             dir.RootDirectory = dirInfo.Root.FullName;
@@ -78,9 +80,85 @@ namespace CryptoBook.Services
             file.IsReadOnly = fileInfo.IsReadOnly;
             file.Parent = parent;
             file.FullPath = fileInfo.FullName;
+            file.DisplayPath = file.FullPath;
             file.RootDirectory = fileInfo.Directory?.Root.FullName ?? string.Empty;
             file.LastWriteTimeUtc = fileInfo.LastWriteTimeUtc.ToLocalTime();
             return file;
+        }
+
+        public IDriveItem CreateRoot(StorageItemMetadata metadata)
+        {
+            ArgumentNullException.ThrowIfNull(metadata);
+            if(metadata.Kind != StorageItemKind.Root)
+                throw new ArgumentException("Metadata does not describe a root.", nameof(metadata));
+
+            var root = _scope.Resolve<IDriveItem>();
+            root.Name = metadata.Name;
+            root.FullPath = metadata.Location.ToString();
+            root.DisplayPath = metadata.DisplayPath ?? root.FullPath;
+            root.RootDirectory = metadata.Location.IsLocal
+                ? root.FullPath
+                : metadata.Name;
+            root.LastWriteTimeUtc = metadata.LastWriteTimeUtc?.ToLocalTime() ?? DateTime.MinValue;
+            root.Capabilities = metadata.Capabilities;
+            root.StatusText = metadata.StatusText;
+            root.VolumeLabel = metadata.Location.IsLocal
+                ? metadata.Name
+                : metadata.DisplayPath ?? "Shared storage";
+            root.DriveFormat = metadata.Location.IsLocal
+                ? metadata.Location.ProviderId.ToUpperInvariant()
+                : $"{metadata.Location.ProviderId.ToUpperInvariant()} • {metadata.StatusText}";
+            root.DriveType = DriveType.Removable;
+            root.TotalSize = Math.Max(0, metadata.Size);
+            return root;
+        }
+
+        public IDirectoryItem CreateDirectory(
+            StorageItemMetadata metadata,
+            ISystemItem parent)
+        {
+            ArgumentNullException.ThrowIfNull(metadata);
+            ArgumentNullException.ThrowIfNull(parent);
+            if(!metadata.IsContainer)
+                throw new ArgumentException("Metadata does not describe a container.", nameof(metadata));
+
+            var directory = _scope.Resolve<IDirectoryItem>();
+            ApplyMetadata(directory, metadata, parent);
+            return directory;
+        }
+
+        public IFileItem CreateFile(
+            StorageItemMetadata metadata,
+            ISystemItem parent)
+        {
+            ArgumentNullException.ThrowIfNull(metadata);
+            ArgumentNullException.ThrowIfNull(parent);
+            if(metadata.Kind != StorageItemKind.File)
+                throw new ArgumentException("Metadata does not describe a file.", nameof(metadata));
+
+            var file = _scope.Resolve<IFileItem>();
+            ApplyMetadata(file, metadata, parent);
+            file.Name = Path.GetFileNameWithoutExtension(metadata.Name);
+            file.Extension = Path.GetExtension(metadata.Name);
+            file.IsHidden = metadata.IsHidden;
+            file.IsReadOnly = metadata.IsReadOnly;
+            return file;
+        }
+
+        private static void ApplyMetadata(
+            ISystemItem item,
+            StorageItemMetadata metadata,
+            ISystemItem parent)
+        {
+            item.Name = metadata.Name;
+            item.FullPath = metadata.Location.ToString();
+            item.DisplayPath = metadata.DisplayPath ?? item.FullPath;
+            item.RootDirectory = parent.RootDirectory;
+            item.Size = metadata.Size;
+            item.LastWriteTimeUtc = metadata.LastWriteTimeUtc?.ToLocalTime() ?? DateTime.MinValue;
+            item.Parent = parent;
+            item.Capabilities = metadata.Capabilities;
+            item.StatusText = metadata.StatusText;
         }
 
 

@@ -118,6 +118,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<BytesToGbConverter>().AsSelf();
             builder.RegisterType<ExtensionToIconConverter>().AsSelf();
             builder.RegisterType<PathToIconConverter>().AsSelf();
+            builder.RegisterType<SystemItemToIconConverter>().AsSelf();
             builder.RegisterType<PercentToGridLengthConverter>().AsSelf();
             builder.RegisterType<StockIconIdToImageSourceConverter>().AsSelf();
             builder.RegisterType<TypeCheckConverter>().AsSelf();
@@ -257,6 +258,33 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksService>().As<IBookmarkService>().SingleInstance();
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
             builder.RegisterType<FileClipboardService>().As<IFileClipboardService>().SingleInstance();
+            builder.RegisterType<LocalStorageProvider>()
+                .As<IStorageProvider>()
+                .SingleInstance();
+            builder.RegisterType<LocalFileSystemFacade>()
+                .As<ILocalFileSystemFacade>()
+                .SingleInstance();
+            builder.RegisterType<WindowsPortableDeviceBridge>()
+                .As<IWpdStorageBridge>()
+                .SingleInstance();
+            builder.RegisterType<WpdStorageProvider>()
+                .AsSelf()
+                .As<IStorageProvider>()
+                .SingleInstance();
+            builder.RegisterType<AdbAndroidStorageBridge>()
+                .As<IAndroidStorageBridge>()
+                .As<IAndroidDeviceDiscovery>()
+                .SingleInstance();
+            builder.RegisterType<AndroidStorageProvider>()
+                .AsSelf()
+                .As<IStorageProvider>()
+                .SingleInstance();
+            builder.RegisterType<StorageFacade>()
+                .As<IStorageFacade>()
+                .SingleInstance();
+            builder.RegisterType<TransferEngine>()
+                .As<ITransferEngine>()
+                .SingleInstance();
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
             builder.RegisterType<FileExplorerFlatViewService>()
                 .As<IFileExplorerFlatViewService>()
@@ -280,6 +308,12 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<TextInputService>().As<ITextInputService>().SingleInstance();
             builder.RegisterType<FileProviderService>().As<IFileProviderService>().SingleInstance();
+            builder.RegisterType<AndroidFileProviderAdapter>()
+                .As<IFileProviderService>()
+                .SingleInstance();
+            builder.RegisterType<WpdFileProviderAdapter>()
+                .As<IFileProviderService>()
+                .SingleInstance();
             builder.RegisterType<CommandService>().As<ICommandService>().SingleInstance();
             builder.RegisterType<FileCreationService>().As<IFileCreationService>().SingleInstance();
             builder.RegisterType<FileExplorerService>()

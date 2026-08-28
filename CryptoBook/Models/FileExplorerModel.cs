@@ -23,6 +23,8 @@ namespace CryptoBook.Models
     {
         private readonly SemaphoreSlim _gate = new(1, 1);
         private readonly IFileManagerService _fileManagerService;
+        private readonly IStorageFacade _storage;
+        private readonly ILocalFileSystemFacade _localFiles;
         private readonly IWindowManager _windowManager;
         private readonly IDriveManagerService _driveManagerService;
         private readonly IFileClipboardService _fileClipboardService;
@@ -117,10 +119,12 @@ namespace CryptoBook.Models
 
 
         public FileExplorerModel(IFileManagerService? fileManagerService, IDriveManagerService? driveManagerService,
-            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileSecurityService fileSecurityService, IDecryptionExportService decryptionExportService, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IViewRenderSynchronizationService viewRenderSynchronizationService, IFileOperationCoordinator fileOperationCoordinator, IWorkspaceFileOpenService fileOpenService, IFileLauncherService fileLauncherService, IDocumentSession documentSession, IPinnedDocumentService pinnedDocumentService, IRecentDocumentService? recentDocumentService = null)
+            IWindowManager? windowManager, IFileClipboardService fileClipboardService, IFolderPickerService folderPickerService, IMessageService messageService, IKeyProvider keyProvider, IFileSecurityService fileSecurityService, IDecryptionExportService decryptionExportService, ISystemItemCreateService systemItemCreateService, IProgressDialogService progressDialogService, IViewRenderSynchronizationService viewRenderSynchronizationService, IFileOperationCoordinator fileOperationCoordinator, IWorkspaceFileOpenService fileOpenService, IFileLauncherService fileLauncherService, IDocumentSession documentSession, IPinnedDocumentService pinnedDocumentService, IRecentDocumentService? recentDocumentService = null, IStorageFacade? storageFacade = null, ILocalFileSystemFacade? localFileSystem = null)
         {
             WindowId = Guid.NewGuid();
             _fileManagerService = fileManagerService ?? throw new ArgumentNullException(nameof(fileManagerService));
+            _storage = storageFacade ?? new StorageFacade([new LocalStorageProvider()]);
+            _localFiles = localFileSystem ?? new LocalFileSystemFacade();
             _driveManagerService = driveManagerService ?? throw new ArgumentNullException(nameof(driveManagerService));
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
             _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
@@ -148,7 +152,7 @@ namespace CryptoBook.Models
         public bool CanExecute_ForwardCommand(object? obj) => _navigationHistory.CanGoForward;
         public bool CanExecute_UpCommand(object? obj) =>
             !string.IsNullOrWhiteSpace(CurrentPath) &&
-            Path.GetDirectoryName(CurrentPath) is not null;
+            _storage.GetParent(_storage.Resolve(CurrentPath)) is not null;
         public bool CanExecute_ApplyAddressCommand(object? obj) =>
             !string.IsNullOrWhiteSpace(AddressText);
         public bool CanExecute_RetryNavigationCommand(object? obj) =>
@@ -156,34 +160,46 @@ namespace CryptoBook.Models
             !string.IsNullOrWhiteSpace(CurrentPath);
         public bool CanExecute_CurrentDocumentCommand(object? obj) =>
             !string.IsNullOrWhiteSpace(_documentSession.FilePath) &&
-            Path.GetDirectoryName(_documentSession.FilePath) is not null;
+            _storage.GetParent(_storage.Resolve(_documentSession.FilePath)) is not null;
         public bool CanExecute_OpenCommand(object? obj) =>
             !IsCurrentDirectoryUnavailable &&
-            FileExplorerSelectionPolicy.IsSingle(obj);
+            GetSingleSelection(obj) is ISystemItem item &&
+            (item is IContainerSystemItem
+                ? Supports(item, StorageProviderCapabilities.Browse)
+                : Supports(item, StorageProviderCapabilities.OpenExternally));
         public bool CanExecute_OpenWithCommand(object? obj) =>
             !IsCurrentDirectoryUnavailable &&
-            GetSingleSelection(obj) is IFileItem;
+            GetSingleSelection(obj) is IFileItem item &&
+            Supports(item, StorageProviderCapabilities.OpenExternally);
         public bool CanExecute_RevealInExplorerCommand(object? obj) =>
             !IsCurrentDirectoryUnavailable &&
-            FileExplorerSelectionPolicy.IsSingle(obj);
+            GetSingleSelection(obj) is ISystemItem item && item.Location.IsLocal;
         public bool CanExecute_CopyPathCommand(object? obj) =>
             !IsCurrentDirectoryUnavailable &&
             FileExplorerSelectionPolicy.NormalizeForOperation(obj).Count > 0;
         public bool CanExecute_CutCommand(object? obj) =>
-            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(obj);
+            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(
+                obj,
+                StorageProviderCapabilities.Read | StorageProviderCapabilities.Delete);
         public bool CanExecute_CopyCommand(object? obj) =>
-            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(obj);
+            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(
+                obj,
+                StorageProviderCapabilities.Read);
         public bool CanExecute_PasteCommand(object? obj)
         {
             if(!IsCurrentDirectoryUnavailable &&
-               !string.IsNullOrEmpty(CurrentPath))
+               !string.IsNullOrEmpty(CurrentPath) &&
+               SelectedItem is ISystemItem target &&
+               Supports(target, StorageProviderCapabilities.Write))
             {
                 return _fileClipboardService.GetData().SourcePaths.Count > 0;
             }
             return false;
         }
         public bool CanExecute_DeleteCommand(object? obj) =>
-            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(obj);
+            !IsCurrentDirectoryUnavailable && CanExecuteMultiItemOperation(
+                obj,
+                StorageProviderCapabilities.Delete);
         public bool CanExecute_SortedCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
@@ -197,28 +213,35 @@ namespace CryptoBook.Models
         public bool CanExecute_DecryptCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
-                _keyProvider.HasKey && CanExecuteMultiItemOperation(obj);
+                _keyProvider.HasKey && CanExecuteMultiItemOperation(
+                    obj,
+                    StorageProviderCapabilities.Encrypt);
         }
         public bool CanExecute_EncryptCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
-                _keyProvider.HasKey && CanExecuteMultiItemOperation(obj);
+                _keyProvider.HasKey && CanExecuteMultiItemOperation(
+                    obj,
+                    StorageProviderCapabilities.Encrypt);
         }
         public bool CanExecute_CreateFileCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
-                SelectedItem is IContainerSystemItem;
+                SelectedItem is IContainerSystemItem container &&
+                Supports(container, StorageProviderCapabilities.Write);
         }
         public bool CanExecute_CreateDirectoryCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
-                SelectedItem is IContainerSystemItem;
+                SelectedItem is IContainerSystemItem container &&
+                Supports(container, StorageProviderCapabilities.CreateContainer);
         }
         public bool CanExecute_RenameClickCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
                    GetSingleSelection(obj) is ISystemItem item &&
                    item is not IDriveItem &&
+                   Supports(item, StorageProviderCapabilities.Rename) &&
                    !item.IsEditing;
         }
         public bool CanExecute_RenameCommand(object? obj)
@@ -229,6 +252,11 @@ namespace CryptoBook.Models
         {
             return !IsCurrentDirectoryUnavailable &&
                    CanExecuteMultiItemOperation(obj) &&
+                   FileExplorerSelectionPolicy.NormalizeForOperation(obj)
+                       .All(item => Supports(
+                           item,
+                           StorageProviderCapabilities.Read |
+                           StorageProviderCapabilities.Delete)) &&
                    FileExplorerSelectionPolicy.NormalizeForOperation(obj)
                        .All(item => item.Parent is not null);
         }
@@ -245,10 +273,12 @@ namespace CryptoBook.Models
             {
                 foreach(string sourcePath in request.SourcePaths)
                 {
-                    FileOperationCoordinator.ValidateDestination(
-                        sourcePath,
-                        request.DestinationDirectory,
-                        Directory.Exists(GetNativePath(sourcePath)));
+                    StorageLocation source = _storage.Resolve(sourcePath);
+                    StorageLocation destination = _storage.Resolve(
+                        request.DestinationDirectory);
+                    if(_storage.AreEquivalent(source, destination) ||
+                       _storage.IsDescendant(source, destination))
+                        return false;
                 }
 
                 return true;
@@ -301,13 +331,13 @@ namespace CryptoBook.Models
 
         public async void Execute_UpCommand(object? obj)
         {
-            string? parentPath = string.IsNullOrWhiteSpace(CurrentPath)
+            StorageLocation? parent = string.IsNullOrWhiteSpace(CurrentPath)
                 ? null
-                : Path.GetDirectoryName(CurrentPath);
-            if(parentPath is not null)
+                : _storage.GetParent(_storage.Resolve(CurrentPath));
+            if(parent is not null)
             {
                 await NavigateAsync(
-                    parentPath,
+                    _storage.Format(parent.Value),
                     FileExplorerNavigationMode.Standard);
             }
         }
@@ -337,14 +367,14 @@ namespace CryptoBook.Models
         public async void Execute_CurrentDocumentCommand(object? obj)
         {
             string? filePath = _documentSession.FilePath;
-            string? directoryPath = string.IsNullOrWhiteSpace(filePath)
+            StorageLocation? directory = string.IsNullOrWhiteSpace(filePath)
                 ? null
-                : Path.GetDirectoryName(filePath);
-            if(filePath is null || directoryPath is null)
+                : _storage.GetParent(_storage.Resolve(filePath));
+            if(filePath is null || directory is null)
                 return;
 
             bool navigated = await NavigateAsync(
-                directoryPath,
+                _storage.Format(directory.Value),
                 FileExplorerNavigationMode.Standard);
             if(!navigated || SelectedItem is not IContainerSystemItem container)
                 return;
@@ -479,6 +509,16 @@ namespace CryptoBook.Models
             if(items.Count == 0)
                 return;
 
+            if(items.Any(item => !item.Location.IsLocal))
+            {
+                Guid confirmationId = await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.PermanentDeleteTitle"),
+                    LocalizationManager.GetString("Explorer.PermanentDeleteAndroidWarning"),
+                    true);
+                if(!_messageService.ShowConfirmation(confirmationId))
+                    return;
+            }
+
             try
             {
                 FileOperationBatchResult result = await _fileOperationCoordinator.DeleteAsync(
@@ -574,8 +614,11 @@ namespace CryptoBook.Models
                 return;
             }
 
-            string directoryPath = Path.Combine(container.FullPath, directoryName);
-            if(Path.Exists(directoryPath))
+            StorageLocation directoryLocation = _storage.GetChild(
+                _storage.Resolve(container.FullPath),
+                directoryName);
+            string directoryPath = _storage.Format(directoryLocation);
+            if(await _storage.GetMetadataAsync(directoryLocation) is not null)
             {
                 _ = await _messageService.ShowMessage(
                     LocalizationManager.GetString(
@@ -598,7 +641,13 @@ namespace CryptoBook.Models
             }
 
             // После успешного создания на диске добавляем представление в текущий контейнер.
-            var directoryItem = _systemItemCreateService.CreateDirectory(directoryPath, container);
+            StorageItemMetadata metadata = await _storage.GetMetadataAsync(
+                directoryLocation) ?? new StorageItemMetadata(
+                    directoryLocation,
+                    directoryName,
+                    StorageItemKind.Container,
+                    Capabilities: _storage.GetCapabilities(directoryLocation));
+            var directoryItem = _systemItemCreateService.CreateDirectory(metadata, container);
             await container.AddChildAsync( [directoryItem], item => item.FullPath, CancellationToken.None);
             await container.SortingAsync( SystemItemSortType.Name, 0, CancellationToken.None);
         }
@@ -632,36 +681,25 @@ namespace CryptoBook.Models
             {
                 if(!systemItem.IsEditing)
                     return;
-                if(string.IsNullOrWhiteSpace(systemItem.Name) || systemItem.FullPath.Equals(System.IO.Path.Combine(systemItem.RootDirectory, systemItem.Name), StringComparison.OrdinalIgnoreCase))
+                if(string.IsNullOrWhiteSpace(systemItem.Name))
                 {
                     systemItem.Name = _lastItemName;
                     return;
                 }
                 //выполняем переименование
                 string oldPath = systemItem.FullPath;
-                string? directory = Path.GetDirectoryName(oldPath);
-                string? newPath = string.IsNullOrWhiteSpace(directory)
+                StorageLocation? directory = _storage.GetParent(
+                    _storage.Resolve(oldPath));
+                string? newPath = directory is null
                     ? null
-                    : Path.Combine(directory, systemItem.Name);
+                    : _storage.Format(_storage.GetChild(
+                        directory.Value,
+                        systemItem.Name));
                 var res = await _fileManagerService.RenameAsync(oldPath, systemItem.Name, CancellationToken.None);
                 if(res.Success)
                 {
-                    if(IsFlatViewEnabled)
-                    {
-                        if(!string.IsNullOrWhiteSpace(newPath))
-                            systemItem.FullPath = newPath;
-                    }
-                    else
-                    {
-                        systemItem.Parent = SelectedItem;
-                        if(systemItem.Parent is IContainerSystemItem parentSystemItem)
-                        {
-                            res = await parentSystemItem.RenameChildAsync(
-                                systemItem,
-                                systemItem.Name,
-                                CancellationToken.None);
-                        }
-                    }
+                    if(!string.IsNullOrWhiteSpace(newPath))
+                        systemItem.FullPath = newPath;
 
                     if(res.Success && !string.IsNullOrWhiteSpace(newPath))
                         await SynchronizeRenamedDocumentAsync(oldPath, newPath);
@@ -719,10 +757,15 @@ namespace CryptoBook.Models
 
             try
             {
-                return string.Equals(
-                    NormalizePath(left),
-                    NormalizePath(right),
-                    StringComparison.OrdinalIgnoreCase);
+                StorageLocation leftLocation = StorageLocation.Parse(left);
+                StorageLocation rightLocation = StorageLocation.Parse(right);
+                return leftLocation.ProviderId.Equals(
+                        rightLocation.ProviderId,
+                        StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(
+                        leftLocation.OpaqueId.TrimEnd('\\', '/'),
+                        rightLocation.OpaqueId.TrimEnd('\\', '/'),
+                        StringComparison.OrdinalIgnoreCase);
             }
             catch(Exception exception) when(
                 exception is ArgumentException or NotSupportedException)
@@ -739,7 +782,8 @@ namespace CryptoBook.Models
             try
             {
                 string? destinationDirectory = await _folderPickerService.PickFolderAsync(
-                    items[0].Parent?.FullPath ?? Path.GetDirectoryName(items[0].FullPath),
+                    items[0].Parent?.FullPath ?? _storage.GetParent(
+                        items[0].Location)?.ToString(),
                     CancellationToken.None);
                 if(string.IsNullOrWhiteSpace(destinationDirectory))
                     return;
@@ -876,7 +920,6 @@ namespace CryptoBook.Models
                 return false;
             }
 
-            string nativePath = GetNativePath(path);
             var lockTaken = false;
             try
             {
@@ -888,7 +931,12 @@ namespace CryptoBook.Models
                 await _gate.WaitAsync(token);
                 lockTaken = true;
 
-                string targetPath = NormalizePath(nativePath);
+                StorageLocation requestedLocation = _storage.Resolve(path);
+                StorageItemMetadata? targetMetadata = await _storage.GetMetadataAsync(
+                    requestedLocation,
+                    token);
+                string targetPath = _storage.Format(
+                    targetMetadata?.Location ?? requestedLocation);
                 IContainerSystemItem container = await ResolveDirectoryContainerAsync(
                     targetPath,
                     token);
@@ -945,10 +993,10 @@ namespace CryptoBook.Models
             catch(Exception ex)
             {
                 await HandleNavigationFailureAsync(
-                    nativePath,
+                    path,
                     FileExplorerNavigationErrorClassifier.Classify(
                         ex,
-                        nativePath));
+                        path));
                 return false;
             }
             finally
@@ -985,37 +1033,31 @@ namespace CryptoBook.Models
             string path,
             CancellationToken cancellationToken)
         {
-            string fullPath = Path.GetFullPath(path);
-            string rootPath = Path.GetPathRoot(fullPath)
+            StorageLocation target = _storage.Resolve(path);
+            var ancestry = new Stack<StorageLocation>();
+            StorageLocation rootLocation = target;
+            StorageLocation? parent;
+            while((parent = _storage.GetParent(rootLocation)) is not null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                ancestry.Push(rootLocation);
+                rootLocation = parent.Value;
+            }
+
+            IContainerSystemItem root = GetDrives
+                .OfType<IContainerSystemItem>()
+                .FirstOrDefault(item => _storage.AreEquivalent(
+                    _storage.Resolve(item.FullPath),
+                    rootLocation))
                 ?? throw new DirectoryNotFoundException(
                     LocalizationManager.Format(
                         "Explorer.RootPathNotFound",
                         path));
 
-            IContainerSystemItem root = GetDrives
-                .OfType<IContainerSystemItem>()
-                .FirstOrDefault(item =>
-                    string.Equals(
-                        NormalizePath(item.FullPath),
-                        NormalizePath(rootPath),
-                        StringComparison.OrdinalIgnoreCase))
-                ?? throw new DirectoryNotFoundException(rootPath);
-
-            string relativePath = Path.GetRelativePath(rootPath, fullPath);
-            if(relativePath == ".")
-                return root;
-
             IContainerSystemItem current = root;
-            string currentPath = rootPath;
-            foreach(string segment in relativePath.Split(
-                new[]
-                {
-                    Path.DirectorySeparatorChar,
-                    Path.AltDirectorySeparatorChar
-                },
-                StringSplitOptions.RemoveEmptyEntries))
+            while(ancestry.Count > 0)
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                StorageLocation childLocation = ancestry.Pop();
                 FileOperationResult loadResult = await ContainerLoad(
                     current,
                     cancellationToken);
@@ -1023,37 +1065,16 @@ namespace CryptoBook.Models
                     throw new IOException(loadResult.ErrorMessage);
 
                 current.IsExpanded = true;
-                currentPath = Path.Combine(currentPath, segment);
                 IContainerSystemItem? existing = current.Children
                     .OfType<IContainerSystemItem>()
-                    .FirstOrDefault(item =>
-                        string.Equals(
-                            NormalizePath(item.FullPath),
-                            NormalizePath(currentPath),
-                            StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(item => _storage.AreEquivalent(
+                        _storage.Resolve(item.FullPath),
+                        childLocation));
 
                 if(existing is null)
                 {
-                    existing = _systemItemCreateService.CreateDirectory(
-                        currentPath,
-                        current);
-                    FileOperationResult addResult = await current.AddChildAsync(
-                        [existing],
-                        item => item.FullPath,
-                        cancellationToken);
-                    if(!addResult.Success)
-                    {
-                        // Наблюдатель мог добавить тот же каталог между
-                        // поиском и AddChildAsync — используем его экземпляр.
-                        existing = current.Children
-                            .OfType<IContainerSystemItem>()
-                            .FirstOrDefault(item =>
-                                string.Equals(
-                                    NormalizePath(item.FullPath),
-                                    NormalizePath(currentPath),
-                                    StringComparison.OrdinalIgnoreCase))
-                            ?? throw new IOException(addResult.ErrorMessage);
-                    }
+                    throw new DirectoryNotFoundException(
+                        _storage.Format(childLocation));
                 }
 
                 current = existing;
@@ -1172,12 +1193,16 @@ namespace CryptoBook.Models
             {
                 switch(item)
                 {
-                    case IContainerSystemItem container:
+                    case IContainerSystemItem container when Supports(
+                        container,
+                        StorageProviderCapabilities.Browse):
                         await NavigateAsync(
                             container.FullPath,
                             FileExplorerNavigationMode.Standard);
                         break;
-                    case IFileItem file when !file.IsEditing:
+                    case IFileItem file when !file.IsEditing && Supports(
+                        file,
+                        StorageProviderCapabilities.OpenExternally):
                         await OpenFileAsync(file, _cancellationTokenSource.Token);
                         break;
                 }
@@ -1318,16 +1343,15 @@ namespace CryptoBook.Models
 
             // FileSystemWatcher может успеть добавить элементы между BrowseAsync
             // и пакетным добавлением. Совпавший итоговый снимок считается успехом.
-            var currentPaths = new HashSet<string>(
-                container.Children.Select(item => NormalizePath(item.FullPath)),
-                StringComparer.OrdinalIgnoreCase);
-            return children.All(item =>
-                currentPaths.Contains(NormalizePath(item.FullPath)))
+            return children.All(item => container.Children.Any(existing =>
+                _storage.AreEquivalent(
+                    _storage.Resolve(existing.FullPath),
+                    _storage.Resolve(item.FullPath))))
                     ? FileOperationResult.Ok()
                     : result;
         }
 
-        private static bool TryValidateDirectoryName(string name, out string error)
+        private bool TryValidateDirectoryName(string name, out string error)
         {
             error = string.Empty;
 
@@ -1341,9 +1365,7 @@ namespace CryptoBook.Models
             if(name is "." or ".." ||
                name.EndsWith(' ') ||
                name.EndsWith('.') ||
-               name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
-               name.Contains(Path.DirectorySeparatorChar) ||
-               name.Contains(Path.AltDirectorySeparatorChar))
+               !_localFiles.IsValidFileName(name))
             {
                 error = LocalizationManager.GetString(
                     "Explorer.DirectoryNameInvalid");
@@ -1373,8 +1395,8 @@ namespace CryptoBook.Models
         {
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
-                InitialDirectory = Path.GetDirectoryName(sourcePath),
-                FileName = Path.GetFileNameWithoutExtension(sourcePath) +
+                InitialDirectory = _localFiles.GetParent(sourcePath),
+                FileName = _localFiles.GetNameWithoutExtension(sourcePath) +
                     "_" + LocalizationManager.GetString(
                         "Explorer.EncryptedSuffix"),
                 DefaultExt = ".cbook",
@@ -1420,7 +1442,7 @@ namespace CryptoBook.Models
                         return;
 
                     string sourcePath = systemItem.FullPath;
-                    if(string.IsNullOrWhiteSpace(sourcePath) || !Path.Exists(sourcePath))
+                    if(string.IsNullOrWhiteSpace(sourcePath) || !_localFiles.Exists(sourcePath))
                     {
                         await _messageService.ShowMessage(
                             errorTitle,
@@ -1574,7 +1596,7 @@ namespace CryptoBook.Models
             {
                 string? destinationDirectory = await _folderPickerService
                     .PickFolderAsync(
-                        Path.GetDirectoryName(sourcePath),
+                        _localFiles.GetParent(sourcePath),
                         CancellationToken.None);
                 if(string.IsNullOrWhiteSpace(destinationDirectory))
                     return;
@@ -1611,10 +1633,10 @@ namespace CryptoBook.Models
                 return;
             }
 
-            string temporaryDirectory = Path.Combine(
+            string temporaryDirectory = _localFiles.Combine(
                 GetDecryptionTemporaryRoot(),
                 $"{Environment.ProcessId}-{Guid.NewGuid():N}");
-            Directory.CreateDirectory(temporaryDirectory);
+            _localFiles.EnsureDirectory(temporaryDirectory);
 
             try
             {
@@ -1625,7 +1647,7 @@ namespace CryptoBook.Models
                         (progress, token) =>
                             _fileSecurityService.DecryptAsync(
                                 item,
-                                Path.Combine(
+                                _localFiles.Combine(
                                     temporaryDirectory,
                                     "payload"),
                                 EncryptionTargetMode.SaveAs,
@@ -1634,7 +1656,7 @@ namespace CryptoBook.Models
 
                 if(!result.Success ||
                    string.IsNullOrWhiteSpace(result.AffectedPath) ||
-                   !File.Exists(result.AffectedPath))
+                   !_localFiles.FileExists(result.AffectedPath))
                 {
                     await _messageService.ShowMessage(
                         errorTitle,
@@ -1646,7 +1668,7 @@ namespace CryptoBook.Models
 
                 string? destinationPath = GetNewDecryptedFilePath(
                     sourcePath,
-                    Path.GetExtension(result.AffectedPath));
+                    _localFiles.GetExtension(result.AffectedPath));
                 if(string.IsNullOrWhiteSpace(destinationPath))
                     return;
 
@@ -1730,13 +1752,13 @@ namespace CryptoBook.Models
             {
                 EncryptionTargetMode.SaveAs =>
                     GetNewDecryptedFilePath(sourcePath, extension),
-                EncryptionTargetMode.ReplaceSource => Path.Combine(
-                    Path.GetDirectoryName(sourcePath) ??
+                EncryptionTargetMode.ReplaceSource => _localFiles.Combine(
+                    _localFiles.GetParent(sourcePath) ??
                         throw new IOException(
                             LocalizationManager.Format(
                                 "Security.SourceDirectoryUnknown",
                                 sourcePath)),
-                    Path.GetFileNameWithoutExtension(sourcePath) + extension),
+                    _localFiles.GetNameWithoutExtension(sourcePath) + extension),
                 _ => null
             };
             if(string.IsNullOrWhiteSpace(destinationPath))
@@ -1769,30 +1791,23 @@ namespace CryptoBook.Models
             return _messageService.ShowConfirmation(messageId);
         }
 
-        private static bool IsCryptoBookContainerPath(string path) =>
-            Path.GetExtension(path).Equals(
+        private bool IsCryptoBookContainerPath(string path) =>
+            _localFiles.GetExtension(path).Equals(
                 ".cbook",
                 StringComparison.OrdinalIgnoreCase) ||
-            Path.GetExtension(path).Equals(
+            _localFiles.GetExtension(path).Equals(
                 ".cbox",
                 StringComparison.OrdinalIgnoreCase);
 
-        private static string GetDecryptionTemporaryRoot() =>
-            Path.Combine(
-                Path.GetTempPath(),
-                "CryptoBook",
-                "Decrypt");
+        private string GetDecryptionTemporaryRoot() =>
+            _localFiles.TemporaryPath("CryptoBook", "Decrypt");
 
-        private static void CleanupOrphanedDecryptionDirectories(
+        private void CleanupOrphanedDecryptionDirectories(
             string temporaryRoot)
         {
-            if(!Directory.Exists(temporaryRoot))
-                return;
-
-            foreach(string directory in Directory.GetDirectories(
-                temporaryRoot))
+            foreach(string directory in _localFiles.EnumerateDirectories(temporaryRoot))
             {
-                string name = Path.GetFileName(directory);
+                string name = _localFiles.GetName(directory);
                 int separator = name.IndexOf('-');
                 if(separator <= 0 ||
                    !int.TryParse(
@@ -1820,89 +1835,19 @@ namespace CryptoBook.Models
             }
         }
 
-        private static void TryDeleteDecryptionDirectory(string path)
-        {
-            try
-            {
-                if(Directory.Exists(path))
-                    Directory.Delete(path, recursive: true);
-            }
-            catch(IOException)
-            {
-                // Следующий запуск повторит очистку каталога осиротевшего
-                // процесса. Ошибка очистки не должна удалить сохранённую копию.
-            }
-            catch(UnauthorizedAccessException)
-            {
-            }
-        }
+        private void TryDeleteDecryptionDirectory(string path) =>
+            _localFiles.DeleteDirectoryIfExists(path);
 
-        private static async Task PublishDecryptedCopyAsync(
+        private Task PublishDecryptedCopyAsync(
             string sourcePath,
             string destinationPath,
             IProgressReporter? progress,
-            CancellationToken cancellationToken)
-        {
-            string? destinationDirectory = Path.GetDirectoryName(
-                destinationPath);
-            if(string.IsNullOrWhiteSpace(destinationDirectory))
-                throw new IOException(
-                    LocalizationManager.Format(
-                        "Security.DestinationDirectoryUnknown",
-                        destinationPath));
-            Directory.CreateDirectory(destinationDirectory);
-
-            string stagingPath = Path.Combine(
-                destinationDirectory,
-                $".{Path.GetFileName(destinationPath)}.{Guid.NewGuid():N}.tmp");
-            try
-            {
-                await using FileStream input = new(
-                    sourcePath,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.Read,
-                    81920,
-                    FileOptions.Asynchronous | FileOptions.SequentialScan);
-                await using(FileStream output = new(
-                    stagingPath,
-                    FileMode.CreateNew,
-                    FileAccess.Write,
-                    FileShare.None,
-                    81920,
-                    FileOptions.Asynchronous | FileOptions.SequentialScan))
-                {
-                    byte[] buffer = new byte[81920];
-                    long copied = 0;
-                    int read;
-                    while((read = await input.ReadAsync(
-                        buffer,
-                        cancellationToken)) > 0)
-                    {
-                        await output.WriteAsync(
-                            buffer.AsMemory(0, read),
-                            cancellationToken);
-                        copied += read;
-                        progress?.Report(
-                            input.Length == 0
-                                ? 1.0
-                                : (double)copied / input.Length,
-                            destinationPath);
-                    }
-                    await output.FlushAsync(cancellationToken);
-                }
-
-                AtomicFileCommit.CommitWithoutBackup(
-                    stagingPath,
-                    destinationPath);
-                progress?.Report(1.0, destinationPath);
-            }
-            finally
-            {
-                if(File.Exists(stagingPath))
-                    File.Delete(stagingPath);
-            }
-        }
+            CancellationToken cancellationToken) =>
+            _localFiles.CopyFileAtomicallyAsync(
+                sourcePath,
+                destinationPath,
+                progress,
+                cancellationToken);
 
         private async Task ExecuteBatchDecryptionAsync(
             IReadOnlyList<ISystemItem> items,
@@ -1930,7 +1875,7 @@ namespace CryptoBook.Models
             {
                 destinationDirectory = await _folderPickerService
                     .PickFolderAsync(
-                        Path.GetDirectoryName(firstItem.FullPath),
+                        _localFiles.GetParent(firstItem.FullPath),
                         CancellationToken.None);
                 if(string.IsNullOrWhiteSpace(destinationDirectory))
                     return;
@@ -2206,17 +2151,21 @@ namespace CryptoBook.Models
             var affectedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach(string sourcePath in sourcePaths)
             {
-                string? parentPath = Path.GetDirectoryName(GetNativePath(sourcePath));
-                if(!string.IsNullOrWhiteSpace(parentPath))
-                    affectedPaths.Add(NormalizePath(parentPath));
+                StorageLocation? parent = _storage.GetParent(
+                    _storage.Resolve(sourcePath));
+                if(parent is not null)
+                    affectedPaths.Add(_storage.Format(parent.Value));
             }
 
             if(!string.IsNullOrWhiteSpace(destinationDirectory))
-                affectedPaths.Add(NormalizePath(GetNativePath(destinationDirectory)));
+                affectedPaths.Add(_storage.Format(
+                    _storage.Resolve(destinationDirectory)));
 
             foreach(IContainerSystemItem container in EnumerateLoadedContainers()
-                .Where(container => affectedPaths.Contains(
-                    NormalizePath(GetNativePath(container.FullPath))))
+                .Where(container => affectedPaths.Any(path =>
+                    _storage.AreEquivalent(
+                        _storage.Resolve(path),
+                        _storage.Resolve(container.FullPath))))
                 .Distinct())
             {
                 await RefreshContainerAsync(container, token);
@@ -2260,7 +2209,7 @@ namespace CryptoBook.Models
             }
         }
 
-        private static void AddAffectedContainerPaths(
+        private void AddAffectedContainerPaths(
             ISet<string> paths,
             string itemPath,
             bool isDirectory)
@@ -2271,21 +2220,14 @@ namespace CryptoBook.Models
             if(isDirectory)
                 paths.Add(NormalizePath(itemPath));
 
-            string? parentPath = Path.GetDirectoryName(itemPath);
-            if(!string.IsNullOrWhiteSpace(parentPath))
-                paths.Add(NormalizePath(parentPath));
+            StorageLocation? parent = _storage.GetParent(
+                _storage.Resolve(itemPath));
+            if(parent is not null)
+                paths.Add(_storage.Format(parent.Value));
         }
 
-        private static string NormalizePath(string path)
-        {
-            return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
-        }
-
-        private static string GetNativePath(string path)
-        {
-            int separatorIndex = path.IndexOf("://", StringComparison.Ordinal);
-            return separatorIndex > 0 ? path[(separatorIndex + 3)..] : path;
-        }
+        private string NormalizePath(string path) =>
+            _storage.Format(_storage.Resolve(path));
 
         private static ISystemItem? GetSingleSelection(object? selection)
         {
@@ -2294,9 +2236,24 @@ namespace CryptoBook.Models
             return snapshot.Count == 1 ? snapshot[0] : null;
         }
 
-        private static bool CanExecuteMultiItemOperation(object? selection) =>
-            !FileExplorerSelectionPolicy.ContainsDrive(selection) &&
-            FileExplorerSelectionPolicy.NormalizeForOperation(selection).Count > 0;
+        private static bool CanExecuteMultiItemOperation(
+            object? selection,
+            StorageProviderCapabilities required = StorageProviderCapabilities.None)
+        {
+            if(FileExplorerSelectionPolicy.ContainsDrive(selection))
+                return false;
+            IReadOnlyList<ISystemItem> items =
+                FileExplorerSelectionPolicy.NormalizeForOperation(selection);
+            return items.Count > 0 && items.All(item => Supports(item, required));
+        }
+
+        private static bool Supports(
+            ISystemItem item,
+            StorageProviderCapabilities capability) =>
+            capability == StorageProviderCapabilities.None ||
+            item.Capabilities.HasFlag(capability) ||
+            (item.Capabilities == StorageProviderCapabilities.None &&
+             item.Location.IsLocal);
 
         private static IReadOnlyList<ISystemItem> GetOperationSelection(
             object? selection) =>
@@ -2308,10 +2265,13 @@ namespace CryptoBook.Models
         {
             existing.Name = incoming.Name;
             existing.FullPath = incoming.FullPath;
+            existing.DisplayPath = incoming.DisplayPath;
             existing.RootDirectory = incoming.RootDirectory;
             existing.Size = incoming.Size;
             existing.LastWriteTimeUtc = incoming.LastWriteTimeUtc;
             existing.Parent = incoming.Parent;
+            existing.Capabilities = incoming.Capabilities;
+            existing.StatusText = incoming.StatusText;
 
             if(existing is IFileItem existingFile && incoming is IFileItem incomingFile)
             {
@@ -2333,8 +2293,8 @@ namespace CryptoBook.Models
                 : $"*{extension}";
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
-                InitialDirectory = Path.GetDirectoryName(sourcePath),
-                FileName = Path.GetFileNameWithoutExtension(sourcePath) +
+                InitialDirectory = _localFiles.GetParent(sourcePath),
+                FileName = _localFiles.GetNameWithoutExtension(sourcePath) +
                     "_" + LocalizationManager.GetString(
                         "Explorer.DecryptedSuffix") + extension,
                 DefaultExt = extension,
@@ -2351,7 +2311,7 @@ namespace CryptoBook.Models
             };
 
             return dialog.ShowDialog() == true
-                ? Path.ChangeExtension(dialog.FileName, extension)
+                ? _localFiles.ChangeExtension(dialog.FileName, extension)
                 : null;
         }
 

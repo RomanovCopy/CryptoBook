@@ -35,7 +35,7 @@
                 <Image Width="16"
                        Height="16"
                        Margin="0,0,6,0"
-                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+                       Source="{Binding ., Converter={markup:ResolveConverter ConverterType={x:Type converters:SystemItemToIconConverter}}}"/>
                 <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
@@ -183,7 +183,7 @@
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
                        Margin="0,0,6,0"
-                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+                       Source="{Binding ., Converter={markup:ResolveConverter ConverterType={x:Type converters:SystemItemToIconConverter}}}"/>
 
                 <StackPanel>
                     <TextBlock FontWeight="Bold">
@@ -214,7 +214,7 @@
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
                        Margin="0,0,6,0"
-                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:PathToIconConverter}}}"/>
+                       Source="{Binding ., Converter={markup:ResolveConverter ConverterType={x:Type converters:SystemItemToIconConverter}}}"/>
                 <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                            FontSize="14"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
@@ -226,7 +226,7 @@
                 <Image Width="{StaticResource Tv_IconSize}"
                        Height="{StaticResource Tv_IconSize}"
                        Margin="0,0,6,0"
-                       Source="{Binding FullPath, Converter={markup:ResolveConverter ConverterType={x:Type converters:ExtensionToIconConverter}}}"/>
+                       Source="{Binding ., Converter={markup:ResolveConverter ConverterType={x:Type converters:SystemItemToIconConverter}}}"/>
                 <TextBlock Text="{Binding Name}" 
                            VerticalAlignment="Center"
                            TextTrimming="CharacterEllipsis"/>
@@ -980,10 +980,11 @@
                            FontSize="16"
                            Margin="0,0,4,0"/>
                 <TextBlock Grid.Column="1"
-                           Text="{Binding SelectedItem.FullPath, ElementName=listview}"
+                           Text="{Binding SelectedItem.DisplayPath, ElementName=listview}"
                            Foreground="{DynamicResource CurrentWindowForeground}"
                            FontSize="16"
-                           TextTrimming="CharacterEllipsis"/>
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip="{Binding SelectedItem.DisplayPath, ElementName=listview}"/>
                 <ProgressBar Grid.Column="2"
                              Width="64"
                              Height="3"

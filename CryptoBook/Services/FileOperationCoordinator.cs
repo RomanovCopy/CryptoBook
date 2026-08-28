@@ -2,8 +2,6 @@ using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
-using System.IO;
-
 namespace CryptoBook.Services
 {
     public sealed class FileOperationCoordinator: IFileOperationCoordinator
@@ -11,15 +9,18 @@ namespace CryptoBook.Services
         private readonly IFileManagerService _fileManager;
         private readonly IProgressDialogService _progressDialog;
         private readonly IFileConflictResolver _conflictResolver;
+        private readonly IStorageFacade _storage;
 
         public FileOperationCoordinator(
             IFileManagerService fileManager,
             IProgressDialogService progressDialog,
-            IFileConflictResolver conflictResolver)
+            IFileConflictResolver conflictResolver,
+            IStorageFacade? storageFacade = null)
         {
             _fileManager = fileManager ?? throw new ArgumentNullException(nameof(fileManager));
             _progressDialog = progressDialog ?? throw new ArgumentNullException(nameof(progressDialog));
             _conflictResolver = conflictResolver ?? throw new ArgumentNullException(nameof(conflictResolver));
+            _storage = storageFacade ?? new StorageFacade([new LocalStorageProvider()]);
         }
 
         public async Task<FileOperationBatchResult> TransferAsync(
@@ -70,11 +71,10 @@ namespace CryptoBook.Services
                             progress.Report(
                                 null,
                                 LocalizationManager.GetString("Explorer.CalculatingSize"));
-                            long[] itemSizes = await Task.Run(
-                                () => plans.Items
-                                    .Select(item => GetItemSize(item.SourcePath, token))
-                                    .ToArray(),
-                                token);
+                            long[] itemSizes = await Task.WhenAll(plans.Items
+                                .Select(item => _storage.GetTotalSizeAsync(
+                                    _storage.Resolve(item.SourcePath),
+                                    token)));
                             long totalBytes = itemSizes.Sum();
                             long completedBytes = 0;
 
@@ -109,23 +109,6 @@ namespace CryptoBook.Services
                                         plan.DestinationPath,
                                         itemProgress,
                                         token);
-                                }
-                                else if(IsCrossVolumeLocalMove(
-                                    plan.SourcePath,
-                                    plan.DestinationPath))
-                                {
-                                    result = await _fileManager.CopyAsync(
-                                        plan.SourcePath,
-                                        plan.DestinationPath,
-                                        itemProgress,
-                                        token);
-                                    if(result.Success)
-                                    {
-                                        token.ThrowIfCancellationRequested();
-                                        result = await _fileManager.DeleteAsync(
-                                            plan.SourcePath,
-                                            token);
-                                    }
                                 }
                                 else
                                 {
@@ -199,17 +182,17 @@ namespace CryptoBook.Services
                             progress.Report(
                                 null,
                                 LocalizationManager.GetString("Explorer.CalculatingSize"));
-                            IReadOnlyList<DeletionEntry> entries = await Task.Run(
-                                () => BuildDeletionPlan(sources, token),
-                                token);
+                            IReadOnlyList<StorageDeletionEntry> entries =
+                                await BuildDeletionPlanAsync(sources, token);
                             long totalBytes = entries.Sum(entry => entry.Size);
                             long completedBytes = 0;
 
                             // Удаление намеренно не транзакционно: отмена сохраняет уже удалённые элементы.
-                            foreach(DeletionEntry entry in entries)
+                            foreach(StorageDeletionEntry entry in entries)
                             {
                                 token.ThrowIfCancellationRequested();
-                                FileOperationResult result = await _fileManager.DeleteAsync(entry.Path, token);
+                                string path = _storage.Format(entry.Location);
+                                FileOperationResult result = await _fileManager.DeleteAsync(path, token);
                                 results.Add(result);
                                 if(!result.Success)
                                     break;
@@ -218,7 +201,7 @@ namespace CryptoBook.Services
                                 completedBytes += entry.Size;
                                 progress.Report(
                                     CalculateOverall(completedBytes, totalBytes, completed, entries.Count),
-                                    entry.Path);
+                                    path);
                             }
 
                             return new FileOperationBatchResult(
@@ -271,11 +254,19 @@ namespace CryptoBook.Services
             foreach(string source in sources)
             {
                 token.ThrowIfCancellationRequested();
-                bool isDirectory = Directory.Exists(ToNativePath(source));
-                ValidateDestination(source, destinationDirectory, isDirectory);
+                StorageLocation sourceLocation = _storage.Resolve(source);
+                StorageLocation destinationContainer = _storage.Resolve(destinationDirectory);
+                StorageItemMetadata? metadata = await _storage.GetMetadataAsync(
+                    sourceLocation,
+                    token);
+                bool isDirectory = metadata?.IsContainer == true;
+                ValidateDestination(sourceLocation, destinationContainer, isDirectory);
 
-                string destination = CombinePath(destinationDirectory, GetItemName(source));
-                if(PathsEqual(source, destination))
+                string itemName = metadata?.Name ?? source;
+                StorageLocation destinationLocation = _storage.GetChild(
+                    destinationContainer,
+                    itemName);
+                if(_storage.AreEquivalent(sourceLocation, destinationLocation))
                 {
                     if(operation == FileTransferKind.Move)
                     {
@@ -283,12 +274,17 @@ namespace CryptoBook.Services
                         continue;
                     }
 
-                    destination = CreateUniquePath(destination, isDirectory);
+                    destinationLocation = await _storage.CreateUniqueLocationAsync(
+                        destinationLocation,
+                        isDirectory,
+                        token);
                 }
 
                 bool replace = false;
-                if(PathExists(destination) && !PathsEqual(source, destination))
+                if(await _storage.GetMetadataAsync(destinationLocation, token) is not null &&
+                   !_storage.AreEquivalent(sourceLocation, destinationLocation))
                 {
+                    string destination = _storage.Format(destinationLocation);
                     FileConflictDecision decision = applyToAll ?? await _conflictResolver.ResolveAsync(
                         source,
                         destination,
@@ -305,7 +301,10 @@ namespace CryptoBook.Services
                             skipped++;
                             continue;
                         case FileConflictAction.KeepBoth:
-                            destination = CreateUniquePath(destination, isDirectory);
+                            destinationLocation = await _storage.CreateUniqueLocationAsync(
+                                destinationLocation,
+                                isDirectory,
+                                token);
                             break;
                         case FileConflictAction.Replace:
                             replace = true;
@@ -313,7 +312,10 @@ namespace CryptoBook.Services
                     }
                 }
 
-                plans.Add(new TransferPlan(source, destination, replace));
+                plans.Add(new TransferPlan(
+                    source,
+                    _storage.Format(destinationLocation),
+                    replace));
             }
 
             return new TransferPlanSet(plans, skipped, false);
@@ -324,73 +326,49 @@ namespace CryptoBook.Services
             string destinationDirectory,
             bool sourceIsDirectory)
         {
-            if(!sourceIsDirectory)
-                return;
+            var storage = new StorageFacade([new LocalStorageProvider()]);
+            StorageLocation source = storage.Resolve(sourcePath);
+            StorageLocation destination = storage.Resolve(destinationDirectory);
+            ValidateDestination(storage, source, destination, sourceIsDirectory);
+        }
 
-            string source = NormalizeLocalPath(sourcePath);
-            string destination = NormalizeLocalPath(destinationDirectory);
-            if(PathsEqual(source, destination) ||
-               destination.StartsWith(
-                   source + Path.DirectorySeparatorChar,
-                   StringComparison.OrdinalIgnoreCase))
+        private void ValidateDestination(
+            StorageLocation source,
+            StorageLocation destination,
+            bool sourceIsDirectory) =>
+            ValidateDestination(_storage, source, destination, sourceIsDirectory);
+
+        private static void ValidateDestination(
+            IStorageFacade storage,
+            StorageLocation source,
+            StorageLocation destination,
+            bool sourceIsDirectory)
+        {
+            if(sourceIsDirectory &&
+               (storage.AreEquivalent(source, destination) ||
+                storage.IsDescendant(source, destination)))
             {
                 throw new InvalidOperationException(
                     LocalizationManager.GetString("Explorer.DropIntoSelfError"));
             }
         }
 
-        private static IReadOnlyList<DeletionEntry> BuildDeletionPlan(
+        private async Task<IReadOnlyList<StorageDeletionEntry>> BuildDeletionPlanAsync(
             IEnumerable<string> sourcePaths,
             CancellationToken token)
         {
-            var entries = new List<DeletionEntry>();
+            var entries = new List<StorageDeletionEntry>();
             foreach(string sourcePath in sourcePaths)
             {
                 token.ThrowIfCancellationRequested();
-                string nativePath = ToNativePath(sourcePath);
-                if(File.Exists(nativePath))
-                {
-                    entries.Add(new DeletionEntry(sourcePath, new FileInfo(nativePath).Length));
-                }
-                else if(Directory.Exists(nativePath))
-                {
-                    AddDirectoryDeletionEntries(nativePath, entries, token);
-                }
-                else
-                {
-                    entries.Add(new DeletionEntry(sourcePath, 0));
-                }
+                entries.AddRange(await _storage.BuildDeletionPlanAsync(
+                    _storage.Resolve(sourcePath),
+                    token));
             }
-
             return entries;
         }
 
-        private static void AddDirectoryDeletionEntries(
-            string directoryPath,
-            ICollection<DeletionEntry> entries,
-            CancellationToken token)
-        {
-            foreach(string entryPath in Directory.EnumerateFileSystemEntries(directoryPath))
-            {
-                token.ThrowIfCancellationRequested();
-                FileAttributes attributes = File.GetAttributes(entryPath);
-                bool isDirectory = (attributes & FileAttributes.Directory) != 0;
-                bool isReparsePoint = (attributes & FileAttributes.ReparsePoint) != 0;
-                if(isDirectory && !isReparsePoint)
-                {
-                    AddDirectoryDeletionEntries(entryPath, entries, token);
-                }
-                else
-                {
-                    long size = isDirectory ? 0 : new FileInfo(entryPath).Length;
-                    entries.Add(new DeletionEntry(entryPath, size));
-                }
-            }
-
-            entries.Add(new DeletionEntry(directoryPath, 0));
-        }
-
-        private static string[] NormalizeTopLevelSources(IEnumerable<string> sourcePaths)
+        private string[] NormalizeTopLevelSources(IEnumerable<string> sourcePaths)
         {
             string[] paths = sourcePaths
                 .Where(path => !string.IsNullOrWhiteSpace(path))
@@ -399,118 +377,25 @@ namespace CryptoBook.Services
 
             return paths
                 .Where(candidate => !paths.Any(parent =>
-                    !PathsEqual(parent, candidate) &&
+                    !_storage.AreEquivalent(
+                        _storage.Resolve(parent),
+                        _storage.Resolve(candidate)) &&
                     IsChildPath(parent, candidate)))
                 .ToArray();
         }
 
-        private static bool IsChildPath(string parentPath, string candidatePath)
+        private bool IsChildPath(string parentPath, string candidatePath)
         {
             try
             {
-                string parent = NormalizeLocalPath(parentPath);
-                string candidate = NormalizeLocalPath(candidatePath);
-                return candidate.StartsWith(
-                    parent + Path.DirectorySeparatorChar,
-                    StringComparison.OrdinalIgnoreCase);
+                return _storage.IsDescendant(
+                    _storage.Resolve(parentPath),
+                    _storage.Resolve(candidatePath));
             }
             catch
             {
                 return false;
             }
-        }
-
-        private static long GetItemSize(string path, CancellationToken token)
-        {
-            string nativePath = ToNativePath(path);
-            if(File.Exists(nativePath))
-                return new FileInfo(nativePath).Length;
-            if(!Directory.Exists(nativePath))
-                return 0;
-
-            long total = 0;
-            var options = new EnumerationOptions
-            {
-                RecurseSubdirectories = true,
-                IgnoreInaccessible = false,
-                AttributesToSkip = FileAttributes.ReparsePoint
-            };
-            foreach(string file in Directory.EnumerateFiles(nativePath, "*", options))
-            {
-                token.ThrowIfCancellationRequested();
-                total += new FileInfo(file).Length;
-            }
-
-            return total;
-        }
-
-        private static string CreateUniquePath(string destinationPath, bool isDirectory)
-        {
-            string native = ToNativePath(destinationPath);
-            string? directory = Path.GetDirectoryName(native);
-            string extension = isDirectory ? string.Empty : Path.GetExtension(native);
-            string baseName = isDirectory
-                ? Path.GetFileName(native)
-                : Path.GetFileNameWithoutExtension(native);
-            for(int index = 2; ; index++)
-            {
-                string suffix = index == 2 ? " - Copy" : $" - Copy ({index})";
-                string candidate = Path.Combine(directory ?? string.Empty, baseName + suffix + extension);
-                if(!PathExists(candidate))
-                    return RestoreScheme(destinationPath, candidate);
-            }
-        }
-
-        private static string CombinePath(string directory, string name)
-        {
-            string native = Path.Combine(ToNativePath(directory), name);
-            return RestoreScheme(directory, native);
-        }
-
-        private static string RestoreScheme(string original, string nativePath) =>
-            original.StartsWith("local://", StringComparison.OrdinalIgnoreCase)
-                ? $"local://{nativePath}"
-                : nativePath;
-
-        private static string GetItemName(string path) =>
-            Path.GetFileName(ToNativePath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-
-        private static bool PathExists(string path)
-        {
-            string native = ToNativePath(path);
-            return File.Exists(native) || Directory.Exists(native);
-        }
-
-        private static bool PathsEqual(string left, string right)
-        {
-            try
-            {
-                return string.Equals(
-                    NormalizeLocalPath(left),
-                    NormalizeLocalPath(right),
-                    StringComparison.OrdinalIgnoreCase);
-            }
-            catch
-            {
-                return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
-            }
-        }
-
-        private static string NormalizeLocalPath(string path) =>
-            Path.TrimEndingDirectorySeparator(Path.GetFullPath(ToNativePath(path)));
-
-        private static string ToNativePath(string path) =>
-            path.StartsWith("local://", StringComparison.OrdinalIgnoreCase)
-                ? path[8..]
-                : path;
-
-        private static bool IsCrossVolumeLocalMove(string sourcePath, string destinationPath)
-        {
-            string? sourceRoot = Path.GetPathRoot(NormalizeLocalPath(sourcePath));
-            string? destinationRoot = Path.GetPathRoot(NormalizeLocalPath(destinationPath));
-            return !string.IsNullOrWhiteSpace(sourceRoot) &&
-                   !string.IsNullOrWhiteSpace(destinationRoot) &&
-                   !string.Equals(sourceRoot, destinationRoot, StringComparison.OrdinalIgnoreCase);
         }
 
         private static double CalculateOverall(
@@ -533,8 +418,6 @@ namespace CryptoBook.Services
             IReadOnlyList<TransferPlan> Items,
             int SkippedCount,
             bool Canceled);
-
-        private sealed record DeletionEntry(string Path, long Size);
 
         private sealed class AggregateProgressReporter: IProgressReporter
         {

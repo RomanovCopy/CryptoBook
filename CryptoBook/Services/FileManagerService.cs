@@ -17,13 +17,18 @@ namespace CryptoBook.Services
     public sealed class FileManagerService: IFileManagerService
     {
         private readonly IReadOnlyDictionary<string, IFileProviderService> _providersByScheme;
+        private readonly IStorageFacade _storage;
+        private readonly ITransferEngine _transferEngine;
 
 
         /// <summary>
         /// В конструктор передаем все зарегистрированные IFileSystemProvider.
         /// Autofac сам вольет сюда все реализации (LocalFileSystemProvider и будущие Zip/Ssh/...).
         /// </summary>
-        public FileManagerService(IEnumerable<IFileProviderService> providers)
+        public FileManagerService(
+            IEnumerable<IFileProviderService> providers,
+            IStorageFacade? storage = null,
+            ITransferEngine? transferEngine = null)
         {
             // Если два провайдера объявят одинаковую схему — это повод упасть сразу, а не в рантайме.
             _providersByScheme = providers
@@ -33,6 +38,8 @@ namespace CryptoBook.Services
                     g => g.Single(),
                     StringComparer.OrdinalIgnoreCase
                 );
+            _storage = storage ?? new StorageFacade([new LocalStorageProvider()]);
+            _transferEngine = transferEngine ?? new TransferEngine(_storage);
         }
 
 
@@ -63,12 +70,26 @@ namespace CryptoBook.Services
 
             if(!string.Equals(src.Scheme, dst.Scheme, StringComparison.OrdinalIgnoreCase))
             {
-                // cross-scheme copy (например local -> ssh) в будущем можно поддержать здесь (stream copy),
-                // но сейчас честно скажем, что не поддерживается
-                return FileOperationResult.Fail("Copy across different providers is not supported yet.");
+                return await _transferEngine.CopyAsync(
+                    _storage.Resolve(sourcePath),
+                    _storage.Resolve(destinationPath),
+                    progress,
+                    cancellationToken);
             }
 
-            if(IsSameOrSubdirectory(sourcePath, destinationPath))
+            if(!src.Scheme.Equals(StorageLocation.LocalProviderId, StringComparison.OrdinalIgnoreCase))
+            {
+                return await _transferEngine.CopyAsync(
+                    _storage.Resolve(sourcePath),
+                    _storage.Resolve(destinationPath),
+                    progress,
+                    cancellationToken);
+            }
+
+            StorageLocation sourceLocation = _storage.Resolve(sourcePath);
+            StorageLocation destinationLocation = _storage.Resolve(destinationPath);
+            if(_storage.AreEquivalent(sourceLocation, destinationLocation) ||
+               _storage.IsDescendant(sourceLocation, destinationLocation))
             {
                 throw new InvalidOperationException( "Нельзя копировать каталог в самого себя " + "или во вложенный подкаталог.");
             }
@@ -95,15 +116,54 @@ namespace CryptoBook.Services
 
             if(!string.Equals(src.Scheme, dst.Scheme, StringComparison.OrdinalIgnoreCase))
             {
-                // Теоретически можно сделать Copy+Delete,
-                // но это уже "интеллектуальное перемещение".
-                // Пока не лезем.
-                return FileOperationResult.Fail("Move across different providers is not supported yet.");
+                return await _transferEngine.MoveAsync(
+                    _storage.Resolve(sourcePath),
+                    _storage.Resolve(destinationPath),
+                    progress,
+                    cancellationToken);
             }
 
-            if(IsSameOrSubdirectory(sourcePath, destinationPath))
+
+            if(!src.Scheme.Equals(StorageLocation.LocalProviderId, StringComparison.OrdinalIgnoreCase))
+            {
+                return await _transferEngine.MoveAsync(
+                    _storage.Resolve(sourcePath),
+                    _storage.Resolve(destinationPath),
+                    progress,
+                    cancellationToken);
+            }
+
+            StorageLocation sourceLocation = _storage.Resolve(sourcePath);
+            StorageLocation destinationLocation = _storage.Resolve(destinationPath);
+            if(_storage.AreEquivalent(sourceLocation, destinationLocation) ||
+               _storage.IsDescendant(sourceLocation, destinationLocation))
             {
                 throw new InvalidOperationException( "Нельзя копировать каталог в самого себя или во вложенный подкаталог.");
+            }
+
+            if(src.Scheme.Equals(StorageLocation.LocalProviderId, StringComparison.OrdinalIgnoreCase) &&
+               IsCrossVolumeLocalMove(src.NativePath, dst.NativePath))
+            {
+                FileOperationResult copyResult = await CopyAsync(
+                    sourcePath,
+                    destinationPath,
+                    progress,
+                    cancellationToken);
+                if(!copyResult.Success)
+                    return copyResult;
+                long sourceSize = await _storage.GetTotalSizeAsync(
+                    sourceLocation,
+                    cancellationToken);
+                long destinationSize = await _storage.GetTotalSizeAsync(
+                    destinationLocation,
+                    cancellationToken);
+                if(await _storage.GetMetadataAsync(destinationLocation, cancellationToken) is null ||
+                   sourceSize != destinationSize)
+                {
+                    return FileOperationResult.Fail(
+                        "The copied item could not be verified; the source was not deleted.");
+                }
+                return await DeleteAsync(sourcePath, cancellationToken);
             }
 
             var provider = ResolveProvider(src.Scheme);
@@ -166,7 +226,10 @@ namespace CryptoBook.Services
             var parentDesc = ParsePath(parentDirectory);
             var provider = ResolveProvider(parentDesc.Scheme);
 
-            string combinedNativePath = CombinePath(provider, parentDesc.NativePath, newDirectoryName);
+            StorageLocation combinedLocation = _storage.GetChild(
+                _storage.Resolve(parentDirectory),
+                newDirectoryName);
+            string combinedNativePath = combinedLocation.OpaqueId;
 
             try
             {
@@ -355,14 +418,6 @@ namespace CryptoBook.Services
         // ------------------------
 
 
-        private bool IsSameOrSubdirectory( string sourceFull, string destFull)
-        {
-            if(string.Equals(sourceFull, destFull))
-                return true;
-
-            return destFull.StartsWith( sourceFull + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
-        }
-
         internal readonly struct PathDescriptor
         {
             public string Scheme { get; }
@@ -404,24 +459,16 @@ namespace CryptoBook.Services
             throw new NotSupportedException($"No provider registered for scheme '{scheme}'.");
         }
 
-        /// <summary>
-        /// Логика склейки для "создать папку".
-        /// Для local это Path.Combine.
-        /// Для zip/ssh в будущем может быть другое поведение.
-        /// Здесь мы делаем хак: если это local-провайдер, то Combine через System.IO.Path,
-        /// иначе — просто parent + "/" + child.
-        /// </summary>
-        private static string CombinePath(IFileProviderService provider, string parent, string child)
+        private static bool IsCrossVolumeLocalMove(
+            string sourcePath,
+            string destinationPath)
         {
-            if(provider.Scheme.Equals("local", StringComparison.OrdinalIgnoreCase))
-            {
-                return System.IO.Path.Combine(parent, child);
-            }
-
-            // Универсальный запасной вариант.
-            if(parent.EndsWith("/", StringComparison.Ordinal))
-                return parent + child;
-            return parent + "/" + child;
+            string? sourceRoot = Path.GetPathRoot(Path.GetFullPath(sourcePath));
+            string? destinationRoot = Path.GetPathRoot(Path.GetFullPath(destinationPath));
+            return !string.Equals(
+                sourceRoot,
+                destinationRoot,
+                StringComparison.OrdinalIgnoreCase);
         }
 
     }

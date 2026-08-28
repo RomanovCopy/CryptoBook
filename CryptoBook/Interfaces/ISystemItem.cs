@@ -17,6 +17,26 @@ namespace CryptoBook.Interfaces
     {
         string Name { get; set; }
         string FullPath{  get; set; }
+        string DisplayPath
+        {
+            get => FullPath;
+            set { }
+        }
+        StorageLocation Location
+        {
+            get => StorageLocation.Parse(FullPath);
+            set => FullPath = value.ToString();
+        }
+        StorageProviderCapabilities Capabilities
+        {
+            get => StorageProviderCapabilities.None;
+            set { }
+        }
+        string? StatusText
+        {
+            get => null;
+            set { }
+        }
         string RootDirectory { get; set; }
         long Size { get; set; }
         bool IsEditing { get; set; }

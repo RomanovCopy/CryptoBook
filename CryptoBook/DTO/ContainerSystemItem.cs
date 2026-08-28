@@ -30,6 +30,21 @@ namespace CryptoBook.DTO
         /// </summary>
         public string FullPath { get => fullPath; set => SetProperty(ref fullPath, value); }
         string fullPath;
+        public string DisplayPath
+        {
+            get => string.IsNullOrWhiteSpace(displayPath) ? FullPath : displayPath;
+            set => SetProperty(ref displayPath, value);
+        }
+        string displayPath = string.Empty;
+        public StorageLocation Location
+        {
+            get => StorageLocation.Parse(FullPath);
+            set => FullPath = value.ToString();
+        }
+        public StorageProviderCapabilities Capabilities { get => capabilities; set => SetProperty(ref capabilities, value); }
+        StorageProviderCapabilities capabilities;
+        public string? StatusText { get => statusText; set => SetProperty(ref statusText, value); }
+        string? statusText;
         /// <summary>
         /// родительская директория(если лежит на диске то null)
         /// </summary>
@@ -194,6 +209,7 @@ namespace CryptoBook.DTO
                 {
                     existing.Name = newName;
                     existing.FullPath = Path.Combine(Path.GetDirectoryName(existing.FullPath) ?? string.Empty, newName);
+                    existing.DisplayPath = existing.FullPath;
                 });
                 if(item is IContainerSystemItem container)
                 {
@@ -517,6 +533,7 @@ namespace CryptoBook.DTO
 
             existing.Name = incoming.Name;
             existing.FullPath = incoming.FullPath;
+            existing.DisplayPath = incoming.DisplayPath;
             existing.RootDirectory = incoming.RootDirectory;
             existing.Size = incoming.Size;
             existing.LastWriteTimeUtc = incoming.LastWriteTimeUtc;

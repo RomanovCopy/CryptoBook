@@ -6,10 +6,10 @@ namespace CryptoBook.Interfaces
     {
         bool HasDecryptionKey { get; }
         Task<bool> IsEncryptedAsync(
-            string path,
+            IFileItem file,
             CancellationToken cancellationToken = default);
         Task<Stream> OpenReadAsync(
-            string path,
+            IFileItem file,
             CancellationToken cancellationToken = default);
     }
 }
