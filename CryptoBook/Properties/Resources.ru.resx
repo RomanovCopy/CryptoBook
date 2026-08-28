@@ -462,6 +462,7 @@
   <data name="Explorer.Column.Folder" xml:space="preserve"><value>Папка</value></data>
   <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Выбрано: {0}</value></data>
   <data name="Explorer.Selected" xml:space="preserve"><value>Выбрано:</value></data>
+  <data name="Explorer.Current" xml:space="preserve"><value>Текущий:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Копирование файлов</value></data>
   <data name="Explorer.CopyError" xml:space="preserve"><value>Ошибка копирования</value></data>
   <data name="Explorer.CopyPathError" xml:space="preserve"><value>Ошибка копирования пути</value></data>

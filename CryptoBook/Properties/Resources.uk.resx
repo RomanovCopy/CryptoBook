@@ -887,6 +887,9 @@
   <data name="Explorer.Selected" xml:space="preserve">
     <value>Вибрано:</value>
   </data>
+  <data name="Explorer.Current" xml:space="preserve">
+    <value>Поточний:</value>
+  </data>
   <data name="Explorer.Copying" xml:space="preserve">
     <value>Копіювання файлів</value>
   </data>

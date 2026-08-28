@@ -33,7 +33,7 @@ namespace CryptoBook.Models
         private readonly IFileManagerService _fileManagerService;
         private readonly IMessageService _messageService;
         private readonly IMediaSourcePreparationService _mediaSourcePreparationService;
-        private readonly IFilePickerService _filePickerService;
+        private readonly IFileExplorerService _fileExplorerService;
         private readonly IWindowManager _windowManager;
         private readonly IMediaPlaybackCoordinator _playbackCoordinator;
         private readonly int _instanceNumber;
@@ -64,7 +64,7 @@ namespace CryptoBook.Models
             IFileManagerService fileManagerService,
             IMessageService messageService,
             IMediaSourcePreparationService mediaSourcePreparationService,
-            IFilePickerService filePickerService,
+            IFileExplorerService fileExplorerService,
             IWindowManager windowManager,
             IMediaPlaybackCoordinator playbackCoordinator)
         {
@@ -76,8 +76,8 @@ namespace CryptoBook.Models
                 throw new ArgumentNullException(nameof(messageService));
             _mediaSourcePreparationService = mediaSourcePreparationService ??
                 throw new ArgumentNullException(nameof(mediaSourcePreparationService));
-            _filePickerService = filePickerService ??
-                throw new ArgumentNullException(nameof(filePickerService));
+            _fileExplorerService = fileExplorerService ??
+                throw new ArgumentNullException(nameof(fileExplorerService));
             _windowManager = windowManager ??
                 throw new ArgumentNullException(nameof(windowManager));
             _playbackCoordinator = playbackCoordinator ??
@@ -113,13 +113,14 @@ namespace CryptoBook.Models
         }
 
         public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing;
-        public void Execute_OpenFile(object? obj) => _ = PickAndOpenFileAsync();
+        public void Execute_OpenFile(object? obj) => ShowFileExplorer(
+            selectedPath => _ = OpenSelectedFileAsync(selectedPath));
 
         public bool CanExecute_OpenFileInNewWindow(object? obj) =>
             !_disposed && !_isClosing;
 
         public void Execute_OpenFileInNewWindow(object? obj) =>
-            _ = PickAndOpenFileInNewWindowAsync();
+            ShowFileExplorer(OpenFileInNewWindow);
 
         public bool CanExecute_PauseAll(object? obj) => !_disposed;
         public void Execute_PauseAll(object? obj) =>
@@ -206,18 +207,17 @@ namespace CryptoBook.Models
         public bool CanExecute_Closed(object? obj) => !_disposed;
         public void Execute_Closed(object? obj) => Dispose();
 
-        private async Task PickAndOpenFileAsync()
+        private void ShowFileExplorer(Action<string> fileSelected)
         {
             try
             {
-                string? selectedPath = await _filePickerService.PickFileAsync(
+                _fileExplorerService.ShowFileSelection(
                     GetInitialDirectory(),
-                    CancellationToken.None);
-                if(!string.IsNullOrWhiteSpace(selectedPath) && !_disposed && !_isClosing)
-                    await OpenPathAsync(selectedPath, autoPlay: true);
-            }
-            catch(OperationCanceledException)
-            {
+                    selectedPath =>
+                    {
+                        if(!_disposed && !_isClosing)
+                            fileSelected(selectedPath);
+                    });
             }
             catch(Exception ex)
             {
@@ -226,16 +226,13 @@ namespace CryptoBook.Models
             }
         }
 
-        private async Task PickAndOpenFileInNewWindowAsync()
+        private void OpenFileInNewWindow(string selectedPath)
         {
+            if(string.IsNullOrWhiteSpace(selectedPath) || _disposed || _isClosing)
+                return;
+
             try
             {
-                string? selectedPath = await _filePickerService.PickFileAsync(
-                    GetInitialDirectory(),
-                    CancellationToken.None);
-                if(string.IsNullOrWhiteSpace(selectedPath) || _disposed || _isClosing)
-                    return;
-
                 var context = new Dictionary<string, object?>
                 {
                     ["path"] = selectedPath
@@ -243,14 +240,22 @@ namespace CryptoBook.Models
                 Guid windowId = _windowManager.CreateSiblingWindow<MediaPlayer>(context);
                 _windowManager.ShowWindow(windowId);
             }
-            catch(OperationCanceledException)
-            {
-            }
             catch(Exception ex)
             {
                 if(!_disposed && !_isClosing)
                     SetEmpty(ex.Message);
             }
+        }
+
+        private async Task OpenSelectedFileAsync(string selectedPath)
+        {
+            if(_disposed || _isClosing)
+                return;
+
+            // FileExplorer является соседним окном и остаётся открытым позади.
+            // Сразу возвращаем MediaPlayer на передний план, пока файл загружается.
+            _windowManager.ActivateWindow(WindowId);
+            await OpenPathAsync(selectedPath, autoPlay: true);
         }
 
         private string? GetInitialDirectory() =>

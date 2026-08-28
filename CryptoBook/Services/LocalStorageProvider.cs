@@ -29,6 +29,19 @@ public sealed class LocalStorageProvider: IStorageProvider
         StorageProviderCapabilities.OpenExternally |
         StorageProviderCapabilities.Encrypt;
 
+    public string FormatDisplayPath(StorageLocation location) =>
+        Normalize(location);
+
+    public StorageLocation ResolveDisplayPath(
+        StorageLocation context,
+        string displayPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayPath);
+        if(!context.IsLocal)
+            throw new ArgumentException("Not a local storage location.", nameof(context));
+        return new StorageLocation(Id, displayPath);
+    }
+
     public Task<IReadOnlyList<StorageItemMetadata>> GetRootsAsync(
         CancellationToken cancellationToken = default) => Task.Run<IReadOnlyList<StorageItemMetadata>>(
         () => DriveInfo.GetDrives()

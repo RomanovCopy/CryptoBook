@@ -345,6 +345,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<WpfViewRenderSynchronizationService>()
                 .As<IViewRenderSynchronizationService>()
                 .SingleInstance();
+            builder.RegisterType<StoragePathDisplayService>().SingleInstance();
             builder.RegisterType<MessageService>().As<IMessageService>().SingleInstance();
             builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
             builder.RegisterType<FileConflictResolver>().As<IFileConflictResolver>().SingleInstance();

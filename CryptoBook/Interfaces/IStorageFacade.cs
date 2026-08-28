@@ -6,6 +6,10 @@ public interface IStorageFacade: IService
 {
     StorageLocation Resolve(string value);
     string Format(StorageLocation location);
+    string FormatDisplayPath(StorageLocation location);
+    StorageLocation ResolveDisplayPath(
+        StorageLocation context,
+        string displayPath);
     IStorageProvider GetProvider(StorageLocation location);
     StorageProviderCapabilities GetCapabilities(StorageLocation location);
 

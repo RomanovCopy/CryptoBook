@@ -1,3 +1,7 @@
+using Autofac;
+
+using CryptoBook.DTO;
+using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
 using CryptoBook.ViewModels;
@@ -162,7 +166,7 @@ public sealed class FileExplorerArchitectureTests
     }
 
     [Fact]
-    public void MediaPlayerOpenCommand_UsesPickerResultToOpenSelectedFile()
+    public void MediaPlayerOpenCommand_UsesPersistentFileExplorerSelection()
     {
         Type[] parameterTypes = Assert.Single(typeof(CryptoBook.Models.MediaPlayerModel).GetConstructors())
             .GetParameters()
@@ -173,21 +177,124 @@ public sealed class FileExplorerArchitectureTests
             "Models",
             "MediaPlayerModel.cs"));
 
-        Assert.Contains(typeof(IFilePickerService), parameterTypes);
-        Assert.DoesNotContain(typeof(IFileExplorerService), parameterTypes);
-        Assert.Contains("_filePickerService.PickFileAsync(", source);
+        Assert.Contains(typeof(IFileExplorerService), parameterTypes);
+        Assert.DoesNotContain(typeof(IFilePickerService), parameterTypes);
+        Assert.Contains("_fileExplorerService.ShowFileSelection(", source);
         Assert.Contains(
             "OpenPathAsync(initialPath, autoPlay: true)",
             source);
         Assert.Contains(
-            "await OpenPathAsync(selectedPath, autoPlay: true);",
+            "OpenSelectedFileAsync(selectedPath)",
             source);
+        Assert.Contains("_windowManager.ActivateWindow(WindowId)", source);
 
         string pickerSource = File.ReadAllText(FindRepositoryFile(
             "CryptoBook",
             "Services",
             "FileExplorerService.cs"));
-        Assert.Contains("normalizedPath[localPrefix.Length..]", pickerSource);
+        Assert.Contains(
+            "windowManager.CreateSiblingWindow<FileExplorer>(",
+            pickerSource);
+        Assert.Contains("windowManager.ShowWindow(windowId)", pickerSource);
+        Assert.Contains("FileSelectionHandlerContextKey", pickerSource);
+    }
+
+    [Fact]
+    public void PersistentFileSelection_InvokesHandlerWithoutClosingExplorer()
+    {
+        string source = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "ViewModels",
+            "FileExplorerViewModel.cs"));
+        int methodStart = source.IndexOf(
+            "private void ConfirmSelection(",
+            StringComparison.Ordinal);
+        int methodEnd = source.IndexOf(
+            "private string? ResolvePickerSelection()",
+            methodStart,
+            StringComparison.Ordinal);
+
+        Assert.True(methodStart >= 0);
+        Assert.True(methodEnd > methodStart);
+        string methodSource = source[methodStart..methodEnd];
+        int handlerCall = methodSource.IndexOf(
+            "_fileSelectionHandler(selection);",
+            StringComparison.Ordinal);
+        int earlyReturn = methodSource.IndexOf(
+            "return;",
+            handlerCall,
+            StringComparison.Ordinal);
+        int closeWindow = methodSource.IndexOf(
+            "CloseWindow(WindowId)",
+            StringComparison.Ordinal);
+
+        Assert.True(handlerCall >= 0);
+        Assert.True(earlyReturn > handlerCall);
+        Assert.True(closeWindow > earlyReturn);
+    }
+
+    [Fact]
+    public void FileExplorerService_PersistentSelection_IsModelessAndKeepsHandler()
+    {
+        var windows = new WindowManagerStub();
+        var service = new FileExplorerService(
+            windows,
+            new FileManagerService([]));
+        Action<string> handler = _ => { };
+
+        service.ShowFileSelection(@"C:\Media", handler);
+
+        Assert.Equal(typeof(CryptoBook.Views.FileExplorer), windows.CreatedType);
+        Assert.True(windows.CreatedAsSibling);
+        Assert.Equal(1, windows.ShowCount);
+        Assert.Equal(0, windows.ShowDialogCount);
+        Assert.Equal(
+            FileExplorerMode.SelectFile,
+            windows.Arguments?[FileExplorerService.ModeContextKey]);
+        Assert.Same(
+            handler,
+            windows.Arguments?[FileExplorerService.FileSelectionHandlerContextKey]);
+    }
+
+    [WpfFact]
+    public void PersistentFileSelection_UsesHandlerWithoutDialogResult()
+    {
+        var app = System.Windows.Application.Current ??
+            new System.Windows.Application();
+        using IContainer container = new Startup().ConfigureServices(app);
+        string? selectedPath = null;
+        var context = new WindowContext(new Dictionary<string, object?>
+        {
+            [FileExplorerService.ModeContextKey] = FileExplorerMode.SelectFile,
+            [FileExplorerService.FileSelectionHandlerContextKey] =
+                (Action<string>)(path => selectedPath = path)
+        });
+        using ILifetimeScope scope = container.BeginLifetimeScope(builder =>
+            builder.RegisterInstance<IWindowContext>(context)
+                .As<IWindowContext>()
+                .SingleInstance());
+        IFileExplorerViewModel viewModel = scope.Resolve<IFileExplorerViewModel>();
+        var file = new FileItem
+        {
+            Name = "video.mp4",
+            FullPath = @"C:\Media\video.mp4"
+        };
+
+        try
+        {
+            viewModel.SelectedListItem = file;
+            viewModel.SelectedItemsSnapshot = [file];
+
+            Assert.True(viewModel.ConfirmSelectionCommand.CanExecute(null));
+            viewModel.ConfirmSelectionCommand.Execute(null);
+
+            Assert.Equal(file.FullPath, selectedPath);
+            Assert.False(viewModel.HasResult);
+        }
+        finally
+        {
+            viewModel.Closed.Execute(null);
+        }
     }
 
     [Fact]
@@ -228,12 +335,16 @@ public sealed class FileExplorerArchitectureTests
     }
 
     [Fact]
-    public void SelectedStatus_UsesHumanReadableDisplayPath()
+    public void PickerStatus_UsesHumanReadablePathAndDynamicLabel()
     {
         string viewSource = File.ReadAllText(FindRepositoryFile(
             "CryptoBook",
             "Views",
             "FileExplorer.xaml"));
+        string modelSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Models",
+            "FileExplorerModel.cs"));
 
         Assert.Contains(
             "SelectedItem.DisplayPath, ElementName=listview",
@@ -241,6 +352,19 @@ public sealed class FileExplorerArchitectureTests
         Assert.DoesNotContain(
             "SelectedItem.FullPath, ElementName=listview",
             viewSource);
+        Assert.Contains("Text=\"{Binding PickerPathLabel}\"", viewSource);
+        Assert.Contains(
+            "Text=\"{Binding PickerSelectionDisplayPath}\"",
+            viewSource);
+        Assert.DoesNotContain(
+            "Text=\"{Binding PickerSelectionPath}\"",
+            viewSource);
+        Assert.Contains(
+            "AddressText = GetDisplayPath(targetPath);",
+            modelSource);
+        Assert.Contains(
+            "ResolveDisplayPath(",
+            modelSource);
     }
 
     private static void AssertConstructorUsesWorkspaceOpener(Type type)
@@ -252,6 +376,40 @@ public sealed class FileExplorerArchitectureTests
 
         Assert.Contains(typeof(IWorkspaceFileOpenService), parameterTypes);
         Assert.DoesNotContain(typeof(IDocumentSwitchCoordinator), parameterTypes);
+    }
+
+    private sealed class WindowManagerStub: IWindowManager
+    {
+        public Type? CreatedType { get; private set; }
+        public bool CreatedAsSibling { get; private set; }
+        public IReadOnlyDictionary<string, object?>? Arguments { get; private set; }
+        public int ShowCount { get; private set; }
+        public int ShowDialogCount { get; private set; }
+
+        public Guid CreateWindow<T>(
+            IReadOnlyDictionary<string, object?>? args = null)
+            where T: System.Windows.Window
+        {
+            CreatedType = typeof(T);
+            Arguments = args;
+            return Guid.NewGuid();
+        }
+
+        public Guid CreateSiblingWindow<T>(
+            IReadOnlyDictionary<string, object?>? args = null)
+            where T: System.Windows.Window
+        {
+            CreatedAsSibling = true;
+            return CreateWindow<T>(args);
+        }
+
+        public TResult? GetResult<TResult>(Guid guid) => default;
+        public void ShowWindow(Guid windowId) => ShowCount++;
+        public void ShowWindowDialog(Guid windowId) => ShowDialogCount++;
+        public void ActivateWindow(Guid windowId) { }
+        public void CloseWindow(Guid windowId) { }
+        public bool IsWindowOpen(Guid windowId) => false;
+        public WindowHost? FindHostWindow(Guid windowId) => null;
     }
 
     private static string FindRepositoryFile(params string[] parts)

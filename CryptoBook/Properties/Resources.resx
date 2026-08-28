@@ -462,6 +462,7 @@
   <data name="Explorer.Column.Folder" xml:space="preserve"><value>Folder</value></data>
   <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Selected: {0}</value></data>
   <data name="Explorer.Selected" xml:space="preserve"><value>Selected:</value></data>
+  <data name="Explorer.Current" xml:space="preserve"><value>Current:</value></data>
   <data name="Explorer.Copying" xml:space="preserve"><value>Copying files</value></data>
   <data name="Explorer.CopyError" xml:space="preserve"><value>Copy error</value></data>
   <data name="Explorer.CopyPathError" xml:space="preserve"><value>Copy path error</value></data>

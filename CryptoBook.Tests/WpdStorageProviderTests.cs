@@ -11,6 +11,25 @@ namespace CryptoBook.Tests;
 public sealed class WpdStorageProviderTests
 {
     [Fact]
+    public void DisplayPath_CanBeResolvedWithoutExposingDeviceId()
+    {
+        var provider = new WpdStorageProvider(new BridgeStub());
+        StorageLocation context = WpdLocatorCodec.Encode(
+            "wpd-device-id",
+            "/Внутреннее хранилище");
+        var storage = new StorageFacade([new LocalStorageProvider(), provider]);
+
+        StorageLocation resolved = storage.ResolveDisplayPath(
+            context,
+            "/Внутреннее хранилище/Download");
+
+        Assert.Equal(
+            "/Внутреннее хранилище/Download",
+            storage.FormatDisplayPath(resolved));
+        Assert.DoesNotContain("wpd-device-id", resolved.OpaqueId);
+    }
+
+    [Fact]
     public async Task Roots_ExposeAvailableMtpDevices_WithOpaqueLocators()
     {
         var bridge = new BridgeStub

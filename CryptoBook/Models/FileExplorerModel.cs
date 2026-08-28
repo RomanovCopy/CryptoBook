@@ -90,6 +90,7 @@ namespace CryptoBook.Models
             Array.Empty<ISystemItem>();
         public string CurrentPath { get => _currentPath; private set => SetProperty(ref _currentPath, value); }
         private string _currentPath = string.Empty;
+        public string CurrentDisplayPath => GetDisplayPath(CurrentPath);
         public string AddressText { get => _addressText; set => SetProperty(ref _addressText, value); }
         private string _addressText = string.Empty;
         public bool IsCurrentDirectoryUnavailable
@@ -345,13 +346,13 @@ namespace CryptoBook.Models
         public async void Execute_ApplyAddressCommand(object? obj)
         {
             await NavigateAsync(
-                AddressText,
+                ResolveAddressPath(AddressText),
                 FileExplorerNavigationMode.Standard);
         }
 
         public void Execute_CancelAddressCommand(object? obj)
         {
-            AddressText = CurrentPath;
+            AddressText = CurrentDisplayPath;
         }
 
         public async void Execute_RetryNavigationCommand(object? obj)
@@ -968,7 +969,7 @@ namespace CryptoBook.Models
                 SelectedListItem = null;
                 SelectedItemsSnapshot = Array.Empty<ISystemItem>();
                 CurrentPath = targetPath;
-                AddressText = targetPath;
+                AddressText = GetDisplayPath(targetPath);
                 ClearNavigationFailure();
                 container.IsSelected = true;
                 container.IsExpanded = true;
@@ -1052,7 +1053,7 @@ namespace CryptoBook.Models
                 ?? throw new DirectoryNotFoundException(
                     LocalizationManager.Format(
                         "Explorer.RootPathNotFound",
-                        path));
+                        GetDisplayPath(path)));
 
             IContainerSystemItem current = root;
             while(ancestry.Count > 0)
@@ -1074,7 +1075,7 @@ namespace CryptoBook.Models
                 if(existing is null)
                 {
                     throw new DirectoryNotFoundException(
-                        _storage.Format(childLocation));
+                        _storage.FormatDisplayPath(childLocation));
                 }
 
                 current = existing;
@@ -1091,9 +1092,54 @@ namespace CryptoBook.Models
                     "Explorer.OpenDirectoryError"),
                 LocalizationManager.Format(
                     "Explorer.OpenDirectoryFailed",
-                    path,
+                    GetDisplayPath(path),
                     Environment.NewLine,
                     error));
+
+        private string GetDisplayPath(string path)
+        {
+            if(string.IsNullOrWhiteSpace(path))
+                return path;
+
+            try
+            {
+                return _storage.FormatDisplayPath(_storage.Resolve(path));
+            }
+            catch(ArgumentException)
+            {
+                return path;
+            }
+            catch(NotSupportedException)
+            {
+                return path;
+            }
+            catch(FormatException)
+            {
+                return path;
+            }
+        }
+
+        private string ResolveAddressPath(string address)
+        {
+            if(string.IsNullOrWhiteSpace(address) ||
+               string.IsNullOrWhiteSpace(CurrentPath) ||
+               address.Contains("://", StringComparison.Ordinal))
+            {
+                return address;
+            }
+
+            StorageLocation current = _storage.Resolve(CurrentPath);
+            if(current.IsLocal || LooksLikeLocalPath(address))
+                return address;
+
+            StorageLocation location = _storage.ResolveDisplayPath(
+                current,
+                address);
+            return _storage.Format(location);
+        }
+
+        private static bool LooksLikeLocalPath(string path) =>
+            Path.IsPathFullyQualified(path) || path.StartsWith("\\\\", StringComparison.Ordinal);
 
         private async Task HandleNavigationFailureAsync(
             string path,

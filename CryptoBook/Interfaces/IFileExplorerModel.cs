@@ -17,6 +17,7 @@ namespace CryptoBook.Interfaces
         bool IsHiddenFilesVisible { get; set; } 
         bool IsFlatViewEnabled { get; set; }
         string CurrentPath { get; }
+        string CurrentDisplayPath { get; }
         string AddressText { get; set; }
         bool IsCurrentDirectoryUnavailable { get; }
         FileExplorerNavigationErrorKind? LastNavigationError { get; }

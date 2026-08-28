@@ -28,6 +28,7 @@ namespace CryptoBook.Interfaces
         bool IsFlatViewLoading { get; }
         string FlatViewStatus { get; }
         string CurrentPath { get; }
+        string CurrentDisplayPath { get; }
         string AddressText { get; set; }
         string FilterText { get; set; }
         ICollectionView ChildrenView { get; }
@@ -37,6 +38,8 @@ namespace CryptoBook.Interfaces
         string ExplorerTitle { get; }
         string PickerActionText { get; }
         string PickerSelectionPath { get; }
+        string PickerSelectionDisplayPath { get; }
+        string PickerPathLabel { get; }
         bool IsPickerMode { get; }
         ISystemItem? SelectedItem { get; set; }
         ISystemItem? SelectedListItem { get; set; }

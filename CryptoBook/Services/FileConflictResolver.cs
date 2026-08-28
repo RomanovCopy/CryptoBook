@@ -7,10 +7,15 @@ namespace CryptoBook.Services
     public sealed class FileConflictResolver: IFileConflictResolver
     {
         private readonly IWindowManager _windowManager;
+        private readonly StoragePathDisplayService _pathDisplay;
 
-        public FileConflictResolver(IWindowManager windowManager)
+        public FileConflictResolver(
+            IWindowManager windowManager,
+            StoragePathDisplayService pathDisplay)
         {
             _windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+            _pathDisplay = pathDisplay ??
+                throw new ArgumentNullException(nameof(pathDisplay));
         }
 
         public Task<FileConflictDecision> ResolveAsync(
@@ -22,8 +27,8 @@ namespace CryptoBook.Services
             cancellationToken.ThrowIfCancellationRequested();
             var context = new Dictionary<string, object?>
             {
-                ["sourcePath"] = sourcePath,
-                ["destinationPath"] = destinationPath,
+                ["sourcePath"] = _pathDisplay.FormatPath(sourcePath),
+                ["destinationPath"] = _pathDisplay.FormatPath(destinationPath),
                 ["isDirectory"] = isDirectory
             };
             Guid windowId = _windowManager.CreateWindow<FileConflictDialog>(context);
