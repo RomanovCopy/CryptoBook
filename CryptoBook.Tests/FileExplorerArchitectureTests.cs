@@ -90,7 +90,7 @@ public sealed class FileExplorerArchitectureTests
     }
 
     [Fact]
-    public void ManageMode_KeepsFileExplorerOpenAfterOpeningFile()
+    public void ManageMode_ClosesFileExplorerAfterOpeningFile()
     {
         string source = File.ReadAllText(FindRepositoryFile(
             "CryptoBook",
@@ -107,7 +107,7 @@ public sealed class FileExplorerArchitectureTests
         Assert.True(methodStart >= 0);
         Assert.True(methodEnd > methodStart);
         string methodSource = source[methodStart..methodEnd];
-        Assert.DoesNotContain("CloseWindow(WindowId)", methodSource);
+        Assert.Contains("CloseWindow(WindowId)", methodSource);
     }
 
     [Fact]

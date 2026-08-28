@@ -1238,6 +1238,8 @@ namespace CryptoBook.Models
                         file.Name));
                 return;
             }
+
+            _windowManager.CloseWindow(WindowId);
         }
         public void Execute_ListViewSelectionChangedCommand(object? obj)
         {
