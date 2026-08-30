@@ -1,3 +1,4 @@
+using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Views;
@@ -43,6 +44,7 @@ namespace CryptoBook.Models
         private int _currentImageIndex = -1;
         private IReadOnlyList<string> _videoPaths = Array.Empty<string>();
         private int _currentVideoIndex = -1;
+        private IReadOnlyList<string> _catalogPaths = Array.Empty<string>();
         private bool _isClosing;
         private bool _disposed;
         private bool _isVideoVisible;
@@ -89,12 +91,24 @@ namespace CryptoBook.Models
             _instanceNumber = _playbackCoordinator.Register(WindowId, VideoService);
             UpdateMediaTitle();
 
+            string? catalogSelectionPath = null;
+            if(windowContext.TryGet<MediaCatalogSelection>(
+                MediaCatalogSelection.WindowContextKey,
+                out MediaCatalogSelection catalogSelection))
+            {
+                ApplyCatalog(catalogSelection);
+                catalogSelectionPath = catalogSelection.SelectedPath;
+            }
+
             if(windowContext.TryGet<string>("path", out var initialPath) &&
                 !string.IsNullOrWhiteSpace(initialPath))
             {
                 // Flyleaf должен получить полностью созданное визуальное дерево окна.
                 System.Windows.Application.Current.Dispatcher.BeginInvoke(
-                    async () => await OpenPathAsync(initialPath, autoPlay: true));
+                    async () => await OpenPathAsync(
+                        initialPath,
+                        autoPlay: true,
+                        catalogSelectionPath));
             }
         }
 
@@ -114,7 +128,7 @@ namespace CryptoBook.Models
 
         public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing;
         public void Execute_OpenFile(object? obj) => ShowFileExplorer(
-            selectedPath => _ = OpenSelectedFileAsync(selectedPath));
+            selection => _ = OpenSelectedFileAsync(selection));
 
         public bool CanExecute_OpenFileInNewWindow(object? obj) =>
             !_disposed && !_isClosing;
@@ -207,16 +221,16 @@ namespace CryptoBook.Models
         public bool CanExecute_Closed(object? obj) => !_disposed;
         public void Execute_Closed(object? obj) => Dispose();
 
-        private void ShowFileExplorer(Action<string> fileSelected)
+        private void ShowFileExplorer(Action<MediaCatalogSelection> fileSelected)
         {
             try
             {
                 _fileExplorerService.ShowFileSelection(
                     GetInitialDirectory(),
-                    selectedPath =>
+                    selection =>
                     {
                         if(!_disposed && !_isClosing)
-                            fileSelected(selectedPath);
+                            fileSelected(selection);
                     });
             }
             catch(Exception ex)
@@ -226,8 +240,9 @@ namespace CryptoBook.Models
             }
         }
 
-        private void OpenFileInNewWindow(string selectedPath)
+        private void OpenFileInNewWindow(MediaCatalogSelection selection)
         {
+            string selectedPath = selection.SelectedPath;
             if(string.IsNullOrWhiteSpace(selectedPath) || _disposed || _isClosing)
                 return;
 
@@ -237,6 +252,10 @@ namespace CryptoBook.Models
                 {
                     ["path"] = selectedPath
                 };
+                if(selection.FilePaths.Count > 0)
+                {
+                    context[MediaCatalogSelection.WindowContextKey] = selection;
+                }
                 Guid windowId = _windowManager.CreateSiblingWindow<MediaPlayer>(context);
                 _windowManager.ShowWindow(windowId);
             }
@@ -247,15 +266,19 @@ namespace CryptoBook.Models
             }
         }
 
-        private async Task OpenSelectedFileAsync(string selectedPath)
+        private async Task OpenSelectedFileAsync(MediaCatalogSelection selection)
         {
             if(_disposed || _isClosing)
                 return;
 
+            ApplyCatalog(selection);
             // FileExplorer является соседним окном и остаётся открытым позади.
             // Сразу возвращаем MediaPlayer на передний план, пока файл загружается.
             _windowManager.ActivateWindow(WindowId);
-            await OpenPathAsync(selectedPath, autoPlay: true);
+            await OpenPathAsync(
+                selection.SelectedPath,
+                autoPlay: true,
+                selection.SelectedPath);
         }
 
         private string? GetInitialDirectory() =>
@@ -263,7 +286,10 @@ namespace CryptoBook.Models
                 ? Path.GetDirectoryName(path)
                 : null;
 
-        private async Task OpenPathAsync(string path, bool autoPlay = false)
+        private async Task OpenPathAsync(
+            string path,
+            bool autoPlay = false,
+            string? sequencePath = null)
         {
             if(_disposed || _isClosing)
                 return;
@@ -296,7 +322,10 @@ namespace CryptoBook.Models
                         throw new InvalidOperationException(
                             LocalizationManager.GetString("Media.DecodeFailed"));
 
-                    UpdateImageSequence(path, preparedSource.IsTemporary);
+                    string catalogPath = sequencePath ?? path;
+                    bool includeSecureFiles = preparedSource.IsTemporary ||
+                        SecureFileExtensions.Contains(Path.GetExtension(catalogPath));
+                    UpdateImageSequence(catalogPath, includeSecureFiles);
                     SetMode(isImage: true);
                 }
                 else
@@ -309,7 +338,10 @@ namespace CryptoBook.Models
                     if(_disposed || _isClosing)
                         return;
 
-                    UpdateVideoSequence(path, preparedSource.IsTemporary);
+                    string catalogPath = sequencePath ?? path;
+                    bool includeSecureFiles = preparedSource.IsTemporary ||
+                        SecureFileExtensions.Contains(Path.GetExtension(catalogPath));
+                    UpdateVideoSequence(catalogPath, includeSecureFiles);
                 }
 
                 ReplaceActiveSource(preparedSource);
@@ -434,6 +466,7 @@ namespace CryptoBook.Models
                     Path.GetFullPath(path),
                     StringComparison.OrdinalIgnoreCase))
                 .ToArray();
+            RemoveFromCatalog(path);
 
             if(remainingImages.Length == 0)
             {
@@ -458,14 +491,11 @@ namespace CryptoBook.Models
 
             try
             {
-                _imagePaths = string.IsNullOrWhiteSpace(directory)
-                    ? [fullPath]
-                    : Directory.EnumerateFiles(directory)
-                        .Where(file => IsImageSequenceCandidate(file, isEncrypted))
-                        .OrderBy(
-                            file => Path.GetFileName(file),
-                            StringComparer.CurrentCultureIgnoreCase)
-                        .ToArray();
+                _imagePaths = BuildImageSequence(
+                    fullPath,
+                    directory,
+                    isEncrypted,
+                    _catalogPaths);
             }
             catch(IOException)
             {
@@ -494,14 +524,11 @@ namespace CryptoBook.Models
 
             try
             {
-                _videoPaths = string.IsNullOrWhiteSpace(directory)
-                    ? [fullPath]
-                    : Directory.EnumerateFiles(directory)
-                        .Where(file => IsVideoSequenceCandidate(file, isEncrypted))
-                        .OrderBy(
-                            file => Path.GetFileName(file),
-                            StringComparer.CurrentCultureIgnoreCase)
-                        .ToArray();
+                _videoPaths = BuildVideoSequence(
+                    fullPath,
+                    directory,
+                    isEncrypted,
+                    _catalogPaths);
             }
             catch(IOException)
             {
@@ -521,6 +548,93 @@ namespace CryptoBook.Models
             string extension = Path.GetExtension(path);
             return VideoExtensions.Contains(extension) ||
                 includeSecureFiles && SecureFileExtensions.Contains(extension);
+        }
+
+        internal static IReadOnlyList<string> BuildImageSequence(
+            string fullPath,
+            string? directory,
+            bool includeSecureFiles,
+            IReadOnlyList<string>? catalogPaths) =>
+            BuildSequence(
+                fullPath,
+                directory,
+                catalogPaths,
+                path => IsImageSequenceCandidate(path, includeSecureFiles));
+
+        internal static IReadOnlyList<string> BuildVideoSequence(
+            string fullPath,
+            string? directory,
+            bool includeSecureFiles,
+            IReadOnlyList<string>? catalogPaths) =>
+            BuildSequence(
+                fullPath,
+                directory,
+                catalogPaths,
+                path => IsVideoSequenceCandidate(path, includeSecureFiles));
+
+        private static IReadOnlyList<string> BuildSequence(
+            string fullPath,
+            string? directory,
+            IReadOnlyList<string>? catalogPaths,
+            Func<string, bool> isCandidate)
+        {
+            if(catalogPaths is { Count: > 0 })
+            {
+                // Плоская коллекция FileExplorer уже отсортирована и может
+                // объединять файлы из разных физических директорий.
+                string[] catalog = catalogPaths
+                    .Where(path => !string.IsNullOrWhiteSpace(path))
+                    .Select(Path.GetFullPath)
+                    .Where(isCandidate)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                return catalog.Length > 0 ? catalog : [fullPath];
+            }
+
+            return string.IsNullOrWhiteSpace(directory)
+                ? [fullPath]
+                : Directory.EnumerateFiles(directory)
+                    .Where(isCandidate)
+                    .OrderBy(
+                        file => Path.GetFileName(file),
+                        StringComparer.CurrentCultureIgnoreCase)
+                    .ToArray();
+        }
+
+        private void ApplyCatalog(MediaCatalogSelection selection)
+        {
+            if(selection.FilePaths.Count == 0)
+            {
+                _catalogPaths = Array.Empty<string>();
+                return;
+            }
+
+            IEnumerable<string> paths = selection.FilePaths
+                .Where(path => !string.IsNullOrWhiteSpace(path));
+            if(!paths.Contains(
+                selection.SelectedPath,
+                StringComparer.OrdinalIgnoreCase))
+            {
+                paths = paths.Append(selection.SelectedPath);
+            }
+
+            _catalogPaths = paths
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+
+        private void RemoveFromCatalog(string path)
+        {
+            if(_catalogPaths.Count == 0)
+                return;
+
+            string fullPath = Path.GetFullPath(path);
+            _catalogPaths = _catalogPaths
+                .Where(candidate => !string.Equals(
+                    Path.GetFullPath(candidate),
+                    fullPath,
+                    StringComparison.OrdinalIgnoreCase))
+                .ToArray();
         }
 
         private int FindImageIndex(string fullPath)

@@ -40,7 +40,7 @@ namespace CryptoBook.Services
 
         public void ShowFileSelection(
             string? initialDirectory,
-            Action<string> fileSelected)
+            Action<MediaCatalogSelection> fileSelected)
         {
             ArgumentNullException.ThrowIfNull(fileSelected);
             Guid windowId = windowManager.CreateSiblingWindow<FileExplorer>(
@@ -90,7 +90,7 @@ namespace CryptoBook.Services
         private static IReadOnlyDictionary<string, object?> CreateContext(
             FileExplorerMode mode,
             string? initialDirectory,
-            Action<string>? fileSelected = null)
+            Action<MediaCatalogSelection>? fileSelected = null)
         {
             var context = new Dictionary<string, object?>
             {

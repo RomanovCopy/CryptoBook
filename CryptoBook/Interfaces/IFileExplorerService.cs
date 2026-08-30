@@ -1,3 +1,5 @@
+using CryptoBook.DTO;
+
 namespace CryptoBook.Interfaces
 {
     /// <summary>
@@ -9,10 +11,11 @@ namespace CryptoBook.Interfaces
 
         /// <summary>
         /// Открывает FileExplorer для последовательного выбора файлов. После
-        /// выбора окно остаётся открытым, а путь передаётся обработчику.
+        /// выбора окно остаётся открытым, а обработчику передаётся выбранный
+        /// путь и снимок виртуального каталога «Все файлы», если он активен.
         /// </summary>
         void ShowFileSelection(
             string? initialDirectory,
-            Action<string> fileSelected);
+            Action<MediaCatalogSelection> fileSelected);
     }
 }

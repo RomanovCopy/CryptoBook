@@ -88,6 +88,13 @@ namespace CryptoBook.Models
         }
         private IReadOnlyList<ISystemItem> _selectedItemsSnapshot =
             Array.Empty<ISystemItem>();
+        public IReadOnlyList<string> FlatFilePathsSnapshot
+        {
+            get => _flatFilePathsSnapshot;
+            set => _flatFilePathsSnapshot = value?.ToArray() ?? Array.Empty<string>();
+        }
+        private IReadOnlyList<string> _flatFilePathsSnapshot =
+            Array.Empty<string>();
         public string CurrentPath { get => _currentPath; private set => SetProperty(ref _currentPath, value); }
         private string _currentPath = string.Empty;
         public string CurrentDisplayPath => GetDisplayPath(CurrentPath);
@@ -398,12 +405,31 @@ namespace CryptoBook.Models
             if(GetSingleSelection(obj) is not IFileItem file)
                 return;
 
-            LaunchResult result = _fileLauncherService.Open(file.FullPath, "openas");
-            if(!result.Success)
+            try
             {
+                WorkspaceFileOpenResult result = await _fileOpenService
+                    .OpenWithAsync(
+                        file.FullPath,
+                        _cancellationTokenSource.Token);
+                if(result.Cancelled || result.Success)
+                    return;
+
                 await _messageService.ShowMessage(
                     LocalizationManager.GetString("Explorer.FileOpenError"),
                     result.Error);
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.FileOpenError"),
+                    LocalizationManager.Format(
+                        "Explorer.FileOpenFailed",
+                        file.Name,
+                        Environment.NewLine,
+                        ex.Message));
             }
         }
 
@@ -1270,8 +1296,14 @@ namespace CryptoBook.Models
 
         private async Task OpenFileAsync(IFileItem file, CancellationToken cancellationToken)
         {
+            MediaCatalogSelection? mediaCatalog = IsFlatViewEnabled
+                ? new MediaCatalogSelection(
+                    file.FullPath,
+                    FlatFilePathsSnapshot)
+                : null;
             WorkspaceFileOpenResult result = await _fileOpenService.OpenAsync(
                 file.FullPath,
+                mediaCatalog,
                 cancellationToken);
             if(result.Cancelled)
                 return;

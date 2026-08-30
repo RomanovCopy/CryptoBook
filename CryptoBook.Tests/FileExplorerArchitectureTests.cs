@@ -148,6 +148,51 @@ public sealed class FileExplorerArchitectureTests
     }
 
     [Fact]
+    public void OpenWithCommand_UsesProtectedWorkspaceFlow()
+    {
+        string modelSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Models",
+            "FileExplorerModel.cs"));
+        string serviceSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Services",
+            "WorkspaceFileOpenService.cs"));
+
+        Assert.Contains("_fileOpenService", modelSource);
+        Assert.Contains(".OpenWithAsync(", modelSource);
+        Assert.DoesNotContain(
+            "_fileLauncherService.Open(file.FullPath, \"openas\")",
+            modelSource);
+        Assert.Contains("FileAttributes.ReadOnly", serviceSource);
+        Assert.Contains("LaunchOpenWith(protectedCopyPath)", serviceSource);
+
+        string launcherSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Services",
+            "FileLauncherService.cs"));
+        Assert.Contains("SHOpenWithDialog", launcherSource);
+        Assert.DoesNotContain(
+            "fileLauncherService.Open(path, \"openas\")",
+            serviceSource);
+    }
+
+    [Fact]
+    public void SystemOpenWithDialog_RejectsMissingFileBeforeNativeCall()
+    {
+        string missingPath = Path.Combine(
+            Path.GetTempPath(),
+            $"cryptobook-open-with-{Guid.NewGuid():N}.txt");
+
+        LaunchResult result = new FileLauncherService()
+            .ShowOpenWithDialog(missingPath);
+
+        Assert.False(result.Success);
+        Assert.Equal("shell:open-with-dialog", result.Action);
+        Assert.Equal(missingPath, result.Target);
+    }
+
+    [Fact]
     public void HomeMediaPlayerCommand_ReusesSideMenuEntryPoint()
     {
         string viewModelSource = File.ReadAllText(FindRepositoryFile(
@@ -180,12 +225,9 @@ public sealed class FileExplorerArchitectureTests
         Assert.Contains(typeof(IFileExplorerService), parameterTypes);
         Assert.DoesNotContain(typeof(IFilePickerService), parameterTypes);
         Assert.Contains("_fileExplorerService.ShowFileSelection(", source);
-        Assert.Contains(
-            "OpenPathAsync(initialPath, autoPlay: true)",
-            source);
-        Assert.Contains(
-            "OpenSelectedFileAsync(selectedPath)",
-            source);
+        Assert.Contains("OpenPathAsync(", source);
+        Assert.Contains("catalogSelectionPath", source);
+        Assert.Contains("OpenSelectedFileAsync(selection)", source);
         Assert.Contains("_windowManager.ActivateWindow(WindowId)", source);
 
         string pickerSource = File.ReadAllText(FindRepositoryFile(
@@ -218,7 +260,7 @@ public sealed class FileExplorerArchitectureTests
         Assert.True(methodEnd > methodStart);
         string methodSource = source[methodStart..methodEnd];
         int handlerCall = methodSource.IndexOf(
-            "_fileSelectionHandler(selection);",
+            "_fileSelectionHandler(CreateMediaCatalogSelection(",
             StringComparison.Ordinal);
         int earlyReturn = methodSource.IndexOf(
             "return;",
@@ -240,7 +282,7 @@ public sealed class FileExplorerArchitectureTests
         var service = new FileExplorerService(
             windows,
             new FileManagerService([]));
-        Action<string> handler = _ => { };
+        Action<MediaCatalogSelection> handler = _ => { };
 
         service.ShowFileSelection(@"C:\Media", handler);
 
@@ -262,12 +304,12 @@ public sealed class FileExplorerArchitectureTests
         var app = System.Windows.Application.Current ??
             new System.Windows.Application();
         using IContainer container = new Startup().ConfigureServices(app);
-        string? selectedPath = null;
+        MediaCatalogSelection? selection = null;
         var context = new WindowContext(new Dictionary<string, object?>
         {
             [FileExplorerService.ModeContextKey] = FileExplorerMode.SelectFile,
             [FileExplorerService.FileSelectionHandlerContextKey] =
-                (Action<string>)(path => selectedPath = path)
+                (Action<MediaCatalogSelection>)(value => selection = value)
         });
         using ILifetimeScope scope = container.BeginLifetimeScope(builder =>
             builder.RegisterInstance<IWindowContext>(context)
@@ -288,7 +330,9 @@ public sealed class FileExplorerArchitectureTests
             Assert.True(viewModel.ConfirmSelectionCommand.CanExecute(null));
             viewModel.ConfirmSelectionCommand.Execute(null);
 
-            Assert.Equal(file.FullPath, selectedPath);
+            Assert.NotNull(selection);
+            Assert.Equal(file.FullPath, selection.SelectedPath);
+            Assert.Empty(selection.FilePaths);
             Assert.False(viewModel.HasResult);
         }
         finally

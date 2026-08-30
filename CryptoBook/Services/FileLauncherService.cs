@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,6 +67,51 @@ namespace CryptoBook.Services
             } catch(Exception ex)
             {
                 return LaunchResult.Fail("open-with", target, ex.Message, ex);
+            }
+        }
+
+        public LaunchResult ShowOpenWithDialog(string target)
+        {
+            const string action = "shell:open-with-dialog";
+            try
+            {
+                if(string.IsNullOrWhiteSpace(target))
+                    return LaunchResult.Fail(action, "", "Path is empty.");
+
+                target = target.Trim();
+                if(!File.Exists(target))
+                {
+                    return LaunchResult.Fail(
+                        action,
+                        target,
+                        $"Path not found: {target}");
+                }
+
+                var info = new OpenAsInfo
+                {
+                    File = target,
+                    Flags = OpenAsInfoFlags.Execute
+                };
+                int result = SHOpenWithDialog(IntPtr.Zero, ref info);
+                if(result >= 0 || result == OperationCancelledHResult)
+                    return LaunchResult.Ok(action, target);
+
+                Exception exception = Marshal.GetExceptionForHR(result) ??
+                    new InvalidOperationException(
+                        $"SHOpenWithDialog failed: 0x{result:X8}.");
+                return LaunchResult.Fail(
+                    action,
+                    target,
+                    exception.Message,
+                    exception);
+            }
+            catch(Exception exception)
+            {
+                return LaunchResult.Fail(
+                    action,
+                    target ?? string.Empty,
+                    exception.Message,
+                    exception);
             }
         }
 
@@ -284,5 +330,31 @@ namespace CryptoBook.Services
             var escaped = ps.Replace("\"", "`\"");
             return $"\"{escaped}\"";
         }
+
+        private const int OperationCancelledHResult =
+            unchecked((int)0x800704C7);
+
+        [Flags]
+        private enum OpenAsInfoFlags: uint
+        {
+            Execute = 0x00000004
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct OpenAsInfo
+        {
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string File;
+
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string? Class;
+
+            public OpenAsInfoFlags Flags;
+        }
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        private static extern int SHOpenWithDialog(
+            IntPtr parentWindow,
+            ref OpenAsInfo openAsInfo);
     }
 }

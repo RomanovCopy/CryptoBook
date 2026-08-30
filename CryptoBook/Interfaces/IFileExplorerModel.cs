@@ -25,6 +25,7 @@ namespace CryptoBook.Interfaces
         ISystemItem? SelectedItem { get; set; }
         ISystemItem? SelectedListItem { get; set; }
         IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get; set; }
+        IReadOnlyList<string> FlatFilePathsSnapshot { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
         Task<bool> NavigateAsync(
             string path,

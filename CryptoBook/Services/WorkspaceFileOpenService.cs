@@ -94,10 +94,88 @@ namespace CryptoBook.Services
         public Task<WorkspaceFileOpenResult> OpenAsync(
             string filePath,
             CancellationToken cancellationToken = default) =>
+            OpenAsync(filePath, null, cancellationToken);
+
+        public Task<WorkspaceFileOpenResult> OpenAsync(
+            string filePath,
+            MediaCatalogSelection? mediaCatalog,
+            CancellationToken cancellationToken = default) =>
             SwitchAsync(
                 filePath,
                 requestEncryptionKey: false,
+                mediaCatalog,
                 cancellationToken);
+
+        public async Task<WorkspaceFileOpenResult> OpenWithAsync(
+            string filePath,
+            CancellationToken cancellationToken = default)
+        {
+            if(keyResetService?.State is KeyResetState.Resetting)
+                return WorkspaceFileOpenResult.Fail("Выполняется безопасный сброс ключа.");
+            using IDisposable? timerPause = keyResetService?.Pause();
+            if(string.IsNullOrWhiteSpace(filePath))
+                return WorkspaceFileOpenResult.Fail("File path is empty.");
+
+            string normalizedPath;
+            try
+            {
+                normalizedPath = Path.GetFullPath(
+                    GetLocalNativePath(filePath));
+            }
+            catch(Exception exception) when(
+                exception is ArgumentException or NotSupportedException)
+            {
+                return WorkspaceFileOpenResult.Fail(exception.Message);
+            }
+
+            await switchGate.WaitAsync(cancellationToken);
+            try
+            {
+                string? accessError = ValidateReadableFile(normalizedPath);
+                if(accessError is not null)
+                    return WorkspaceFileOpenResult.Fail(accessError);
+
+                bool isEncrypted = await secureFileValidator
+                    .HasCryptoBookHeaderAsync(
+                        normalizedPath,
+                        cancellationToken);
+                if(!isEncrypted)
+                    return LaunchOpenWith(normalizedPath);
+
+                if(!keyRequestService.EnsureKeyAvailable())
+                    return WorkspaceFileOpenResult.Cancel();
+
+                (string operationDirectory, string decryptedPath) =
+                    await CreateDecryptedTemporaryCopyAsync(
+                        normalizedPath,
+                        cancellationToken);
+                try
+                {
+                    string protectedCopyPath = RenameDecryptedCopyForDisplay(
+                        normalizedPath,
+                        decryptedPath);
+                    File.SetAttributes(
+                        protectedCopyPath,
+                        File.GetAttributes(protectedCopyPath) |
+                            FileAttributes.ReadOnly);
+
+                    WorkspaceFileOpenResult result =
+                        LaunchOpenWith(protectedCopyPath);
+                    if(!result.Success)
+                        TryDeleteDirectory(operationDirectory);
+                    return result;
+                }
+                catch
+                {
+                    TryDeleteDirectory(operationDirectory);
+                    throw;
+                }
+            }
+            finally
+            {
+                switchGate.Release();
+            }
+        }
 
         public Task<WorkspaceFileOpenResult> OpenFromShellAsync(
             string filePath,
@@ -105,6 +183,7 @@ namespace CryptoBook.Services
             SwitchAsync(
                 filePath,
                 requestEncryptionKey: true,
+                mediaCatalog: null,
                 cancellationToken);
 
         public async Task<WorkspaceFileOpenResult> SwitchAsync(
@@ -113,11 +192,13 @@ namespace CryptoBook.Services
             await SwitchAsync(
                 targetPath,
                 requestEncryptionKey: false,
+                mediaCatalog: null,
                 cancellationToken);
 
         private async Task<WorkspaceFileOpenResult> SwitchAsync(
             string targetPath,
             bool requestEncryptionKey,
+            MediaCatalogSelection? mediaCatalog,
             CancellationToken cancellationToken)
         {
             // В состоянии Restoring сервис сам вызывает штатное открытие
@@ -172,6 +253,7 @@ namespace CryptoBook.Services
                     normalizedPath,
                     requestEncryptionKey,
                     knownEncryptionState,
+                    mediaCatalog,
                     cancellationToken);
                 if(result.Success && IsCurrentDocument(normalizedPath))
                     await TryDeletePreviousRecoverySnapshotAsync();
@@ -189,6 +271,7 @@ namespace CryptoBook.Services
             string filePath,
             bool requestEncryptionKey,
             bool? knownEncryptionState,
+            MediaCatalogSelection? mediaCatalog,
             CancellationToken cancellationToken)
         {
             bool isEncrypted = knownEncryptionState ??
@@ -210,7 +293,7 @@ namespace CryptoBook.Services
                 }
 
                 if(template?.OpenMode == FileOpenMode.Media)
-                    return OpenMedia(filePath);
+                    return OpenMedia(filePath, mediaCatalog);
 
                 LaunchResult launchResult = fileLauncherService.Open(filePath);
                 return launchResult.Success
@@ -224,43 +307,13 @@ namespace CryptoBook.Services
             if(!keyAvailable)
                 return WorkspaceFileOpenResult.Cancel();
 
-            // Отдельный каталог на операцию упрощает проверку результата и позволяет
-            // удалить открытый текст целиком после внутреннего открытия или ошибки.
-            string operationDirectory = Path.Combine(
-                temporaryRoot,
-                Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(operationDirectory);
+            (string operationDirectory, string decryptedPath) =
+                await CreateDecryptedTemporaryCopyAsync(
+                    filePath,
+                    cancellationToken);
 
             try
             {
-                string outputBasePath = Path.Combine(
-                    operationDirectory,
-                    "document");
-                await progressDialogService.RunAsync(
-                LocalizationManager.GetString("Media.DecryptingFile"),
-                    async (progress, token) =>
-                    {
-                        using var linkedTokenSource =
-                            CancellationTokenSource.CreateLinkedTokenSource(
-                                cancellationToken,
-                                token);
-                        await secureFileProcessor.DecryptFileAsyncToFile(
-                            filePath,
-                            outputBasePath,
-                            progress,
-                            linkedTokenSource.Token);
-                        return true;
-                    });
-
-                string[] outputFiles = Directory.GetFiles(operationDirectory);
-                if(outputFiles.Length != 1)
-                {
-                    throw new IOException(
-                    LocalizationManager.GetString(
-                        "Media.DecryptedFileUnknown"));
-                }
-
-                string decryptedPath = outputFiles[0];
                 IFileTemplate? template = FindTemplate(decryptedPath);
                 if(template?.OpenMode == FileOpenMode.Document)
                 {
@@ -278,7 +331,7 @@ namespace CryptoBook.Services
                 {
                     // Медиаплеер читает файл после возврата из метода, поэтому каталог
                     // остаётся жить до Dispose сервиса вместе с окном приложения.
-                    return OpenMedia(decryptedPath);
+                    return OpenMedia(decryptedPath, mediaCatalog);
                 }
 
                 LaunchResult launchResult = fileLauncherService.Open(decryptedPath);
@@ -297,12 +350,101 @@ namespace CryptoBook.Services
             }
         }
 
-        private WorkspaceFileOpenResult OpenMedia(string filePath)
+        private async Task<(string OperationDirectory, string DecryptedPath)>
+            CreateDecryptedTemporaryCopyAsync(
+                string encryptedPath,
+                CancellationToken cancellationToken)
+        {
+            // Каждый открытый файл изолирован в отдельном каталоге, чтобы исходный
+            // контейнер никогда не передавался стороннему приложению.
+            string operationDirectory = Path.Combine(
+                temporaryRoot,
+                Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(operationDirectory);
+
+            try
+            {
+                string outputBasePath = Path.Combine(
+                    operationDirectory,
+                    "document");
+                await progressDialogService.RunAsync(
+                    LocalizationManager.GetString("Media.DecryptingFile"),
+                    async (progress, token) =>
+                    {
+                        using var linkedTokenSource =
+                            CancellationTokenSource.CreateLinkedTokenSource(
+                                cancellationToken,
+                                token);
+                        await secureFileProcessor.DecryptFileAsyncToFile(
+                            encryptedPath,
+                            outputBasePath,
+                            progress,
+                            linkedTokenSource.Token);
+                        return true;
+                    });
+
+                string[] outputFiles = Directory.GetFiles(operationDirectory);
+                if(outputFiles.Length != 1)
+                {
+                    throw new IOException(
+                        LocalizationManager.GetString(
+                            "Media.DecryptedFileUnknown"));
+                }
+
+                return (operationDirectory, outputFiles[0]);
+            }
+            catch
+            {
+                TryDeleteDirectory(operationDirectory);
+                throw;
+            }
+        }
+
+        private WorkspaceFileOpenResult LaunchOpenWith(string path)
+        {
+            LaunchResult launchResult =
+                fileLauncherService.ShowOpenWithDialog(path);
+            return launchResult.Success
+                ? WorkspaceFileOpenResult.ExternalSuccess()
+                : WorkspaceFileOpenResult.Fail(launchResult.Error);
+        }
+
+        private static string RenameDecryptedCopyForDisplay(
+            string encryptedPath,
+            string decryptedPath)
+        {
+            string baseName = Path.GetFileNameWithoutExtension(encryptedPath);
+            if(string.IsNullOrWhiteSpace(baseName))
+                return decryptedPath;
+
+            string displayPath = Path.Combine(
+                Path.GetDirectoryName(decryptedPath)!,
+                baseName + Path.GetExtension(decryptedPath));
+            if(string.Equals(
+                displayPath,
+                decryptedPath,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return decryptedPath;
+            }
+
+            File.Move(decryptedPath, displayPath);
+            return displayPath;
+        }
+
+        private WorkspaceFileOpenResult OpenMedia(
+            string filePath,
+            MediaCatalogSelection? mediaCatalog)
         {
             var context = new Dictionary<string, object?>
             {
                 ["path"] = filePath
             };
+            if(mediaCatalog is not null && mediaCatalog.FilePaths.Count > 0)
+            {
+                context[MediaCatalogSelection.WindowContextKey] =
+                    mediaCatalog;
+            }
             // FileExplorer и другие окна-источники могут закрыться
             // сразу после открытия. MediaPlayer должен принадлежать их
             // владельцу, а не самому временному окну.
@@ -432,8 +574,30 @@ namespace CryptoBook.Services
         {
             try
             {
-                if(Directory.Exists(path))
-                    Directory.Delete(path, recursive: true);
+                if(!Directory.Exists(path))
+                    return;
+
+                foreach(string file in Directory.EnumerateFiles(
+                    path,
+                    "*",
+                    SearchOption.AllDirectories))
+                {
+                    try
+                    {
+                        File.SetAttributes(
+                            file,
+                            File.GetAttributes(file) &
+                                ~FileAttributes.ReadOnly);
+                    }
+                    catch(IOException)
+                    {
+                    }
+                    catch(UnauthorizedAccessException)
+                    {
+                    }
+                }
+
+                Directory.Delete(path, recursive: true);
             }
             catch(IOException)
             {
