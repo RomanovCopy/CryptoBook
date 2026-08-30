@@ -11,6 +11,32 @@ namespace CryptoBook.Tests;
 public sealed class AndroidStorageProviderTests
 {
     [Fact]
+    public void DisplayPath_HidesOpaqueAndroidLocator()
+    {
+        var provider = new AndroidStorageProvider(new BridgeStub());
+        StorageLocation location = AndroidLocatorCodec.Encode(
+            "device-serial",
+            "/storage/emulated/0/DCIM/photo.jpg");
+        var storage = new StorageFacade([new LocalStorageProvider(), provider]);
+        var display = new StoragePathDisplayService(storage);
+
+        Assert.Equal(
+            "/storage/emulated/0/DCIM/photo.jpg",
+            storage.FormatDisplayPath(location));
+        Assert.Equal(
+            "Ошибка: /storage/emulated/0/DCIM/photo.jpg",
+            display.FormatMessage($"Ошибка: {location}"));
+
+        StorageLocation resolved = storage.ResolveDisplayPath(
+            location,
+            "/storage/emulated/0/Download");
+        Assert.Equal(
+            "/storage/emulated/0/Download",
+            storage.FormatDisplayPath(resolved));
+        Assert.DoesNotContain("device-serial", resolved.OpaqueId);
+    }
+
+    [Fact]
     public async Task Roots_PreserveOnlineOfflineAndUnauthorizedStates_WithOpaqueLocators()
     {
         var bridge = new BridgeStub

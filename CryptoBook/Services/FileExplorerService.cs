@@ -15,6 +15,8 @@ namespace CryptoBook.Services
     {
         public const string ModeContextKey = "fileExplorerMode";
         public const string InitialDirectoryContextKey = "initialDirectory";
+        public const string FileSelectionHandlerContextKey =
+            "fileSelectionHandler";
 
         private readonly IWindowManager windowManager;
         private readonly IFileManagerService fileManagerService;
@@ -33,6 +35,21 @@ namespace CryptoBook.Services
         {
             Guid windowId = windowManager.CreateWindow<FileExplorer>(
                 CreateContext(FileExplorerMode.Manage, initialDirectory));
+            windowManager.ShowWindow(windowId);
+        }
+
+        public void ShowFileSelection(
+            string? initialDirectory,
+            Action<MediaCatalogSelection> fileSelected)
+        {
+            ArgumentNullException.ThrowIfNull(fileSelected);
+            Guid windowId = windowManager.CreateSiblingWindow<FileExplorer>(
+                CreateContext(
+                    FileExplorerMode.SelectFile,
+                    initialDirectory,
+                    fileSelected));
+            // MediaPlayer использует FileExplorer как постоянный браузер:
+            // каждый выбор открывает файл, не завершая окно выбора.
             windowManager.ShowWindow(windowId);
         }
 
@@ -72,7 +89,8 @@ namespace CryptoBook.Services
 
         private static IReadOnlyDictionary<string, object?> CreateContext(
             FileExplorerMode mode,
-            string? initialDirectory)
+            string? initialDirectory,
+            Action<MediaCatalogSelection>? fileSelected = null)
         {
             var context = new Dictionary<string, object?>
             {
@@ -80,6 +98,8 @@ namespace CryptoBook.Services
             };
             if(!string.IsNullOrWhiteSpace(initialDirectory))
                 context[InitialDirectoryContextKey] = initialDirectory;
+            if(fileSelected is not null)
+                context[FileSelectionHandlerContextKey] = fileSelected;
             return context;
         }
     }

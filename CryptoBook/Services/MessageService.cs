@@ -13,10 +13,16 @@ namespace CryptoBook.Services
     public sealed class MessageService: IMessageService
     {
         private readonly IWindowManager _windowManager;
+        private readonly StoragePathDisplayService _pathDisplay;
 
-        public MessageService(IWindowManager windowManager)
+        public MessageService(
+            IWindowManager windowManager,
+            StoragePathDisplayService pathDisplay)
         {
-            _windowManager = windowManager;
+            _windowManager = windowManager ??
+                throw new ArgumentNullException(nameof(windowManager));
+            _pathDisplay = pathDisplay ??
+                throw new ArgumentNullException(nameof(pathDisplay));
         }
 
         public Task<Guid> ShowMessage(string title, string message, bool isCanceled = false)
@@ -28,7 +34,7 @@ namespace CryptoBook.Services
             var parameters = new Dictionary<string, object?>
             {
                 { "Title", title },
-                { "Message", message },
+                { "Message", _pathDisplay.FormatMessage(message) },
                 {"IsCanceled",isCanceled }
             };
             var id = _windowManager.CreateWindow<MessageWindow>(args: parameters);

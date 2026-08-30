@@ -13,6 +13,11 @@ public interface IStorageProvider: IService
     string Id { get; }
     StorageProviderCapabilities Capabilities { get; }
 
+    string FormatDisplayPath(StorageLocation location) => location.ToString();
+    StorageLocation ResolveDisplayPath(
+        StorageLocation context,
+        string displayPath);
+
     Task<IReadOnlyList<StorageItemMetadata>> GetRootsAsync(
         CancellationToken cancellationToken = default);
 

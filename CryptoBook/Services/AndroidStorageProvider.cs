@@ -32,6 +32,21 @@ public sealed class AndroidStorageProvider:
         StorageProviderCapabilities.RawStreams |
         StorageProviderCapabilities.Preview;
 
+    public string FormatDisplayPath(StorageLocation location)
+    {
+        (_, string objectId) = AndroidLocatorCodec.Decode(location);
+        return NormalizeRemote(objectId);
+    }
+
+    public StorageLocation ResolveDisplayPath(
+        StorageLocation context,
+        string displayPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayPath);
+        (string serial, _) = AndroidLocatorCodec.Decode(context);
+        return AndroidLocatorCodec.Encode(serial, NormalizeRemote(displayPath));
+    }
+
     public async Task<IReadOnlyList<StorageItemMetadata>> GetRootsAsync(
         CancellationToken cancellationToken = default)
     {

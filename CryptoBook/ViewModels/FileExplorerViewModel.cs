@@ -30,6 +30,7 @@ namespace CryptoBook.ViewModels
         private readonly IFileExplorerFlatViewService _flatViewService;
         private readonly FileExplorerMode _mode;
         private readonly string? _initialDirectory;
+        private readonly Action<MediaCatalogSelection>? _fileSelectionHandler;
         private ISystemItem? _previewSelection;
         private readonly ObservableCollection<ISystemItem> _emptyChildren = [];
         private readonly RangeObservableCollection<IFileItem> _flatFiles = [];
@@ -87,6 +88,7 @@ namespace CryptoBook.ViewModels
         public IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get => _fileExplorerModel.SelectedItemsSnapshot; set => _fileExplorerModel.SelectedItemsSnapshot=value; }
         public ReadOnlyObservableCollection<IDriveItem> GetDrives => _fileExplorerModel.GetDrives;
         public string CurrentPath => _fileExplorerModel.CurrentPath;
+        public string CurrentDisplayPath => _fileExplorerModel.CurrentDisplayPath;
         public string AddressText { get => _fileExplorerModel.AddressText; set => _fileExplorerModel.AddressText=value; }
         public bool IsCurrentDirectoryUnavailable =>
             _fileExplorerModel.IsCurrentDirectoryUnavailable;
@@ -106,6 +108,15 @@ namespace CryptoBook.ViewModels
                 : "Explorer.Picker.SelectFile");
         public bool IsPickerMode => _mode != FileExplorerMode.Manage;
         public string PickerSelectionPath => ResolvePickerSelection() ?? string.Empty;
+        public string PickerSelectionDisplayPath =>
+            ResolvePickerSelectionItem()?.DisplayPath ??
+            (IsPickerMode
+                ? CurrentDisplayPath
+                : string.Empty);
+        public string PickerPathLabel => LocalizationManager.GetString(
+            ResolvePickerSelectionItem() is null
+                ? "Explorer.Current"
+                : "Explorer.Selected");
         public string? Result { get; private set; }
         public bool HasResult => Result is not null;
         public string FilterText
@@ -163,6 +174,11 @@ namespace CryptoBook.ViewModels
                 out string initialDirectory)
                 ? initialDirectory
                 : null;
+            _fileSelectionHandler = windowContext.TryGet<Action<MediaCatalogSelection>>(
+                FileExplorerService.FileSelectionHandlerContextKey,
+                out Action<MediaCatalogSelection> fileSelectionHandler)
+                ? fileSelectionHandler
+                : null;
             _dispatcher = Dispatcher.CurrentDispatcher;
             _filterDebounceTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(FilterDebounceMilliseconds),
@@ -211,7 +227,11 @@ namespace CryptoBook.ViewModels
                 nameof(CurrentPath) or
                 nameof(IsCurrentDirectoryUnavailable))
             {
+                if(e.PropertyName == nameof(CurrentPath))
+                    OnPropertyChanged(nameof(CurrentDisplayPath));
                 OnPropertyChanged(nameof(PickerSelectionPath));
+                OnPropertyChanged(nameof(PickerSelectionDisplayPath));
+                OnPropertyChanged(nameof(PickerPathLabel));
                 _confirmSelectionCommand?.RaiseCanExecuteChanged();
             }
         }
@@ -325,6 +345,9 @@ namespace CryptoBook.ViewModels
                 _previewSelection = null;
                 Preview.Clear();
                 _flatFiles.ReplaceAll(result.Files);
+                _fileExplorerModel.FlatFilePathsSnapshot = result.Files
+                    .Select(file => file.FullPath)
+                    .ToArray();
                 _flatViewFileCount = result.Files.Count;
                 _flatViewSkippedDirectoryCount =
                     result.SkippedDirectoryCount;
@@ -385,6 +408,7 @@ namespace CryptoBook.ViewModels
             cancellation?.Cancel();
             _flatViewService.StopMonitoring();
             _flatFiles.ReplaceAll(Array.Empty<IFileItem>());
+            _fileExplorerModel.FlatFilePathsSnapshot = Array.Empty<string>();
             _flatViewHasResult = false;
             IsFlatViewLoading = false;
             FlatViewStatus = string.Empty;
@@ -710,21 +734,46 @@ namespace CryptoBook.ViewModels
             if(string.IsNullOrWhiteSpace(selection))
                 return;
 
+            if(_fileSelectionHandler is not null)
+            {
+                _fileSelectionHandler(CreateMediaCatalogSelection(
+                    selection,
+                    IsFlatViewEnabled,
+                    _flatFiles));
+                return;
+            }
+
             Result = selection;
             _windowManager.CloseWindow(WindowId);
         }
 
+        internal static MediaCatalogSelection CreateMediaCatalogSelection(
+            string selectedPath,
+            bool includeFlatCatalog,
+            IEnumerable<IFileItem> flatFiles) =>
+            new(
+                selectedPath,
+                includeFlatCatalog
+                    ? flatFiles.Select(file => file.FullPath).ToArray()
+                    : Array.Empty<string>());
+
         private string? ResolvePickerSelection()
         {
-            if(_mode == FileExplorerMode.SelectFile)
-                return SelectedListItem is IFileItem file ? file.FullPath : null;
+            ISystemItem? selectedItem = ResolvePickerSelectionItem();
+            if(selectedItem is not null)
+                return selectedItem.FullPath;
             if(_mode != FileExplorerMode.SelectFolder)
                 return null;
 
-            return SelectedListItem is IContainerSystemItem directory
-                ? directory.FullPath
-                : string.IsNullOrWhiteSpace(CurrentPath) ? null : CurrentPath;
+            return string.IsNullOrWhiteSpace(CurrentPath) ? null : CurrentPath;
         }
+
+        private ISystemItem? ResolvePickerSelectionItem() => _mode switch
+        {
+            FileExplorerMode.SelectFile => SelectedListItem as IFileItem,
+            FileExplorerMode.SelectFolder => SelectedListItem as IContainerSystemItem,
+            _ => null
+        };
 
         private async Task<bool> NavigateToInitialDirectoryAsync()
         {
@@ -747,6 +796,7 @@ namespace CryptoBook.ViewModels
         {
             OnPropertyChanged(nameof(ExplorerTitle));
             OnPropertyChanged(nameof(PickerActionText));
+            OnPropertyChanged(nameof(PickerPathLabel));
             if(IsFlatViewLoading)
             {
                 FlatViewStatus = LocalizationManager.GetString(

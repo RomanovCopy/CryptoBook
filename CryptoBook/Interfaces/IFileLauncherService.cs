@@ -22,6 +22,9 @@ namespace CryptoBook.Interfaces
         // 4) Запуск через конкретную программу (например notepad.exe file.txt)
         LaunchResult OpenWith(string applicationPath, string target, string? arguments = null, string? workingDirectory = null);
 
+        // 4.1) Системный список Windows «Открыть с помощью».
+        LaunchResult ShowOpenWithDialog(string target);
+
         // 5) Запустить EXE (без Shell), с контролем окна/учётки/переменных окружения и т.п.
         LaunchResult StartProcess(ProcessLaunchOptions options);
 

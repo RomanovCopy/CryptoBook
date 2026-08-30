@@ -34,6 +34,21 @@ public sealed class WpdStorageProvider:
         StorageProviderCapabilities.RawStreams |
         StorageProviderCapabilities.Preview;
 
+    public string FormatDisplayPath(StorageLocation location)
+    {
+        (_, string relativePath) = WpdLocatorCodec.Decode(location);
+        return relativePath;
+    }
+
+    public StorageLocation ResolveDisplayPath(
+        StorageLocation context,
+        string displayPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayPath);
+        (string deviceId, _) = WpdLocatorCodec.Decode(context);
+        return WpdLocatorCodec.Encode(deviceId, displayPath);
+    }
+
     public async Task<IReadOnlyList<StorageItemMetadata>> GetRootsAsync(
         CancellationToken cancellationToken = default) =>
         (await _bridge.GetDevicesAsync(cancellationToken))

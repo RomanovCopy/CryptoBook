@@ -161,6 +161,35 @@ public sealed class FileExplorerFlatViewTests
     }
 
     [Fact]
+    public void MediaSelection_InFlatViewCarriesEntireVirtualCatalog()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CryptoBook.FlatRoot");
+        var first = new FileItem
+        {
+            Name = "first",
+            Extension = ".jpg",
+            FullPath = Path.Combine(root, "one", "first.jpg")
+        };
+        var second = new FileItem
+        {
+            Name = "second",
+            Extension = ".mp4",
+            FullPath = Path.Combine(root, "two", "second.mp4")
+        };
+
+        MediaCatalogSelection selection =
+            FileExplorerViewModel.CreateMediaCatalogSelection(
+                second.FullPath,
+                includeFlatCatalog: true,
+                [first, second]);
+
+        Assert.Equal(second.FullPath, selection.SelectedPath);
+        Assert.Equal(
+            [first.FullPath, second.FullPath],
+            selection.FilePaths);
+    }
+
+    [Fact]
     public void FileExplorerXaml_ExposesFlatViewToggleAndFolderColumn()
     {
         string xamlPath = FindRepositoryFile(

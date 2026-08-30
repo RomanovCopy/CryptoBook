@@ -145,7 +145,11 @@ namespace CryptoBook.Tests
         public async Task PlainMedia_IsOpenedInBuiltInViewer(string extension)
         {
             string sourcePath = Path.Combine(testDirectory, "media" + extension);
+            string otherPath = Path.Combine(testDirectory, "nested", "other" + extension);
             await File.WriteAllBytesAsync(sourcePath, [1, 2, 3]);
+            var mediaCatalog = new MediaCatalogSelection(
+                sourcePath,
+                [otherPath, sourcePath]);
             var launcher = new FileLauncherStub();
             var internalOpener = new InternalFileOpenServiceStub();
             var windowManager = new WindowManagerStub();
@@ -163,12 +167,17 @@ namespace CryptoBook.Tests
                 new RecoveryServiceStub(),
                 new DocumentDialogServiceStub());
 
-            WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
+            WorkspaceFileOpenResult result = await service.OpenAsync(
+                sourcePath,
+                mediaCatalog);
 
             Assert.True(result.Success);
             Assert.True(result.OpenedInternally);
             Assert.Equal(typeof(Views.MediaPlayer), windowManager.CreatedWindowType);
             Assert.Equal(Path.GetFullPath(sourcePath), windowManager.CreatedArguments?["path"]);
+            Assert.Same(
+                mediaCatalog,
+                windowManager.CreatedArguments?[MediaCatalogSelection.WindowContextKey]);
             Assert.True(windowManager.CreatedAsSibling);
             Assert.Equal(1, windowManager.ShowCount);
             Assert.Null(launcher.OpenedPath);
@@ -238,10 +247,112 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
+        public async Task OpenWith_PlainFile_UsesSystemApplicationPicker()
+        {
+            string sourcePath = Path.Combine(testDirectory, "notes.txt");
+            await File.WriteAllTextAsync(sourcePath, "plain");
+            var launcher = new FileLauncherStub();
+            var keyRequest = new KeyRequestStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(encrypted: false),
+                keyRequest,
+                new InternalFileOpenServiceStub(),
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                fileLauncher: launcher);
+
+            WorkspaceFileOpenResult result = await service.OpenWithAsync(
+                sourcePath);
+
+            Assert.True(result.Success);
+            Assert.False(result.OpenedInternally);
+            Assert.Equal(Path.GetFullPath(sourcePath), launcher.OpenedPath);
+            Assert.Equal(1, launcher.SystemPickerCallCount);
+            Assert.Equal(0, keyRequest.CallCount);
+
+            service.Dispose();
+        }
+
+        [Fact]
+        public async Task OpenWith_EncryptedFile_UsesReadOnlyDecryptedCopy()
+        {
+            string sourcePath = Path.Combine(testDirectory, "secret.cbook");
+            byte[] encryptedContent = [9, 8, 7];
+            await File.WriteAllBytesAsync(sourcePath, encryptedContent);
+            var launcher = new FileLauncherStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(),
+                new KeyRequestStub(),
+                new InternalFileOpenServiceStub(),
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                new SecureFileProcessorStub(".txt"),
+                fileLauncher: launcher);
+
+            WorkspaceFileOpenResult result = await service.OpenWithAsync(
+                sourcePath);
+            string copyPath = Assert.IsType<string>(launcher.OpenedPath);
+
+            Assert.True(result.Success);
+            Assert.False(result.OpenedInternally);
+            Assert.Equal(1, launcher.SystemPickerCallCount);
+            Assert.NotEqual(sourcePath, copyPath);
+            Assert.Equal("secret.txt", Path.GetFileName(copyPath));
+            Assert.Equal([4, 5, 6], await File.ReadAllBytesAsync(copyPath));
+            Assert.True(
+                (File.GetAttributes(copyPath) & FileAttributes.ReadOnly) != 0);
+            Assert.Throws<UnauthorizedAccessException>(() =>
+                File.WriteAllBytes(copyPath, [7, 7, 7]));
+            Assert.Equal(
+                encryptedContent,
+                await File.ReadAllBytesAsync(sourcePath));
+
+            service.Dispose();
+
+            Assert.False(File.Exists(copyPath));
+            Assert.Equal(
+                encryptedContent,
+                await File.ReadAllBytesAsync(sourcePath));
+        }
+
+        [Fact]
+        public async Task OpenWith_EncryptedFile_KeyCancellationDoesNotLaunch()
+        {
+            string sourcePath = Path.Combine(testDirectory, "secret.cbook");
+            await File.WriteAllBytesAsync(sourcePath, [9, 8, 7]);
+            var launcher = new FileLauncherStub();
+            var service = CreateService(
+                new SecureFileValidatorStub(),
+                new KeyRequestStub { Available = false },
+                new InternalFileOpenServiceStub(),
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                fileLauncher: launcher);
+
+            WorkspaceFileOpenResult result = await service.OpenWithAsync(
+                sourcePath);
+
+            Assert.True(result.Cancelled);
+            Assert.Null(launcher.OpenedPath);
+            Assert.Equal(0, launcher.SystemPickerCallCount);
+
+            service.Dispose();
+        }
+
+        [Fact]
         public async Task EncryptedMedia_IsOpenedInBuiltInViewer()
         {
             string sourcePath = Path.Combine(testDirectory, "image.cbook");
             await File.WriteAllBytesAsync(sourcePath, [9, 8, 7]);
+            var mediaCatalog = new MediaCatalogSelection(
+                sourcePath,
+                [
+                    Path.Combine(testDirectory, "nested", "other.cbook"),
+                    sourcePath
+                ]);
             var launcher = new FileLauncherStub();
             var internalOpener = new InternalFileOpenServiceStub();
             var windowManager = new WindowManagerStub();
@@ -259,7 +370,9 @@ namespace CryptoBook.Tests
                 new RecoveryServiceStub(),
                 new DocumentDialogServiceStub());
 
-            WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
+            WorkspaceFileOpenResult result = await service.OpenAsync(
+                sourcePath,
+                mediaCatalog);
             string playbackPath = Assert.IsType<string>(
                 windowManager.CreatedArguments?["path"]);
 
@@ -267,6 +380,9 @@ namespace CryptoBook.Tests
             Assert.True(result.OpenedInternally);
             Assert.Equal(typeof(Views.MediaPlayer), windowManager.CreatedWindowType);
             Assert.True(windowManager.CreatedAsSibling);
+            Assert.Same(
+                mediaCatalog,
+                windowManager.CreatedArguments?[MediaCatalogSelection.WindowContextKey]);
             Assert.Equal(1, windowManager.ShowCount);
             Assert.True(File.Exists(playbackPath));
             Assert.Null(launcher.OpenedPath);
@@ -616,14 +732,15 @@ namespace CryptoBook.Tests
             DocumentSessionStub session,
             RecoveryServiceStub recovery,
             SecureFileProcessorStub? secureFileProcessor = null,
-            IRecentDocumentService? recentDocumentService = null) =>
+            IRecentDocumentService? recentDocumentService = null,
+            FileLauncherStub? fileLauncher = null) =>
             new(
                 validator,
                 secureFileProcessor ?? new SecureFileProcessorStub(".txt"),
                 keyRequest,
                 new WindowManagerStub(),
                 new ProgressDialogServiceStub(),
-                new FileLauncherStub(),
+                fileLauncher ?? new FileLauncherStub(),
                 CreateTemplateRegistry(),
                 internalOpener,
                 guard,
@@ -938,6 +1055,8 @@ namespace CryptoBook.Tests
         private sealed class FileLauncherStub: IFileLauncherService
         {
             public string? OpenedPath { get; private set; }
+            public string? OpenedVerb { get; private set; }
+            public int SystemPickerCallCount { get; private set; }
 
             public LaunchResult Open(string target)
             {
@@ -945,8 +1064,12 @@ namespace CryptoBook.Tests
                 return LaunchResult.Ok("open", target);
             }
 
-            public LaunchResult Open(string target, string verb) =>
-                throw new NotSupportedException();
+            public LaunchResult Open(string target, string verb)
+            {
+                OpenedPath = target;
+                OpenedVerb = verb;
+                return LaunchResult.Ok($"shell:{verb}", target);
+            }
             public LaunchResult ShellExecute(ShellLaunchOptions options) =>
                 throw new NotSupportedException();
             public LaunchResult OpenWith(
@@ -955,6 +1078,12 @@ namespace CryptoBook.Tests
                 string? arguments = null,
                 string? workingDirectory = null) =>
                 throw new NotSupportedException();
+            public LaunchResult ShowOpenWithDialog(string target)
+            {
+                OpenedPath = target;
+                SystemPickerCallCount++;
+                return LaunchResult.Ok("shell:open-with-dialog", target);
+            }
             public LaunchResult StartProcess(ProcessLaunchOptions options) =>
                 throw new NotSupportedException();
             public LaunchResult RevealInExplorer(string path, bool select = true) =>

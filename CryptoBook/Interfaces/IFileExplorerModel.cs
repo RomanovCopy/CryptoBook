@@ -17,6 +17,7 @@ namespace CryptoBook.Interfaces
         bool IsHiddenFilesVisible { get; set; } 
         bool IsFlatViewEnabled { get; set; }
         string CurrentPath { get; }
+        string CurrentDisplayPath { get; }
         string AddressText { get; set; }
         bool IsCurrentDirectoryUnavailable { get; }
         FileExplorerNavigationErrorKind? LastNavigationError { get; }
@@ -24,6 +25,7 @@ namespace CryptoBook.Interfaces
         ISystemItem? SelectedItem { get; set; }
         ISystemItem? SelectedListItem { get; set; }
         IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get; set; }
+        IReadOnlyList<string> FlatFilePathsSnapshot { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
         Task<bool> NavigateAsync(
             string path,

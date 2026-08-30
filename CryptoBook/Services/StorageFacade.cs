@@ -28,6 +28,14 @@ public sealed class StorageFacade: IStorageFacade
 
     public string Format(StorageLocation location) => location.ToString();
 
+    public string FormatDisplayPath(StorageLocation location) =>
+        GetProvider(location).FormatDisplayPath(location);
+
+    public StorageLocation ResolveDisplayPath(
+        StorageLocation context,
+        string displayPath) =>
+        GetProvider(context).ResolveDisplayPath(context, displayPath);
+
     public IStorageProvider GetProvider(StorageLocation location) =>
         _providers.TryGetValue(location.ProviderId, out IStorageProvider? provider)
             ? provider

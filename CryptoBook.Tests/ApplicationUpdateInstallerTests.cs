@@ -175,6 +175,8 @@ public sealed class ApplicationUpdateInstallerTests
             string? arguments = null,
             string? workingDirectory = null) =>
             throw new NotSupportedException();
+        public LaunchResult ShowOpenWithDialog(string target) =>
+            throw new NotSupportedException();
         public LaunchResult StartProcess(ProcessLaunchOptions options) =>
             throw new NotSupportedException();
         public LaunchResult RevealInExplorer(string path, bool select = true) =>
