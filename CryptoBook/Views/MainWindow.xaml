@@ -7,6 +7,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
+        xmlns:services="clr-namespace:CryptoBook.Services"
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
         xmlns:converters="clr-namespace:CryptoBook.Converters"
         xmlns:control="clr-namespace:CryptoBook.MyControls"
@@ -128,7 +129,12 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <i:Interaction.Behaviors>
-        <behaviors:WindowBehavior 
+        <behaviors:WindowBehavior
+            CloseCoordinator="{markup:ResolveService ServiceType={x:Type services:DocumentCloseCoordinator}}"
+            KeyResetService="{markup:ResolveService ServiceType={x:Type interfaces:IKeyResetService}}"
+            SnapshotService="{markup:ResolveService ServiceType={x:Type interfaces:ILockSnapshotService}}"
+            RichTextBoxService="{markup:ResolveService ServiceType={x:Type interfaces:IRichTextBoxService}}"
+            ActivationService="{markup:ResolveService ServiceType={x:Type interfaces:IApplicationActivationService}}"
             SidePanel="{Binding ElementName=sidemenu,UpdateSourceTrigger=PropertyChanged}"
             CloseSidePanelCommand="{Binding SideMenuClose, UpdateSourceTrigger=PropertyChanged}"/>
     </i:Interaction.Behaviors>

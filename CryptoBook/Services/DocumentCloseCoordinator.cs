@@ -6,7 +6,7 @@ namespace CryptoBook.Services
     /// Координирует восстановление при запуске и безопасное закрытие документа,
     /// включая сохранение изменений и удаление аварийного снимка.
     /// </summary>
-    public sealed class DocumentCloseCoordinator
+    public sealed class DocumentCloseCoordinator: IService
     {
         private readonly IDocumentSession documentSession;
         private readonly IUnsavedChangesGuard unsavedChangesGuard;

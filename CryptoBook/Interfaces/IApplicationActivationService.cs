@@ -1,6 +1,6 @@
 namespace CryptoBook.Interfaces
 {
-    public interface IApplicationActivationService: IDisposable
+    public interface IApplicationActivationService: IService, IDisposable
     {
         Task<bool> StartAsync(
             IReadOnlyList<string> commandLineArguments,
