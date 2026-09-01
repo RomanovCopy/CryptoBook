@@ -229,6 +229,22 @@ public sealed class FileExplorerArchitectureTests
         Assert.Contains("catalogSelectionPath", source);
         Assert.Contains("OpenSelectedFileAsync(selection)", source);
         Assert.Contains("_windowManager.ActivateWindow(WindowId)", source);
+        Assert.Contains("OpenFileInNewWindow(selection);", source);
+
+        int newWindowMethodStart = source.IndexOf(
+            "private void OpenFileInNewWindow(",
+            StringComparison.Ordinal);
+        int selectedFileMethodStart = source.IndexOf(
+            "private async Task OpenSelectedFileAsync(",
+            newWindowMethodStart,
+            StringComparison.Ordinal);
+        Assert.True(newWindowMethodStart >= 0);
+        Assert.True(selectedFileMethodStart > newWindowMethodStart);
+        string newWindowMethod = source[
+            newWindowMethodStart..selectedFileMethodStart];
+        Assert.DoesNotContain(
+            "_disposed || _isClosing",
+            newWindowMethod);
 
         string pickerSource = File.ReadAllText(FindRepositoryFile(
             "CryptoBook",

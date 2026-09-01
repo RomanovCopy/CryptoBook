@@ -390,25 +390,57 @@ namespace CryptoBook.DTO
                 return;
 
             _monitor = _directoryMonitoringService.StartMonitoring(FullPath,
-                onCreated: e => _ = HandleCreatedAsync(e.FullPath),
-                onDeleted: e => _ = HandleDeletedAsync(e.FullPath),
-                onRenamed: e => _ = HandleRenamedAsync(e.OldFullPath, e.FullPath),
-                 onChanged: async (e) =>
-                 {
-                     await _dispatcherService.InvokeAsync(new Action(() =>
-                     {
-                         if(e.ChangeType != WatcherChangeTypes.Created && e.ChangeType != WatcherChangeTypes.Renamed)
-                         {
-                             var item = _children.Where<ISystemItem>(x => string.Equals(x.FullPath, e.FullPath, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-                             var info = new FileInfo(e.FullPath);
-                             if(item is not null && info.Exists)
-                             {
-                                 item.Size = info.Length;
-                                 item.LastWriteTimeUtc = info.LastWriteTime.ToLocalTime();
-                             }
-                         }
-                     }));
-                 });
+                onCreated: e => RunMonitoringHandler(
+                    () => HandleCreatedAsync(e.FullPath)),
+                onDeleted: e => RunMonitoringHandler(
+                    () => HandleDeletedAsync(e.FullPath)),
+                onRenamed: e => RunMonitoringHandler(
+                    () => HandleRenamedAsync(e.OldFullPath, e.FullPath)),
+                onChanged: e => RunMonitoringHandler(
+                    () => HandleChangedAsync(e)));
+        }
+
+        private void RunMonitoringHandler(Func<Task> handler)
+        {
+            _ = RunMonitoringHandlerAsync(handler);
+        }
+
+        private static async Task RunMonitoringHandlerAsync(Func<Task> handler)
+        {
+            try
+            {
+                await handler().ConfigureAwait(false);
+            }
+            catch(OperationCanceledException)
+            {
+                // Dispatcher cancels queued operations during application shutdown.
+            }
+            catch(Exception)
+            {
+                // FileSystemWatcher callbacks must not terminate the application.
+            }
+        }
+
+        private async Task HandleChangedAsync(FileSystemEventArgs e)
+        {
+            await _dispatcherService.InvokeAsync(new Action(() =>
+            {
+                if(e.ChangeType != WatcherChangeTypes.Created &&
+                   e.ChangeType != WatcherChangeTypes.Renamed)
+                {
+                    ISystemItem? item = _children.FirstOrDefault(x =>
+                        string.Equals(
+                            x.FullPath,
+                            e.FullPath,
+                            StringComparison.OrdinalIgnoreCase));
+                    var info = new FileInfo(e.FullPath);
+                    if(item is not null && info.Exists)
+                    {
+                        item.Size = info.Length;
+                        item.LastWriteTimeUtc = info.LastWriteTime.ToLocalTime();
+                    }
+                }
+            }));
         }
 
         private async Task HandleCreatedAsync(string fullPath)

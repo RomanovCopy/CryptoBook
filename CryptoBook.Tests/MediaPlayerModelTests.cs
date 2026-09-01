@@ -70,5 +70,37 @@ namespace CryptoBook.Tests
             Assert.Equal(catalog[..2], images);
             Assert.Equal([catalog[2]], videos);
         }
+
+        [Fact]
+        public void BuildImageSequence_EmptyCatalogUsesOriginalSourceDirectory()
+        {
+            string directory = Path.Combine(
+                Path.GetTempPath(),
+                $"CryptoBook.MediaSequence.{Guid.NewGuid():N}");
+            Directory.CreateDirectory(directory);
+            string first = Path.Combine(directory, "first.cbook");
+            string selected = Path.Combine(directory, "second.cbook");
+            string unrelated = Path.Combine(directory, "notes.txt");
+
+            try
+            {
+                File.WriteAllBytes(first, [1]);
+                File.WriteAllBytes(selected, [2]);
+                File.WriteAllBytes(unrelated, [3]);
+
+                IReadOnlyList<string> images =
+                    MediaPlayerModel.BuildImageSequence(
+                        selected,
+                        directory,
+                        includeSecureFiles: true,
+                        Array.Empty<string>());
+
+                Assert.Equal([first, selected], images);
+            }
+            finally
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
     }
 }
