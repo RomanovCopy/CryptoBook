@@ -192,6 +192,26 @@ public sealed class FileExplorerCollectionPerformanceTests
     }
 
     [Fact]
+    public async Task WatcherChanged_DispatcherCancellation_IsHandled()
+    {
+        var monitoring = new MonitoringStub();
+        var dispatcher = new CancelingDispatcher();
+        DirectoryItem container = CreateContainer(
+            monitoring,
+            dispatcher: dispatcher);
+        container.FullPath = "C:\\catalog";
+        container.IsSelected = true;
+
+        monitoring.Changed?.Invoke(new FileSystemEventArgs(
+            WatcherChangeTypes.Changed,
+            container.FullPath,
+            "file.txt"));
+        await Task.Delay(50);
+
+        Assert.Equal(1, dispatcher.InvocationCount);
+    }
+
+    [Fact]
     public async Task DirectoryChildren_ExcludesFiles_AndIgnoresFileOnlyUpdates()
     {
         DirectoryItem container = CreateContainer();
@@ -224,8 +244,9 @@ public sealed class FileExplorerCollectionPerformanceTests
 
     private static DirectoryItem CreateContainer(
         MonitoringStub? monitoring = null,
-        ISystemItemCreateService? itemFactory = null) => new(
-            new ImmediateDispatcher(),
+        ISystemItemCreateService? itemFactory = null,
+        IDispatcherService? dispatcher = null) => new(
+            dispatcher ?? new ImmediateDispatcher(),
             monitoring ?? new MonitoringStub(),
             itemFactory ?? new ItemFactoryStub(),
             new SystemItemSortService());
@@ -269,9 +290,34 @@ public sealed class FileExplorerCollectionPerformanceTests
             Task.FromResult(func());
     }
 
+    private sealed class CancelingDispatcher: IDispatcherService
+    {
+        private int invocationCount;
+
+        public int InvocationCount => Volatile.Read(ref invocationCount);
+        public bool CheckAccess() => false;
+        public void Invoke(Action action) => throw new NotSupportedException();
+        public void BeginInvoke(Action action) => throw new NotSupportedException();
+        public Task InvokeAsync(
+            Action action,
+            DispatcherPriority priority = DispatcherPriority.Background)
+        {
+            Interlocked.Increment(ref invocationCount);
+            return Task.FromCanceled(new CancellationToken(canceled: true));
+        }
+        public Task<T> InvokeAsync<T>(
+            Func<T> func,
+            DispatcherPriority priority = DispatcherPriority.Background)
+        {
+            Interlocked.Increment(ref invocationCount);
+            return Task.FromCanceled<T>(new CancellationToken(canceled: true));
+        }
+    }
+
     private sealed class MonitoringStub: IDirectoryMonitoringService
     {
         public Action<RenamedEventArgs>? Renamed { get; private set; }
+        public Action<FileSystemEventArgs>? Changed { get; private set; }
 
         public bool StartMonitoring(
             string directoryPath,
@@ -287,6 +333,7 @@ public sealed class FileExplorerCollectionPerformanceTests
             int internalBufferSize = 64 * 1024)
         {
             Renamed = onRenamed;
+            Changed = onChanged;
             return true;
         }
         public bool StopMonitoring(string directoryPath) => true;

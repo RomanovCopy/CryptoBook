@@ -230,7 +230,16 @@ namespace CryptoBook.Models
                     selection =>
                     {
                         if(!_disposed && !_isClosing)
+                        {
                             fileSelected(selection);
+                            return;
+                        }
+
+                        // Постоянный FileExplorer живёт дольше окна,
+                        // из которого был открыт. После закрытия исходного
+                        // MediaPlayer следующий выбранный файл открываем в
+                        // новом окне, а не отправляем в уже уничтоженную модель.
+                        OpenFileInNewWindow(selection);
                     });
             }
             catch(Exception ex)
@@ -243,7 +252,7 @@ namespace CryptoBook.Models
         private void OpenFileInNewWindow(MediaCatalogSelection selection)
         {
             string selectedPath = selection.SelectedPath;
-            if(string.IsNullOrWhiteSpace(selectedPath) || _disposed || _isClosing)
+            if(string.IsNullOrWhiteSpace(selectedPath))
                 return;
 
             try

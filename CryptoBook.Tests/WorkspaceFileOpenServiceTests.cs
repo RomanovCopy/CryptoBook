@@ -394,6 +394,41 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
+        public async Task EncryptedMedia_WithoutFlatCatalog_PreservesSourceForNavigation()
+        {
+            string sourcePath = Path.Combine(testDirectory, "image.cbook");
+            await File.WriteAllBytesAsync(sourcePath, [9, 8, 7]);
+            var windowManager = new WindowManagerStub();
+            var service = new WorkspaceFileOpenService(
+                new SecureFileValidatorStub(),
+                new SecureFileProcessorStub(".png"),
+                new KeyRequestStub(),
+                windowManager,
+                new ProgressDialogServiceStub(),
+                new FileLauncherStub(),
+                CreateTemplateRegistry(),
+                new InternalFileOpenServiceStub(),
+                new UnsavedChangesGuardStub(),
+                new DocumentSessionStub(),
+                new RecoveryServiceStub(),
+                new DocumentDialogServiceStub());
+
+            WorkspaceFileOpenResult result = await service.OpenAsync(sourcePath);
+            string playbackPath = Assert.IsType<string>(
+                windowManager.CreatedArguments?["path"]);
+            var selection = Assert.IsType<MediaCatalogSelection>(
+                windowManager.CreatedArguments?[
+                    MediaCatalogSelection.WindowContextKey]);
+
+            Assert.True(result.Success);
+            Assert.NotEqual(sourcePath, playbackPath);
+            Assert.Equal(Path.GetFullPath(sourcePath), selection.SelectedPath);
+            Assert.Empty(selection.FilePaths);
+
+            service.Dispose();
+        }
+
+        [Fact]
         public async Task CurrentDocument_IsNotSavedOrReloaded()
         {
             string sourcePath = Path.Combine(testDirectory, "current.txt");

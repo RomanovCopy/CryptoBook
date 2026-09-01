@@ -293,7 +293,7 @@ namespace CryptoBook.Services
                 }
 
                 if(template?.OpenMode == FileOpenMode.Media)
-                    return OpenMedia(filePath, mediaCatalog);
+                    return OpenMedia(filePath, filePath, mediaCatalog);
 
                 LaunchResult launchResult = fileLauncherService.Open(filePath);
                 return launchResult.Success
@@ -331,7 +331,7 @@ namespace CryptoBook.Services
                 {
                     // Медиаплеер читает файл после возврата из метода, поэтому каталог
                     // остаётся жить до Dispose сервиса вместе с окном приложения.
-                    return OpenMedia(decryptedPath, mediaCatalog);
+                    return OpenMedia(decryptedPath, filePath, mediaCatalog);
                 }
 
                 LaunchResult launchResult = fileLauncherService.Open(decryptedPath);
@@ -433,18 +433,18 @@ namespace CryptoBook.Services
         }
 
         private WorkspaceFileOpenResult OpenMedia(
-            string filePath,
+            string playbackPath,
+            string sourcePath,
             MediaCatalogSelection? mediaCatalog)
         {
+            MediaCatalogSelection selection = mediaCatalog ?? new(
+                sourcePath,
+                Array.Empty<string>());
             var context = new Dictionary<string, object?>
             {
-                ["path"] = filePath
+                ["path"] = playbackPath,
+                [MediaCatalogSelection.WindowContextKey] = selection
             };
-            if(mediaCatalog is not null && mediaCatalog.FilePaths.Count > 0)
-            {
-                context[MediaCatalogSelection.WindowContextKey] =
-                    mediaCatalog;
-            }
             // FileExplorer и другие окна-источники могут закрыться
             // сразу после открытия. MediaPlayer должен принадлежать их
             // владельцу, а не самому временному окну.
