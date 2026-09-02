@@ -10,6 +10,12 @@
 
 **A local-first encrypted document workspace for Windows.**
 
+> **Important for version 1.1.2.5:** if CryptoBook stopped launching after an
+> in-place update, it cannot run its built-in updater. Download and run the
+> [1.1.2.51 installer](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.2.51)
+> manually over the existing installation. See the
+> [repair instructions](docs/releases/v1.1.2.5-recovery.md).
+
 CryptoBook combines rich-text editing, local file management, full-text search, media preview,
 and password-protected documents in one WPF desktop application. Documents stay on your
 machine unless you explicitly move or share them.

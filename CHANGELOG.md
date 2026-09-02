@@ -12,6 +12,9 @@
   before copying the current single-file application. It deliberately avoids a
   broad deletion of the installation directory.
 - Added regression coverage for the legacy-runtime cleanup rules.
+- Because affected 1.1.2.5 installations fail before application startup, they
+  cannot use the built-in updater. Version 1.1.2.51 must be installed manually
+  once over the existing installation; user documents and settings are kept.
 
 Full comparison: [v1.1.2.5...v1.1.2.51](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.2.5...v1.1.2.51)
 

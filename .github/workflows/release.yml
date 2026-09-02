@@ -253,6 +253,19 @@ jobs:
               --verify-tag
           }
 
+      - name: Publish 1.1.2.5 recovery notice
+        if: env.RELEASE_TAG == 'v1.1.2.51'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release edit v1.1.2.51 `
+            --title "CryptoBook 1.1.2.51" `
+            --notes-file docs/releases/v1.1.2.51.md
+          gh release edit v1.1.2.5 `
+            --title "v1.1.2.5 - manual repair required" `
+            --notes-file docs/releases/v1.1.2.5-recovery.md
+
       - name: Remove signing certificate
         if: always() && steps.certificate.outputs.enabled == 'true'
         shell: pwsh
