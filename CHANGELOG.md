@@ -11,7 +11,8 @@
   runtime is now kept in a repository-local NuGet package so locked restores
   and release builds use the verified binaries.
 - Hardened media startup by checking the complete required FFmpeg DLL set and
-  added a release smoke test for the Flyleaf WPF control template.
+  added a release smoke test that builds and validates the Flyleaf WPF control
+  template in clean CI environments.
 - Updated Autofac, Microsoft.Data.Sqlite, SQLitePCLRaw, Material Design, WPF
   Behaviors, test infrastructure, and their locked dependency graphs.
 - Expanded FFmpeg/Flyleaf provenance checks and release evidence, refreshed

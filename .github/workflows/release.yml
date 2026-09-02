@@ -65,7 +65,7 @@ jobs:
       - name: Verify Flyleaf WPF template compatibility
         run: >-
           dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj
-          -c Release --no-build --no-restore -- --template-only
+          -c Release --no-restore -- --template-only
 
       - name: Publish self-contained single file
         shell: pwsh
