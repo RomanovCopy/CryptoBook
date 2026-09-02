@@ -6,6 +6,20 @@ namespace CryptoBook.Tests;
 
 public sealed class InstallerDefinitionTests
 {
+    private static readonly string[] LegacyRuntimeCleanupEntries =
+    [
+        "Type: files; Name: \"{app}\\*.dll\"",
+        "Type: files; Name: \"{app}\\*.deps.json\"",
+        "Type: files; Name: \"{app}\\*.runtimeconfig.json\"",
+        "Type: files; Name: \"{app}\\*.config\"",
+        "Type: files; Name: \"{app}\\createdump.exe\"",
+        "Type: filesandordirs; Name: \"{app}\\ru\"",
+        "Type: filesandordirs; Name: \"{app}\\uk\"",
+        "Type: filesandordirs; Name: \"{app}\\runtimes\"",
+        "Type: filesandordirs; Name: \"{app}\\LICENSES\"",
+        "Type: filesandordirs; Name: \"{app}\\compliance\""
+    ];
+
     [Fact]
     public void Installer_RemovesVersionedIconsBeforeCopyingCurrentIcon()
     {
@@ -29,6 +43,34 @@ public sealed class InstallerDefinitionTests
         Assert.Contains(
             "DestName: \"{#MyShortcutIconName}\"",
             installer,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Installer_RemovesLegacyMultiFileRuntimeBeforeCopyingSingleFile()
+    {
+        string installer = File.ReadAllText(FindRepositoryFile(
+            "installer",
+            "CryptoBook.iss"));
+
+        int cleanupSection = installer.IndexOf(
+            "[InstallDelete]",
+            StringComparison.Ordinal);
+        int filesSection = installer.IndexOf(
+            "[Files]",
+            StringComparison.Ordinal);
+        Assert.True(cleanupSection >= 0);
+        Assert.True(filesSection > cleanupSection);
+
+        string cleanupRules = installer[cleanupSection..filesSection];
+        foreach(string entry in LegacyRuntimeCleanupEntries)
+        {
+            Assert.Contains(entry, cleanupRules, StringComparison.Ordinal);
+        }
+
+        Assert.DoesNotContain(
+            "Type: filesandordirs; Name: \"{app}\\*\"",
+            cleanupRules,
             StringComparison.Ordinal);
     }
 

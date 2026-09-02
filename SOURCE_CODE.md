@@ -12,7 +12,7 @@ the distributor must also satisfy the source-code requirements of GNU GPL v3
 section 6; a link to an unrelated or moving branch is not a substitute for the
 corresponding source of the conveyed binary.
 
-CryptoBook 1.1.2.5 consumes the local RID-native package
+CryptoBook 1.1.2.51 consumes the local RID-native package
 `CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64` 9.0.20260816. It contains the
 unmodified FFmpeg DLLs from the official Flyleaf v3.11.3 release. The libraries
 report `GPL version 3 or later` and identify the exact FFmpeg tree at commit

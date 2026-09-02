@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.1.2.51 - 2026-09-02
+
+### Fixed
+
+- Fixed an in-place upgrade failure where the new .NET 10 single-file
+  executable could load `System.Private.CoreLib.dll` and other runtime files
+  left by an earlier .NET 8 multi-file installation, then exit before opening
+  the main window.
+- The installer now removes only known legacy runtime files and directories
+  before copying the current single-file application. It deliberately avoids a
+  broad deletion of the installation directory.
+- Added regression coverage for the legacy-runtime cleanup rules.
+
+Full comparison: [v1.1.2.5...v1.1.2.51](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.2.5...v1.1.2.51)
+
 ## 1.1.2.5 - 2026-09-02
 
 ### Highlights
