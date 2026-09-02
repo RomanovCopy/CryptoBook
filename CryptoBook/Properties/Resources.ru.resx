@@ -245,7 +245,7 @@
   <data name="Settings.Developers.Description" xml:space="preserve"><value>Техническое описание проекта, его архитектуры, защиты данных и ресурсов для разработки.</value></data>
   <data name="Settings.Developers.Technology" xml:space="preserve"><value>Технологии и архитектура</value></data>
   <data name="Settings.Developers.Platform.Title" xml:space="preserve"><value>Платформа и интерфейс</value></data>
-  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 8, WPF, Windows 10 версии 1809 или новее, x64.</value></data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 10, WPF, Windows 10 версии 1809 или новее, x64.</value></data>
   <data name="Settings.Developers.Architecture.Title" xml:space="preserve"><value>Архитектура</value></data>
   <data name="Settings.Developers.Architecture.Description" xml:space="preserve"><value>MVVM с внедрением зависимостей через Autofac и разделением слоёв представления, предметной логики и инфраструктурных сервисов.</value></data>
   <data name="Settings.Developers.Security.Title" xml:space="preserve"><value>Защита данных</value></data>
@@ -698,7 +698,7 @@
   <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve"><value>Для режима «Сохранить как» каталог назначения должен отличаться от исходного.</value></data>
   <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve"><value>Файл не является зашифрованным файлом CryptoBook.</value></data>
   <data name="Security.InvalidExtension" xml:space="preserve"><value>Некорректное расширение файла.</value></data>
-  <data name="Media.FfmpegMissing" xml:space="preserve"><value>Не найдены нативные библиотеки FFmpeg. Ожидался полный FFmpeg 7.1 runtime в «{0}».</value></data>
+  <data name="Media.FfmpegMissing" xml:space="preserve"><value>Не найдены нативные библиотеки FFmpeg. Ожидался полный FFmpeg 9 runtime в «{0}».</value></data>
   <data name="Media.OpenFailed" xml:space="preserve"><value>Не удалось открыть медиафайл.</value></data>
   <data name="Media.DecryptedFileUnknown" xml:space="preserve"><value>Не удалось определить расшифрованный медиафайл.</value></data>
   <data name="Media.DecryptingFile" xml:space="preserve"><value>Расшифровка файла</value></data>

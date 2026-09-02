@@ -633,7 +633,7 @@
                                 <TextBlock Text="{Binding ApplicationVersion}"/>
                                 <TextBlock Text="  ·  "
                                            Foreground="{DynamicResource CurrentMutedForeground}"/>
-                                <TextBlock Text="Windows x64 · .NET 8"
+                                <TextBlock Text="Windows x64 · .NET 10"
                                            Foreground="{DynamicResource CurrentMutedForeground}"/>
                             </StackPanel>
                         </StackPanel>

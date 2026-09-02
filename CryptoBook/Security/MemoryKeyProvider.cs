@@ -36,9 +36,12 @@ namespace CryptoBook.Security
             if(_passwordBytes is null)
                 throw new InvalidOperationException("Ключ не задан.");
 
-            using Rfc2898DeriveBytes rfc2898 = new( _passwordBytes, salt, 100_000, HashAlgorithmName.SHA256);
-
-            return rfc2898.GetBytes(32);
+            return Rfc2898DeriveBytes.Pbkdf2(
+                _passwordBytes,
+                salt,
+                100_000,
+                HashAlgorithmName.SHA256,
+                32);
         }
 
         public Task<byte[]> DeriveKeyAsync(

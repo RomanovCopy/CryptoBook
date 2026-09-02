@@ -12,6 +12,7 @@ using Controls = System.Windows.Controls;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using ContextMenu = System.Windows.Controls.ContextMenu;
 
 
 namespace CryptoBook.Interfaces

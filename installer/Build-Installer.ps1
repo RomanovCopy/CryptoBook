@@ -18,7 +18,7 @@ $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $projectPath = Join-Path $repositoryRoot 'CryptoBook\CryptoBook.csproj'
 $publishDirectory = Join-Path $repositoryRoot 'artifacts\win-x64'
 $installerScript = Join-Path $PSScriptRoot 'CryptoBook.iss'
-$minimumInstallerSdk = [Version]'8.0.423'
+$minimumInstallerSdk = [Version]'10.0.400'
 
 $dotnetCandidates = @(
     (Join-Path $env:LOCALAPPDATA 'Microsoft\dotnet\dotnet.exe'),
@@ -31,6 +31,8 @@ foreach ($candidate in $dotnetCandidates) {
     $candidateVersionText = & $candidate --version 2>$null
     $candidateVersion = $null
     if ([Version]::TryParse($candidateVersionText, [ref]$candidateVersion) -and
+        $candidateVersion.Major -eq $minimumInstallerSdk.Major -and
+        $candidateVersion.Minor -eq $minimumInstallerSdk.Minor -and
         $candidateVersion -ge $minimumInstallerSdk) {
         $dotnetPath = $candidate
         break
@@ -38,7 +40,7 @@ foreach ($candidate in $dotnetCandidates) {
 }
 
 if (-not $dotnetPath) {
-    throw "Building the installer requires .NET SDK $minimumInstallerSdk or newer in the 8.0 feature band."
+    throw "Building the installer requires .NET SDK $minimumInstallerSdk or newer in the 10.0 feature band."
 }
 
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {

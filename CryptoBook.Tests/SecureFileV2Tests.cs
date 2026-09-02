@@ -246,15 +246,12 @@ namespace CryptoBook.Tests
         {
             byte[] salt = RandomNumberGenerator.GetBytes(16);
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-            byte[] key;
-            using(Rfc2898DeriveBytes pbkdf2 = new(
+            byte[] key = Rfc2898DeriveBytes.Pbkdf2(
                 passwordBytes,
                 salt,
                 100_000,
-                HashAlgorithmName.SHA256))
-            {
-                key = pbkdf2.GetBytes(32);
-            }
+                HashAlgorithmName.SHA256,
+                32);
 
             try
             {
@@ -329,12 +326,12 @@ namespace CryptoBook.Tests
             {
                 if(_password is null)
                     throw new InvalidOperationException();
-                using Rfc2898DeriveBytes pbkdf2 = new(
+                return Rfc2898DeriveBytes.Pbkdf2(
                     _password,
                     salt,
                     100_000,
-                    HashAlgorithmName.SHA256);
-                return pbkdf2.GetBytes(32);
+                    HashAlgorithmName.SHA256,
+                    32);
             }
 
             public Task<byte[]> DeriveKeyAsync(

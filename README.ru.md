@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/RomanovCopy/CryptoBook)](https://github.com/RomanovCopy/CryptoBook/releases/latest)
-[![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
 
@@ -109,7 +109,8 @@ PDF открывается системным приложением и не р�
 
 ## Сборка из исходников
 
-Для разработки требуется .NET 8 SDK. В Visual Studio установите workload
+Для разработки требуется .NET 10 SDK (10.0.400 или новее в линейке 10.0).
+В Visual Studio установите workload
 **.NET desktop development**.
 
 ```powershell
@@ -149,7 +150,7 @@ CryptoBook/
 └── .github/workflows/
 ```
 
-CryptoBook построен на WPF и .NET 8, использует MVVM и Autofac для внедрения зависимостей.
+CryptoBook построен на WPF и .NET 10, использует MVVM и Autofac для внедрения зависимостей.
 
 ## CI и релизы
 

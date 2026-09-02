@@ -1,18 +1,19 @@
-# Request for the original Sdcb 7.1.0 input archive
+# Request for the Flyleaf v3.11.3 FFmpeg 9 build source
 
-Suggested upstream question for the maintainer of `Sdcb.FFmpeg`:
+Suggested upstream question for the maintainer of `SuRGeoNix/Flyleaf`:
 
-> Please provide or confirm the exact `PackageInfo.Url` and source/archive
-> checksum used to publish `Sdcb.FFmpeg.runtime.windows-x64` 7.1.0 on
-> 2024-12-16. The package DLLs identify themselves as
-> `n7.1-58-g10aaf84f85-20241215` (FFmpeg commit
-> `10aaf84f855dbcedb8ee2e3fce307e9b98320946`) and match the BtbN
-> `win64-gpl-shared 7.1` recipe before commit
-> `93aace027adccefcc3f4cd7a0647eea54980dc9b`. The public repository contains
-> the NuGet builder but no committed 7.1.0 `PackageInfo` value. We need the
-> original BtbN release URL/checksum and any retained corresponding-source
-> archive for GPL distribution compliance.
+> Please provide the complete build and corresponding-source material for the
+> FFmpeg DLLs distributed in `Flyleaf_v3.11.3.7z` and committed under `FFmpeg/`
+> at Flyleaf commit `2e11026f0690c1707db70d84f199917d88c3a431`.
+> The binaries identify themselves as
+> `N-126175-g0056dd32fd-20260816` (FFmpeg commit
+> `0056dd32fd94e739e14bb3c463c68ebe806dfd1d`) and report
+> `GPL version 3 or later`. We need the exact build scripts/container or
+> toolchain definition, the .NET patch referenced by the release notes, and
+> the exact source revisions and patches for every statically linked library
+> enabled by the embedded configure command. If a corresponding-source archive
+> already exists, please provide its stable URL and checksum.
 
-Save the maintainer's response, message URL and supplied checksums alongside
-`package-manifest.json`; do not replace the measured hashes with assertions.
-
+Save the maintainer's response, message URL, supplied archives and checksums
+beside `package-manifest.json`. Do not replace measured hashes or exported
+metadata with unverified assertions.

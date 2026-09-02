@@ -21,6 +21,8 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Runtime.CompilerServices;
 using System.CodeDom;
+using ContextMenu = System.Windows.Controls.ContextMenu;
+
 namespace CryptoBook.Services
 {
     public class RichTextBoxService:

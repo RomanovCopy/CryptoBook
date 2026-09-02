@@ -178,6 +178,17 @@ namespace CryptoBook.Services
             return new FlyleafPlayer(new Config());
         }
 
+        internal static IReadOnlyList<string> RequiredFfmpegLibraries { get; } =
+        [
+            "avcodec-63.dll",
+            "avdevice-63.dll",
+            "avfilter-12.dll",
+            "avformat-63.dll",
+            "avutil-61.dll",
+            "swresample-7.dll",
+            "swscale-10.dll"
+        ];
+
         internal static string ResolveFFmpegPath()
         {
             // В single-file native assets извлекаются в каталог, переданный host
@@ -194,8 +205,8 @@ namespace CryptoBook.Services
 
             foreach(var candidate in candidates)
             {
-                if(File.Exists(Path.Combine(candidate, "avcodec-61.dll")) &&
-                   File.Exists(Path.Combine(candidate, "avutil-59.dll")))
+                if(RequiredFfmpegLibraries.All(
+                    library => File.Exists(Path.Combine(candidate, library))))
                 {
                     return candidate;
                 }

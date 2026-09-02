@@ -117,12 +117,12 @@ namespace CryptoBook.Tests
                     tryParents: false));
             ResourceSet russian = Assert.IsAssignableFrom<ResourceSet>(
                 manager.GetResourceSet(
-                    CultureInfo.GetCultureInfo("ru-RU"),
+                    CultureInfo.GetCultureInfo("ru"),
                     createIfNotExists: true,
                     tryParents: false));
             ResourceSet ukrainian = Assert.IsAssignableFrom<ResourceSet>(
                 manager.GetResourceSet(
-                    CultureInfo.GetCultureInfo("uk-UA"),
+                    CultureInfo.GetCultureInfo("uk"),
                     createIfNotExists: true,
                     tryParents: false));
 

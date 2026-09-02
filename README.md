@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-1.1.2.4-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.2.4)
-[![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
 
@@ -110,7 +110,8 @@ Release assets include SHA-256 checksums, SPDX SBOM data and signing-status info
 
 ## Build from source
 
-Development requires the .NET 8 SDK. Visual Studio users should install the
+Development requires the .NET 10 SDK (10.0.400 or newer in the 10.0 feature
+band). Visual Studio users should install the
 **.NET desktop development** workload.
 
 ```powershell
@@ -153,7 +154,7 @@ CryptoBook/
 └── .github/workflows/   # CI and release automation
 ```
 
-CryptoBook is built with WPF and .NET 8, follows MVVM, and uses Autofac for dependency
+CryptoBook is built with WPF and .NET 10, follows MVVM, and uses Autofac for dependency
 injection.
 
 ## CI and releases

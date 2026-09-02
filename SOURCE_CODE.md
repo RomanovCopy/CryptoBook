@@ -12,22 +12,20 @@ the distributor must also satisfy the source-code requirements of GNU GPL v3
 section 6; a link to an unrelated or moving branch is not a substitute for the
 corresponding source of the conveyed binary.
 
-CryptoBook 1.1.2.4 currently consumes the native package
-`Sdcb.FFmpeg.runtime.windows-x64` 7.1.0, which declares `GPL-3.0-only`. Binary
-inspection fixed the exact FFmpeg tree at commit
-`10aaf84f855dbcedb8ee2e3fce307e9b98320946`, the matching BtbN recipe at
-`dc38e41621fd62eec41a467dad15462efdb0d516`, and the complete embedded
-configuration string. Hashes, evidence, 86 declared dependency source pins and
-verification tooling are under `compliance/ffmpeg/` and `tools/compliance/`.
+CryptoBook 1.1.2.4 consumes the local RID-native package
+`CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64` 9.0.20260816. It contains the
+unmodified FFmpeg DLLs from the official Flyleaf v3.11.3 release. The libraries
+report `GPL version 3 or later` and identify the exact FFmpeg tree at commit
+`0056dd32fd94e739e14bb3c463c68ebe806dfd1d`. The official archive, local package,
+all DLL hashes, the exact Flyleaf release commit and the complete embedded
+configuration string are recorded under `compliance/ffmpeg/`.
 
 `New-FfmpegCoreSourceSnapshot.ps1` retrieves and hashes the exact FFmpeg core
-tree and build-recipe tree. This small snapshot is intentionally labelled as
-provenance material, not complete Corresponding Source: the GPL release bundle
-must additionally contain the source trees and patches for every enabled linked
-library selected by `compliance/ffmpeg/source-pins.json`. The original December
-2024 BtbN binary archive is no longer publicly retained, and Sdcb's repository
-does not contain the 7.1.0 input URL, so the original archive URL/hash remains
-an upstream evidence request. The NuGet package alone contains DLLs, not source.
+and Flyleaf release trees. This snapshot is intentionally labelled as
+provenance material, not complete Corresponding Source: the upstream release
+does not publish the custom FFmpeg build recipe, referenced .NET patch set or
+exact revisions for every statically linked library. Those missing materials
+remain an upstream evidence request documented in `compliance/ffmpeg/`.
 
 Build instructions are in `README.md`, `docs/PRODUCTION.md`, and
 `.github/workflows/release.yml`. Dependency versions are in

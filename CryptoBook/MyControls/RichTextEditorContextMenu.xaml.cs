@@ -1,6 +1,7 @@
 using CryptoBook.Interfaces;
 
 using System.Windows.Controls;
+using ContextMenu = System.Windows.Controls.ContextMenu;
 
 namespace CryptoBook.MyControls
 {

@@ -1,37 +1,47 @@
 {
-  "schemaVersion": 1,
-  "recordedAt": "2026-08-17",
+  "schemaVersion": 2,
+  "recordedAt": "2026-09-02",
   "package": {
-    "id": "Sdcb.FFmpeg.runtime.windows-x64",
-    "version": "7.1.0",
-    "source": "https://api.nuget.org/v3/index.json",
-    "licenseExpression": "GPL-3.0-only",
-    "size": 56242150,
-    "sha256": "E16C7DA53FA654DA30808BF8D01F21288097BC86C899F9800C28796BA2C8C937",
-    "sha512": "KrUlbyjm786PcDVJVqZFDc/225uphXKOLyHCldmoDngPBioMd87wpYMEbRf9U9z7BaTzaNaDqHqMWWGOegl4Bw==",
-    "nugetContentHash": "VOG9c8uIKrYFkzSVLEiuEChB/7a6pBJ2KNabMXzXjWwymsHxyUVprQGxm5Rbrurpf1lbPmpOnoqFB2sqKLWeYA=="
+    "id": "CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64",
+    "version": "9.0.20260816",
+    "source": "third_party/nuget",
+    "licenseExpression": "GPL-3.0-or-later",
+    "size": 38975167,
+    "sha256": "1603B1CE0C55F306F6E9B9DC2084AC603B88D9C04B3D16B4DD402D5B55B2730D",
+    "sha512": "1NG53EmVPsNPkKeEGL82OHuNLhzbGjoYEqxxVIMVIREMSPMCYDb2RYpncKqvCQEwxTJaQoYnZBkRR6iZgpAy8w=="
+  },
+  "runtimeSource": {
+    "provider": "SuRGeoNix/Flyleaf",
+    "release": "v3.11.3",
+    "releaseCommit": "2e11026f0690c1707db70d84f199917d88c3a431",
+    "url": "https://github.com/SuRGeoNix/Flyleaf/releases/download/v3.11.3/Flyleaf_v3.11.3.7z",
+    "archiveName": "Flyleaf_v3.11.3.7z",
+    "size": 44830891,
+    "sha256": "1280CB89C6C5BC6D7D776152274167651C92A0B83FC1507E7106C6CDEE3B1D18",
+    "packaging": "The seven FFmpeg DLLs are copied byte-for-byte into runtimes/win-x64/native."
   },
   "nativeBuild": {
-    "embeddedProductVersion": "n7.1-58-g10aaf84f85-20241215",
+    "embeddedProductVersion": "N-126175-g0056dd32fd-20260816",
     "ffmpegRepository": "https://github.com/FFmpeg/FFmpeg.git",
-    "ffmpegCommit": "10aaf84f855dbcedb8ee2e3fce307e9b98320946",
-    "ffmpegCommitDate": "2024-12-11T22:49:07Z",
-    "buildRecipeRepository": "https://github.com/BtbN/FFmpeg-Builds.git",
-    "buildRecipeCommit": "dc38e41621fd62eec41a467dad15462efdb0d516",
-    "variant": "win64-gpl-shared",
-    "releaseLine": "7.1",
-    "buildCommand": "./build.sh win64 gpl-shared 7.1",
+    "ffmpegCommit": "0056dd32fd94e739e14bb3c463c68ebe806dfd1d",
+    "ffmpegCommitDate": "2026-08-15T22:40:43+02:00",
+    "releaseLine": "9.0",
     "licenseReportedByLibraries": "GPL version 3 or later",
-    "configuration": "--prefix=/ffbuild/prefix --pkg-config-flags=--static --pkg-config=pkg-config --cross-prefix=x86_64-w64-mingw32- --arch=x86_64 --target-os=mingw32 --enable-gpl --enable-version3 --disable-debug --enable-shared --disable-static --disable-w32threads --enable-pthreads --enable-iconv --enable-zlib --enable-libfreetype --enable-libfribidi --enable-gmp --enable-libxml2 --enable-lzma --enable-fontconfig --enable-libharfbuzz --enable-libvorbis --enable-opencl --disable-libpulse --enable-libvmaf --disable-libxcb --disable-xlib --enable-amf --enable-libaom --enable-libaribb24 --enable-avisynth --enable-chromaprint --enable-libdav1d --enable-libdavs2 --enable-libdvdread --enable-libdvdnav --disable-libfdk-aac --enable-ffnvcodec --enable-cuda-llvm --enable-frei0r --enable-libgme --enable-libkvazaar --enable-libaribcaption --enable-libass --enable-libbluray --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librist --enable-libssh --enable-libtheora --enable-libvpx --enable-libwebp --enable-libzmq --enable-lv2 --enable-libvpl --enable-openal --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenh264 --enable-libopenjpeg --enable-libopenmpt --enable-librav1e --enable-librubberband --enable-schannel --enable-sdl2 --enable-libsoxr --enable-libsrt --enable-libsvtav1 --enable-libtwolame --enable-libuavs3d --disable-libdrm --enable-vaapi --enable-libvidstab --enable-vulkan --enable-libshaderc --enable-libplacebo --enable-libvvenc --enable-libx264 --enable-libx265 --enable-libxavs2 --enable-libxvid --enable-libzimg --enable-libzvbi --extra-cflags=-DLIBTWOLAME_STATIC --extra-cxxflags= --extra-libs=-lgomp --extra-ldflags=-pthread --extra-ldexeflags= --cc=x86_64-w64-mingw32-gcc --cxx=x86_64-w64-mingw32-g++ --ar=x86_64-w64-mingw32-gcc-ar --ranlib=x86_64-w64-mingw32-gcc-ranlib --nm=x86_64-w64-mingw32-gcc-nm --extra-version=20241215"
+    "configuration": "--disable-encoders --disable-vulkan --disable-videotoolbox --disable-vdpau --disable-vaapi --disable-d3d12va --disable-cuvid --disable-dxva2 --disable-cuda-llvm --disable-audiotoolbox --disable-amf --disable-appkit --disable-avfoundation --disable-ffnvcodec --disable-nvdec --disable-nvenc --disable-mediafoundation --enable-gpl --enable-version3 --disable-debug --enable-shared --disable-static --disable-w32threads --enable-pthreads --enable-iconv --enable-zlib --enable-libxml2 --enable-fontconfig --enable-libharfbuzz --enable-libfreetype --enable-libfribidi --enable-libvorbis --disable-libxcb --disable-xlib --disable-libpulse --enable-gmp --enable-lzma --enable-liblcevc-dec --enable-libaom --enable-libaribb24 --enable-avisynth --enable-libdav1d --enable-libdavs2 --enable-libdvdread --enable-libdvdnav --disable-libfdk-aac --enable-libgme --enable-libaribcaption --enable-libass --enable-libbluray --enable-libjxl --enable-libopus --enable-librist --enable-libssh --enable-libvpx --enable-libopenmpt --enable-librubberband --enable-schannel --enable-libsoxr --enable-libsrt --enable-libuavs3d --disable-libdrm --disable-whisper --enable-libzvbi --prefix=/ffbuild/prefix --pkg-config-flags=--static --pkg-config=pkg-config --cross-prefix=x86_64-w64-mingw32- --arch=x86_64 --target-os=mingw32 --extra-cxxflags= --extra-libs=-lgomp --extra-ldflags=-pthread --extra-ldexeflags= --cc=x86_64-w64-mingw32-gcc --cxx=x86_64-w64-mingw32-g++ --ar=x86_64-w64-mingw32-gcc-ar --ranlib=x86_64-w64-mingw32-gcc-ranlib --nm=x86_64-w64-mingw32-gcc-nm --extra-version=20260816"
+  },
+  "sourceAvailability": {
+    "ffmpegCore": "Exact upstream commit identified and archived by the release workflow.",
+    "flyleafRelease": "Exact release tag identified and archived by the release workflow; the tagged tree contains the identical DLLs.",
+    "buildRecipe": "The exact custom Flyleaf FFmpeg build recipe and .NET patch set are not published in the release archive.",
+    "linkedDependencies": "Exact source revisions for every statically linked dependency remain an upstream evidence request."
   },
   "libraries": [
-    { "file": "avcodec-61.dll", "size": 88368128, "sha256": "360E2497E9762F7D6E1A2A1993DE23A8D85E012025E2F0CB8CD23A68990211E6", "apiVersion": "61.19.101" },
-    { "file": "avdevice-61.dll", "size": 5134848, "sha256": "1CC63DDA5E5EB720B07F4C7BDA0121935D3006772BC01F9B18E268691ABED43F", "apiVersion": "61.3.100" },
-    { "file": "avfilter-10.dll", "size": 28831744, "sha256": "A636470DB1AD4477B0B793CF6F41E12403D32CCE841AA69472F1D2C96C7EF800", "apiVersion": "10.4.100" },
-    { "file": "avformat-61.dll", "size": 19787776, "sha256": "C773E26ED3C91C0081362B2FC1BB9253809CDE092114CE5C473F02FC5BDEAB3A", "apiVersion": "61.7.100" },
-    { "file": "avutil-59.dll", "size": 2799616, "sha256": "1BE5A0CE5E1FAC83B963ADC05DD15019EE0195615DEB03F3CB8E950221C6B467", "apiVersion": "59.39.100" },
-    { "file": "postproc-58.dll", "size": 89088, "sha256": "34276E6D38C31CC9FAA54E3A283FD984CF94A13BF203EEF77930220A68B9A5C8", "apiVersion": "58.3.100" },
-    { "file": "swresample-5.dll", "size": 658944, "sha256": "3514292C343B55AA4F2B7E62A407FFE1EF890B55456C09133FA62DF49229267C", "apiVersion": "5.3.100" },
-    { "file": "swscale-8.dll", "size": 703488, "sha256": "2077C0399270A051162B8A5BF20B15D78F6329E538AD1E06B43601DBFEF6B551", "apiVersion": "8.3.100" }
+    { "file": "avcodec-63.dll", "size": 43534336, "sha256": "7D60586963B8847ADA9A24D728477741E0D8E82A7A7F9A6FC6BE4C5AF7D32E3F", "apiVersion": "63.8.101" },
+    { "file": "avdevice-63.dll", "size": 156672, "sha256": "827A3A33C793747550614F82D19052D915B933C8A5A1262FD0560497212112B7", "apiVersion": "63.2.100" },
+    { "file": "avfilter-12.dll", "size": 20448768, "sha256": "160A624BCCDE65CFD8AA2E1236130CEF5B41142D03FF37D1930ABFDE6B15782A", "apiVersion": "12.3.101" },
+    { "file": "avformat-63.dll", "size": 19267584, "sha256": "62C1D67E1CB1EC1383C944AF8EA16310D248231CE282129C3E85ACB9C2287334", "apiVersion": "63.6.100" },
+    { "file": "avutil-61.dll", "size": 1120768, "sha256": "AC9C0A6B0A88CB8372C9F9C9DCFCEA2F063775CCC96B953D1ACC1FE1B37450BF", "apiVersion": "61.5.100" },
+    { "file": "swresample-7.dll", "size": 726528, "sha256": "62966C9E02E4338C6AFA5E6D8A61120D97976261F2450730DB2FB6C05471D4F8", "apiVersion": "7.2.100" },
+    { "file": "swscale-10.dll", "size": 2344960, "sha256": "72CAA6BC65D38B1575E77F6D63E70C6D5DCF47D308387ECFB8A592FA5A9A70B3", "apiVersion": "10.2.100" }
   ]
 }

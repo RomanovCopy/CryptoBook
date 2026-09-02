@@ -1,22 +1,25 @@
 [CmdletBinding()]
 param(
-    [string] $PackageRoot = (Join-Path `
-        ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) `
-        '.nuget\packages\sdcb.ffmpeg.runtime.windows-x64\7.1.0'),
+    [string] $PackageRoot,
     [string] $ManifestPath = (Join-Path $PSScriptRoot '..\..\compliance\ffmpeg\package-manifest.json')
 )
 
 $ErrorActionPreference = 'Stop'
-$PackageRoot = [IO.Path]::GetFullPath($PackageRoot)
 $ManifestPath = [IO.Path]::GetFullPath($ManifestPath)
 $manifest = Get-Content -LiteralPath $ManifestPath -Raw | ConvertFrom-Json
-$sourcePinsPath = Join-Path (Split-Path -Parent $ManifestPath) 'source-pins.json'
-$recipePath = Join-Path (Split-Path -Parent $ManifestPath) `
-    'btbn-win64-gpl-shared-7.1.Dockerfile'
+$packageIdLower = ([string] $manifest.package.id).ToLowerInvariant()
+$packageVersion = [string] $manifest.package.version
 
-$nupkg = Join-Path $PackageRoot 'sdcb.ffmpeg.runtime.windows-x64.7.1.0.nupkg'
+if ([string]::IsNullOrWhiteSpace($PackageRoot)) {
+    $PackageRoot = Join-Path `
+        ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) `
+        ".nuget\packages\$packageIdLower\$packageVersion"
+}
+$PackageRoot = [IO.Path]::GetFullPath($PackageRoot)
+$packageFileName = "$packageIdLower.$packageVersion.nupkg"
+$nupkg = Join-Path $PackageRoot $packageFileName
 if (-not (Test-Path -LiteralPath $nupkg -PathType Leaf)) {
-    throw "NuGet archive was not found: $nupkg"
+    throw "Restored runtime package was not found: $nupkg"
 }
 
 function Assert-Equal {
@@ -26,20 +29,10 @@ function Assert-Equal {
     }
 }
 
-function Get-NormalizedTextSha256 {
-    param([string] $Path)
-
-    $content = (Get-Content -LiteralPath $Path -Raw).Replace("`r`n", "`n")
-    $bytes = [Text.Encoding]::UTF8.GetBytes($content)
-    return [Convert]::ToHexString(
-        [Security.Cryptography.SHA256]::HashData($bytes))
-}
-
 $archive = Get-Item -LiteralPath $nupkg
 Assert-Equal 'NuGet package size' ([long] $archive.Length) ([long] $manifest.package.size)
-Assert-Equal 'NuGet package SHA-256' `
-    (Get-FileHash -LiteralPath $nupkg -Algorithm SHA256).Hash `
-    ([string] $manifest.package.sha256)
+$packageSha256 = (Get-FileHash -LiteralPath $nupkg -Algorithm SHA256).Hash
+Assert-Equal 'NuGet package SHA-256' $packageSha256 ([string] $manifest.package.sha256)
 
 $sha512 = [Security.Cryptography.SHA512]::Create()
 try {
@@ -56,20 +49,33 @@ finally {
 }
 Assert-Equal 'NuGet package SHA-512' $archiveSha512 ([string] $manifest.package.sha512)
 
-$sourcePins = Get-Content -LiteralPath $sourcePinsPath -Raw | ConvertFrom-Json
-Assert-Equal 'BtbN generated recipe SHA-256' `
-    (Get-NormalizedTextSha256 -Path $recipePath) `
-    ([string] $sourcePins.recipe.generatedDockerfileSha256)
-$recipeConfigureLine = Get-Content -LiteralPath $recipePath |
-    Where-Object { $_ -match '^\s*FF_CONFIGURE="(?<value>.+)" \\$' } |
-    Select-Object -Last 1
-if (-not $recipeConfigureLine -or
-    $recipeConfigureLine -notmatch '^\s*FF_CONFIGURE="(?<value>.+)" \\$') {
-    throw 'The generated BtbN FF_CONFIGURE line was not found.'
+$repositoryRoot = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $ManifestPath) '..\..'))
+$localPackage = Join-Path `
+    $repositoryRoot `
+    "third_party\nuget\$($manifest.package.id).$packageVersion.nupkg"
+if (-not (Test-Path -LiteralPath $localPackage -PathType Leaf)) {
+    throw "Pinned local-feed package was not found: $localPackage"
 }
-$recipeConfiguration = $Matches.value
-if (-not ([string] $manifest.nativeBuild.configuration).Contains($recipeConfiguration)) {
-    throw 'The generated BtbN feature configuration does not match the DLL configuration.'
+Assert-Equal 'Local-feed package SHA-256' `
+    (Get-FileHash -LiteralPath $localPackage -Algorithm SHA256).Hash `
+    $packageSha256
+
+$zip = [IO.Compression.ZipFile]::OpenRead($nupkg)
+try {
+    $nuspecEntry = $zip.Entries |
+        Where-Object { $_.FullName.EndsWith('.nuspec', [StringComparison]::OrdinalIgnoreCase) } |
+        Select-Object -First 1
+    if (-not $nuspecEntry) { throw 'The runtime package does not contain a nuspec.' }
+    $reader = [IO.StreamReader]::new($nuspecEntry.Open())
+    try { [xml] $nuspec = $reader.ReadToEnd() }
+    finally { $reader.Dispose() }
+    Assert-Equal 'NuGet package ID' ([string] $nuspec.package.metadata.id) ([string] $manifest.package.id)
+    Assert-Equal 'NuGet package version' ([string] $nuspec.package.metadata.version) $packageVersion
+    Assert-Equal 'NuGet package license' ([string] $nuspec.package.metadata.license.'#text') `
+        ([string] $manifest.package.licenseExpression)
+}
+finally {
+    $zip.Dispose()
 }
 
 $nativeDirectory = Join-Path $PackageRoot 'runtimes\win-x64\native'
@@ -77,6 +83,14 @@ $runtimeInfo = @(& (Join-Path $PSScriptRoot 'Get-FfmpegBuildInfo.ps1') `
     -NativeDirectory $nativeDirectory)
 $runtimeByFile = @{}
 foreach ($item in $runtimeInfo) { $runtimeByFile[$item.File] = $item }
+
+$expectedNames = @($manifest.libraries | ForEach-Object { [string] $_.file })
+$actualNames = @(Get-ChildItem -LiteralPath $nativeDirectory -Filter '*.dll' -File |
+    Select-Object -ExpandProperty Name)
+$unexpectedNames = @($actualNames | Where-Object { $_ -notin $expectedNames })
+if ($unexpectedNames.Count -ne 0) {
+    throw "Unexpected native libraries in the runtime package: $($unexpectedNames -join ', ')"
+}
 
 foreach ($expected in $manifest.libraries) {
     $path = Join-Path $nativeDirectory $expected.file
@@ -103,10 +117,9 @@ foreach ($expected in $manifest.libraries) {
 }
 
 [pscustomobject]@{
-    Package = "$($manifest.package.id) $($manifest.package.version)"
+    Package = "$($manifest.package.id) $packageVersion"
     Libraries = $manifest.libraries.Count
     FfmpegCommit = $manifest.nativeBuild.ffmpegCommit
-    RecipeCommit = $manifest.nativeBuild.buildRecipeCommit
-    DeclaredSourcePins = $sourcePins.declaredSourcePinCount
+    FlyleafCommit = $manifest.runtimeSource.releaseCommit
     Status = 'Verified'
 }

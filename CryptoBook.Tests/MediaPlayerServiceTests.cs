@@ -13,8 +13,11 @@ namespace CryptoBook.Tests
         {
             string runtimePath = MediaPlayerService.ResolveFFmpegPath();
 
-            Assert.True(File.Exists(Path.Combine(runtimePath, "avcodec-61.dll")));
-            Assert.True(File.Exists(Path.Combine(runtimePath, "avutil-59.dll")));
+            Assert.All(
+                MediaPlayerService.RequiredFfmpegLibraries,
+                library => Assert.True(
+                    File.Exists(Path.Combine(runtimePath, library)),
+                    $"Packaged FFmpeg library is missing: {library}"));
         }
     }
 }

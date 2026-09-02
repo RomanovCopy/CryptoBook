@@ -2,6 +2,7 @@ using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 
 using System.Collections.ObjectModel;
+using MenuItem = CryptoBook.DTO.MenuItem;
 
 namespace CryptoBook.Interfaces
 {

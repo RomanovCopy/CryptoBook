@@ -2,7 +2,7 @@
 param(
     [string] $NativeDirectory = (Join-Path `
         ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) `
-        '.nuget\packages\sdcb.ffmpeg.runtime.windows-x64\7.1.0\runtimes\win-x64\native')
+        '.nuget\packages\cryptobook.flyleaf.ffmpeg.runtime.windows.x64\9.0.20260816\runtimes\win-x64\native')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -45,14 +45,13 @@ namespace CryptoBook.Compliance
 }
 
 $libraries = @(
-    @{ File = 'avcodec-61.dll'; Prefix = 'avcodec' },
-    @{ File = 'avdevice-61.dll'; Prefix = 'avdevice' },
-    @{ File = 'avfilter-10.dll'; Prefix = 'avfilter' },
-    @{ File = 'avformat-61.dll'; Prefix = 'avformat' },
-    @{ File = 'avutil-59.dll'; Prefix = 'avutil' },
-    @{ File = 'postproc-58.dll'; Prefix = 'postproc' },
-    @{ File = 'swresample-5.dll'; Prefix = 'swresample' },
-    @{ File = 'swscale-8.dll'; Prefix = 'swscale' }
+    @{ File = 'avcodec-63.dll'; Prefix = 'avcodec' },
+    @{ File = 'avdevice-63.dll'; Prefix = 'avdevice' },
+    @{ File = 'avfilter-12.dll'; Prefix = 'avfilter' },
+    @{ File = 'avformat-63.dll'; Prefix = 'avformat' },
+    @{ File = 'avutil-61.dll'; Prefix = 'avutil' },
+    @{ File = 'swresample-7.dll'; Prefix = 'swresample' },
+    @{ File = 'swscale-10.dll'; Prefix = 'swscale' }
 )
 
 $originalPath = $env:PATH

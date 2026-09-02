@@ -4,7 +4,8 @@ Thanks for considering a contribution.
 
 ## Development environment
 
-CryptoBook targets Windows and .NET 8. Visual Studio users should install the
+CryptoBook targets Windows and .NET 10. Use SDK 10.0.400 or newer in the 10.0
+feature band. Visual Studio users should install the
 **.NET desktop development** workload.
 
 Clone the repository and restore locked dependencies:

@@ -22,7 +22,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.423
+          dotnet-version: 10.0.400
           cache: true
           cache-dependency-path: |
             **/packages.lock.json
@@ -33,8 +33,20 @@ jobs:
       - name: Restore Windows x64 runtime
         run: dotnet restore CryptoBook/CryptoBook.csproj --locked-mode -r win-x64
 
+      - name: Verify FFmpeg binary provenance
+        shell: pwsh
+        run: ./tools/compliance/Test-FfmpegProvenance.ps1
+
       - name: Test Release
-        run: dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore --logger "trx;LogFileName=tests.trx"
+        run: >-
+          dotnet test --solution CryptoBook/CryptoBook.sln -c Release --no-restore
+          --results-directory artifacts/TestResults --minimum-expected-tests 1
+          --report-xunit-trx --report-xunit-trx-filename tests.trx
+
+      - name: Verify Flyleaf WPF template compatibility
+        run: >-
+          dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj
+          -c Release --no-build --no-restore -- --template-only
 
       - name: Build Windows installer
         shell: pwsh

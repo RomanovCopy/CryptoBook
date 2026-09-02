@@ -11,14 +11,14 @@ $sources = @(
     [ordered]@{
         Name = 'ffmpeg'
         Repository = 'https://github.com/FFmpeg/FFmpeg.git'
-        Commit = '10aaf84f855dbcedb8ee2e3fce307e9b98320946'
-        Archive = 'ffmpeg-10aaf84f855dbcedb8ee2e3fce307e9b98320946.zip'
+        Commit = '0056dd32fd94e739e14bb3c463c68ebe806dfd1d'
+        Archive = 'ffmpeg-0056dd32fd94e739e14bb3c463c68ebe806dfd1d.zip'
     },
     [ordered]@{
-        Name = 'btbn-ffmpeg-builds'
-        Repository = 'https://github.com/BtbN/FFmpeg-Builds.git'
-        Commit = 'dc38e41621fd62eec41a467dad15462efdb0d516'
-        Archive = 'btbn-ffmpeg-builds-dc38e41621fd62eec41a467dad15462efdb0d516.zip'
+        Name = 'flyleaf'
+        Repository = 'https://github.com/SuRGeoNix/Flyleaf.git'
+        Commit = '2e11026f0690c1707db70d84f199917d88c3a431'
+        Archive = 'flyleaf-2e11026f0690c1707db70d84f199917d88c3a431.zip'
     }
 )
 
@@ -73,7 +73,7 @@ foreach ($source in $sources) {
 
 $record = [ordered]@{
     schemaVersion = 1
-    scope = 'Exact FFmpeg core source and BtbN build recipe; not the complete source set for linked libraries.'
+    scope = 'Exact FFmpeg core and Flyleaf release source; the upstream custom build recipe and linked-library source set are not published.'
     artifacts = $records
 }
 $recordPath = Join-Path $Destination 'SHA256SUMS.json'

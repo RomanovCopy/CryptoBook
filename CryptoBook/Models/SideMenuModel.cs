@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using CryptoBook.DTO;
+using MenuItem = CryptoBook.DTO.MenuItem;
 
 namespace CryptoBook.Models
 {

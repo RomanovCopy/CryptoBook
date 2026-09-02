@@ -264,7 +264,7 @@ internal static class Program
         {
             string candidate = Path.Combine(
                 current.FullName, "CryptoBook", "bin", "Release",
-                "net8.0-windows10.0.17763.0", "win-x64", "CryptoBook.exe");
+                "net10.0-windows10.0.17763.0", "win-x64", "CryptoBook.exe");
             if(File.Exists(candidate))
                 return candidate;
             current = current.Parent;

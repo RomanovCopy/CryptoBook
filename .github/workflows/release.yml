@@ -29,7 +29,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.423
+          dotnet-version: 10.0.400
           cache: true
           cache-dependency-path: |
             **/packages.lock.json
@@ -61,6 +61,11 @@ jobs:
 
       - name: Verify Release
         run: dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
+
+      - name: Verify Flyleaf WPF template compatibility
+        run: >-
+          dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj
+          -c Release --no-build --no-restore -- --template-only
 
       - name: Publish self-contained single file
         shell: pwsh
@@ -164,7 +169,7 @@ jobs:
           upload-artifact: false
           upload-release-assets: false
 
-      - name: Snapshot exact FFmpeg core source and build recipe
+      - name: Snapshot exact FFmpeg and Flyleaf sources
         shell: pwsh
         run: ./tools/compliance/New-FfmpegCoreSourceSnapshot.ps1
 
@@ -194,6 +199,9 @@ jobs:
           New-Item -ItemType Directory -Path "$ffmpegDirectory/compliance" -Force |
             Out-Null
           Copy-Item compliance/ffmpeg "$ffmpegDirectory/compliance/ffmpeg" -Recurse
+          Copy-Item NuGet.config "$ffmpegDirectory/NuGet.config"
+          Copy-Item third_party/nuget/*.nupkg $ffmpegDirectory
+          Copy-Item tools/ffmpeg-runtime-package "$ffmpegDirectory/ffmpeg-runtime-package" -Recurse
           Copy-Item artifacts/ffmpeg-core-source/* $ffmpegDirectory
           Compress-Archive `
             -Path "$packageDirectory/*" `

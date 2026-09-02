@@ -245,7 +245,7 @@
   <data name="Settings.Developers.Description" xml:space="preserve"><value>Technical overview of the project, its architecture, security, and development resources.</value></data>
   <data name="Settings.Developers.Technology" xml:space="preserve"><value>Technology and architecture</value></data>
   <data name="Settings.Developers.Platform.Title" xml:space="preserve"><value>Platform and interface</value></data>
-  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 8, WPF, Windows 10 version 1809 or later, x64.</value></data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 10, WPF, Windows 10 version 1809 or later, x64.</value></data>
   <data name="Settings.Developers.Architecture.Title" xml:space="preserve"><value>Architecture</value></data>
   <data name="Settings.Developers.Architecture.Description" xml:space="preserve"><value>MVVM with dependency injection through Autofac and separated presentation, domain, and infrastructure services.</value></data>
   <data name="Settings.Developers.Security.Title" xml:space="preserve"><value>Data protection</value></data>
@@ -698,7 +698,7 @@
   <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve"><value>In Save As mode, the destination directory must differ from the source directory.</value></data>
   <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve"><value>The file is not an encrypted CryptoBook file.</value></data>
   <data name="Security.InvalidExtension" xml:space="preserve"><value>Invalid file extension.</value></data>
-  <data name="Media.FfmpegMissing" xml:space="preserve"><value>FFmpeg native libraries were not found. A complete FFmpeg 7.1 runtime was expected in “{0}”.</value></data>
+  <data name="Media.FfmpegMissing" xml:space="preserve"><value>FFmpeg native libraries were not found. A complete FFmpeg 9 runtime was expected in “{0}”.</value></data>
   <data name="Media.OpenFailed" xml:space="preserve"><value>Could not open the media file.</value></data>
   <data name="Media.DecryptedFileUnknown" xml:space="preserve"><value>Could not determine the decrypted media file.</value></data>
   <data name="Media.DecryptingFile" xml:space="preserve"><value>Decrypting file</value></data>

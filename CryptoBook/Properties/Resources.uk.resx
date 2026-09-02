@@ -241,7 +241,7 @@
     <value>Платформа та інтерфейс</value>
   </data>
   <data name="Settings.Developers.Platform.Description" xml:space="preserve">
-    <value>.NET 8, WPF, Windows 10 версії 1809 або новіша, x64.</value>
+    <value>.NET 10, WPF, Windows 10 версії 1809 або новіша, x64.</value>
   </data>
   <data name="Settings.Developers.Architecture.Title" xml:space="preserve">
     <value>Архітектура</value>
@@ -1512,7 +1512,7 @@
     <value>Некоректне розширення файлу.</value>
   </data>
   <data name="Media.FfmpegMissing" xml:space="preserve">
-    <value>Не знайдено нативних бібліотек FFmpeg. Повне середовище виконання FFmpeg 7.1 очікувалося в «{0}».</value>
+    <value>Не знайдено нативних бібліотек FFmpeg. Повне середовище виконання FFmpeg 9 очікувалося в «{0}».</value>
   </data>
   <data name="Media.OpenFailed" xml:space="preserve">
     <value>Не вдалося відкрити медіафайл.</value>

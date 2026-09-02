@@ -29,8 +29,9 @@ builds are not production artifacts.
 - Run `tools/compliance/Test-FfmpegProvenance.ps1` after locked restore; any
   native hash, version, license, or configure-string mismatch blocks release.
 - Publish `CryptoBook-ffmpeg-provenance.zip` as supporting evidence. It contains
-  the exact FFmpeg tree and BtbN recipe, but does not replace the required
-  complete source bundle for all linked libraries.
+  the exact FFmpeg core and Flyleaf release trees, but does not replace the
+  missing custom build recipe, patch set, and complete source bundle for all
+  linked libraries.
 - Publish the matching tagged CryptoBook source and the exact corresponding
   source/build materials for the bundled GPL-covered FFmpeg libraries beside
   every binary release.

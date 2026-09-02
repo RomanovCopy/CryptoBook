@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64</PackageId>
+    <PackageVersion Condition="'$(PackageVersion)' == ''">9.0.20260816</PackageVersion>
+    <Title>Flyleaf FFmpeg 9 runtime for CryptoBook (Windows x64)</Title>
+    <Authors>SuRGeoNix; FFmpeg developers; CryptoBook repackaging</Authors>
+    <Description>Unmodified FFmpeg 9 Windows x64 shared libraries from the official Flyleaf v3.11.3 release, repackaged as RID-native NuGet assets for CryptoBook.</Description>
+    <PackageTags>ffmpeg;flyleaf;native;runtime;windows;x64</PackageTags>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/SuRGeoNix/Flyleaf/releases/tag/v3.11.3</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SuRGeoNix/Flyleaf.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryCommit>2e11026f0690c1707db70d84f199917d88c3a431</RepositoryCommit>
+    <PackageReadmeFile>PACKAGE-README.md</PackageReadmeFile>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <Target Name="ValidateFfmpegSource" BeforeTargets="Pack">
+    <Error Condition="'$(FfmpegSourceDirectory)' == ''"
+           Text="FfmpegSourceDirectory must point to the verified Flyleaf FFmpeg directory." />
+    <Error Condition="!Exists('$(FfmpegSourceDirectory)\avcodec-63.dll')"
+           Text="FFmpeg 9 native libraries were not found in $(FfmpegSourceDirectory)." />
+  </Target>
+
+  <ItemGroup>
+    <None Include="PACKAGE-README.md" Pack="true" PackagePath="\" />
+    <None Include="$(FfmpegSourceDirectory)\*.dll"
+          Pack="true"
+          PackagePath="runtimes\win-x64\native\" />
+  </ItemGroup>
+
+</Project>

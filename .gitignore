@@ -194,6 +194,7 @@ PublishScripts/
 
 # NuGet Packages
 *.nupkg
+!third_party/nuget/*.nupkg
 # NuGet Symbol Packages
 *.snupkg
 # The standalone performance harness follows the application's dependency graph.
