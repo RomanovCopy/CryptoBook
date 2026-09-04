@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Added complete German localization for the application and installer.
+
 ### Security
 
 - Protected V2 media is now decrypted as an authenticated seekable stream
