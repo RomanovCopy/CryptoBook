@@ -38,7 +38,6 @@ namespace CryptoBook.Models
         private readonly IWindowManager _windowManager;
         private readonly IMediaPlaybackCoordinator _playbackCoordinator;
         private readonly int _instanceNumber;
-        private readonly List<IPreparedMediaSource> _retiredSources = [];
         private IPreparedMediaSource? _activeSource;
         private IReadOnlyList<string> _imagePaths = Array.Empty<string>();
         private int _currentImageIndex = -1;
@@ -317,12 +316,23 @@ namespace CryptoBook.Models
             {
                 preparedSource = await _mediaSourcePreparationService.PrepareAsync(path, token);
                 string playbackPath = preparedSource.PlaybackPath;
+                string mediaExtension = preparedSource.OriginalExtension;
 
-                if(ImageExtensions.Contains(Path.GetExtension(playbackPath)))
+                if(ImageExtensions.Contains(mediaExtension))
                 {
                     VideoService.Stop();
                     ClearVideoSequence();
-                    await ImageService.LoadImageAsync(playbackPath, token);
+                    if(preparedSource.PlaybackStream is Stream imageStream)
+                    {
+                        await ImageService.LoadImageAsync(
+                            imageStream,
+                            preparedSource.OriginalPath,
+                            token);
+                    }
+                    else
+                    {
+                        await ImageService.LoadImageAsync(playbackPath, token);
+                    }
                     token.ThrowIfCancellationRequested();
                     if(_disposed || _isClosing)
                         return;
@@ -332,7 +342,7 @@ namespace CryptoBook.Models
                             LocalizationManager.GetString("Media.DecodeFailed"));
 
                     string catalogPath = sequencePath ?? path;
-                    bool includeSecureFiles = preparedSource.IsTemporary ||
+                    bool includeSecureFiles = preparedSource.IsEncrypted ||
                         SecureFileExtensions.Contains(Path.GetExtension(catalogPath));
                     UpdateImageSequence(catalogPath, includeSecureFiles);
                     SetMode(isImage: true);
@@ -342,13 +352,27 @@ namespace CryptoBook.Models
                     ClearImageSequence();
                     ImageService.Clear();
                     SetMode(isImage: false);
-                    await VideoService.OpenAsync(playbackPath, autoPlay, token);
+                    if(preparedSource.PlaybackStream is Stream mediaStream)
+                    {
+                        await VideoService.OpenAsync(
+                            mediaStream,
+                            preparedSource.OriginalPath,
+                            autoPlay,
+                            token);
+                    }
+                    else
+                    {
+                        await VideoService.OpenAsync(
+                            playbackPath,
+                            autoPlay,
+                            token);
+                    }
                     token.ThrowIfCancellationRequested();
                     if(_disposed || _isClosing)
                         return;
 
                     string catalogPath = sequencePath ?? path;
-                    bool includeSecureFiles = preparedSource.IsTemporary ||
+                    bool includeSecureFiles = preparedSource.IsEncrypted ||
                         SecureFileExtensions.Contains(Path.GetExtension(catalogPath));
                     UpdateVideoSequence(catalogPath, includeSecureFiles);
                 }
@@ -708,16 +732,7 @@ namespace CryptoBook.Models
         private void ReplaceActiveSource(IPreparedMediaSource source)
         {
             if(_activeSource is not null)
-            {
                 _activeSource.Dispose();
-                string? directory = Path.GetDirectoryName(_activeSource.PlaybackPath);
-                if(_activeSource.IsTemporary &&
-                   directory is not null &&
-                   Directory.Exists(directory))
-                {
-                    _retiredSources.Add(_activeSource);
-                }
-            }
 
             _activeSource = source;
         }
@@ -736,9 +751,6 @@ namespace CryptoBook.Models
             ImageService.Clear();
             VideoService.Dispose();
             _activeSource?.Dispose();
-            foreach(var source in _retiredSources)
-                source.Dispose();
-            _retiredSources.Clear();
             GC.SuppressFinalize(this);
         }
 

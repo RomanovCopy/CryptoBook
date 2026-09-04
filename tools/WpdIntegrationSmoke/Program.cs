@@ -144,6 +144,37 @@ try
     if(!payload.AsSpan().SequenceEqual(pulledPayload))
         throw new IOException("Pulled local content mismatch.");
 
+    string corruptedMovePath = Path.Combine(localRoot, "corrupted-move.bin");
+    var localCorruptedMove = new StorageLocation(
+        StorageLocation.LocalProviderId,
+        corruptedMovePath);
+    var corruptingProgress = new SameLengthCorruptingProgressReporter(
+        corruptedMovePath);
+    FileOperationResult corruptedMove = await engine.MoveAsync(
+        remoteUpload,
+        localCorruptedMove,
+        corruptingProgress);
+    if(corruptedMove.Success ||
+       corruptedMove.ErrorMessage?.Contains(
+           "could not be verified",
+           StringComparison.Ordinal) != true)
+    {
+        throw new IOException(
+            "The same-size corruption was not rejected by move verification.");
+    }
+    if(!corruptingProgress.Corrupted ||
+       new FileInfo(corruptedMovePath).Length != payload.LongLength)
+    {
+        throw new IOException(
+            "The integration test did not produce same-size corruption.");
+    }
+    if(await provider.GetMetadataAsync(remoteUpload) is null)
+    {
+        throw new IOException(
+            "The source was deleted after failed checksum verification.");
+    }
+    Console.WriteLine("Same-size corruption rejected; MTP source preserved: OK");
+
     string treePath = Path.Combine(localRoot, "tree");
     string nestedPath = Path.Combine(treePath, "nested");
     Directory.CreateDirectory(nestedPath);
@@ -257,4 +288,22 @@ static void EnsureSuccess(FileOperationResult result, string operation)
     if(!result.Success)
         throw new IOException($"{operation} failed: {result.ErrorMessage}");
     Console.WriteLine($"{operation}: OK");
+}
+
+sealed class SameLengthCorruptingProgressReporter(string path): IProgressReporter
+{
+    public bool Corrupted { get; private set; }
+
+    public void Report(double? value, string? currentInfo = null)
+    {
+        if(Corrupted || value != 1)
+            return;
+
+        byte[] content = File.ReadAllBytes(path);
+        if(content.Length == 0)
+            throw new IOException("Cannot corrupt an empty integration payload.");
+        content[0] ^= 0xFF;
+        File.WriteAllBytes(path, content);
+        Corrupted = true;
+    }
 }

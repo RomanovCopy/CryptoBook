@@ -702,6 +702,7 @@
   <data name="Media.OpenFailed" xml:space="preserve"><value>Could not open the media file.</value></data>
   <data name="Media.DecryptedFileUnknown" xml:space="preserve"><value>Could not determine the decrypted media file.</value></data>
   <data name="Media.DecryptingFile" xml:space="preserve"><value>Decrypting file</value></data>
+  <data name="Media.LegacyRamLimitExceeded" xml:space="preserve"><value>This legacy protected media file exceeds the {0:F0} MB in-memory playback limit. Convert it to the current CryptoBook format before playing it.</value></data>
   <data name="Document.NoSaveFormats" xml:space="preserve"><value>No document save formats are registered.</value></data>
   <data name="Image.EmptyFile" xml:space="preserve"><value>The image file is empty.</value></data>
   <data name="Image.FileNotFound" xml:space="preserve"><value>The image file was not found.</value></data>
@@ -727,7 +728,7 @@
   <data name="PinnedDocuments.MoveDown" xml:space="preserve"><value>Move down</value></data>
   <data name="PinnedDocuments.RenameSyncFailed" xml:space="preserve"><value>The file was renamed, but its pinned link could not be updated.</value></data>
   <data name="Update.Available" xml:space="preserve"><value>CryptoBook {0} is available</value></data>
-  <data name="Update.Description" xml:space="preserve"><value>Download the update and the installer will start automatically.</value></data>
+  <data name="Update.Description" xml:space="preserve"><value>SHA-256 and Authenticode are checked before launch. An explicitly unsigned release is allowed only when its published checksum matches.</value></data>
   <data name="Update.OpenRelease" xml:space="preserve"><value>Download and install</value></data>
   <data name="Update.Later" xml:space="preserve"><value>Later</value></data>
   <data name="Update.Skip" xml:space="preserve"><value>Skip version</value></data>
@@ -739,6 +740,7 @@
   <data name="Update.InstallProgressTitle" xml:space="preserve"><value>Updating CryptoBook</value></data>
   <data name="Update.DownloadPreparing" xml:space="preserve"><value>Preparing the installer download…</value></data>
   <data name="Update.DownloadingInstaller" xml:space="preserve"><value>Downloading the new installer…</value></data>
+  <data name="Update.VerifyingInstaller" xml:space="preserve"><value>Verifying installer integrity and signature…</value></data>
   <data name="Update.RemovingOldInstallers" xml:space="preserve"><value>Removing old installers…</value></data>
   <data name="Update.StartingInstaller" xml:space="preserve"><value>Starting the installer…</value></data>
   <data name="Settings.Security" xml:space="preserve"><value>Security</value></data>

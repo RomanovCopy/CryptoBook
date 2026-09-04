@@ -16,6 +16,9 @@ namespace CryptoBook.Services
 {
     public class MediaPlayerService: INotifyPropertyChanged, IMediaPlayerService
     {
+        private static readonly TimeSpan EndSeekGuard =
+            TimeSpan.FromMilliseconds(250);
+
         private readonly FlyleafPlayer player;
         private TaskCompletionSource<bool>? openCompletion;
         private CancellationTokenRegistration openCancellation;
@@ -82,31 +85,79 @@ namespace CryptoBook.Services
         public IReadOnlyList<string> SubtitleStreams => _subtitleStreams;
         public int CurrentSubtitleStreamIndex=> player.Subtitles.StreamIndex;
 
-        public Task OpenAsync( string source, bool autoPlay = true, CancellationToken cancellationToken = default)
+        public Task OpenAsync(
+            string source,
+            bool autoPlay = true,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(source);
+            return OpenCoreAsync(
+                source,
+                autoPlay,
+                cancellationToken,
+                () => player.OpenAsync(source));
+        }
+
+        public Task OpenAsync(
+            Stream source,
+            string sourceName,
+            bool autoPlay = true,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentException.ThrowIfNullOrWhiteSpace(sourceName);
+            if(!source.CanRead || !source.CanSeek)
+                throw new ArgumentException(
+                    "Медиапоток должен поддерживать чтение и позиционирование.",
+                    nameof(source));
+
+            return OpenCoreAsync(
+                sourceName,
+                autoPlay,
+                cancellationToken,
+                () => player.OpenAsync(source));
+        }
+
+        private Task OpenCoreAsync(
+            string sourceName,
+            bool autoPlay,
+            CancellationToken cancellationToken,
+            Action open)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
-            ArgumentException.ThrowIfNullOrWhiteSpace(source);
-
+            cancellationToken.ThrowIfCancellationRequested();
             CancelPendingOpen();
 
-            this.source = source;
+            source = sourceName;
             player.Config.Player.AutoPlay = autoPlay;
-            openCompletion = new TaskCompletionSource<bool>(
+            var completion = new TaskCompletionSource<bool>(
                 TaskCreationOptions.RunContinuationsAsynchronously);
+            openCompletion = completion;
 
             if(cancellationToken.CanBeCanceled)
             {
                 openCancellation = cancellationToken.Register(() =>
                 {
                     player.Stop();
-                    openCompletion?.TrySetCanceled(cancellationToken);
+                    completion.TrySetCanceled(cancellationToken);
                 });
             }
 
-            OnPropertyChanged(nameof(Source), nameof(IsMediaLoaded));
-            player.OpenAsync(source);
+            if(completion.Task.IsCanceled)
+                return completion.Task;
 
-            return openCompletion.Task;
+            OnPropertyChanged(nameof(Source), nameof(IsMediaLoaded));
+            try
+            {
+                open();
+            }
+            catch
+            {
+                CancelPendingOpen();
+                throw;
+            }
+
+            return completion.Task;
         }
 
         public void Play()
@@ -127,19 +178,17 @@ namespace CryptoBook.Services
             player.Stop();
         }
 
-        // Покадровая прокрутка встроенными методами Flyleaf
-        public void FrameForward() => player.SeekForward();
-        public void FrameBackward() => player.SeekBackward();
+        // Переход на шаг встроенной настройки Flyleaf. Не вызываем
+        // SeekForward/SeekBackward на границах: FFmpeg может отклонить
+        // переход ровно в Duration и отбросить позицию к началу.
+        public void FrameForward() => SeekRelative(player.Config.Player.SeekOffset);
+        public void FrameBackward() => SeekRelative(-player.Config.Player.SeekOffset);
 
         public void Seek(TimeSpan position)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
 
-            var boundedPosition = position < TimeSpan.Zero
-                ? TimeSpan.Zero
-                : position > Duration
-                    ? Duration
-                    : position;
+            var boundedPosition = ClampSeekPosition(position, Duration);
 
             var milliseconds = Math.Clamp(
                 boundedPosition.TotalMilliseconds,
@@ -147,6 +196,50 @@ namespace CryptoBook.Services
                 int.MaxValue);
 
             player.SeekAccurate((int)milliseconds);
+        }
+
+        internal static TimeSpan ClampSeekPosition(
+            TimeSpan requested,
+            TimeSpan duration)
+        {
+            if(requested <= TimeSpan.Zero || duration <= TimeSpan.Zero)
+                return TimeSpan.Zero;
+
+            TimeSpan lastSeekablePosition = duration > EndSeekGuard
+                ? duration - EndSeekGuard
+                : TimeSpan.Zero;
+            return requested >= lastSeekablePosition
+                ? lastSeekablePosition
+                : requested;
+        }
+
+        private void SeekRelative(long offsetTicks)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            if(!player.CanPlay || offsetTicks == 0)
+                return;
+
+            TimeSpan current = TimeSpan.FromTicks(player.CurTime);
+            TimeSpan target;
+            try
+            {
+                target = current + TimeSpan.FromTicks(offsetTicks);
+            }
+            catch(OverflowException)
+            {
+                target = offsetTicks > 0 ? TimeSpan.MaxValue : TimeSpan.Zero;
+            }
+
+            TimeSpan bounded = ClampSeekPosition(
+                target,
+                TimeSpan.FromTicks(player.Duration));
+            if(bounded == current)
+                return;
+
+            player.SeekAccurate((int)Math.Clamp(
+                bounded.TotalMilliseconds,
+                0,
+                int.MaxValue));
         }
 
         public void Dispose()
@@ -239,6 +332,8 @@ namespace CryptoBook.Services
 
             if(e.Success)
             {
+                ApplySourceTitle();
+
                 // Flyleaf leaves a non-autoplay video paused without rendering a frame.
                 // Render the first frame explicitly so the player has a poster before Play.
                 if(!player.Config.Player.AutoPlay && player.Video.IsOpened)
@@ -315,6 +410,20 @@ namespace CryptoBook.Services
             openCancellation.Dispose();
             openCompletion?.TrySetCanceled();
             openCompletion = null;
+        }
+
+        private void ApplySourceTitle()
+        {
+            if(player.Playlist.Selected is null ||
+               string.IsNullOrWhiteSpace(source))
+            {
+                return;
+            }
+
+            string title = Path.GetFileName(source);
+            player.Playlist.Selected.Title = string.IsNullOrWhiteSpace(title)
+                ? source
+                : title;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

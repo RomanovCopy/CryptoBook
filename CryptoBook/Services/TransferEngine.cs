@@ -2,6 +2,7 @@ using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
 using System.IO;
+using System.Security.Cryptography;
 
 namespace CryptoBook.Services;
 
@@ -244,8 +245,71 @@ public sealed class TransferEngine: ITransferEngine
            sourceMetadata.IsContainer != destinationMetadata.IsContainer)
             return false;
 
-        long sourceSize = await _storage.GetTotalSizeAsync(source, cancellationToken);
-        long destinationSize = await _storage.GetTotalSizeAsync(destination, cancellationToken);
-        return sourceSize == destinationSize;
+        if(!sourceMetadata.IsContainer)
+        {
+            if(sourceMetadata.Size != destinationMetadata.Size)
+                return false;
+
+            IStorageProvider sourceProvider = _storage.GetProvider(source);
+            IStorageProvider destinationProvider = _storage.GetProvider(destination);
+            await using Stream sourceStream = await sourceProvider.OpenRawReadAsync(
+                source,
+                cancellationToken);
+            await using Stream destinationStream = await destinationProvider.OpenRawReadAsync(
+                destination,
+                cancellationToken);
+            byte[] sourceHash = await SHA256.HashDataAsync(
+                sourceStream,
+                cancellationToken);
+            byte[] destinationHash = await SHA256.HashDataAsync(
+                destinationStream,
+                cancellationToken);
+            return CryptographicOperations.FixedTimeEquals(sourceHash, destinationHash);
+        }
+
+        IReadOnlyList<StorageItemMetadata> sourceChildren =
+            await _storage.GetChildrenAsync(
+                source,
+                includeHidden: true,
+                cancellationToken);
+        IReadOnlyList<StorageItemMetadata> destinationChildren =
+            await _storage.GetChildrenAsync(
+                destination,
+                includeHidden: true,
+                cancellationToken);
+        if(sourceChildren.Count != destinationChildren.Count ||
+           !TryIndexByName(destinationChildren, out var destinationByName))
+            return false;
+
+        var sourceNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach(StorageItemMetadata sourceChild in sourceChildren)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if(!sourceNames.Add(sourceChild.Name) ||
+               !destinationByName.TryGetValue(
+                   sourceChild.Name,
+                   out StorageItemMetadata? destinationChild) ||
+               !await VerifyAsync(
+                   sourceChild.Location,
+                   destinationChild.Location,
+                   cancellationToken))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static bool TryIndexByName(
+        IReadOnlyList<StorageItemMetadata> items,
+        out Dictionary<string, StorageItemMetadata> itemsByName)
+    {
+        itemsByName = new Dictionary<string, StorageItemMetadata>(StringComparer.Ordinal);
+        foreach(StorageItemMetadata item in items)
+        {
+            if(!itemsByName.TryAdd(item.Name, item))
+                return false;
+        }
+        return true;
     }
 }

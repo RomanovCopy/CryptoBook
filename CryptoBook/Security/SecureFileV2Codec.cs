@@ -259,7 +259,7 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
-            MemoryStream output = new();
+            SensitiveMemoryStream output = new();
             try
             {
                 string extension = await DecryptCoreAsync(
@@ -274,6 +274,47 @@ namespace CryptoBook.Security
             {
                 await output.DisposeAsync();
                 throw;
+            }
+        }
+
+        public async Task<DecryptedFileContent> OpenDecryptedReadStreamAsync(
+            string inputFile,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(inputFile);
+
+            FileStream? input = null;
+            byte[]? key = null;
+            try
+            {
+                input = OpenRandomRead(inputFile);
+                byte[] header = new byte[HeaderSize];
+                await input.ReadExactlyAsync(header, cancellationToken);
+                ParsedHeader parsed = ParseHeader(header);
+                ValidatePhysicalLength(input.Length, parsed);
+
+                key = await _keyProvider.DeriveKeyAsync(
+                    parsed.Salt,
+                    parsed.Parameters,
+                    cancellationToken);
+
+                var stream = new SeekableV2DecryptionStream(
+                    input,
+                    header,
+                    parsed,
+                    key);
+                input = null;
+                key = null;
+                return new DecryptedFileContent(
+                    stream,
+                    stream.OriginalExtension);
+            }
+            finally
+            {
+                if(key is not null)
+                    CryptographicOperations.ZeroMemory(key);
+                if(input is not null)
+                    await input.DisposeAsync();
             }
         }
 
@@ -655,6 +696,37 @@ namespace CryptoBook.Security
         private static FileStream OpenRead(string path) =>
             SharedFileReadStream.Open(path, SecureFileFormat.BufferSize);
 
+        private static FileStream OpenRandomRead(string path) =>
+            new(
+                path,
+                FileMode.Open,
+                FileAccess.Read,
+                SharedFileReadStream.ShareMode,
+                SecureFileFormat.BufferSize,
+                FileOptions.Asynchronous | FileOptions.RandomAccess);
+
+        private static void ValidatePhysicalLength(
+            long physicalLength,
+            ParsedHeader parsed)
+        {
+            long recordCount =
+                ((parsed.PayloadLength - 1) / parsed.ChunkSize) + 1;
+            const int recordOverhead = RecordHeaderSize +
+                SecureFileFormat.GcmTagSize;
+            if(recordCount >
+               (long.MaxValue - HeaderSize - parsed.PayloadLength) /
+               recordOverhead)
+            {
+                throw new CryptographicException(
+                    "Недопустимая длина защищённого файла.");
+            }
+
+            long expectedLength = HeaderSize + parsed.PayloadLength +
+                recordCount * recordOverhead;
+            if(physicalLength != expectedLength)
+                throw new IOException("Некорректная длина защищённого файла.");
+        }
+
         private static void TryDelete(string path)
         {
             try
@@ -663,6 +735,289 @@ namespace CryptoBook.Security
                     File.Delete(path);
             } catch
             {
+            }
+        }
+
+        private sealed class SeekableV2DecryptionStream: Stream
+        {
+            private readonly object syncRoot = new();
+            private readonly FileStream input;
+            private readonly ParsedHeader parsed;
+            private readonly byte[] key;
+            private readonly AesGcm aes;
+            private readonly byte[] plaintext;
+            private readonly byte[] ciphertext;
+            private readonly byte[] recordHeader = new byte[RecordHeaderSize];
+            private readonly byte[] tag = new byte[SecureFileFormat.GcmTagSize];
+            private readonly byte[] nonce = new byte[SecureFileFormat.NonceSize];
+            private readonly byte[] associatedData;
+            private readonly long chunkCount;
+            private readonly int contentOffset;
+            private readonly long contentLength;
+            private long cachedChunkIndex = -1;
+            private int cachedChunkLength;
+            private long position;
+            private bool disposed;
+
+            public SeekableV2DecryptionStream(
+                FileStream input,
+                byte[] header,
+                ParsedHeader parsed,
+                byte[] key)
+            {
+                this.input = input;
+                this.parsed = parsed;
+                this.key = key;
+                aes = new AesGcm(key, SecureFileFormat.GcmTagSize);
+                plaintext = new byte[parsed.ChunkSize];
+                ciphertext = new byte[parsed.ChunkSize];
+                associatedData = new byte[
+                    HeaderSize + sizeof(ulong) + RecordHeaderSize];
+                header.CopyTo(associatedData, 0);
+                chunkCount = ((parsed.PayloadLength - 1) /
+                    parsed.ChunkSize) + 1;
+
+                try
+                {
+                    LoadChunk(0);
+                    if(cachedChunkLength < sizeof(int))
+                        throw new CryptographicException(
+                            "Отсутствуют метаданные файла.");
+
+                    int extensionLength =
+                        BinaryPrimitives.ReadInt32LittleEndian(plaintext);
+                    if(extensionLength is <= 0 or >
+                           SecureFileFormat.MaxExtensionLength ||
+                       sizeof(int) + extensionLength > cachedChunkLength)
+                    {
+                        throw new CryptographicException(
+                            LocalizationManager.GetString(
+                                "Security.InvalidExtension"));
+                    }
+
+                    OriginalExtension = Encoding.UTF8.GetString(
+                        plaintext,
+                        sizeof(int),
+                        extensionLength);
+                    if(!OriginalExtension.StartsWith('.') ||
+                       OriginalExtension.IndexOfAny(
+                           Path.GetInvalidFileNameChars()) >= 0)
+                    {
+                        throw new CryptographicException(
+                            LocalizationManager.GetString(
+                                "Security.InvalidExtension"));
+                    }
+
+                    contentOffset = sizeof(int) + extensionLength;
+                    contentLength = parsed.PayloadLength - contentOffset;
+                }
+                catch
+                {
+                    Dispose();
+                    throw;
+                }
+            }
+
+            public string OriginalExtension { get; }
+
+            public override bool CanRead => !disposed;
+            public override bool CanSeek => !disposed;
+            public override bool CanWrite => false;
+            public override long Length
+            {
+                get
+                {
+                    lock(syncRoot)
+                    {
+                        ObjectDisposedException.ThrowIf(disposed, this);
+                        return contentLength;
+                    }
+                }
+            }
+
+            public override long Position
+            {
+                get
+                {
+                    lock(syncRoot)
+                    {
+                        ObjectDisposedException.ThrowIf(disposed, this);
+                        return position;
+                    }
+                }
+                set
+                {
+                    lock(syncRoot)
+                    {
+                        ObjectDisposedException.ThrowIf(disposed, this);
+                        if(value < 0)
+                            throw new ArgumentOutOfRangeException(nameof(value));
+                        position = value;
+                    }
+                }
+            }
+
+            public override int Read(byte[] buffer, int offset, int count) =>
+                Read(buffer.AsSpan(offset, count));
+
+            public override int Read(Span<byte> buffer)
+            {
+                lock(syncRoot)
+                {
+                    ObjectDisposedException.ThrowIf(disposed, this);
+                    if(buffer.IsEmpty || position >= contentLength)
+                        return 0;
+
+                    int requested = (int)Math.Min(
+                        buffer.Length,
+                        contentLength - position);
+                    int copied = 0;
+                    while(copied < requested)
+                    {
+                        long payloadPosition = contentOffset + position;
+                        long chunkIndex = payloadPosition / parsed.ChunkSize;
+                        int chunkOffset = (int)(payloadPosition % parsed.ChunkSize);
+                        LoadChunk(chunkIndex);
+
+                        int available = Math.Min(
+                            cachedChunkLength - chunkOffset,
+                            requested - copied);
+                        plaintext.AsSpan(chunkOffset, available)
+                            .CopyTo(buffer[copied..]);
+                        copied += available;
+                        position += available;
+                    }
+
+                    return copied;
+                }
+            }
+
+            public override ValueTask<int> ReadAsync(
+                Memory<byte> buffer,
+                CancellationToken cancellationToken = default)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return ValueTask.FromResult(Read(buffer.Span));
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                lock(syncRoot)
+                {
+                    ObjectDisposedException.ThrowIf(disposed, this);
+                    long newPosition;
+                    try
+                    {
+                        newPosition = origin switch
+                        {
+                            SeekOrigin.Begin => offset,
+                            SeekOrigin.Current => checked(position + offset),
+                            SeekOrigin.End => checked(contentLength + offset),
+                            _ => throw new ArgumentOutOfRangeException(nameof(origin))
+                        };
+                    }
+                    catch(OverflowException exception)
+                    {
+                        throw new IOException(
+                            "Недопустимая позиция потока.",
+                            exception);
+                    }
+
+                    if(newPosition < 0)
+                        throw new IOException("Нельзя перейти до начала потока.");
+                    position = newPosition;
+                    return position;
+                }
+            }
+
+            public override void Flush()
+            {
+                lock(syncRoot)
+                    ObjectDisposedException.ThrowIf(disposed, this);
+            }
+
+            public override void SetLength(long value) =>
+                throw new NotSupportedException();
+
+            public override void Write(byte[] buffer, int offset, int count) =>
+                throw new NotSupportedException();
+
+            protected override void Dispose(bool disposing)
+            {
+                lock(syncRoot)
+                {
+                    if(disposed)
+                    {
+                        base.Dispose(disposing);
+                        return;
+                    }
+
+                    disposed = true;
+                    if(disposing)
+                    {
+                        aes.Dispose();
+                        input.Dispose();
+                    }
+
+                    CryptographicOperations.ZeroMemory(key);
+                    CryptographicOperations.ZeroMemory(plaintext);
+                    CryptographicOperations.ZeroMemory(ciphertext);
+                    CryptographicOperations.ZeroMemory(tag);
+                    CryptographicOperations.ZeroMemory(nonce);
+                    cachedChunkIndex = -1;
+                    cachedChunkLength = 0;
+                    base.Dispose(disposing);
+                }
+            }
+
+            private void LoadChunk(long chunkIndex)
+            {
+                if(cachedChunkIndex == chunkIndex)
+                    return;
+                if(chunkIndex < 0 || chunkIndex >= chunkCount)
+                    throw new IOException("Запрошен отсутствующий блок файла.");
+
+                CryptographicOperations.ZeroMemory(plaintext);
+                long payloadStart = checked(chunkIndex * parsed.ChunkSize);
+                int expectedLength = (int)Math.Min(
+                    parsed.ChunkSize,
+                    parsed.PayloadLength - payloadStart);
+                long recordOffset = checked(
+                    HeaderSize +
+                    chunkIndex *
+                    (parsed.ChunkSize + RecordHeaderSize +
+                     SecureFileFormat.GcmTagSize));
+
+                input.Position = recordOffset;
+                input.ReadExactly(recordHeader);
+                byte flags = recordHeader[0];
+                int storedLength = BinaryPrimitives.ReadInt32LittleEndian(
+                    recordHeader.AsSpan(1));
+                bool isFinal = chunkIndex == chunkCount - 1;
+                if(flags != (isFinal ? FinalChunkFlag : 0) ||
+                   storedLength != expectedLength)
+                {
+                    throw new CryptographicException(
+                        "Некорректная структура блока.");
+                }
+
+                input.ReadExactly(ciphertext.AsSpan(0, storedLength));
+                input.ReadExactly(tag);
+                CreateNonce(parsed.BaseNonce, (ulong)chunkIndex, nonce);
+                BinaryPrimitives.WriteUInt64LittleEndian(
+                    associatedData.AsSpan(HeaderSize),
+                    (ulong)chunkIndex);
+                recordHeader.CopyTo(
+                    associatedData.AsSpan(HeaderSize + sizeof(ulong)));
+                aes.Decrypt(
+                    nonce,
+                    ciphertext.AsSpan(0, storedLength),
+                    tag,
+                    plaintext.AsSpan(0, storedLength),
+                    associatedData);
+
+                cachedChunkIndex = chunkIndex;
+                cachedChunkLength = storedLength;
             }
         }
 

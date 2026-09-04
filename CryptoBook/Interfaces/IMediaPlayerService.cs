@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,6 +34,13 @@ namespace CryptoBook.Interfaces
 
         // Управление
         Task OpenAsync(string source, bool autoPlay = true, CancellationToken cancellationToken = default);
+        Task OpenAsync(
+            Stream source,
+            string sourceName,
+            bool autoPlay = true,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException(
+                "The media player does not support stream sources.");
         void Play();
         void Pause();
         void Stop();

@@ -65,7 +65,7 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default)
         {
-            MemoryStream outputStream = new();
+            SensitiveMemoryStream outputStream = new();
 
             try
             {
@@ -84,7 +84,43 @@ namespace CryptoBook.Security
                 throw;
             }
         }
-        private async Task<string> DecryptFileCoreAsync(string inputFile, Func<string, Stream> outputStreamFactory,
+
+        public async Task<DecryptedFileContent> DecryptFileContentWithLimitAsync(
+            string inputFile,
+            long maximumContentLength,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            SensitiveMemoryStream outputStream = new(maximumContentLength);
+            try
+            {
+                string extension = await DecryptFileCoreAsync(
+                    inputFile,
+                    _ => outputStream,
+                    leaveOutputOpen: true,
+                    progress,
+                    cancellationToken);
+                outputStream.Position = 0;
+                return new DecryptedFileContent(outputStream, extension);
+            }
+            catch
+            {
+                await outputStream.DisposeAsync();
+                throw;
+            }
+        }
+
+        public Task<string> ReadOriginalExtensionAsync(
+            string inputFile,
+            CancellationToken cancellationToken = default) =>
+            DecryptFileCoreAsync(
+                inputFile,
+                outputStreamFactory: null,
+                leaveOutputOpen: false,
+                progress: null,
+                cancellationToken);
+
+        private async Task<string> DecryptFileCoreAsync(string inputFile, Func<string, Stream>? outputStreamFactory,
         bool leaveOutputOpen, IProgressReporter? progress, CancellationToken cancellationToken = default)
         {
             byte[]? key = null;
@@ -138,6 +174,9 @@ namespace CryptoBook.Security
                     CryptoStreamMode.Read);
 
                 string fileExtension = await ReadFileExtensionAsync(cryptoStream, cancellationToken);
+
+                if(outputStreamFactory is null)
+                    return fileExtension;
 
                 outputStream = outputStreamFactory(fileExtension);
 
@@ -216,26 +255,37 @@ namespace CryptoBook.Security
         {
             byte[] buffer = new byte[SecureFileFormat.BufferSize];
 
-            long processedBytes = 0;
-            int bytesRead;
-
-            while((bytesRead = await cryptoStream.ReadAsync(
-                      buffer,
-                      cancellationToken)) > 0)
+            try
             {
-                await outputStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+                long processedBytes = 0;
+                int bytesRead;
 
-                processedBytes += bytesRead;
-
-                if(approximateTotalBytes > 0)
+                while((bytesRead = await cryptoStream.ReadAsync(
+                          buffer,
+                          cancellationToken)) > 0)
                 {
-                    progress?.Report(Math.Min(1.0, (double)processedBytes / approximateTotalBytes));
+                    await outputStream.WriteAsync(
+                        buffer.AsMemory(0, bytesRead),
+                        cancellationToken);
+
+                    processedBytes += bytesRead;
+
+                    if(approximateTotalBytes > 0)
+                    {
+                        progress?.Report(Math.Min(
+                            1.0,
+                            (double)processedBytes / approximateTotalBytes));
+                    }
+
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                cancellationToken.ThrowIfCancellationRequested();
+                progress?.Report(1.0);
             }
-
-            progress?.Report(1.0);
+            finally
+            {
+                CryptographicOperations.ZeroMemory(buffer);
+            }
         }
         private async Task<string> ReadFileExtensionAsync(Stream cryptoStream, CancellationToken cancellationToken = default)
         {
@@ -255,7 +305,16 @@ namespace CryptoBook.Security
 
             await cryptoStream.ReadExactlyAsync(extensionBytes, cancellationToken);
 
-            return Encoding.UTF8.GetString(extensionBytes);
+            string extension = Encoding.UTF8.GetString(extensionBytes);
+            if(!extension.StartsWith('.') ||
+               extension.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                throw new CryptographicException(
+                    LocalizationManager.GetString(
+                        "Security.InvalidExtension"));
+            }
+
+            return extension;
         }
 
         private sealed class LimitedReadStream: Stream

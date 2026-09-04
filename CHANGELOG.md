@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+### Security
+
+- Protected V2 media is now decrypted as an authenticated seekable stream
+  instead of a plaintext temporary file. Legacy media uses a zeroing in-memory
+  buffer with a 256 MB limit and has no automatic disk fallback.
+
+### Fixed
+
+- Restored Left/Right video seeking and Alt+Left/Alt+Right navigation when
+  protected media is played from a decrypted stream.
+- Prevented end-of-video seek buttons from resetting playback to the beginning,
+  and restored the protected file name in the playback bar.
+
 ## 1.1.2.51 - 2026-09-02
 
 ### Fixed

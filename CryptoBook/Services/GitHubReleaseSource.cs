@@ -70,23 +70,16 @@ namespace CryptoBook.Services
                 throw new InvalidDataException("GitHub release URL is invalid.");
             }
 
-            Uri? installerUri = null;
             string installerName = $"CryptoBook-Setup-{version}.exe";
-            GitHubAsset? installer = release.Assets?
-                .FirstOrDefault(asset => string.Equals(
-                    asset.Name,
-                    installerName,
-                    StringComparison.OrdinalIgnoreCase));
-            if(installer is not null)
-            {
-                if(!Uri.TryCreate(installer.BrowserDownloadUrl, UriKind.Absolute, out Uri? candidate) ||
-                   candidate.Scheme != Uri.UriSchemeHttps ||
-                   !string.Equals(candidate.Host, "github.com", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new InvalidDataException("GitHub installer download URL is invalid.");
-                }
-                installerUri = candidate;
-            }
+            Uri? installerUri = GetAssetUri(release.Assets, installerName);
+            Uri? checksumsUri = GetAssetUri(release.Assets, "SHA256SUMS.txt");
+            Uri? signingStatusUri = GetAssetUri(
+                release.Assets,
+                "SIGNING-STATUS.txt");
+            bool canInstallSecurely =
+                installerUri is not null &&
+                checksumsUri is not null &&
+                signingStatusUri is not null;
 
             return new ApplicationRelease(
                 version,
@@ -97,8 +90,37 @@ namespace CryptoBook.Services
                 releaseUri,
                 release.PublishedAt)
             {
-                InstallerUri = installerUri
+                InstallerUri = canInstallSecurely ? installerUri : null,
+                Sha256ChecksumsUri = checksumsUri,
+                SigningStatusUri = signingStatusUri
             };
+        }
+
+        private static Uri? GetAssetUri(
+            GitHubAsset[]? assets,
+            string assetName)
+        {
+            GitHubAsset? asset = assets?.FirstOrDefault(candidate => string.Equals(
+                candidate.Name,
+                assetName,
+                StringComparison.OrdinalIgnoreCase));
+            if(asset is null)
+                return null;
+            if(!Uri.TryCreate(
+                   asset.BrowserDownloadUrl,
+                   UriKind.Absolute,
+                   out Uri? assetUri) ||
+               assetUri.Scheme != Uri.UriSchemeHttps ||
+               !assetUri.IsDefaultPort ||
+               !string.Equals(
+                   assetUri.Host,
+                   "github.com",
+                   StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidDataException(
+                    $"GitHub release asset URL for '{assetName}' is invalid.");
+            }
+            return assetUri;
         }
 
         private sealed class GitHubReleaseResponse

@@ -185,6 +185,98 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
+        public async Task V2_MediaStream_IsSeekableAndDoesNotCreatePlaintextFile()
+        {
+            byte[] content = RandomNumberGenerator.GetBytes(20_000);
+            string source = CreateSource("video.mp4", content);
+            string encrypted = Path.Combine(_directory, "video.cbook");
+            var (processor, _) = CreateProcessor("media password");
+            await processor.EncryptFileAsync(source, encrypted);
+            File.Delete(source);
+
+            await using DecryptedFileContent decrypted =
+                await processor.OpenDecryptedMediaStreamAsync(
+                    encrypted,
+                    legacyMemoryLimitBytes: 1024);
+            Stream stream = decrypted.Content;
+
+            Assert.True(stream.CanSeek);
+            Assert.Equal(content.Length, stream.Length);
+            Assert.Equal(".mp4", decrypted.OriginalExtension);
+
+            foreach(int offset in new[] { 0, 4_090, 4_096, 8_187, 16_500 })
+            {
+                stream.Position = offset;
+                byte[] actual = new byte[Math.Min(700, content.Length - offset)];
+                await stream.ReadExactlyAsync(actual);
+                Assert.Equal(content.AsSpan(offset, actual.Length).ToArray(), actual);
+            }
+
+            Assert.Equal([encrypted], Directory.GetFiles(_directory));
+        }
+
+        [Fact]
+        public async Task V2_MediaStream_AuthenticatesBlockBeforeReturningIt()
+        {
+            byte[] content = RandomNumberGenerator.GetBytes(16_000);
+            string source = CreateSource("video.mp4", content);
+            string encrypted = Path.Combine(_directory, "video.cbook");
+            var (processor, _) = CreateProcessor("media password");
+            await processor.EncryptFileAsync(source, encrypted);
+
+            byte[] bytes = await File.ReadAllBytesAsync(encrypted);
+            const int headerSize = 66;
+            const int recordSize = 5 + 4096 + 16;
+            bytes[headerSize + 2 * recordSize + 5 + 20] ^= 0x20;
+            await File.WriteAllBytesAsync(encrypted, bytes);
+
+            await using DecryptedFileContent decrypted =
+                await processor.OpenDecryptedMediaStreamAsync(
+                    encrypted,
+                    legacyMemoryLimitBytes: 1024);
+            decrypted.Content.Position = 2 * 4096;
+
+            Assert.ThrowsAny<CryptographicException>(() =>
+                decrypted.Content.ReadByte());
+        }
+
+        [Fact]
+        public async Task Legacy_MediaStream_RejectsPlaintextAboveMemoryLimit()
+        {
+            const string password = "legacy media password";
+            byte[] content = RandomNumberGenerator.GetBytes(256);
+            string encrypted = Path.Combine(_directory, "legacy.cbox");
+            await CreateLegacyFileAsync(encrypted, ".mp4", content, password);
+            var (processor, _) = CreateProcessor(password);
+
+            await Assert.ThrowsAsync<IOException>(() =>
+                processor.OpenDecryptedMediaStreamAsync(
+                    encrypted,
+                    legacyMemoryLimitBytes: 128));
+        }
+
+        [Fact]
+        public async Task Legacy_MediaStream_IsSeekableWithinMemoryLimit()
+        {
+            const string password = "legacy media password";
+            byte[] content = RandomNumberGenerator.GetBytes(256);
+            string encrypted = Path.Combine(_directory, "legacy.cbox");
+            await CreateLegacyFileAsync(encrypted, ".mp4", content, password);
+            var (processor, _) = CreateProcessor(password);
+
+            await using DecryptedFileContent decrypted =
+                await processor.OpenDecryptedMediaStreamAsync(
+                    encrypted,
+                    legacyMemoryLimitBytes: 512);
+            decrypted.Content.Position = 123;
+            byte[] actual = new byte[50];
+            await decrypted.Content.ReadExactlyAsync(actual);
+
+            Assert.Equal(".mp4", decrypted.OriginalExtension);
+            Assert.Equal(content.AsSpan(123, actual.Length).ToArray(), actual);
+        }
+
+        [Fact]
         public async Task Validator_RecognizesV2Header()
         {
             string source = CreateSource("secret.txt", Encoding.UTF8.GetBytes("classified"));

@@ -31,6 +31,14 @@ public sealed class GitHubReleaseSourceTests
                 {
                   "name": "CryptoBook-win-x64.zip",
                   "browser_download_url": "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.2.0/CryptoBook-win-x64.zip"
+                },
+                {
+                  "name": "SHA256SUMS.txt",
+                  "browser_download_url": "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.2.0/SHA256SUMS.txt"
+                },
+                {
+                  "name": "SIGNING-STATUS.txt",
+                  "browser_download_url": "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.2.0/SIGNING-STATUS.txt"
                 }
               ]
             }
@@ -59,11 +67,50 @@ public sealed class GitHubReleaseSourceTests
             "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.2.0/CryptoBook-Setup-1.2.0.exe",
             release.InstallerUri?.AbsoluteUri);
         Assert.Equal(
+            "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.2.0/SHA256SUMS.txt",
+            release.Sha256ChecksumsUri?.AbsoluteUri);
+        Assert.Equal(
+            "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.2.0/SIGNING-STATUS.txt",
+            release.SigningStatusUri?.AbsoluteUri);
+        Assert.Equal(
             "https://api.github.com/repos/RomanovCopy/CryptoBook/releases/latest",
             handler.LastRequestUri?.AbsoluteUri);
         Assert.Contains(
             "CryptoBook-UpdateChecker",
             handler.LastUserAgent ?? string.Empty);
+    }
+
+    [Fact]
+    public async Task GetLatestAsync_DoesNotOfferAutomaticInstallWithoutVerificationAssets()
+    {
+        const string json = """
+            {
+              "tag_name": "v1.2.0",
+              "html_url": "https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.2.0",
+              "draft": false,
+              "prerelease": false,
+              "assets": [
+                {
+                  "name": "CryptoBook-Setup-1.2.0.exe",
+                  "browser_download_url": "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.2.0/CryptoBook-Setup-1.2.0.exe"
+                }
+              ]
+            }
+            """;
+        using var client = new HttpClient(new StubHttpMessageHandler(
+            new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            }))
+        {
+            BaseAddress = new Uri("https://api.github.com/")
+        };
+        var source = new GitHubReleaseSource(client, Options());
+
+        ApplicationRelease? release = await source.GetLatestAsync();
+
+        Assert.NotNull(release);
+        Assert.Null(release.InstallerUri);
     }
 
     [Theory]

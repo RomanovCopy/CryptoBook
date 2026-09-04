@@ -17,6 +17,16 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default);
 
+        Task<DecryptedFileContent> DecryptFileContentWithLimitAsync(
+            string inputFile,
+            long maximumContentLength,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default);
+
+        Task<string> ReadOriginalExtensionAsync(
+            string inputFile,
+            CancellationToken cancellationToken = default);
+
         Task<Stream> DecryptFileAsyncToStream(
             string inputFile,
             IProgressReporter? progress = null,

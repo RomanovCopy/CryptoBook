@@ -41,6 +41,16 @@ builds are not production artifacts.
 Unsigned releases are permitted while no production certificate is available.
 Users must verify the published SHA-256 checksums before running them.
 
+The built-in updater applies the same rule automatically. It offers automatic
+installation only when the release contains the installer, `SHA256SUMS.txt`,
+and `SIGNING-STATUS.txt`, and it always verifies the installer's SHA-256 before
+launch. A release declared as signed must have a valid, trusted Authenticode
+signature. An invalid signature or a declaration/signature mismatch is always
+rejected. The production composition explicitly uses
+`AllowWithVerifiedChecksum`, so an installer declared as unsigned is accepted
+only after its checksum succeeds; other hosts default to
+`RequireAuthenticodeSignature` unless they deliberately choose that policy.
+
 Never put signing certificates, passwords, document contents, recovery files,
 or user crash logs in the repository or CI artifacts.
 

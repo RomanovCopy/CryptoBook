@@ -356,9 +356,10 @@ namespace CryptoBook.Tests
             var launcher = new FileLauncherStub();
             var internalOpener = new InternalFileOpenServiceStub();
             var windowManager = new WindowManagerStub();
+            var processor = new SecureFileProcessorStub(".png");
             var service = new WorkspaceFileOpenService(
                 new SecureFileValidatorStub(),
-                new SecureFileProcessorStub(".png"),
+                processor,
                 new KeyRequestStub(),
                 windowManager,
                 new ProgressDialogServiceStub(),
@@ -384,13 +385,15 @@ namespace CryptoBook.Tests
                 mediaCatalog,
                 windowManager.CreatedArguments?[MediaCatalogSelection.WindowContextKey]);
             Assert.Equal(1, windowManager.ShowCount);
+            Assert.Equal(Path.GetFullPath(sourcePath), playbackPath);
             Assert.True(File.Exists(playbackPath));
+            Assert.Equal(0, processor.DecryptToFileCallCount);
             Assert.Null(launcher.OpenedPath);
             Assert.Null(internalOpener.DecryptedPath);
 
             service.Dispose();
 
-            Assert.False(File.Exists(playbackPath));
+            Assert.True(File.Exists(playbackPath));
         }
 
         [Fact]
@@ -421,7 +424,7 @@ namespace CryptoBook.Tests
                     MediaCatalogSelection.WindowContextKey]);
 
             Assert.True(result.Success);
-            Assert.NotEqual(sourcePath, playbackPath);
+            Assert.Equal(Path.GetFullPath(sourcePath), playbackPath);
             Assert.Equal(Path.GetFullPath(sourcePath), selection.SelectedPath);
             Assert.Empty(selection.FilePaths);
 
@@ -820,6 +823,8 @@ namespace CryptoBook.Tests
             Exception? exception = null):
             ISecureFileProcessor
         {
+            public int DecryptToFileCallCount { get; private set; }
+
             public Task EncryptFileAsync(
                 string inputFile,
                 string outputFile,
@@ -841,6 +846,7 @@ namespace CryptoBook.Tests
                 IProgressReporter? progress = null,
                 CancellationToken cancellationToken = default)
             {
+                DecryptToFileCallCount++;
                 return exception is null
                     ? File.WriteAllBytesAsync(
                         outputFile + extension,
@@ -862,6 +868,14 @@ namespace CryptoBook.Tests
                 Task.FromResult(new DecryptedFileContent(
                     new MemoryStream([4, 5, 6]),
                     extension));
+
+            public Task<string> ReadOriginalExtensionAsync(
+                string inputFile,
+                CancellationToken cancellationToken = default)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Task.FromResult(extension);
+            }
         }
 
         private sealed class InternalFileOpenServiceStub:

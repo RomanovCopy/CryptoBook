@@ -1523,6 +1523,9 @@
   <data name="Media.DecryptingFile" xml:space="preserve">
     <value>Розшифрування файлу</value>
   </data>
+  <data name="Media.LegacyRamLimitExceeded" xml:space="preserve">
+    <value>Цей захищений медіафайл старого формату перевищує ліміт відтворення в пам’яті ({0:F0} МБ). Перед переглядом перетворіть його на актуальний формат CryptoBook.</value>
+  </data>
   <data name="Document.NoSaveFormats" xml:space="preserve">
     <value>Не зареєстровано форматів збереження документів.</value>
   </data>
@@ -1554,7 +1557,7 @@
   <data name="PinnedDocuments.MoveDown" xml:space="preserve"><value>Перемістити нижче</value></data>
   <data name="PinnedDocuments.RenameSyncFailed" xml:space="preserve"><value>Файл перейменовано, але закріплене посилання оновити не вдалося.</value></data>
   <data name="Update.Available" xml:space="preserve"><value>Доступна нова версія CryptoBook: {0}</value></data>
-  <data name="Update.Description" xml:space="preserve"><value>Завантажте оновлення — інсталятор запуститься автоматично.</value></data>
+  <data name="Update.Description" xml:space="preserve"><value>Перед запуском перевіряються SHA-256 та Authenticode. Явно непідписаний випуск дозволено лише за умови збігу опублікованої контрольної суми.</value></data>
   <data name="Update.OpenRelease" xml:space="preserve"><value>Завантажити й установити</value></data>
   <data name="Update.Later" xml:space="preserve"><value>Пізніше</value></data>
   <data name="Update.Skip" xml:space="preserve"><value>Пропустити версію</value></data>
@@ -1566,6 +1569,7 @@
   <data name="Update.InstallProgressTitle" xml:space="preserve"><value>Оновлення CryptoBook</value></data>
   <data name="Update.DownloadPreparing" xml:space="preserve"><value>Підготовка завантаження інсталятора…</value></data>
   <data name="Update.DownloadingInstaller" xml:space="preserve"><value>Завантаження нової версії інсталятора…</value></data>
+  <data name="Update.VerifyingInstaller" xml:space="preserve"><value>Перевірка цілісності та підпису інсталятора…</value></data>
   <data name="Update.RemovingOldInstallers" xml:space="preserve"><value>Видалення старих інсталяторів…</value></data>
   <data name="Update.StartingInstaller" xml:space="preserve"><value>Запуск інсталятора…</value></data>
   <data name="Settings.Security" xml:space="preserve"><value>Безпека</value></data>

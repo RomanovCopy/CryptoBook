@@ -91,6 +91,53 @@ namespace CryptoBook.Services
             }
         }
 
+        public async Task LoadImageAsync(
+            Stream source,
+            string sourceName,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentException.ThrowIfNullOrWhiteSpace(sourceName);
+            if(!source.CanRead || !source.CanSeek)
+                throw new ArgumentException(
+                    "Поток изображения должен поддерживать чтение и позиционирование.",
+                    nameof(source));
+
+            IsLoading = true;
+            CurrentImagePath = sourceName;
+            ResetTransform();
+
+            try
+            {
+                ImageSource = await Task.Run(() =>
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    source.Position = 0;
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.StreamSource = source;
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    return bitmap;
+                }, cancellationToken);
+            }
+            catch(OperationCanceledException)
+            {
+                Clear();
+                throw;
+            }
+            catch
+            {
+                Clear();
+                throw;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
         public void Zoom(double zoomFactor, System.Windows.Point mousePosition)
         {
             if(ImageSource == null)

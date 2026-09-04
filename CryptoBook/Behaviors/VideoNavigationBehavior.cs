@@ -20,6 +20,18 @@ namespace CryptoBook.Behaviors
         private Window? _surface;
         private Window? _overlay;
 
+        public static readonly DependencyProperty ViewModelProperty =
+            DependencyProperty.Register(
+                nameof(ViewModel),
+                typeof(IMediaPlayerViewModel),
+                typeof(VideoNavigationBehavior));
+
+        public IMediaPlayerViewModel? ViewModel
+        {
+            get => (IMediaPlayerViewModel?)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -110,11 +122,9 @@ namespace CryptoBook.Behaviors
 
         private void ExecuteFocusCommand(bool activated)
         {
-            if(Window.GetWindow(AssociatedObject)?.DataContext is not
-                IMediaPlayerViewModel viewModel)
-            {
+            IMediaPlayerViewModel? viewModel = ResolveViewModel();
+            if(viewModel is null)
                 return;
-            }
 
             var command = activated
                 ? viewModel.ActivatedCommand
@@ -125,25 +135,49 @@ namespace CryptoBook.Behaviors
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs args)
         {
-            if(args.KeyboardDevice.Modifiers != ModifierKeys.Alt)
-                return;
-
             var key = args.Key == Key.System ? args.SystemKey : args.Key;
-            args.Handled = key switch
+            if(HandleShortcut(key, args.KeyboardDevice.Modifiers))
+                args.Handled = true;
+        }
+
+        internal bool HandleShortcut(Key key, ModifierKeys modifiers)
+        {
+            return modifiers switch
             {
-                Key.Left => ExecuteNavigation(previous: true),
-                Key.Right => ExecuteNavigation(previous: false),
+                ModifierKeys.None => key switch
+                {
+                    Key.Left => ExecuteSeek(backward: true),
+                    Key.Right => ExecuteSeek(backward: false),
+                    _ => false
+                },
+                ModifierKeys.Alt => key switch
+                {
+                    Key.Left => ExecuteNavigation(previous: true),
+                    Key.Right => ExecuteNavigation(previous: false),
+                    _ => false
+                },
                 _ => false
             };
         }
 
+        private bool ExecuteSeek(bool backward)
+        {
+            IMediaPlayerViewModel? viewModel = ResolveViewModel();
+            if(viewModel is null || !viewModel.VideoService.IsMediaLoaded)
+                return false;
+
+            if(backward)
+                viewModel.VideoService.FrameBackward();
+            else
+                viewModel.VideoService.FrameForward();
+            return true;
+        }
+
         private bool ExecuteNavigation(bool previous)
         {
-            if(Window.GetWindow(AssociatedObject)?.DataContext is not
-                IMediaPlayerViewModel viewModel)
-            {
+            IMediaPlayerViewModel? viewModel = ResolveViewModel();
+            if(viewModel is null)
                 return false;
-            }
 
             var command = previous
                 ? viewModel.PreviousVideoCommand
@@ -154,5 +188,10 @@ namespace CryptoBook.Behaviors
             command.Execute(null);
             return true;
         }
+
+        private IMediaPlayerViewModel? ResolveViewModel() =>
+            ViewModel ??
+            Window.GetWindow(AssociatedObject)?.DataContext as
+                IMediaPlayerViewModel;
     }
 }

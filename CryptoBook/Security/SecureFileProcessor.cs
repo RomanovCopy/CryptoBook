@@ -98,5 +98,47 @@ namespace CryptoBook.Security
                 progress,
                 cancellationToken);
         }
+
+        public async Task<DecryptedFileContent> OpenDecryptedMediaStreamAsync(
+            string inputFile,
+            long legacyMemoryLimitBytes,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            if(legacyMemoryLimitBytes is <= 0 or > int.MaxValue)
+                throw new ArgumentOutOfRangeException(
+                    nameof(legacyMemoryLimitBytes));
+
+            if(await _v2Codec.HasHeaderAsync(inputFile, cancellationToken))
+            {
+                return await _v2Codec.OpenDecryptedReadStreamAsync(
+                    inputFile,
+                    cancellationToken);
+            }
+
+            return await _legacyCodec.DecryptFileContentWithLimitAsync(
+                inputFile,
+                legacyMemoryLimitBytes,
+                progress,
+                cancellationToken);
+        }
+
+        public async Task<string> ReadOriginalExtensionAsync(
+            string inputFile,
+            CancellationToken cancellationToken = default)
+        {
+            if(await _v2Codec.HasHeaderAsync(inputFile, cancellationToken))
+            {
+                await using DecryptedFileContent decrypted =
+                    await _v2Codec.OpenDecryptedReadStreamAsync(
+                        inputFile,
+                        cancellationToken);
+                return decrypted.OriginalExtension;
+            }
+
+            return await _legacyCodec.ReadOriginalExtensionAsync(
+                inputFile,
+                cancellationToken);
+        }
     }
 }

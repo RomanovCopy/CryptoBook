@@ -34,6 +34,14 @@ namespace CryptoBook.Security
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Opens authenticated V2 content as a seekable, on-demand decrypted stream.
+        /// Only the block currently requested by the consumer is kept in plaintext.
+        /// </summary>
+        Task<DecryptedFileContent> OpenDecryptedReadStreamAsync(
+            string inputFile,
+            CancellationToken cancellationToken = default);
+
         Task<Stream> DecryptFileAsyncToStream(
             string inputFile,
             IProgressReporter? progress = null,
