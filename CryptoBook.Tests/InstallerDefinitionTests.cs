@@ -6,6 +6,14 @@ namespace CryptoBook.Tests;
 
 public sealed class InstallerDefinitionTests
 {
+    private static readonly string[] SupportedInstallerLanguages =
+    [
+        "Name: \"english\"; MessagesFile: \"compiler:Default.isl\"",
+        "Name: \"german\"; MessagesFile: \"compiler:Languages\\German.isl\"",
+        "Name: \"russian\"; MessagesFile: \"compiler:Languages\\Russian.isl\"",
+        "Name: \"ukrainian\"; MessagesFile: \"compiler:Languages\\Ukrainian.isl\""
+    ];
+
     private static readonly string[] LegacyRuntimeCleanupEntries =
     [
         "Type: files; Name: \"{app}\\*.dll\"",
@@ -72,6 +80,17 @@ public sealed class InstallerDefinitionTests
             "Type: filesandordirs; Name: \"{app}\\*\"",
             cleanupRules,
             StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Installer_ProvidesEverySupportedApplicationLanguage()
+    {
+        string installer = File.ReadAllText(FindRepositoryFile(
+            "installer",
+            "CryptoBook.iss"));
+
+        foreach(string language in SupportedInstallerLanguages)
+            Assert.Contains(language, installer, StringComparison.Ordinal);
     }
 
     private static string FindRepositoryFile(params string[] parts)

@@ -7,11 +7,11 @@
 #endif
 
 #ifndef MyAppVersion
-  #define MyAppVersion "1.1.2.51"
+  #define MyAppVersion "1.1.3.0"
 #endif
 
 #ifndef VersionInfoVersion
-  #define VersionInfoVersion "1.1.2.51"
+  #define VersionInfoVersion "1.1.3.0"
 #endif
 
 #define MyAppName "CryptoBook"
@@ -54,6 +54,7 @@ VersionInfoDescription={#MyAppName} installer
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

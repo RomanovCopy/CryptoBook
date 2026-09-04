@@ -1,16 +1,20 @@
 # Changelog
 
-## Unreleased
+## 1.1.3.0 - 2026-09-04
 
 ### Added
 
 - Added complete German localization for the application and installer.
+- Added Ukrainian language support to the installer, matching the existing
+  application localization.
 
 ### Security
 
 - Protected V2 media is now decrypted as an authenticated seekable stream
   instead of a plaintext temporary file. Legacy media uses a zeroing in-memory
   buffer with a 256 MB limit and has no automatic disk fallback.
+- The built-in updater now verifies the published SHA-256 checksum and the
+  declared Authenticode signing state before launching an installer.
 
 ### Fixed
 
@@ -18,6 +22,10 @@
   protected media is played from a decrypted stream.
 - Prevented end-of-video seek buttons from resetting playback to the beginning,
   and restored the protected file name in the playback bar.
+- Android/MTP moves now verify directory contents and each file's size and
+  SHA-256 checksum before deleting the source.
+
+Full comparison: [v1.1.2.51...v1.1.3.0](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.2.51...v1.1.3.0)
 
 ## 1.1.2.51 - 2026-09-02
 

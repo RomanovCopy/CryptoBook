@@ -1,8 +1,8 @@
 # Third-party notices
 
 CryptoBook uses the third-party components listed below. This notice is based
-on the dependency locks committed for CryptoBook 1.1.2.51 and was audited on
-2026-09-02. A package's own license and notices control if this summary differs
+on the dependency locks committed for CryptoBook 1.1.3.0 and was audited on
+2026-09-04. A package's own license and notices control if this summary differs
 from them. CryptoBook does not claim ownership of third-party software.
 
 The GNU GPL v3 text is in `LICENSE`. Other standard license texts are in
