@@ -1,0 +1,818 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="addImage" xml:space="preserve">
+    <value>Bild hinzufügen</value>
+  </data>
+  <data name="addText" xml:space="preserve">
+    <value>Text hinzufügen</value>
+  </data>
+  <data name="background" xml:space="preserve">
+    <value>Hintergrund</value>
+  </data>
+  <data name="closeFile" xml:space="preserve">
+    <value>Datei schließen</value>
+  </data>
+  <data name="content" xml:space="preserve">
+    <value>Inhalt</value>
+  </data>
+  <data name="decrypt" xml:space="preserve">
+    <value>Entschlüsseln</value>
+  </data>
+  <data name="documentTree" xml:space="preserve">
+    <value>Dokumentbaum</value>
+  </data>
+  <data name="encoding" xml:space="preserve">
+    <value>Kodierung</value>
+  </data>
+  <data name="encrypt" xml:space="preserve">
+    <value>Verschlüsseln</value>
+  </data>
+  <data name="encryption" xml:space="preserve">
+    <value>Verschlüsselung</value>
+  </data>
+  <data name="encryption: Off" xml:space="preserve">
+    <value>Verschlüsselung: Aus</value>
+  </data>
+  <data name="encryption: On" xml:space="preserve">
+    <value>Verschlüsselung: An</value>
+  </data>
+  <data name="file" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="ink" xml:space="preserve">
+    <value>Tinte</value>
+  </data>
+  <data name="localization" xml:space="preserve">
+    <value>Lokalisierung</value>
+  </data>
+  <data name="mediaPlayer" xml:space="preserve">
+    <value>Medienplayer</value>
+  </data>
+  <data name="newFile" xml:space="preserve">
+    <value>Neue Datei</value>
+  </data>
+  <data name="openDirectory" xml:space="preserve">
+    <value>Verzeichnis öffnen</value>
+  </data>
+  <data name="openFile" xml:space="preserve">
+    <value>Datei öffnen</value>
+  </data>
+  <data name="paper" xml:space="preserve">
+    <value>Papier</value>
+  </data>
+  <data name="readDocument" xml:space="preserve">
+    <value>Dokument lesen</value>
+  </data>
+  <data name="saveFile" xml:space="preserve">
+    <value>Datei speichern</value>
+  </data>
+  <data name="saveFileAs..." xml:space="preserve">
+    <value>Datei speichern unter...</value>
+  </data>
+  <data name="settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="synchronization" xml:space="preserve">
+    <value>Synchronisierung</value>
+  </data>
+  <data name="updateFile" xml:space="preserve">
+    <value>Datei aktualisieren</value>
+  </data>
+  <data name="App.StartupFailureMessage" xml:space="preserve"><value>CryptoBook konnte nicht gestartet werden. Details wurden in das lokale Fehlerprotokoll geschrieben.</value></data>
+  <data name="App.StartupFailureTitle" xml:space="preserve"><value>Startfehler</value></data>
+  <data name="Activation.OpenErrorTitle" xml:space="preserve"><value>Datei kann nicht geöffnet werden</value></data>
+  <data name="Activation.InvalidPath" xml:space="preserve"><value>Der Pfad „{0}“ ist ungültig.</value></data>
+  <data name="Activation.FileUnavailable" xml:space="preserve"><value>Die Datei „{0}“ ist nicht vorhanden oder nicht verfügbar.</value></data>
+  <data name="Activation.UnsupportedFile" xml:space="preserve"><value>Die Datei „{0}“ weist ein nicht unterstütztes Format auf. CryptoBook kann .cbook- und .cbox-Dateien über Windows öffnen.</value></data>
+  <data name="Activation.OpenFailed" xml:space="preserve"><value>„{0}“ konnte nicht geöffnet werden.{1}</value></data>
+  <data name="Common.Browse" xml:space="preserve"><value>Durchsuchen...</value></data>
+  <data name="Common.Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="Common.Open" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="Common.Search" xml:space="preserve"><value>Suchen</value></data>
+  <data name="Common.Show" xml:space="preserve"><value>Anzeigen</value></data>
+  <data name="Settings.WindowTitle" xml:space="preserve"><value>CryptoBook-Einstellungen</value></data>
+  <data name="Settings.Title" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="Settings.Appearance" xml:space="preserve"><value>Darstellung</value></data>
+  <data name="Settings.Appearance.Description" xml:space="preserve"><value>Das Design wird sofort angewendet und für den nächsten Start gespeichert.</value></data>
+  <data name="Settings.ApplicationTheme" xml:space="preserve"><value>Anwendungsdesign</value></data>
+  <data name="Settings.Appearance.DocumentNote" xml:space="preserve"><value>Die Darstellung der Benutzeroberfläche ändert keine im Dokument gespeicherten Farben oder Formatierungen.</value></data>
+  <data name="Settings.Workspace" xml:space="preserve"><value>Arbeitsbereich</value></data>
+  <data name="Settings.Workspace.Description" xml:space="preserve"><value>Wählen Sie den Stammordner aus, in dem CryptoBook Dateien nach Namen suchen soll.</value></data>
+  <data name="Settings.WorkspaceDirectory" xml:space="preserve"><value>Arbeitsbereichsverzeichnis</value></data>
+  <data name="Settings.SearchByFileName" xml:space="preserve"><value>Datei nach Namen suchen</value></data>
+  <data name="Settings.Search.Hint" xml:space="preserve"><value>Geben Sie einen Dateinamen oder einen Teil davon ein</value></data>
+  <data name="Settings.RevealInExplorer" xml:space="preserve"><value>Datei im Datei-Explorer anzeigen</value></data>
+  <data name="Settings.Language" xml:space="preserve"><value>Sprache</value></data>
+  <data name="Settings.Language.Description" xml:space="preserve"><value>Wählen Sie die Sprache der CryptoBook-Benutzeroberfläche aus.</value></data>
+  <data name="Settings.ApplicationLanguage" xml:space="preserve"><value>Anwendungssprache</value></data>
+  <data name="Settings.Language.AppliedImmediately" xml:space="preserve"><value>Die Sprache wird sofort angewendet und für den nächsten Start gespeichert.</value></data>
+  <data name="Settings.About" xml:space="preserve"><value>Info</value></data>
+  <data name="Settings.About.Description" xml:space="preserve"><value>Anwendungsdetails und Versionsinformationen.</value></data>
+  <data name="Settings.About.ProductDescription" xml:space="preserve"><value>Eine Desktop-Anwendung zum Bearbeiten und Durchsuchen lokaler Dokumente, Verwalten von Dateien und für passwortgeschützten Speicher.</value></data>
+  <data name="Settings.About.Version" xml:space="preserve"><value>Version</value></data>
+  <data name="Settings.About.Highlights" xml:space="preserve"><value>Wichtigste Funktionen</value></data>
+  <data name="Settings.About.Feature.Documents" xml:space="preserve"><value>Dokumente mit Links und Bildern erstellen und formatieren sowie das aktuelle Dokument drucken.</value></data>
+  <data name="Settings.About.Feature.Files" xml:space="preserve"><value>Lokale Dateien verwalten, durchsuchen und in der Vorschau anzeigen.</value></data>
+  <data name="Settings.About.Feature.QuickAccess" xml:space="preserve"><value>Häufig verwendete Dokumente anheften, sicher zwischen ihnen wechseln, Links neu anordnen und nicht verfügbare Dateien erneut verbinden.</value></data>
+  <data name="Settings.About.Feature.Search" xml:space="preserve"><value>Text in Dokumenten des Arbeitsbereichs durchsuchen, einschließlich verschlüsselter Dateien, und über die Navigation in der Titelleiste zu den Ergebnissen zurückkehren.</value></data>
+  <data name="Settings.About.Feature.Security" xml:space="preserve"><value>Schützen Sie einzelne Dateien und Ordner mit Verschlüsselung.</value></data>
+  <data name="Settings.About.Feedback" xml:space="preserve"><value>Feedback und Anregungen</value></data>
+  <data name="Settings.About.Feedback.Description" xml:space="preserve"><value>Schicken Sie uns Ihr Feedback, Ihre Ideen oder Vorschläge zur Verbesserung von CryptoBook.</value></data>
+  <data name="Settings.About.Feedback.ToolTip" xml:space="preserve"><value>Schreiben Sie an EncryptoBook@gmail.com</value></data>
+  <data name="Settings.About.Updates" xml:space="preserve"><value>Aktualisierungen</value></data>
+  <data name="Settings.About.Updates.Description" xml:space="preserve"><value>Überprüfen Sie stabile Releases im Hintergrund oder auf Abruf, laden Sie Updates herunter und starten Sie den Installer automatisch.</value></data>
+  <data name="Settings.About.Updates.Check" xml:space="preserve"><value>Nach Updates suchen</value></data>
+  <data name="Settings.About.Updates.ToolTip" xml:space="preserve"><value>Überprüfen Sie die neueste CryptoBook-Veröffentlichung</value></data>
+  <data name="Settings.About.DevelopmentStatus" xml:space="preserve"><value>CryptoBook wird aktiv weiterentwickelt. Bewahren Sie separate Sicherungskopien wichtiger Daten auf.</value></data>
+  <data name="Settings.Developers" xml:space="preserve"><value>Für Entwickler</value></data>
+  <data name="Settings.Developers.Description" xml:space="preserve"><value>Technischer Überblick über das Projekt, seine Architektur, Sicherheit und Entwicklungsressourcen.</value></data>
+  <data name="Settings.Developers.Technology" xml:space="preserve"><value>Technologie und Architektur</value></data>
+  <data name="Settings.Developers.Platform.Title" xml:space="preserve"><value>Plattform und Benutzeroberfläche</value></data>
+  <data name="Settings.Developers.Platform.Description" xml:space="preserve"><value>.NET 10, WPF, Windows 10 Version 1809 oder höher, x64.</value></data>
+  <data name="Settings.Developers.Architecture.Title" xml:space="preserve"><value>Architektur</value></data>
+  <data name="Settings.Developers.Architecture.Description" xml:space="preserve"><value>MVVM mit Abhängigkeitsinjektion durch Autofac und getrennten Präsentations-, Domänen- und Infrastrukturdiensten.</value></data>
+  <data name="Settings.Developers.Security.Title" xml:space="preserve"><value>Datenschutz</value></data>
+  <data name="Settings.Developers.Security.Description" xml:space="preserve"><value>Argon2id-Schlüsselableitung, authentifizierte AES-256-GCM-Verschlüsselung und Windows DPAPI zur Wiederherstellung von Snapshots.</value></data>
+  <data name="Settings.Developers.Quality.Title" xml:space="preserve"><value>Buildqualität</value></data>
+  <data name="Settings.Developers.Quality.Description" xml:space="preserve"><value>xUnit- und WPF-STA-Tests, deterministische Builds und CI; Warnungen und Sicherheitshinweise werden als Fehler behandelt.</value></data>
+  <data name="Settings.Developers.Repository" xml:space="preserve"><value>Quellcode-Repository</value></data>
+  <data name="Settings.Developers.Repository.Description" xml:space="preserve"><value>Quellcode, Dokumentation, Vorgangshistorie und die aktuelle Projektentwicklung sind im Projekt-Repository verfügbar.</value></data>
+  <data name="Settings.Developers.Repository.Open" xml:space="preserve"><value>Repository öffnen</value></data>
+  <data name="Settings.Developers.Repository.ToolTip" xml:space="preserve"><value>CryptoBook-Quellcode-Repository öffnen</value></data>
+  <data name="Settings.Workspace.ChooseFailed" xml:space="preserve"><value>Das Arbeitsbereichsverzeichnis konnte nicht ausgewählt werden: {0}</value></data>
+  <data name="Settings.Search.EnterQuery" xml:space="preserve"><value>Geben Sie einen Teil eines Dateinamens ein.</value></data>
+  <data name="Settings.Search.InProgress" xml:space="preserve"><value>Suche läuft...</value></data>
+  <data name="Settings.Search.OpenFailed" xml:space="preserve"><value>Die Datei kann nicht geöffnet werden</value></data>
+  <data name="Settings.Search.RevealFailed" xml:space="preserve"><value>Die Datei kann nicht angezeigt werden</value></data>
+  <data name="Settings.Search.NoFiles" xml:space="preserve"><value>Keine Dateien gefunden.</value></data>
+  <data name="Settings.Search.OneFile" xml:space="preserve"><value>1 Datei gefunden.</value></data>
+  <data name="Settings.Search.ManyFiles" xml:space="preserve"><value>Gefundene Dateien: {0}.</value></data>
+  <data name="Settings.Search.Truncated" xml:space="preserve"><value> Die ersten 200 Ergebnisse werden angezeigt.</value></data>
+  <data name="Settings.Search.SkippedDirectories" xml:space="preserve"><value> Übersprungene nicht zugängliche Ordner: {0}.</value></data>
+  <data name="Theme.System.Name" xml:space="preserve"><value>System</value></data>
+  <data name="Theme.System.Description" xml:space="preserve"><value>Windows-Systemfarben verwenden.</value></data>
+  <data name="Theme.Light.Name" xml:space="preserve"><value>Hell</value></data>
+  <data name="Theme.Light.Description" xml:space="preserve"><value>Eine helle, neutrale Benutzeroberfläche.</value></data>
+  <data name="Theme.Dark.Name" xml:space="preserve"><value>Dunkel</value></data>
+  <data name="Theme.Dark.Description" xml:space="preserve"><value>Eine graphitfarbene Benutzeroberfläche für Umgebungen mit wenig Licht.</value></data>
+  <data name="Theme.Sepia.Name" xml:space="preserve"><value>Sepia</value></data>
+  <data name="Theme.Sepia.Description" xml:space="preserve"><value>Eine warme Farbpalette für längeres Lesen.</value></data>
+  <data name="Common.File" xml:space="preserve"><value>Datei</value></data>
+  <data name="Common.Rename" xml:space="preserve"><value>Umbenennen</value></data>
+  <data name="Common.Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Common.SaveAs" xml:space="preserve"><value>Speichern unter</value></data>
+  <data name="Common.Print" xml:space="preserve"><value>Drucken</value></data>
+  <data name="Bookmarks.Title" xml:space="preserve"><value>Lesezeichen</value></data>
+  <data name="Media.Title" xml:space="preserve"><value>Fotos und Videos</value></data>
+  <data name="SideMenu.Subtitle" xml:space="preserve"><value>Buch- und Arbeitsbereich</value></data>
+  <data name="SideMenu.MoreSections" xml:space="preserve"><value>Weitere Bereiche werden angezeigt, sobald sie verfügbar sind</value></data>
+  <data name="SideMenu.Create" xml:space="preserve"><value>Erstellen</value></data>
+  <data name="SideMenu.Create.Description" xml:space="preserve"><value>Neues Buch erstellen</value></data>
+  <data name="SideMenu.Open.Description" xml:space="preserve"><value>Ein Buch oder Arbeitsbereichsverzeichnis öffnen</value></data>
+  <data name="SideMenu.Save.Description" xml:space="preserve"><value>Das aktuelle Dokument speichern</value></data>
+  <data name="SideMenu.SaveChanges.Description" xml:space="preserve"><value>Änderungen in der aktuellen Datei speichern</value></data>
+  <data name="SideMenu.SaveAs.Description" xml:space="preserve"><value>Namen, Ordner und Format auswählen</value></data>
+  <data name="SideMenu.Print.Description" xml:space="preserve"><value>Das aktuelle Dokument drucken</value></data>
+  <data name="SideMenu.RestoreBackup" xml:space="preserve"><value>Vorherige Version wiederherstellen</value></data>
+  <data name="SideMenu.RestoreBackup.Description" xml:space="preserve"><value>Vorherige Version aus der benachbarten .bak-Datei laden</value></data>
+  <data name="SideMenu.CloseDocument.Description" xml:space="preserve"><value>Das aktuelle Dokument schließen</value></data>
+  <data name="SideMenu.RenameBook" xml:space="preserve"><value>Buch umbenennen</value></data>
+  <data name="SideMenu.RenameBook.Description" xml:space="preserve"><value>Namen des aktuellen Buchs ändern</value></data>
+  <data name="SideMenu.Content" xml:space="preserve"><value>Inhalt</value></data>
+  <data name="SideMenu.Bookmarks.Description" xml:space="preserve"><value>Navigation, Notizen und Links im Buch</value></data>
+  <data name="SideMenu.InsertImage" xml:space="preserve"><value>Bild einfügen</value></data>
+  <data name="SideMenu.InsertImage.Description" xml:space="preserve"><value>Ein Bild an der Cursorposition hinzufügen</value></data>
+  <data name="SideMenu.Media.Description" xml:space="preserve"><value>Mediendateien im Arbeitsbereichsverzeichnis durchsuchen</value></data>
+  <data name="SideMenu.RenameBook.DialogTitle" xml:space="preserve"><value>Buch umbenennen</value></data>
+  <data name="SideMenu.RenameBook.Prompt" xml:space="preserve"><value>Geben Sie einen neuen Buchnamen ein:</value></data>
+  <data name="SideMenu.RenameBook.Empty" xml:space="preserve"><value>Der Buchname kann nicht leer sein.</value></data>
+  <data name="SideMenu.RenameBook.Invalid" xml:space="preserve"><value>Der Buchname enthält ungültige Zeichen.</value></data>
+  <data name="SideMenu.RenameBook.ErrorTitle" xml:space="preserve"><value>Fehler beim Umbenennen</value></data>
+  <data name="SideMenu.RenameBook.Failed" xml:space="preserve"><value>Das Buch konnte nicht umbenannt werden.</value></data>
+  <data name="Document.PrintError" xml:space="preserve"><value>Druckfehler</value></data>
+  <data name="Editor.Lists" xml:space="preserve"><value>Listen</value></data>
+  <data name="Editor.BulletedList" xml:space="preserve"><value>Aufzählung</value></data>
+  <data name="Editor.NumberedList" xml:space="preserve"><value>Nummerierte Liste</value></data>
+  <data name="Editor.RemoveList" xml:space="preserve"><value>Liste entfernen</value></data>
+  <data name="Editor.Paragraph" xml:space="preserve"><value>Absatz</value></data>
+  <data name="Editor.AlignLeft" xml:space="preserve"><value>Links ausrichten</value></data>
+  <data name="Editor.AlignCenter" xml:space="preserve"><value>Zentrieren</value></data>
+  <data name="Editor.AlignRight" xml:space="preserve"><value>Rechts ausrichten</value></data>
+  <data name="Editor.Justify" xml:space="preserve"><value>Blocksatz</value></data>
+  <data name="Editor.FirstLineIndent" xml:space="preserve"><value>Erste Zeile einrücken</value></data>
+  <data name="Editor.IncreaseLineSpacing" xml:space="preserve"><value>Zeilenabstand erhöhen</value></data>
+  <data name="Editor.DecreaseLineSpacing" xml:space="preserve"><value>Zeilenabstand verringern</value></data>
+  <data name="Editor.InsertHyperlink" xml:space="preserve"><value>Hyperlink einfügen</value></data>
+  <data name="Editor.Font" xml:space="preserve"><value>Schriftart</value></data>
+  <data name="Editor.FontFamily" xml:space="preserve"><value>Schriftfamilie</value></data>
+  <data name="Editor.FontStyle" xml:space="preserve"><value>Stil</value></data>
+  <data name="Editor.FontWeight" xml:space="preserve"><value>Schriftstärke</value></data>
+  <data name="Editor.Decoration" xml:space="preserve"><value>Verzierung</value></data>
+  <data name="Editor.FontStretch" xml:space="preserve"><value>Schriftbreite</value></data>
+  <data name="Editor.FontSize" xml:space="preserve"><value>Größe</value></data>
+  <data name="Editor.Color" xml:space="preserve"><value>Farbe</value></data>
+  <data name="Editor.Highlight" xml:space="preserve"><value>Hervorhebung</value></data>
+  <data name="Editor.Paper" xml:space="preserve"><value>Papier</value></data>
+  <data name="Editor.DocumentBackground" xml:space="preserve"><value>Hintergrundfarbe des Dokuments</value></data>
+  <data name="Editor.ToggleDocumentMode" xml:space="preserve"><value>Dokumentmodus wechseln</value></data>
+  <data name="Bookmarks.New" xml:space="preserve"><value>Neues Lesezeichen</value></data>
+  <data name="Bookmarks.AddAtCaret" xml:space="preserve"><value>An Cursorposition hinzufügen</value></data>
+  <data name="Bookmarks.NewName" xml:space="preserve"><value>Neuer Lesezeichenname</value></data>
+  <data name="Bookmarks.Selected" xml:space="preserve"><value>Ausgewähltes Lesezeichen</value></data>
+  <data name="Bookmarks.Previous" xml:space="preserve"><value>Vorheriges Lesezeichen</value></data>
+  <data name="Bookmarks.GoToSelected" xml:space="preserve"><value>Zum ausgewählten Lesezeichen wechseln</value></data>
+  <data name="Bookmarks.Next" xml:space="preserve"><value>Nächstes Lesezeichen</value></data>
+  <data name="Bookmarks.OpenManager" xml:space="preserve"><value>Lesezeichen-Manager öffnen</value></data>
+  <data name="Bookmarks.RefreshIndex" xml:space="preserve"><value>Index aus Dokument aktualisieren</value></data>
+  <data name="Bookmarks.DeleteSelected" xml:space="preserve"><value>Ausgewähltes Lesezeichen löschen</value></data>
+  <data name="Bookmarks.RenameSelected" xml:space="preserve"><value>Ausgewähltes Lesezeichen umbenennen</value></data>
+  <data name="Bookmarks.SelectedNewName" xml:space="preserve"><value>Neuer Name für das ausgewählte Lesezeichen</value></data>
+  <data name="Bookmarks.InsertSelectedLink" xml:space="preserve"><value>Link zum ausgewählten Lesezeichen einfügen</value></data>
+  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>Linktext; Sie können zuerst Text im Dokument auswählen</value></data>
+  <data name="Common.Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Common.Insert" xml:space="preserve"><value>Einfügen</value></data>
+  <data name="Hyperlink.Title" xml:space="preserve"><value>Hyperlink einfügen</value></data>
+  <data name="Hyperlink.Address" xml:space="preserve"><value>Link-Adresse:</value></data>
+  <data name="Hyperlink.DisplayText" xml:space="preserve"><value>Anzeigetext:</value></data>
+  <data name="Directory.NewTitle" xml:space="preserve"><value>Neues Verzeichnis</value></data>
+  <data name="Directory.NewPrompt" xml:space="preserve"><value>Geben Sie einen Namen für das neue Verzeichnis ein:</value></data>
+  <data name="File.Folder" xml:space="preserve"><value>Ordner:</value></data>
+  <data name="File.ReadOnly" xml:space="preserve"><value>Nur lesen:</value></data>
+  <data name="File.Hidden" xml:space="preserve"><value>Versteckte Datei:</value></data>
+  <data name="File.Type" xml:space="preserve"><value>Dateityp:</value></data>
+  <data name="File.Name" xml:space="preserve"><value>Dateiname:</value></data>
+  <data name="File.Extension" xml:space="preserve"><value>Dateierweiterung:</value></data>
+  <data name="Common.Back" xml:space="preserve"><value>Zurück</value></data>
+  <data name="Common.Refresh" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="Common.Cut" xml:space="preserve"><value>Ausschneiden</value></data>
+  <data name="Common.Copy" xml:space="preserve"><value>Kopieren</value></data>
+  <data name="Common.Paste" xml:space="preserve"><value>Einfügen</value></data>
+  <data name="Common.Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Explorer.CreateFile" xml:space="preserve"><value>Datei erstellen</value></data>
+  <data name="Explorer.CreateFolder" xml:space="preserve"><value>Ordner erstellen</value></data>
+  <data name="Explorer.OpenWith" xml:space="preserve"><value>Öffnen mit</value></data>
+  <data name="Common.Properties" xml:space="preserve"><value>Eigenschaften</value></data>
+  <data name="Explorer.RevealInExplorer" xml:space="preserve"><value>Im Datei-Explorer anzeigen</value></data>
+  <data name="Explorer.CopyPath" xml:space="preserve"><value>Pfad kopieren</value></data>
+  <data name="Explorer.Move" xml:space="preserve"><value>Verschieben</value></data>
+  <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Aktuelles Verzeichnis zu Favoriten hinzufügen</value></data>
+  <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Verschlüsselungsschlüssel festlegen</value></data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Ausgewählte Elemente verschlüsseln</value></data>
+  <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Ausgewählte Elemente entschlüsseln</value></data>
+  <data name="Explorer.Favorites" xml:space="preserve"><value>Favoriten</value></data>
+  <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Aus Favoriten entfernen</value></data>
+  <data name="Explorer.Favorites.Empty" xml:space="preserve"><value>Fügen Sie den aktuellen Ordner mit der Schaltfläche ★ hinzu</value></data>
+  <data name="Common.OK" xml:space="preserve"><value>OK</value></data>
+  <data name="Common.Undo" xml:space="preserve"><value>_Rückgängig</value></data>
+  <data name="Common.Redo" xml:space="preserve"><value>_Wiederholen</value></data>
+  <data name="Common.SelectAll" xml:space="preserve"><value>_Alles auswählen</value></data>
+  <data name="Common.Error" xml:space="preserve"><value>Fehler</value></data>
+  <data name="Home.Title" xml:space="preserve"><value>Startseite</value></data>
+  <data name="Editor.ClearDocument" xml:space="preserve"><value>Dokument _leeren</value></data>
+  <data name="Editor.RemoveEmptyParagraphs" xml:space="preserve"><value>Leere Absätze _entfernen</value></data>
+  <data name="Editor.Formatting" xml:space="preserve"><value>_Formatierung</value></data>
+  <data name="Editor.Bold" xml:space="preserve"><value>_Fett</value></data>
+  <data name="Editor.Italic" xml:space="preserve"><value>_Kursiv</value></data>
+  <data name="Editor.Underline" xml:space="preserve"><value>_Unterstrichen</value></data>
+  <data name="Editor.ClearFormatting" xml:space="preserve"><value>Formatierung _löschen</value></data>
+  <data name="Editor.Alignment" xml:space="preserve"><value>_Ausrichtung</value></data>
+  <data name="Editor.Image" xml:space="preserve"><value>_Bild</value></data>
+  <data name="Editor.ImageInline" xml:space="preserve"><value>In _Zeile</value></data>
+  <data name="Editor.ImageCenteredBlock" xml:space="preserve"><value>Zentrierter _Block</value></data>
+  <data name="Editor.ImageFloatLeft" xml:space="preserve"><value>Textumbruch: Bild _links</value></data>
+  <data name="Editor.ImageFloatRight" xml:space="preserve"><value>Textumbruch: Bild _rechts</value></data>
+  <data name="Editor.ImageLayoutCommand" xml:space="preserve"><value>Bildlayout ändern</value></data>
+  <data name="Editor.ImageMoveUp" xml:space="preserve"><value>Bild nach oben verschieben</value></data>
+  <data name="Editor.ImageMoveDown" xml:space="preserve"><value>Bild nach unten verschieben</value></data>
+  <data name="Editor.ImageMoveUpHint" xml:space="preserve"><value>Klicken Sie auf ↑ oder drücken Sie Alt+↑, um das Bild nach oben zu verschieben</value></data>
+  <data name="Editor.ImageMoveDownHint" xml:space="preserve"><value>Klicken Sie auf ↓ oder drücken Sie Alt+↓, um das Bild nach unten zu verschieben</value></data>
+  <data name="Editor.PagedPreview" xml:space="preserve"><value>Seitenvorschau</value></data>
+  <data name="Editor.Editing" xml:space="preserve"><value>Bearbeitung</value></data>
+  <data name="Editor.Editor" xml:space="preserve"><value>Editor</value></data>
+  <data name="Editor.Preview" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="Editor.Zoom100" xml:space="preserve"><value>Zoom 100 %</value></data>
+  <data name="Editor.FitToWindow" xml:space="preserve"><value>An Fenster anpassen</value></data>
+  <data name="Editor.DocumentStructure" xml:space="preserve"><value>Struktur</value></data>
+  <data name="Editor.ToggleDocumentStructure" xml:space="preserve"><value>Dokumentstruktur anzeigen</value></data>
+  <data name="Editor.DocumentStructureTextElements" xml:space="preserve"><value>Textelemente anzeigen (Run, Span)</value></data>
+  <data name="Editor.DocumentStructurePreviewReadOnly" xml:space="preserve"><value>Navigation und Strukturbearbeitung sind im Vorschaumodus deaktiviert.</value></data>
+  <data name="Editor.DocumentStructureEmpty" xml:space="preserve"><value>Das Dokument hat keine strukturellen Elemente.</value></data>
+  <data name="Editor.DocumentStructureNavigate" xml:space="preserve"><value>Zum Element wechseln</value></data>
+  <data name="Editor.DocumentStructureAddParagraph" xml:space="preserve"><value>Absatz hinzufügen (Strg+Enter)</value></data>
+  <data name="Editor.DocumentStructureAddParagraphBefore" xml:space="preserve"><value>Absatz davor hinzufügen</value></data>
+  <data name="Editor.DocumentStructureAddParagraphInside" xml:space="preserve"><value>Absatz innerhalb hinzufügen</value></data>
+  <data name="Editor.DocumentStructureAddParagraphAfter" xml:space="preserve"><value>Absatz danach hinzufügen</value></data>
+  <data name="Editor.InsertLineBreak" xml:space="preserve"><value>Zeilenumbruch einfügen</value></data>
+  <data name="Editor.InsertParagraph" xml:space="preserve"><value>Absatz einfügen</value></data>
+  <data name="Editor.DocumentStructureDeleteTitle" xml:space="preserve"><value>Dokumentelement löschen</value></data>
+  <data name="Editor.DocumentStructureDeletePrompt" xml:space="preserve"><value>„{0}“ und den gesamten Inhalt löschen?</value></data>
+  <data name="Editor.DocumentStructureMoveUp" xml:space="preserve"><value>Nach oben</value></data>
+  <data name="Editor.DocumentStructureMoveDown" xml:space="preserve"><value>Nach unten</value></data>
+  <data name="Editor.DocumentStructureMoveHint" xml:space="preserve"><value>Enter fügt einen Zeilenumbruch ein; Strg+Enter erzeugt einen Absatz. Ziehen Sie ein Element, um es zu verschieben; Alt+↑/↓ ändert seine Reihenfolge.</value></data>
+  <data name="Bookmarks.Properties" xml:space="preserve"><value>Lesezeichen-Eigenschaften</value></data>
+  <data name="Bookmarks.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Bookmarks.Note" xml:space="preserve"><value>Notiz</value></data>
+  <data name="Bookmarks.AnchorFormat" xml:space="preserve"><value>Anker: {0}</value></data>
+  <data name="Bookmarks.Anchor" xml:space="preserve"><value>Anker:</value></data>
+  <data name="Bookmarks.Refresh" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="Bookmarks.Added" xml:space="preserve"><value>Das Lesezeichen „{0}“ wurde hinzugefügt.</value></data>
+  <data name="Bookmarks.Removed" xml:space="preserve"><value>Das Lesezeichen „{0}“ wurde entfernt.</value></data>
+  <data name="Bookmarks.Renamed" xml:space="preserve"><value>„{0}“ wurde in „{1}“ umbenannt.</value></data>
+  <data name="Bookmarks.LinkInserted" xml:space="preserve"><value>Ein Link zu „{0}“ wurde eingefügt.</value></data>
+  <data name="Bookmarks.IndexRefreshed" xml:space="preserve"><value>Index aktualisiert. Lesezeichen: {0}.</value></data>
+  <data name="Bookmarks.OperationFailed" xml:space="preserve"><value>Der Vorgang konnte nicht abgeschlossen werden.</value></data>
+  <data name="Bookmarks.NoDocument" xml:space="preserve"><value>Kein Dokument geöffnet.</value></data>
+  <data name="Bookmarks.ReadOnly" xml:space="preserve"><value>Das Dokument ist schreibgeschützt.</value></data>
+  <data name="Bookmarks.NameEmpty" xml:space="preserve"><value>Der Name des Lesezeichens ist leer.</value></data>
+  <data name="Bookmarks.OldNameEmpty" xml:space="preserve"><value>Der alte Name ist leer.</value></data>
+  <data name="Bookmarks.NewNameEmpty" xml:space="preserve"><value>Der neue Name ist leer.</value></data>
+  <data name="Bookmarks.NameInvalid" xml:space="preserve"><value>Der Name darf weder # noch Steuerzeichen enthalten.</value></data>
+  <data name="Bookmarks.NameExists" xml:space="preserve"><value>„{0}“ ist bereits vorhanden.</value></data>
+  <data name="Bookmarks.NameUnchanged" xml:space="preserve"><value>Der Name hat sich nicht geändert.</value></data>
+  <data name="Bookmarks.NameNotFound" xml:space="preserve"><value>Das Lesezeichen „{0}“ wurde nicht gefunden.</value></data>
+  <data name="Bookmarks.BadCaret" xml:space="preserve"><value>Die Cursorposition ist nicht verfügbar.</value></data>
+  <data name="Bookmarks.InsideHyperlink" xml:space="preserve"><value>Der Cursor befindet sich in einem Hyperlink.</value></data>
+  <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Nur Inline-Inhalte innerhalb eines Absatzes werden unterstützt.</value></data>
+  <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>Die Auswahl überschneidet sich mit einem anderen Hyperlink.</value></data>
+  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Geben Sie Linktext ein oder wählen Sie Text im Dokument aus.</value></data>
+  <data name="Explorer.Picker.SelectFile" xml:space="preserve"><value>Datei auswählen</value></data>
+  <data name="Explorer.Picker.SelectFolder" xml:space="preserve"><value>Ordner auswählen</value></data>
+  <data name="Explorer.WindowTitle" xml:space="preserve"><value>Datei-Explorer</value></data>
+  <data name="Explorer.Column.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Explorer.Column.DateModified" xml:space="preserve"><value>Änderungsdatum</value></data>
+  <data name="Explorer.Column.Type" xml:space="preserve"><value>Typ</value></data>
+  <data name="Explorer.Column.Size" xml:space="preserve"><value>Größe</value></data>
+  <data name="Explorer.Column.Folder" xml:space="preserve"><value>Ordner</value></data>
+  <data name="Explorer.SelectedFormat" xml:space="preserve"><value>Ausgewählt: {0}</value></data>
+  <data name="Explorer.Selected" xml:space="preserve"><value>Ausgewählt:</value></data>
+  <data name="Explorer.Current" xml:space="preserve"><value>Aktuell:</value></data>
+  <data name="Explorer.Copying" xml:space="preserve"><value>Dateien kopieren</value></data>
+  <data name="Explorer.CopyError" xml:space="preserve"><value>Kopierfehler</value></data>
+  <data name="Explorer.CopyPathError" xml:space="preserve"><value>Fehler beim Kopieren des Pfads</value></data>
+  <data name="Explorer.DeleteError" xml:space="preserve"><value>Fehler beim Löschen</value></data>
+  <data name="Explorer.SortError" xml:space="preserve"><value>Sortierfehler</value></data>
+  <data name="Explorer.UnknownSortColumn" xml:space="preserve"><value>Die zu sortierende Spalte konnte nicht erkannt werden.</value></data>
+  <data name="Explorer.CreateDirectoryError" xml:space="preserve"><value>Fehler beim Erstellen des Verzeichnisses</value></data>
+  <data name="Explorer.ItemAlreadyExists" xml:space="preserve"><value>Ein Element mit dem Namen „{0}“ ist bereits vorhanden.</value></data>
+  <data name="Explorer.RenameError" xml:space="preserve"><value>Fehler beim Umbenennen</value></data>
+  <data name="Explorer.Moving" xml:space="preserve"><value>Verschieben</value></data>
+  <data name="Explorer.MoveError" xml:space="preserve"><value>Fehler beim Verschieben</value></data>
+  <data name="Explorer.RefreshError" xml:space="preserve"><value>Aktualisierungsfehler</value></data>
+  <data name="Explorer.CancelOperation" xml:space="preserve"><value>Vorgang abbrechen</value></data>
+  <data name="Explorer.RenameCanceledConfirmation" xml:space="preserve"><value>Das Umbenennen des Elements wurde abgebrochen.{0}Sind Sie sicher?</value></data>
+  <data name="Explorer.OpenDirectoryError" xml:space="preserve"><value>Fehler beim Öffnen des Verzeichnisses</value></data>
+  <data name="Explorer.OpenDirectoryFailed" xml:space="preserve"><value>„{0}“ konnte nicht geöffnet werden:{1}{2}</value></data>
+  <data name="Explorer.Filter" xml:space="preserve"><value>Filter:</value></data>
+  <data name="Explorer.FilterHint" xml:space="preserve"><value>Filtern Sie die aktuelle Ansicht nach Name oder Ordner</value></data>
+  <data name="Explorer.FlatView.Toggle" xml:space="preserve"><value>Alle Dateien</value></data>
+  <data name="Explorer.FlatView.ToolTip" xml:space="preserve"><value>Dateien aus dem aktuellen Ordner und allen Unterordnern anzeigen</value></data>
+  <data name="Explorer.FlatView.Scanning" xml:space="preserve"><value>Dateien werden durchsucht…</value></data>
+  <data name="Explorer.FlatView.Canceled" xml:space="preserve"><value>Durchsuchen abgebrochen.</value></data>
+  <data name="Explorer.FlatView.Result" xml:space="preserve"><value>Dateien: {0}. Übersprungene Ordner: {1}.</value></data>
+  <data name="Explorer.FlatView.Error" xml:space="preserve"><value>Die Dateiliste konnte nicht erstellt werden: {0}</value></data>
+  <data name="Explorer.Navigation.Unavailable" xml:space="preserve"><value>Nicht verfügbar</value></data>
+  <data name="Explorer.Navigation.Retry" xml:space="preserve"><value>Wiederholen</value></data>
+  <data name="Explorer.Navigation.DirectoryNotFound" xml:space="preserve"><value>Das Verzeichnis existiert nicht mehr.</value></data>
+  <data name="Explorer.Navigation.AccessDenied" xml:space="preserve"><value>Der Zugriff auf dieses Verzeichnis wird verweigert.</value></data>
+  <data name="Explorer.Navigation.DriveNotReady" xml:space="preserve"><value>Das Laufwerk ist nicht bereit.</value></data>
+  <data name="Explorer.Navigation.NetworkUnavailable" xml:space="preserve"><value>Die Netzwerkressource ist nicht verfügbar.</value></data>
+  <data name="Explorer.Navigation.OperationCanceled" xml:space="preserve"><value>Der Vorgang wurde abgebrochen.</value></data>
+  <data name="Explorer.OpenFileTitle" xml:space="preserve"><value>Datei öffnen</value></data>
+  <data name="Explorer.FileOpenError" xml:space="preserve"><value>Fehler beim Öffnen der Datei</value></data>
+  <data name="Explorer.PropertiesError" xml:space="preserve"><value>Eigenschaften können nicht geöffnet werden</value></data>
+  <data name="Explorer.FileOpenFailed" xml:space="preserve"><value>{0} konnte nicht geöffnet werden:{1}{2}</value></data>
+  <data name="Explorer.OpenFileDefaultFailed" xml:space="preserve"><value>{0} konnte nicht mit der Standardanwendung geöffnet werden.</value></data>
+  <data name="Explorer.DirectoryPathRequired" xml:space="preserve"><value>Es ist ein Verzeichnispfad erforderlich.</value></data>
+  <data name="Explorer.RootPathNotFound" xml:space="preserve"><value>Das Stammverzeichnis von „{0}“ konnte nicht ermittelt werden.</value></data>
+  <data name="Explorer.DirectoryNameEmpty" xml:space="preserve"><value>Der Verzeichnisname kann nicht leer sein.</value></data>
+  <data name="Explorer.DirectoryNameInvalid" xml:space="preserve"><value>Der Verzeichnisname enthält ungültige Zeichen oder hat ein ungültiges Format.</value></data>
+  <data name="Explorer.DirectoryNameReserved" xml:space="preserve"><value>Der Name „{0}“ ist für das Betriebssystem reserviert.</value></data>
+  <data name="Explorer.CryptoBookFilesFilter" xml:space="preserve"><value>CryptoBook-Dateien (*.cbook)|*.cbook</value></data>
+  <data name="Explorer.AllFilesFilter" xml:space="preserve"><value>Alle Dateien (*.*)|*.*</value></data>
+  <data name="Explorer.SaveEncryptedTitle" xml:space="preserve"><value>Verschlüsselte Datei speichern</value></data>
+  <data name="Explorer.SaveDecryptedTitle" xml:space="preserve"><value>Entschlüsselte Datei speichern</value></data>
+  <data name="Explorer.EncryptionError" xml:space="preserve"><value>Verschlüsselungsfehler</value></data>
+  <data name="Explorer.DecryptionError" xml:space="preserve"><value>Entschlüsselungsfehler</value></data>
+  <data name="Explorer.Encryption" xml:space="preserve"><value>Verschlüsselung</value></data>
+  <data name="Explorer.Decryption" xml:space="preserve"><value>Entschlüsselung</value></data>
+  <data name="Explorer.SavingDecryptedCopy" xml:space="preserve"><value>Entschlüsselte Kopie speichern</value></data>
+  <data name="Explorer.DecryptionResultTitle" xml:space="preserve"><value>Entschlüsselung abgeschlossen</value></data>
+  <data name="Explorer.DecryptionBatchResult" xml:space="preserve"><value>Entschlüsselte Dateien: {0}. Übersprungene ungeschützte Dateien: {1}. Vorhandene Dateien wurden beibehalten; Kopien mit Namenskonflikten erhielten eindeutige Namen.</value></data>
+  <data name="Explorer.WholeDriveNotAllowed" xml:space="preserve"><value>Ein ganzes Laufwerk kann nicht verschlüsselt oder entschlüsselt werden. Wählen Sie eine Datei oder ein Verzeichnis aus.</value></data>
+  <data name="Explorer.ItemDoesNotExist" xml:space="preserve"><value>Die ausgewählte Datei oder das ausgewählte Verzeichnis existiert nicht.</value></data>
+  <data name="Explorer.RefreshAfterOperationFailed" xml:space="preserve"><value>Der Vorgang wurde erfolgreich abgeschlossen, die Dateiansicht konnte jedoch nicht aktualisiert werden:{0}{1}</value></data>
+  <data name="Explorer.OverwriteTitle" xml:space="preserve"><value>Quellelement überschreiben</value></data>
+  <data name="Explorer.OverwriteFilePrompt" xml:space="preserve"><value>Die Quelldatei durch eine Kopie ({0}) ersetzen?</value></data>
+  <data name="Explorer.OverwriteDirectoryPrompt" xml:space="preserve"><value>Die Quelldateien durch Kopien ({0}) ersetzen?</value></data>
+  <data name="Explorer.OverwriteBatchPrompt" xml:space="preserve"><value>{0} ausgewählte Elemente durch Kopien ({1}) ersetzen?</value></data>
+  <data name="Explorer.EncryptedAdjective" xml:space="preserve"><value>verschlüsselt</value></data>
+  <data name="Explorer.DecryptedAdjective" xml:space="preserve"><value>entschlüsselt</value></data>
+  <data name="Explorer.EncryptedCopiesAdjective" xml:space="preserve"><value>verschlüsselt</value></data>
+  <data name="Explorer.DecryptedCopiesAdjective" xml:space="preserve"><value>entschlüsselt</value></data>
+  <data name="Explorer.EncryptionWarning" xml:space="preserve"><value>Das Öffnen ohne Schlüssel ist nicht mehr möglich.</value></data>
+  <data name="Explorer.EncryptedSuffix" xml:space="preserve"><value>Verschlüsselt</value></data>
+  <data name="Explorer.DecryptedSuffix" xml:space="preserve"><value>Entschlüsselt</value></data>
+  <data name="File.NewTitle" xml:space="preserve"><value>Neue Datei</value></data>
+  <data name="File.CreateOperation" xml:space="preserve"><value>Datei erstellen</value></data>
+  <data name="File.TypeNotSelected" xml:space="preserve"><value>Es ist kein Dateityp ausgewählt.</value></data>
+  <data name="FileTemplate.Image" xml:space="preserve"><value>Bild</value></data>
+  <data name="FileTemplate.Text" xml:space="preserve"><value>Textdatei</value></data>
+  <data name="FileTemplate.Secure" xml:space="preserve"><value>Verschlüsselte Datei</value></data>
+  <data name="FileTemplate.Video" xml:space="preserve"><value>Video</value></data>
+  <data name="FileTemplate.Xaml" xml:space="preserve"><value>XAML-Datei</value></data>
+  <data name="FileTemplate.XamlPackage" xml:space="preserve"><value>XAML-Paketdatei</value></data>
+  <data name="FileTemplate.PdfUnsupported" xml:space="preserve"><value>Das Erstellen von PDF-Dateien in CryptoBook wird nicht unterstützt.</value></data>
+  <data name="FileTemplate.RichText" xml:space="preserve"><value>Rich-Text-Format</value></data>
+  <data name="FileTemplate.NewImage" xml:space="preserve"><value>Neues Bild</value></data>
+  <data name="FileTemplate.NewFile" xml:space="preserve"><value>Neue Datei</value></data>
+  <data name="FileTemplate.NewDocument" xml:space="preserve"><value>Neues Dokument</value></data>
+  <data name="FileTemplate.NewEncryptedFile" xml:space="preserve"><value>Neue verschlüsselte Datei</value></data>
+  <data name="FileTemplate.NewVideo" xml:space="preserve"><value>Neues Video</value></data>
+  <data name="FileTemplate.NewXamlPackage" xml:space="preserve"><value>Neues XAML-Paket</value></data>
+  <data name="Media.EmptyTitle" xml:space="preserve"><value>Fotos und Videos</value></data>
+  <data name="Media.PlayerTitle" xml:space="preserve"><value>Medienplayer</value></data>
+  <data name="Media.DefaultStatus" xml:space="preserve"><value>Bild oder Video öffnen</value></data>
+  <data name="Media.OpenFile" xml:space="preserve"><value>Datei öffnen</value></data>
+  <data name="Media.OpenFileCurrent" xml:space="preserve"><value>In diesem Player öffnen</value></data>
+  <data name="Media.OpenFileNew" xml:space="preserve"><value>In einem neuen Player öffnen</value></data>
+  <data name="Media.PauseAll" xml:space="preserve"><value>Alle Player anhalten</value></data>
+  <data name="Media.SynchronizeExperimental" xml:space="preserve"><value>Wiedergabe synchronisieren (experimentell)</value></data>
+  <data name="Media.PlayerTitleNumbered" xml:space="preserve"><value>Medienplayer {0}</value></data>
+  <data name="Media.WindowTitle" xml:space="preserve"><value>{0} — Medienplayer {1}</value></data>
+  <data name="Media.PreviousImage" xml:space="preserve"><value>Vorheriges Bild</value></data>
+  <data name="Media.NextImage" xml:space="preserve"><value>Nächstes Bild</value></data>
+  <data name="Media.Rotate" xml:space="preserve"><value>Drehen</value></data>
+  <data name="Media.FitImage" xml:space="preserve"><value>Bild anpassen</value></data>
+  <data name="Media.DeleteImage" xml:space="preserve"><value>Bild löschen</value></data>
+  <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Bild oder Video öffnen</value></data>
+  <data name="Media.Loading" xml:space="preserve"><value>Wird geladen: {0}</value></data>
+  <data name="Media.DeleteTitle" xml:space="preserve"><value>Bild löschen</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>„{0}“ löschen?</value></data>
+  <data name="Media.DeleteError" xml:space="preserve"><value>Fehler beim Löschen</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Das Bild konnte nicht gelöscht werden.</value></data>
+  <data name="Media.NoMoreImages" xml:space="preserve"><value>Es gibt keine Bilder mehr im Ordner.</value></data>
+  <data name="Media.DecodeFailed" xml:space="preserve"><value>Das Bild konnte nicht dekodiert werden.</value></data>
+  <data name="Media.Filter" xml:space="preserve"><value>Mediendateien|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Bilder|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Video|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|CryptoBook-Dateien|*.cbook;*.cbox|Alle Dateien|*.*</value></data>
+  <data name="Key.Title" xml:space="preserve"><value>Verschlüsselungsschlüssel</value></data>
+  <data name="Key.Prompt" xml:space="preserve"><value>Geben Sie den Verschlüsselungsschlüssel ein:</value></data>
+  <data name="Key.TooShort" xml:space="preserve"><value>Der Schlüssel muss mindestens {0} Zeichen lang sein.</value></data>
+  <data name="Key.InvalidCharacters" xml:space="preserve"><value>Der Schlüssel enthält ungültige Zeichen.</value></data>
+  <data name="Key.Enter" xml:space="preserve"><value>Geben Sie einen Schlüssel ein.</value></data>
+  <data name="Key.MinimumLength" xml:space="preserve"><value>Mindestlänge des Schlüssels: {0}.</value></data>
+  <data name="Key.Repeat" xml:space="preserve"><value>Wiederholen Sie den Schlüssel.</value></data>
+  <data name="Key.Mismatch" xml:space="preserve"><value>Die Schlüssel stimmen nicht überein.</value></data>
+  <data name="EncryptionMode.Title" xml:space="preserve"><value>Dateispeichermodus</value></data>
+  <data name="EncryptionMode.Prompt" xml:space="preserve"><value>Wählen Sie aus, wie die Datei gespeichert werden soll:</value></data>
+  <data name="EncryptionMode.SaveAs" xml:space="preserve"><value>Datei speichern unter...</value></data>
+  <data name="EncryptionMode.ReplaceSource" xml:space="preserve"><value>Quelldatei ersetzen</value></data>
+  <data name="EncryptionMode.DecryptionTitle" xml:space="preserve"><value>Geschützte Dateien entschlüsseln</value></data>
+  <data name="EncryptionMode.DecryptionPrompt" xml:space="preserve"><value>Wählen Sie, wie Sie das entschlüsselte Ergebnis speichern:</value></data>
+  <data name="EncryptionMode.SaveDecryptedCopy" xml:space="preserve"><value>Geschützte Quelldatei beibehalten und eine entschlüsselte Kopie speichern</value></data>
+  <data name="EncryptionMode.ReplaceEncryptedSource" xml:space="preserve"><value>Geschützte Quelldatei durch die entschlüsselte Datei ersetzen</value></data>
+  <data name="EncryptionMode.DecryptionWarning" xml:space="preserve"><value>Das entschlüsselte Ergebnis wird ohne Verschlüsselung gespeichert.</value></data>
+  <data name="Progress.Canceling" xml:space="preserve"><value>Vorgang wird abgebrochen…</value></data>
+  <data name="Favorites.ErrorTitle" xml:space="preserve"><value>Favoritenfehler</value></data>
+  <data name="Favorites.AddFailed" xml:space="preserve"><value>Das Verzeichnis konnte nicht hinzugefügt werden:{0}{1}</value></data>
+  <data name="Favorites.RenameTitle" xml:space="preserve"><value>Favorit umbenennen</value></data>
+  <data name="Favorites.RenamePrompt" xml:space="preserve"><value>Geben Sie einen Anzeigenamen ein:</value></data>
+  <data name="Favorites.RenameFailed" xml:space="preserve"><value>Der Favorit konnte nicht umbenannt werden:{0}{1}</value></data>
+  <data name="Favorites.RemoveFailed" xml:space="preserve"><value>Der Favorit konnte nicht entfernt werden:{0}{1}</value></data>
+  <data name="Favorites.RefreshFailed" xml:space="preserve"><value>Die Favoriten konnten nicht aktualisiert werden:{0}{1}</value></data>
+  <data name="Hyperlink.InvalidAddress" xml:space="preserve"><value>Geben Sie eine gültige HTTP- oder HTTPS-Adresse ein, zum Beispiel https://example.com.</value></data>
+  <data name="SystemItemRename.Title" xml:space="preserve"><value>Eintrag umbenennen</value></data>
+  <data name="SystemItemRename.OldName" xml:space="preserve"><value>Alter Name:</value></data>
+  <data name="SystemItemRename.OldExtension" xml:space="preserve"><value>Alte Erweiterung:</value></data>
+  <data name="SystemItemRename.NewName" xml:space="preserve"><value>Neuer Name:</value></data>
+  <data name="SystemItemRename.NewExtension" xml:space="preserve"><value>Neue Erweiterung:</value></data>
+  <data name="Document.SaveOperation" xml:space="preserve"><value>Dokument speichern</value></data>
+  <data name="Document.SaveError" xml:space="preserve"><value>Speicherfehler</value></data>
+  <data name="Document.EncryptionSaveTitle" xml:space="preserve"><value>Verschlüsselung des Dokuments</value></data>
+  <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>Ein Verschlüsselungsschlüssel ist konfiguriert. Soll diese Datei beim Speichern verschlüsselt werden? Klicken Sie auf OK, um sie zu verschlüsseln, oder auf Abbrechen, um sie ohne Verschlüsselung zu speichern. Nach der Verschlüsselung kann die Datei ohne den Schlüssel nicht geöffnet werden.</value></data>
+  <data name="Document.EncryptionSaveWarning" xml:space="preserve"><value>Die Datei wird verschlüsselt und kann ohne den Schlüssel nicht geöffnet werden. Speichern fortsetzen?</value></data>
+  <data name="Document.EncryptionFormatUnavailable" xml:space="preserve"><value>Das verschlüsselte Dokumentformat ist nicht verfügbar.</value></data>
+  <data name="File.CreatedFilePathUnavailable" xml:space="preserve"><value>Die Datei wurde erstellt, aber ihr Pfad ist nicht verfügbar.</value></data>
+  <data name="File.CreatedFileOpenFailed" xml:space="preserve"><value>Die Datei wurde erstellt, konnte aber nicht geöffnet werden.</value></data>
+  <data name="Document.InsertImageError" xml:space="preserve"><value>Das Bild kann nicht eingefügt werden</value></data>
+  <data name="Document.RecoveryPrompt" xml:space="preserve"><value>Eine automatisch gespeicherte Kopie aus der vorherigen Sitzung wurde gefunden. Dokument wiederherstellen?</value></data>
+  <data name="Document.RecoveryTitle" xml:space="preserve"><value>CryptoBook-Wiederherstellung</value></data>
+  <data name="Document.BackupRecoveryTitle" xml:space="preserve"><value>Vorherige Version wiederherstellen</value></data>
+  <data name="Document.BackupRecoveryPrompt" xml:space="preserve"><value>Vorherige Version laden aus:{0}{1}{0}{0}Aktuelle nicht gespeicherte Änderungen gehen verloren. Die .bak-Datei selbst wird nicht gelöscht.</value></data>
+  <data name="Document.BackupRecoveryUnavailable" xml:space="preserve"><value>Für das aktuelle Dokument wurde keine .bak-Datei gefunden. Eine Sicherung erscheint, nachdem eine bestehende Datei erneut gespeichert wurde.</value></data>
+  <data name="Document.BackupRecoveryErrorTitle" xml:space="preserve"><value>Fehler beim Wiederherstellen der Sicherung</value></data>
+  <data name="Document.UnsavedPrompt" xml:space="preserve"><value>Das Dokument hat nicht gespeicherte Änderungen. Speichern Sie sie vor dem Schließen?</value></data>
+  <data name="Document.UnsavedSwitchPrompt" xml:space="preserve"><value>Das Dokument hat nicht gespeicherte Änderungen. Speichern Sie sie vor dem Öffnen einer anderen Datei?</value></data>
+  <data name="Document.RecoveryFailed" xml:space="preserve"><value>Das Dokument konnte nicht wiederhergestellt werden:{0}{1}</value></data>
+  <data name="Document.RecoveryErrorTitle" xml:space="preserve"><value>Wiederherstellungsfehler</value></data>
+  <data name="Document.RecoveryCleanupFailed" xml:space="preserve"><value>Die automatische Wiederherstellungsdatei konnte nicht gelöscht werden. Sie wird beim nächsten Start möglicherweise erneut angeboten:{0}{1}</value></data>
+  <data name="Document.RecoveryCleanupErrorTitle" xml:space="preserve"><value>Fehler beim Bereinigen der Wiederherstellung</value></data>
+  <data name="Preview.SelectFile" xml:space="preserve"><value>Datei für die Vorschau auswählen.</value></data>
+  <data name="Preview.Creating" xml:space="preserve"><value>Vorschau wird erstellt…</value></data>
+  <data name="Preview.DisplayFailed" xml:space="preserve"><value>Die Datei konnte nicht angezeigt werden:{0}{1}</value></data>
+  <data name="Preview.RemoteDisplayFailed" xml:space="preserve"><value>Die Datei konnte nicht zur Vorschau vom verbundenen Gerät geladen werden:{0}{1}</value></data>
+  <data name="Preview.EncryptedNeedsKey" xml:space="preserve"><value>Die Datei ist verschlüsselt. Geben Sie den Schlüssel ein, um die Vorschau zu aktivieren.</value></data>
+  <data name="Preview.PdfUnsupported" xml:space="preserve"><value>Die integrierte PDF-Vorschau wird noch nicht unterstützt.</value></data>
+  <data name="Preview.DetailsOnly" xml:space="preserve"><value>Für diesen Dateityp stehen nur Dateidetails zur Verfügung.</value></data>
+  <data name="Preview.EncryptedTooLarge" xml:space="preserve"><value>Die verschlüsselte Datei ist für eine Vorschau im Arbeitsspeicher zu groß.</value></data>
+  <data name="Preview.DecryptedTooLarge" xml:space="preserve"><value>Die entschlüsselte Datei ist für eine sichere Vorschau zu groß.</value></data>
+  <data name="Preview.DecryptedPdfUnsupported" xml:space="preserve"><value>Die Datei wurde erfolgreich entschlüsselt, aber die integrierte PDF-Vorschau wird noch nicht unterstützt.</value></data>
+  <data name="Preview.Truncated" xml:space="preserve"><value>— Vorschau gekürzt —</value></data>
+  <data name="Preview.DecryptedTypeUnsupported" xml:space="preserve"><value>Die Datei wurde erfolgreich entschlüsselt, aber ihr Format unterstützt keine integrierte Vorschau.</value></data>
+  <data name="Preview.DecryptFailed" xml:space="preserve"><value>Die Datei konnte nicht für die Vorschau entschlüsselt werden. Überprüfen Sie den Schlüssel:{0}{1}</value></data>
+  <data name="Preview.ImageTooLarge" xml:space="preserve"><value>Das Bild ist zu groß für eine sichere Vorschau.</value></data>
+  <data name="Preview.DirectoryUnavailable" xml:space="preserve"><value>{0}{1}Das Verzeichnis ist derzeit nicht verfügbar</value></data>
+  <data name="Preview.BytesFormat" xml:space="preserve"><value>{0} B</value></data>
+  <data name="Preview.KilobytesFormat" xml:space="preserve"><value>{0:F1} KB</value></data>
+  <data name="Preview.MegabytesFormat" xml:space="preserve"><value>{0:F1} MB</value></data>
+  <data name="Preview.GigabytesFormat" xml:space="preserve"><value>{0:F1} GB</value></data>
+  <data name="File.AlreadyExists" xml:space="preserve"><value>Die Datei existiert bereits.</value></data>
+  <data name="File.Writing" xml:space="preserve"><value>Datei wird geschrieben</value></data>
+  <data name="File.Created" xml:space="preserve"><value>Datei erstellt</value></data>
+  <data name="File.Loaded" xml:space="preserve"><value>Datei geladen</value></data>
+  <data name="File.ReadComplete" xml:space="preserve"><value>Lesen abgeschlossen</value></data>
+  <data name="File.Reading" xml:space="preserve"><value>Datei wird gelesen</value></data>
+  <data name="File.Saved" xml:space="preserve"><value>Datei gespeichert</value></data>
+  <data name="File.CopyComplete" xml:space="preserve"><value>Kopiervorgang abgeschlossen</value></data>
+  <data name="File.PickerTitle" xml:space="preserve"><value>Datei auswählen</value></data>
+  <data name="File.TextFilter" xml:space="preserve"><value>Textdateien (*.txt)|*.txt|Alle Dateien (*.*)|*.*</value></data>
+  <data name="File.ImagePickerTitle" xml:space="preserve"><value>Bild einfügen</value></data>
+  <data name="File.ImageFilter" xml:space="preserve"><value>Bilder|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Alle Dateien|*.*</value></data>
+  <data name="File.NewFolderPickerDescription" xml:space="preserve"><value>Ordner für die neue Datei auswählen</value></data>
+  <data name="Document.SaveAsTitle" xml:space="preserve"><value>Dokument speichern unter</value></data>
+  <data name="Workspace.DirectoryNotFound" xml:space="preserve"><value>Arbeitsbereichsverzeichnis nicht gefunden: {0}</value></data>
+  <data name="Workspace.EnterSearchQuery" xml:space="preserve"><value>Geben Sie einen Teil eines Dateinamens ein.</value></data>
+  <data name="Workspace.NotSelected" xml:space="preserve"><value>Es ist kein Arbeitsbereichsverzeichnis ausgewählt.</value></data>
+  <data name="Workspace.LocalOnly" xml:space="preserve"><value>Die Suche wird derzeit nur in einem lokalen Arbeitsbereichsverzeichnis unterstützt.</value></data>
+  <data name="SideMenu.Workspace" xml:space="preserve"><value>Arbeitsbereich</value></data>
+  <data name="SideMenu.Editor" xml:space="preserve"><value>Editor</value></data>
+  <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Das aktuelle Dokument öffnen</value></data>
+  <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Dokumente durchsuchen</value></data>
+  <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Text in Dokumenten des Arbeitsbereichs finden</value></data>
+  <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Dokumente durchsuchen</value></data>
+  <data name="Workspace.ContentSearch.Description" xml:space="preserve"><value>Text in unterstützten Dokumenten im gesamten Arbeitsbereich suchen.</value></data>
+  <data name="Workspace.ContentSearch.EnterQuery" xml:space="preserve"><value>Geben Sie Text ein, nach dem gesucht werden soll.</value></data>
+  <data name="Workspace.ContentSearch.InProgress" xml:space="preserve"><value>Dokumente werden durchsucht…</value></data>
+  <data name="Workspace.ContentSearch.FilesProcessed" xml:space="preserve"><value>Verarbeitete Dateien: {0}</value></data>
+  <data name="Workspace.ContentSearch.Cancelled" xml:space="preserve"><value>Suche abgebrochen.</value></data>
+  <data name="Workspace.ContentSearch.Results" xml:space="preserve"><value>Gefundene Dokumente: {0}.</value></data>
+  <data name="Workspace.ContentSearch.Truncated" xml:space="preserve"><value> Die Ergebnisgrenze wurde erreicht.</value></data>
+  <data name="Workspace.ContentSearch.SkippedDirectories" xml:space="preserve"><value> Übersprungene nicht zugängliche Ordner: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedFiles" xml:space="preserve"><value> Übersprungene nicht verfügbare oder zu große Dateien: {0}.</value></data>
+  <data name="Workspace.ContentSearch.SkippedEncrypted" xml:space="preserve"><value> Übersprungene verschlüsselte Dateien: {0}.</value></data>
+  <data name="Workspace.ContentSearch.OpenFailed" xml:space="preserve"><value>Das Dokument konnte nicht geöffnet werden: {0}</value></data>
+  <data name="Workspace.ContentSearch.Encrypted" xml:space="preserve"><value>• verschlüsselt</value></data>
+  <data name="Workspace.ContentSearch.Clear" xml:space="preserve"><value>Leeren</value></data>
+  <data name="Workspace.ContentSearch.DeleteTitle" xml:space="preserve"><value>Dokument löschen</value></data>
+  <data name="Workspace.ContentSearch.DeletePrompt" xml:space="preserve"><value>„{0}“ dauerhaft löschen?</value></data>
+  <data name="Workspace.ContentSearch.DeleteFailed" xml:space="preserve"><value>Das Dokument konnte nicht gelöscht werden.</value></data>
+  <data name="Workspace.ContentSearch.DeleteError" xml:space="preserve"><value>Das Dokument konnte nicht gelöscht werden: {0}</value></data>
+  <data name="Workspace.ContentSearch.DeleteSucceeded" xml:space="preserve"><value>Das Dokument „{0}“ wurde gelöscht.</value></data>
+  <data name="Error.OperationCanceled" xml:space="preserve"><value>Der Vorgang wurde abgebrochen.</value></data>
+  <data name="Security.UnknownMode" xml:space="preserve"><value>Unbekannter Verarbeitungsmodus.</value></data>
+  <data name="Security.DestinationRequired" xml:space="preserve"><value>Es wurde kein Zielpfad angegeben.</value></data>
+  <data name="Security.UnsupportedItemType" xml:space="preserve"><value>Der Elementtyp „{0}“ wird nicht unterstützt.</value></data>
+  <data name="Security.DestinationDirectoryUnknown" xml:space="preserve"><value>Das Zielverzeichnis für „{0}“ konnte nicht ermittelt werden.</value></data>
+  <data name="Security.SourceDirectoryUnknown" xml:space="preserve"><value>Das Verzeichnis von „{0}“ konnte nicht ermittelt werden.</value></data>
+  <data name="Security.DecryptionResultUnknown" xml:space="preserve"><value>Das Entschlüsselungsergebnis konnte nicht ermittelt werden.</value></data>
+  <data name="Security.SourceFileNotFound" xml:space="preserve"><value>Die Quelldatei wurde nicht gefunden.</value></data>
+  <data name="Security.OperationFailedForPath" xml:space="preserve"><value>„{1}“ konnte nicht verarbeitet werden:{0}{2}</value></data>
+  <data name="Explorer.BatchOperationFailed" xml:space="preserve"><value>Die folgenden Dateien konnten nicht verarbeitet werden:{0}{0}{1}</value></data>
+  <data name="Explorer.RefreshingAfterOperation" xml:space="preserve"><value>Dateiliste wird aktualisiert…</value></data>
+  <data name="Security.SourceDirectoryNotFound" xml:space="preserve"><value>Das Quellverzeichnis „{0}“ wurde nicht gefunden.</value></data>
+  <data name="Security.SaveAsDirectoryMustDiffer" xml:space="preserve"><value>Im Modus Speichern unter muss sich das Zielverzeichnis vom Quellverzeichnis unterscheiden.</value></data>
+  <data name="Security.NotEncryptedCryptoBookFile" xml:space="preserve"><value>Die Datei ist keine verschlüsselte CryptoBook-Datei.</value></data>
+  <data name="Security.InvalidExtension" xml:space="preserve"><value>Ungültige Dateierweiterung.</value></data>
+  <data name="Media.FfmpegMissing" xml:space="preserve"><value>Die nativen FFmpeg-Bibliotheken wurden nicht gefunden. Unter „{0}“ wurde eine vollständige FFmpeg-9-Laufzeitumgebung erwartet.</value></data>
+  <data name="Media.OpenFailed" xml:space="preserve"><value>Die Mediendatei konnte nicht geöffnet werden.</value></data>
+  <data name="Media.DecryptedFileUnknown" xml:space="preserve"><value>Die entschlüsselte Mediendatei konnte nicht ermittelt werden.</value></data>
+  <data name="Media.DecryptingFile" xml:space="preserve"><value>Datei entschlüsseln</value></data>
+  <data name="Media.LegacyRamLimitExceeded" xml:space="preserve"><value>Diese ältere geschützte Mediendatei überschreitet das Wiedergabelimit von {0:F0} MB im Arbeitsspeicher. Konvertieren Sie sie vor der Wiedergabe in das aktuelle CryptoBook-Format.</value></data>
+  <data name="Document.NoSaveFormats" xml:space="preserve"><value>Es sind keine Formate zum Speichern von Dokumenten registriert.</value></data>
+  <data name="Image.EmptyFile" xml:space="preserve"><value>Die Bilddatei ist leer.</value></data>
+  <data name="Image.FileNotFound" xml:space="preserve"><value>Die Bilddatei wurde nicht gefunden.</value></data>
+  <data name="PinnedDocuments.Title" xml:space="preserve"><value>Angeheftet</value></data>
+  <data name="PinnedDocuments.Empty" xml:space="preserve"><value>Heften Sie das aktuelle Dokument für den Schnellzugriff an. Ein neues Dokument wird zuvor gespeichert.</value></data>
+  <data name="PinnedDocuments.PinCurrent" xml:space="preserve"><value>Aktuelles Dokument anheften</value></data>
+  <data name="PinnedDocuments.SaveAndPinCurrent" xml:space="preserve"><value>Aktuelles Dokument speichern und anheften</value></data>
+  <data name="PinnedDocuments.UnpinCurrent" xml:space="preserve"><value>Aktuelles Dokument lösen</value></data>
+  <data name="PinnedDocuments.Unpin" xml:space="preserve"><value>Aus angehefteten Dokumenten entfernen</value></data>
+  <data name="PinnedDocuments.UnsavedChanges" xml:space="preserve"><value>Nicht gespeicherte Änderungen</value></data>
+  <data name="PinnedDocuments.ErrorTitle" xml:space="preserve"><value>Angeheftete Dokumente</value></data>
+  <data name="PinnedDocuments.LoadFailed" xml:space="preserve"><value>Angeheftete Dokumente konnten nicht geladen werden.</value></data>
+  <data name="PinnedDocuments.SaveFailed" xml:space="preserve"><value>Angeheftete Dokumente konnten nicht aktualisiert werden.</value></data>
+  <data name="PinnedDocuments.OpenFailed" xml:space="preserve"><value>Das angeheftete Dokument „{0}“ konnte nicht geöffnet werden.</value></data>
+  <data name="PinnedDocuments.MissingState" xml:space="preserve"><value>Datei nicht verfügbar</value></data>
+  <data name="PinnedDocuments.MissingFile" xml:space="preserve"><value>Die Datei „{0}“ ist nicht verfügbar. Wählen Sie ihren neuen Speicherort aus oder entfernen Sie sie aus den angehefteten Dokumenten.</value></data>
+  <data name="PinnedDocuments.RevealInExplorer" xml:space="preserve"><value>Im Datei-Explorer anzeigen</value></data>
+  <data name="PinnedDocuments.RevealFailed" xml:space="preserve"><value>„{0}“ konnte nicht im Datei-Explorer angezeigt werden.</value></data>
+  <data name="PinnedDocuments.Relocate" xml:space="preserve"><value>Neuen Speicherort auswählen…</value></data>
+  <data name="PinnedDocuments.RelocateInvalid" xml:space="preserve"><value>Der neue Speicherort für „{0}“ ist nicht verfügbar.</value></data>
+  <data name="PinnedDocuments.RelocateFailed" xml:space="preserve"><value>Der Speicherort des angehefteten Dokuments konnte nicht aktualisiert werden.</value></data>
+  <data name="PinnedDocuments.MoveUp" xml:space="preserve"><value>Nach oben</value></data>
+  <data name="PinnedDocuments.MoveDown" xml:space="preserve"><value>Nach unten</value></data>
+  <data name="PinnedDocuments.RenameSyncFailed" xml:space="preserve"><value>Die Datei wurde umbenannt, aber ihre Verknüpfung zum angehefteten Dokument konnte nicht aktualisiert werden.</value></data>
+  <data name="Update.Available" xml:space="preserve"><value>CryptoBook {0} ist verfügbar</value></data>
+  <data name="Update.Description" xml:space="preserve"><value>SHA-256 und Authenticode werden vor dem Start überprüft. Eine ausdrücklich unsignierte Version ist nur zulässig, wenn ihre veröffentlichte Prüfsumme übereinstimmt.</value></data>
+  <data name="Update.OpenRelease" xml:space="preserve"><value>Herunterladen und installieren</value></data>
+  <data name="Update.Later" xml:space="preserve"><value>Später</value></data>
+  <data name="Update.Skip" xml:space="preserve"><value>Version überspringen</value></data>
+  <data name="Update.Checking" xml:space="preserve"><value>Nach Updates suchen…</value></data>
+  <data name="Update.UpToDate" xml:space="preserve"><value>Sie haben die neueste Version von CryptoBook.</value></data>
+  <data name="Update.CheckFound" xml:space="preserve"><value>CryptoBook {0} ist verfügbar.</value></data>
+  <data name="Update.CheckFailed" xml:space="preserve"><value>Es konnte nicht nach Updates gesucht werden. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</value></data>
+  <data name="Update.CheckCanceled" xml:space="preserve"><value>Updateprüfung abgebrochen.</value></data>
+  <data name="Update.InstallProgressTitle" xml:space="preserve"><value>CryptoBook wird aktualisiert</value></data>
+  <data name="Update.DownloadPreparing" xml:space="preserve"><value>Installer-Download wird vorbereitet…</value></data>
+  <data name="Update.DownloadingInstaller" xml:space="preserve"><value>Neues Installationsprogramm wird heruntergeladen…</value></data>
+  <data name="Update.VerifyingInstaller" xml:space="preserve"><value>Integrität und Signatur des Installationsprogramms werden überprüft…</value></data>
+  <data name="Update.RemovingOldInstallers" xml:space="preserve"><value>Alte Installationsprogramme werden entfernt…</value></data>
+  <data name="Update.StartingInstaller" xml:space="preserve"><value>Installationsprogramm wird gestartet…</value></data>
+  <data name="Settings.Security" xml:space="preserve"><value>Sicherheit</value></data>
+  <data name="Settings.Security.Description" xml:space="preserve"><value>Automatisches Zurücksetzen des Verschlüsselungsschlüssels konfigurieren.</value></data>
+  <data name="Settings.KeyResetTimeout" xml:space="preserve"><value>Schlüssel nach Inaktivität zurücksetzen</value></data>
+  <data name="Settings.EncryptionKey" xml:space="preserve"><value>Verschlüsselungsschlüssel</value></data>
+  <data name="Settings.EnterEncryptionKey" xml:space="preserve"><value>Schlüssel eingeben oder ändern</value></data>
+  <data name="Home.StartTitle" xml:space="preserve"><value>Loslegen</value></data>
+  <data name="Home.StartDescription" xml:space="preserve"><value>Erstellen Sie ein Dokument, öffnen Sie eine Datei oder kehren Sie zu einem kürzlich verwendeten Element zurück.</value></data>
+  <data name="Home.CreateDocument" xml:space="preserve"><value>Neues Dokument</value></data>
+  <data name="Home.OpenDocument" xml:space="preserve"><value>Datei öffnen</value></data>
+  <data name="Home.OpenMediaPlayer" xml:space="preserve"><value>Medienplayer öffnen</value></data>
+  <data name="Home.ChooseWorkspace" xml:space="preserve"><value>Arbeitsbereich auswählen</value></data>
+  <data name="Home.Workspace" xml:space="preserve"><value>Arbeitsbereich</value></data>
+  <data name="Home.WorkspaceNotSelected" xml:space="preserve"><value>Nicht ausgewählt</value></data>
+  <data name="Home.NoPinnedDocuments" xml:space="preserve"><value>Noch keine angehefteten Dokumente.</value></data>
+  <data name="Home.FileUnavailable" xml:space="preserve"><value>Datei verschoben oder nicht verfügbar</value></data>
+  <data name="Home.OpenErrorTitle" xml:space="preserve"><value>Dokument öffnen</value></data>
+  <data name="Home.OpenFailed" xml:space="preserve"><value>„{0}“ konnte nicht geöffnet werden.</value></data>
+  <data name="Home.WorkspaceErrorTitle" xml:space="preserve"><value>Arbeitsbereich</value></data>
+  <data name="RecentDocuments.Title" xml:space="preserve"><value>Zuletzt verwendete Dokumente</value></data>
+  <data name="RecentDocuments.Empty" xml:space="preserve"><value>Dokumente erscheinen hier erst nach erfolgreichem Öffnen oder Speichern.</value></data>
+  <data name="RecentDocuments.ErrorTitle" xml:space="preserve"><value>Zuletzt verwendete Dokumente</value></data>
+  <data name="RecentDocuments.LoadFailed" xml:space="preserve"><value>Zuletzt verwendete Dokumente konnten nicht geladen werden.</value></data>
+  <data name="RecentDocuments.SaveFailed" xml:space="preserve"><value>Zuletzt verwendete Dokumente konnten nicht aktualisiert werden.</value></data>
+  <data name="RecentDocuments.OpenFailed" xml:space="preserve"><value>Das zuletzt verwendete Dokument „{0}“ konnte nicht geöffnet werden.</value></data>
+  <data name="RecentDocuments.OpenFailedGeneric" xml:space="preserve"><value>Das zuletzt verwendete Dokument konnte nicht geöffnet werden.</value></data>
+  <data name="RecentDocuments.MissingFile" xml:space="preserve"><value>Die Datei „{0}“ wurde verschoben oder ist nicht verfügbar. Wählen Sie ihren neuen Speicherort aus oder entfernen Sie sie aus dem Verlauf.</value></data>
+  <data name="RecentDocuments.RelocateShort" xml:space="preserve"><value>Speicherort suchen…</value></data>
+  <data name="RecentDocuments.RelocateInvalid" xml:space="preserve"><value>Der neue Speicherort für „{0}“ ist nicht verfügbar.</value></data>
+  <data name="RecentDocuments.RelocateFailed" xml:space="preserve"><value>Der Speicherort des Dokuments konnte nicht aktualisiert werden.</value></data>
+  <data name="RecentDocuments.Remove" xml:space="preserve"><value>Aus Verlauf entfernen</value></data>
+  <data name="DocumentLinks.RenameSyncFailed" xml:space="preserve"><value>Die Datei wurde umbenannt, aber eine oder mehrere Schnellzugriffsverknüpfungen konnten nicht aktualisiert werden.</value></data>
+  <data name="File.NewDescription" xml:space="preserve"><value>Wählen Sie den Dokumenttyp, den Namen und das Ziel.</value></data>
+  <data name="File.Attributes" xml:space="preserve"><value>Dateiattribute</value></data>
+  <data name="File.ReadOnlyAttribute" xml:space="preserve"><value>Schreibgeschützt</value></data>
+  <data name="File.HiddenAttribute" xml:space="preserve"><value>Versteckt</value></data>
+  <data name="Common.Forward" xml:space="preserve"><value>Vorwärts</value></data>
+  <data name="Common.Up" xml:space="preserve"><value>Nach oben</value></data>
+  <data name="Explorer.CurrentDocument" xml:space="preserve"><value>Aktuelles Dokument anzeigen</value></data>
+  <data name="Explorer.Deleting" xml:space="preserve"><value>Wird gelöscht</value></data>
+  <data name="Explorer.CalculatingSize" xml:space="preserve"><value>Gesamtgröße wird berechnet…</value></data>
+  <data name="Explorer.DeleteCanceledTitle" xml:space="preserve"><value>Löschung abgebrochen</value></data>
+  <data name="Explorer.DeleteCanceledPartial" xml:space="preserve"><value>Das Löschen erfolgt nicht transaktional. Einige Dateien und Ordner wurden bereits vor dem Abbruch gelöscht.</value></data>
+  <data name="Explorer.DropIntoSelfError" xml:space="preserve"><value>Ein Ordner kann nicht in sich selbst oder einen seiner Unterordner kopiert oder verschoben werden.</value></data>
+  <data name="Explorer.FileOperationError" xml:space="preserve"><value>Fehler beim Dateivorgang</value></data>
+  <data name="Explorer.Conflict.Title" xml:space="preserve"><value>Namenskonflikt</value></data>
+  <data name="Explorer.Conflict.FileMessage" xml:space="preserve"><value>Am Ziel ist bereits eine Datei mit dem Namen „{0}“ vorhanden.</value></data>
+  <data name="Explorer.Conflict.DirectoryMessage" xml:space="preserve"><value>Am Ziel ist bereits ein Ordner mit dem Namen „{0}“ vorhanden.</value></data>
+  <data name="Explorer.Conflict.ApplyToAll" xml:space="preserve"><value>Auf alle Konflikte anwenden</value></data>
+  <data name="Explorer.Conflict.Replace" xml:space="preserve"><value>Ersetzen</value></data>
+  <data name="Explorer.Conflict.Skip" xml:space="preserve"><value>Überspringen</value></data>
+  <data name="Explorer.Conflict.KeepBoth" xml:space="preserve"><value>Beide beibehalten</value></data>
+  <data name="DecryptionOptions.Title" xml:space="preserve"><value>Dokument entschlüsseln</value></data>
+  <data name="DecryptionOptions.FormatSectionTitle" xml:space="preserve"><value>Ergebnisformat</value></data>
+  <data name="DecryptionOptions.TargetSectionTitle" xml:space="preserve"><value>Speichermethode</value></data>
+  <data name="DecryptionOptions.FormatRtf" xml:space="preserve"><value>RTF — zum Öffnen in anderen Anwendungen (empfohlen)</value></data>
+  <data name="DecryptionOptions.FormatPlainText" xml:space="preserve"><value>TXT-Klartext — nur Text</value></data>
+  <data name="DecryptionOptions.FormatOriginalXamlPackage" xml:space="preserve"><value>XAML-Paket — exakte Beibehaltung, internes technisches Format von CryptoBook</value></data>
+  <data name="DecryptionOptions.FormatOriginal" xml:space="preserve"><value>Originalformat {0} — exakte Beibehaltung</value></data>
+  <data name="DecryptionOptions.FormatOriginalOnly" xml:space="preserve"><value>Originalformat — einzige verfügbare Option</value></data>
+  <data name="DecryptionOptions.RtfWarning" xml:space="preserve"><value>Einige CryptoBook-spezifische Funktionen können in RTF umgewandelt oder verloren gehen.</value></data>
+  <data name="DecryptionOptions.PlainTextWarning" xml:space="preserve"><value>TXT entfernt dauerhaft:
+• Formatierung;
+• Bilder und eingebettete Objekte;
+• Tabellen- und Listenstruktur;
+• Hyperlink-Adressen und Lesezeichen.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceWarning" xml:space="preserve"><value>Durch das Ersetzen der geschützten Quelldatei durch TXT werden diese Verluste unumkehrbar.</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceTitle" xml:space="preserve"><value>Unumkehrbaren Textexport bestätigen</value></data>
+  <data name="DecryptionOptions.PlainTextReplaceConfirmation" xml:space="preserve"><value>Die geschützte Quelldatei wird erst gelöscht, nachdem die TXT-Datei erfolgreich gespeichert wurde. Formatierungen, Bilder, eingebettete Objekte, Tabellen- und Listenstrukturen, Hyperlink-Adressen und Lesezeichen können nicht wiederhergestellt werden.{0}{0}{1}{0}{0}Fortfahren?</value></data>
+  <data name="DecryptionExport.UnsupportedConversion" xml:space="preserve"><value>Dieser Inhalt kann nicht konvertiert werden. Stellen Sie ihn im Originalformat wieder her.</value></data>
+  <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Das entschlüsselte Dokument konnte nicht konvertiert und veröffentlicht werden: {0}</value></data>
+  <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Endgültiges Löschen</value></data>
+  <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Das Löschen unter Android ist in der Regel unumkehrbar und verwendet den Papierkorb nicht. Ausgewählte Elemente endgültig löschen?</value></data>
+</root>

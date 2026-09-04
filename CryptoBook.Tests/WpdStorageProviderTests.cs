@@ -147,6 +147,77 @@ public sealed class WpdStorageProviderTests
         Assert.Null(await mtp.GetMetadataAsync(source));
     }
 
+    [Fact]
+    public async Task TransferEngine_CrossDeviceMove_KeepsSourceWhenSameSizeContentIsCorrupted()
+    {
+        var bridge = new BridgeStub
+        {
+            Devices = [new("device-a", "Phone A"), new("device-b", "Phone B")],
+            CorruptCopiedFiles = true
+        };
+        bridge.Entries[("device-a", "/payload.bin")] = new WpdStorageEntry(
+            "/payload.bin",
+            "payload.bin",
+            false,
+            3,
+            DateTime.UtcNow);
+        bridge.Content[("device-a", "/payload.bin")] = [4, 5, 6];
+        var mtp = new WpdStorageProvider(bridge);
+        var storage = new StorageFacade([new LocalStorageProvider(), mtp]);
+        var engine = new TransferEngine(storage);
+        StorageLocation source = WpdLocatorCodec.Encode("device-a", "/payload.bin");
+        StorageLocation destination = WpdLocatorCodec.Encode("device-b", "/payload.bin");
+
+        FileOperationResult result = await engine.MoveAsync(source, destination);
+
+        Assert.False(result.Success);
+        Assert.NotNull(await mtp.GetMetadataAsync(source));
+        Assert.Equal(3, await mtp.GetTotalSizeAsync(source));
+        Assert.Equal(3, await mtp.GetTotalSizeAsync(destination));
+        Assert.NotEqual(
+            bridge.Content[("device-a", "/payload.bin")],
+            bridge.Content[("device-b", "/payload.bin")]);
+    }
+
+    [Fact]
+    public async Task TransferEngine_CrossDeviceMove_KeepsSourceWhenDirectoryCompositionDiffers()
+    {
+        var bridge = new BridgeStub
+        {
+            Devices = [new("device-a", "Phone A"), new("device-b", "Phone B")],
+            AddUnexpectedDestinationEntry = true
+        };
+        bridge.Entries[("device-a", "/archive")] = new WpdStorageEntry(
+            "/archive",
+            "archive",
+            true,
+            0,
+            DateTime.UtcNow);
+        bridge.Entries[("device-a", "/archive/payload.bin")] = new WpdStorageEntry(
+            "/archive/payload.bin",
+            "payload.bin",
+            false,
+            3,
+            DateTime.UtcNow);
+        bridge.Content[("device-a", "/archive/payload.bin")] = [1, 2, 3];
+        var mtp = new WpdStorageProvider(bridge);
+        var storage = new StorageFacade([new LocalStorageProvider(), mtp]);
+        var engine = new TransferEngine(storage);
+        StorageLocation source = WpdLocatorCodec.Encode("device-a", "/archive");
+        StorageLocation destination = WpdLocatorCodec.Encode("device-b", "/archive");
+
+        FileOperationResult result = await engine.MoveAsync(source, destination);
+
+        Assert.False(result.Success);
+        Assert.NotNull(await mtp.GetMetadataAsync(source));
+        Assert.Equal(
+            await mtp.GetTotalSizeAsync(source),
+            await mtp.GetTotalSizeAsync(destination));
+        Assert.Contains(
+            await mtp.GetChildrenAsync(destination, includeHidden: true),
+            item => item.Name == "unexpected.bin");
+    }
+
     private sealed class BridgeStub: IWpdStorageBridge
     {
         public IReadOnlyList<WpdDeviceInfo> Devices { get; init; } = [];
@@ -155,6 +226,8 @@ public sealed class WpdStorageProviderTests
         public bool CopyToLocalCalled { get; private set; }
         public bool CopyFromLocalCalled { get; private set; }
         public bool DestinationExistedBeforeDelete { get; private set; }
+        public bool CorruptCopiedFiles { get; init; }
+        public bool AddUnexpectedDestinationEntry { get; init; }
 
         public Task<IReadOnlyList<WpdDeviceInfo>> GetDevicesAsync(
             CancellationToken cancellationToken = default) => Task.FromResult(Devices);
@@ -204,9 +277,10 @@ public sealed class WpdStorageProviderTests
             CancellationToken cancellationToken = default)
         {
             CopyToLocalCalled = true;
-            await File.WriteAllBytesAsync(
+            await CopyToLocalCoreAsync(
+                deviceId,
+                sourceRelativePath,
                 localDestination,
-                Content[(deviceId, sourceRelativePath)],
                 cancellationToken);
         }
 
@@ -217,14 +291,25 @@ public sealed class WpdStorageProviderTests
             CancellationToken cancellationToken = default)
         {
             CopyFromLocalCalled = true;
-            byte[] content = await File.ReadAllBytesAsync(localSource, cancellationToken);
-            Content[(deviceId, destinationRelativePath)] = content;
-            Entries[(deviceId, destinationRelativePath)] = new WpdStorageEntry(
+            bool isContainer = Directory.Exists(localSource);
+            await CopyFromLocalCoreAsync(
+                localSource,
+                deviceId,
                 destinationRelativePath,
-                destinationRelativePath.Split('/').Last(),
-                false,
-                content.LongLength,
-                DateTime.UtcNow);
+                cancellationToken);
+            if(isContainer && AddUnexpectedDestinationEntry)
+            {
+                string unexpectedPath = CombineRemote(
+                    destinationRelativePath,
+                    "unexpected.bin");
+                Content[(deviceId, unexpectedPath)] = [];
+                Entries[(deviceId, unexpectedPath)] = new WpdStorageEntry(
+                    unexpectedPath,
+                    "unexpected.bin",
+                    false,
+                    0,
+                    DateTime.UtcNow);
+            }
         }
 
         public Task CopyAsync(
@@ -260,5 +345,75 @@ public sealed class WpdStorageProviderTests
             string relativePath,
             string newName,
             CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        private async Task CopyToLocalCoreAsync(
+            string deviceId,
+            string sourceRelativePath,
+            string localDestination,
+            CancellationToken cancellationToken)
+        {
+            WpdStorageEntry entry = Entries[(deviceId, sourceRelativePath)];
+            if(!entry.IsContainer)
+            {
+                await File.WriteAllBytesAsync(
+                    localDestination,
+                    Content[(deviceId, sourceRelativePath)],
+                    cancellationToken);
+                return;
+            }
+
+            Directory.CreateDirectory(localDestination);
+            foreach(WpdStorageEntry child in await GetChildrenAsync(
+                deviceId,
+                sourceRelativePath,
+                cancellationToken))
+            {
+                await CopyToLocalCoreAsync(
+                    deviceId,
+                    child.RelativePath,
+                    Path.Combine(localDestination, child.Name),
+                    cancellationToken);
+            }
+        }
+
+        private async Task CopyFromLocalCoreAsync(
+            string localSource,
+            string deviceId,
+            string destinationRelativePath,
+            CancellationToken cancellationToken)
+        {
+            if(Directory.Exists(localSource))
+            {
+                Entries[(deviceId, destinationRelativePath)] = new WpdStorageEntry(
+                    destinationRelativePath,
+                    destinationRelativePath.Split('/').Last(),
+                    true,
+                    0,
+                    DateTime.UtcNow);
+                foreach(string child in Directory.EnumerateFileSystemEntries(localSource))
+                {
+                    await CopyFromLocalCoreAsync(
+                        child,
+                        deviceId,
+                        CombineRemote(destinationRelativePath, Path.GetFileName(child)),
+                        cancellationToken);
+                }
+                return;
+            }
+
+            byte[] content = await File.ReadAllBytesAsync(localSource, cancellationToken);
+            if(CorruptCopiedFiles && content.Length > 0)
+                content[0] ^= 0xFF;
+            Content[(deviceId, destinationRelativePath)] = content;
+            Entries[(deviceId, destinationRelativePath)] = new WpdStorageEntry(
+                destinationRelativePath,
+                destinationRelativePath.Split('/').Last(),
+                false,
+                content.LongLength,
+                DateTime.UtcNow);
+        }
+
+        private static string CombineRemote(string parent, string name) =>
+            parent.TrimEnd('/') + "/" + name;
     }
 }

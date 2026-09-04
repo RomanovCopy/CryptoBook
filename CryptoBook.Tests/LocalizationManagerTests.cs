@@ -3,6 +3,7 @@ using CryptoBook.Infrastructure;
 using System.Collections;
 using System.Globalization;
 using System.Resources;
+using System.Text.RegularExpressions;
 
 using Xunit;
 
@@ -13,7 +14,9 @@ namespace CryptoBook.Tests
         [Theory]
         [InlineData(null, "en-US")]
         [InlineData("", "en-US")]
-        [InlineData("de-DE", "en-US")]
+        [InlineData("de", "de-DE")]
+        [InlineData("de-DE", "de-DE")]
+        [InlineData("de-AT", "de-DE")]
         [InlineData("en-GB", "en-US")]
         [InlineData("ru", "ru-RU")]
         [InlineData("ru-RU", "ru-RU")]
@@ -53,6 +56,12 @@ namespace CryptoBook.Tests
                 Assert.Equal(
                     "Мова",
                     LocalizationManager.GetString("Settings.Language"));
+
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
+                CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+                Assert.Equal(
+                    "Sprache",
+                    LocalizationManager.GetString("Settings.Language"));
             }
             finally
             {
@@ -70,6 +79,10 @@ namespace CryptoBook.Tests
             Assert.Contains(
                 LocalizationManager.AvailableLanguages,
                 language => language.CultureName == "ru-RU");
+            Assert.Contains(
+                LocalizationManager.AvailableLanguages,
+                language => language.CultureName == "de-DE" &&
+                    language.DisplayName == "Deutsch");
             Assert.Contains(
                 LocalizationManager.AvailableLanguages,
                 language => language.CultureName == "uk-UA");
@@ -120,6 +133,11 @@ namespace CryptoBook.Tests
                     CultureInfo.GetCultureInfo("ru"),
                     createIfNotExists: true,
                     tryParents: false));
+            ResourceSet german = Assert.IsAssignableFrom<ResourceSet>(
+                manager.GetResourceSet(
+                    CultureInfo.GetCultureInfo("de"),
+                    createIfNotExists: true,
+                    tryParents: false));
             ResourceSet ukrainian = Assert.IsAssignableFrom<ResourceSet>(
                 manager.GetResourceSet(
                     CultureInfo.GetCultureInfo("uk"),
@@ -128,12 +146,16 @@ namespace CryptoBook.Tests
 
             Dictionary<string, string> neutralValues = ReadStrings(neutral);
             Dictionary<string, string> russianValues = ReadStrings(russian);
+            Dictionary<string, string> germanValues = ReadStrings(german);
             Dictionary<string, string> ukrainianValues = ReadStrings(ukrainian);
 
             Assert.NotEmpty(neutralValues);
             Assert.Equal(
                 neutralValues.Keys.OrderBy(key => key),
                 russianValues.Keys.OrderBy(key => key));
+            Assert.Equal(
+                neutralValues.Keys.OrderBy(key => key),
+                germanValues.Keys.OrderBy(key => key));
             Assert.Equal(
                 neutralValues.Keys.OrderBy(key => key),
                 ukrainianValues.Keys.OrderBy(key => key));
@@ -144,8 +166,14 @@ namespace CryptoBook.Tests
                 russianValues,
                 pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
             Assert.All(
+                germanValues,
+                pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
+            Assert.All(
                 ukrainianValues,
                 pair => Assert.False(string.IsNullOrWhiteSpace(pair.Value)));
+            AssertFormatPlaceholdersMatch(neutralValues, russianValues);
+            AssertFormatPlaceholdersMatch(neutralValues, germanValues);
+            AssertFormatPlaceholdersMatch(neutralValues, ukrainianValues);
         }
 
         [Fact]
@@ -164,5 +192,26 @@ namespace CryptoBook.Tests
                     entry => Assert.IsType<string>(entry.Key),
                     entry => Assert.IsType<string>(entry.Value),
                     StringComparer.Ordinal);
+
+        private static void AssertFormatPlaceholdersMatch(
+            IReadOnlyDictionary<string, string> neutralValues,
+            IReadOnlyDictionary<string, string> localizedValues)
+        {
+            foreach((string key, string neutralValue) in neutralValues)
+            {
+                string[] neutralPlaceholders = ReadFormatPlaceholders(
+                    neutralValue);
+                string[] localizedPlaceholders = ReadFormatPlaceholders(
+                    localizedValues[key]);
+
+                Assert.Equal(neutralPlaceholders, localizedPlaceholders);
+            }
+        }
+
+        private static string[] ReadFormatPlaceholders(string value) =>
+            Regex.Matches(value, @"\{\d+(?::[^}]+)?\}")
+                .Select(match => match.Value)
+                .OrderBy(placeholder => placeholder, StringComparer.Ordinal)
+                .ToArray();
     }
 }

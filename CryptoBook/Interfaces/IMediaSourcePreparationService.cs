@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace CryptoBook.Interfaces
 {
     public interface IMediaSourcePreparationService: IService
@@ -11,6 +13,9 @@ namespace CryptoBook.Interfaces
     {
         string OriginalPath { get; }
         string PlaybackPath { get; }
+        string OriginalExtension { get; }
+        Stream? PlaybackStream { get; }
+        bool IsEncrypted { get; }
         bool IsTemporary { get; }
     }
 }

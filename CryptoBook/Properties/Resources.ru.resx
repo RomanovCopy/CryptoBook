@@ -702,6 +702,7 @@
   <data name="Media.OpenFailed" xml:space="preserve"><value>Не удалось открыть медиафайл.</value></data>
   <data name="Media.DecryptedFileUnknown" xml:space="preserve"><value>Не удалось определить расшифрованный медиафайл.</value></data>
   <data name="Media.DecryptingFile" xml:space="preserve"><value>Расшифровка файла</value></data>
+  <data name="Media.LegacyRamLimitExceeded" xml:space="preserve"><value>Этот защищённый медиафайл старого формата превышает лимит воспроизведения в памяти ({0:F0} МБ). Перед просмотром преобразуйте его в актуальный формат CryptoBook.</value></data>
   <data name="Document.NoSaveFormats" xml:space="preserve"><value>Не зарегистрированы форматы сохранения документа.</value></data>
   <data name="Image.EmptyFile" xml:space="preserve"><value>Файл изображения пуст.</value></data>
   <data name="Image.FileNotFound" xml:space="preserve"><value>Файл изображения не найден.</value></data>
@@ -727,7 +728,7 @@
   <data name="PinnedDocuments.MoveDown" xml:space="preserve"><value>Переместить ниже</value></data>
   <data name="PinnedDocuments.RenameSyncFailed" xml:space="preserve"><value>Файл переименован, но закреплённую ссылку обновить не удалось.</value></data>
   <data name="Update.Available" xml:space="preserve"><value>Доступна новая версия CryptoBook: {0}</value></data>
-  <data name="Update.Description" xml:space="preserve"><value>Скачайте обновление — установщик запустится автоматически.</value></data>
+  <data name="Update.Description" xml:space="preserve"><value>Перед запуском проверяются SHA-256 и Authenticode. Явно неподписанный выпуск разрешён только при совпадении опубликованной контрольной суммы.</value></data>
   <data name="Update.OpenRelease" xml:space="preserve"><value>Скачать и установить</value></data>
   <data name="Update.Later" xml:space="preserve"><value>Позже</value></data>
   <data name="Update.Skip" xml:space="preserve"><value>Пропустить версию</value></data>
@@ -739,6 +740,7 @@
   <data name="Update.InstallProgressTitle" xml:space="preserve"><value>Обновление CryptoBook</value></data>
   <data name="Update.DownloadPreparing" xml:space="preserve"><value>Подготовка загрузки установщика…</value></data>
   <data name="Update.DownloadingInstaller" xml:space="preserve"><value>Загрузка новой версии установщика…</value></data>
+  <data name="Update.VerifyingInstaller" xml:space="preserve"><value>Проверка целостности и подписи установщика…</value></data>
   <data name="Update.RemovingOldInstallers" xml:space="preserve"><value>Удаление старых установщиков…</value></data>
   <data name="Update.StartingInstaller" xml:space="preserve"><value>Запуск установщика…</value></data>
   <data name="Settings.Security" xml:space="preserve"><value>Безопасность</value></data>

@@ -393,7 +393,8 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.Register(context => new ApplicationUpdateInstaller(
                     context.ResolveNamed<HttpClient>("UpdateDownload"),
-                    context.Resolve<IFileLauncherService>()))
+                    context.Resolve<IFileLauncherService>(),
+                    UnsignedReleasePolicy.AllowWithVerifiedChecksum))
                 .As<IApplicationUpdateInstaller>()
                 .SingleInstance();
             builder.RegisterType<AssemblyApplicationVersionProvider>()
@@ -472,6 +473,7 @@ namespace CryptoBook.Injections
 
             // Поставщики данных.
             builder.RegisterInstance(new SecureFileV2Options()).SingleInstance();
+            builder.RegisterInstance(new SecureMediaPlaybackOptions()).SingleInstance();
             builder.RegisterType<MemoryKeyProvider>().As<IKeyProvider>().SingleInstance();
 
             // Аксессоры.

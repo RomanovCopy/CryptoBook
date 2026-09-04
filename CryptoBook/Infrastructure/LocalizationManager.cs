@@ -13,7 +13,7 @@ namespace CryptoBook.Infrastructure
         public const string DefaultCultureName = "en-US";
 
         private static readonly LocalizationCatalog languageCatalog =
-            LocalizationCatalog.Create(["ru", "uk"]);
+            LocalizationCatalog.Create(["de", "ru", "uk"]);
 
         /// <summary>Событие, возникающее при смене текущей культуры.</summary>
         public static event EventHandler? CultureChanged;

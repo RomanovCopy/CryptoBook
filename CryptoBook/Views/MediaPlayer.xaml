@@ -27,9 +27,9 @@
         <!-- FlyleafME создаёт собственные окна рендеринга, поэтому он не должен
              существовать в визуальном дереве при просмотре изображения. -->
         <DataTemplate x:Key="VideoPlayerTemplate">
-            <fl:FlyleafME Player="{Binding}">
+            <fl:FlyleafME Player="{Binding VideoService.PlayerInstance}">
                 <i:Interaction.Behaviors>
-                    <behaviors:VideoNavigationBehavior/>
+                    <behaviors:VideoNavigationBehavior ViewModel="{Binding}"/>
                 </i:Interaction.Behaviors>
             </fl:FlyleafME>
         </DataTemplate>
@@ -192,7 +192,7 @@
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsVideoVisible}" Value="True">
                                 <Setter Property="Content"
-                                        Value="{Binding VideoService.PlayerInstance}"/>
+                                        Value="{Binding}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

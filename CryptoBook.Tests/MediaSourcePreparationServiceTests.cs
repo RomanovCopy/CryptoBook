@@ -36,7 +36,7 @@ namespace CryptoBook.Tests
         }
 
         [Fact]
-        public async Task EncryptedMedia_IsDecryptedWithOriginalExtensionAndDeletedOnDispose()
+        public async Task EncryptedMedia_UsesProtectedStreamWithoutPlaintextFile()
         {
             string source = CreateFile("video.cbook", [9, 8, 7]);
             var processor = new StubProcessor();
@@ -47,16 +47,23 @@ namespace CryptoBook.Tests
 
             IPreparedMediaSource prepared = await service.PrepareAsync(source);
             string playbackPath = prepared.PlaybackPath;
-            string temporaryDirectory = Path.GetDirectoryName(playbackPath)!;
 
-            Assert.True(prepared.IsTemporary);
-            Assert.Equal(".mp4", Path.GetExtension(playbackPath));
-            Assert.Equal([4, 5, 6], await File.ReadAllBytesAsync(playbackPath));
+            Assert.False(prepared.IsTemporary);
+            Assert.True(prepared.IsEncrypted);
+            Assert.Equal(".mp4", prepared.OriginalExtension);
+            Assert.Equal(Path.GetFullPath(source), playbackPath);
+            Stream protectedStream = Assert.IsAssignableFrom<Stream>(
+                prepared.PlaybackStream);
+            using var restored = new MemoryStream();
+            await protectedStream.CopyToAsync(restored);
+            Assert.Equal([4, 5, 6], restored.ToArray());
             Assert.Equal(Path.GetFullPath(source), processor.InputPath);
 
             prepared.Dispose();
 
-            Assert.False(Directory.Exists(temporaryDirectory));
+            Assert.True(File.Exists(source));
+            Assert.Throws<ObjectDisposedException>(() =>
+                protectedStream.ReadByte());
         }
 
         [Fact]
@@ -156,6 +163,19 @@ namespace CryptoBook.Tests
                 Task.FromResult(new DecryptedFileContent(
                     new MemoryStream([4, 5, 6]),
                     ".mp4"));
+
+            public Task<DecryptedFileContent> OpenDecryptedMediaStreamAsync(
+                string inputFile,
+                long legacyMemoryLimitBytes,
+                IProgressReporter? progress = null,
+                CancellationToken cancellationToken = default)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                InputPath = inputFile;
+                return Task.FromResult(new DecryptedFileContent(
+                    new MemoryStream([4, 5, 6]),
+                    ".mp4"));
+            }
         }
     }
 }

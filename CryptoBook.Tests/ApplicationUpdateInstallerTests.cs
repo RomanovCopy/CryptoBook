@@ -5,6 +5,8 @@ using CryptoBook.Services;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 
 using Xunit;
 
@@ -25,17 +27,15 @@ public sealed class ApplicationUpdateInstallerTests
         string unrelatedFile = directory.WriteFile("notes.txt", [7]);
         byte[] installerBytes = new byte[300 * 1024];
         Random.Shared.NextBytes(installerBytes);
-        using var response = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new ByteArrayContent(installerBytes)
-        };
-        using var client = new HttpClient(new StubHttpMessageHandler(response));
+        using var client = CreateClient(installerBytes);
         var launcher = new FileLauncherStub();
         var progress = new RecordingProgressReporter();
         var installer = new ApplicationUpdateInstaller(
             client,
             launcher,
-            directory.Path);
+            directory.Path,
+            UnsignedReleasePolicy.AllowWithVerifiedChecksum,
+            new AuthenticodeVerifierStub(AuthenticodeStatus.NotSigned));
         ApplicationRelease release = CreateRelease("1.2.0");
 
         await installer.InstallAsync(release, progress);
@@ -59,21 +59,135 @@ public sealed class ApplicationUpdateInstallerTests
     public async Task InstallAsync_WithoutContentLength_ReportsIndeterminateDownload()
     {
         using var directory = new TemporaryDirectory();
-        using var response = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new UnknownLengthContent([1, 2, 3, 4])
-        };
-        using var client = new HttpClient(new StubHttpMessageHandler(response));
+        byte[] installerBytes = [1, 2, 3, 4];
+        using var client = CreateClient(
+            installerBytes,
+            unknownInstallerLength: true);
         var progress = new RecordingProgressReporter();
         var installer = new ApplicationUpdateInstaller(
             client,
             new FileLauncherStub(),
-            directory.Path);
+            directory.Path,
+            UnsignedReleasePolicy.AllowWithVerifiedChecksum,
+            new AuthenticodeVerifierStub(AuthenticodeStatus.NotSigned));
 
         await installer.InstallAsync(CreateRelease("1.2.0"), progress);
 
         Assert.Contains(null, progress.Values);
         Assert.Equal(1.0, progress.Values.Last());
+    }
+
+    [Fact]
+    public async Task InstallAsync_RejectsInstallerWhenSha256DoesNotMatch()
+    {
+        using var directory = new TemporaryDirectory();
+        byte[] installerBytes = [1, 2, 3, 4];
+        using var client = CreateClient(
+            installerBytes,
+            checksum: new string('0', 64));
+        var launcher = new FileLauncherStub();
+        var verifier = new AuthenticodeVerifierStub(AuthenticodeStatus.NotSigned);
+        var installer = new ApplicationUpdateInstaller(
+            client,
+            launcher,
+            directory.Path,
+            UnsignedReleasePolicy.AllowWithVerifiedChecksum,
+            verifier);
+
+        InvalidDataException exception = await Assert.ThrowsAsync<InvalidDataException>(
+            () => installer.InstallAsync(CreateRelease("1.2.0")));
+
+        Assert.Contains("SHA-256", exception.Message);
+        Assert.Null(launcher.LaunchedPath);
+        Assert.Equal(0, verifier.VerifyCount);
+        Assert.Empty(Directory.EnumerateFiles(directory.Path));
+    }
+
+    [Fact]
+    public async Task InstallAsync_RejectsSignedReleaseWithInvalidAuthenticodeSignature()
+    {
+        using var directory = new TemporaryDirectory();
+        byte[] installerBytes = [1, 2, 3, 4];
+        using var client = CreateClient(installerBytes, signed: true);
+        var launcher = new FileLauncherStub();
+        var installer = new ApplicationUpdateInstaller(
+            client,
+            launcher,
+            directory.Path,
+            UnsignedReleasePolicy.AllowWithVerifiedChecksum,
+            new AuthenticodeVerifierStub(AuthenticodeStatus.Invalid));
+
+        InvalidDataException exception = await Assert.ThrowsAsync<InvalidDataException>(
+            () => installer.InstallAsync(CreateRelease("1.2.0")));
+
+        Assert.Contains("Authenticode", exception.Message);
+        Assert.Null(launcher.LaunchedPath);
+        Assert.Empty(Directory.EnumerateFiles(directory.Path));
+    }
+
+    [Fact]
+    public async Task InstallAsync_AllowsSignedReleaseWithValidAuthenticodeSignature()
+    {
+        using var directory = new TemporaryDirectory();
+        byte[] installerBytes = [1, 2, 3, 4];
+        using var client = CreateClient(installerBytes, signed: true);
+        var launcher = new FileLauncherStub();
+        var installer = new ApplicationUpdateInstaller(
+            client,
+            launcher,
+            directory.Path,
+            UnsignedReleasePolicy.RequireAuthenticodeSignature,
+            new AuthenticodeVerifierStub(AuthenticodeStatus.Valid));
+
+        await installer.InstallAsync(CreateRelease("1.2.0"));
+
+        Assert.NotNull(launcher.LaunchedPath);
+    }
+
+    [Fact]
+    public async Task InstallAsync_RejectsUnsignedReleaseWhenPolicyRequiresSignature()
+    {
+        using var directory = new TemporaryDirectory();
+        byte[] installerBytes = [1, 2, 3, 4];
+        using var client = CreateClient(installerBytes);
+        var launcher = new FileLauncherStub();
+        var installer = new ApplicationUpdateInstaller(
+            client,
+            launcher,
+            directory.Path,
+            UnsignedReleasePolicy.RequireAuthenticodeSignature,
+            new AuthenticodeVerifierStub(AuthenticodeStatus.NotSigned));
+
+        InvalidDataException exception = await Assert.ThrowsAsync<InvalidDataException>(
+            () => installer.InstallAsync(CreateRelease("1.2.0")));
+
+        Assert.Contains("disabled", exception.Message);
+        Assert.Null(launcher.LaunchedPath);
+        Assert.Empty(Directory.EnumerateFiles(directory.Path));
+    }
+
+    [Fact]
+    public async Task InstallAsync_RejectsVerificationAssetFromAnotherRelease()
+    {
+        using var directory = new TemporaryDirectory();
+        using var client = CreateClient([1, 2, 3, 4]);
+        var launcher = new FileLauncherStub();
+        var installer = new ApplicationUpdateInstaller(
+            client,
+            launcher,
+            directory.Path,
+            UnsignedReleasePolicy.AllowWithVerifiedChecksum,
+            new AuthenticodeVerifierStub(AuthenticodeStatus.NotSigned));
+        ApplicationRelease release = CreateRelease("1.2.0") with
+        {
+            Sha256ChecksumsUri = new Uri(
+                "https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.0/SHA256SUMS.txt")
+        };
+
+        await Assert.ThrowsAsync<InvalidDataException>(
+            () => installer.InstallAsync(release));
+
+        Assert.Null(launcher.LaunchedPath);
     }
 
     private static ApplicationRelease CreateRelease(string version)
@@ -88,9 +202,51 @@ public sealed class ApplicationUpdateInstallerTests
             new Uri($"https://github.com/RomanovCopy/CryptoBook/releases/tag/v{version}"),
             DateTimeOffset.UtcNow)
         {
-            InstallerUri = new Uri(
-                $"https://github.com/RomanovCopy/CryptoBook/releases/download/v{version}/CryptoBook-Setup-{version}.exe")
+            InstallerUri = AssetUri(version, $"CryptoBook-Setup-{version}.exe"),
+            Sha256ChecksumsUri = AssetUri(version, "SHA256SUMS.txt"),
+            SigningStatusUri = AssetUri(version, "SIGNING-STATUS.txt")
         };
+    }
+
+    private static Uri AssetUri(string version, string fileName) => new(
+        $"https://github.com/RomanovCopy/CryptoBook/releases/download/v{version}/{fileName}");
+
+    private static HttpClient CreateClient(
+        byte[] installerBytes,
+        string? checksum = null,
+        bool signed = false,
+        bool unknownInstallerLength = false)
+    {
+        checksum ??= Convert.ToHexString(SHA256.HashData(installerBytes));
+        string manifest =
+            $"{checksum}  artifacts\\CryptoBook-Setup-1.2.0.exe\r\n";
+        string signingStatus = signed
+            ? "CryptoBook binaries in this release are signed with Authenticode."
+            : "CryptoBook binaries in this release are not digitally signed.";
+        return new HttpClient(new StubHttpMessageHandler(request =>
+        {
+            string fileName = request.RequestUri is null
+                ? string.Empty
+                : System.IO.Path.GetFileName(request.RequestUri.AbsolutePath);
+            HttpContent content = fileName switch
+            {
+                "SHA256SUMS.txt" => new StringContent(
+                    manifest,
+                    Encoding.UTF8,
+                    "text/plain"),
+                "SIGNING-STATUS.txt" => new StringContent(
+                    signingStatus,
+                    Encoding.UTF8,
+                    "text/plain"),
+                _ when unknownInstallerLength => new UnknownLengthContent(
+                    installerBytes),
+                _ => new ByteArrayContent(installerBytes)
+            };
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = content
+            };
+        }));
     }
 
     private sealed class RecordingProgressReporter: IProgressReporter
@@ -106,13 +262,26 @@ public sealed class ApplicationUpdateInstallerTests
         }
     }
 
-    private sealed class StubHttpMessageHandler(HttpResponseMessage response):
+    private sealed class StubHttpMessageHandler(
+        Func<HttpRequestMessage, HttpResponseMessage> responseFactory):
         HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken) =>
-            Task.FromResult(response);
+            Task.FromResult(responseFactory(request));
+    }
+
+    private sealed class AuthenticodeVerifierStub(AuthenticodeStatus status):
+        IAuthenticodeVerifier
+    {
+        public int VerifyCount { get; private set; }
+
+        public AuthenticodeStatus Verify(string filePath)
+        {
+            VerifyCount++;
+            return status;
+        }
     }
 
     private sealed class UnknownLengthContent(byte[] content): HttpContent

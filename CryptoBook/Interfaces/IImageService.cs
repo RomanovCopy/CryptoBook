@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,6 +24,12 @@ namespace CryptoBook.Interfaces
 
         // Управление файлом
         Task LoadImageAsync(string filePath, CancellationToken cancellationToken = default);
+        Task LoadImageAsync(
+            Stream source,
+            string sourceName,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException(
+                "The image service does not support stream sources.");
         void Clear();
 
         // Управление трансформацией

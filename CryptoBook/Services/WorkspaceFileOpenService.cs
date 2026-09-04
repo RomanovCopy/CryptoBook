@@ -307,6 +307,18 @@ namespace CryptoBook.Services
             if(!keyAvailable)
                 return WorkspaceFileOpenResult.Cancel();
 
+            // The original extension is authenticated inside the protected
+            // container. Inspect it before choosing the open mode so media can
+            // be handed to the player in encrypted form instead of being staged
+            // as a plaintext temporary file.
+            string originalExtension = await secureFileProcessor
+                .ReadOriginalExtensionAsync(filePath, cancellationToken);
+            IFileTemplate? protectedTemplate = fileTemplateRegistry.GetAll()
+                .FirstOrDefault(item => item.CanHandleExtension(
+                    originalExtension));
+            if(protectedTemplate?.OpenMode == FileOpenMode.Media)
+                return OpenMedia(filePath, filePath, mediaCatalog);
+
             (string operationDirectory, string decryptedPath) =
                 await CreateDecryptedTemporaryCopyAsync(
                     filePath,
@@ -328,11 +340,8 @@ namespace CryptoBook.Services
                 }
 
                 if(template?.OpenMode == FileOpenMode.Media)
-                {
-                    // Медиаплеер читает файл после возврата из метода, поэтому каталог
-                    // остаётся жить до Dispose сервиса вместе с окном приложения.
-                    return OpenMedia(decryptedPath, filePath, mediaCatalog);
-                }
+                    throw new InvalidOperationException(
+                        "Защищённое медиа не должно открываться через временный файл.");
 
                 LaunchResult launchResult = fileLauncherService.Open(decryptedPath);
                 if(!launchResult.Success)

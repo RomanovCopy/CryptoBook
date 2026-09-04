@@ -12,11 +12,13 @@ namespace CryptoBook.Services
         private readonly ISecureFileValidator _secureFileValidator;
         private readonly ISecureFileProcessor _secureFileProcessor;
         private readonly IEncryptionKeyRequestService _keyRequestService;
+        private readonly SecureMediaPlaybackOptions playbackOptions;
 
         public MediaSourcePreparationService(
             ISecureFileValidator secureFileValidator,
             ISecureFileProcessor secureFileProcessor,
-            IEncryptionKeyRequestService keyRequestService)
+            IEncryptionKeyRequestService keyRequestService,
+            SecureMediaPlaybackOptions? playbackOptions = null)
         {
             _secureFileValidator = secureFileValidator ??
                 throw new ArgumentNullException(nameof(secureFileValidator));
@@ -24,6 +26,8 @@ namespace CryptoBook.Services
                 throw new ArgumentNullException(nameof(secureFileProcessor));
             _keyRequestService = keyRequestService ??
                 throw new ArgumentNullException(nameof(keyRequestService));
+            this.playbackOptions = playbackOptions ?? new SecureMediaPlaybackOptions();
+            this.playbackOptions.Validate();
         }
 
         public async Task<IPreparedMediaSource> PrepareAsync(
@@ -37,88 +41,67 @@ namespace CryptoBook.Services
                 fullPath,
                 cancellationToken))
             {
-                return new PreparedMediaSource(fullPath);
+                return new PreparedMediaSource(
+                    fullPath,
+                    Path.GetExtension(fullPath));
             }
 
             if(!_keyRequestService.EnsureKeyAvailable())
                 throw new OperationCanceledException(cancellationToken);
 
-            string temporaryDirectory = Path.Combine(
-                Path.GetTempPath(),
-                "CryptoBook",
-                "Media",
-                Guid.NewGuid().ToString("N"));
-
-            Directory.CreateDirectory(temporaryDirectory);
+            DecryptedFileContent? decrypted = null;
             try
             {
-                string outputBasePath = Path.Combine(temporaryDirectory, "media");
-                await _secureFileProcessor.DecryptFileAsyncToFile(
+                decrypted = await _secureFileProcessor.OpenDecryptedMediaStreamAsync(
                     fullPath,
-                    outputBasePath,
+                    playbackOptions.LegacyMemoryLimitBytes,
                     cancellationToken: cancellationToken);
-
-                string[] files = Directory.GetFiles(temporaryDirectory);
-                if(files.Length != 1)
-                throw new IOException(
-                    LocalizationManager.GetString(
-                        "Media.DecryptedFileUnknown"));
-
-                return new PreparedMediaSource(
+                var prepared = new PreparedMediaSource(
                     fullPath,
-                    files[0],
-                    temporaryDirectory);
+                    decrypted.OriginalExtension,
+                    decrypted.Content);
+                decrypted = null;
+                return prepared;
             }
             catch
             {
-                TryDeleteDirectory(temporaryDirectory);
+                if(decrypted is not null)
+                    await decrypted.DisposeAsync();
                 throw;
             }
         }
 
         private sealed class PreparedMediaSource: IPreparedMediaSource
         {
-            private readonly string? _temporaryDirectory;
+            private Stream? playbackStream;
 
-            public PreparedMediaSource(string path)
-                : this(path, path, null)
+            public PreparedMediaSource(string path, string originalExtension)
+                : this(path, originalExtension, null)
             {
             }
 
             public PreparedMediaSource(
                 string originalPath,
-                string playbackPath,
-                string? temporaryDirectory)
+                string originalExtension,
+                Stream? playbackStream)
             {
                 OriginalPath = originalPath;
-                PlaybackPath = playbackPath;
-                _temporaryDirectory = temporaryDirectory;
+                PlaybackPath = originalPath;
+                OriginalExtension = originalExtension;
+                this.playbackStream = playbackStream;
             }
 
             public string OriginalPath { get; }
             public string PlaybackPath { get; }
-            public bool IsTemporary => _temporaryDirectory is not null;
+            public string OriginalExtension { get; }
+            public Stream? PlaybackStream => playbackStream;
+            public bool IsEncrypted => playbackStream is not null;
+            public bool IsTemporary => false;
 
             public void Dispose()
             {
-                if(_temporaryDirectory is not null)
-                    TryDeleteDirectory(_temporaryDirectory);
-            }
-        }
-
-        private static void TryDeleteDirectory(string path)
-        {
-            try
-            {
-                if(Directory.Exists(path))
-                    Directory.Delete(path, recursive: true);
-            }
-            catch(IOException)
-            {
-                // Проигрыватель может освободить файл чуть позже.
-            }
-            catch(UnauthorizedAccessException)
-            {
+                playbackStream?.Dispose();
+                playbackStream = null;
             }
         }
     }
