@@ -1,3 +1,4 @@
+using CryptoBook.Accessors;
 using CryptoBook.Composition;
 using CryptoBook.Behaviors;
 using CryptoBook.FileTemplates;
@@ -11,6 +12,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Xunit;
 
 namespace CryptoBook.Tests;
@@ -686,6 +689,35 @@ public sealed class TextFormattingTests
     }
 
     [WpfFact]
+    public void PreviewMode_RefreshesWhenDocumentBackgroundChanges()
+    {
+        var (richText, _) = CreateDocument("preview background");
+        var inline = new InlineService(
+            richText,
+            new ReflectionPropertyAccessor(),
+            new TestParagraphFactory());
+        var fonts = new FontService(
+            richText,
+            inline,
+            new DocumentBackgroundPreferenceStoreStub(),
+            new DocumentAppearanceDefaults());
+        var viewModel = new RichtextboxViewModel(
+            new RichtextboxModel(),
+            richText,
+            new DocumentPreviewService(),
+            new StubUriNavigationService(),
+            new StubMenuFileViewModel(),
+            fonts);
+        viewModel.ToggleView.Execute(null);
+        FlowDocument previousPreview = viewModel.PreviewDocument!;
+
+        fonts.SetDocumentBackgroundImage(CreateBitmap());
+
+        Assert.NotSame(previousPreview, viewModel.PreviewDocument);
+        Assert.IsType<ImageBrush>(viewModel.PreviewDocument!.Background);
+    }
+
+    [WpfFact]
     public void PreviewHyperlinkCommand_DelegatesToNavigationService()
     {
         var (richText, _) = CreateDocument("text");
@@ -749,6 +781,32 @@ public sealed class TextFormattingTests
         public double Load() => Ratio;
 
         public void Save(double ratio) => Ratio = ratio;
+    }
+
+    private sealed class DocumentBackgroundPreferenceStoreStub:
+        IDocumentBackgroundPreferenceStore
+    {
+        public System.Drawing.Color? Load() => null;
+
+        public void Save(System.Drawing.Color color)
+        {
+        }
+    }
+
+    private static BitmapSource CreateBitmap()
+    {
+        byte[] pixels = [0, 0, 255, 255];
+        var bitmap = BitmapSource.Create(
+            1,
+            1,
+            96,
+            96,
+            PixelFormats.Bgra32,
+            null,
+            pixels,
+            4);
+        bitmap.Freeze();
+        return bitmap;
     }
 
     private sealed class TestParagraphFactory: IParagraphFactory

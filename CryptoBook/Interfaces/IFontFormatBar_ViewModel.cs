@@ -66,6 +66,8 @@ namespace CryptoBook.Interfaces
         ICommand SetFontColorCommand { get; }
         ICommand SetFontBackgroundCommand { get; }
         ICommand SetDocumentBackgroundCommand { get; }
+        ICommand ChooseDocumentBackgroundImageCommand { get; }
+        ICommand ClearDocumentBackgroundImageCommand { get; }
         ICommand SetFontSizeCommand { get; }
         ICommand ClearFormattingCommand { get; }
         ICommand Opened { get; }

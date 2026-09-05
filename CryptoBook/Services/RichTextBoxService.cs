@@ -112,6 +112,7 @@ namespace CryptoBook.Services
             this.IsInactiveSelectionHighlightEnabled = true;
 
             this.LostFocus += RichTextBoxService_LostFocus;
+            this.SelectionChanged += RichTextBoxService_SelectionChanged;
             this.PreviewKeyDown += RichTextBoxService_PreviewKeyDown;
             this.PreviewTextInput += RichTextBoxService_PreviewTextInput;
             this.PreviewMouseLeftButtonDown += RichTextBoxService_PreviewMouseLeftButtonDown;
@@ -270,6 +271,11 @@ namespace CryptoBook.Services
                 this.Document.Blocks.Clear();
                 this.Document.Blocks.Add(paragraph.Element);
 
+                var paperBrush = CreateBrush(
+                    appearanceDefaults.PaperColor);
+                this.Document.Background = paperBrush;
+                this.Background = paperBrush;
+
                 var caret = paragraph.Element.ContentStart
                     .GetInsertionPosition(LogicalDirection.Forward);
                 this.CaretPosition = caret;
@@ -288,7 +294,8 @@ namespace CryptoBook.Services
         {
             ArgumentNullException.ThrowIfNull(document);
 
-            var paperBrush = CreateBrush(appearanceDefaults.PaperColor);
+            Media.Brush paperBrush = document.Background ??
+                CreateBrush(appearanceDefaults.PaperColor);
             var textBrush = CreateBrush(appearanceDefaults.TextColor);
             document.Background = paperBrush;
             document.Foreground = textBrush;
@@ -477,6 +484,30 @@ namespace CryptoBook.Services
             lastSelection = Selection.IsEmpty
                 ? null
                 : new TextRange(Selection.Start, Selection.End);
+        }
+        private void RichTextBoxService_SelectionChanged(
+            object sender,
+            RoutedEventArgs e)
+        {
+            if(!Selection.IsEmpty)
+                return;
+
+            if(typingProperties.TryGetValue(
+                   TextElement.ForegroundProperty,
+                   out object? pendingForeground) &&
+               pendingForeground is Media.Brush pendingBrush)
+            {
+                CaretBrush = pendingBrush;
+                return;
+            }
+
+            TextPointer caret = CaretPosition.GetInsertionPosition(
+                LogicalDirection.Backward);
+            object foreground = GetEffectiveValue(
+                caret,
+                TextElement.ForegroundProperty);
+            if(foreground is Media.Brush brush)
+                CaretBrush = brush;
         }
         private void RichTextBoxService_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {

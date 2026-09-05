@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using Media = System.Windows.Media;
 using Drawing = System.Drawing;
 using CryptoBook.Infrastructure;
@@ -14,6 +15,8 @@ namespace CryptoBook.Interfaces
 {
     public interface IFontService: IService
     {
+        event EventHandler? DocumentBackgroundChanged;
+
         /// <summary>
         /// Interface для работы с RichTextBox
         /// </summary>
@@ -42,6 +45,10 @@ namespace CryptoBook.Interfaces
         /// Фоновый цвет бумаги текущего документа.
         /// </summary>
         Drawing.Color DocumentBackground { get; }
+        /// <summary>
+        /// Использует ли текущий документ изображение вместо однотонного фона.
+        /// </summary>
+        bool HasDocumentBackgroundImage { get; }
         /// <summary>
         /// TextDecoration шрифта по умолчанию
         /// </summary>
@@ -94,6 +101,8 @@ namespace CryptoBook.Interfaces
         void SetFontColor(System.Drawing.Color? fontColor);
         void SetFontBackground(System.Drawing.Color? fontBackground);
         void SetDocumentBackground(System.Drawing.Color? documentBackground);
+        void SetDocumentBackgroundImage(BitmapSource backgroundImage);
+        void ClearDocumentBackgroundImage();
         void SetFontSize(double fontSize);
 
         void ClearFormatting();

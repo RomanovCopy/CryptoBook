@@ -312,22 +312,48 @@
                             <Path Data="{StaticResource Icon.DocumentBackground}" Style="{StaticResource EditorToolbarSmallIconStyle}"/>
                             <TextBlock Text="{Binding [Editor.Paper], Source={StaticResource Res}}" Style="{StaticResource textBlockHeader}"/>
                         </StackPanel>
-                        <ComboBox ItemsSource="{Binding FontColors}"
-                                  ToolTip="{Binding [Editor.DocumentBackground], Source={StaticResource Res}}"
-                                  SelectedItem="{Binding DocumentBackground, Mode=TwoWay}"
-                                  Width="100"
-                                  Height="24"
-                                  ItemTemplate="{StaticResource ComboBoxItemTemplate}"
-                                  Tag="isColor"
-                                  Template="{StaticResource ComboBoxTemplate}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="SelectionChanged">
-                                    <i:InvokeCommandAction
-                                        Command="{Binding SetDocumentBackgroundCommand, UpdateSourceTrigger=PropertyChanged}"
-                                        CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ComboBox>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox ItemsSource="{Binding FontColors}"
+                                      ToolTip="{Binding [Editor.DocumentBackground], Source={StaticResource Res}}"
+                                      SelectedItem="{Binding DocumentBackground, Mode=TwoWay}"
+                                      Width="100"
+                                      Height="24"
+                                      ItemTemplate="{StaticResource ComboBoxItemTemplate}"
+                                      Tag="isColor"
+                                      Template="{StaticResource ComboBoxTemplate}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction
+                                            Command="{Binding SetDocumentBackgroundCommand, UpdateSourceTrigger=PropertyChanged}"
+                                            CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ComboBox>
+                            <Button Style="{StaticResource EditorToolButtonStyle}"
+                                    Width="24"
+                                    Height="24"
+                                    Padding="4"
+                                    Margin="1,0,0,0"
+                                    Command="{Binding ChooseDocumentBackgroundImageCommand}"
+                                    ToolTip="{Binding [Editor.DocumentBackgroundImage], Source={StaticResource Res}}"
+                                    AutomationProperties.Name="{Binding [Editor.DocumentBackgroundImage], Source={StaticResource Res}}">
+                                <Path Data="{StaticResource Icon.DocumentBackgroundImage}"
+                                      Style="{StaticResource EditorToolbarSmallIconStyle}"
+                                      Margin="0"/>
+                            </Button>
+                            <Button Style="{StaticResource EditorToolButtonStyle}"
+                                    Width="24"
+                                    Height="24"
+                                    Padding="4"
+                                    Margin="1,0,0,0"
+                                    Command="{Binding ClearDocumentBackgroundImageCommand}"
+                                    ToolTip="{Binding [Editor.RemoveDocumentBackgroundImage], Source={StaticResource Res}}"
+                                    AutomationProperties.Name="{Binding [Editor.RemoveDocumentBackgroundImage], Source={StaticResource Res}}">
+                                <Path Data="{StaticResource Icon.DocumentBackgroundImageRemove}"
+                                      Style="{StaticResource EditorToolbarSmallIconStyle}"
+                                      Margin="0"/>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
 
 

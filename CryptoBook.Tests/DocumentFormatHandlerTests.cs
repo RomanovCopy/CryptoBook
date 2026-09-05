@@ -66,6 +66,68 @@ public sealed class DocumentFormatHandlerTests
     }
 
     [StaFact]
+    public async Task XamlPackage_PreservesDocumentBackgroundColor()
+    {
+        var handler = new XamlPackageDocumentFormatHandler(
+            CreateDispatcher());
+        var sourceDocument = new FlowDocument(
+            new Paragraph(new Run("colored paper")))
+        {
+            Background = new SolidColorBrush(
+                Color.FromArgb(0xCC, 0x12, 0x34, 0x56))
+        };
+
+        byte[] content = await handler.SerializeAsync(sourceDocument);
+        var loadedDocument = new FlowDocument();
+        await handler.LoadAsync(loadedDocument, content);
+
+        Assert.Equal(
+            Color.FromArgb(0xCC, 0x12, 0x34, 0x56),
+            Assert.IsType<SolidColorBrush>(
+                loadedDocument.Background).Color);
+    }
+
+    [StaFact]
+    public async Task XamlPackage_EmbedsAndRestoresDocumentBackgroundImage()
+    {
+        var handler = new XamlPackageDocumentFormatHandler(
+            CreateDispatcher());
+        var sourceDocument = new FlowDocument(
+            new Paragraph(new Run("image paper")))
+        {
+            Background = new ImageBrush(CreateBitmap())
+            {
+                Stretch = Stretch.UniformToFill,
+                AlignmentX = AlignmentX.Right,
+                AlignmentY = AlignmentY.Bottom,
+                Opacity = 0.4
+            }
+        };
+
+        byte[] content = await handler.SerializeAsync(sourceDocument);
+        var loadedDocument = new FlowDocument();
+        await handler.LoadAsync(loadedDocument, content);
+
+        var brush = Assert.IsType<ImageBrush>(loadedDocument.Background);
+        var bitmap = Assert.IsAssignableFrom<BitmapSource>(brush.ImageSource);
+        Assert.Equal(2, bitmap.PixelWidth);
+        Assert.Equal(1, bitmap.PixelHeight);
+        Assert.Equal(Stretch.UniformToFill, brush.Stretch);
+        Assert.Equal(AlignmentX.Right, brush.AlignmentX);
+        Assert.Equal(AlignmentY.Bottom, brush.AlignmentY);
+        Assert.Equal(0.4, brush.Opacity, precision: 3);
+    }
+
+    [Fact]
+    public void XamlPackage_HandlerAlsoOwnsSecureDocumentPayloads()
+    {
+        var handler = new XamlPackageDocumentFormatHandler(
+            CreateDispatcher());
+
+        Assert.True(handler.CanHandle(new SecureFileTemplate()));
+    }
+
+    [StaFact]
     public async Task Rtf_PreservesEmbeddedImageDimensions()
     {
         var handler = new RtfDocumentFormatHandler(CreateDispatcher());

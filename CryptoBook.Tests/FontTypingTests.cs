@@ -4,10 +4,12 @@ using CryptoBook.FileTemplates;
 using CryptoBook.Interfaces;
 using CryptoBook.Markup;
 using CryptoBook.Services;
+using CryptoBook.ViewModels;
 using System.IO;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Xunit;
 using DrawingColor = System.Drawing.Color;
 
@@ -247,6 +249,65 @@ public sealed class FontTypingTests
                 GetCharacterRange(service, 1).GetPropertyValue(Inline.TextDecorationsProperty)));
         AssertCharacterBrush(service, 0, TextElement.ForegroundProperty, Colors.Black);
         AssertCharacterBrush(service, 2, TextElement.ForegroundProperty, Colors.Blue);
+    }
+
+    [WpfFact]
+    public void FontColor_UpdatesCaretBrushWithActiveSelection()
+    {
+        var (service, fonts) = CreateServices(new Run("text"));
+        var run = GetOnlyRun(service);
+        service.Selection.Select(run.ContentStart, run.ContentEnd);
+
+        fonts.SetFontColor(DrawingColor.Red);
+
+        Assert.Equal(
+            Colors.Red,
+            Assert.IsType<SolidColorBrush>(service.CaretBrush).Color);
+    }
+
+    [WpfFact]
+    public void MovingCaret_UsesForegroundAtCurrentTextPosition()
+    {
+        var (service, _) = CreateServices(
+            new Run("red") { Foreground = Brushes.Red },
+            new Run("blue") { Foreground = Brushes.Blue });
+        var runs = ((Paragraph)service.Document.Blocks.FirstBlock!)
+            .Inlines
+            .OfType<Run>()
+            .ToArray();
+
+        TextPointer redPosition = runs[0].ContentStart.GetPositionAtOffset(1)!;
+        service.Selection.Select(redPosition, redPosition);
+
+        Assert.Equal(
+            Colors.Red,
+            Assert.IsType<SolidColorBrush>(service.CaretBrush).Color);
+
+        TextPointer bluePosition = runs[1].ContentStart.GetPositionAtOffset(1)!;
+        service.Selection.Select(bluePosition, bluePosition);
+
+        Assert.Equal(
+            Colors.Blue,
+            Assert.IsType<SolidColorBrush>(service.CaretBrush).Color);
+    }
+
+    [WpfFact]
+    public void PendingFontColor_RemainsCaretColorAfterTyping()
+    {
+        var (service, fonts) = CreateServices(new Run("ab"));
+        var run = GetOnlyRun(service);
+        service.CaretPosition = run.ContentStart.GetPositionAtOffset(1)!;
+        service.ClearSelection();
+
+        fonts.SetFontColor(DrawingColor.Red);
+        service.InsertTextAtCaret("X");
+
+        Assert.Equal(
+            Colors.Red,
+            Assert.IsType<SolidColorBrush>(service.CaretBrush).Color);
+        Assert.Equal(2, GetTextOffset(
+            (Paragraph)service.Document.Blocks.FirstBlock!,
+            service.CaretPosition));
     }
 
     [WpfFact]
@@ -534,6 +595,166 @@ public sealed class FontTypingTests
     }
 
     [WpfFact]
+    public void DocumentBackgroundImage_ReplacesPaperAndCanBeCleared()
+    {
+        var (service, fonts) = CreateServices(new Run("text"));
+        BitmapSource bitmap = CreateBitmap();
+
+        fonts.SetDocumentBackground(DrawingColor.Yellow);
+        fonts.SetDocumentBackgroundImage(bitmap);
+
+        var imageBrush = Assert.IsType<ImageBrush>(
+            service.Document.Background);
+        Assert.Same(bitmap, imageBrush.ImageSource);
+        Assert.Same(imageBrush, service.BackGround);
+        Assert.Equal(Stretch.UniformToFill, imageBrush.Stretch);
+        Assert.True(fonts.HasDocumentBackgroundImage);
+
+        fonts.ClearDocumentBackgroundImage();
+
+        Assert.Equal(
+            Colors.Yellow,
+            Assert.IsType<SolidColorBrush>(
+                service.Document.Background).Color);
+        Assert.False(fonts.HasDocumentBackgroundImage);
+    }
+
+    [WpfFact]
+    public async Task DocumentBackgroundImageCommand_LoadsAndAppliesSelectedImage()
+    {
+        IRichTextBoxService service = new RichTextBoxService(
+            new TestParagraphFactory(),
+            new TestUriNavigationService(),
+            new DocumentAppearanceDefaults());
+        var inline = new InlineService(
+            service,
+            new ReflectionPropertyAccessor(),
+            new TestParagraphFactory());
+        var fonts = new FontService(
+            service,
+            inline,
+            new DocumentBackgroundPreferenceStoreStub(),
+            new DocumentAppearanceDefaults());
+        BitmapSource bitmap = CreateBitmap();
+        var viewModel = new FontFormatBar_ViewModel(
+            fonts,
+            inline,
+            service,
+            new ImageFilePickerStub("background.png"),
+            new ImageContentLoaderStub(bitmap));
+
+        await Assert.IsAssignableFrom<IAsyncCommand>(
+            viewModel.ChooseDocumentBackgroundImageCommand)
+            .ExecuteAsync();
+
+        var brush = Assert.IsType<ImageBrush>(service.Document.Background);
+        Assert.Same(bitmap, brush.ImageSource);
+        Assert.Same(brush, service.BackGround);
+        Assert.Equal(
+            fonts.DocumentBackground.ToArgb(),
+            viewModel.DocumentBackground!.Value.ToArgb());
+    }
+
+    [WpfFact]
+    public void DocumentBackgroundImage_IsRenderedByEditor()
+    {
+        var (service, fonts) = CreateServices(new Run("text"));
+        fonts.SetDocumentBackgroundImage(CreateBitmap());
+        var editor = service.Service;
+        editor.Width = 240;
+        editor.Height = 120;
+        editor.Measure(new Size(editor.Width, editor.Height));
+        editor.Arrange(new Rect(0, 0, editor.Width, editor.Height));
+        editor.UpdateLayout();
+
+        var rendered = new RenderTargetBitmap(
+            240,
+            120,
+            96,
+            96,
+            PixelFormats.Pbgra32);
+        rendered.Render(editor);
+        byte[] pixels = new byte[240 * 120 * 4];
+        rendered.CopyPixels(pixels, 240 * 4, 0);
+
+        Assert.Contains(
+            Enumerable.Range(0, pixels.Length / 4),
+            index =>
+            {
+                int offset = index * 4;
+                byte blue = pixels[offset];
+                byte green = pixels[offset + 1];
+                byte red = pixels[offset + 2];
+                byte alpha = pixels[offset + 3];
+                return alpha > 200 &&
+                    ((red > 200 && green < 80 && blue < 80) ||
+                     (green > 200 && red < 80 && blue < 80));
+            });
+    }
+
+    [WpfFact]
+    public void ReplaceDocument_PreservesLoadedDocumentBackground()
+    {
+        var (service, _) = CreateInitialServices();
+        var loadedBackground = new ImageBrush(CreateBitmap())
+        {
+            Stretch = Stretch.UniformToFill
+        };
+        var loadedDocument = new FlowDocument(
+            new Paragraph(new Run("loaded")))
+        {
+            Background = loadedBackground
+        };
+
+        service.ReplaceDocument(loadedDocument);
+
+        Assert.Same(loadedBackground, service.Document.Background);
+        Assert.Same(loadedBackground, service.BackGround);
+    }
+
+    [WpfFact]
+    public void DocumentBackgroundChanges_MarkDocumentSessionDirty()
+    {
+        IRichTextBoxService service = new RichTextBoxService(
+            new TestParagraphFactory(),
+            new TestUriNavigationService(),
+            new DocumentAppearanceDefaults());
+        var session = new DocumentSession(service);
+        var inline = new InlineService(
+            service,
+            new ReflectionPropertyAccessor(),
+            new TestParagraphFactory(),
+            session);
+        var fonts = new FontService(
+            service,
+            inline,
+            new DocumentBackgroundPreferenceStoreStub(),
+            new DocumentAppearanceDefaults(),
+            session);
+        session.Open(
+            Path.Combine(Path.GetTempPath(), "background.XamlPackage"),
+            new XamlPackageFileTemplate());
+
+        fonts.SetDocumentBackground(DrawingColor.Yellow);
+
+        Assert.True(session.IsDirty);
+
+        session.MarkSaved(
+            session.FilePath!,
+            session.Template!);
+        fonts.SetDocumentBackgroundImage(CreateBitmap());
+
+        Assert.True(session.IsDirty);
+
+        session.MarkSaved(
+            session.FilePath!,
+            session.Template!);
+        fonts.ClearDocumentBackgroundImage();
+
+        Assert.True(session.IsDirty);
+    }
+
+    [WpfFact]
     public void ClearFormatting_ResetsEveryPropertyOnlyInsideSelection()
     {
         var formatted = new Run("ab")
@@ -671,6 +892,28 @@ public sealed class FontTypingTests
         TextDecorations = source.TextDecorations
     };
 
+    private static BitmapSource CreateBitmap()
+    {
+        const int width = 2;
+        const int height = 1;
+        byte[] pixels =
+        [
+            0, 0, 255, 255,
+            0, 255, 0, 255
+        ];
+        var bitmap = BitmapSource.Create(
+            width,
+            height,
+            96,
+            96,
+            PixelFormats.Bgra32,
+            null,
+            pixels,
+            width * 4);
+        bitmap.Freeze();
+        return bitmap;
+    }
+
     private static (string Name, Action<FontService> Apply)[] FontPropertyChanges() =>
     [
         ("FontWeight", fonts => fonts.SetFontWeight(FontWeights.Bold)),
@@ -778,6 +1021,35 @@ public sealed class FontTypingTests
         public void Save(DrawingColor color)
         {
         }
+    }
+
+    private sealed class ImageFilePickerStub(string selectedPath):
+        IImageFilePicker
+    {
+        public Task<string?> PickImageAsync(
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult<string?>(selectedPath);
+        }
+    }
+
+    private sealed class ImageContentLoaderStub(BitmapSource image):
+        IImageContentLoader
+    {
+        public Task<BitmapSource> LoadFromFileAsync(
+            string filePath,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            Assert.Equal("background.png", filePath);
+            return Task.FromResult(image);
+        }
+
+        public Task<BitmapSource> LoadAsync(
+            Stream source,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 
 }
