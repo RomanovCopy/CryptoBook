@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.1.3.1 - 2026-09-06
+
+### Added
+
+- Added document background images with localized choose and remove actions in
+  the editor's Paper controls.
+- XamlPackage and protected documents now preserve their document background
+  color or embedded background image and restore it when reopened.
+
+### Changed
+
+- Document preview refreshes immediately after its background changes, and a
+  background change now marks the document as modified so it is not lost.
+
+### Fixed
+
+- The text caret now follows the active foreground color after selection,
+  navigation, and continued typing.
+- Invalid or unsupported optional background metadata no longer prevents the
+  document text from opening.
+
+Full comparison: [v1.1.3.0...v1.1.3.1](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.0...v1.1.3.1)
+
 ## 1.1.3.0 - 2026-09-04
 
 ### Added

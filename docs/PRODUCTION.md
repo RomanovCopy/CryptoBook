@@ -1,8 +1,12 @@
 # Production release policy
 
-CryptoBook releases must be produced by the GitHub Actions workflow from a
-version tag that references the verified release commit. Local developer
-builds are not production artifacts.
+CryptoBook releases must be verified by the GitHub Actions workflow from a
+version tag that references the verified release commit. The installer asset
+must be the exact locally built candidate that was installed over the latest
+public version and explicitly confirmed working before the tag was created.
+The tag workflow produces an independent CI build plus the supporting release
+assets and stores them as a workflow artifact; it does not publish the GitHub
+Release automatically.
 
 ## Required repository settings
 
@@ -18,6 +22,8 @@ builds are not production artifacts.
 
 - Restore dependencies with `--locked-mode`.
 - Run all tests in `Release`.
+- Preserve the locally tested installer and its SHA-256 before creating the
+  release commit or tag; never replace it with an untested rebuild.
 - Publish on the pinned `windows-2022` image, which includes Inno Setup.
 - Produce both the self-contained Windows x64 application and its installer.
 - Sign the executable or installer with an Authenticode certificate when the
@@ -37,6 +43,13 @@ builds are not production artifacts.
   every binary release.
 - Publish an explicit signing-status file and warning for unsigned releases.
 - Retain the previous version for rollback.
+
+After the tagged workflow succeeds, download its release-assets artifact,
+replace only its installer with the preserved locally tested installer,
+regenerate `SHA256SUMS.txt` without a UTF-8 BOM, and verify every manifest entry
+before creating the public GitHub Release. The release must contain exactly the
+installer, portable ZIP, license archive, FFmpeg provenance archive, dependency
+lock, SPDX SBOM, signing-status file, and checksum manifest.
 
 Unsigned releases are permitted while no production certificate is available.
 Users must verify the published SHA-256 checksums before running them.
