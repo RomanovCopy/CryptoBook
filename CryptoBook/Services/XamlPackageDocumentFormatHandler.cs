@@ -25,6 +25,19 @@ namespace CryptoBook.Services
             System.Windows.DataFormats.XamlPackage;
         protected override bool PreserveTextElements => false;
 
+        public override bool CanHandle(IFileTemplate template) =>
+            template is XamlPackageFileTemplate or SecureFileTemplate;
+
+        protected override void RestoreDocumentProperties(
+            System.Windows.Documents.FlowDocument document,
+            ReadOnlyMemory<byte> content) =>
+            XamlPackageDocumentAppearanceCodec.Restore(document, content);
+
+        protected override byte[] PreserveDocumentProperties(
+            System.Windows.Documents.FlowDocument document,
+            byte[] content) =>
+            XamlPackageDocumentAppearanceCodec.Preserve(document, content);
+
         protected override ReadOnlyMemory<byte> PrepareLoadContent(
             ReadOnlyMemory<byte> content)
         {

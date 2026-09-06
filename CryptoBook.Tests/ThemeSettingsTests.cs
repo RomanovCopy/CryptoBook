@@ -748,6 +748,33 @@ public sealed class ThemeSettingsTests
         IFileExplorerService explorer = scope.Resolve<IFileExplorerService>();
         Assert.Same(explorer, scope.Resolve<IFilePickerService>());
         Assert.Same(explorer, scope.Resolve<IFolderPickerService>());
+        IFontFormatBar_ViewModel fontFormatting =
+            scope.Resolve<IFontFormatBar_ViewModel>();
+        Assert.True(
+            fontFormatting.ChooseDocumentBackgroundImageCommand
+                .CanExecute(null));
+    }
+
+    [WpfFact]
+    public async Task Startup_ImageLoaderReadsNormalizedLocalImage()
+    {
+        var app = Application.Current ?? new Application();
+        using IContainer container = new Startup().ConfigureServices(app);
+        using ILifetimeScope scope = container.BeginLifetimeScope();
+        string imagePath = FindRepositoryFile(
+            "CryptoBook",
+            "Resources",
+            "Images",
+            "AppIcon.BlueYellow.v1.png");
+        IFileManagerService files = scope.Resolve<IFileManagerService>();
+        IImageContentLoader loader = scope.Resolve<IImageContentLoader>();
+
+        BitmapSource image = await loader.LoadFromFileAsync(
+            files.NormalizePath(imagePath));
+
+        Assert.True(image.PixelWidth > 0);
+        Assert.True(image.PixelHeight > 0);
+        Assert.True(image.IsFrozen);
     }
 
     [Fact]
@@ -763,6 +790,32 @@ public sealed class ThemeSettingsTests
         Assert.Equal(1, windowManager.ShowCount);
         Assert.Equal(1, windowManager.ActivateCount);
         Assert.Equal(typeof(SettingsWindow), windowManager.CreatedWindowType);
+    }
+
+    [Fact]
+    public void FontToolbar_OffersDocumentBackgroundImageActions()
+    {
+        string xamlPath = FindRepositoryFile(
+            "CryptoBook",
+            "MyControls",
+            "FontFormatBar.xaml");
+        XDocument document = XDocument.Load(xamlPath);
+        string[] commandBindings = document
+            .Descendants()
+            .Attributes("Command")
+            .Select(attribute => attribute.Value)
+            .ToArray();
+
+        Assert.Contains(
+            commandBindings,
+            value => value.Contains(
+                "ChooseDocumentBackgroundImageCommand",
+                StringComparison.Ordinal));
+        Assert.Contains(
+            commandBindings,
+            value => value.Contains(
+                "ClearDocumentBackgroundImageCommand",
+                StringComparison.Ordinal));
     }
 
     private sealed class ThemePreferenceStoreStub:

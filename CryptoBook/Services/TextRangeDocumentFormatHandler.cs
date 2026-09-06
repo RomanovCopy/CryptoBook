@@ -28,7 +28,8 @@ namespace CryptoBook.Services
             ReadOnlyMemory<byte> content) =>
             content;
 
-        public bool CanHandle(IFileTemplate template) => template is TTemplate;
+        public virtual bool CanHandle(IFileTemplate template) =>
+            template is TTemplate;
 
         public Task LoadAsync(
             FlowDocument document,
@@ -47,6 +48,7 @@ namespace CryptoBook.Services
                 {
                     document.Blocks.Clear();
                     document.Blocks.Add(new Paragraph());
+                    RestoreDocumentProperties(document, buffer);
                     return;
                 }
 
@@ -68,6 +70,8 @@ namespace CryptoBook.Services
 
                 if(document.Blocks.Count == 0)
                     document.Blocks.Add(new Paragraph());
+
+                RestoreDocumentProperties(document, buffer);
             });
         }
 
@@ -80,9 +84,30 @@ namespace CryptoBook.Services
             return dispatcher.InvokeAsync(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                return Serialize(document);
+                return PreserveDocumentProperties(
+                    document,
+                    Serialize(document));
             });
         }
+
+        /// <summary>
+        /// Восстанавливает свойства уровня FlowDocument, которые TextRange.Load
+        /// не переносит вместе с содержимым документа.
+        /// </summary>
+        protected virtual void RestoreDocumentProperties(
+            FlowDocument document,
+            ReadOnlyMemory<byte> content)
+        {
+        }
+
+        /// <summary>
+        /// Добавляет к сериализованному содержимому свойства уровня
+        /// FlowDocument, которые TextRange.Save не сохраняет самостоятельно.
+        /// </summary>
+        protected virtual byte[] PreserveDocumentProperties(
+            FlowDocument document,
+            byte[] content) =>
+            content;
 
         private byte[] Serialize(FlowDocument document)
         {

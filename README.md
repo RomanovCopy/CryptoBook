@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.3.0-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.0)
+[![Version](https://img.shields.io/badge/version-1.1.3.1-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.1)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -51,6 +51,8 @@ machine unless you explicitly move or share them.
 
 - create and edit TXT, RTF, XAML and XamlPackage documents;
 - format text and paragraphs, create lists, insert links and images;
+- set a document background color or image and preserve it in XamlPackage and
+  protected documents;
 - resize and position images inside documents;
 - browse folders and files with sorting, favorites and change monitoring;
 - pin frequently used documents with Quick Access;
@@ -129,7 +131,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.3.0
+./installer/Build-Installer.ps1 -Version 1.1.3.1
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:

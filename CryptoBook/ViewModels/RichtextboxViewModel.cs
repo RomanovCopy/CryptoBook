@@ -13,6 +13,7 @@ namespace CryptoBook.ViewModels
         private readonly IDocumentPreviewService previewService;
         private readonly IUriNavigationService uriNavigationService;
         private readonly IMenuFileViewModel menuFile;
+        private readonly IFontService? fontService;
         private bool isPreviewMode;
         private bool isFitToWindow = true;
         private FlowDocument? previewDocument;
@@ -22,7 +23,8 @@ namespace CryptoBook.ViewModels
             IRichTextBoxService richTextBox,
             IDocumentPreviewService previewService,
             IUriNavigationService uriNavigationService,
-            IMenuFileViewModel menuFile)
+            IMenuFileViewModel menuFile,
+            IFontService? fontService = null)
         {
             this.richtextboxModel = richtextboxModel ??
                 throw new ArgumentNullException(nameof(richtextboxModel));
@@ -32,8 +34,14 @@ namespace CryptoBook.ViewModels
                 throw new ArgumentNullException(nameof(uriNavigationService));
             this.menuFile = menuFile
                 ?? throw new ArgumentNullException(nameof(menuFile));
+            this.fontService = fontService;
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             LocalizationManager.CultureChanged += OnCultureChanged;
+            if(fontService is not null)
+            {
+                fontService.DocumentBackgroundChanged +=
+                    OnDocumentBackgroundChanged;
+            }
         }
 
         public bool IsPreviewMode
@@ -116,6 +124,11 @@ namespace CryptoBook.ViewModels
                 parameter =>
                 {
                     LocalizationManager.CultureChanged -= OnCultureChanged;
+                    if(fontService is not null)
+                    {
+                        fontService.DocumentBackgroundChanged -=
+                            OnDocumentBackgroundChanged;
+                    }
                     richtextboxModel.Execute_Closed(parameter);
                 },
                 richtextboxModel.CanExecute_Closed);
@@ -143,5 +156,16 @@ namespace CryptoBook.ViewModels
                 nameof(ModeLabel),
                 nameof(ToggleViewText),
                 nameof(FitToWindowText));
+
+        private void OnDocumentBackgroundChanged(
+            object? sender,
+            EventArgs args)
+        {
+            if(IsPreviewMode)
+            {
+                PreviewDocument = previewService.CreatePreview(
+                    richTextBox.Document);
+            }
+        }
     }
 }

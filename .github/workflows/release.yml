@@ -224,34 +224,22 @@ jobs:
             ForEach-Object { "$($_.Hash)  $($_.Path.Substring($env:GITHUB_WORKSPACE.Length + 1))" } |
             Set-Content artifacts/SHA256SUMS.txt
 
-      - name: Publish GitHub release assets
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $signingNote = if ("${{ steps.certificate.outputs.enabled }}" -eq "true") {
-            "The Windows binaries are digitally signed with Authenticode."
-          } else {
-            "⚠️ The Windows binaries are not digitally signed. Verify the SHA-256 checksums before use."
-          }
-          $assets = @(
-            "artifacts/CryptoBook-Setup-$env:RELEASE_VERSION.exe",
-            "artifacts/CryptoBook-win-x64.zip",
-            "artifacts/CryptoBook-licenses.zip",
-            "artifacts/CryptoBook-ffmpeg-provenance.zip",
-            "artifacts/packages.lock.json",
-            "artifacts/CryptoBook.spdx.json",
-            "artifacts/SIGNING-STATUS.txt",
-            "artifacts/SHA256SUMS.txt"
-          )
-          if (gh release view $env:RELEASE_TAG --json id 2>$null) {
-            gh release upload $env:RELEASE_TAG $assets --clobber
-          } else {
-            gh release create $env:RELEASE_TAG $assets `
-              --generate-notes `
-              --notes $signingNote `
-              --verify-tag
-          }
+      - name: Upload verified release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: CryptoBook-release-assets
+          path: |
+            artifacts/CryptoBook-Setup-*.exe
+            artifacts/CryptoBook-win-x64.zip
+            artifacts/CryptoBook-licenses.zip
+            artifacts/CryptoBook-ffmpeg-provenance.zip
+            artifacts/packages.lock.json
+            artifacts/CryptoBook.spdx.json
+            artifacts/SIGNING-STATUS.txt
+            artifacts/SHA256SUMS.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
 
       - name: Publish 1.1.2.5 recovery notice
         if: env.RELEASE_TAG == 'v1.1.2.51'

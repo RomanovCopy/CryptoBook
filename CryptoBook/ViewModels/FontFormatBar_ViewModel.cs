@@ -16,6 +16,10 @@ namespace CryptoBook.ViewModels
     public class FontFormatBar_ViewModel: ViewModelBase, IFontFormatBar_ViewModel
     {
         private readonly FontFormatBar_Model model;
+        private readonly IFontService fontService;
+        private readonly IImageFilePicker? imageFilePicker;
+        private readonly IImageContentLoader? imageLoader;
+        private readonly IMessageService? messages;
 
         // Реализация IFontFormatBar_ViewModel.
 
@@ -40,10 +44,21 @@ namespace CryptoBook.ViewModels
 
 
         // Конструктор.
-        public FontFormatBar_ViewModel(IFontService service, IInlineService inlineService, IRichTextBoxService richService)
+        public FontFormatBar_ViewModel(
+            IFontService service,
+            IInlineService inlineService,
+            IRichTextBoxService richService,
+            IImageFilePicker? imageFilePicker = null,
+            IImageContentLoader? imageLoader = null,
+            IMessageService? messages = null)
         {
+            fontService = service ??
+                throw new ArgumentNullException(nameof(service));
+            this.imageFilePicker = imageFilePicker;
+            this.imageLoader = imageLoader;
+            this.messages = messages;
             model = new FontFormatBar_Model(
-                service ?? throw new ArgumentNullException(nameof(service)), 
+                fontService,
                 inlineService??throw new ArgumentNullException(nameof(inlineService)) ,
                 richService??throw new ArgumentNullException(nameof(richService)));
             model.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
@@ -85,6 +100,19 @@ namespace CryptoBook.ViewModels
                 model.CanExecute_SetDocumentBackgroundCommand);
         RelayCommand? setDocumentBackgroundCommand;
 
+        public ICommand ChooseDocumentBackgroundImageCommand =>
+            chooseDocumentBackgroundImageCommand ??= new AsyncRelayCommand(
+                (_, cancellationToken) =>
+                    ChooseDocumentBackgroundImageAsync(cancellationToken),
+                _ => imageFilePicker is not null && imageLoader is not null);
+        AsyncRelayCommand? chooseDocumentBackgroundImageCommand;
+
+        public ICommand ClearDocumentBackgroundImageCommand =>
+            clearDocumentBackgroundImageCommand ??= new RelayCommand(
+                _ => ClearDocumentBackgroundImage(),
+                _ => fontService.HasDocumentBackgroundImage);
+        RelayCommand? clearDocumentBackgroundImageCommand;
+
         public ICommand SetFontSizeCommand => 
             setFontSizeCommand ??= new RelayCommand(model.Execute_SetFontSizeCommand, model.CanExecute_SetFontSizeCommand);
         RelayCommand? setFontSizeCommand;
@@ -94,7 +122,9 @@ namespace CryptoBook.ViewModels
         RelayCommand? clearFormattingCommand;
 
         public ICommand Opened => 
-            openCommand ??= new RelayCommand(model.Execute_Open, model.CanExecute_Open);
+            openCommand ??= new RelayCommand(
+                OpenFormattingPanel,
+                model.CanExecute_Open);
         RelayCommand? openCommand;
 
         public ICommand PopupClosed =>
@@ -120,6 +150,55 @@ namespace CryptoBook.ViewModels
         public ICommand Closed => 
             closedCommand ??= new RelayCommand(model.Execute_Closed, model.CanExecute_Closed);
         RelayCommand? closedCommand;
+
+        private async Task ChooseDocumentBackgroundImageAsync(
+            CancellationToken cancellationToken)
+        {
+            if(imageFilePicker is null || imageLoader is null)
+                return;
+
+            try
+            {
+                string? path = await imageFilePicker.PickImageAsync(
+                    cancellationToken);
+                if(string.IsNullOrWhiteSpace(path))
+                    return;
+
+                var image = await imageLoader.LoadFromFileAsync(
+                    path,
+                    cancellationToken);
+                fontService.SetDocumentBackgroundImage(image);
+                clearDocumentBackgroundImageCommand?
+                    .RaiseCanExecuteChanged();
+            }
+            catch(OperationCanceledException)
+            {
+                // Закрытие диалога выбора не является ошибкой.
+            }
+            catch(Exception exception)
+            {
+                if(messages is null)
+                    throw;
+
+                await messages.ShowMessage(
+                    LocalizationManager.GetString(
+                        "Document.BackgroundImageError"),
+                    exception.Message);
+            }
+        }
+
+        private void ClearDocumentBackgroundImage()
+        {
+            fontService.ClearDocumentBackgroundImage();
+            DocumentBackground = fontService.DocumentBackground;
+            clearDocumentBackgroundImageCommand?.RaiseCanExecuteChanged();
+        }
+
+        private void OpenFormattingPanel(object? parameter)
+        {
+            model.Execute_Open(parameter);
+            clearDocumentBackgroundImageCommand?.RaiseCanExecuteChanged();
+        }
 
     }
 }

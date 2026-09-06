@@ -331,6 +331,10 @@
   <data name="Editor.Highlight" xml:space="preserve"><value>Highlight</value></data>
   <data name="Editor.Paper" xml:space="preserve"><value>Paper</value></data>
   <data name="Editor.DocumentBackground" xml:space="preserve"><value>Document background color</value></data>
+  <data name="Editor.DocumentBackgroundImage" xml:space="preserve"><value>Choose document background image</value></data>
+  <data name="Editor.RemoveDocumentBackgroundImage" xml:space="preserve"><value>Remove document background image</value></data>
+  <data name="Document.BackgroundImageError" xml:space="preserve"><value>Background image error</value></data>
+  <data name="Document.BackgroundImageTooLarge" xml:space="preserve"><value>The embedded background image exceeds 64 MB.</value></data>
   <data name="Editor.ToggleDocumentMode" xml:space="preserve"><value>Switch document mode</value></data>
   <data name="Bookmarks.New" xml:space="preserve"><value>New bookmark</value></data>
   <data name="Bookmarks.AddAtCaret" xml:space="preserve"><value>Add at caret position</value></data>

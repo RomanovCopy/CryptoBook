@@ -331,6 +331,10 @@
   <data name="Editor.Highlight" xml:space="preserve"><value>Выделение</value></data>
   <data name="Editor.Paper" xml:space="preserve"><value>Бумага</value></data>
   <data name="Editor.DocumentBackground" xml:space="preserve"><value>Фоновый цвет документа</value></data>
+  <data name="Editor.DocumentBackgroundImage" xml:space="preserve"><value>Выбрать фоновое изображение документа</value></data>
+  <data name="Editor.RemoveDocumentBackgroundImage" xml:space="preserve"><value>Удалить фоновое изображение документа</value></data>
+  <data name="Document.BackgroundImageError" xml:space="preserve"><value>Ошибка фонового изображения</value></data>
+  <data name="Document.BackgroundImageTooLarge" xml:space="preserve"><value>Размер встроенного фонового изображения превышает 64 МБ.</value></data>
   <data name="Editor.ToggleDocumentMode" xml:space="preserve"><value>Переключить режим документа</value></data>
   <data name="Bookmarks.New" xml:space="preserve"><value>Новая закладка</value></data>
   <data name="Bookmarks.AddAtCaret" xml:space="preserve"><value>Добавить в позиции каретки</value></data>
