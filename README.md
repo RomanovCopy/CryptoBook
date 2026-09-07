@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.3.1-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.1)
+[![Version](https://img.shields.io/badge/version-1.1.3.2-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.2)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -50,6 +50,8 @@ machine unless you explicitly move or share them.
 ## Main features
 
 - create and edit TXT, RTF, XAML and XamlPackage documents;
+- edit Markdown in a dedicated page and switch between source and rendered preview;
+- switch between rich-text and Markdown documents while preserving unsaved changes;
 - format text and paragraphs, create lists, insert links and images;
 - set a document background color or image and preserve it in XamlPackage and
   protected documents;
@@ -80,6 +82,9 @@ machine unless you explicitly move or share them.
 
 PDF files are opened by the system application and are not edited inside CryptoBook.
 Video-codec support depends on the bundled media engine.
+
+See [Markdown support](docs/MARKDOWN.md) for supported syntax, encoding preservation,
+navigation and image/link restrictions.
 
 ## Security overview
 
@@ -131,7 +136,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.3.1
+./installer/Build-Installer.ps1 -Version 1.1.3.2
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:
