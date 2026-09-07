@@ -27,7 +27,6 @@ namespace CryptoBook.FileTemplates
         [
             ".txt",
             ".log",
-            ".md",
             ".cs",
             ".xaml",
             ".json",

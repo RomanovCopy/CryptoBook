@@ -7,7 +7,12 @@ public sealed record LockSnapshotMetadata(
     string DocumentName,
     string TemplateId,
     bool HasUnsavedChanges,
-    DateTimeOffset CreatedUtc);
+    DateTimeOffset CreatedUtc,
+    string? ContentTemplateId = null)
+{
+    [System.Text.Json.Serialization.JsonIgnore]
+    public WorkspaceDocumentSnapshot? InactiveDocument { get; init; }
+}
 
 public interface ILockSnapshotService : IService
 {

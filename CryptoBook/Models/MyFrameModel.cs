@@ -7,6 +7,7 @@ using CryptoBook.MyPages;
 using CryptoBook.Views;
 
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Controls;
 
 namespace CryptoBook.Models
@@ -15,25 +16,111 @@ namespace CryptoBook.Models
     {
 
         private readonly IPageNavigationService pageNavigationService;
+        private readonly IMarkdownDocumentState? markdownDocument;
+        private readonly IWorkspaceDocumentSession? workspaceDocuments;
+        private bool synchronizing;
 
         public string? CurrentPageKey => pageNavigationService.CurrentKey;
         public Page? CurrentPage => pageNavigationService.CurrentPage;
 
 
-        public MyFrameModel( IPageNavigationService pageNavigationService)
+        public MyFrameModel(
+            IPageNavigationService pageNavigationService,
+            IMarkdownDocumentState? markdownDocument = null,
+            IDocumentSession? documentSession = null)
         {
             this.pageNavigationService = pageNavigationService ?? throw new ArgumentNullException(nameof(pageNavigationService));
+            this.markdownDocument = markdownDocument;
+            workspaceDocuments = documentSession as IWorkspaceDocumentSession;
             pageNavigationService.PropertyChanged += (_, args) =>
             {
                 if(args.PropertyName is nameof(IPageNavigationService.CurrentPage) or
                    nameof(IPageNavigationService.CurrentKey))
                 {
+                    if(!synchronizing && workspaceDocuments is not null)
+                    {
+                        string? key = pageNavigationService.CurrentKey;
+                        if(key is "Home" or "MarkdownEditor" &&
+                           !workspaceDocuments.SelectPage(key))
+                        {
+                            pageNavigationService.Navigate(workspaceDocuments.ActivePageKey);
+                            if((key == "Home" && !workspaceDocuments.HasHomeDocument) ||
+                               (key == "MarkdownEditor" && !workspaceDocuments.HasMarkdownDocument))
+                                pageNavigationService.Remove(key);
+                        }
+                    }
                     OnPropertyChanged(
                         nameof(CurrentPage),
                         nameof(CurrentPageKey));
                 }
             };
+            synchronizing = true;
             pageNavigationService.Navigate("Home");
+            synchronizing = false;
+            if(workspaceDocuments is not null)
+            {
+                workspaceDocuments.PropertyChanged += OnWorkspaceDocumentsChanged;
+                SynchronizeWorkspacePages();
+            }
+            else if(markdownDocument is not null)
+            {
+                markdownDocument.PropertyChanged += OnMarkdownDocumentChanged;
+                if(markdownDocument.IsActive)
+                    pageNavigationService.Navigate("MarkdownEditor");
+            }
+        }
+
+        private void OnWorkspaceDocumentsChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(IWorkspaceDocumentSession.ActivePageKey))
+                SynchronizeWorkspacePages();
+        }
+
+        private void SynchronizeWorkspacePages()
+        {
+            if(synchronizing || workspaceDocuments is null)
+                return;
+            synchronizing = true;
+            try
+            {
+                // Register both occupied surfaces, then focus the active document.
+                if(workspaceDocuments.HasHomeDocument)
+                    pageNavigationService.Navigate("Home");
+                if(workspaceDocuments.HasMarkdownDocument)
+                    pageNavigationService.Navigate("MarkdownEditor");
+                pageNavigationService.Navigate(workspaceDocuments.ActivePageKey);
+                if(!workspaceDocuments.HasMarkdownDocument)
+                    pageNavigationService.Remove("MarkdownEditor");
+                if(!workspaceDocuments.HasHomeDocument && workspaceDocuments.HasMarkdownDocument)
+                    pageNavigationService.Remove("Home");
+            }
+            finally
+            {
+                synchronizing = false;
+            }
+        }
+
+        private void OnMarkdownDocumentChanged(
+            object? sender,
+            PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName != nameof(IMarkdownDocumentState.IsActive) ||
+               markdownDocument is null)
+            {
+                return;
+            }
+
+            if(markdownDocument.IsActive)
+            {
+                pageNavigationService.Navigate("MarkdownEditor");
+            }
+            else if(string.Equals(
+                pageNavigationService.CurrentKey,
+                "MarkdownEditor",
+                StringComparison.Ordinal))
+            {
+                pageNavigationService.Navigate("Home");
+            }
         }
 
         public bool CanExecute_Navigate(object? obj)

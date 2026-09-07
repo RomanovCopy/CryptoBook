@@ -1,8 +1,8 @@
 # Third-party notices
 
 CryptoBook uses the third-party components listed below. This notice is based
-on the dependency locks committed for CryptoBook 1.1.3.1 and was audited on
-2026-09-06. A package's own license and notices control if this summary differs
+on the dependency locks committed for CryptoBook 1.1.3.2 and was audited on
+2026-09-07. A package's own license and notices control if this summary differs
 from them. CryptoBook does not claim ownership of third-party software.
 
 The GNU GPL v3 text is in `LICENSE`. Other standard license texts are in
@@ -44,6 +44,13 @@ Project: <https://github.com/ericsink/SQLitePCL.raw>. License text:
 `LICENSES/Apache-2.0.txt`. The `SQLite` 3.53.4 package contains the native
 SQLite library, which is dedicated to the public domain by the SQLite project;
 see <https://www.sqlite.org/copyright.html>.
+
+### BSD-2-Clause
+
+- `Markdig` 1.3.2 — Copyright (c) 2018-2019, Alexandre Mutel.
+
+Project: <https://github.com/xoofx/markdig>. License text:
+`LICENSES/BSD-2-Clause.txt`.
 
 ### MIT
 

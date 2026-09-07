@@ -62,7 +62,7 @@ namespace CryptoBook.ViewModels
             {
                 ".cbook" or ".cbox" => "\uE72E",
                 ".pdf" => "\uEA90",
-                ".rtf" or ".txt" or ".xaml" or ".xamlpackage" => "\uE8A5",
+                ".rtf" or ".txt" or ".md" or ".xaml" or ".xamlpackage" => "\uE8A5",
                 _ => "\uE7C3"
             };
     }

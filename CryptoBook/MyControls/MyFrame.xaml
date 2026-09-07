@@ -14,7 +14,10 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyFrameViewModel}"/>
     </UserControl.DataContext>
     <Grid Background="{DynamicResource CurrentWindowBackground}">
-        <Frame  Content="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}" NavigationUIVisibility="Hidden" />
+        <!-- WPF Page requires Window or Frame as its visual parent. Page
+             lifetime itself remains owned by PageNavigationService. -->
+        <Frame Content="{Binding CurrentPage}"
+               NavigationUIVisibility="Hidden"/>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

@@ -74,6 +74,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<MenuEncryptionViewModel>().As<IMenuEncryptionViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MenuContentViewModel>().As<IMenuContentViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<RichtextboxViewModel>().As<IRichtextboxViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<MarkdownEditorViewModel>()
+                .As<IMarkdownEditorViewModel>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<RichTextContextMenuViewModel>().As<IRichTextContextMenuViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().InstancePerLifetimeScope();
@@ -164,6 +167,7 @@ namespace CryptoBook.Injections
                                                                                                          
             // Шаблоны файлов.
             builder.RegisterType<PlainTextTemplate>().As<IFileTemplate>().SingleInstance();
+            builder.RegisterType<MarkdownFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<ImageFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<VideoFileTemplate>().As<IFileTemplate>().SingleInstance();
             builder.RegisterType<PdfFileTemplate>().As<IFileTemplate>().SingleInstance();
@@ -184,6 +188,9 @@ namespace CryptoBook.Injections
                 .As<IDocumentFormatHandler>()
                 .SingleInstance();
             builder.RegisterType<PlainTextDocumentFormatHandler>()
+                .As<IDocumentFormatHandler>()
+                .SingleInstance();
+            builder.RegisterType<MarkdownDocumentFormatHandler>()
                 .As<IDocumentFormatHandler>()
                 .SingleInstance();
             builder.RegisterType<XamlTextDocumentFormatHandler>()
@@ -250,6 +257,12 @@ namespace CryptoBook.Injections
                 .As<IWorkspaceInternalFileOpenService>()
                 .SingleInstance();
             builder.RegisterType<RichTextBoxService>().As<IRichTextBoxService>().SingleInstance();
+            builder.RegisterType<MarkdownDocumentState>()
+                .As<IMarkdownDocumentState>()
+                .SingleInstance();
+            builder.RegisterType<MarkdownFlowDocumentRenderer>()
+                .As<IMarkdownFlowDocumentRenderer>()
+                .SingleInstance();
             builder.RegisterType<FontService>().As<IFontService>().SingleInstance();
             builder.RegisterType<TextFormatService>().As<ITextFormatService>().SingleInstance();
             builder.RegisterType<ParagraphService>().As<IParagraphService>().InstancePerDependency();
@@ -482,6 +495,7 @@ namespace CryptoBook.Injections
 
             // Страницы.
             builder.RegisterType<Home>().InstancePerLifetimeScope();
+            builder.RegisterType<MarkdownEditor>().InstancePerLifetimeScope();
             builder.RegisterType<WorkspaceSearch>().InstancePerLifetimeScope();
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 

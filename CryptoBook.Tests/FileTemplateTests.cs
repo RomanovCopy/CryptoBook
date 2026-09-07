@@ -72,8 +72,11 @@ public sealed class FileTemplateTests
         Assert.False(plainText.PreservesTextFormatting);
         Assert.False(xamlText.PreservesTextFormatting);
         Assert.All(
-            new[] { ".txt", ".log", ".md", ".cs", ".xaml", ".json", ".xml" },
+            new[] { ".txt", ".log", ".cs", ".xaml", ".json", ".xml" },
             extension => Assert.True(plainText.CanHandleExtension(extension)));
+        Assert.False(plainText.CanHandleExtension(".md"));
+        Assert.True(((IFileTemplate)new MarkdownFileTemplate())
+            .CanHandleExtension(".md"));
     }
 
     [Fact]

@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.1.3.2 - 2026-09-07
+
+### Added
+
+- Added a dedicated Markdown editor with source editing and rendered preview,
+  including headings, lists, quotes, tables, code blocks and local images.
+- Rich-text and Markdown documents can remain open independently, with navigation
+  through the side menu and Back/Forward buttons.
+
+### Changed
+
+- Markdown saves preserve the source text, original encoding, BOM and line endings;
+  protected saves also use the Markdown source rather than the rendered preview.
+- Recovery and lock snapshots include both open documents and their unsaved changes.
+- File commands and unsaved-change prompts target the relevant document; application
+  shutdown checks both editors.
+- Added Markdig and its BSD-2-Clause license to dependency and licensing records.
+
+### Security
+
+- Markdown HTML remains inert text, remote images are not loaded, and active links
+  are restricted to absolute HTTP, HTTPS and mailto URLs.
+
+Full comparison: [v1.1.3.1...v1.1.3.2](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.1...v1.1.3.2)
+
 ## 1.1.3.1 - 2026-09-06
 
 ### Added

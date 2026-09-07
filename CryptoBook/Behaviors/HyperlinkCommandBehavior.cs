@@ -28,7 +28,7 @@ namespace CryptoBook.Behaviors
             DependencyObject dependencyObject,
             DependencyPropertyChangedEventArgs e)
         {
-            if(dependencyObject is not FlowDocumentPageViewer viewer)
+            if(dependencyObject is not UIElement viewer)
                 return;
 
             if(e.OldValue != null)

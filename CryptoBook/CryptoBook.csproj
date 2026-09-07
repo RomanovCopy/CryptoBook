@@ -12,7 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\Icons\AppIcon.ico</ApplicationIcon>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <VersionPrefix>1.1.3.1</VersionPrefix>
+    <VersionPrefix>1.1.3.2</VersionPrefix>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
@@ -37,7 +37,6 @@
     <Compile Remove="FileTemplates\JPEGFileTemplate.cs" />
     <Compile Remove="FileTemplates\JPGFileTemplate.cs" />
     <Compile Remove="FileTemplates\JsonFileTemplate.cs" />
-    <Compile Remove="FileTemplates\MarkdownFileTemplate.cs" />
     <Compile Remove="FileTemplates\PNGFileTemplate.cs" />
     <Compile Remove="FileTemplates\SourceCodeTemplate.cs" />
     <Compile Remove="FileTemplates\TextFileTemplate.cs" />
@@ -141,6 +140,7 @@
     <PackageReference Include="FlyleafLib" Version="3.11.3" />
     <PackageReference Include="FlyleafLib.Controls.WPF" Version="1.7.3" />
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
+    <PackageReference Include="Markdig" Version="1.3.2" />
     <PackageReference Include="MaterialDesignThemes" Version="5.3.3-ci1443" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.11" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.11" PrivateAssets="all" />

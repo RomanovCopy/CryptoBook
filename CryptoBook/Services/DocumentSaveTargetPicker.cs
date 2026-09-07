@@ -1,4 +1,5 @@
 using CryptoBook.DTO;
+using CryptoBook.FileTemplates;
 using CryptoBook.Interfaces;
 
 using CryptoBook.Infrastructure;
@@ -13,10 +14,12 @@ namespace CryptoBook.Services
         IDocumentSaveTargetPicker
     {
         private readonly IReadOnlyList<IFileTemplate> templates;
+        private readonly IMarkdownDocumentState? markdownDocument;
 
         public DocumentSaveTargetPicker(
             IFileTemplateRegistry templateRegistry,
-            IDocumentFormatHandlerRegistry formatHandlers)
+            IDocumentFormatHandlerRegistry formatHandlers,
+            IMarkdownDocumentState? markdownDocument = null)
         {
             ArgumentNullException.ThrowIfNull(templateRegistry);
             ArgumentNullException.ThrowIfNull(formatHandlers);
@@ -28,17 +31,22 @@ namespace CryptoBook.Services
                     formatHandlers.Find(template) is not null)
                 .OrderBy(template => template.DisplayName)
                 .ToArray();
+            this.markdownDocument = markdownDocument;
         }
 
         public DocumentSaveTarget? Pick(
             string? currentFilePath,
             IFileTemplate? currentTemplate)
         {
-            if(templates.Count == 0)
+            IReadOnlyList<IFileTemplate> availableTemplates =
+                GetAvailableTemplates();
+            if(availableTemplates.Count == 0)
                 throw new InvalidOperationException(
                 LocalizationManager.GetString("Document.NoSaveFormats"));
 
-            int selectedIndex = FindTemplateIndex(currentTemplate);
+            int selectedIndex = FindTemplateIndex(
+                availableTemplates,
+                currentTemplate);
             var dialog = new WpfSaveFileDialog
             {
                 Title = LocalizationManager.GetString(
@@ -48,11 +56,11 @@ namespace CryptoBook.Services
                 CheckPathExists = true,
                 Filter = string.Join(
                     "|",
-                    templates.Select(CreateFilter)),
+                    availableTemplates.Select(CreateFilter)),
                 FilterIndex = selectedIndex + 1,
-                DefaultExt = templates[selectedIndex].DefaultExtension,
+                DefaultExt = availableTemplates[selectedIndex].DefaultExtension,
                 FileName = string.IsNullOrWhiteSpace(currentFilePath)
-                    ? templates[selectedIndex].SuggestedBaseName
+                    ? availableTemplates[selectedIndex].SuggestedBaseName
                     : Path.GetFileName(currentFilePath),
                 InitialDirectory = string.IsNullOrWhiteSpace(
                     currentFilePath)
@@ -63,26 +71,46 @@ namespace CryptoBook.Services
             if(dialog.ShowDialog() != true)
                 return null;
 
-            IFileTemplate selectedTemplate =
-                FindByExtension(Path.GetExtension(dialog.FileName))
-                ?? templates[Math.Clamp(
+            string selectedExtension = Path.GetExtension(dialog.FileName);
+            IFileTemplate? extensionTemplate = FindByExtension(
+                availableTemplates,
+                selectedExtension);
+            bool isMarkdownExtension = templates
+                .OfType<MarkdownFileTemplate>()
+                .Cast<IFileTemplate>()
+                .Any(template => template.CanHandleExtension(
+                    selectedExtension));
+            if((markdownDocument?.IsActive == true &&
+                extensionTemplate is null) ||
+               (markdownDocument?.IsActive != true &&
+                isMarkdownExtension))
+            {
+                throw new InvalidOperationException(
+                    LocalizationManager.GetString(
+                        "Document.MarkdownRequiresSourceText"));
+            }
+
+            IFileTemplate selectedTemplate = extensionTemplate
+                ?? availableTemplates[Math.Clamp(
                     dialog.FilterIndex - 1,
                     0,
-                    templates.Count - 1)];
+                    availableTemplates.Count - 1)];
             return new DocumentSaveTarget(
                 dialog.FileName,
                 selectedTemplate);
         }
 
-        private int FindTemplateIndex(IFileTemplate? currentTemplate)
+        private int FindTemplateIndex(
+            IReadOnlyList<IFileTemplate> availableTemplates,
+            IFileTemplate? currentTemplate)
         {
             if(currentTemplate is null)
-                return FindPreferredTemplateIndex();
+                return FindPreferredTemplateIndex(availableTemplates);
 
-            for(int index = 0; index < templates.Count; index++)
+            for(int index = 0; index < availableTemplates.Count; index++)
             {
                 if(string.Equals(
-                    templates[index].Id,
+                    availableTemplates[index].Id,
                     currentTemplate.Id,
                     StringComparison.OrdinalIgnoreCase))
                 {
@@ -90,15 +118,16 @@ namespace CryptoBook.Services
                 }
             }
 
-            return FindPreferredTemplateIndex();
+            return FindPreferredTemplateIndex(availableTemplates);
         }
 
-        private int FindPreferredTemplateIndex()
+        private static int FindPreferredTemplateIndex(
+            IReadOnlyList<IFileTemplate> availableTemplates)
         {
-            for(int index = 0; index < templates.Count; index++)
+            for(int index = 0; index < availableTemplates.Count; index++)
             {
                 if(string.Equals(
-                    templates[index].DefaultExtension,
+                    availableTemplates[index].DefaultExtension,
                     ".XamlPackage",
                     StringComparison.OrdinalIgnoreCase))
                 {
@@ -109,9 +138,26 @@ namespace CryptoBook.Services
             return 0;
         }
 
-        private IFileTemplate? FindByExtension(string extension) =>
-            templates.FirstOrDefault(template =>
+        private static IFileTemplate? FindByExtension(
+            IReadOnlyList<IFileTemplate> availableTemplates,
+            string extension) =>
+            availableTemplates.FirstOrDefault(template =>
                 template.CanHandleExtension(extension));
+
+        private IReadOnlyList<IFileTemplate> GetAvailableTemplates()
+        {
+            if(markdownDocument?.IsActive == true)
+            {
+                return templates.Where(template =>
+                    template is MarkdownFileTemplate or PlainTextTemplate)
+                    .ToArray();
+            }
+
+            // Entering Markdown must start with source text. A formatted
+            // FlowDocument is intentionally never reverse-converted to it.
+            return templates.Where(template =>
+                template is not MarkdownFileTemplate).ToArray();
+        }
 
         private static string CreateFilter(IFileTemplate template)
         {

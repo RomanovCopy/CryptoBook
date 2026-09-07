@@ -61,7 +61,10 @@ namespace CryptoBook.Services
                 }
             }
 
-            TrimForward();
+            // Pages in the main workspace behave as parallel surfaces, not as
+            // disposable entries in a browser journal. Keep every created page
+            // (and its lifetime scope) alive until it is explicitly removed or
+            // the owning window is closed.
             var entry = CreateEntry(key, args);
             _list.Add(entry);
             _index = _list.IndexOf(entry);
@@ -131,21 +134,6 @@ namespace CryptoBook.Services
             }
 
             return new PageEntry(key, page, pageScope);
-        }
-
-        private void TrimForward()
-        {
-            if(_index >= _list.Count - 1)
-                return;
-
-            var toRemove = _list
-                .Skip(_index + 1)
-                .ToList();
-
-            foreach(var e in toRemove)
-                e.Dispose();
-
-            _list.RemoveRange(_index + 1, _list.Count - _index - 1);
         }
 
         private void NotifyNavigationChanged() =>

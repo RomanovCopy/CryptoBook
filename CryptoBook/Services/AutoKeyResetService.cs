@@ -175,7 +175,11 @@ public sealed class AutoKeyResetService : IKeyResetService
                         : documentSession.DisplayName,
                     documentSession.Template?.Id ?? "XamlPackage",
                     documentSession.IsDirty,
-                    DateTimeOffset.UtcNow);
+                    DateTimeOffset.UtcNow)
+                {
+                    InactiveDocument = (documentSession as IWorkspaceDocumentSession)
+                        ?.CaptureInactiveDocument()
+                };
                 await snapshotService.CreateAndVerifyAsync(richTextBox, metadata, cancellationToken);
             }
 
@@ -294,6 +298,8 @@ public sealed class AutoKeyResetService : IKeyResetService
                 });
             }
 
+            if(documentSession is IWorkspaceDocumentSession workspace)
+                await dispatcher.InvokeAsync(() => workspace.RestoreInactiveDocument(metadata.InactiveDocument));
             snapshotService.Delete();
             lastActivityUtc = DateTimeOffset.UtcNow;
             SetState(KeyResetState.Active);

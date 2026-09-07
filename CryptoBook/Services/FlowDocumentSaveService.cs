@@ -23,13 +23,16 @@ namespace CryptoBook.Services
     {
         private readonly IDispatcherService _dispatcherService;
         private readonly IDocumentFormatHandlerRegistry _formatHandlers;
+        private readonly IMarkdownDocumentState? markdownDocument;
 
         public FlowDocumentSaveService(
             IDispatcherService dispatcherService,
-            IDocumentFormatHandlerRegistry formatHandlers)
+            IDocumentFormatHandlerRegistry formatHandlers,
+            IMarkdownDocumentState? markdownDocument = null)
         {
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
             _formatHandlers = formatHandlers ?? throw new ArgumentNullException(nameof(formatHandlers));
+            this.markdownDocument = markdownDocument;
         }
 
         public async Task  SaveToFileAsync(IRichTextBoxService richTextBoxService, string filePath, IFileTemplate template, 
@@ -84,7 +87,7 @@ namespace CryptoBook.Services
             ArgumentNullException.ThrowIfNull(richTextBoxService);
             ArgumentNullException.ThrowIfNull(destination);
             ArgumentNullException.ThrowIfNull(template);
-            var document = richTextBoxService.Document;
+            FlowDocument document = richTextBoxService.Document;
 
 
             if(!destination.CanWrite)
@@ -98,7 +101,10 @@ namespace CryptoBook.Services
 
             // Объекты FlowDocument принадлежат UI-потоку, а запись готового массива
             // можно выполнять асинхронно небольшими блоками с поддержкой отмены.
-            byte[] buffer = await SerializeAsync( document, template, cancellationToken);
+            byte[] buffer = await SerializeAsync(
+                document,
+                template,
+                cancellationToken);
             const int chunkSize = 81920;
             for(int offset = 0; offset < buffer.Length; offset += chunkSize)
             {
@@ -114,6 +120,21 @@ namespace CryptoBook.Services
 
         private async Task<byte[]> SerializeAsync( FlowDocument document, IFileTemplate template, CancellationToken cancellationToken)
         {
+            if(markdownDocument?.IsActive == true)
+            {
+                // Markdown persistence always reads the authoritative text,
+                // never the formatted preview FlowDocument.
+                if(template is MarkdownFileTemplate or PlainTextTemplate)
+                    return markdownDocument.GetBytes();
+
+                document = await _dispatcherService.InvokeAsync(() =>
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return new FlowDocument(
+                        new Paragraph(new Run(markdownDocument.Text)));
+                });
+            }
+
             IDocumentFormatHandler? formatHandler =
                 _formatHandlers.Find(template);
             if(formatHandler is not null)

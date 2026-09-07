@@ -538,6 +538,8 @@
   <data name="File.TypeNotSelected" xml:space="preserve"><value>Es ist kein Dateityp ausgewählt.</value></data>
   <data name="FileTemplate.Image" xml:space="preserve"><value>Bild</value></data>
   <data name="FileTemplate.Text" xml:space="preserve"><value>Textdatei</value></data>
+  <data name="FileTemplate.Markdown" xml:space="preserve"><value>Markdown-Dokument</value></data>
+  <data name="Document.MarkdownRequiresSourceText" xml:space="preserve"><value>Markdown kann nur aus einem Markdown-Quelldokument gespeichert werden.</value></data>
   <data name="FileTemplate.Secure" xml:space="preserve"><value>Verschlüsselte Datei</value></data>
   <data name="FileTemplate.Video" xml:space="preserve"><value>Video</value></data>
   <data name="FileTemplate.Xaml" xml:space="preserve"><value>XAML-Datei</value></data>
@@ -666,6 +668,9 @@
   <data name="SideMenu.Workspace" xml:space="preserve"><value>Arbeitsbereich</value></data>
   <data name="SideMenu.Editor" xml:space="preserve"><value>Editor</value></data>
   <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Das aktuelle Dokument öffnen</value></data>
+  <data name="SideMenu.Home.Description" xml:space="preserve"><value>Die Startseite öffnen</value></data>
+  <data name="SideMenu.MarkdownEditor" xml:space="preserve"><value>Markdown-Editor</value></data>
+  <data name="SideMenu.MarkdownEditor.Description" xml:space="preserve"><value>Zum geöffneten Markdown-Dokument zurückkehren</value></data>
   <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Dokumente durchsuchen</value></data>
   <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Text in Dokumenten des Arbeitsbereichs finden</value></data>
   <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Dokumente durchsuchen</value></data>

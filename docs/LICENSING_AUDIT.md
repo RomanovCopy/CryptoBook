@@ -1,7 +1,7 @@
 # Licensing audit
 
-Audit date: 2026-09-02
-Audited revision: working tree based on commit `a30c0a0`
+Audit date: 2026-09-07
+Audited revision: working tree based on commit `551e81c`
 Scope: tracked source, project files, dependency locks, NuGet metadata,
 application resources, installer, and release workflow.
 
@@ -46,6 +46,7 @@ Application/runtime lock:
 | GPL-3.0-or-later | `CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64` 9.0.20260816 |
 | LGPL-3.0-or-later | `FlyleafLib` 3.11.3; `FlyleafLib.Controls.WPF` 1.7.3; `Flyleaf.FFmpeg.Bindings` 9.0.0 |
 | Apache-2.0 | `SQLitePCLRaw.bundle_e_sqlite3`, `.config.e_sqlite3`, `.core`, `.provider.e_sqlite3` 3.0.5 |
+| BSD-2-Clause | `Markdig` 1.3.2 |
 | MIT | Autofac family; Konscious Argon2/Blake2; MaterialDesign/Dragablz; Microsoft and System libraries; Mono.Posix; SharpGen; Vortice; WpfColorFontDialog |
 | Public domain | `SQLite` 3.53.4 native code embedded by the e_sqlite3 bundle |
 | MIT and bundled notices | Microsoft .NET/Windows Desktop Runtime 10.0.11 included by self-contained publish |
@@ -64,7 +65,7 @@ remain authoritative in the committed lock files.
 - `compliance/ffmpeg/` — native binary manifest, exact source/release mapping,
   package reproduction instructions and upstream evidence request;
 - `compliance/assets/` — image manifest, contact sheet and attestation draft;
-- `LICENSES/` — LGPL-3.0-or-later, MIT, Apache-2.0, and MS-PL texts plus
+- `LICENSES/` — LGPL-3.0-or-later, MIT, Apache-2.0, BSD-2-Clause, and MS-PL texts plus
   the exact .NET 10.0.11 runtime license and third-party notices.
 
 ## Release gate

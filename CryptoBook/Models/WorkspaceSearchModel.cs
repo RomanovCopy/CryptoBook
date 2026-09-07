@@ -10,6 +10,7 @@ namespace CryptoBook.Models
         private readonly IWorkspaceFileOpenService fileOpenService;
         private readonly IWorkspaceDocumentDeleteService deleteService;
         private readonly IPageNavigationService navigationService;
+        private readonly IDocumentSession? documentSession;
         private IReadOnlyList<WorkspaceContentSearchResult> searchResults =
             Array.Empty<WorkspaceContentSearchResult>();
         private string searchQuery = string.Empty;
@@ -21,7 +22,8 @@ namespace CryptoBook.Models
             IWorkspaceContentSearchService searchService,
             IWorkspaceFileOpenService fileOpenService,
             IWorkspaceDocumentDeleteService deleteService,
-            IPageNavigationService navigationService)
+            IPageNavigationService navigationService,
+            IDocumentSession? documentSession = null)
         {
             this.searchService = searchService ??
                 throw new ArgumentNullException(nameof(searchService));
@@ -31,6 +33,7 @@ namespace CryptoBook.Models
                 throw new ArgumentNullException(nameof(deleteService));
             this.navigationService = navigationService ??
                 throw new ArgumentNullException(nameof(navigationService));
+            this.documentSession = documentSession;
         }
 
         public string SearchQuery
@@ -135,7 +138,7 @@ namespace CryptoBook.Models
                 }
 
                 if(openResult.OpenedInternally)
-                    navigationService.Navigate("Home");
+                    navigationService.Navigate((documentSession as IWorkspaceDocumentSession)?.ActivePageKey ?? "Home");
             }
             catch(OperationCanceledException)
             {
@@ -203,7 +206,7 @@ namespace CryptoBook.Models
         public void Close()
         {
             Clear();
-            navigationService.Navigate("Home");
+            navigationService.Navigate((documentSession as IWorkspaceDocumentSession)?.ActivePageKey ?? "Home");
             navigationService.Remove("WorkspaceSearch");
         }
 
