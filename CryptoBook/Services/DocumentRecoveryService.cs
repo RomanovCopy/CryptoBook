@@ -36,6 +36,7 @@ namespace CryptoBook.Services
         private readonly IFlowDocumentSaveService saveService;
         private readonly IFlowDocumentLoadService loadService;
         private readonly IFileTemplateRegistry templateRegistry;
+        private readonly IMarkdownDocumentState? markdownDocument;
         private readonly DispatcherTimer timer;
         private readonly string recoveryFilePath;
         private readonly Action<Exception> autosaveFailureLogger;
@@ -58,7 +59,8 @@ namespace CryptoBook.Services
             IFlowDocumentSaveService saveService,
             IFlowDocumentLoadService loadService,
             IFileTemplateRegistry templateRegistry,
-            Dispatcher dispatcher)
+            Dispatcher dispatcher,
+            IMarkdownDocumentState? markdownDocument = null)
             : this(
                 documentSession,
                 richTextBox,
@@ -66,7 +68,8 @@ namespace CryptoBook.Services
                 loadService,
                 templateRegistry,
                 dispatcher,
-                GetDefaultRecoveryFilePath())
+                GetDefaultRecoveryFilePath(),
+                markdownDocument: markdownDocument)
         {
         }
 
@@ -79,7 +82,8 @@ namespace CryptoBook.Services
             Dispatcher dispatcher,
             string recoveryFilePath,
             Action<Exception>? autosaveFailureLogger = null,
-            Func<DateTimeOffset>? getUtcNow = null)
+            Func<DateTimeOffset>? getUtcNow = null,
+            IMarkdownDocumentState? markdownDocument = null)
         {
             this.documentSession = documentSession
                 ?? throw new ArgumentNullException(nameof(documentSession));
@@ -91,6 +95,7 @@ namespace CryptoBook.Services
                 ?? throw new ArgumentNullException(nameof(loadService));
             this.templateRegistry = templateRegistry
                 ?? throw new ArgumentNullException(nameof(templateRegistry));
+            this.markdownDocument = markdownDocument;
             ArgumentNullException.ThrowIfNull(dispatcher);
             ArgumentException.ThrowIfNullOrWhiteSpace(recoveryFilePath);
 
@@ -108,6 +113,8 @@ namespace CryptoBook.Services
         }
 
         public bool HasSnapshot => File.Exists(recoveryFilePath);
+        private bool HasWorkspaceChanges => documentSession.IsDirty ||
+            (documentSession as IWorkspaceDocumentSession)?.HasInactiveChanges == true;
 
         public void Start()
         {
@@ -160,14 +167,21 @@ namespace CryptoBook.Services
                         binarySource,
                         RecoveryMagic,
                         cancellationToken);
+                System.Windows.Documents.FlowDocument recoveredDocument;
+                WorkspaceDocumentSnapshot? inactiveDocument = null;
                 if(metadata is not null)
                 {
                     await using Stream documentSource =
                         BinarySnapshotEnvelope.OpenPayloadStream(binarySource);
-                    await loadService.LoadAsync(
-                        richTextBox,
-                        documentSource,
-                        recoveryTemplate,
+                    var workspace = await WorkspaceSnapshotPayload.ReadAsync(documentSource, cancellationToken);
+                    await using var activeSource = workspace.Active;
+                    inactiveDocument = workspace.Inactive;
+                    IFileTemplate contentTemplate =
+                        ResolveRecoveryContentTemplate(
+                            metadata.ContentTemplateId);
+                    recoveredDocument = await loadService.PrepareAsync(
+                        activeSource,
+                        contentTemplate,
                         cancellationToken);
                 }
                 else
@@ -185,8 +199,7 @@ namespace CryptoBook.Services
                 {
                     await using MemoryStream source =
                         new(documentBytes, writable: false);
-                    await loadService.LoadAsync(
-                        richTextBox,
+                    recoveredDocument = await loadService.PrepareAsync(
                         source,
                         recoveryTemplate,
                         cancellationToken);
@@ -201,7 +214,8 @@ namespace CryptoBook.Services
                         envelope.DisplayName,
                         envelope.TemplateId,
                         envelope.Revision,
-                        envelope.SavedAt);
+                        envelope.SavedAt,
+                        null);
                 }
 
                 IFileTemplate? originalTemplate =
@@ -212,10 +226,12 @@ namespace CryptoBook.Services
                 {
                     documentSession.Open(
                         metadata.FilePath,
-                        originalTemplate);
+                        originalTemplate,
+                        recoveredDocument);
                 }
                 else
                 {
+                    richTextBox.ReplaceDocument(recoveredDocument);
                     documentSession.SetDisplayName(
                         string.IsNullOrWhiteSpace(metadata.DisplayName)
                             ? "Восстановленный документ.XamlPackage"
@@ -223,6 +239,7 @@ namespace CryptoBook.Services
                 }
 
                 documentSession.MarkDirty();
+                (documentSession as IWorkspaceDocumentSession)?.RestoreInactiveDocument(inactiveDocument);
                 return true;
             }
             finally
@@ -247,6 +264,9 @@ namespace CryptoBook.Services
             {
                 recoveryFileGate.Release();
             }
+            // A saved or replaced active document may still have an unsaved neighbour.
+            if((documentSession as IWorkspaceDocumentSession)?.HasInactiveChanges == true)
+                ScheduleIfDirty();
         }
 
         internal Task SaveSnapshotNowAsync() => GetOrStartSaveTask();
@@ -255,6 +275,12 @@ namespace CryptoBook.Services
             object? sender,
             System.ComponentModel.PropertyChangedEventArgs args)
         {
+            if(args.PropertyName == nameof(IWorkspaceDocumentSession.ActivePageKey))
+            {
+                invalidationVersion++;
+                lastSnapshotRevision = -1;
+                ScheduleIfDirty();
+            }
             if(args.PropertyName is nameof(IDocumentSession.IsDirty) or
                nameof(IDocumentSession.Revision) or
                nameof(IDocumentSession.SavedRevision))
@@ -266,7 +292,7 @@ namespace CryptoBook.Services
             if(!started ||
                stopping ||
                saving ||
-               !documentSession.IsDirty ||
+               !HasWorkspaceChanges ||
                documentSession.Revision == lastSnapshotRevision)
                 return;
 
@@ -277,7 +303,7 @@ namespace CryptoBook.Services
         private async void OnTimerTick(object? sender, EventArgs args)
         {
             timer.Stop();
-            if(stopping || saving || !documentSession.IsDirty)
+            if(stopping || saving || !HasWorkspaceChanges)
                 return;
 
             saving = true;
@@ -294,7 +320,7 @@ namespace CryptoBook.Services
             {
                 saving = false;
                 if(!stopping &&
-                   documentSession.IsDirty &&
+                   HasWorkspaceChanges &&
                    documentSession.Revision != lastSnapshotRevision)
                     timer.Start();
             }
@@ -356,24 +382,33 @@ namespace CryptoBook.Services
             // Версия инвалидируется при остановке и удалении снимка. Она не позволяет
             // уже начатому сохранению воскресить файл восстановления после очистки.
             long snapshotInvalidationVersion = invalidationVersion;
+            WorkspaceDocumentSnapshot? inactiveDocument =
+                (documentSession as IWorkspaceDocumentSession)?.CaptureInactiveDocument();
             RecoveryMetadata metadata = new(
                 documentSession.FilePath,
                 documentSession.DisplayName,
                 documentSession.Template?.Id,
                 revision,
-                DateTimeOffset.UtcNow);
+                DateTimeOffset.UtcNow,
+                markdownDocument?.IsActive == true
+                    ? "Markdown"
+                    : null);
+            IFileTemplate snapshotTemplate =
+                markdownDocument?.IsActive == true
+                    ? templateRegistry.GetById("Markdown")
+                        ?? new MarkdownFileTemplate()
+                    : recoveryTemplate;
             await using MemoryStream document = new();
             await saveService.SaveToStreamAsync(
                 richTextBox,
                 document,
-                recoveryTemplate);
+                snapshotTemplate);
             await using MemoryStream envelope = new();
             await BinarySnapshotEnvelope.WriteHeaderAsync(
                 envelope,
                 RecoveryMagic,
                 metadata);
-            document.Position = 0;
-            await document.CopyToAsync(envelope);
+            await WorkspaceSnapshotPayload.WriteAsync(envelope, document, inactiveDocument);
             byte[] serialized = envelope.ToArray();
             byte[] encrypted;
             try
@@ -418,7 +453,7 @@ namespace CryptoBook.Services
                 try
                 {
                     if(snapshotInvalidationVersion != invalidationVersion ||
-                       !documentSession.IsDirty)
+                       !HasWorkspaceChanges)
                         return;
 
                     File.Move(
@@ -532,6 +567,17 @@ namespace CryptoBook.Services
             }
         }
 
+        private IFileTemplate ResolveRecoveryContentTemplate(
+            string? templateId)
+        {
+            if(string.IsNullOrWhiteSpace(templateId))
+                return recoveryTemplate;
+
+            return templateRegistry.GetById(templateId)
+                ?? throw new InvalidDataException(
+                    $"Recovery content format '{templateId}' is unavailable.");
+        }
+
         public void Dispose()
         {
             if(disposed)
@@ -549,7 +595,8 @@ namespace CryptoBook.Services
             string DisplayName,
             string? TemplateId,
             long Revision,
-            DateTimeOffset SavedAt);
+            DateTimeOffset SavedAt,
+            string? ContentTemplateId);
 
         private sealed record RecoveryEnvelope(
             int Version,

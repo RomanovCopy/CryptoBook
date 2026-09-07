@@ -7,8 +7,10 @@ using CryptoBook.ViewModels;
 using DTO=CryptoBook.DTO;
 
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Input;
 using CryptoBook.DTO;
 using MenuItem = CryptoBook.DTO.MenuItem;
 
@@ -55,6 +57,7 @@ namespace CryptoBook.Models
         private readonly IRecentDocumentService recentDocumentService;
         private readonly IDocumentDialogService documentDialogService;
         private readonly IDocumentBackupRecoveryService backupRecoveryService;
+        private readonly IMarkdownDocumentState markdownDocument;
         private readonly AsyncRelayCommand renameBookCommand;
         private readonly AsyncRelayCommand restoreBackupCommand;
 
@@ -76,6 +79,7 @@ namespace CryptoBook.Models
             documentDialogService = _scope.Resolve<IDocumentDialogService>();
             backupRecoveryService =
                 _scope.Resolve<IDocumentBackupRecoveryService>();
+            markdownDocument = _scope.Resolve<IMarkdownDocumentState>();
             renameBookCommand = new AsyncRelayCommand(RenameBookAsync);
             restoreBackupCommand = new AsyncRelayCommand(RestoreBackupAsync);
             Width = Properties.Settings.Default.SideMenuWidth;
@@ -83,6 +87,8 @@ namespace CryptoBook.Models
             FontSize = Properties.Settings.Default.SideMenuFontSize;
             QuickActions = InitializeQuickActions();
             MenuItems = InitializeMenu();
+            markdownDocument.PropertyChanged += OnMarkdownDocumentPropertyChanged;
+            documentSession.PropertyChanged += OnWorkspaceDocumentPropertyChanged;
             LocalizationManager.CultureChanged += OnCultureChanged;
         }
 
@@ -130,10 +136,21 @@ namespace CryptoBook.Models
             };
             workspace.Children.Add(CreateNavigationItem(
                 commandService,
-                LocalizationManager.GetString("SideMenu.Editor"),
+                LocalizationManager.GetString("Home.Title"),
+                "\uE80F",
+                LocalizationManager.GetString("SideMenu.Home.Description"),
+                "Home",
+                () => documentSession is not IWorkspaceDocumentSession workspace ||
+                    workspace.HasHomeDocument || !workspace.HasMarkdownDocument));
+            workspace.Children.Add(CreateNavigationItem(
+                commandService,
+                LocalizationManager.GetString("SideMenu.MarkdownEditor"),
                 "\uE70F",
-                LocalizationManager.GetString("SideMenu.Editor.Description"),
-                "Home"));
+                LocalizationManager.GetString(
+                    "SideMenu.MarkdownEditor.Description"),
+                "MarkdownEditor",
+                () => documentSession is IWorkspaceDocumentSession workspace
+                    ? workspace.HasMarkdownDocument : markdownDocument.IsActive));
             workspace.Children.Add(CreateNavigationItem(
                 commandService,
                 LocalizationManager.GetString("SideMenu.SearchDocuments"),
@@ -219,7 +236,8 @@ namespace CryptoBook.Models
             string name,
             string glyph,
             string description,
-            string pageKey) =>
+            string pageKey,
+            Func<bool>? canNavigate = null) =>
             new(commandService)
             {
                 Name = name,
@@ -228,7 +246,8 @@ namespace CryptoBook.Models
                 IsEnabled = true,
                 Command = new RelayCommand(
                     _ => pageNavigationService.Navigate(pageKey),
-                    _ => !string.Equals(
+                    _ => (canNavigate?.Invoke() ?? true) &&
+                        !string.Equals(
                         pageNavigationService.CurrentKey,
                         pageKey,
                         StringComparison.Ordinal))
@@ -363,7 +382,7 @@ namespace CryptoBook.Models
                 if(await backupRecoveryService.RestoreAsync(
                     cancellationToken))
                 {
-                    pageNavigationService.Navigate("Home");
+                    pageNavigationService.Navigate((documentSession as IWorkspaceDocumentSession)?.ActivePageKey ?? "Home");
                 }
             }
             catch(OperationCanceledException)
@@ -417,7 +436,23 @@ namespace CryptoBook.Models
 
         internal void Execute_Closed(object? obj)
         {
+            markdownDocument.PropertyChanged -= OnMarkdownDocumentPropertyChanged;
+            documentSession.PropertyChanged -= OnWorkspaceDocumentPropertyChanged;
             LocalizationManager.CultureChanged -= OnCultureChanged;
+        }
+
+        private static void OnWorkspaceDocumentPropertyChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(IWorkspaceDocumentSession.ActivePageKey))
+                CommandManager.InvalidateRequerySuggested();
+        }
+
+        private static void OnMarkdownDocumentPropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(IMarkdownDocumentState.IsActive))
+                CommandManager.InvalidateRequerySuggested();
         }
 
         private void OnCultureChanged(object? sender, EventArgs args)

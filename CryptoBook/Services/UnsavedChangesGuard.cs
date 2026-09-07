@@ -29,9 +29,30 @@ namespace CryptoBook.Services
 
         public async Task<bool> CanCloseAsync(
             CancellationToken cancellationToken = default) =>
-            await CanProceedAsync(
+            await CheckWorkspaceAsync(
                 dialogService.ConfirmCloseWithUnsavedChanges,
                 cancellationToken);
+
+        private async Task<bool> CheckWorkspaceAsync(
+            Func<UnsavedChangesChoice> requestChoice,
+            CancellationToken cancellationToken)
+        {
+            if(!await CanProceedAsync(requestChoice, cancellationToken))
+                return false;
+            if(documentSession is not IWorkspaceDocumentSession workspace ||
+               !workspace.HasInactiveChanges)
+                return true;
+            string originalPage = workspace.ActivePageKey;
+            try
+            {
+                workspace.SelectPage(originalPage == "Home" ? "MarkdownEditor" : "Home");
+                return await CanProceedAsync(requestChoice, cancellationToken);
+            }
+            finally
+            {
+                workspace.SelectPage(originalPage);
+            }
+        }
 
         private async Task<bool> CanProceedAsync(
             Func<UnsavedChangesChoice> requestChoice,

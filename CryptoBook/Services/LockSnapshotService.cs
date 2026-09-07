@@ -24,11 +24,32 @@ public sealed class LockSnapshotService: ILockSnapshotService
     private readonly IFlowDocumentSaveService saveService;
     private readonly IFlowDocumentLoadService loadService;
     private readonly IFileTemplate snapshotTemplate = new SecureFileTemplate();
+    private readonly IFileTemplateRegistry? templateRegistry;
+    private readonly IMarkdownDocumentState? markdownDocument;
 
     public LockSnapshotService(
         ISecureFileProcessor secureFileProcessor,
         IFlowDocumentSaveService saveService,
-        IFlowDocumentLoadService loadService)
+        IFlowDocumentLoadService loadService,
+        IFileTemplateRegistry? templateRegistry = null,
+        IMarkdownDocumentState? markdownDocument = null)
+        : this(
+            secureFileProcessor,
+            saveService,
+            loadService,
+            GetDefaultSnapshotPath(),
+            templateRegistry,
+            markdownDocument)
+    {
+    }
+
+    internal LockSnapshotService(
+        ISecureFileProcessor secureFileProcessor,
+        IFlowDocumentSaveService saveService,
+        IFlowDocumentLoadService loadService,
+        string snapshotPath,
+        IFileTemplateRegistry? templateRegistry = null,
+        IMarkdownDocumentState? markdownDocument = null)
     {
         this.secureFileProcessor = secureFileProcessor ??
             throw new ArgumentNullException(nameof(secureFileProcessor));
@@ -36,9 +57,15 @@ public sealed class LockSnapshotService: ILockSnapshotService
             throw new ArgumentNullException(nameof(saveService));
         this.loadService = loadService ??
             throw new ArgumentNullException(nameof(loadService));
+        this.templateRegistry = templateRegistry;
+        this.markdownDocument = markdownDocument;
+        ArgumentException.ThrowIfNullOrWhiteSpace(snapshotPath);
+        SnapshotPath = Path.GetFullPath(snapshotPath);
     }
 
-    public string SnapshotPath { get; } = Path.Combine(
+    public string SnapshotPath { get; }
+
+    private static string GetDefaultSnapshotPath() => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "CryptoBook",
         "Lock",
@@ -58,20 +85,28 @@ public sealed class LockSnapshotService: ILockSnapshotService
         string? temporaryPath = null;
         try
         {
+            bool isMarkdown = markdownDocument?.IsActive == true;
+            IFileTemplate contentTemplate = isMarkdown
+                ? templateRegistry?.GetById("Markdown")
+                    ?? new MarkdownFileTemplate()
+                : snapshotTemplate;
+            LockSnapshotMetadata snapshotMetadata = isMarkdown
+                ? metadata with { ContentTemplateId = "Markdown" }
+                : metadata;
             await using var document = new MemoryStream();
             await saveService.SaveToStreamAsync(
                 richTextBox,
                 document,
-                snapshotTemplate,
+                contentTemplate,
                 cancellationToken);
             await using var envelope = new MemoryStream();
             await BinarySnapshotEnvelope.WriteHeaderAsync(
                 envelope,
                 SnapshotMagic,
-                metadata,
+                snapshotMetadata,
                 cancellationToken);
-            document.Position = 0;
-            await document.CopyToAsync(envelope, cancellationToken);
+            await WorkspaceSnapshotPayload.WriteAsync(envelope, document,
+                metadata.InactiveDocument, cancellationToken);
             envelope.Position = 0;
 
             string directory = Path.GetDirectoryName(SnapshotPath)!;
@@ -134,11 +169,15 @@ public sealed class LockSnapshotService: ILockSnapshotService
         {
             await using Stream documentSource =
                 BinarySnapshotEnvelope.OpenPayloadStream(stream);
+            var workspace = await WorkspaceSnapshotPayload.ReadAsync(documentSource, cancellationToken);
+            await using var activeSource = workspace.Active;
+            IFileTemplate contentTemplate = ResolveContentTemplate(
+                metadata.ContentTemplateId);
             FlowDocument document = await loadService.PrepareAsync(
-                documentSource,
-                snapshotTemplate,
+                activeSource,
+                contentTemplate,
                 cancellationToken);
-            return (document, metadata);
+            return (document, metadata with { InactiveDocument = workspace.Inactive });
         }
 
         // Совместимость со снимками версии 1: JSON с Base64-документом.
@@ -178,6 +217,23 @@ public sealed class LockSnapshotService: ILockSnapshotService
         catch
         {
         }
+    }
+
+    private IFileTemplate ResolveContentTemplate(string? templateId)
+    {
+        if(string.IsNullOrWhiteSpace(templateId))
+            return snapshotTemplate;
+        if(string.Equals(
+            templateId,
+            "Markdown",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return templateRegistry?.GetById("Markdown")
+                ?? new MarkdownFileTemplate();
+        }
+
+        throw new InvalidDataException(
+            $"Lock snapshot content format '{templateId}' is unavailable.");
     }
 
     private sealed record LegacySnapshotEnvelope(

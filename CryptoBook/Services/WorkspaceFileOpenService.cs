@@ -243,7 +243,8 @@ namespace CryptoBook.Services
                 if(accessError is not null)
                     return WorkspaceFileOpenResult.Fail(accessError);
 
-                if(!await unsavedChangesGuard.CanProceedAsync(
+                if(documentSession is not IWorkspaceDocumentSession &&
+                   !await unsavedChangesGuard.CanProceedAsync(
                     cancellationToken))
                 {
                     return WorkspaceFileOpenResult.Cancel();
@@ -283,13 +284,12 @@ namespace CryptoBook.Services
                 IFileTemplate? template = FindTemplate(filePath);
                 if(template?.OpenMode == FileOpenMode.Document)
                 {
-                    await internalFileOpenService.OpenDocumentAsync(
+                    return await OpenWorkspaceDocumentAsync(
                         filePath,
                         filePath,
                         template,
                         sourceIsEncrypted: false,
                         cancellationToken);
-                    return WorkspaceFileOpenResult.InternalSuccess();
                 }
 
                 if(template?.OpenMode == FileOpenMode.Media)
@@ -329,14 +329,14 @@ namespace CryptoBook.Services
                 IFileTemplate? template = FindTemplate(decryptedPath);
                 if(template?.OpenMode == FileOpenMode.Document)
                 {
-                    await internalFileOpenService.OpenDocumentAsync(
+                    WorkspaceFileOpenResult result = await OpenWorkspaceDocumentAsync(
                         filePath,
                         decryptedPath,
                         template,
                         sourceIsEncrypted: true,
                         cancellationToken);
                     TryDeleteDirectory(operationDirectory);
-                    return WorkspaceFileOpenResult.InternalSuccess();
+                    return result;
                 }
 
                 if(template?.OpenMode == FileOpenMode.Media)
@@ -357,6 +357,33 @@ namespace CryptoBook.Services
                 TryDeleteDirectory(operationDirectory);
                 throw;
             }
+        }
+
+        private async Task<WorkspaceFileOpenResult> OpenWorkspaceDocumentAsync(
+            string sourcePath, string contentPath, IFileTemplate contentTemplate,
+            bool sourceIsEncrypted, CancellationToken cancellationToken)
+        {
+            if(documentSession is IWorkspaceDocumentSession workspace)
+            {
+                string originalPage = workspace.ActivePageKey;
+                string targetPage = contentTemplate is CryptoBook.FileTemplates.MarkdownFileTemplate
+                    ? "MarkdownEditor" : "Home";
+                bool selected = workspace.SelectPage(targetPage);
+                if(selected && IsCurrentDocument(sourcePath))
+                    return WorkspaceFileOpenResult.InternalSuccess();
+                try
+                {
+                    if(selected && !await unsavedChangesGuard.CanProceedAsync(cancellationToken))
+                        return WorkspaceFileOpenResult.Cancel();
+                }
+                finally
+                {
+                    workspace.SelectPage(originalPage);
+                }
+            }
+            await internalFileOpenService.OpenDocumentAsync(sourcePath, contentPath,
+                contentTemplate, sourceIsEncrypted, cancellationToken);
+            return WorkspaceFileOpenResult.InternalSuccess();
         }
 
         private async Task<(string OperationDirectory, string DecryptedPath)>

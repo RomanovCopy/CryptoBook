@@ -37,6 +37,8 @@ namespace CryptoBook.Models
         private readonly IRecentDocumentService? recentDocumentService;
         private readonly IDocumentBackupRecoveryService?
             backupRecoveryService;
+        private readonly IMarkdownDocumentState? markdownDocument;
+        private readonly IMarkdownFlowDocumentRenderer? markdownRenderer;
 
         public MenuFileModel(
             IWindowManager windowManager,
@@ -55,7 +57,9 @@ namespace CryptoBook.Models
             IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
             IKeyResetService? keyResetService = null,
             IRecentDocumentService? recentDocumentService = null,
-            IDocumentBackupRecoveryService? backupRecoveryService = null)
+            IDocumentBackupRecoveryService? backupRecoveryService = null,
+            IMarkdownDocumentState? markdownDocument = null,
+            IMarkdownFlowDocumentRenderer? markdownRenderer = null)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
@@ -94,6 +98,8 @@ namespace CryptoBook.Models
             this.keyResetService = keyResetService;
             this.recentDocumentService = recentDocumentService;
             this.backupRecoveryService = backupRecoveryService;
+            this.markdownDocument = markdownDocument;
+            this.markdownRenderer = markdownRenderer;
 
             documentSession.PropertyChanged += (_, _) =>
                 OnPropertyChanged(nameof(documentSession));
@@ -124,7 +130,8 @@ namespace CryptoBook.Models
         public bool CanExecute_SaveFile(object? obj)
         {
             return keyResetService?.State is not (KeyResetState.Resetting or KeyResetState.Restoring) &&
-                !richTextBox.IsReadOnly &&
+                (markdownDocument?.IsActive == true ||
+                 !richTextBox.IsReadOnly) &&
                 (documentSession.IsDirty ||
                  string.IsNullOrWhiteSpace(documentSession.FilePath));
         }
@@ -140,7 +147,8 @@ namespace CryptoBook.Models
         public bool CanExecute_SaveAsFile(object? obj)
         {
             return keyResetService?.State is not (KeyResetState.Resetting or KeyResetState.Restoring) &&
-                !richTextBox.IsReadOnly;
+                (markdownDocument?.IsActive == true ||
+                 !richTextBox.IsReadOnly);
         }
         public Task Execute_SaveAsFileAsync(
             object? obj,
@@ -153,8 +161,10 @@ namespace CryptoBook.Models
 
         public bool CanExecute_PrintFile(object? obj) =>
             documentSession.HasDocument &&
-            documentContentInspector.HasPrintableContent(
-                richTextBox.Document);
+            (markdownDocument?.IsActive == true
+                ? !string.IsNullOrWhiteSpace(markdownDocument.Text)
+                : documentContentInspector.HasPrintableContent(
+                    richTextBox.Document));
 
         public async Task Execute_PrintFileAsync(
             object? obj,
@@ -170,9 +180,14 @@ namespace CryptoBook.Models
                     documentSession.FilePath)
                     ? documentSession.DisplayName
                     : Path.GetFileName(documentSession.FilePath);
-                documentPrintService.Print(
-                    richTextBox.Document,
-                    documentName);
+                System.Windows.Documents.FlowDocument printDocument =
+                    markdownDocument?.IsActive == true &&
+                    markdownRenderer is not null
+                        ? markdownRenderer.Render(
+                            markdownDocument.Text,
+                            documentSession.FilePath)
+                        : richTextBox.Document;
+                documentPrintService.Print(printDocument, documentName);
             }
             catch(Exception exception)
             {
@@ -198,6 +213,8 @@ namespace CryptoBook.Models
             CancellationToken cancellationToken)
         {
             using IDisposable? timerPause = keyResetService?.Pause();
+            using IDisposable? activeDocument =
+                (documentSession as IWorkspaceDocumentSession)?.HoldActiveDocument();
             try
             {
                 DocumentSaveTarget? target =
@@ -260,7 +277,8 @@ namespace CryptoBook.Models
                             cancellationToken);
                 }
                 await TryRecordSavedAsync(target.FilePath);
-                if(!documentSession.IsDirty)
+                if(!documentSession.IsDirty &&
+                   (documentSession as IWorkspaceDocumentSession)?.HasInactiveChanges != true)
                     await recoveryService.DeleteSnapshotAsync();
                 return true;
             }
@@ -301,6 +319,28 @@ namespace CryptoBook.Models
             CancellationToken cancellationToken,
             IProgressReporter progress)
         {
+            if(markdownDocument?.IsActive == true)
+            {
+                byte[] source = markdownDocument.GetBytes();
+                try
+                {
+                    await using var markdownPlaintext = new MemoryStream(
+                        source,
+                        writable: false);
+                    await secureFileProcessor.EncryptStreamAsync(
+                        markdownPlaintext,
+                        ".md",
+                        filePath,
+                        progress,
+                        cancellationToken);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(source);
+                }
+                return;
+            }
+
             // XamlPackage сначала формируется в памяти, чтобы открытая версия
             // документа не появлялась во временном файле на диске.
             await using MemoryStream plaintext = new();
@@ -412,7 +452,10 @@ namespace CryptoBook.Models
                 documentDialogService.ShowRecoveryCleanupError(exception);
             }
 
-            documentSession.Close();
+            if(documentSession is IWorkspaceDocumentSession workspace)
+                workspace.CloseCurrent();
+            else
+                documentSession.Close();
         }
 
         public bool CanExecute_UpdateFile(object? obj)

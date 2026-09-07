@@ -18,6 +18,7 @@ namespace CryptoBook.ViewModels
         private readonly IImageContentLoader imageLoader;
         private readonly IDocumentImageInserter imageInserter;
         private readonly IMessageService messages;
+        private readonly IMarkdownDocumentState? markdownDocument;
 
         public MenuContentViewModel(
             IWindowManager windowManager,
@@ -25,7 +26,8 @@ namespace CryptoBook.ViewModels
             IImageFilePicker imageFilePicker,
             IImageContentLoader imageLoader,
             IDocumentImageInserter imageInserter,
-            IMessageService messages)
+            IMessageService messages,
+            IMarkdownDocumentState? markdownDocument = null)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
@@ -39,6 +41,18 @@ namespace CryptoBook.ViewModels
                 ?? throw new ArgumentNullException(nameof(imageInserter));
             this.messages = messages
                 ?? throw new ArgumentNullException(nameof(messages));
+            this.markdownDocument = markdownDocument;
+            if(markdownDocument is not null)
+            {
+                markdownDocument.PropertyChanged += (_, args) =>
+                {
+                    if(args.PropertyName == nameof(
+                        IMarkdownDocumentState.IsActive))
+                    {
+                        insertImage?.RaiseCanExecuteChanged();
+                    }
+                };
+            }
 
             RegistryCommands();
         }
@@ -50,7 +64,8 @@ namespace CryptoBook.ViewModels
         public ICommand InsertImage => insertImage ??=
             new AsyncRelayCommand(
                 (_, cancellationToken) =>
-                    InsertImageAsync(cancellationToken));
+                    InsertImageAsync(cancellationToken),
+                _ => markdownDocument?.IsActive != true);
         private AsyncRelayCommand? insertImage;
 
         public ICommand MediaPlayer => mediaPlayer ??=

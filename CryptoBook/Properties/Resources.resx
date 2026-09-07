@@ -538,6 +538,8 @@
   <data name="File.TypeNotSelected" xml:space="preserve"><value>No file type is selected.</value></data>
   <data name="FileTemplate.Image" xml:space="preserve"><value>Image</value></data>
   <data name="FileTemplate.Text" xml:space="preserve"><value>Text file</value></data>
+  <data name="FileTemplate.Markdown" xml:space="preserve"><value>Markdown document</value></data>
+  <data name="Document.MarkdownRequiresSourceText" xml:space="preserve"><value>Markdown can only be saved from a Markdown source document.</value></data>
   <data name="FileTemplate.Secure" xml:space="preserve"><value>Encrypted file</value></data>
   <data name="FileTemplate.Video" xml:space="preserve"><value>Video</value></data>
   <data name="FileTemplate.Xaml" xml:space="preserve"><value>XAML file</value></data>
@@ -666,6 +668,9 @@
   <data name="SideMenu.Workspace" xml:space="preserve"><value>Workspace</value></data>
   <data name="SideMenu.Editor" xml:space="preserve"><value>Editor</value></data>
   <data name="SideMenu.Editor.Description" xml:space="preserve"><value>Open the current document</value></data>
+  <data name="SideMenu.Home.Description" xml:space="preserve"><value>Open the home page</value></data>
+  <data name="SideMenu.MarkdownEditor" xml:space="preserve"><value>Markdown editor</value></data>
+  <data name="SideMenu.MarkdownEditor.Description" xml:space="preserve"><value>Return to the open Markdown document</value></data>
   <data name="SideMenu.SearchDocuments" xml:space="preserve"><value>Search documents</value></data>
   <data name="SideMenu.SearchDocuments.Description" xml:space="preserve"><value>Find text in workspace documents</value></data>
   <data name="Workspace.ContentSearch.Title" xml:space="preserve"><value>Search documents</value></data>

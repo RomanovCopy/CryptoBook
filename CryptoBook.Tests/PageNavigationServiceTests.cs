@@ -52,6 +52,31 @@ namespace CryptoBook.Tests
             Assert.Same(service, page.OwningNavigationService);
         }
 
+        [StaFact]
+        public void Navigate_NewBranch_KeepsParallelPagesAlive()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterType<TestPage>();
+            builder.RegisterInstance(new Registry()).As<IPageRegistry>();
+            using IContainer container = builder.Build();
+            using var service = new PageNavigationService(container);
+
+            service.Navigate("Home");
+            service.Navigate("MarkdownEditor");
+            Page markdownPage = Assert.IsType<TestPage>(service.CurrentPage);
+
+            service.Navigate("Home");
+            service.Navigate("WorkspaceSearch");
+
+            Assert.Equal(
+                ["Home", "MarkdownEditor", "WorkspaceSearch"],
+                service.Keys);
+
+            service.Navigate("MarkdownEditor");
+
+            Assert.Same(markdownPage, service.CurrentPage);
+        }
+
         private sealed class Registry: IPageRegistry
         {
             public Type Resolve(string key) => typeof(TestPage);

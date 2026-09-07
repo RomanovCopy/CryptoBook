@@ -15,6 +15,48 @@ namespace CryptoBook.Tests
     public sealed class DocumentRecoveryTests
     {
         [WpfFact]
+        public async Task Snapshot_CleanHomeAndDirtyInactiveMarkdown_RestoresBoth()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var editor = CreateEditor();
+                var markdown = new MarkdownDocumentState();
+                var session = new DocumentSession(editor, markdown);
+                var template = new XamlPackageFileTemplate();
+                var registry = new FileTemplateRegistry([template, new MarkdownFileTemplate()]);
+                session.Open(Path.Combine(directory, "home.XamlPackage"), template,
+                    new FlowDocument(new Paragraph(new Run("Home contents"))));
+                var markdownDocument = new FlowDocument();
+                MarkdownDocumentMetadata.SetSource(markdownDocument,
+                    new MarkdownTextDocument("# Original", new UTF8Encoding(false), []));
+                session.Open(Path.Combine(directory, "book.md"), new MarkdownFileTemplate(), markdownDocument);
+                markdown.Text = "# Unsaved independent Markdown";
+                session.SelectPage("Home");
+                Assert.False(session.IsDirty);
+                Assert.True(session.HasInactiveChanges);
+                using var recovery = new DocumentRecoveryService(session, editor,
+                    new TestSaveService(), new TestLoadService(), registry,
+                    Dispatcher.CurrentDispatcher, Path.Combine(directory, "current.recovery"),
+                    markdownDocument: markdown);
+                await recovery.SaveSnapshotNowAsync();
+                Assert.True(recovery.HasSnapshot);
+                session.Close();
+                Assert.True(await recovery.RestoreSnapshotAsync());
+                Assert.Contains("Home contents", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+                Assert.True(session.HasMarkdownDocument);
+                session.SelectPage("MarkdownEditor");
+                Assert.Equal("# Unsaved independent Markdown", markdown.Text);
+                Assert.True(session.IsDirty);
+            }
+            finally
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+
+        [WpfFact]
         public async Task Snapshot_IsEncrypted_AndRestoresDirtyDocument()
         {
             string directory = Path.Combine(

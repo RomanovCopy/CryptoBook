@@ -20,6 +20,7 @@ namespace CryptoBook.ViewModels
         private readonly IFolderPickerService folderPickerService;
         private readonly IWorkspaceService workspaceService;
         private readonly IMessageService messageService;
+        private readonly IMarkdownDocumentState markdownDocument;
         private readonly AsyncRelayCommand pageLoadedCommand;
         private readonly AsyncRelayCommand chooseWorkspaceCommand;
         private readonly RelayCommand noOperationCommand = new(_ => { });
@@ -34,7 +35,8 @@ namespace CryptoBook.ViewModels
             IPinnedDocumentsViewModel pinnedDocuments,
             IFolderPickerService folderPickerService,
             IWorkspaceService workspaceService,
-            IMessageService messageService)
+            IMessageService messageService,
+            IMarkdownDocumentState markdownDocument)
         {
             DocumentView = documentView
                 ?? throw new ArgumentNullException(nameof(documentView));
@@ -56,11 +58,14 @@ namespace CryptoBook.ViewModels
                 ?? throw new ArgumentNullException(nameof(workspaceService));
             this.messageService = messageService
                 ?? throw new ArgumentNullException(nameof(messageService));
+            this.markdownDocument = markdownDocument
+                ?? throw new ArgumentNullException(nameof(markdownDocument));
 
             pageLoadedCommand = new AsyncRelayCommand(InitializeAsync);
             chooseWorkspaceCommand = new AsyncRelayCommand(ChooseWorkspaceAsync);
 
             documentSession.PropertyChanged += OnDocumentSessionPropertyChanged;
+            markdownDocument.PropertyChanged += OnMarkdownDocumentPropertyChanged;
             LocalizationManager.CultureChanged += OnCultureChanged;
         }
 
@@ -70,7 +75,10 @@ namespace CryptoBook.ViewModels
         public IRecentDocumentsViewModel RecentDocuments { get; }
         public IPinnedDocumentsViewModel PinnedDocuments { get; }
 
-        public bool HasDocument => documentSession.HasDocument;
+        public bool HasDocument =>
+            documentSession is IWorkspaceDocumentSession workspace
+                ? workspace.HasHomeDocument
+                : documentSession.HasDocument && !markdownDocument.IsActive;
 
         public string WorkspaceDirectoryDisplay
         {
@@ -158,7 +166,16 @@ namespace CryptoBook.ViewModels
             object? sender,
             PropertyChangedEventArgs args)
         {
-            if(args.PropertyName == nameof(IDocumentSession.HasDocument))
+            if(args.PropertyName is nameof(IDocumentSession.HasDocument) or
+                nameof(IWorkspaceDocumentSession.HasHomeDocument))
+                OnPropertyChanged(nameof(HasDocument));
+        }
+
+        private void OnMarkdownDocumentPropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(IMarkdownDocumentState.IsActive))
                 OnPropertyChanged(nameof(HasDocument));
         }
 
