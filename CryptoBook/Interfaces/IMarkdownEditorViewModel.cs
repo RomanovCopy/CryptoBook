@@ -14,6 +14,7 @@ namespace CryptoBook.Interfaces
         string ToggleViewText { get; }
         FlowDocument? PreviewDocument { get; }
         ICommand ToggleView { get; }
+        ICommand OpenSyntaxHelp { get; }
         ICommand OpenHyperlink { get; }
         ICommand SaveDocument { get; }
         ICommand SaveDocumentAs { get; }

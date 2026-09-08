@@ -90,7 +90,10 @@ namespace CryptoBook.Models
                     pageNavigationService.Navigate("MarkdownEditor");
                 pageNavigationService.Navigate(workspaceDocuments.ActivePageKey);
                 if(!workspaceDocuments.HasMarkdownDocument)
+                {
                     pageNavigationService.Remove("MarkdownEditor");
+                    pageNavigationService.Remove("MarkdownSyntaxHelp");
+                }
                 if(!workspaceDocuments.HasHomeDocument && workspaceDocuments.HasMarkdownDocument)
                     pageNavigationService.Remove("Home");
             }
