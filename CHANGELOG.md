@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.1.3.3 - 2026-09-09
+
+### Added
+
+- A2, A3 and A4 page-size selection with portrait/landscape orientation in the
+  new rich-text document dialog.
+- Built-in Markdown syntax help with examples, navigation back to the editor,
+  and explanations of supported preview syntax and image/link restrictions.
+- An Insert image command in the rich-text editor context menu.
+
+### Changed
+
+- Center the document sheet and automatically scale the editor to the available
+  width when resizing the window; show the current zoom in the status bar.
+- Preserve document width through XamlPackage/protected rich-text saves and
+  document-session switches, and use it when preparing the reading preview.
+- Refresh English and Russian READMEs with current application views and
+  illustrated demonstration documents.
+- Synchronize application, installer and release metadata for 1.1.3.3.
+
+Page size controls the continuous editor's sheet width. It does not introduce
+separate editable pages or a dedicated PDF exporter.
+
+Full comparison: [v1.1.3.2...v1.1.3.3](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.2...v1.1.3.3)
+
 ## 1.1.3.2 - 2026-09-07
 
 ### Added

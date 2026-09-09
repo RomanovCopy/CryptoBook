@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.3.2-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.2)
+[![Version](https://img.shields.io/badge/version-1.1.3.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.3)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -41,21 +41,35 @@ machine unless you explicitly move or share them.
 
 ## Screenshots
 
-| File workspace | Themes |
+| Markdown preview | Markdown syntax help |
 | --- | --- |
-| ![CryptoBook side menu](docs/screenshots/side-menu.png) | ![CryptoBook theme settings](docs/screenshots/settings-themes.png) |
-| **Sepia reading mode** | **Editor** |
-| ![CryptoBook Sepia mode](docs/screenshots/sepia-reading.png) | ![CryptoBook editor](docs/screenshots/editor.png) |
+| ![Markdown document with a local illustration](docs/screenshots/markdown-preview.png) | ![Built-in Markdown syntax guide](docs/screenshots/markdown-help.png) |
+| **Sepia reading mode** | **Document navigation** |
+| ![Illustrated document in Sepia](docs/screenshots/sepia-reading.png) | ![Side menu and illustrated document](docs/screenshots/side-menu.png) |
+
+Screenshots show version 1.1.3.3 with demonstration content. See the
+[capture notes and sample documents](docs/screenshots/README.md).
+
+## New in 1.1.3.3
+
+- Choose A2, A3 or A4 and portrait or landscape orientation when creating a rich-text document.
+- The editor centers the sheet and scales it to the available width as the window changes size;
+  the status bar displays the current zoom.
+- Insert an image from the editor's context menu.
+- Open the built-in Markdown syntax guide with examples and preview restrictions.
 
 ## Main features
 
 - create and edit TXT, RTF, XAML and XamlPackage documents;
 - edit Markdown in a dedicated page and switch between source and rendered preview;
+- consult the built-in Markdown syntax guide without closing the document;
 - switch between rich-text and Markdown documents while preserving unsaved changes;
 - format text and paragraphs, create lists, insert links and images;
 - set a document background color or image and preserve it in XamlPackage and
   protected documents;
 - resize and position images inside documents;
+- choose A2/A3/A4 page width and orientation for new rich-text documents, with automatic
+  editor scaling and layout preservation in XamlPackage and protected rich-text saves;
 - browse folders and files with sorting, favorites and change monitoring;
 - pin frequently used documents with Quick Access;
 - search file names inside the selected workspace;
@@ -135,8 +149,8 @@ dotnet restore CryptoBook/CryptoBook.sln --locked-mode
 dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
-# Self-contained single-file x64-публикация и установочный EXE (требуется Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.3.2
+# Self-contained single-file x64 build and installer (requires Inno Setup 6)
+./installer/Build-Installer.ps1 -Version 1.1.3.3
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:

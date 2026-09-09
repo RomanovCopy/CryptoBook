@@ -129,6 +129,8 @@ def main() -> None:
         item
         for item in git(root, "ls-files").splitlines()
         if Path(item).suffix.lower() in IMAGE_SUFFIXES
+        # The generated contact sheet cannot inventory its own previous hash.
+        and (root / item).resolve() != sheet
     ]
 
     records: list[dict[str, object]] = []
@@ -150,7 +152,7 @@ def main() -> None:
 
     manifest = {
         "schemaVersion": 1,
-        "scope": "Git-tracked raster and vector image files",
+        "scope": "Git-tracked raster and vector image files, excluding the generated contact sheet",
         "assetCount": len(records),
         "assets": records,
     }
