@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -883,4 +883,9 @@
   <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>All specially rendered syntax is listed above. Other Markdig extensions—including task checkboxes, footnotes, formulas, diagrams, definition lists, alerts, custom containers, media, abbreviations, inserted/marked text, subscript, and superscript—have no corresponding presentation.</value></data>
   <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Safe preview</value></data>
   <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>Raw HTML is displayed as inert text. Remote and absolute-path images are not loaded; only relative local images up to 25 MB are shown.</value></data>
+  <data name="File.PaperSize" xml:space="preserve"><value>Paper size</value></data>
+  <data name="File.Orientation" xml:space="preserve"><value>Orientation</value></data>
+  <data name="File.Portrait" xml:space="preserve"><value>Portrait</value></data>
+  <data name="File.Landscape" xml:space="preserve"><value>Landscape</value></data>
+  <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Page height is unlimited.</value></data>
 </root>

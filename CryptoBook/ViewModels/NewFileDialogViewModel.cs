@@ -29,6 +29,10 @@ namespace CryptoBook.ViewModels
 
 
         public IReadOnlyList<IFileTemplate> Templates { get => newFileDialogModel.Templates;}
+        public IReadOnlyList<DocumentPaperSize> PaperSizes { get; } = Enum.GetValues<DocumentPaperSize>();
+        public DocumentPaperSize PaperSize { get => newFileDialogModel.PaperSize; set => newFileDialogModel.PaperSize = value; }
+        public bool IsLandscape { get => newFileDialogModel.IsLandscape; set => newFileDialogModel.IsLandscape = value; }
+        public bool HasPageLayout => SelectedTemplate is not CryptoBook.FileTemplates.MarkdownFileTemplate;
 
         public IFileTemplate? SelectedTemplate { get => newFileDialogModel.SelectedTemplate; set => newFileDialogModel.SelectedTemplate = value; }
 
@@ -72,6 +76,8 @@ namespace CryptoBook.ViewModels
 
             if(propertyName is nameof(FileName) or nameof(SelectedTemplate))
                 OnPropertyChanged(nameof(Caption), nameof(CaptionToolTip));
+            if(propertyName == nameof(SelectedTemplate))
+                OnPropertyChanged(nameof(HasPageLayout));
         }
 
         public void Dispose()

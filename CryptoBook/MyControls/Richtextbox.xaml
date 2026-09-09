@@ -24,6 +24,7 @@
     </UserControl.InputBindings>
     <Border BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="1,1,1,0">
         <Grid>
+            <AdornerDecorator>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
                 <ContentControl.Style>
                     <Style TargetType="{x:Type ContentControl}">
@@ -37,6 +38,12 @@
                 </ContentControl.Style>
                 <ContentControl.Resources>
                     <Style TargetType="{x:Type services:RichTextBoxService}">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Margin" Value="24,24,24,0"/>
+                        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+                        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+                        <Setter Property="behaviors:DocumentPageBorderBehavior.IsEnabled" Value="True"/>
                         <Setter Property="Cursor"
                                 Value="{x:Static markup:HighContrastTextCursor.Instance}"/>
                         <Setter Property="ContextMenu"
@@ -50,6 +57,7 @@
                     </Style>
                 </ContentControl.Resources>
             </ContentControl>
+            </AdornerDecorator>
 
             <Grid>
                 <Grid.Style>

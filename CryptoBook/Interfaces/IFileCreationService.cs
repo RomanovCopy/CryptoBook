@@ -41,6 +41,7 @@ namespace CryptoBook.Interfaces
             bool isHidden,
             bool isReadOnly,
             CancellationToken ct,
-            IProgressReporter? progress = null);
+            IProgressReporter? progress = null,
+            byte[]? initialContent = null);
     }
 }

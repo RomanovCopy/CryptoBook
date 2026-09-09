@@ -35,10 +35,10 @@ namespace CryptoBook.Services
             ArgumentNullException.ThrowIfNull(document);
             ArgumentNullException.ThrowIfNull(packageContent);
 
-            AppearanceMetadata? metadata = CreateMetadata(
-                document.Background);
-            if(metadata is null)
-                return packageContent;
+            AppearanceMetadata metadata = CreateMetadata(
+                document.Background) ?? new AppearanceMetadata { Version = CurrentVersion };
+            metadata.PageWidth = double.IsFinite(document.PageWidth) && document.PageWidth > 0
+                ? document.PageWidth : null;
 
             using var package = new MemoryStream(
                 packageContent.Length + 1024);
@@ -108,6 +108,13 @@ namespace CryptoBook.Services
 
                 if(metadata?.Version != CurrentVersion)
                     return;
+
+                if(metadata.PageWidth is > 0 and <= 1000000)
+                {
+                    document.MinPageWidth = 0;
+                    document.MaxPageWidth = double.PositiveInfinity;
+                    document.PageWidth = metadata.PageWidth.Value;
+                }
 
                 Media.Brush? background = metadata.BackgroundKind switch
                 {
@@ -290,6 +297,7 @@ namespace CryptoBook.Services
 
         private sealed class AppearanceMetadata
         {
+            public double? PageWidth { get; set; }
             public int Version { get; init; }
             public string? BackgroundKind { get; init; }
             public uint? ColorArgb { get; init; }

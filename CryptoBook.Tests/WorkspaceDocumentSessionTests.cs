@@ -217,6 +217,21 @@ public sealed class WorkspaceDocumentSessionTests
         return (editor, markdown, new DocumentSession(editor, markdown));
     }
 
+    [WpfFact]
+    public void InactiveSnapshot_RestoresSelectedPageWidth()
+    {
+        var (editor, _, session) = CreateSession();
+        OpenHome(session);
+        DocumentPageLayout.Apply(editor.Document, CryptoBook.DTO.DocumentPaperSize.A3, true);
+        double width = editor.Document.PageWidth;
+        OpenMarkdown(session);
+        var snapshot = session.CaptureInactiveDocument();
+        session.Close();
+        session.RestoreInactiveDocument(snapshot);
+        Assert.Equal(width, editor.Document.PageWidth);
+        Assert.True(double.IsNaN(editor.Document.PageHeight));
+    }
+
     private static void OpenHome(DocumentSession session) => session.Open("home.txt",
         new PlainTextTemplate(), new FlowDocument(new Paragraph(new Run("Home content"))));
 

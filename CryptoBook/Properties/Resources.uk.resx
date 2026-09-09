@@ -1724,4 +1724,9 @@
   <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>Усю розмітку зі спеціальним відображенням перелічено вище. Інші розширення Markdig — прапорці завдань, виноски, формули, діаграми, списки визначень, попередження, контейнери, медіавставки, скорочення, вставлений і виділений текст, нижні й верхні індекси — не мають відповідного оформлення.</value></data>
   <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Безпечний попередній перегляд</value></data>
   <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>HTML-код відображається як неактивний текст. Віддалені зображення та зображення за абсолютним шляхом не завантажуються; показуються лише локальні файли за відносним шляхом розміром до 25 МБ.</value></data>
+  <data name="File.PaperSize" xml:space="preserve"><value>Формат аркуша</value></data>
+  <data name="File.Orientation" xml:space="preserve"><value>Орієнтація</value></data>
+  <data name="File.Portrait" xml:space="preserve"><value>Книжкова</value></data>
+  <data name="File.Landscape" xml:space="preserve"><value>Альбомна</value></data>
+  <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Висота сторінки не обмежена.</value></data>
 </root>
