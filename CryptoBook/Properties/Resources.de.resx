@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -411,6 +411,7 @@
   <data name="Editor.Editing" xml:space="preserve"><value>Bearbeitung</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Editor</value></data>
   <data name="Editor.Preview" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="Editor.Zoom" xml:space="preserve"><value>Zoom</value></data>
   <data name="Editor.Zoom100" xml:space="preserve"><value>Zoom 100 %</value></data>
   <data name="Editor.FitToWindow" xml:space="preserve"><value>An Fenster anpassen</value></data>
   <data name="Editor.DocumentStructure" xml:space="preserve"><value>Struktur</value></data>
@@ -824,4 +825,68 @@
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Das entschlüsselte Dokument konnte nicht konvertiert und veröffentlicht werden: {0}</value></data>
   <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Endgültiges Löschen</value></data>
   <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Das Löschen unter Android ist in der Regel unumkehrbar und verwendet den Papierkorb nicht. Ausgewählte Elemente endgültig löschen?</value></data>
+  <data name="MarkdownHelp.Title" xml:space="preserve"><value>Markdown-Syntax</value></data>
+  <data name="MarkdownHelp.Description" xml:space="preserve"><value>Vollständige Übersicht der Markdown-Syntax und Editorbefehle, die von der aktuellen CryptoBook-Vorschau unterstützt werden.</value></data>
+  <data name="MarkdownHelp.OpenHint" xml:space="preserve"><value>Hilfe zur Markdown-Syntax öffnen</value></data>
+  <data name="MarkdownHelp.Back" xml:space="preserve"><value>Zurück zum Editor</value></data>
+  <data name="MarkdownHelp.BackHint" xml:space="preserve"><value>Zum Markdown-Editor zurückkehren (Esc)</value></data>
+  <data name="MarkdownHelp.Group.Blocks" xml:space="preserve"><value>Blockelemente</value></data>
+  <data name="MarkdownHelp.Group.Inline" xml:space="preserve"><value>Formatierung innerhalb einer Zeile</value></data>
+  <data name="MarkdownHelp.Group.Spacing" xml:space="preserve"><value>Absätze und Zeilenumbrüche</value></data>
+  <data name="MarkdownHelp.Group.Editor" xml:space="preserve"><value>Editorbefehle</value></data>
+  <data name="MarkdownHelp.Group.Structure" xml:space="preserve"><value>Überschriften und Trennlinien</value></data>
+  <data name="MarkdownHelp.Group.Lists" xml:space="preserve"><value>Listen und Zitate</value></data>
+  <data name="MarkdownHelp.Group.Links" xml:space="preserve"><value>Links und Bilder</value></data>
+  <data name="MarkdownHelp.Group.Code" xml:space="preserve"><value>Codeblöcke</value></data>
+  <data name="MarkdownHelp.Group.Tables" xml:space="preserve"><value>Tabellen</value></data>
+  <data name="MarkdownHelp.Group.Limitations" xml:space="preserve"><value>Einschränkungen der Vorschau</value></data>
+  <data name="MarkdownHelp.Syntax" xml:space="preserve"><value>SYNTAX</value></data>
+  <data name="MarkdownHelp.Result" xml:space="preserve"><value>ERGEBNIS</value></data>
+  <data name="MarkdownHelp.Editor.Save.Result" xml:space="preserve"><value>Änderungen in der aktuellen Datei speichern.</value></data>
+  <data name="MarkdownHelp.Editor.SaveAs.Result" xml:space="preserve"><value>Das aktuelle Dokument in einer anderen Datei speichern.</value></data>
+  <data name="MarkdownHelp.Editor.Toggle.Result" xml:space="preserve"><value>Zwischen Quelltextbearbeitung und gerenderter Dokumentansicht wechseln.</value></data>
+  <data name="MarkdownHelp.Editor.Tab.Result" xml:space="preserve"><value>Ein Tabulatorzeichen in den Quelltext einfügen.</value></data>
+  <data name="MarkdownHelp.Editor.Help.Result" xml:space="preserve"><value>Die Schaltfläche ? öffnet diese Hilfe; Esc kehrt zum Editor zurück.</value></data>
+  <data name="MarkdownHelp.Headings.Result" xml:space="preserve"><value>ATX-Überschriften der Ebenen 1–6. Am Ende kann optional dieselbe Anzahl #-Zeichen stehen.</value></data>
+  <data name="MarkdownHelp.SetextH1.Result" xml:space="preserve"><value>Eine Setext-Überschrift der ersten Ebene.</value></data>
+  <data name="MarkdownHelp.SetextH2.Result" xml:space="preserve"><value>Eine Setext-Überschrift der zweiten Ebene.</value></data>
+  <data name="MarkdownHelp.Quote.Result" xml:space="preserve"><value>Ein Zitatblock. Zusätzliche &gt;-Zeichen erzeugen verschachtelte Zitate.</value></data>
+  <data name="MarkdownHelp.BulletedList.Result" xml:space="preserve"><value>Eine Aufzählungsliste; -, + und * sind als Marker zulässig.</value></data>
+  <data name="MarkdownHelp.NumberedList.Result" xml:space="preserve"><value>Eine nummerierte Liste mit . oder ) nach der Zahl. Die erste Zahl bestimmt den Startwert.</value></data>
+  <data name="MarkdownHelp.NestedList.Result" xml:space="preserve"><value>Ein eingerückter Eintrag erzeugt eine verschachtelte Liste. Einträge können Absätze, Zitate, Code und weitere Listen enthalten.</value></data>
+  <data name="MarkdownHelp.Rule.Result" xml:space="preserve"><value>Eine horizontale Trennlinie aus mindestens drei -, * oder _.</value></data>
+  <data name="MarkdownHelp.CodeBlock.Result" xml:space="preserve"><value>Ein umschlossener Codeblock. Text nach dem öffnenden Zaun wird als Sprachname angezeigt; Syntaxhervorhebung wird nicht angewendet.</value></data>
+  <data name="MarkdownHelp.TildeCode.Result" xml:space="preserve"><value>Ein Codeblock mit drei oder mehr Tilden statt Backticks.</value></data>
+  <data name="MarkdownHelp.IndentedCode.Result" xml:space="preserve"><value>Ein Codeblock, bei dem jede Zeile um vier Leerzeichen oder einen Tabulator eingerückt ist.</value></data>
+  <data name="MarkdownHelp.Table.Result" xml:space="preserve"><value>Eine Pipe-Tabelle. Die Trennzeile erzeugt den Kopf; äußere Pipes sind optional.</value></data>
+  <data name="MarkdownHelp.GridTable.Result" xml:space="preserve"><value>Eine Gittertabelle. = kennzeichnet die Kopfgrenze; Zeilen und Spalten können verbunden werden.</value></data>
+  <data name="MarkdownHelp.Bold.Result" xml:space="preserve"><value>Fett formatierter Text.</value></data>
+  <data name="MarkdownHelp.Italic.Result" xml:space="preserve"><value>Kursiver Text.</value></data>
+  <data name="MarkdownHelp.BoldItalic.Result" xml:space="preserve"><value>Fett-kursiver Text. Drei Unterstriche können statt Sternchen verwendet werden.</value></data>
+  <data name="MarkdownHelp.Strikethrough.Result" xml:space="preserve"><value>Durchgestrichener Text.</value></data>
+  <data name="MarkdownHelp.InlineCode.Result" xml:space="preserve"><value>Ein Codefragment in Festbreitenschrift. Enthält es einen Backtick, verwenden Sie einen längeren Begrenzer.</value></data>
+  <data name="MarkdownHelp.Escape.Result" xml:space="preserve"><value>Ein umgekehrter Schrägstrich zeigt Markdown-Satzzeichen wörtlich an, ohne sie als Markup auszuwerten.</value></data>
+  <data name="MarkdownHelp.Entity.Result" xml:space="preserve"><value>Eine benannte oder numerische HTML-Entität, die in ihr Unicode-Zeichen umgewandelt wird.</value></data>
+  <data name="MarkdownHelp.Link.Result" xml:space="preserve"><value>Ein anklickbarer HTTP-, HTTPS- oder E-Mail-Link.</value></data>
+  <data name="MarkdownHelp.ReferenceLink.Result" xml:space="preserve"><value>Ein Link, dessen URL separat definiert ist. Auch die Kurzformen [text][] und [ref] werden unterstützt.</value></data>
+  <data name="MarkdownHelp.AutoLink.Result" xml:space="preserve"><value>Eine Webadresse ohne eigene Beschriftung, die als anklickbarer Link angezeigt wird.</value></data>
+  <data name="MarkdownHelp.AutoEmail.Result" xml:space="preserve"><value>Eine E-Mail-Adresse, die in einen anklickbaren mailto-Link umgewandelt wird.</value></data>
+  <data name="MarkdownHelp.BareLink.Result" xml:space="preserve"><value>Eine einfache HTTP- oder HTTPS-Adresse wird automatisch erkannt.</value></data>
+  <data name="MarkdownHelp.Image.Result" xml:space="preserve"><value>Ein Bild neben der Markdown-Datei oder in einem relativen Unterordner.</value></data>
+  <data name="MarkdownHelp.ReferenceImage.Result" xml:space="preserve"><value>Ein lokales Bild, dessen relativer Pfad in einer Referenzdefinition angegeben ist.</value></data>
+  <data name="MarkdownHelp.Paragraph.Result" xml:space="preserve"><value>Eine Leerzeile beginnt einen neuen Absatz.</value></data>
+  <data name="MarkdownHelp.SoftBreak.Result" xml:space="preserve"><value>Ein normaler Zeilenumbruch im Quelltext wird als Leerzeichen im selben Absatz angezeigt.</value></data>
+  <data name="MarkdownHelp.LineBreak.Result" xml:space="preserve"><value>Zwei Leerzeichen am Zeilenende fügen einen Umbruch ohne neuen Absatz ein.</value></data>
+  <data name="MarkdownHelp.BackslashBreak.Result" xml:space="preserve"><value>Ein umgekehrter Schrägstrich am Zeilenende fügt ebenfalls einen harten Zeilenumbruch ein.</value></data>
+  <data name="MarkdownHelp.Html.Result" xml:space="preserve"><value>HTML-Code wird als inaktiver Quelltext angezeigt und niemals ausgeführt.</value></data>
+  <data name="MarkdownHelp.UnsafeLinks.Result" xml:space="preserve"><value>FTP-, Datei-, relative, JavaScript- und andere Nicht-HTTP-Links werden als Text statt als aktive Links angezeigt.</value></data>
+  <data name="MarkdownHelp.RemoteImage.Result" xml:space="preserve"><value>Entfernte Bilder und Bilder mit absolutem Pfad werden nicht geladen; stattdessen erscheint der Alternativtext.</value></data>
+  <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>Alle speziell dargestellten Konstrukte sind oben aufgeführt. Andere Markdig-Erweiterungen – darunter Aufgaben-Kontrollkästchen, Fußnoten, Formeln, Diagramme, Definitionslisten, Hinweise, Container, Medien, Abkürzungen, eingefügter/markierter Text sowie Tief- und Hochstellung – haben keine entsprechende Darstellung.</value></data>
+  <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Sichere Vorschau</value></data>
+  <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>HTML-Code wird als inaktiver Text angezeigt. Entfernte Bilder und Bilder mit absoluten Pfaden werden nicht geladen; angezeigt werden nur lokale relative Bilder bis 25 MB.</value></data>
+  <data name="File.PaperSize" xml:space="preserve"><value>Papierformat</value></data>
+  <data name="File.Orientation" xml:space="preserve"><value>Ausrichtung</value></data>
+  <data name="File.Portrait" xml:space="preserve"><value>Hochformat</value></data>
+  <data name="File.Landscape" xml:space="preserve"><value>Querformat</value></data>
+  <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Die Seitenhöhe ist unbegrenzt.</value></data>
 </root>

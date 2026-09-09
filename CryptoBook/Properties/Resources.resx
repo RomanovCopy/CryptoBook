@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -411,6 +411,7 @@
   <data name="Editor.Editing" xml:space="preserve"><value>Editing</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Editor</value></data>
   <data name="Editor.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Editor.Zoom" xml:space="preserve"><value>Zoom</value></data>
   <data name="Editor.Zoom100" xml:space="preserve"><value>100% zoom</value></data>
   <data name="Editor.FitToWindow" xml:space="preserve"><value>Fit to window</value></data>
   <data name="Editor.DocumentStructure" xml:space="preserve"><value>Structure</value></data>
@@ -824,4 +825,68 @@
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Could not convert and publish the decrypted document: {0}</value></data>
   <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Permanent deletion</value></data>
   <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Android deletion is usually irreversible and does not use the Recycle Bin. Permanently delete the selected items?</value></data>
+  <data name="MarkdownHelp.Title" xml:space="preserve"><value>Markdown syntax</value></data>
+  <data name="MarkdownHelp.Description" xml:space="preserve"><value>A complete reference to the Markdown syntax and editor commands supported by the current CryptoBook preview.</value></data>
+  <data name="MarkdownHelp.OpenHint" xml:space="preserve"><value>Open Markdown syntax help</value></data>
+  <data name="MarkdownHelp.Back" xml:space="preserve"><value>Back to editor</value></data>
+  <data name="MarkdownHelp.BackHint" xml:space="preserve"><value>Return to the Markdown editor (Esc)</value></data>
+  <data name="MarkdownHelp.Group.Blocks" xml:space="preserve"><value>Block elements</value></data>
+  <data name="MarkdownHelp.Group.Inline" xml:space="preserve"><value>Inline formatting</value></data>
+  <data name="MarkdownHelp.Group.Spacing" xml:space="preserve"><value>Paragraphs and line breaks</value></data>
+  <data name="MarkdownHelp.Group.Editor" xml:space="preserve"><value>Editor commands</value></data>
+  <data name="MarkdownHelp.Group.Structure" xml:space="preserve"><value>Headings and separators</value></data>
+  <data name="MarkdownHelp.Group.Lists" xml:space="preserve"><value>Lists and quotes</value></data>
+  <data name="MarkdownHelp.Group.Links" xml:space="preserve"><value>Links and images</value></data>
+  <data name="MarkdownHelp.Group.Code" xml:space="preserve"><value>Code blocks</value></data>
+  <data name="MarkdownHelp.Group.Tables" xml:space="preserve"><value>Tables</value></data>
+  <data name="MarkdownHelp.Group.Limitations" xml:space="preserve"><value>Preview limitations</value></data>
+  <data name="MarkdownHelp.Syntax" xml:space="preserve"><value>SYNTAX</value></data>
+  <data name="MarkdownHelp.Result" xml:space="preserve"><value>RESULT</value></data>
+  <data name="MarkdownHelp.Editor.Save.Result" xml:space="preserve"><value>Save changes to the current file.</value></data>
+  <data name="MarkdownHelp.Editor.SaveAs.Result" xml:space="preserve"><value>Save the current document to a different file.</value></data>
+  <data name="MarkdownHelp.Editor.Toggle.Result" xml:space="preserve"><value>Switch between editing the source and viewing the rendered document.</value></data>
+  <data name="MarkdownHelp.Editor.Tab.Result" xml:space="preserve"><value>Insert a tab character in the source editor.</value></data>
+  <data name="MarkdownHelp.Editor.Help.Result" xml:space="preserve"><value>The ? button opens this reference; Esc returns from it to the editor.</value></data>
+  <data name="MarkdownHelp.Headings.Result" xml:space="preserve"><value>ATX headings of levels 1–6. An optional matching run of # characters may close the heading.</value></data>
+  <data name="MarkdownHelp.SetextH1.Result" xml:space="preserve"><value>A level-one Setext heading.</value></data>
+  <data name="MarkdownHelp.SetextH2.Result" xml:space="preserve"><value>A level-two Setext heading.</value></data>
+  <data name="MarkdownHelp.Quote.Result" xml:space="preserve"><value>A quoted block. Additional &gt; characters create nested quotes.</value></data>
+  <data name="MarkdownHelp.BulletedList.Result" xml:space="preserve"><value>A bulleted list; -, +, and * are accepted as markers.</value></data>
+  <data name="MarkdownHelp.NumberedList.Result" xml:space="preserve"><value>A numbered list using . or ) after the number. The first number sets the starting value.</value></data>
+  <data name="MarkdownHelp.NestedList.Result" xml:space="preserve"><value>Indent an item to create a nested list. Lists may contain paragraphs, quotes, code, and other lists.</value></data>
+  <data name="MarkdownHelp.Rule.Result" xml:space="preserve"><value>A horizontal separator made from at least three -, *, or _ characters.</value></data>
+  <data name="MarkdownHelp.CodeBlock.Result" xml:space="preserve"><value>A fenced code block. Text after the opening fence is shown as a language label; syntax highlighting is not applied.</value></data>
+  <data name="MarkdownHelp.TildeCode.Result" xml:space="preserve"><value>A fenced code block using three or more tildes instead of backticks.</value></data>
+  <data name="MarkdownHelp.IndentedCode.Result" xml:space="preserve"><value>A code block created by indenting every line by four spaces or one tab.</value></data>
+  <data name="MarkdownHelp.Table.Result" xml:space="preserve"><value>A pipe table. The separator row creates the header; outer pipes are optional.</value></data>
+  <data name="MarkdownHelp.GridTable.Result" xml:space="preserve"><value>A grid table. = marks the header boundary; grid tables may span rows and columns.</value></data>
+  <data name="MarkdownHelp.Bold.Result" xml:space="preserve"><value>Bold text.</value></data>
+  <data name="MarkdownHelp.Italic.Result" xml:space="preserve"><value>Italic text.</value></data>
+  <data name="MarkdownHelp.BoldItalic.Result" xml:space="preserve"><value>Bold italic text. Three underscores may be used instead of asterisks.</value></data>
+  <data name="MarkdownHelp.Strikethrough.Result" xml:space="preserve"><value>Strikethrough text.</value></data>
+  <data name="MarkdownHelp.InlineCode.Result" xml:space="preserve"><value>A monospaced code fragment. Use a longer backtick delimiter when the fragment contains a backtick.</value></data>
+  <data name="MarkdownHelp.Escape.Result" xml:space="preserve"><value>A backslash displays Markdown punctuation literally instead of interpreting it as markup.</value></data>
+  <data name="MarkdownHelp.Entity.Result" xml:space="preserve"><value>A named or numeric HTML entity, converted to its Unicode character.</value></data>
+  <data name="MarkdownHelp.Link.Result" xml:space="preserve"><value>A clickable HTTP, HTTPS, or email link.</value></data>
+  <data name="MarkdownHelp.ReferenceLink.Result" xml:space="preserve"><value>A link whose URL is declared elsewhere. Collapsed [text][] and shortcut [ref] forms are also supported.</value></data>
+  <data name="MarkdownHelp.AutoLink.Result" xml:space="preserve"><value>A web address displayed as a clickable link without a custom caption.</value></data>
+  <data name="MarkdownHelp.AutoEmail.Result" xml:space="preserve"><value>An email address converted to a clickable mailto link.</value></data>
+  <data name="MarkdownHelp.BareLink.Result" xml:space="preserve"><value>A bare HTTP or HTTPS address is recognized automatically.</value></data>
+  <data name="MarkdownHelp.Image.Result" xml:space="preserve"><value>An image stored next to the Markdown file or in a relative subfolder.</value></data>
+  <data name="MarkdownHelp.ReferenceImage.Result" xml:space="preserve"><value>A local image whose relative path is declared in a reference definition.</value></data>
+  <data name="MarkdownHelp.Paragraph.Result" xml:space="preserve"><value>A blank line starts a new paragraph.</value></data>
+  <data name="MarkdownHelp.SoftBreak.Result" xml:space="preserve"><value>A normal source line ending is displayed as a space within the same paragraph.</value></data>
+  <data name="MarkdownHelp.LineBreak.Result" xml:space="preserve"><value>Two spaces at the end of a line insert a line break without starting a new paragraph.</value></data>
+  <data name="MarkdownHelp.BackslashBreak.Result" xml:space="preserve"><value>A backslash at the end of a line also inserts a hard line break.</value></data>
+  <data name="MarkdownHelp.Html.Result" xml:space="preserve"><value>Raw HTML is shown as inert source text and is never executed.</value></data>
+  <data name="MarkdownHelp.UnsafeLinks.Result" xml:space="preserve"><value>FTP, file, relative, javascript, and other non-HTTP schemes are displayed as text, not active links.</value></data>
+  <data name="MarkdownHelp.RemoteImage.Result" xml:space="preserve"><value>Remote and absolute-path images are not loaded; their alternative text is shown instead.</value></data>
+  <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>All specially rendered syntax is listed above. Other Markdig extensions—including task checkboxes, footnotes, formulas, diagrams, definition lists, alerts, custom containers, media, abbreviations, inserted/marked text, subscript, and superscript—have no corresponding presentation.</value></data>
+  <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Safe preview</value></data>
+  <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>Raw HTML is displayed as inert text. Remote and absolute-path images are not loaded; only relative local images up to 25 MB are shown.</value></data>
+  <data name="File.PaperSize" xml:space="preserve"><value>Paper size</value></data>
+  <data name="File.Orientation" xml:space="preserve"><value>Orientation</value></data>
+  <data name="File.Portrait" xml:space="preserve"><value>Portrait</value></data>
+  <data name="File.Landscape" xml:space="preserve"><value>Landscape</value></data>
+  <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Page height is unlimited.</value></data>
 </root>

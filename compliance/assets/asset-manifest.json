@@ -1,26 +1,8 @@
 {
   "schemaVersion": 1,
-  "scope": "Git-tracked raster and vector image files",
-  "assetCount": 48,
+  "scope": "Git-tracked raster and vector image files, excluding the generated contact sheet",
+  "assetCount": 51,
   "assets": [
-    {
-      "path": "AppIcon.BlueYellow.v1.png",
-      "size": 1444049,
-      "sha256": "948C12BF6F76B096D4C6D2BD710D6B4F096D4AF6A857134DB6BA4FEE359C3950",
-      "format": "PNG",
-      "width": 1254,
-      "height": 1254,
-      "mode": "RGB",
-      "frames": 1,
-      "metadata": {},
-      "firstAdded": {
-        "commit": "3d4425fde8b8d3ea33b984cb3f3b9663f9a82193",
-        "date": "2026-08-02T20:25:35+03:00",
-        "author": "RomanovCopy",
-        "email": "RomanovCopy@gmail.com",
-        "subject": "Добавлена иконка"
-      }
-    },
     {
       "path": "CryptoBook/Resources/Icons/AppIcon.ico",
       "size": 128004,
@@ -826,12 +808,46 @@
       }
     },
     {
-      "path": "docs/screenshots/editor.png",
-      "size": 24974,
-      "sha256": "77C296310C8DD0A73E4AA60B3C3AC37F99E84BA587AD7DE1E4B1B9462B73ACA7",
+      "path": "docs/assets/branding/AppIcon.BlueYellow.v1.png",
+      "size": 1444049,
+      "sha256": "948C12BF6F76B096D4C6D2BD710D6B4F096D4AF6A857134DB6BA4FEE359C3950",
+      "format": "PNG",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "frames": 1,
+      "metadata": {},
+      "firstAdded": {
+        "commit": "3d4425fde8b8d3ea33b984cb3f3b9663f9a82193",
+        "date": "2026-08-02T20:25:35+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Добавлена иконка"
+      }
+    },
+    {
+      "path": "docs/screenshots/demo/mountain-lake.png",
+      "size": 37549,
+      "sha256": "5032EACEE4702EF9AB8F187AE1774F68FBC35CE147EB05A52D4F774615313244",
       "format": "PNG",
       "width": 1200,
-      "height": 800,
+      "height": 440,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": null
+    },
+    {
+      "path": "docs/screenshots/editor.png",
+      "size": 137071,
+      "sha256": "2EDC16F8FAB69CA7A14EA32228B2C48170FD11A1EE3F3C936A2224944E927CD7",
+      "format": "PNG",
+      "width": 1440,
+      "height": 960,
       "mode": "RGBA",
       "frames": 1,
       "metadata": {
@@ -848,12 +864,44 @@
       }
     },
     {
-      "path": "docs/screenshots/sepia-reading.png",
-      "size": 44133,
-      "sha256": "CE0CC868AD6621A33B5797D03DBE4E28C67C2DAE1B962FF08A74174801E35F7C",
+      "path": "docs/screenshots/markdown-help.png",
+      "size": 79908,
+      "sha256": "13F6F1527BD01C20EE5BD2399C8259193F1A6375613496788A76D0E98078316C",
       "format": "PNG",
-      "width": 1200,
-      "height": 800,
+      "width": 1120,
+      "height": 960,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": null
+    },
+    {
+      "path": "docs/screenshots/markdown-preview.png",
+      "size": 84478,
+      "sha256": "2F27EB0BAE84F1DEEF5433924BDC61BB540D7A9FC87E20BBE91A727F01D13602",
+      "format": "PNG",
+      "width": 1120,
+      "height": 960,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
+      "firstAdded": null
+    },
+    {
+      "path": "docs/screenshots/sepia-reading.png",
+      "size": 70004,
+      "sha256": "3E1C1B86587A6FC00402160B3C68205FD942D575AF3FEC081F74D4A8B90F3AC1",
+      "format": "PNG",
+      "width": 1440,
+      "height": 960,
       "mode": "RGBA",
       "frames": 1,
       "metadata": {
@@ -893,11 +941,11 @@
     },
     {
       "path": "docs/screenshots/side-menu.png",
-      "size": 43895,
-      "sha256": "BFF35D8039680D19796DF7460376EAF77D8CC4D054BAF14628B70D85651719BF",
+      "size": 145085,
+      "sha256": "645E5CFDD5E8258D5A7F9976AE7FEABEA904E667785AE248BE6811870F52E7DA",
       "format": "PNG",
-      "width": 1200,
-      "height": 800,
+      "width": 1440,
+      "height": 960,
       "mode": "RGBA",
       "frames": 1,
       "metadata": {

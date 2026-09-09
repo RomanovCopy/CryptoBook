@@ -61,6 +61,31 @@ namespace CryptoBook.Tests
                 Directory.Delete(testDirectory, recursive: true);
         }
 
+        [WpfTheory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Create_PreservesSelectedWidthInInitialFile(bool encrypted)
+        {
+            var processor = new SecureFileProcessorStub();
+            IFileTemplate template = encrypted ? new SecureFileTemplate() : new XamlPackageFileTemplate();
+            var service = new FileCreationService(new LocalFileManagerStub(), processor,
+                new FileTemplateRegistry([new SecureFileTemplate(), new XamlPackageFileTemplate()]));
+            var handler = new XamlPackageDocumentFormatHandler(
+                new WpfDispatcherService(System.Windows.Threading.Dispatcher.CurrentDispatcher));
+            var source = new System.Windows.Documents.FlowDocument(new System.Windows.Documents.Paragraph());
+            DocumentPageLayout.Apply(source, DocumentPaperSize.A2, true);
+            byte[] content = await handler.SerializeAsync(source);
+            FileOperationResult result = await service.CreateAsync(testDirectory, "wide", template,
+                IfExistsMode.FailIfExists, false, false, CancellationToken.None, initialContent: content);
+            Assert.True(result.Success);
+            byte[] saved = encrypted ? processor.Plaintext! :
+                await File.ReadAllBytesAsync(result.AffectedPath!["local://".Length..]);
+            var restored = new System.Windows.Documents.FlowDocument();
+            await handler.LoadAsync(restored, saved);
+            Assert.Equal(source.PageWidth, restored.PageWidth);
+            Assert.True(double.IsNaN(restored.PageHeight));
+        }
+
         private sealed class SecureFileProcessorStub: ISecureFileProcessor
         {
             public byte[]? Plaintext { get; private set; }

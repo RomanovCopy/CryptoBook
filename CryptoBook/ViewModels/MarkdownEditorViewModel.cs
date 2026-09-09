@@ -16,6 +16,7 @@ namespace CryptoBook.ViewModels
         private readonly IUriNavigationService uriNavigationService;
         private readonly IMenuFileViewModel menuFile;
         private readonly IDocumentSession documentSession;
+        private readonly IPageNavigationService navigationService;
         private bool isPreviewMode;
         private FlowDocument? previewDocument;
 
@@ -24,7 +25,8 @@ namespace CryptoBook.ViewModels
             IMarkdownFlowDocumentRenderer renderer,
             IUriNavigationService uriNavigationService,
             IMenuFileViewModel menuFile,
-            IDocumentSession documentSession)
+            IDocumentSession documentSession,
+            IPageNavigationService navigationService)
         {
             this.markdownDocument = markdownDocument ??
                 throw new ArgumentNullException(nameof(markdownDocument));
@@ -36,6 +38,8 @@ namespace CryptoBook.ViewModels
                 throw new ArgumentNullException(nameof(menuFile));
             this.documentSession = documentSession ??
                 throw new ArgumentNullException(nameof(documentSession));
+            this.navigationService = navigationService ??
+                throw new ArgumentNullException(nameof(navigationService));
 
             markdownDocument.PropertyChanged += OnMarkdownDocumentChanged;
             LocalizationManager.CultureChanged += OnCultureChanged;
@@ -72,6 +76,11 @@ namespace CryptoBook.ViewModels
         public ICommand ToggleView => toggleView ??=
             new RelayCommand(_ => SetPreviewMode(!IsPreviewMode));
         private RelayCommand? toggleView;
+
+        public ICommand OpenSyntaxHelp => openSyntaxHelp ??=
+            new RelayCommand(_ => navigationService.Navigate(
+                "MarkdownSyntaxHelp"));
+        private RelayCommand? openSyntaxHelp;
 
         public ICommand OpenHyperlink => openHyperlink ??=
             new RelayCommand(

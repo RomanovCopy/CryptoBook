@@ -19,10 +19,10 @@ namespace CryptoBook.Services
             stream.Position = 0;
 
             var preview = new FlowDocument();
-            DocumentPageLayout.Apply(preview);
 
             var previewRange = new TextRange(preview.ContentStart, preview.ContentEnd);
             previewRange.Load(stream, System.Windows.DataFormats.XamlPackage);
+            preview.PageWidth = source.PageWidth;
             DocumentPageLayout.Apply(preview);
             preview.Background = source.Background;
             return preview;

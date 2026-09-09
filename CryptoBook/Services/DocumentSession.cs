@@ -139,7 +139,7 @@ namespace CryptoBook.Services
                 using var stream = new MemoryStream();
                 new TextRange(parked.Document.ContentStart, parked.Document.ContentEnd)
                     .Save(stream, System.Windows.DataFormats.XamlPackage);
-                content = stream.ToArray();
+                content = XamlPackageDocumentAppearanceCodec.Preserve(parked.Document, stream.ToArray());
             }
             return new(parked.FilePath, parked.DisplayName, parked.Template?.Id,
                 parked.Revision, parked.SavedRevision, parked.Markdown is not null, content,
@@ -163,6 +163,7 @@ namespace CryptoBook.Services
                 using var stream = new MemoryStream(snapshot.Content, writable: false);
                 new TextRange(document.ContentStart, document.ContentEnd)
                     .Load(stream, System.Windows.DataFormats.XamlPackage);
+                XamlPackageDocumentAppearanceCodec.Restore(document, snapshot.Content);
             }
             IFileTemplate? restoredTemplate = snapshot.TemplateId switch
             {

@@ -734,6 +734,7 @@
   <data name="Editor.Preview" xml:space="preserve">
     <value>Попередній перегляд</value>
   </data>
+  <data name="Editor.Zoom" xml:space="preserve"><value>Масштаб</value></data>
   <data name="Editor.Zoom100" xml:space="preserve">
     <value>100% масштаб</value>
   </data>
@@ -1665,4 +1666,68 @@
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не вдалося перетворити й опублікувати розшифрований документ: {0}</value></data>
   <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Незворотне видалення</value></data>
   <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Видалення через Android зазвичай незворотне й не використовує Кошик. Назавжди видалити вибрані елементи?</value></data>
+  <data name="MarkdownHelp.Title" xml:space="preserve"><value>Синтаксис Markdown</value></data>
+  <data name="MarkdownHelp.Description" xml:space="preserve"><value>Повний довідник із синтаксису Markdown і команд, які підтримує поточний редактор CryptoBook.</value></data>
+  <data name="MarkdownHelp.OpenHint" xml:space="preserve"><value>Відкрити довідку із синтаксису Markdown</value></data>
+  <data name="MarkdownHelp.Back" xml:space="preserve"><value>Повернутися до редактора</value></data>
+  <data name="MarkdownHelp.BackHint" xml:space="preserve"><value>Повернутися до редактора Markdown (Esc)</value></data>
+  <data name="MarkdownHelp.Group.Blocks" xml:space="preserve"><value>Блокові елементи</value></data>
+  <data name="MarkdownHelp.Group.Inline" xml:space="preserve"><value>Форматування всередині рядка</value></data>
+  <data name="MarkdownHelp.Group.Spacing" xml:space="preserve"><value>Абзаци та перенесення рядків</value></data>
+  <data name="MarkdownHelp.Group.Editor" xml:space="preserve"><value>Команди редактора</value></data>
+  <data name="MarkdownHelp.Group.Structure" xml:space="preserve"><value>Заголовки та роздільники</value></data>
+  <data name="MarkdownHelp.Group.Lists" xml:space="preserve"><value>Списки та цитати</value></data>
+  <data name="MarkdownHelp.Group.Links" xml:space="preserve"><value>Посилання та зображення</value></data>
+  <data name="MarkdownHelp.Group.Code" xml:space="preserve"><value>Блоки коду</value></data>
+  <data name="MarkdownHelp.Group.Tables" xml:space="preserve"><value>Таблиці</value></data>
+  <data name="MarkdownHelp.Group.Limitations" xml:space="preserve"><value>Обмеження попереднього перегляду</value></data>
+  <data name="MarkdownHelp.Syntax" xml:space="preserve"><value>СИНТАКСИС</value></data>
+  <data name="MarkdownHelp.Result" xml:space="preserve"><value>РЕЗУЛЬТАТ</value></data>
+  <data name="MarkdownHelp.Editor.Save.Result" xml:space="preserve"><value>Зберегти зміни в поточному файлі.</value></data>
+  <data name="MarkdownHelp.Editor.SaveAs.Result" xml:space="preserve"><value>Зберегти поточний документ в інший файл.</value></data>
+  <data name="MarkdownHelp.Editor.Toggle.Result" xml:space="preserve"><value>Перемкнутися між редагуванням вихідного тексту та переглядом готового документа.</value></data>
+  <data name="MarkdownHelp.Editor.Tab.Result" xml:space="preserve"><value>Вставити символ табуляції у вихідний текст.</value></data>
+  <data name="MarkdownHelp.Editor.Help.Result" xml:space="preserve"><value>Кнопка ? відкриває цю довідку, клавіша Esc повертає з неї до редактора.</value></data>
+  <data name="MarkdownHelp.Headings.Result" xml:space="preserve"><value>ATX-заголовки рівнів 1–6. Наприкінці можна додати таку саму кількість символів #.</value></data>
+  <data name="MarkdownHelp.SetextH1.Result" xml:space="preserve"><value>Setext-заголовок першого рівня.</value></data>
+  <data name="MarkdownHelp.SetextH2.Result" xml:space="preserve"><value>Setext-заголовок другого рівня.</value></data>
+  <data name="MarkdownHelp.Quote.Result" xml:space="preserve"><value>Блок цитати. Додаткові символи &gt; створюють вкладені цитати.</value></data>
+  <data name="MarkdownHelp.BulletedList.Result" xml:space="preserve"><value>Маркований список; маркером може бути -, + або *.</value></data>
+  <data name="MarkdownHelp.NumberedList.Result" xml:space="preserve"><value>Нумерований список із . або ) після числа. Перше число задає початок нумерації.</value></data>
+  <data name="MarkdownHelp.NestedList.Result" xml:space="preserve"><value>Відступ створює вкладений список. У пункти можна вкладати абзаци, цитати, код та інші списки.</value></data>
+  <data name="MarkdownHelp.Rule.Result" xml:space="preserve"><value>Горизонтальний роздільник із трьох або більше символів -, * чи _.</value></data>
+  <data name="MarkdownHelp.CodeBlock.Result" xml:space="preserve"><value>Огороджений блок коду. Текст після початкової огорожі показується як назва мови; підсвічування синтаксису немає.</value></data>
+  <data name="MarkdownHelp.TildeCode.Result" xml:space="preserve"><value>Огороджений блок коду з трьох або більше тильд замість зворотних лапок.</value></data>
+  <data name="MarkdownHelp.IndentedCode.Result" xml:space="preserve"><value>Блок коду, створений відступом кожного рядка на чотири пробіли або одну табуляцію.</value></data>
+  <data name="MarkdownHelp.Table.Result" xml:space="preserve"><value>Таблиця з вертикальними рисками. Рядок-роздільник створює заголовок; крайні риски необов’язкові.</value></data>
+  <data name="MarkdownHelp.GridTable.Result" xml:space="preserve"><value>Сіткова таблиця. Символ = позначає межу заголовка; підтримується об’єднання рядків і стовпців.</value></data>
+  <data name="MarkdownHelp.Bold.Result" xml:space="preserve"><value>Напівжирний текст.</value></data>
+  <data name="MarkdownHelp.Italic.Result" xml:space="preserve"><value>Курсивний текст.</value></data>
+  <data name="MarkdownHelp.BoldItalic.Result" xml:space="preserve"><value>Напівжирний курсив. Замість трьох зірочок можна використати три підкреслення.</value></data>
+  <data name="MarkdownHelp.Strikethrough.Result" xml:space="preserve"><value>Закреслений текст.</value></data>
+  <data name="MarkdownHelp.InlineCode.Result" xml:space="preserve"><value>Фрагмент коду моноширинним шрифтом. Якщо всередині є зворотна лапка, використовуйте довший обмежувач.</value></data>
+  <data name="MarkdownHelp.Escape.Result" xml:space="preserve"><value>Зворотна коса риска показує службовий символ буквально, не застосовуючи розмітку.</value></data>
+  <data name="MarkdownHelp.Entity.Result" xml:space="preserve"><value>Іменована або числова HTML-сутність, що перетворюється на символ Unicode.</value></data>
+  <data name="MarkdownHelp.Link.Result" xml:space="preserve"><value>Активне HTTP-, HTTPS- або поштове посилання.</value></data>
+  <data name="MarkdownHelp.ReferenceLink.Result" xml:space="preserve"><value>Посилання, URL якого оголошено окремо. Також підтримуються скорочені форми [text][] і [ref].</value></data>
+  <data name="MarkdownHelp.AutoLink.Result" xml:space="preserve"><value>Вебадреса без окремого підпису, що відображається як активне посилання.</value></data>
+  <data name="MarkdownHelp.AutoEmail.Result" xml:space="preserve"><value>Адреса електронної пошти, що перетворюється на активне посилання mailto.</value></data>
+  <data name="MarkdownHelp.BareLink.Result" xml:space="preserve"><value>Звичайна HTTP- або HTTPS-адреса розпізнається автоматично.</value></data>
+  <data name="MarkdownHelp.Image.Result" xml:space="preserve"><value>Зображення поруч із Markdown-файлом або у відносній вкладеній папці.</value></data>
+  <data name="MarkdownHelp.ReferenceImage.Result" xml:space="preserve"><value>Локальне зображення, відносний шлях до якого оголошено у визначенні посилання.</value></data>
+  <data name="MarkdownHelp.Paragraph.Result" xml:space="preserve"><value>Порожній рядок починає новий абзац.</value></data>
+  <data name="MarkdownHelp.SoftBreak.Result" xml:space="preserve"><value>Звичайне переведення рядка у вихідному тексті відображається як пробіл у тому самому абзаці.</value></data>
+  <data name="MarkdownHelp.LineBreak.Result" xml:space="preserve"><value>Два пробіли в кінці рядка вставляють перенесення без створення нового абзацу.</value></data>
+  <data name="MarkdownHelp.BackslashBreak.Result" xml:space="preserve"><value>Зворотна коса риска в кінці рядка також вставляє примусове перенесення.</value></data>
+  <data name="MarkdownHelp.Html.Result" xml:space="preserve"><value>HTML-код показується як неактивний вихідний текст і ніколи не виконується.</value></data>
+  <data name="MarkdownHelp.UnsafeLinks.Result" xml:space="preserve"><value>FTP, file, відносні, javascript- та інші посилання поза HTTP відображаються як текст, а не як активні посилання.</value></data>
+  <data name="MarkdownHelp.RemoteImage.Result" xml:space="preserve"><value>Віддалені зображення та зображення за абсолютним шляхом не завантажуються; замість них показується альтернативний текст.</value></data>
+  <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>Усю розмітку зі спеціальним відображенням перелічено вище. Інші розширення Markdig — прапорці завдань, виноски, формули, діаграми, списки визначень, попередження, контейнери, медіавставки, скорочення, вставлений і виділений текст, нижні й верхні індекси — не мають відповідного оформлення.</value></data>
+  <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Безпечний попередній перегляд</value></data>
+  <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>HTML-код відображається як неактивний текст. Віддалені зображення та зображення за абсолютним шляхом не завантажуються; показуються лише локальні файли за відносним шляхом розміром до 25 МБ.</value></data>
+  <data name="File.PaperSize" xml:space="preserve"><value>Формат аркуша</value></data>
+  <data name="File.Orientation" xml:space="preserve"><value>Орієнтація</value></data>
+  <data name="File.Portrait" xml:space="preserve"><value>Книжкова</value></data>
+  <data name="File.Landscape" xml:space="preserve"><value>Альбомна</value></data>
+  <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Висота сторінки не обмежена.</value></data>
 </root>

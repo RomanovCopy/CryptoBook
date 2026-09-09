@@ -147,6 +147,73 @@ public sealed class MarkdownTests
     }
 
     [WpfFact]
+    public void Renderer_SupportsDocumentedSyntaxVariants()
+    {
+        const string markdown = """
+            Setext level 1
+            ==============
+
+            Setext level 2
+            --------------
+
+            > outer
+            >> nested
+
+            + plus item
+              + nested item
+
+            3) ordered item
+
+            text with a hard break\
+            on the next line and &copy; plus \*literal asterisks\*.
+
+            [reference link][docs] and https://example.com/bare
+
+            [docs]: https://example.com/reference
+
+            ~~~text
+            fenced with tildes
+            ~~~
+
+                indented code
+
+            +---+---+
+            | A | B |
+            +===+===+
+            | 1 | 2 |
+            +---+---+
+            """;
+
+        FlowDocument document = new MarkdownFlowDocumentRenderer().Render(
+            markdown,
+            Path.Combine(Path.GetTempPath(), "book.md"));
+        IReadOnlyList<Paragraph> paragraphs = document.Blocks
+            .OfType<Paragraph>()
+            .ToList();
+        string text = new TextRange(
+            document.ContentStart,
+            document.ContentEnd).Text;
+
+        Assert.Contains(paragraphs, paragraph => paragraph.FontSize == 30);
+        Assert.Contains(paragraphs, paragraph => paragraph.FontSize == 26);
+        Assert.Contains(document.Blocks, block => block is Section);
+        Assert.Contains(document.Blocks, block => block is List);
+        Assert.Contains(document.Blocks, block => block is Table);
+        Assert.True(paragraphs.Count(paragraph =>
+            paragraph.FontFamily?.Source.Contains(
+                "Mono",
+                StringComparison.OrdinalIgnoreCase) == true) >= 2);
+        Assert.True(document.Blocks
+            .SelectMany(block => block is Paragraph paragraph
+                ? paragraph.Inlines.OfType<Hyperlink>()
+                : [])
+            .Count() >= 2);
+        Assert.Contains("©", text);
+        Assert.Contains("*literal asterisks*", text);
+        Assert.DoesNotContain("[docs]:", text);
+    }
+
+    [WpfFact]
     public async Task Renderer_LoadsOnlyRelativeLocalImages()
     {
         string directory = Path.Combine(
@@ -169,12 +236,18 @@ public sealed class MarkdownTests
             FlowDocument remote = renderer.Render(
                 "![remote](https://example.com/pixel.png)",
                 Path.Combine(directory, "book.md"));
+            FlowDocument reference = renderer.Render(
+                "![local][pixel]\n\n[pixel]: pixel.png",
+                Path.Combine(directory, "book.md"));
 
             Assert.IsType<Image>(Assert.IsType<InlineUIContainer>(
                 ((Paragraph)local.Blocks.FirstBlock!).Inlines.FirstInline!).Child);
             Assert.Empty(
                 ((Paragraph)remote.Blocks.FirstBlock!).Inlines
                     .OfType<InlineUIContainer>());
+            Assert.IsType<Image>(Assert.IsType<InlineUIContainer>(
+                ((Paragraph)reference.Blocks.FirstBlock!)
+                    .Inlines.FirstInline!).Child);
         }
         finally
         {
@@ -197,12 +270,14 @@ public sealed class MarkdownTests
             path);
         var session = new DocumentSession(CreateEditor(), state);
         session.Open(path, new MarkdownFileTemplate());
+        var navigation = new NavigationServiceStub("MarkdownEditor");
         var viewModel = new MarkdownEditorViewModel(
             state,
             new MarkdownFlowDocumentRenderer(),
             new TestUriNavigationService(),
             new StubMenuFileViewModel(),
-            session);
+            session,
+            navigation);
 
         viewModel.ToggleView.Execute(null);
         FlowDocument firstPreview = viewModel.PreviewDocument!;
@@ -224,6 +299,10 @@ public sealed class MarkdownTests
             new TextRange(
                 viewModel.PreviewDocument!.ContentStart,
                 viewModel.PreviewDocument.ContentEnd).Text);
+
+        viewModel.OpenSyntaxHelp.Execute(null);
+
+        Assert.Equal("MarkdownSyntaxHelp", navigation.CurrentKey);
     }
 
     [WpfFact]
@@ -302,6 +381,33 @@ public sealed class MarkdownTests
         Assert.Equal(
             typeof(CryptoBook.MyPages.MarkdownEditor),
             registry.Resolve("MarkdownEditor"));
+    }
+
+    [Fact]
+    public void MarkdownSyntaxHelp_IsRegisteredAndReturnsToEditor()
+    {
+        var registry = new CryptoBook.Injections.PageRegistry();
+        var navigation = new NavigationServiceStub("MarkdownSyntaxHelp");
+        var viewModel = new MarkdownSyntaxHelpViewModel(navigation);
+
+        Assert.Equal(
+            typeof(CryptoBook.MyPages.MarkdownSyntaxHelp),
+            registry.Resolve("MarkdownSyntaxHelp"));
+        Assert.Equal(9, viewModel.Groups.Count);
+        Assert.Equal(
+            40,
+            viewModel.Groups.Sum(group => group.Entries.Count));
+        Assert.Contains(
+            viewModel.Groups.SelectMany(group => group.Entries),
+            entry => entry.Syntax == "```csharp\ncode\n```");
+        Assert.Contains(
+            viewModel.Groups.SelectMany(group => group.Entries),
+            entry => entry.Syntax == "![alt](image.png)");
+
+        viewModel.BackToEditor.Execute(null);
+
+        Assert.Equal("MarkdownEditor", navigation.CurrentKey);
+        viewModel.Closed.Execute(null);
     }
 
     [WpfFact]

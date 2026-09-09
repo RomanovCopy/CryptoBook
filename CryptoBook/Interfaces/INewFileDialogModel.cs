@@ -12,6 +12,8 @@ namespace CryptoBook.Interfaces
     public interface INewFileDialogModel:IModel,IWindowWithId
     {
         public IReadOnlyList<IFileTemplate> Templates { get; }
+        DocumentPaperSize PaperSize { get; set; }
+        bool IsLandscape { get; set; }
         public IFileTemplate? SelectedTemplate { get; set; }
         public string FileName { get ; set; }
         public IfExistsMode IfExists { get; set; }

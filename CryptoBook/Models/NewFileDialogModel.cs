@@ -2,6 +2,8 @@
 using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
+using System.Windows.Documents;
 
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,12 @@ namespace CryptoBook.Models
         private readonly IEncryptionKeyRequestService _keyRequestService;
         private readonly IDocumentSaveEncryptionPolicy _saveEncryptionPolicy;
         private readonly IWorkspaceFileOpenService _workspaceFileOpenService;
+        private readonly IRichTextBoxService _richTextBox;
+
+        private DocumentPaperSize paperSize = DocumentPaperSize.A4;
+        public DocumentPaperSize PaperSize { get => paperSize; set => SetProperty(ref paperSize, value); }
+        private bool isLandscape;
+        public bool IsLandscape { get => isLandscape; set => SetProperty(ref isLandscape, value); }
 
         private CancellationTokenSource? _cts;
 
@@ -146,10 +154,12 @@ namespace CryptoBook.Models
             IProgressDialogService progressDialogService,
             IEncryptionKeyRequestService keyRequestService,
             IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
-            IWorkspaceFileOpenService workspaceFileOpenService)
+            IWorkspaceFileOpenService workspaceFileOpenService,
+            IRichTextBoxService richTextBox)
         {
             WindowId = Guid.NewGuid();
             _registry = registry;
+            _richTextBox = richTextBox ?? throw new ArgumentNullException(nameof(richTextBox));
             _creator = creator;
             _fileManager = fileManager;
             _folderPicker = folderPicker;
@@ -313,6 +323,8 @@ namespace CryptoBook.Models
                             ct);
                     if(openResult.Success)
                     {
+                        if(SelectedTemplate is not MarkdownFileTemplate)
+                            DocumentPageLayout.Apply(_richTextBox.Document, PaperSize, IsLandscape);
                         _windowManager.CloseWindow(WindowId);
                     }
                     else if(!openResult.Cancelled)
@@ -447,6 +459,17 @@ namespace CryptoBook.Models
                 return FileOperationResult.Fail(
                     LocalizationManager.GetString("File.TypeNotSelected"));
 
+            byte[]? initialContent = null;
+            if(SelectedTemplate is XamlPackageFileTemplate or SecureFileTemplate)
+            {
+                var document = new FlowDocument(new Paragraph());
+                DocumentPageLayout.Apply(document, PaperSize, IsLandscape);
+                using var stream = new MemoryStream();
+                new TextRange(document.ContentStart, document.ContentEnd)
+                    .Save(stream, System.Windows.DataFormats.XamlPackage);
+                initialContent = XamlPackageDocumentAppearanceCodec.Preserve(document, stream.ToArray());
+            }
+
             return await _progressDialogService.RunAsync(
                 LocalizationManager.GetString("File.CreateOperation"),
                 async (progress, token) =>
@@ -461,7 +484,8 @@ namespace CryptoBook.Models
                         IsHidden,
                         IsReadOnly,
                         linkedTokenSource.Token,
-                        progress);
+                        progress,
+                        initialContent);
                 });
         }
 

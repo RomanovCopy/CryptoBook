@@ -82,7 +82,8 @@ namespace CryptoBook.Services
         }
 
         public async Task<FileOperationResult> CreateAsync( string targetDirectory, string fileNameWithOrWithoutExt, IFileTemplate template,
-            IfExistsMode ifExists, bool isHidden, bool isReadOnly, CancellationToken ct, IProgressReporter? progress = null)
+            IfExistsMode ifExists, bool isHidden, bool isReadOnly, CancellationToken ct, IProgressReporter? progress = null,
+            byte[]? initialContent = null)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -116,7 +117,7 @@ namespace CryptoBook.Services
                         LocalizationManager.GetString(
                             "Document.EncryptionFormatUnavailable"))
                 : template;
-            byte[] content = await contentTemplate.GetInitialContentAsync(ct);
+            byte[] content = initialContent ?? await contentTemplate.GetInitialContentAsync(ct);
             if(template.DefaultEncoding is { } enc && content.Length > 0)
             {
                 // Если шаблон вернул строку не в этой кодировке — обычно контент уже в UTF-8.

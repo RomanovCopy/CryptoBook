@@ -19,7 +19,9 @@ namespace CryptoBook.Services
             get
             {
                 DocumentPageLayout.Apply(richTextBox.Document);
-                return double.PositiveInfinity;
+                return Math.Max(0, richTextBox.Document.PageWidth -
+                    richTextBox.Document.PagePadding.Left -
+                    richTextBox.Document.PagePadding.Right);
             }
         }
 

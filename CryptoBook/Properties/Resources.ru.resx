@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -411,6 +411,7 @@
   <data name="Editor.Editing" xml:space="preserve"><value>Редактирование</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Редактор</value></data>
   <data name="Editor.Preview" xml:space="preserve"><value>Просмотр</value></data>
+  <data name="Editor.Zoom" xml:space="preserve"><value>Масштаб</value></data>
   <data name="Editor.Zoom100" xml:space="preserve"><value>Масштаб 100%</value></data>
   <data name="Editor.FitToWindow" xml:space="preserve"><value>Вписать в окно</value></data>
   <data name="Editor.DocumentStructure" xml:space="preserve"><value>Структура</value></data>
@@ -824,4 +825,68 @@
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не удалось преобразовать и опубликовать расшифрованный документ: {0}</value></data>
   <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Необратимое удаление</value></data>
   <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Удаление через Android обычно необратимо и не использует Корзину. Навсегда удалить выбранные элементы?</value></data>
+  <data name="MarkdownHelp.Title" xml:space="preserve"><value>Синтаксис Markdown</value></data>
+  <data name="MarkdownHelp.Description" xml:space="preserve"><value>Полный справочник по синтаксису Markdown и командам, которые поддерживает текущий редактор CryptoBook.</value></data>
+  <data name="MarkdownHelp.OpenHint" xml:space="preserve"><value>Открыть справку по синтаксису Markdown</value></data>
+  <data name="MarkdownHelp.Back" xml:space="preserve"><value>Вернуться в редактор</value></data>
+  <data name="MarkdownHelp.BackHint" xml:space="preserve"><value>Вернуться в редактор Markdown (Esc)</value></data>
+  <data name="MarkdownHelp.Group.Blocks" xml:space="preserve"><value>Блочные элементы</value></data>
+  <data name="MarkdownHelp.Group.Inline" xml:space="preserve"><value>Форматирование внутри строки</value></data>
+  <data name="MarkdownHelp.Group.Spacing" xml:space="preserve"><value>Абзацы и переносы строк</value></data>
+  <data name="MarkdownHelp.Group.Editor" xml:space="preserve"><value>Команды редактора</value></data>
+  <data name="MarkdownHelp.Group.Structure" xml:space="preserve"><value>Заголовки и разделители</value></data>
+  <data name="MarkdownHelp.Group.Lists" xml:space="preserve"><value>Списки и цитаты</value></data>
+  <data name="MarkdownHelp.Group.Links" xml:space="preserve"><value>Ссылки и изображения</value></data>
+  <data name="MarkdownHelp.Group.Code" xml:space="preserve"><value>Блоки кода</value></data>
+  <data name="MarkdownHelp.Group.Tables" xml:space="preserve"><value>Таблицы</value></data>
+  <data name="MarkdownHelp.Group.Limitations" xml:space="preserve"><value>Ограничения предпросмотра</value></data>
+  <data name="MarkdownHelp.Syntax" xml:space="preserve"><value>СИНТАКСИС</value></data>
+  <data name="MarkdownHelp.Result" xml:space="preserve"><value>РЕЗУЛЬТАТ</value></data>
+  <data name="MarkdownHelp.Editor.Save.Result" xml:space="preserve"><value>Сохранить изменения в текущем файле.</value></data>
+  <data name="MarkdownHelp.Editor.SaveAs.Result" xml:space="preserve"><value>Сохранить текущий документ в другой файл.</value></data>
+  <data name="MarkdownHelp.Editor.Toggle.Result" xml:space="preserve"><value>Переключиться между редактированием исходного текста и просмотром готового документа.</value></data>
+  <data name="MarkdownHelp.Editor.Tab.Result" xml:space="preserve"><value>Вставить символ табуляции в исходный текст.</value></data>
+  <data name="MarkdownHelp.Editor.Help.Result" xml:space="preserve"><value>Кнопка ? открывает эту справку, клавиша Esc возвращает из неё в редактор.</value></data>
+  <data name="MarkdownHelp.Headings.Result" xml:space="preserve"><value>ATX-заголовки уровней 1–6. В конце можно добавить такое же количество символов #.</value></data>
+  <data name="MarkdownHelp.SetextH1.Result" xml:space="preserve"><value>Setext-заголовок первого уровня.</value></data>
+  <data name="MarkdownHelp.SetextH2.Result" xml:space="preserve"><value>Setext-заголовок второго уровня.</value></data>
+  <data name="MarkdownHelp.Quote.Result" xml:space="preserve"><value>Блок цитаты. Дополнительные символы &gt; создают вложенные цитаты.</value></data>
+  <data name="MarkdownHelp.BulletedList.Result" xml:space="preserve"><value>Маркированный список; маркером может быть -, + или *.</value></data>
+  <data name="MarkdownHelp.NumberedList.Result" xml:space="preserve"><value>Нумерованный список с . или ) после числа. Первое число задаёт начало нумерации.</value></data>
+  <data name="MarkdownHelp.NestedList.Result" xml:space="preserve"><value>Отступ создаёт вложенный список. В пункты можно вкладывать абзацы, цитаты, код и другие списки.</value></data>
+  <data name="MarkdownHelp.Rule.Result" xml:space="preserve"><value>Горизонтальный разделитель из трёх или более символов -, * или _.</value></data>
+  <data name="MarkdownHelp.CodeBlock.Result" xml:space="preserve"><value>Ограждённый блок кода. Текст после открывающей ограды показывается как имя языка; подсветки синтаксиса нет.</value></data>
+  <data name="MarkdownHelp.TildeCode.Result" xml:space="preserve"><value>Ограждённый блок кода из трёх или более тильд вместо обратных кавычек.</value></data>
+  <data name="MarkdownHelp.IndentedCode.Result" xml:space="preserve"><value>Блок кода, созданный отступом каждой строки на четыре пробела или одну табуляцию.</value></data>
+  <data name="MarkdownHelp.Table.Result" xml:space="preserve"><value>Таблица с вертикальными чертами. Строка-разделитель создаёт заголовок; крайние черты необязательны.</value></data>
+  <data name="MarkdownHelp.GridTable.Result" xml:space="preserve"><value>Сеточная таблица. Символ = отмечает границу заголовка; поддерживается объединение строк и столбцов.</value></data>
+  <data name="MarkdownHelp.Bold.Result" xml:space="preserve"><value>Полужирный текст.</value></data>
+  <data name="MarkdownHelp.Italic.Result" xml:space="preserve"><value>Курсивный текст.</value></data>
+  <data name="MarkdownHelp.BoldItalic.Result" xml:space="preserve"><value>Полужирный курсив. Вместо трёх звёздочек можно использовать три подчёркивания.</value></data>
+  <data name="MarkdownHelp.Strikethrough.Result" xml:space="preserve"><value>Зачёркнутый текст.</value></data>
+  <data name="MarkdownHelp.InlineCode.Result" xml:space="preserve"><value>Фрагмент кода моноширинным шрифтом. Если внутри есть обратная кавычка, используйте более длинный ограничитель.</value></data>
+  <data name="MarkdownHelp.Escape.Result" xml:space="preserve"><value>Обратная косая черта показывает служебный символ буквально, не применяя разметку.</value></data>
+  <data name="MarkdownHelp.Entity.Result" xml:space="preserve"><value>Именованная или числовая HTML-сущность, преобразуемая в символ Unicode.</value></data>
+  <data name="MarkdownHelp.Link.Result" xml:space="preserve"><value>Активная HTTP-, HTTPS- или почтовая ссылка.</value></data>
+  <data name="MarkdownHelp.ReferenceLink.Result" xml:space="preserve"><value>Ссылка, URL которой объявлен отдельно. Также поддерживаются сокращённые формы [text][] и [ref].</value></data>
+  <data name="MarkdownHelp.AutoLink.Result" xml:space="preserve"><value>Веб-адрес без отдельной подписи, отображаемый как активная ссылка.</value></data>
+  <data name="MarkdownHelp.AutoEmail.Result" xml:space="preserve"><value>Адрес электронной почты, преобразуемый в активную ссылку mailto.</value></data>
+  <data name="MarkdownHelp.BareLink.Result" xml:space="preserve"><value>Обычный HTTP- или HTTPS-адрес распознаётся автоматически.</value></data>
+  <data name="MarkdownHelp.Image.Result" xml:space="preserve"><value>Изображение рядом с Markdown-файлом или в относительной вложенной папке.</value></data>
+  <data name="MarkdownHelp.ReferenceImage.Result" xml:space="preserve"><value>Локальное изображение, относительный путь к которому объявлен в определении ссылки.</value></data>
+  <data name="MarkdownHelp.Paragraph.Result" xml:space="preserve"><value>Пустая строка начинает новый абзац.</value></data>
+  <data name="MarkdownHelp.SoftBreak.Result" xml:space="preserve"><value>Обычный перевод строки в исходном тексте отображается как пробел внутри того же абзаца.</value></data>
+  <data name="MarkdownHelp.LineBreak.Result" xml:space="preserve"><value>Два пробела в конце строки вставляют перенос без создания нового абзаца.</value></data>
+  <data name="MarkdownHelp.BackslashBreak.Result" xml:space="preserve"><value>Обратная косая черта в конце строки также вставляет принудительный перенос.</value></data>
+  <data name="MarkdownHelp.Html.Result" xml:space="preserve"><value>HTML-код показывается как неактивный исходный текст и никогда не исполняется.</value></data>
+  <data name="MarkdownHelp.UnsafeLinks.Result" xml:space="preserve"><value>FTP, file, относительные, javascript- и прочие ссылки вне HTTP отображаются как текст, а не как активные ссылки.</value></data>
+  <data name="MarkdownHelp.RemoteImage.Result" xml:space="preserve"><value>Удалённые изображения и изображения по абсолютному пути не загружаются; вместо них показывается альтернативный текст.</value></data>
+  <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>Вся специально отображаемая разметка перечислена выше. Остальные расширения Markdig — флажки задач, сноски, формулы, диаграммы, списки определений, предупреждения, контейнеры, медиавставки, сокращения, вставленный и выделенный текст, нижние и верхние индексы — не имеют соответствующего оформления.</value></data>
+  <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Безопасный предпросмотр</value></data>
+  <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>HTML-код отображается как неактивный текст. Удалённые изображения и изображения по абсолютному пути не загружаются; показываются только локальные файлы по относительному пути размером до 25 МБ.</value></data>
+  <data name="File.PaperSize" xml:space="preserve"><value>Формат листа</value></data>
+  <data name="File.Orientation" xml:space="preserve"><value>Ориентация</value></data>
+  <data name="File.Portrait" xml:space="preserve"><value>Книжная</value></data>
+  <data name="File.Landscape" xml:space="preserve"><value>Альбомная</value></data>
+  <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Высота страницы не ограничена.</value></data>
 </root>
