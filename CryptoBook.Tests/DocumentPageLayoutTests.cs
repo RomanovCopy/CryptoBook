@@ -7,6 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Markup;
+using System.Windows.Threading;
+using System.Xml.Linq;
+using System.IO;
 
 using Xunit;
 
@@ -81,8 +85,11 @@ public sealed class DocumentPageLayoutTests
         Assert.True(double.IsNaN(document.PageHeight));
     }
 
-    [WpfFact]
-    public void Editor_DrawsThreePageEdgesWithoutBottomEdge()
+    [WpfTheory]
+    [InlineData(600)]
+    [InlineData(1000)]
+    [InlineData(2000)]
+    public void Editor_DrawsThreePageEdgesWithoutBottomEdge(int width)
     {
         var document = new FlowDocument(new Paragraph(new Run("A4 — страница с неограниченной высотой")));
         DocumentPageLayout.Apply(document);
@@ -95,25 +102,27 @@ public sealed class DocumentPageLayoutTests
         };
         var host = new AdornerDecorator { Child = editor };
         DocumentPageBorderBehavior.SetIsEnabled(editor, true);
-        host.Measure(new Size(1000, 400));
-        host.Arrange(new Rect(0, 0, 1000, 400));
+        host.Measure(new Size(width, 400));
+        host.Arrange(new Rect(0, 0, width, 400));
         host.UpdateLayout();
         editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
         host.UpdateLayout();
-        var bitmap = new RenderTargetBitmap(1000, 400, 96, 96, PixelFormats.Pbgra32);
+        var bitmap = new RenderTargetBitmap(width, 400, 96, 96, PixelFormats.Pbgra32);
         bitmap.Render(host);
-        var pixels = new byte[1000 * 400 * 4];
-        bitmap.CopyPixels(pixels, 4000, 0);
-        byte Red(int x, int y) => pixels[(y * 1000 + x) * 4 + 2];
-        int gutter = (int)Math.Round((1000 - document.PageWidth) / 2);
+        var pixels = new byte[width * 400 * 4];
+        bitmap.CopyPixels(pixels, width * 4, 0);
+        byte Red(int x, int y) => pixels[(y * width + x) * 4 + 2];
+        const int gutter = 24;
         Assert.True(Red(gutter, 200) < 128, "Left page edge is visible.");
         Assert.True(Red(400, gutter) < 128, "Top page edge is visible.");
-        Assert.True(Red(1000 - gutter - 1, 200) < 128, "Right page edge is visible.");
+        Assert.True(Red(width - gutter - 1, 200) < 128, "Right page edge is visible.");
+        Assert.Equal(255, pixels[(200 * width + gutter) * 4 + 3]);
+        Assert.Equal(255, pixels[(200 * width + width - gutter - 1) * 4 + 3]);
         Assert.Equal(255, Red(400, 399));
         if(Environment.GetEnvironmentVariable("CRYPTOBOOK_UI_QA_DIR") is { Length: > 0 } outputDirectory)
         {
             System.IO.Directory.CreateDirectory(outputDirectory);
-            using var stream = System.IO.File.Create(System.IO.Path.Combine(outputDirectory, "page-editor.png"));
+            using var stream = System.IO.File.Create(System.IO.Path.Combine(outputDirectory, $"page-editor-{width}.png"));
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
             encoder.Save(stream);
@@ -133,10 +142,70 @@ public sealed class DocumentPageLayoutTests
         Assert.Equal(64, zoom);
     }
 
+    [WpfFact]
+    public async Task ZoomIndicator_TracksEditorResizeAndPreviewZoom()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while(directory is not null && !File.Exists(Path.Combine(directory.FullName, "CryptoBook", "MyControls", "Richtextbox.xaml")))
+            directory = directory.Parent;
+        Assert.NotNull(directory);
+        var source = XDocument.Load(Path.Combine(directory.FullName, "CryptoBook", "MyControls", "Richtextbox.xaml"));
+        XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
+        XElement indicatorXaml = source.Descendants().Single(element => (string?)element.Attribute(x + "Name") == "ZoomIndicator");
+        var grid = (Grid)XamlReader.Parse($$"""
+            <Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                <Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <AdornerDecorator><ContentControl x:Name="EditorHost"/></AdornerDecorator>
+                <FlowDocumentPageViewer x:Name="PageViewer" Visibility="Collapsed"/>
+                <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="24,4">{{indicatorXaml}}</StackPanel>
+            </Grid>
+            """);
+        var editorHost = (ContentControl)grid.FindName("EditorHost");
+        var indicator = (TextBlock)grid.FindName("ZoomIndicator");
+        var preview = (FlowDocumentPageViewer)grid.FindName("PageViewer");
+        var document = new FlowDocument(new Paragraph(new Run("Scaled page")));
+        DocumentPageLayout.Apply(document);
+        var editor = new RichTextBox(document)
+        {
+            Padding = new Thickness(0), BorderThickness = new Thickness(0),
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+        editorHost.Content = editor;
+        grid.DataContext = new { IsPreviewMode = false };
+        DocumentPageBorderBehavior.SetIsEnabled(editor, true);
+        await Resize(1000);
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        await Resize(1000);
+        Assert.Equal("120%", indicator.Text.Replace(" ", ""));
+        await Resize(600);
+        Assert.Equal("70%", indicator.Text.Replace(" ", ""));
+
+        grid.DataContext = new { IsPreviewMode = true };
+        preview.Zoom = 85;
+        await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+        Assert.Equal("85%", indicator.Text);
+        preview.Zoom = 100;
+        await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+        Assert.Equal("100%", indicator.Text);
+        grid.DataContext = new { IsPreviewMode = false };
+        await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+        Assert.Equal("70%", indicator.Text.Replace(" ", ""));
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+
+        async Task Resize(double width)
+        {
+            grid.Measure(new Size(width, 400));
+            grid.Arrange(new Rect(0, 0, width, 400));
+            grid.UpdateLayout();
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+        }
+    }
+
     [WpfTheory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Editor_CentersPaperWithEqualGuttersAfterResizeAndDocumentChange(bool longDocument)
+    public void Editor_ScalesPaperWithFixedGuttersAfterResizeAndDocumentChange(bool longDocument)
     {
         var document = new FlowDocument();
         DocumentPageLayout.Apply(document);
@@ -154,34 +223,41 @@ public sealed class DocumentPageLayoutTests
         Layout(1200);
         editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
         host.UpdateLayout();
-        AssertCentered(1200);
+        AssertFitted(1200);
 
         Layout(1050);
-        AssertCentered(1050);
+        AssertFitted(1050);
+        Layout(600);
+        AssertFitted(600);
+        Layout(1500);
+        AssertFitted(1500);
+        Layout(2000);
+        AssertFitted(2000);
+        Layout(1050);
         if(longDocument)
         {
             editor.ScrollToVerticalOffset(100);
             host.UpdateLayout();
             Assert.True(editor.VerticalOffset > 0);
-            AssertCentered(1050);
+            AssertFitted(1050);
         }
 
         var wideDocument = new FlowDocument(new Paragraph(new Run("Wide page")));
         DocumentPageLayout.Apply(wideDocument, DocumentPaperSize.A2, true);
         editor.Document = wideDocument;
         host.UpdateLayout();
-        Assert.Equal(new Thickness(24, 24, 24, 0), editor.Margin);
-        Assert.True(editor.ExtentWidth > editor.ViewportWidth);
+        AssertFitted(1050);
         editor.ScrollToHorizontalOffset(200);
         host.UpdateLayout();
-        Assert.True(editor.HorizontalOffset > 0);
+        Assert.Equal(0, editor.HorizontalOffset, 4);
         Assert.Equal(DocumentPageLayout.GetWidth(DocumentPaperSize.A2, true), wideDocument.PageWidth);
 
         editor.Document = document;
         host.UpdateLayout();
-        AssertCentered(1050);
+        AssertFitted(1050);
         editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
         Assert.Equal(new Thickness(0), editor.Margin);
+        Assert.True(editor.LayoutTransform.Value.IsIdentity);
 
         void Layout(double width)
         {
@@ -190,14 +266,19 @@ public sealed class DocumentPageLayoutTests
             host.UpdateLayout();
         }
 
-        void AssertCentered(double width)
+        void AssertFitted(double width)
         {
             Point origin = editor.TranslatePoint(new Point(), host);
-            double gutter = (width - document.PageWidth) / 2;
-            Assert.Equal(gutter, origin.X, 4);
-            Assert.Equal(gutter, origin.Y, 4);
-            Assert.Equal(gutter, width - origin.X - document.PageWidth, 4);
-            Assert.InRange(editor.ViewportWidth, document.PageWidth - 0.01, document.PageWidth + 0.01);
+            Point rightEdge = editor.TranslatePoint(new Point(editor.Document.PageWidth, 0), host);
+            Assert.Equal(24, origin.X, 4);
+            Assert.Equal(24, origin.Y, 4);
+            Assert.True(Math.Abs(24 - (width - rightEdge.X)) < 0.0001,
+                $"Width={width}, host={content.ActualWidth}, editor={editor.ActualWidth}, viewport={editor.ViewportWidth}, scale={editor.LayoutTransform.Value.M11}, right={rightEdge.X}, margin={editor.Margin}");
+            Assert.InRange(editor.ViewportWidth, editor.Document.PageWidth - 0.01, editor.Document.PageWidth + 0.01);
+            Assert.Equal(DocumentPageLayout.GetWidth(DocumentPaperSize.A4), document.PageWidth);
+            Assert.True(double.IsNaN(editor.Document.PageHeight));
+            Point controlRight = editor.TranslatePoint(new Point(editor.ActualWidth, 0), host);
+            Assert.True(controlRight.X <= width, "The scrollbar stays inside the viewport at large zoom.");
         }
     }
 

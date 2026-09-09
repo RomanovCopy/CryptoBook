@@ -380,6 +380,11 @@
                       StrokeLineJoin="Round"/>
             </Viewbox>
         </MenuItem.Icon>
+        <MenuItem Header="{Binding [SideMenu.InsertImage], Source={StaticResource Res}}"
+                  Command="{Binding InsertImage, Source={markup:ResolveViewModel ViewModelType={x:Type interfaces:IMenuContentViewModel}}}"/>
+        <MenuItem Height="9" MinHeight="0" Padding="0" Focusable="False"
+                  IsEnabled="False"
+                  Template="{StaticResource RichTextMenuSeparatorTemplate}"/>
         <MenuItem Header="{Binding [Editor.ImageMoveUp], Source={StaticResource Res}}"
                   InputGestureText="Alt+↑"
                   Command="{x:Static behaviors:DocumentImageResizeBehavior.MoveImageUpCommand}"/>

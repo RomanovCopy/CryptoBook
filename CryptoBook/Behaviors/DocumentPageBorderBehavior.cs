@@ -3,13 +3,14 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using RichTextBox = System.Windows.Controls.RichTextBox;
+using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
 using Point = System.Windows.Point;
 using Pen = System.Windows.Media.Pen;
 using Brushes = System.Windows.Media.Brushes;
 
 namespace CryptoBook.Behaviors
 {
-    /// <summary>Centers the continuous page with equal outer gutters and outlines its three edges.</summary>
+    /// <summary>Fits the continuous page to the available width with fixed outer gutters and outlines its three edges.</summary>
     public static class DocumentPageBorderBehavior
     {
         public static readonly DependencyProperty IsEnabledProperty =
@@ -61,7 +62,7 @@ namespace CryptoBook.Behaviors
             if(editor.GetValue(AdornerProperty) is not PageBorderAdorner adorner)
                 return;
             editor.LayoutUpdated -= adorner.Update;
-            adorner.RestoreMargin();
+            adorner.RestoreLayout();
             (VisualTreeHelper.GetParent(adorner) as AdornerLayer)?.Remove(adorner);
             editor.ClearValue(AdornerProperty);
         }
@@ -69,6 +70,9 @@ namespace CryptoBook.Behaviors
         private sealed class PageBorderAdorner(RichTextBox editor) : Adorner(editor)
         {
             private readonly Thickness originalMargin = editor.Margin;
+            private readonly Transform originalTransform = editor.LayoutTransform;
+            private ScaleTransform pageScale = new();
+            private readonly Dictionary<ScrollBar, Transform> scrollbarTransforms = new();
             private Rect viewport;
             private double pageWidth;
             private double horizontalOffset;
@@ -80,7 +84,7 @@ namespace CryptoBook.Behaviors
                 var presenter = FindPresenter(editor);
                 if(presenter is null)
                     return;
-                if(UpdatePageMargin(presenter))
+                if(UpdatePageLayout(presenter))
                     return;
                 var bounds = new Rect(presenter.TranslatePoint(new Point(), editor), presenter.RenderSize);
                 if(bounds == viewport && pageWidth == editor.Document.PageWidth &&
@@ -93,28 +97,61 @@ namespace CryptoBook.Behaviors
                 InvalidateVisual();
             }
 
-            public void RestoreMargin() => editor.SetCurrentValue(FrameworkElement.MarginProperty, originalMargin);
-
-            private bool UpdatePageMargin(ScrollContentPresenter presenter)
+            public void RestoreLayout()
             {
-                if(editor.Parent is not FrameworkElement host || host.ActualWidth <= 0 ||
-                   !double.IsFinite(editor.Document.PageWidth))
+                editor.SetCurrentValue(FrameworkElement.MarginProperty, originalMargin);
+                editor.SetCurrentValue(FrameworkElement.LayoutTransformProperty, originalTransform);
+                foreach(var (scrollbar, transform) in scrollbarTransforms)
+                    scrollbar.SetCurrentValue(FrameworkElement.LayoutTransformProperty, transform);
+                scrollbarTransforms.Clear();
+            }
+
+            private bool UpdatePageLayout(ScrollContentPresenter presenter)
+            {
+                const double gutter = 24;
+                if(editor.Parent is not FrameworkElement host || host.ActualWidth <= 2 * gutter ||
+                   !double.IsFinite(editor.Document.PageWidth) || editor.Document.PageWidth <= 0)
                     return false;
 
-                const double minimumGutter = 24;
-                double gutter = Math.Max(minimumGutter, (host.ActualWidth - editor.Document.PageWidth) / 2);
-                double rightGutter = gutter;
-                if(editor.Document.PageWidth + 2 * minimumGutter <= host.ActualWidth &&
-                   presenter.TemplatedParent is ScrollViewer { ComputedVerticalScrollBarVisibility: Visibility.Visible })
+                // Scale the view, keeping the paper size, line wrapping and saved document unchanged.
+                double scale = (host.ActualWidth - 2 * gutter) / editor.Document.PageWidth;
+                bool changed = false;
+                if(Math.Abs(pageScale.ScaleX - scale) > 0.0000001 || editor.LayoutTransform != pageScale)
                 {
-                    // The scrollbar occupies the right gutter; it must not push the paper off center.
-                    rightGutter -= Math.Max(0, editor.ActualWidth - presenter.ActualWidth);
+                    pageScale = new ScaleTransform(scale, scale);
+                    pageScale.Freeze();
+                    editor.SetCurrentValue(FrameworkElement.LayoutTransformProperty, pageScale);
+                    InvalidateVisual();
+                    changed = true;
+                }
+                if(presenter.TemplatedParent is ScrollViewer scrollViewer)
+                {
+                    // Keep scrollbar controls at their normal screen size, including at large zoom.
+                    foreach(var scrollbar in FindScrollbars(scrollViewer))
+                    {
+                        if(scrollbar.LayoutTransform is ScaleTransform current &&
+                           Math.Abs(current.ScaleX - 1 / scale) < 0.0000001)
+                            continue;
+                        scrollbarTransforms.TryAdd(scrollbar, scrollbar.LayoutTransform);
+                        var inverseScale = new ScaleTransform(1 / scale, 1 / scale);
+                        inverseScale.Freeze();
+                        scrollbar.SetCurrentValue(FrameworkElement.LayoutTransformProperty, inverseScale);
+                        changed = true;
+                    }
+                }
+                double rightGutter = gutter;
+                if(presenter.TemplatedParent is ScrollViewer { ComputedVerticalScrollBarVisibility: Visibility.Visible })
+                {
+                    // The scrollbar occupies the right gutter in screen coordinates.
+                    rightGutter -= Math.Max(0, editor.ActualWidth - presenter.ActualWidth) * scale;
                 }
                 var margin = new Thickness(gutter, gutter, rightGutter, 0);
-                if(editor.Margin == margin)
-                    return false;
-                editor.SetCurrentValue(FrameworkElement.MarginProperty, margin);
-                return true;
+                if(editor.Margin != margin)
+                {
+                    editor.SetCurrentValue(FrameworkElement.MarginProperty, margin);
+                    changed = true;
+                }
+                return changed;
             }
 
             protected override void OnRender(DrawingContext drawing)
@@ -122,10 +159,11 @@ namespace CryptoBook.Behaviors
                 if(viewport.IsEmpty || !double.IsFinite(pageWidth))
                     return;
                 drawing.PushClip(new RectangleGeometry(viewport));
-                double left = viewport.Left - horizontalOffset + 0.5;
-                double right = left + pageWidth - 1;
-                double top = viewport.Top - verticalOffset + 0.5;
-                var pen = new Pen(editor.BorderBrush ?? Brushes.Gray, 1);
+                double strokeWidth = 1 / pageScale.ScaleX;
+                double left = viewport.Left - horizontalOffset + strokeWidth / 2;
+                double right = left + pageWidth - strokeWidth;
+                double top = viewport.Top - verticalOffset + strokeWidth / 2;
+                var pen = new Pen(editor.BorderBrush ?? Brushes.Gray, strokeWidth);
                 drawing.DrawLine(pen, new Point(left, top), new Point(right, top));
                 drawing.DrawLine(pen, new Point(left, top), new Point(left, viewport.Bottom));
                 drawing.DrawLine(pen, new Point(right, top), new Point(right, viewport.Bottom));
@@ -143,6 +181,19 @@ namespace CryptoBook.Behaviors
                         return nested;
                 }
                 return null;
+            }
+
+            private static IEnumerable<ScrollBar> FindScrollbars(DependencyObject parent)
+            {
+                for(int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                    if(child is ScrollBar scrollbar)
+                        yield return scrollbar;
+                    else if(child is not ScrollContentPresenter)
+                        foreach(var nested in FindScrollbars(child))
+                            yield return nested;
+                }
             }
         }
     }

@@ -411,6 +411,7 @@
   <data name="Editor.Editing" xml:space="preserve"><value>Bearbeitung</value></data>
   <data name="Editor.Editor" xml:space="preserve"><value>Editor</value></data>
   <data name="Editor.Preview" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="Editor.Zoom" xml:space="preserve"><value>Zoom</value></data>
   <data name="Editor.Zoom100" xml:space="preserve"><value>Zoom 100 %</value></data>
   <data name="Editor.FitToWindow" xml:space="preserve"><value>An Fenster anpassen</value></data>
   <data name="Editor.DocumentStructure" xml:space="preserve"><value>Struktur</value></data>

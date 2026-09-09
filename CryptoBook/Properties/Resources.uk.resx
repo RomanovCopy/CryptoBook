@@ -734,6 +734,7 @@
   <data name="Editor.Preview" xml:space="preserve">
     <value>Попередній перегляд</value>
   </data>
+  <data name="Editor.Zoom" xml:space="preserve"><value>Масштаб</value></data>
   <data name="Editor.Zoom100" xml:space="preserve">
     <value>100% масштаб</value>
   </data>
