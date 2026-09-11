@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 using ScrollBar = System.Windows.Controls.Primitives.ScrollBar;
@@ -10,9 +11,41 @@ using Brushes = System.Windows.Media.Brushes;
 
 namespace CryptoBook.Behaviors
 {
-    /// <summary>Fits the continuous page to the available width with fixed outer gutters and outlines its three edges.</summary>
+    /// <summary>Fits the continuous page to the available width, supports Ctrl+wheel zoom and outlines its three edges.</summary>
     public static class DocumentPageBorderBehavior
     {
+        private const double Gutter = 24;
+
+        public static RoutedCommand ResetZoomCommand { get; } = new(
+            nameof(ResetZoomCommand), typeof(DocumentPageBorderBehavior));
+
+        static DocumentPageBorderBehavior()
+        {
+            CommandManager.RegisterClassCommandBinding(typeof(RichTextBox), new CommandBinding(
+                ResetZoomCommand,
+                (sender, args) =>
+                {
+                    var editor = (RichTextBox)sender;
+                    if(editor.GetValue(AdornerProperty) is PageBorderAdorner adorner &&
+                       editor.Parent is FrameworkElement host && host.ActualWidth > 2 * Gutter)
+                    {
+                        // 100% is the actual page scale, independent of the current fit-to-width scale.
+                        editor.SetValue(ZoomFactorProperty, editor.Document.PageWidth / (host.ActualWidth - 2 * Gutter));
+                        adorner.Update(null, EventArgs.Empty);
+                        editor.ScrollToHorizontalOffset(0);
+                    }
+                    args.Handled = true;
+                },
+                (sender, args) =>
+                {
+                    var editor = (RichTextBox)sender;
+                    args.CanExecute = editor.GetValue(AdornerProperty) is PageBorderAdorner &&
+                        editor.Parent is FrameworkElement host && host.ActualWidth > 2 * Gutter &&
+                        double.IsFinite(editor.Document.PageWidth) && editor.Document.PageWidth > 0;
+                    args.Handled = true;
+                }));
+        }
+
         public static readonly DependencyProperty IsEnabledProperty =
             DependencyProperty.RegisterAttached("IsEnabled", typeof(bool),
                 typeof(DocumentPageBorderBehavior), new PropertyMetadata(false, OnEnabledChanged));
@@ -20,6 +53,10 @@ namespace CryptoBook.Behaviors
         private static readonly DependencyProperty AdornerProperty =
             DependencyProperty.RegisterAttached("Adorner", typeof(PageBorderAdorner),
                 typeof(DocumentPageBorderBehavior));
+
+        private static readonly DependencyProperty ZoomFactorProperty =
+            DependencyProperty.RegisterAttached("ZoomFactor", typeof(double),
+                typeof(DocumentPageBorderBehavior), new PropertyMetadata(1.0));
 
         public static bool GetIsEnabled(DependencyObject element) => (bool)element.GetValue(IsEnabledProperty);
         public static void SetIsEnabled(DependencyObject element, bool value) => element.SetValue(IsEnabledProperty, value);
@@ -53,7 +90,9 @@ namespace CryptoBook.Behaviors
             editor.SetValue(AdornerProperty, adorner);
             layer.Add(adorner);
             editor.LayoutUpdated += adorner.Update;
+            editor.PreviewMouseWheel += OnPreviewMouseWheel;
             adorner.Update(null, EventArgs.Empty);
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private static void Detach(object sender, RoutedEventArgs args)
@@ -62,9 +101,31 @@ namespace CryptoBook.Behaviors
             if(editor.GetValue(AdornerProperty) is not PageBorderAdorner adorner)
                 return;
             editor.LayoutUpdated -= adorner.Update;
+            editor.PreviewMouseWheel -= OnPreviewMouseWheel;
             adorner.RestoreLayout();
             (VisualTreeHelper.GetParent(adorner) as AdornerLayer)?.Remove(adorner);
             editor.ClearValue(AdornerProperty);
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private static void OnPreviewMouseWheel(object sender, MouseWheelEventArgs args)
+        {
+            if(HandleMouseWheel((RichTextBox)sender, args.Delta, Keyboard.Modifiers))
+                args.Handled = true;
+        }
+
+        internal static bool HandleMouseWheel(RichTextBox editor, int delta, ModifierKeys modifiers)
+        {
+            if((modifiers & ModifierKeys.Control) == 0 || delta == 0 ||
+               editor.GetValue(AdornerProperty) is not PageBorderAdorner adorner)
+                return false;
+
+            // Preserve the user's zoom relative to fit-to-width when the window is resized.
+            double factor = (double)editor.GetValue(ZoomFactorProperty);
+            factor = Math.Clamp(factor * Math.Pow(1.1, delta / 120.0), 0.1, 5.0);
+            editor.SetValue(ZoomFactorProperty, factor);
+            adorner.Update(null, EventArgs.Empty);
+            return true;
         }
 
         private sealed class PageBorderAdorner(RichTextBox editor) : Adorner(editor)
@@ -108,13 +169,14 @@ namespace CryptoBook.Behaviors
 
             private bool UpdatePageLayout(ScrollContentPresenter presenter)
             {
-                const double gutter = 24;
+                const double gutter = Gutter;
                 if(editor.Parent is not FrameworkElement host || host.ActualWidth <= 2 * gutter ||
                    !double.IsFinite(editor.Document.PageWidth) || editor.Document.PageWidth <= 0)
                     return false;
 
                 // Scale the view, keeping the paper size, line wrapping and saved document unchanged.
-                double scale = (host.ActualWidth - 2 * gutter) / editor.Document.PageWidth;
+                double scale = (host.ActualWidth - 2 * gutter) / editor.Document.PageWidth *
+                    (double)editor.GetValue(ZoomFactorProperty);
                 bool changed = false;
                 if(Math.Abs(pageScale.ScaleX - scale) > 0.0000001 || editor.LayoutTransform != pageScale)
                 {
