@@ -8,6 +8,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Markup;
+using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using System.IO;
@@ -152,18 +153,23 @@ public sealed class DocumentPageLayoutTests
         var source = XDocument.Load(Path.Combine(directory.FullName, "CryptoBook", "MyControls", "Richtextbox.xaml"));
         XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
         XElement indicatorXaml = source.Descendants().Single(element => (string?)element.Attribute(x + "Name") == "ZoomIndicator");
+        var resetButtonXaml = new XElement(source.Descendants().Single(element => (string?)element.Attribute(x + "Name") == "ResetZoomButton"));
+        resetButtonXaml.Attribute("ToolTip")!.Remove();
         var grid = (Grid)XamlReader.Parse($$"""
             <Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:behaviors="clr-namespace:CryptoBook.Behaviors;assembly=CryptoBook">
+                <Grid.Resources><Style TargetType="Button"/></Grid.Resources>
                 <Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <AdornerDecorator><ContentControl x:Name="EditorHost"/></AdornerDecorator>
                 <FlowDocumentPageViewer x:Name="PageViewer" Visibility="Collapsed"/>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="24,4">{{indicatorXaml}}</StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="24,4">{{indicatorXaml}}{{resetButtonXaml}}</StackPanel>
             </Grid>
             """);
         var editorHost = (ContentControl)grid.FindName("EditorHost");
         var indicator = (TextBlock)grid.FindName("ZoomIndicator");
         var preview = (FlowDocumentPageViewer)grid.FindName("PageViewer");
+        var resetButton = (Button)grid.FindName("ResetZoomButton");
         var document = new FlowDocument(new Paragraph(new Run("Scaled page")));
         DocumentPageLayout.Apply(document);
         var editor = new RichTextBox(document)
@@ -181,17 +187,48 @@ public sealed class DocumentPageLayoutTests
         await Resize(600);
         Assert.Equal("70%", indicator.Text.Replace(" ", ""));
 
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(editor, 120, ModifierKeys.Control));
+        await Resize(600);
+        Assert.Equal("77%", indicator.Text.Replace(" ", ""));
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(editor, -120, ModifierKeys.Control));
+        await Resize(600);
+        Assert.Equal("70%", indicator.Text.Replace(" ", ""));
+
+        await ResetZoom();
+        Assert.Equal("100%", indicator.Text.Replace(" ", ""));
+        Assert.Equal(1, editor.LayoutTransform.Value.M11, 6);
+        await Resize(1000);
+        Assert.NotEqual("100%", indicator.Text.Replace(" ", ""));
+        await ResetZoom();
+        Assert.Equal("100%", indicator.Text.Replace(" ", ""));
+        Assert.Equal(1, editor.LayoutTransform.Value.M11, 6);
+
         grid.DataContext = new { IsPreviewMode = true };
         preview.Zoom = 85;
         await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
         Assert.Equal("85%", indicator.Text);
+        Assert.Equal(Visibility.Collapsed, resetButton.Visibility);
         preview.Zoom = 100;
         await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
         Assert.Equal("100%", indicator.Text);
         grid.DataContext = new { IsPreviewMode = false };
         await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-        Assert.Equal("70%", indicator.Text.Replace(" ", ""));
+        Assert.Equal("100%", indicator.Text.Replace(" ", ""));
+        Assert.Equal(Visibility.Visible, resetButton.Visibility);
         editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+
+        async Task ResetZoom()
+        {
+            Assert.Same(editor, resetButton.CommandTarget);
+            Assert.True(DocumentPageBorderBehavior.ResetZoomCommand.CanExecute(null, editor));
+            var peer = new System.Windows.Automation.Peers.ButtonAutomationPeer(resetButton);
+            var invoke = (System.Windows.Automation.Provider.IInvokeProvider)peer.GetPattern(
+                System.Windows.Automation.Peers.PatternInterface.Invoke);
+            invoke.Invoke();
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            grid.UpdateLayout();
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+        }
 
         async Task Resize(double width)
         {
@@ -199,6 +236,97 @@ public sealed class DocumentPageLayoutTests
             grid.Arrange(new Rect(0, 0, width, 400));
             grid.UpdateLayout();
             await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+        }
+    }
+
+    [WpfFact]
+    public void Editor_ControlWheelZoomPreservesDocumentAndSurvivesResizeAndReload()
+    {
+        var document = new FlowDocument(new Paragraph(new Run("Page zoom")));
+        DocumentPageLayout.Apply(document);
+        var editor = new RichTextBox(document)
+        {
+            Padding = new Thickness(0), BorderThickness = new Thickness(0),
+            BorderBrush = Brushes.Black, Background = Brushes.White,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+        var host = new AdornerDecorator { Child = new ContentControl { Content = editor } };
+        double pageWidth = document.PageWidth;
+        double fontSize = document.FontSize;
+        DocumentPageBorderBehavior.SetIsEnabled(editor, true);
+        Layout(1000);
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        host.UpdateLayout();
+        double initialScale = editor.LayoutTransform.Value.M11;
+        string originalContent = XamlWriter.Save(document);
+
+        Assert.False(DocumentPageBorderBehavior.HandleMouseWheel(editor, 120, ModifierKeys.None));
+        Assert.False(DocumentPageBorderBehavior.HandleMouseWheel(editor, 120, ModifierKeys.Shift));
+        Assert.False(DocumentPageBorderBehavior.HandleMouseWheel(editor, 0, ModifierKeys.Control));
+        Assert.Equal(initialScale, editor.LayoutTransform.Value.M11);
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(editor, 240, ModifierKeys.Control));
+        host.UpdateLayout();
+        Assert.Equal(initialScale * 1.21, editor.LayoutTransform.Value.M11, 6);
+        Assert.True(editor.ExtentWidth > editor.ViewportWidth);
+        editor.ScrollToHorizontalOffset(50);
+        host.UpdateLayout();
+        Assert.True(editor.HorizontalOffset > 0);
+        Assert.Equal(pageWidth, document.PageWidth);
+        Assert.Equal(fontSize, document.FontSize);
+        Assert.Equal(originalContent, XamlWriter.Save(document));
+
+        Layout(600);
+        Assert.Equal((600 - 48) / pageWidth * 1.21, editor.LayoutTransform.Value.M11, 6);
+        Capture("page-zoom-in");
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+        host.UpdateLayout();
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        host.UpdateLayout();
+        Assert.Equal((600 - 48) / pageWidth * 1.21, editor.LayoutTransform.Value.M11, 6);
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(editor, -240, ModifierKeys.Control));
+        host.UpdateLayout();
+        Assert.Equal((600 - 48) / pageWidth, editor.LayoutTransform.Value.M11, 6);
+
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(editor, -120, ModifierKeys.Control));
+        host.UpdateLayout();
+        var bitmap = Capture("page-zoom-out");
+        var pixels = new byte[600 * 400 * 4];
+        bitmap.CopyPixels(pixels, 600 * 4, 0);
+        int rightEdge = (int)(24 + (600 - 48) / 1.1);
+        Assert.True(Enumerable.Range(rightEdge - 2, 4).Any(x => pixels[(200 * 600 + x) * 4 + 2] < 128),
+            "The rendered right page edge follows the wheel zoom.");
+
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(editor, int.MinValue, ModifierKeys.Control));
+        host.UpdateLayout();
+        Assert.Equal((600 - 48) / pageWidth * 0.1, editor.LayoutTransform.Value.M11, 6);
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(editor, int.MaxValue, ModifierKeys.Control));
+        host.UpdateLayout();
+        Assert.Equal((600 - 48) / pageWidth * 5, editor.LayoutTransform.Value.M11, 6);
+        DocumentPageBorderBehavior.SetIsEnabled(editor, false);
+        Assert.True(editor.LayoutTransform.Value.IsIdentity);
+        Assert.False(DocumentPageBorderBehavior.HandleMouseWheel(editor, 120, ModifierKeys.Control));
+
+        RenderTargetBitmap Capture(string name)
+        {
+            var bitmap = new RenderTargetBitmap(600, 400, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(host);
+            if(Environment.GetEnvironmentVariable("CRYPTOBOOK_UI_QA_DIR") is { Length: > 0 } outputDirectory)
+            {
+                Directory.CreateDirectory(outputDirectory);
+                using var stream = File.Create(Path.Combine(outputDirectory, name + ".png"));
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                encoder.Save(stream);
+            }
+            return bitmap;
+        }
+
+        void Layout(double width)
+        {
+            host.Measure(new Size(width, 400));
+            host.Arrange(new Rect(0, 0, width, 400));
+            host.UpdateLayout();
         }
     }
 

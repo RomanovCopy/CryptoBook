@@ -151,6 +151,24 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
+                <Button x:Name="ResetZoomButton"
+                        Content="100%"
+                        ToolTip="{Binding [Editor.Zoom100], Source={StaticResource Res}}"
+                        Command="{x:Static behaviors:DocumentPageBorderBehavior.ResetZoomCommand}"
+                        CommandTarget="{Binding Content, ElementName=EditorHost}"
+                        Margin="12,0,0,0"
+                        Padding="8,2"
+                        VerticalAlignment="Center">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </StackPanel>
         </Grid>
     </Border>
