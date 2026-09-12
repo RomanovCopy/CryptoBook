@@ -335,7 +335,8 @@ namespace CryptoBook.Tests
                 string filePath,
                 IFileTemplate template,
                 CancellationToken cancellationToken = default,
-                IProgressReporter? progress = null)
+                IProgressReporter? progress = null,
+                FlowDocument? documentSnapshot = null)
             {
                 throw new NotSupportedException();
             }
@@ -345,7 +346,8 @@ namespace CryptoBook.Tests
                 Stream destination,
                 IFileTemplate template,
                 CancellationToken cancellationToken = default,
-                IProgressReporter? progress = null)
+                IProgressReporter? progress = null,
+                FlowDocument? documentSnapshot = null)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 new TextRange(
@@ -406,7 +408,8 @@ namespace CryptoBook.Tests
                 string filePath,
                 IFileTemplate template,
                 CancellationToken cancellationToken = default,
-                IProgressReporter? progress = null) =>
+                IProgressReporter? progress = null,
+                FlowDocument? documentSnapshot = null) =>
                 throw new NotSupportedException();
 
             public async Task SaveToStreamAsync(
@@ -414,7 +417,8 @@ namespace CryptoBook.Tests
                 Stream destination,
                 IFileTemplate template,
                 CancellationToken cancellationToken = default,
-                IProgressReporter? progress = null)
+                IProgressReporter? progress = null,
+                FlowDocument? documentSnapshot = null)
             {
                 Started.TrySetResult();
                 await Continue.Task.WaitAsync(cancellationToken);

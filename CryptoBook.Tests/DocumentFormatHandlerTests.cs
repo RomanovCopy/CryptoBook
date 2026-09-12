@@ -100,7 +100,10 @@ public sealed class DocumentFormatHandlerTests
                 Stretch = Stretch.UniformToFill,
                 AlignmentX = AlignmentX.Right,
                 AlignmentY = AlignmentY.Bottom,
-                Opacity = 0.4
+                Opacity = 0.4,
+                Viewbox = new Rect(0.2, 0.1, 0.6, 0.7),
+                ViewportUnits = BrushMappingMode.Absolute,
+                Viewport = new Rect(0, 0, 793.7, 1800)
             }
         };
 
@@ -116,6 +119,12 @@ public sealed class DocumentFormatHandlerTests
         Assert.Equal(AlignmentX.Right, brush.AlignmentX);
         Assert.Equal(AlignmentY.Bottom, brush.AlignmentY);
         Assert.Equal(0.4, brush.Opacity, precision: 3);
+        Assert.Equal(new Rect(0.2, 0.1, 0.6, 0.7), brush.Viewbox);
+        Assert.Equal(BrushMappingMode.Absolute, brush.ViewportUnits);
+        Assert.Equal(new Rect(0, 0, 793.7, 1800), brush.Viewport);
+        var preview = new DocumentPreviewService().CreatePreview(loadedDocument);
+        Assert.Equal(brush.Viewbox, Assert.IsType<ImageBrush>(preview.Background).Viewbox);
+        Assert.Equal(brush.Viewport, Assert.IsType<ImageBrush>(preview.Background).Viewport);
     }
 
     [Fact]

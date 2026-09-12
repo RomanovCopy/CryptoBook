@@ -5,6 +5,7 @@ using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
+using CryptoBook.Services;
 using CryptoBook.Views;
 
 using System.IO;
@@ -33,6 +34,8 @@ namespace CryptoBook.Models
         private readonly IDocumentContentInspector documentContentInspector;
         private readonly IDocumentPrintService documentPrintService;
         private readonly IDocumentSaveEncryptionPolicy saveEncryptionPolicy;
+        private readonly DocumentBackgroundSaveOperation backgroundSave;
+        private bool isSaving;
         private readonly IKeyResetService? keyResetService;
         private readonly IRecentDocumentService? recentDocumentService;
         private readonly IDocumentBackupRecoveryService?
@@ -55,6 +58,7 @@ namespace CryptoBook.Models
             IDocumentContentInspector documentContentInspector,
             IDocumentPrintService documentPrintService,
             IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
+            IFontService fontService,
             IKeyResetService? keyResetService = null,
             IRecentDocumentService? recentDocumentService = null,
             IDocumentBackupRecoveryService? backupRecoveryService = null,
@@ -96,6 +100,7 @@ namespace CryptoBook.Models
                 ?? throw new ArgumentNullException(
                     nameof(saveEncryptionPolicy));
             this.keyResetService = keyResetService;
+            backgroundSave = new DocumentBackgroundSaveOperation(fontService, messageService);
             this.recentDocumentService = recentDocumentService;
             this.backupRecoveryService = backupRecoveryService;
             this.markdownDocument = markdownDocument;
@@ -212,6 +217,9 @@ namespace CryptoBook.Models
             bool forceChooseTarget,
             CancellationToken cancellationToken)
         {
+            if(isSaving)
+                return false;
+            isSaving = true;
             using IDisposable? timerPause = keyResetService?.Pause();
             using IDisposable? activeDocument =
                 (documentSession as IWorkspaceDocumentSession)?.HoldActiveDocument();
@@ -235,34 +243,44 @@ namespace CryptoBook.Models
                 // должны оставить документ в состоянии IsDirty.
                 long savedRevision = documentSession.Revision;
 
-                await progressDialogService.RunAsync(
-                    LocalizationManager.GetString(
-                        "Document.SaveOperation"),
-                    async (progress, dialogToken) =>
+                bool saved = await backgroundSave.RunAsync(target.Template, markdownDocument?.IsActive == true,
+                    async snapshot =>
                     {
-                        using var linkedTokenSource =
-                            CancellationTokenSource
-                                .CreateLinkedTokenSource(
-                                    cancellationToken,
-                                    dialogToken);
-                        if(target.Template is SecureFileTemplate)
-                        {
-                            await SaveEncryptedAsync(
-                                target.FilePath,
-                                linkedTokenSource.Token,
-                                progress);
-                        }
-                        else
-                        {
-                            await saveService.SaveToFileAsync(
-                                richTextBox,
-                                target.FilePath,
-                                target.Template,
-                                linkedTokenSource.Token,
-                                progress);
-                        }
-                        return true;
-                    });
+                        savedRevision = documentSession.Revision;
+
+                        await progressDialogService.RunAsync(
+                            LocalizationManager.GetString(
+                                "Document.SaveOperation"),
+                            async (progress, dialogToken) =>
+                            {
+                                using var linkedTokenSource =
+                                    CancellationTokenSource
+                                        .CreateLinkedTokenSource(
+                                            cancellationToken,
+                                            dialogToken);
+                                if(target.Template is SecureFileTemplate)
+                                {
+                                    await SaveEncryptedAsync(
+                                        target.FilePath,
+                                        linkedTokenSource.Token,
+                                        progress,
+                                        snapshot);
+                                }
+                                else
+                                {
+                                    await saveService.SaveToFileAsync(
+                                        richTextBox,
+                                        target.FilePath,
+                                        target.Template,
+                                        linkedTokenSource.Token,
+                                        progress,
+                                        snapshot);
+                                }
+                                return true;
+                            });
+                    }, cancellationToken);
+                if(!saved)
+                    return false;
 
                 documentSession.MarkSaved(
                     target.FilePath,
@@ -293,6 +311,10 @@ namespace CryptoBook.Models
                     exception.Message);
                 return false;
             }
+            finally
+            {
+                isSaving = false;
+            }
         }
 
         private async Task TryRecordSavedAsync(string path)
@@ -317,7 +339,8 @@ namespace CryptoBook.Models
         private async Task SaveEncryptedAsync(
             string filePath,
             CancellationToken cancellationToken,
-            IProgressReporter progress)
+            IProgressReporter progress,
+            System.Windows.Documents.FlowDocument? snapshot)
         {
             if(markdownDocument?.IsActive == true)
             {
@@ -351,7 +374,8 @@ namespace CryptoBook.Models
                     plaintext,
                     new XamlPackageFileTemplate(),
                     cancellationToken,
-                    progress);
+                    progress,
+                    snapshot);
                 plaintext.Position = 0;
                 await secureFileProcessor.EncryptStreamAsync(
                     plaintext,
