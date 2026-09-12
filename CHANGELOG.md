@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.1.3.4 - 2026-09-12
+
+### Added
+
+- Ctrl + mouse wheel zoom in the rich-text editor.
+- A **100%** button beside the zoom indicator to reset the actual page scale
+  and return horizontal scrolling to the left edge; hidden in reading preview.
+
+### Changed
+
+- Preserve the user's zoom factor relative to fit-to-width when resizing the
+  window or reloading the editor view. The displayed percentage follows the
+  available width, including after resetting to 100%.
+- Keep document page size, font sizes and saved content unchanged while zooming;
+  allow horizontal scrolling when the enlarged sheet exceeds the viewport.
+- Extend WPF regression coverage for wheel zoom, limits, rendered page borders,
+  resize/reload behavior and the reset button.
+- Synchronize application, installer, documentation and release metadata for 1.1.3.4.
+
+Full comparison: [v1.1.3.3...v1.1.3.4](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.3...v1.1.3.4)
+
 ## 1.1.3.3 - 2026-09-09
 
 ### Added

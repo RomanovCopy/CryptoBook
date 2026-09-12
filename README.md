@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.3.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.3)
+[![Version](https://img.shields.io/badge/version-1.1.3.4-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.4)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -50,13 +50,15 @@ machine unless you explicitly move or share them.
 Screenshots show version 1.1.3.3 with demonstration content. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.3.3
+## New in 1.1.3.4
 
-- Choose A2, A3 or A4 and portrait or landscape orientation when creating a rich-text document.
-- The editor centers the sheet and scales it to the available width as the window changes size;
-  the status bar displays the current zoom.
-- Insert an image from the editor's context menu.
-- Open the built-in Markdown syntax guide with examples and preview restrictions.
+- Hold Ctrl and turn the mouse wheel to zoom the rich-text editor.
+- Click **100%** beside the zoom indicator to restore the actual page scale.
+- Zoom changes only the view, preserving the document's page size, fonts and content.
+- Window resizing retains the zoom factor relative to the automatic fit-to-width scale;
+  the displayed percentage can change after resizing, including after a reset to 100%.
+
+See the [release notes](docs/releases/v1.1.3.4.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -70,6 +72,7 @@ Screenshots show version 1.1.3.3 with demonstration content. See the
 - resize and position images inside documents;
 - choose A2/A3/A4 page width and orientation for new rich-text documents, with automatic
   editor scaling and layout preservation in XamlPackage and protected rich-text saves;
+- zoom with Ctrl + mouse wheel and reset the editor view to 100%;
 - browse folders and files with sorting, favorites and change monitoring;
 - pin frequently used documents with Quick Access;
 - search file names inside the selected workspace;
@@ -150,7 +153,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.3.3
+./installer/Build-Installer.ps1 -Version 1.1.3.4
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:
