@@ -20,6 +20,84 @@ namespace CryptoBook.Tests;
 public sealed class DocumentPageLayoutTests
 {
     [WpfFact]
+    public void Preview_HidesEditorAdornerLayerAndRestoresItOnReturn()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while(directory is not null && !File.Exists(Path.Combine(directory.FullName, "CryptoBook", "MyControls", "Richtextbox.xaml")))
+            directory = directory.Parent;
+        Assert.NotNull(directory);
+        var xaml = XDocument.Load(Path.Combine(directory.FullName, "CryptoBook", "MyControls", "Richtextbox.xaml"));
+        XNamespace ns = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+        // Exercise the production visibility trigger and container hierarchy with an isolated editor.
+        var decoratorXaml = new XElement(xaml.Descendants(ns + "AdornerDecorator").Single());
+        decoratorXaml.SetAttributeValue(XNamespace.Xmlns + "x", "http://schemas.microsoft.com/winfx/2006/xaml");
+        var hostXaml = decoratorXaml.Element(ns + "ContentControl")!;
+        hostXaml.Attribute("Content")!.Remove();
+        hostXaml.Element(ns + "ContentControl.Resources")!.Remove();
+        var decorator = (AdornerDecorator)XamlReader.Parse(decoratorXaml.ToString());
+        var document = new FlowDocument(new Paragraph(new Run("Документ с фоновым изображением")));
+        DocumentPageLayout.Apply(document);
+        var background = BitmapSource.Create(2, 1, 96, 96, PixelFormats.Bgra32, null,
+            new byte[] { 230, 220, 180, 255, 210, 190, 130, 255 }, 8);
+        document.Background = new ImageBrush(background);
+        var editor = new RichTextBox(document)
+        {
+            Background = document.Background,
+            BorderBrush = Brushes.Magenta,
+            Padding = new Thickness(0), BorderThickness = new Thickness(0)
+        };
+        ((ContentControl)decorator.Child).Content = editor;
+        DocumentPageBorderBehavior.SetIsEnabled(editor, true);
+        var preview = new FlowDocumentPageViewer
+        {
+            Document = new DocumentPreviewService().CreatePreview(document),
+            Width = 320, Height = 280, HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center, Visibility = Visibility.Collapsed
+        };
+        var root = new Grid { Background = Brushes.White, DataContext = new { IsPreviewMode = false } };
+        root.Children.Add(decorator);
+        root.Children.Add(preview);
+        void Layout()
+        {
+            root.Measure(new Size(900, 500));
+            root.Arrange(new Rect(0, 0, 900, 500));
+            root.UpdateLayout();
+        }
+        int RenderEditorEdges(string name)
+        {
+            Layout();
+            var bitmap = new RenderTargetBitmap(900, 500, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(root);
+            var pixels = new byte[900 * 500 * 4];
+            bitmap.CopyPixels(pixels, 3600, 0);
+            if(Environment.GetEnvironmentVariable("CRYPTOBOOK_UI_QA_DIR") is { Length: > 0 } output)
+            {
+                Directory.CreateDirectory(output);
+                using var stream = File.Create(Path.Combine(output, name + ".png"));
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                encoder.Save(stream);
+            }
+            return Enumerable.Range(0, pixels.Length / 4).Count(i =>
+                pixels[i * 4] > 180 && pixels[i * 4 + 1] < 80 && pixels[i * 4 + 2] > 180);
+        }
+        Layout();
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        Assert.True(RenderEditorEdges("mode-editor") > 500, "The editor frame must actually be rendered before switching.");
+        for(int i = 0; i < 2; i++)
+        {
+            root.DataContext = new { IsPreviewMode = true };
+            preview.Visibility = Visibility.Visible;
+            Assert.Equal(0, RenderEditorEdges("mode-preview"));
+            Assert.Equal(Visibility.Collapsed, decorator.Visibility);
+            root.DataContext = new { IsPreviewMode = false };
+            preview.Visibility = Visibility.Collapsed;
+            Assert.True(RenderEditorEdges("mode-return") > 500);
+        }
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+    }
+
+    [WpfFact]
     public void Apply_DefaultsToA4WithUnlimitedHeight()
     {
         var document = new FlowDocument();
