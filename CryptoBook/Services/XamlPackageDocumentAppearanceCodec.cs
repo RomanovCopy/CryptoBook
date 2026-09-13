@@ -163,7 +163,14 @@ namespace CryptoBook.Services
                     Stretch = (int)image.Stretch,
                     AlignmentX = (int)image.AlignmentX,
                     AlignmentY = (int)image.AlignmentY,
-                    Opacity = image.Opacity
+                    Opacity = image.Opacity,
+                    CropX = image.Viewbox.X,
+                    CropY = image.Viewbox.Y,
+                    CropWidth = image.Viewbox.Width,
+                    CropHeight = image.Viewbox.Height,
+                    BackgroundFinalized = DocumentBackgroundImageLayout.IsFinalized(image),
+                    ImageWidth = image.ViewportUnits == Media.BrushMappingMode.Absolute ? image.Viewport.Width : null,
+                    ImageHeight = image.ViewportUnits == Media.BrushMappingMode.Absolute ? image.Viewport.Height : null
                 };
             }
 
@@ -224,6 +231,16 @@ namespace CryptoBook.Services
                         ? metadata.Opacity
                         : 1
             };
+            var crop = new System.Windows.Rect(metadata.CropX, metadata.CropY,
+                Math.Max(0, metadata.CropWidth), Math.Max(0, metadata.CropHeight));
+            if(DocumentBackgroundImageLayout.IsValidCrop(crop))
+                brush.Viewbox = crop;
+            brush.SetValue(DocumentBackgroundImageLayout.IsFinalizedProperty, metadata.BackgroundFinalized);
+            if(metadata.ImageWidth is > 0 and <= 1000000 && metadata.ImageHeight is > 0 and <= 1000000)
+            {
+                brush.ViewportUnits = Media.BrushMappingMode.Absolute;
+                brush.Viewport = new System.Windows.Rect(0, 0, metadata.ImageWidth.Value, metadata.ImageHeight.Value);
+            }
             brush.Freeze();
             return brush;
         }
@@ -308,6 +325,13 @@ namespace CryptoBook.Services
             public int AlignmentY { get; init; } =
                 (int)System.Windows.Media.AlignmentY.Center;
             public double Opacity { get; init; } = 1;
+            public double CropX { get; init; }
+            public double CropY { get; init; }
+            public double CropWidth { get; init; } = 1;
+            public double CropHeight { get; init; } = 1;
+            public double? ImageWidth { get; init; }
+            public double? ImageHeight { get; init; }
+            public bool BackgroundFinalized { get; init; }
         }
     }
 }

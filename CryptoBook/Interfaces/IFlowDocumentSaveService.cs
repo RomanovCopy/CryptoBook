@@ -11,10 +11,12 @@ namespace CryptoBook.Interfaces
     {
         Task SaveToFileAsync( IRichTextBoxService richTextBoxService, string filePath, IFileTemplate template, 
         CancellationToken cancellationToken = default,
-        IProgressReporter? progress = null);
+        IProgressReporter? progress = null,
+        System.Windows.Documents.FlowDocument? documentSnapshot = null);
 
         Task SaveToStreamAsync( IRichTextBoxService richTextBoxService, Stream destination, IFileTemplate template, 
         CancellationToken cancellationToken = default,
-        IProgressReporter? progress = null);
+        IProgressReporter? progress = null,
+        System.Windows.Documents.FlowDocument? documentSnapshot = null);
     }
 }

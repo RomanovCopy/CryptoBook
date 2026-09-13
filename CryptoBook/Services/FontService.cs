@@ -143,9 +143,36 @@ namespace CryptoBook.Services
                 AlignmentX = Media.AlignmentX.Center,
                 AlignmentY = Media.AlignmentY.Center
             };
+            var mapped = DocumentBackgroundImageLayout.MapToPaper(brush,
+                DocumentBackgroundImageLayout.GetPaperSize(Service.Document.PageWidth));
+            Service.Document.Background = mapped;
+            Service.BackGround = mapped;
+            documentSession?.MarkDirty();
+            NotifyDocumentBackgroundChanged();
+        }
+        public void SetDocumentBackgroundImageCrop(Rect crop)
+        {
+            if(Service.Document.Background is not Media.ImageBrush current ||
+               DocumentBackgroundImageLayout.IsFinalized(current) ||
+               !DocumentBackgroundImageLayout.IsValidCrop(crop) || current.Viewbox == crop)
+                return;
+
+            var brush = current.CloneCurrentValue();
+            brush.ImageSource = current.ImageSource;
+            brush.ViewboxUnits = Media.BrushMappingMode.RelativeToBoundingBox;
+            brush.Viewbox = crop;
+            brush.Freeze();
             Service.Document.Background = brush;
             Service.BackGround = brush;
             documentSession?.MarkDirty();
+            NotifyDocumentBackgroundChanged();
+        }
+        public void CommitDocumentBackgroundImage(Media.ImageBrush expected, Media.ImageBrush saved)
+        {
+            if(Service.Document.Background != expected)
+                return;
+            Service.Document.Background = saved;
+            Service.BackGround = saved;
             NotifyDocumentBackgroundChanged();
         }
         public void ClearDocumentBackgroundImage()

@@ -495,7 +495,7 @@
     <value>Колір фону документа</value>
   </data>
   <data name="Editor.DocumentBackgroundImage" xml:space="preserve">
-    <value>Вибрати фонове зображення документа</value>
+    <value>Вибрати фонове зображення документа. Переміщення на сторінці: Ctrl + ліва кнопка миші.</value>
   </data>
   <data name="Editor.RemoveDocumentBackgroundImage" xml:space="preserve">
     <value>Видалити фонове зображення документа</value>
@@ -1730,4 +1730,6 @@
   <data name="File.Portrait" xml:space="preserve"><value>Книжкова</value></data>
   <data name="File.Landscape" xml:space="preserve"><value>Альбомна</value></data>
   <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Висота сторінки не обмежена.</value></data>
+  <data name="Document.BackgroundFinalizeTitle" xml:space="preserve"><value>Збереження вибраного фону</value></data>
+  <data name="Document.BackgroundFinalizeWarning" xml:space="preserve"><value>У документі залишиться лише вибрана область фонового зображення. Після збереження переміщувати фон і змінювати вибрану область буде неможливо — можна буде встановити інше зображення. Продовжити збереження?</value></data>
 </root>

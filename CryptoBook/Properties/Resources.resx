@@ -331,7 +331,7 @@
   <data name="Editor.Highlight" xml:space="preserve"><value>Highlight</value></data>
   <data name="Editor.Paper" xml:space="preserve"><value>Paper</value></data>
   <data name="Editor.DocumentBackground" xml:space="preserve"><value>Document background color</value></data>
-  <data name="Editor.DocumentBackgroundImage" xml:space="preserve"><value>Choose document background image</value></data>
+  <data name="Editor.DocumentBackgroundImage" xml:space="preserve"><value>Choose document background image. Move it on the page with Ctrl + left mouse button.</value></data>
   <data name="Editor.RemoveDocumentBackgroundImage" xml:space="preserve"><value>Remove document background image</value></data>
   <data name="Document.BackgroundImageError" xml:space="preserve"><value>Background image error</value></data>
   <data name="Document.BackgroundImageTooLarge" xml:space="preserve"><value>The embedded background image exceeds 64 MB.</value></data>
@@ -889,4 +889,6 @@
   <data name="File.Portrait" xml:space="preserve"><value>Portrait</value></data>
   <data name="File.Landscape" xml:space="preserve"><value>Landscape</value></data>
   <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Page height is unlimited.</value></data>
+  <data name="Document.BackgroundFinalizeTitle" xml:space="preserve"><value>Save background crop</value></data>
+  <data name="Document.BackgroundFinalizeWarning" xml:space="preserve"><value>Only the selected background area will be stored in this document. After saving, you will no longer be able to move or reframe this background; you can replace it with another image. Continue saving?</value></data>
 </root>

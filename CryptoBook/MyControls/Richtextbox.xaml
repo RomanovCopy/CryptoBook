@@ -29,10 +29,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <AdornerDecorator>
-            <ContentControl x:Name="EditorHost"
-                            Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
-                <ContentControl.Style>
-                    <Style TargetType="{x:Type ContentControl}">
+                <AdornerDecorator.Style>
+                    <Style TargetType="{x:Type AdornerDecorator}">
                         <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
@@ -40,7 +38,9 @@
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </ContentControl.Style>
+                </AdornerDecorator.Style>
+            <ContentControl x:Name="EditorHost"
+                            Content="{markup:ResolveUserControl UserControlType={x:Type interfaces:IRichTextBoxService}}">
                 <ContentControl.Resources>
                     <Style TargetType="{x:Type services:RichTextBoxService}">
                         <Setter Property="Padding" Value="0"/>
@@ -49,6 +49,8 @@
                         <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
                         <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
                         <Setter Property="behaviors:DocumentPageBorderBehavior.IsEnabled" Value="True"/>
+                        <Setter Property="behaviors:DocumentBackgroundImageBehavior.FontService"
+                                Value="{markup:ResolveService ServiceType={x:Type interfaces:IFontService}}"/>
                         <Setter Property="Cursor"
                                 Value="{x:Static markup:HighContrastTextCursor.Instance}"/>
                         <Setter Property="ContextMenu"

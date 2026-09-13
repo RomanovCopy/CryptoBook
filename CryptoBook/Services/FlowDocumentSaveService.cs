@@ -36,7 +36,8 @@ namespace CryptoBook.Services
         }
 
         public async Task  SaveToFileAsync(IRichTextBoxService richTextBoxService, string filePath, IFileTemplate template, 
-        CancellationToken cancellationToken = default, IProgressReporter? progress = null)
+        CancellationToken cancellationToken = default, IProgressReporter? progress = null,
+        System.Windows.Documents.FlowDocument? documentSnapshot = null)
         {
             ArgumentNullException.ThrowIfNull(richTextBoxService);
             ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
@@ -55,7 +56,7 @@ namespace CryptoBook.Services
                 await using(FileStream stream = new( temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 81920,
                 useAsync: true))
                 {
-                    await SaveToStreamAsync( richTextBoxService, stream, template, cancellationToken, progress);
+                    await SaveToStreamAsync( richTextBoxService, stream, template, cancellationToken, progress, documentSnapshot);
 
                     await stream.FlushAsync(cancellationToken);
                     stream.Flush(flushToDisk: true);
@@ -82,12 +83,13 @@ namespace CryptoBook.Services
         }
 
         public async Task SaveToStreamAsync(IRichTextBoxService richTextBoxService, Stream destination, IFileTemplate template, 
-        CancellationToken cancellationToken = default, IProgressReporter? progress = null)
+        CancellationToken cancellationToken = default, IProgressReporter? progress = null,
+        System.Windows.Documents.FlowDocument? documentSnapshot = null)
         {
             ArgumentNullException.ThrowIfNull(richTextBoxService);
             ArgumentNullException.ThrowIfNull(destination);
             ArgumentNullException.ThrowIfNull(template);
-            FlowDocument document = richTextBoxService.Document;
+            FlowDocument document = documentSnapshot ?? richTextBoxService.Document;
 
 
             if(!destination.CanWrite)

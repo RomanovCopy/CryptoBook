@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.1.3.5 - 2026-09-13
+
+### Added
+
+- Reposition an editable document background with Ctrl + left mouse drag; Esc restores the crop from before the drag.
+- Confirm background cropping when saving XamlPackage and protected rich-text documents.
+  A successful save embeds only the selected pixels and locks the crop until a new background is chosen.
+
+### Fixed
+
+- Keep background images within the paper, without filling the surrounding workspace or painting translucent images twice.
+- Preserve background placement across editor resizing, zooming and scrolling; clamp dragging to prevent empty paper edges.
+- Keep the original background editable when saving is cancelled or fails; do not overwrite a newer background selected during a save.
+- Hide the editor's adorner layer in reading preview and restore page borders when returning to editing.
+
+### Changed
+
+- Extend WPF coverage for rendered backgrounds, dragging, crop persistence, save failures and preview borders.
+- Refresh README screenshots with the current WPF views, an illustrated journal and a page background.
+- Synchronize application, installer, documentation and release metadata for 1.1.3.5.
+
+Full comparison: [v1.1.3.4...v1.1.3.5](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.4...v1.1.3.5)
+
 ## 1.1.3.4 - 2026-09-12
 
 ### Added

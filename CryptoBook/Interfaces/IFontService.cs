@@ -102,6 +102,8 @@ namespace CryptoBook.Interfaces
         void SetFontBackground(System.Drawing.Color? fontBackground);
         void SetDocumentBackground(System.Drawing.Color? documentBackground);
         void SetDocumentBackgroundImage(BitmapSource backgroundImage);
+        void SetDocumentBackgroundImageCrop(Rect crop);
+        void CommitDocumentBackgroundImage(Media.ImageBrush expected, Media.ImageBrush saved);
         void ClearDocumentBackgroundImage();
         void SetFontSize(double fontSize);
 

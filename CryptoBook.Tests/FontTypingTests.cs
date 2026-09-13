@@ -693,6 +693,245 @@ public sealed class FontTypingTests
     }
 
     [WpfFact]
+    public void DocumentBackgroundImage_KeepsDocumentCoordinatesAcrossResizeZoomAndScroll()
+    {
+        var (service, fonts) = CreateServices(new Run("CryptoBook — фон закреплён на странице"));
+        var pixels = new byte[400 * 400 * 4];
+        for(int y = 0; y < 400; y++)
+            for(int x = 0; x < 400; x++)
+            {
+                int offset = (y * 400 + x) * 4;
+                pixels[offset] = 40;
+                pixels[offset + 1] = (byte)(y * 255 / 399);
+                pixels[offset + 2] = (byte)(x * 255 / 399);
+                pixels[offset + 3] = 255;
+            }
+        fonts.SetDocumentBackgroundImage(BitmapSource.Create(400, 400, 96, 96,
+            PixelFormats.Bgra32, null, pixels, 1600));
+        var editor = service.Service;
+        editor.Padding = new Thickness(0);
+        editor.BorderThickness = new Thickness(0);
+        editor.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto;
+        editor.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto;
+        var host = new AdornerDecorator { Child = editor };
+        DocumentPageBorderBehavior.SetIsEnabled(editor, true);
+        DocumentBackgroundImageBehavior.SetFontService(editor, fonts);
+        void Layout(int width, int height)
+        {
+            host.Measure(new Size(width, height));
+            host.Arrange(new Rect(0, 0, width, height));
+            host.UpdateLayout();
+        }
+        byte[] Sample(string name = "baseline")
+        {
+            host.UpdateLayout();
+            int width = (int)host.ActualWidth, height = (int)host.ActualHeight;
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(host);
+            if(Environment.GetEnvironmentVariable("CRYPTOBOOK_UI_QA_DIR") is { Length: > 0 } directory)
+            {
+                Directory.CreateDirectory(directory);
+                using var stream = File.Create(Path.Combine(directory, "anchored-" + name + ".png"));
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                encoder.Save(stream);
+            }
+            var data = new byte[width * height * 4];
+            bitmap.CopyPixels(data, width * 4, 0);
+            var point = editor.TranslatePoint(new Point(250 - editor.HorizontalOffset, 250 - editor.VerticalOffset), host);
+            int offset = ((int)Math.Round(point.Y) * width + (int)Math.Round(point.X)) * 4;
+            return data[offset..(offset + 4)];
+        }
+        void SamePixel(byte[] expected, string operation)
+        {
+            var actual = Sample(operation);
+            for(int i = 0; i < 4; i++)
+                Assert.True(Math.Abs(expected[i] - actual[i]) <= 2,
+                    $"{operation}: document point changed from {string.Join(',', expected)} to {string.Join(',', actual)}");
+        }
+        Layout(900, 500);
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        host.UpdateLayout();
+        var baseline = Sample();
+        var background = service.Document.Background;
+        Layout(900, 750);
+        SamePixel(baseline, "Resize height");
+        Layout(1100, 750);
+        SamePixel(baseline, "Resize width");
+        DocumentPageBorderBehavior.HandleMouseWheel(editor, -480, System.Windows.Input.ModifierKeys.Control);
+        SamePixel(baseline, "Zoom out");
+        Assert.Same(background, service.Document.Background);
+        for(int i = 0; i < 80; i++)
+            service.Document.Blocks.Add(new Paragraph(new Run("Строка " + i)) { LineHeight = 30 });
+        host.UpdateLayout();
+        // Growing the continuous sheet changes its height; resizing its window must not.
+        baseline = Sample("long-document");
+        Layout(900, 500);
+        SamePixel(baseline, "Resize long document");
+        editor.ScrollToVerticalOffset(100);
+        host.UpdateLayout();
+        Assert.True(editor.VerticalOffset > 0);
+        SamePixel(baseline, "Scroll vertically");
+        DocumentPageBorderBehavior.HandleMouseWheel(editor, 1200, System.Windows.Input.ModifierKeys.Control);
+        host.UpdateLayout();
+        SamePixel(baseline, "Zoom in");
+        editor.ScrollToHorizontalOffset(100);
+        host.UpdateLayout();
+        Assert.True(editor.HorizontalOffset > 0);
+        SamePixel(baseline, "Scroll horizontally");
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+    }
+
+    [WpfFact]
+    public void DocumentBackgroundImage_DragRequiresControlPreservesSelectionAndCancelsWithEscape()
+    {
+        var (service, fonts) = CreateServices(new Run("Выделенный текст"));
+        fonts.SetDocumentBackgroundImage(CreateBitmap());
+        var editor = service.Service;
+        DocumentBackgroundImageBehavior.SetFontService(editor, fonts);
+        var window = new Window
+        {
+            Content = editor, Width = 900, Height = 600,
+            Left = -10000, Top = -10000, ShowActivated = false, ShowInTaskbar = false
+        };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            service.Selection.Select(service.Document.ContentStart, service.Document.ContentEnd);
+            var selection = service.Selection.Text;
+            var point = new Point(100, 100);
+            Assert.False(DocumentBackgroundImageBehavior.BeginDrag(editor, point, System.Windows.Input.ModifierKeys.None));
+            editor.IsReadOnly = true;
+            Assert.False(DocumentBackgroundImageBehavior.BeginDrag(editor, point, System.Windows.Input.ModifierKeys.Control));
+            editor.IsReadOnly = false;
+            Assert.False(DocumentBackgroundImageBehavior.BeginDrag(editor, new Point(-20, 100), System.Windows.Input.ModifierKeys.Control));
+            Assert.True(DocumentBackgroundImageBehavior.BeginDrag(editor, point, System.Windows.Input.ModifierKeys.Control));
+            Assert.True(editor.IsMouseCaptured);
+            Assert.True(DocumentBackgroundImageBehavior.MoveDrag(editor, new Point(180, 100),
+                System.Windows.Input.ModifierKeys.Control, System.Windows.Input.MouseButtonState.Pressed));
+            Assert.NotEqual(new Rect(0, 0, 1, 1), ((ImageBrush)service.Document.Background).Viewbox);
+            Assert.Equal(selection, service.Selection.Text);
+            Assert.True(DocumentBackgroundImageBehavior.MoveDrag(editor, point,
+                System.Windows.Input.ModifierKeys.Control, System.Windows.Input.MouseButtonState.Pressed));
+            Assert.Equal(new Rect(0, 0, 1, 1), ((ImageBrush)service.Document.Background).Viewbox);
+            Assert.True(DocumentBackgroundImageBehavior.MoveDrag(editor, new Point(180, 100),
+                System.Windows.Input.ModifierKeys.Control, System.Windows.Input.MouseButtonState.Pressed));
+            editor.RaiseEvent(new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice,
+                PresentationSource.FromVisual(editor), 0, System.Windows.Input.Key.Escape)
+            { RoutedEvent = UIElement.PreviewKeyDownEvent });
+            Assert.False(editor.IsMouseCaptured);
+            Assert.Equal(new Rect(0, 0, 1, 1), ((ImageBrush)service.Document.Background).Viewbox);
+            Assert.Equal(selection, service.Selection.Text);
+            Assert.True(DocumentBackgroundImageBehavior.BeginDrag(editor, point, System.Windows.Input.ModifierKeys.Control));
+            editor.ReleaseMouseCapture();
+            Assert.False(DocumentBackgroundImageBehavior.MoveDrag(editor, new Point(220, 100),
+                System.Windows.Input.ModifierKeys.Control, System.Windows.Input.MouseButtonState.Pressed));
+            var original = (ImageBrush)service.Document.Background;
+            fonts.CommitDocumentBackgroundImage(original, DocumentBackgroundSaveOperation.Crop(original, service.Document.PageWidth));
+            Assert.False(DocumentBackgroundImageBehavior.BeginDrag(editor, point, System.Windows.Input.ModifierKeys.Control));
+            fonts.SetDocumentBackgroundImage(CreateBitmap());
+            window.UpdateLayout();
+            Assert.True(DocumentBackgroundImageBehavior.BeginDrag(editor, point, System.Windows.Input.ModifierKeys.Control));
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [WpfFact]
+    public void DocumentBackgroundImage_ClipsToPaperAndMovesVisibleCropAtReducedZoom()
+    {
+        var (service, fonts) = CreateServices(new Run("Фон страницы — Ctrl + левая кнопка мыши"));
+        fonts.SetDocumentBackgroundImage(CreateBitmap());
+        var editor = service.Service;
+        editor.Padding = new Thickness(0);
+        editor.BorderThickness = new Thickness(0);
+        editor.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto;
+        editor.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto;
+        var host = new AdornerDecorator { Child = editor };
+        DocumentPageBorderBehavior.SetIsEnabled(editor, true);
+        DocumentBackgroundImageBehavior.SetFontService(editor, fonts);
+        host.Measure(new Size(1000, 500));
+        host.Arrange(new Rect(0, 0, 1000, 500));
+        host.UpdateLayout();
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        host.UpdateLayout();
+        DocumentPageBorderBehavior.HandleMouseWheel(editor, -1200, System.Windows.Input.ModifierKeys.Control);
+        host.UpdateLayout();
+
+        byte[] Render(string name)
+        {
+            host.UpdateLayout();
+            var bitmap = new RenderTargetBitmap(1000, 500, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(host);
+            var pixels = new byte[1000 * 500 * 4];
+            bitmap.CopyPixels(pixels, 4000, 0);
+            if(Environment.GetEnvironmentVariable("CRYPTOBOOK_UI_QA_DIR") is { Length: > 0 } directory)
+            {
+                Directory.CreateDirectory(directory);
+                using var stream = File.Create(Path.Combine(directory, name + ".png"));
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                encoder.Save(stream);
+            }
+            return pixels;
+        }
+        var before = Render("background-before");
+        Assert.Equal(0, before[(200 * 1000 + 700) * 4 + 3]);
+        Assert.Equal(255, before[(200 * 1000 + 100) * 4 + 3]);
+        var start = DocumentBackgroundImageLayout.GetVisibleCrop(
+            (ImageBrush)service.Document.Background, new Size(service.Document.PageWidth, editor.ViewportHeight));
+        var moved = DocumentBackgroundImageLayout.MoveCrop(start,
+            new Size(service.Document.PageWidth, editor.ViewportHeight), new Vector(10000, 10000));
+        Assert.Equal(0, moved.X);
+        Assert.Equal(0, moved.Y);
+        fonts.SetDocumentBackgroundImageCrop(moved);
+        var after = Render("background-after");
+        Assert.Equal(0, after[(200 * 1000 + 700) * 4 + 3]);
+        Assert.False(before.SequenceEqual(after), "Moving the crop must visibly change the rendered paper.");
+
+        for(int i = 0; i < 80; i++)
+            service.Document.Blocks.Add(new Paragraph(new Run("Строка документа " + i)));
+        host.UpdateLayout();
+        editor.ScrollToVerticalOffset(200);
+        host.UpdateLayout();
+        var scrolled = Render("background-scrolled");
+        Assert.True(editor.VerticalOffset > 0);
+        Assert.Equal(0, scrolled[(200 * 1000 + 700) * 4 + 3]);
+        Assert.Equal(255, scrolled[(200 * 1000 + 100) * 4 + 3]);
+        var translucent = ((ImageBrush)service.Document.Background).CloneCurrentValue();
+        translucent.Opacity = 0.4;
+        service.Document.Background = translucent;
+        service.BackGround = translucent;
+        var alpha = Render("background-opacity");
+        Assert.InRange(alpha[(210 * 1000 + 350) * 4 + 3], 101, 103);
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+        Assert.Same(service.Document.Background, editor.Background);
+    }
+
+    [WpfTheory]
+    [InlineData(200, 100, 100, 200, 0.25, 1)]
+    [InlineData(100, 200, 200, 100, 1, 0.25)]
+    public void DocumentBackgroundImage_CropPreservesAspectAndClampsBothDirections(
+        int imageWidth, int imageHeight, double paperWidth, double paperHeight, double cropWidth, double cropHeight)
+    {
+        var bitmap = BitmapSource.Create(imageWidth, imageHeight, 96, 96, PixelFormats.Bgra32,
+            null, new byte[imageWidth * imageHeight * 4], imageWidth * 4);
+        var paper = new Size(paperWidth, paperHeight);
+        var crop = DocumentBackgroundImageLayout.GetVisibleCrop(new ImageBrush(bitmap), paper);
+        Assert.Equal(cropWidth, crop.Width, 6);
+        Assert.Equal(cropHeight, crop.Height, 6);
+        var end = DocumentBackgroundImageLayout.MoveCrop(crop, paper, new Vector(-10000, -10000));
+        Assert.Equal(1, end.Right, 6);
+        Assert.Equal(1, end.Bottom, 6);
+        var start = DocumentBackgroundImageLayout.MoveCrop(crop, paper, new Vector(10000, 10000));
+        Assert.Equal(0, start.X);
+        Assert.Equal(0, start.Y);
+    }
+
+    [WpfFact]
     public void ReplaceDocument_PreservesLoadedDocumentBackground()
     {
         var (service, _) = CreateInitialServices();
@@ -749,6 +988,13 @@ public sealed class FontTypingTests
         session.MarkSaved(
             session.FilePath!,
             session.Template!);
+        var selectionStart = service.Selection.Start;
+        var selectionEnd = service.Selection.End;
+        fonts.SetDocumentBackgroundImageCrop(new Rect(0.1, 0, 0.5, 1));
+        Assert.True(session.IsDirty);
+        Assert.Equal(0, selectionStart.CompareTo(service.Selection.Start));
+        Assert.Equal(0, selectionEnd.CompareTo(service.Selection.End));
+        session.MarkSaved(session.FilePath!, session.Template!);
         fonts.ClearDocumentBackgroundImage();
 
         Assert.True(session.IsDirty);

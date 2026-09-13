@@ -331,7 +331,7 @@
   <data name="Editor.Highlight" xml:space="preserve"><value>Выделение</value></data>
   <data name="Editor.Paper" xml:space="preserve"><value>Бумага</value></data>
   <data name="Editor.DocumentBackground" xml:space="preserve"><value>Фоновый цвет документа</value></data>
-  <data name="Editor.DocumentBackgroundImage" xml:space="preserve"><value>Выбрать фоновое изображение документа</value></data>
+  <data name="Editor.DocumentBackgroundImage" xml:space="preserve"><value>Выбрать фоновое изображение документа. Перемещение на странице: Ctrl + левая кнопка мыши.</value></data>
   <data name="Editor.RemoveDocumentBackgroundImage" xml:space="preserve"><value>Удалить фоновое изображение документа</value></data>
   <data name="Document.BackgroundImageError" xml:space="preserve"><value>Ошибка фонового изображения</value></data>
   <data name="Document.BackgroundImageTooLarge" xml:space="preserve"><value>Размер встроенного фонового изображения превышает 64 МБ.</value></data>
@@ -889,4 +889,6 @@
   <data name="File.Portrait" xml:space="preserve"><value>Книжная</value></data>
   <data name="File.Landscape" xml:space="preserve"><value>Альбомная</value></data>
   <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Высота страницы не ограничена.</value></data>
+  <data name="Document.BackgroundFinalizeTitle" xml:space="preserve"><value>Сохранение выбранного фона</value></data>
+  <data name="Document.BackgroundFinalizeWarning" xml:space="preserve"><value>В документе останется только выбранная область фонового изображения. После сохранения перемещать фон и менять выбранную область будет нельзя — можно будет установить другое изображение. Продолжить сохранение?</value></data>
 </root>

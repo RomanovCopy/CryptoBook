@@ -81,14 +81,23 @@ internal static class Program
         window.ShowActivated = false;
         string picture = Path.Combine(output, "demo", "mountain-lake.png");
         DrawLandscape(picture);
+        string paper = Path.Combine(output, "demo", "paper-background.png");
+        DrawPaperBackground(paper);
         var document = CreateDocument(picture);
         string documentPath = Path.Combine(output, "demo", "Альпийский маршрут.XamlPackage");
-        using(var stream = File.Create(documentPath))
-            new TextRange(document.ContentStart, document.ContentEnd).Save(stream, DataFormats.XamlPackage);
         var session = host.Scope.Resolve<IDocumentSession>();
         session.Open(documentPath, new XamlPackageFileTemplate(), document);
         manager.ShowWindow(id);
         await Settle(window);
+        var fonts = host.Scope.Resolve<IFontService>();
+        fonts.SetDocumentBackgroundImage(new BitmapImage(new Uri(paper)));
+        await Settle(window);
+        // Serialize the demonstration through the production codec, including its
+        // editable background metadata. No user documents or settings are involved.
+        using(var stream = File.Create(documentPath))
+            await host.Scope.Resolve<IFlowDocumentSaveService>().SaveToStreamAsync(
+                fonts.Service, stream, new XamlPackageFileTemplate());
+        session.MarkSaved(documentPath, new XamlPackageFileTemplate());
         Save(window, Path.Combine(output, "editor.png"));
 
         host.Scope.Resolve<IMainWindowModel>().IsMenuOpen = true;
@@ -215,6 +224,30 @@ internal static class Program
     }
 
     private static SolidColorBrush Brush(string hex) => new((Color)ColorConverter.ConvertFromString(hex));
+
+    private static void DrawPaperBackground(string path)
+    {
+        // Original pale stationery artwork, used as a real document image background.
+        var visual = new DrawingVisual();
+        using(var dc = visual.RenderOpen())
+        {
+            dc.DrawRectangle(new LinearGradientBrush(Color.FromRgb(244, 241, 226),
+                Color.FromRgb(223, 236, 230), 90), null, new Rect(0, 0, 1000, 1414));
+            for(int i = 0; i < 9; i++)
+            {
+                double y = 880 + i * 43;
+                var contour = new StreamGeometry();
+                using(var line = contour.Open())
+                {
+                    line.BeginFigure(new Point(0, y + 100), false, false);
+                    line.BezierTo(new Point(290, y - 125), new Point(500, y + 160), new Point(1000, y - 95), true, false);
+                }
+                dc.DrawGeometry(null, new Pen(Brush("#CBDCD2"), 2), contour);
+            }
+            dc.DrawEllipse(Brush("#EEE4C8"), null, new Point(875, 210), 82, 82);
+        }
+        Save(visual, path, 1000, 1414);
+    }
 
     private static void DrawLandscape(string path)
     {
