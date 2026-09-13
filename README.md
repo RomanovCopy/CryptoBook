@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.3.4-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.4)
+[![Version](https://img.shields.io/badge/version-1.1.3.5-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.5)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -47,18 +47,20 @@ machine unless you explicitly move or share them.
 | **Sepia reading mode** | **Document navigation** |
 | ![Illustrated document in Sepia](docs/screenshots/sepia-reading.png) | ![Side menu and illustrated document](docs/screenshots/side-menu.png) |
 
-Screenshots show version 1.1.3.3 with demonstration content. See the
+Screenshots show version 1.1.3.5 with an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.3.4
+## New in 1.1.3.5
 
-- Hold Ctrl and turn the mouse wheel to zoom the rich-text editor.
-- Click **100%** beside the zoom indicator to restore the actual page scale.
-- Zoom changes only the view, preserving the document's page size, fonts and content.
-- Window resizing retains the zoom factor relative to the automatic fit-to-width scale;
-  the displayed percentage can change after resizing, including after a reset to 100%.
+- Reposition a document background image with **Ctrl + left mouse drag**; press **Esc** to cancel the drag.
+- Background images stay within the paper and retain their placement while zooming, scrolling and resizing.
+- Saving to XamlPackage or a protected rich-text document asks you to confirm the crop.
+  After a successful save, only the chosen image area remains embedded and its position is locked;
+  choose another background image to change the crop. Cancellation or a failed save leaves it editable.
+- Reading preview no longer shows the editor's page borders over the document.
+- Refreshed screenshots show the current editor, reading mode and Markdown views with sample content.
 
-See the [release notes](docs/releases/v1.1.3.4.md) and [changelog](CHANGELOG.md).
+See the [release notes](docs/releases/v1.1.3.5.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -153,7 +155,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.3.4
+./installer/Build-Installer.ps1 -Version 1.1.3.5
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scope": "Git-tracked raster and vector image files, excluding the generated contact sheet",
-  "assetCount": 51,
+  "assetCount": 52,
   "assets": [
     {
       "path": "CryptoBook/Resources/Icons/AppIcon.ico",
@@ -839,12 +839,34 @@
         "gamma": "0.45455",
         "srgb": "0"
       },
+      "firstAdded": {
+        "commit": "cf43c087aa9e9ceac48c984f2c2368e5c79fa7dc",
+        "date": "2026-09-09T19:44:46+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Release 1.1.3.3"
+      }
+    },
+    {
+      "path": "docs/screenshots/demo/paper-background.png",
+      "size": 56698,
+      "sha256": "6A4C5796BB342693C68A2AC4EC3A29887842999B86A6DDC2434426BBF483EEE3",
+      "format": "PNG",
+      "width": 1000,
+      "height": 1414,
+      "mode": "RGBA",
+      "frames": 1,
+      "metadata": {
+        "dpi": "(95.9866, 95.9866)",
+        "gamma": "0.45455",
+        "srgb": "0"
+      },
       "firstAdded": null
     },
     {
       "path": "docs/screenshots/editor.png",
-      "size": 137071,
-      "sha256": "2EDC16F8FAB69CA7A14EA32228B2C48170FD11A1EE3F3C936A2224944E927CD7",
+      "size": 141533,
+      "sha256": "0CCF080A01518AEC583F7A116C29A92EDC7A369EF1D17E8A24AD3FC3E3A4F03B",
       "format": "PNG",
       "width": 1440,
       "height": 960,
@@ -877,12 +899,18 @@
         "gamma": "0.45455",
         "srgb": "0"
       },
-      "firstAdded": null
+      "firstAdded": {
+        "commit": "cf43c087aa9e9ceac48c984f2c2368e5c79fa7dc",
+        "date": "2026-09-09T19:44:46+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Release 1.1.3.3"
+      }
     },
     {
       "path": "docs/screenshots/markdown-preview.png",
-      "size": 84478,
-      "sha256": "2F27EB0BAE84F1DEEF5433924BDC61BB540D7A9FC87E20BBE91A727F01D13602",
+      "size": 84600,
+      "sha256": "C95212C3178E01AB1FD0E635FA04927A197AA80296AAA5DFAE7223D47DA68992",
       "format": "PNG",
       "width": 1120,
       "height": 960,
@@ -893,12 +921,18 @@
         "gamma": "0.45455",
         "srgb": "0"
       },
-      "firstAdded": null
+      "firstAdded": {
+        "commit": "cf43c087aa9e9ceac48c984f2c2368e5c79fa7dc",
+        "date": "2026-09-09T19:44:46+03:00",
+        "author": "RomanovCopy",
+        "email": "RomanovCopy@gmail.com",
+        "subject": "Release 1.1.3.3"
+      }
     },
     {
       "path": "docs/screenshots/sepia-reading.png",
-      "size": 70004,
-      "sha256": "3E1C1B86587A6FC00402160B3C68205FD942D575AF3FEC081F74D4A8B90F3AC1",
+      "size": 109914,
+      "sha256": "FDFD877B3AF68473CE547CD1F9B91C79B3AD12E91916726B0FEC65FE1723B905",
       "format": "PNG",
       "width": 1440,
       "height": 960,
@@ -941,8 +975,8 @@
     },
     {
       "path": "docs/screenshots/side-menu.png",
-      "size": 145085,
-      "sha256": "645E5CFDD5E8258D5A7F9976AE7FEABEA904E667785AE248BE6811870F52E7DA",
+      "size": 148790,
+      "sha256": "09B7121A8E02E1941FC95B3CEBE2A50FDC59C442F71B913D56F0293CEA1B7953",
       "format": "PNG",
       "width": 1440,
       "height": 960,
