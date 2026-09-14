@@ -2,6 +2,8 @@ using CryptoBook.Interfaces;
 using CryptoBook.Security;
 using CryptoBook.Services;
 using CryptoBook.Views;
+using CryptoBook.Infrastructure;
+using Button = System.Windows.Controls.Button;
 
 using Microsoft.Win32;
 using Microsoft.Xaml.Behaviors;
@@ -74,6 +76,7 @@ namespace CryptoBook.Behaviors
         private bool unlockDialogOpen;
         private bool serviceEventsAttached;
         private bool systemEventsAttached;
+        private readonly List<Window> securityHiddenWindows = new();
 
         public ICommand? CloseSidePanelCommand
         {
@@ -149,11 +152,20 @@ namespace CryptoBook.Behaviors
         private async void OnLoaded(object sender, RoutedEventArgs args)
         {
             AssociatedObject.Loaded -= OnLoaded;
+            if(AssociatedObject.FindName("SecurityUnlockButton") is Button unlockButton)
+                unlockButton.Click += OnUnlockClick;
+            if(AssociatedObject.FindName("SecurityCloseButton") is Button closeButton)
+                closeButton.Click += OnSecurityCloseClick;
+            if(AssociatedObject.FindName("SecurityRestoreButton") is Button restoreButton)
+                restoreButton.Click += OnUnlockClick;
+            if(AssociatedObject.FindName("SecurityDismissNoticeButton") is Button dismissButton)
+                dismissButton.Click += OnDismissRecoveryNotice;
 
             if(CloseCoordinator is not null)
                 await CloseCoordinator.InitializeAsync();
 
             KeyResetService?.Start();
+            UpdateRecoveryNotice();
             AttachSystemEvents();
 
             if(ActivationService is not null &&
@@ -178,8 +190,41 @@ namespace CryptoBook.Behaviors
                 CloseSidePanelCommand.Execute(args);
         }
 
-        private void OnUserActivity(object sender, InputEventArgs args) =>
-            KeyResetService?.NotifyActivity();
+        private void OnUserActivity(object sender, InputEventArgs args)
+        {
+            if(IsWorkspaceLocked && args is WpfKeyEventArgs key &&
+                (Keyboard.Modifiers != ModifierKeys.None || key.Key is not (Key.Tab or Key.Enter or Key.Space or Key.Escape)))
+                args.Handled = true;
+            else
+                KeyResetService?.NotifyActivity();
+        }
+
+        private bool IsWorkspaceLocked => WorkspaceLockPresentation.IsLocked(KeyResetService?.State,
+            KeyResetService?.HasRetainedDocument == true);
+
+        private void UpdateRecoveryNotice()
+        {
+            LockSnapshotNotice? details = SnapshotService?.GetNotice();
+            if(AssociatedObject.FindName("SecurityRecoveryNotice") is FrameworkElement notice)
+                notice.Visibility = details is not null && !IsWorkspaceLocked
+                    ? Visibility.Visible : Visibility.Collapsed;
+            if(AssociatedObject.FindName("SecurityRecoveryDetails") is TextBlock text)
+                text.Text = details is null ? string.Empty : LockSnapshotNoticePresentation.Describe(details);
+            if(AssociatedObject.FindName("SecurityRestoreButton") is Button restore)
+                restore.IsEnabled = !unlockDialogOpen && KeyResetService?.State is not
+                    (KeyResetState.Resetting or KeyResetState.Unlocking or KeyResetState.Restoring);
+        }
+
+        private void OnDismissRecoveryNotice(object sender, RoutedEventArgs args)
+        {
+            SnapshotService?.DismissNotice();
+            UpdateRecoveryNotice();
+        }
+
+        private void OnNoticeCultureChanged(object? sender, EventArgs args) => UpdateRecoveryNotice();
+
+        private void OnUnlockClick(object sender, RoutedEventArgs args) => ShowUnlockDialog();
+        private void OnSecurityCloseClick(object sender, RoutedEventArgs args) => AssociatedObject.Close();
 
         private void OnDocumentTextChanged(object sender, TextChangedEventArgs args) =>
             KeyResetService?.NotifyActivity();
@@ -222,13 +267,41 @@ namespace CryptoBook.Behaviors
             object? sender,
             KeyResetStateChangedEventArgs args)
         {
-            if(args.State == KeyResetState.KeyReset &&
-               AssociatedObject.IsLoaded &&
-               !unlockDialogOpen)
+            if(AssociatedObject.FindName("SecurityWorkspace") is FrameworkElement workspace &&
+               AssociatedObject.FindName("SecurityLockShield") is FrameworkElement shield)
             {
-                _ = AssociatedObject.Dispatcher.BeginInvoke(
-                    new Action(ShowUnlockDialog));
+                bool locked = IsWorkspaceLocked;
+                WorkspaceLockPresentation.Apply(workspace, shield,
+                    AssociatedObject.FindName("SecurityUnlockButton") as Button,
+                    AssociatedObject.FindName("SecurityCloseButton") as Button,
+                    args.State, KeyResetService?.HasRetainedDocument == true);
+                if(locked)
+                {
+                    foreach(Window window in WpfApplication.Current.Windows.Cast<Window>().ToArray())
+                        if(window != AssociatedObject && window is not UnlockWindow && window.IsVisible)
+                        {
+                            if(window is MediaPlayer)
+                            {
+                                window.Close();
+                                continue;
+                            }
+                            securityHiddenWindows.Add(window);
+                            window.Hide();
+                        }
+                }
+                else
+                {
+                    foreach(Window window in securityHiddenWindows)
+                    {
+                        if(args.State == KeyResetState.KeyReset && KeyResetService?.HasRetainedDocument != true)
+                            window.Close();
+                        else if(window.IsLoaded)
+                            window.Show();
+                    }
+                    securityHiddenWindows.Clear();
+                }
             }
+            UpdateRecoveryNotice();
         }
 
         private void OnSnapshotFailed(object? sender, Exception exception)
@@ -238,7 +311,7 @@ namespace CryptoBook.Behaviors
                 using IDisposable? pause = KeyResetService?.Pause();
                 WpfMessageBox.Show(
                     AssociatedObject,
-                    "Не удалось создать и проверить защищённый снимок. Ключ и документ не были очищены.",
+                    LocalizationManager.GetString("Security.SnapshotFailedLocked"),
                     "Сброс ключа",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
@@ -257,11 +330,18 @@ namespace CryptoBook.Behaviors
             unlockDialogOpen = true;
             try
             {
-                var unlock = new UnlockWindow(KeyResetService)
+                bool restoringRetainedDocument = KeyResetService.HasRetainedDocument;
+                if(!restoringRetainedDocument && CloseCoordinator is not null &&
+                   !await CloseCoordinator.TryApproveDocumentReplacementAsync())
+                    return;
+                LockSnapshotNotice? notice = SnapshotService?.GetNotice();
+                var unlock = new UnlockWindow(KeyResetService,
+                    restoringRetainedDocument || notice is null ? null : LockSnapshotNoticePresentation.Describe(notice))
                 {
                     Owner = AssociatedObject
                 };
                 if(unlock.ShowDialog() != true ||
+                   restoringRetainedDocument ||
                    SnapshotService is null ||
                    !SnapshotService.Exists)
                 {
@@ -305,11 +385,18 @@ namespace CryptoBook.Behaviors
             finally
             {
                 unlockDialogOpen = false;
+                UpdateRecoveryNotice();
             }
         }
 
         private async void OnClosing(object? sender, CancelEventArgs args)
         {
+            if(IsWorkspaceLocked && KeyResetService?.HasRetainedDocument == true)
+            {
+                args.Cancel = true;
+                _ = AssociatedObject.Dispatcher.BeginInvoke(new Action(ShowUnlockDialog));
+                return;
+            }
             if(CloseCoordinator is null || CloseCoordinator.IsCloseApproved)
                 return;
 
@@ -322,12 +409,25 @@ namespace CryptoBook.Behaviors
             }
         }
 
-        private void OnClosed(object? sender, EventArgs args) => Cleanup();
+        private void OnClosed(object? sender, EventArgs args)
+        {
+            if(AssociatedObject.FindName("SecurityUnlockButton") is Button button)
+                button.Click -= OnUnlockClick;
+            if(AssociatedObject.FindName("SecurityCloseButton") is Button closeButton)
+                closeButton.Click -= OnSecurityCloseClick;
+            if(AssociatedObject.FindName("SecurityRestoreButton") is Button restoreButton)
+                restoreButton.Click -= OnUnlockClick;
+            if(AssociatedObject.FindName("SecurityDismissNoticeButton") is Button dismissButton)
+                dismissButton.Click -= OnDismissRecoveryNotice;
+            securityHiddenWindows.Clear();
+            Cleanup();
+        }
 
         private void AttachServiceEvents()
         {
             if(serviceEventsAttached)
                 return;
+            LocalizationManager.CultureChanged += OnNoticeCultureChanged;
 
             if(RichTextBoxService is not null)
             {
@@ -372,6 +472,7 @@ namespace CryptoBook.Behaviors
 
             if(serviceEventsAttached)
             {
+                LocalizationManager.CultureChanged -= OnNoticeCultureChanged;
                 if(RichTextBoxService is not null)
                 {
                     RichTextBoxService.Service.TextChanged -=

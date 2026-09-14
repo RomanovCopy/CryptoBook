@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using System.Security.Cryptography;
 
 namespace CryptoBook.Services
 {
@@ -108,6 +109,8 @@ namespace CryptoBook.Services
                 template,
                 cancellationToken);
             const int chunkSize = 81920;
+            try
+            {
             for(int offset = 0; offset < buffer.Length; offset += chunkSize)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -117,6 +120,8 @@ namespace CryptoBook.Services
                     buffer.Length == 0 ? 1.0 : (double)(offset + count) / buffer.Length,
                     LocalizationManager.GetString("File.Writing"));
             }
+            }
+            finally { CryptographicOperations.ZeroMemory(buffer); }
         }
 
 
@@ -150,7 +155,7 @@ namespace CryptoBook.Services
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    using MemoryStream memory = new();
+                    using SensitiveMemoryStream memory = new();
 
                     TextRange range = new( document.ContentStart, document.ContentEnd);
 

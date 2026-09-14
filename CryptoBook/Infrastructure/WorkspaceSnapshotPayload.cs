@@ -1,4 +1,5 @@
 using CryptoBook.Interfaces;
+using CryptoBook.Security;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -21,7 +22,7 @@ internal static class WorkspaceSnapshotPayload
             return;
         }
         await destination.WriteAsync(Magic, cancellationToken);
-        using var buffer = new MemoryStream();
+        using var buffer = new SensitiveMemoryStream();
         using(var archive = new ZipArchive(buffer, ZipArchiveMode.Create, leaveOpen: true))
         {
             await using(var entry = archive.CreateEntry("active", CompressionLevel.NoCompression).Open())
@@ -36,7 +37,7 @@ internal static class WorkspaceSnapshotPayload
     public static async Task<(MemoryStream Active, WorkspaceDocumentSnapshot? Inactive)> ReadAsync(
         Stream source, CancellationToken cancellationToken = default)
     {
-        var active = new MemoryStream();
+        var active = new SensitiveMemoryStream();
         try
         {
             long start = source.Position;

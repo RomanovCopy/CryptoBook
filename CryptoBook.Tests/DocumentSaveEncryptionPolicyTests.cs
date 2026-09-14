@@ -138,6 +138,7 @@ namespace CryptoBook.Tests
             }
 
             public bool HasKey { get; }
+            public bool CanEncrypt => HasKey;
 
             public void SetKey(ReadOnlySpan<char> password) =>
                 throw new NotSupportedException();

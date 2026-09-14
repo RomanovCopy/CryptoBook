@@ -23,6 +23,10 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:ISettingsViewModel}"/>
     </Window.DataContext>
 
+    <Window.InputBindings>
+        <KeyBinding Key="L" Modifiers="Control" Command="{Binding ResetEncryptionKey}"/>
+    </Window.InputBindings>
+
     <Window.Resources>
         <BitmapImage x:Key="AboutApplicationLogo"
                      UriSource="/CryptoBook;component/Resources/Images/AppIcon.BlueYellow.v1.png"
@@ -360,6 +364,16 @@
                         MinWidth="220"
                         Height="34"
                         HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding EncryptionKeyStatus}" TextWrapping="Wrap"
+                           Margin="0,12,0,8" Foreground="{DynamicResource CurrentMutedForeground}"/>
+                <Button x:Name="ResetEncryptionKeyButton"
+                        Content="{Binding [Settings.ResetEncryptionKeyNow], Source={StaticResource Res}}"
+                        Command="{Binding ResetEncryptionKey}"
+                        ToolTip="{Binding [Settings.ResetEncryptionKeyShortcut], Source={StaticResource Res}}"
+                        MinWidth="220" Height="34" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="ResetEncryptionKeyShortcutHint" Margin="0,8,0,0" TextWrapping="Wrap"
+                           Text="{Binding [Settings.ResetEncryptionKeyShortcut], Source={StaticResource Res}}"
+                           Foreground="{DynamicResource CurrentMutedForeground}"/>
             </StackPanel>
         </ScrollViewer>
 
@@ -975,6 +989,9 @@
     </Grid>
 
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding Loaded}"/>
+        </i:EventTrigger>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Loaded}"/>
         </i:EventTrigger>

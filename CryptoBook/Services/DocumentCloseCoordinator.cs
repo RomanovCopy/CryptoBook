@@ -48,6 +48,8 @@ namespace CryptoBook.Services
 
         public bool IsCloseApproved { get; private set; }
 
+        public Task<bool> TryApproveDocumentReplacementAsync() => unsavedChangesGuard.CanCloseAsync();
+
         public async Task InitializeAsync()
         {
             if(recoveryService.HasSnapshot)
@@ -56,11 +58,13 @@ namespace CryptoBook.Services
                 {
                     try
                     {
-                        await recoveryService.RestoreSnapshotAsync();
+                        if(!await recoveryService.RestoreSnapshotAsync())
+                            await TryDeferSnapshotAsync();
                     }
                     catch(Exception exception)
                     {
                         dialogService.ShowRecoveryError(exception);
+                        await TryDeferSnapshotAsync();
                     }
                 }
                 else
@@ -108,6 +112,12 @@ namespace CryptoBook.Services
             {
                 dialogService.ShowRecoveryCleanupError(exception);
             }
+        }
+
+        private async Task TryDeferSnapshotAsync()
+        {
+            try { await recoveryService.DeferSnapshotAsync(); }
+            catch(Exception exception) { dialogService.ShowRecoveryCleanupError(exception); }
         }
     }
 }

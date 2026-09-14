@@ -110,7 +110,8 @@ namespace CryptoBook.Services
             string filePath,
             CancellationToken cancellationToken = default)
         {
-            if(keyResetService?.State is KeyResetState.Resetting)
+            if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Unlocking ||
+               (keyResetService?.State == KeyResetState.KeyReset && keyResetService.HasRetainedDocument))
                 return WorkspaceFileOpenResult.Fail("Выполняется безопасный сброс ключа.");
             using IDisposable? timerPause = keyResetService?.Pause();
             if(string.IsNullOrWhiteSpace(filePath))
@@ -203,7 +204,8 @@ namespace CryptoBook.Services
         {
             // В состоянии Restoring сервис сам вызывает штатное открытие
             // исходного файла; блокируем только внешний Resetting.
-            if(keyResetService?.State is KeyResetState.Resetting)
+            if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Unlocking ||
+               (keyResetService?.State == KeyResetState.KeyReset && keyResetService.HasRetainedDocument))
                 return WorkspaceFileOpenResult.Fail("Выполняется безопасный сброс ключа.");
             using IDisposable? timerPause = keyResetService?.Pause();
             if(string.IsNullOrWhiteSpace(targetPath))

@@ -311,7 +311,7 @@ namespace CryptoBook.Behaviors
 
             if(ReferenceEquals(sender, _passwordBox))
             {
-                if(_passwordBox.Password.Length < MinLength)
+                if(GetPasswordLength(_passwordBox) < MinLength)
                 {
                 _errorText!.Text = LocalizationManager.Format(
                     "Key.TooShort",
@@ -356,7 +356,18 @@ namespace CryptoBook.Behaviors
 
             try
             {
-                password = Converter.ToCharArray(_passwordBox.SecurePassword);
+                using var securePassword = _passwordBox.SecurePassword;
+                password = Converter.ToCharArray(securePassword);
+
+                if(AssociatedObject.DataContext is IKeyInputViewModel { RequireStrongPassword: true } &&
+                    !EncryptionPasswordPolicy.IsStrong(password))
+                {
+                    _errorText.Text = LocalizationManager.GetString("Key.StrongPasswordRequired");
+                    _passwordBox.IsEnabled = true;
+                    _repeatPasswordBox.IsEnabled = false;
+                    _passwordBox.Focus();
+                    return;
+                }
 
                 KeyProvider.SetKey(password);
 
@@ -390,7 +401,7 @@ namespace CryptoBook.Behaviors
         /// </summary>
         private bool CanInput(PasswordBox passwordBox, string text)
         {
-            if(passwordBox.SecurePassword.Length + text.Length > MaxLength)
+            if(GetPasswordLength(passwordBox) + text.Length > MaxLength)
                 return false;
 
             foreach(char ch in text)
@@ -412,7 +423,9 @@ namespace CryptoBook.Behaviors
         /// </summary>
         private bool ValidatePasswordBoxes()
         {
-            int length = _passwordBox!.SecurePassword.Length;
+            using var first = _passwordBox!.SecurePassword;
+            using var repeated = _repeatPasswordBox!.SecurePassword;
+            int length = first.Length;
 
             if(length == 0)
             {
@@ -428,13 +441,13 @@ namespace CryptoBook.Behaviors
                 return false;
             }
 
-            if(_repeatPasswordBox!.SecurePassword.Length == 0)
+            if(repeated.Length == 0)
             {
                 _errorText!.Text = LocalizationManager.GetString("Key.Repeat");
                 return false;
             }
 
-            bool equals = Converter!.ContentEquals(_passwordBox.SecurePassword, _repeatPasswordBox.SecurePassword);
+            bool equals = Converter!.ContentEquals(first, repeated);
 
             if(!equals)
             {
@@ -444,6 +457,12 @@ namespace CryptoBook.Behaviors
             }
 
             return true;
+        }
+
+        private static int GetPasswordLength(PasswordBox box)
+        {
+            using var password = box.SecurePassword;
+            return password.Length;
         }
 
         /// <summary>

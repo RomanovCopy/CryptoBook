@@ -44,6 +44,7 @@ public sealed class EncryptionKeyRequestServiceTests
     private sealed class KeyProviderStub: IKeyProvider
     {
         public bool HasKey { get; set; }
+        public bool CanEncrypt => HasKey;
 
         public void SetKey(ReadOnlySpan<char> password) => HasKey = true;
 

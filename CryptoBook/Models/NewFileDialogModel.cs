@@ -294,7 +294,7 @@ namespace CryptoBook.Models
             {
                 if(SelectedTemplate is SecureFileTemplate)
                 {
-                    if(!_keyRequestService.EnsureKeyAvailable())
+                    if(!_keyRequestService.EnsureEncryptionKeyAvailable())
                         return;
 
                     DocumentSaveTarget? approvedTarget =

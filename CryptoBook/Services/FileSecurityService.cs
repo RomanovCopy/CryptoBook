@@ -13,16 +13,19 @@ namespace CryptoBook.Services
         private readonly ISecureFileProcessor _secureFileProcessor;
         private readonly ISecureFileValidator secureFileValidator;
         private readonly IKeyResetService? keyResetService;
+        private readonly IEncryptionKeyRequestService? keyRequestService;
 
         public FileSecurityService(
             ISystemItemCreateService createService,
             ISecureFileProcessor secureFileProcessor,
             IKeyResetService? keyResetService = null,
-            ISecureFileValidator? secureFileValidator = null)
+            ISecureFileValidator? secureFileValidator = null,
+            IEncryptionKeyRequestService? keyRequestService = null)
         {
             ArgumentNullException.ThrowIfNull(createService);
             _secureFileProcessor = secureFileProcessor ?? throw new ArgumentNullException(nameof(secureFileProcessor));
             this.keyResetService = keyResetService;
+            this.keyRequestService = keyRequestService;
             this.secureFileValidator = secureFileValidator ??
                 new SecureFileValidator();
         }
@@ -224,7 +227,9 @@ namespace CryptoBook.Services
             CancellationToken cancellationToken, bool continueAfterFileError = false,
             bool avoidDestinationOverwrite = false)
         {
-            if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring)
+            if(keyResetService?.State is KeyResetState.Resetting or KeyResetState.Restoring or
+                KeyResetState.Unlocking || (keyResetService?.State == KeyResetState.KeyReset &&
+                keyResetService.HasRetainedDocument))
                 return FileOperationResult.Fail("Выполняется безопасный сброс ключа.");
             using IDisposable? timerPause = keyResetService?.Pause();
             string? currentPath = null;
@@ -248,6 +253,8 @@ namespace CryptoBook.Services
                 cancellationToken.ThrowIfCancellationRequested();
 
                 string sourcePath = Path.GetFullPath(source.FullPath);
+                if(!decrypt && keyRequestService?.EnsureEncryptionKeyAvailable() == false)
+                    return FileOperationResult.Fail(LocalizationManager.GetString("Error.OperationCanceled"));
                 currentPath = sourcePath;
                 string normalizedDestinationPath = Path.GetFullPath(destinationPath);
 

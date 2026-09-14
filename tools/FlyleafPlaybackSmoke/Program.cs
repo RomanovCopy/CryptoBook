@@ -226,6 +226,7 @@ internal static class Program
             .ToArray();
 
         public bool HasKey => true;
+        public bool CanEncrypt => true;
         public void SetKey(ReadOnlySpan<char> password) { }
         public byte[] DeriveKey(byte[] salt) => Key.ToArray();
         public Task<byte[]> DeriveKeyAsync(

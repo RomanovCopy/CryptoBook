@@ -365,6 +365,20 @@ public sealed class MarkdownTests
             Assert.Equal(
                 source,
                 MarkdownDocumentMetadata.GetSource(restored)!.Text);
+
+            state.Text = "# A second encrypted document";
+            await snapshot.CreateAndVerifyAsync(editor, metadata with { DocumentName = "second.md" });
+            Assert.Single(Directory.GetFiles(directory, "*.pending"));
+            Assert.Equal("second.md", snapshot.GetNotice()!.Documents[0].DocumentName);
+            (var second, _) = await snapshot.ReadAndVerifyAsync();
+            Assert.Equal(state.Text, MarkdownDocumentMetadata.GetSource(second)!.Text);
+            snapshot.Delete();
+            Assert.True(snapshot.Exists);
+            Assert.Equal("book.md", snapshot.GetNotice()!.Documents[0].DocumentName);
+            (var earlier, _) = await snapshot.ReadAndVerifyAsync();
+            Assert.Equal(source, MarkdownDocumentMetadata.GetSource(earlier)!.Text);
+            snapshot.Delete();
+            Assert.False(snapshot.Exists);
         }
         finally
         {

@@ -891,4 +891,22 @@
   <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Page height is unlimited.</value></data>
   <data name="Document.BackgroundFinalizeTitle" xml:space="preserve"><value>Save background crop</value></data>
   <data name="Document.BackgroundFinalizeWarning" xml:space="preserve"><value>Only the selected background area will be stored in this document. After saving, you will no longer be able to move or reframe this background; you can replace it with another image. Continue saving?</value></data>
+  <data name="Key.StrongPasswordRequired" xml:space="preserve"><value>Use a password of 8–128 characters, with at least 6 different characters. Avoid digits only, repeated patterns and common passwords. Set a new encryption key in Settings; existing files can still be opened with their old password.</value></data>
+  <data name="Security.WorkspaceLocked" xml:space="preserve"><value>CryptoBook is locked</value></data>
+  <data name="Security.Unlock" xml:space="preserve"><value>Unlock</value></data>
+  <data name="Security.SnapshotFailedLocked" xml:space="preserve"><value>The recovery snapshot could not be saved. CryptoBook is locked. Unsaved work remains in memory: unlock with the previous password before closing the application.</value></data>
+  <data name="Key.NewPasswordPrompt" xml:space="preserve"><value>Set a new encryption password: 8–128 characters, with at least 6 different characters. Spaces are allowed.</value></data>
+  <data name="Security.RestoreProtectedDocument" xml:space="preserve"><value>Restore document</value></data>
+  <data name="Security.ProtectedSnapshotAvailable" xml:space="preserve"><value>An earlier protected recovery snapshot was found. Restoring it is optional.</value></data>
+  <data name="Security.RecoverySnapshotFrom" xml:space="preserve"><value>Recovery snapshot from {0:g}</value></data>
+  <data name="Security.RecoveryDocument" xml:space="preserve"><value>Document: {0}&#10;Original path: {1}</value></data>
+  <data name="Security.RecoveryUnknownSource" xml:space="preserve"><value>The original document name is unavailable until decryption.&#10;Snapshot file: {0}</value></data>
+  <data name="Security.RecoveryUnsavedPath" xml:space="preserve"><value>the document had not yet been saved to a file</value></data>
+  <data name="Security.RecoveryKeyHint" xml:space="preserve"><value>Use the encryption key that was active in CryptoBook when this snapshot was created. This is not your Windows password.</value></data>
+  <data name="Security.DismissRecoveryNotice" xml:space="preserve"><value>Close notification</value></data>
+  <data name="Security.DismissRecoveryNoticeHint" xml:space="preserve"><value>Hide until the next launch. The snapshot will be kept.</value></data>
+  <data name="Settings.ResetEncryptionKeyNow" xml:space="preserve"><value>Reset key now</value></data>
+  <data name="Settings.ResetEncryptionKeyShortcut" xml:space="preserve"><value>Ctrl+L — reset the key without restarting the application.</value></data>
+  <data name="Settings.EncryptionKeyPresent" xml:space="preserve"><value>An encryption key is set.</value></data>
+  <data name="Settings.EncryptionKeyAbsent" xml:space="preserve"><value>No encryption key is set.</value></data>
 </root>

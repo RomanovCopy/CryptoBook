@@ -435,6 +435,7 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
             .ToArray();
 
         public bool HasKey => true;
+        public bool CanEncrypt => true;
         public void SetKey(ReadOnlySpan<char> password)
         {
         }

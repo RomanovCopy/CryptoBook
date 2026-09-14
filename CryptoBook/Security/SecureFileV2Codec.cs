@@ -55,6 +55,7 @@ namespace CryptoBook.Security
             CancellationToken cancellationToken = default)
         {
             StagedEncryption staged;
+            bool preserveBackup = await DestinationIsEncryptedAsync(outputFile, cancellationToken);
             await using(FileStream input = OpenRead(inputFile))
             {
                 staged = await EncryptToTemporaryFileAsync(
@@ -67,7 +68,7 @@ namespace CryptoBook.Security
 
             CommitEncryptedFile(
                 staged,
-                preserveBackup: !PathsEqual(inputFile, outputFile));
+                preserveBackup);
         }
 
         public async Task EncryptStreamAsync(
@@ -115,11 +116,8 @@ namespace CryptoBook.Security
                 bytesRead += read;
             }
 
+            // Do not create a new backup with the cheaper, legacy password verifier.
             return HasPrefix(
-                       header,
-                       bytesRead,
-                       SecureFileFormat.MagicHeader) ||
-                   HasPrefix(
                        header,
                        bytesRead,
                        SecureFileFormat.V2MagicHeader);
@@ -140,6 +138,8 @@ namespace CryptoBook.Security
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(input);
+            if(!_keyProvider.CanEncrypt)
+                throw new CryptographicException(LocalizationManager.GetString("Key.StrongPasswordRequired"));
             if(!input.CanRead || !input.CanSeek)
                 throw new ArgumentException(
                     "Поток должен поддерживать чтение и позиционирование.",
@@ -177,8 +177,8 @@ namespace CryptoBook.Security
         {
             try
             {
-                // При шифровании в другой путь сохраняем предыдущую версию цели.
-                // При шифровании файла «на месте» резервная копия содержала бы открытый текст.
+                // Резервируем только существующий V2. Открытый текст и V1 не должны
+                // становиться новой резервной копией защищённого файла.
                 if(preserveBackup)
                 {
                     AtomicFileCommit.CommitWithBackup(
@@ -197,12 +197,6 @@ namespace CryptoBook.Security
                 throw;
             }
         }
-
-        private static bool PathsEqual(string firstPath, string secondPath) =>
-            string.Equals(
-                Path.GetFullPath(firstPath),
-                Path.GetFullPath(secondPath),
-                StringComparison.OrdinalIgnoreCase);
 
         public async Task DecryptFileAsyncToFile(
             string inputFile,
@@ -340,7 +334,7 @@ namespace CryptoBook.Security
 
             try
             {
-                key = await _keyProvider.DeriveKeyAsync(
+                key = await _keyProvider.DeriveEncryptionKeyAsync(
                     salt,
                     parameters,
                     cancellationToken);

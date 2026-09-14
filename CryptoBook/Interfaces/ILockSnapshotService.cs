@@ -18,6 +18,8 @@ public interface ILockSnapshotService : IService
 {
     string SnapshotPath { get; }
     bool Exists { get; }
+    LockSnapshotNotice? GetNotice() => null;
+    void DismissNotice() { }
     Task CreateAndVerifyAsync(
         IRichTextBoxService richTextBox,
         LockSnapshotMetadata metadata,
@@ -26,3 +28,8 @@ public interface ILockSnapshotService : IService
         CancellationToken cancellationToken = default);
     void Delete();
 }
+
+public sealed record LockSnapshotDocumentInfo(string DocumentName, string? OriginalPath);
+
+public sealed record LockSnapshotNotice(string SnapshotPath, DateTimeOffset SavedAt,
+    IReadOnlyList<LockSnapshotDocumentInfo> Documents);

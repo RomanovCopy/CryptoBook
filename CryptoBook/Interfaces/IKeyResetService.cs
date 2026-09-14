@@ -7,6 +7,7 @@ public interface IKeyResetService : IService, IDisposable
     KeyResetState State { get; }
     TimeSpan Timeout { get; }
     bool IsPaused { get; }
+    bool HasRetainedDocument { get; }
     event EventHandler<KeyResetStateChangedEventArgs>? StateChanged;
     event EventHandler<Exception>? SnapshotFailed;
 
@@ -16,7 +17,7 @@ public interface IKeyResetService : IService, IDisposable
     void UpdateTimeout(TimeSpan timeout);
     IDisposable Pause();
     Task<bool> ResetAsync(CancellationToken cancellationToken = default);
-    Task<bool> TryUnlockAsync(string key, CancellationToken cancellationToken = default);
+    Task<bool> TryUnlockAsync(ReadOnlyMemory<char> key, CancellationToken cancellationToken = default);
     Task RestoreSnapshotAsync(bool restoreAsUnsaved, CancellationToken cancellationToken = default);
 }
 
