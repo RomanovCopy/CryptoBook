@@ -17,7 +17,7 @@ namespace CryptoBook.Converters
         {
             ArgumentNullException.ThrowIfNull(secureString);
 
-            var chars = new char[secureString.Length];
+            var chars = GC.AllocateArray<char>(secureString.Length, pinned: true);
             IntPtr ptr = IntPtr.Zero;
 
             try

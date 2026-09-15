@@ -26,20 +26,24 @@ public sealed class LockSnapshotService: ILockSnapshotService
     private readonly IFileTemplate snapshotTemplate = new SecureFileTemplate();
     private readonly IFileTemplateRegistry? templateRegistry;
     private readonly IMarkdownDocumentState? markdownDocument;
+    private readonly PasswordProtectedBuffer? snapshotProtection;
+    private readonly LockSnapshotNoticeStore noticeStore = new();
 
     public LockSnapshotService(
         ISecureFileProcessor secureFileProcessor,
         IFlowDocumentSaveService saveService,
         IFlowDocumentLoadService loadService,
         IFileTemplateRegistry? templateRegistry = null,
-        IMarkdownDocumentState? markdownDocument = null)
+        IMarkdownDocumentState? markdownDocument = null,
+        IKeyProvider? keyProvider = null)
         : this(
             secureFileProcessor,
             saveService,
             loadService,
             GetDefaultSnapshotPath(),
             templateRegistry,
-            markdownDocument)
+            markdownDocument,
+            keyProvider)
     {
     }
 
@@ -49,7 +53,8 @@ public sealed class LockSnapshotService: ILockSnapshotService
         IFlowDocumentLoadService loadService,
         string snapshotPath,
         IFileTemplateRegistry? templateRegistry = null,
-        IMarkdownDocumentState? markdownDocument = null)
+        IMarkdownDocumentState? markdownDocument = null,
+        IKeyProvider? keyProvider = null)
     {
         this.secureFileProcessor = secureFileProcessor ??
             throw new ArgumentNullException(nameof(secureFileProcessor));
@@ -59,8 +64,10 @@ public sealed class LockSnapshotService: ILockSnapshotService
             throw new ArgumentNullException(nameof(loadService));
         this.templateRegistry = templateRegistry;
         this.markdownDocument = markdownDocument;
+        snapshotProtection = keyProvider is null ? null : new PasswordProtectedBuffer(keyProvider);
         ArgumentException.ThrowIfNullOrWhiteSpace(snapshotPath);
         SnapshotPath = Path.GetFullPath(snapshotPath);
+        PromotePendingSnapshot();
     }
 
     public string SnapshotPath { get; }
@@ -72,6 +79,8 @@ public sealed class LockSnapshotService: ILockSnapshotService
         "last.lock.cbook");
 
     public bool Exists => File.Exists(SnapshotPath);
+    public LockSnapshotNotice? GetNotice() => noticeStore.Read(SnapshotPath);
+    public void DismissNotice() => noticeStore.Dismiss(SnapshotPath);
 
     public async Task CreateAndVerifyAsync(
         IRichTextBoxService richTextBox,
@@ -93,13 +102,13 @@ public sealed class LockSnapshotService: ILockSnapshotService
             LockSnapshotMetadata snapshotMetadata = isMarkdown
                 ? metadata with { ContentTemplateId = "Markdown" }
                 : metadata;
-            await using var document = new MemoryStream();
+            await using var document = new SensitiveMemoryStream();
             await saveService.SaveToStreamAsync(
                 richTextBox,
                 document,
                 contentTemplate,
                 cancellationToken);
-            await using var envelope = new MemoryStream();
+            await using var envelope = new SensitiveMemoryStream();
             await BinarySnapshotEnvelope.WriteHeaderAsync(
                 envelope,
                 SnapshotMagic,
@@ -114,15 +123,29 @@ public sealed class LockSnapshotService: ILockSnapshotService
             temporaryPath = Path.Combine(
                 directory,
                 $".{Path.GetFileName(SnapshotPath)}.{Guid.NewGuid():N}.tmp");
-            await secureFileProcessor.EncryptStreamAsync(
-                envelope,
-                ".cbook",
-                temporaryPath,
-                cancellationToken: cancellationToken);
+            if(snapshotProtection is not null)
+            {
+                byte[] encrypted = await snapshotProtection.ProtectAsync(
+                    envelope.GetBuffer().AsMemory(0, checked((int)envelope.Length)), cancellationToken);
+                await File.WriteAllBytesAsync(temporaryPath, encrypted, cancellationToken);
+            }
+            else
+            {
+                await secureFileProcessor.EncryptStreamAsync(envelope, ".cbook", temporaryPath,
+                    cancellationToken: cancellationToken);
+            }
 
             await VerifyFileAsync(temporaryPath, cancellationToken);
+            // Continuing without restoring must not overwrite an earlier unsaved document.
+            if(Exists)
+            {
+                string pending = SnapshotPath + "." + Guid.NewGuid().ToString("N") + ".pending";
+                File.Copy(SnapshotPath, pending);
+                LockSnapshotNoticeStore.Copy(SnapshotPath, pending);
+            }
             File.Move(temporaryPath, SnapshotPath, overwrite: true);
             temporaryPath = null;
+            LockSnapshotNoticeStore.Save(SnapshotPath, snapshotMetadata);
         }
         finally
         {
@@ -137,22 +160,61 @@ public sealed class LockSnapshotService: ILockSnapshotService
         if(!Exists)
             throw new FileNotFoundException("Защищённый снимок не найден.");
 
+        var result = await ReadFileAsync(SnapshotPath, cancellationToken);
+        LockSnapshotNoticeStore.Save(SnapshotPath, result.Metadata);
+        return result;
+    }
+
+    private async Task<(FlowDocument Document, LockSnapshotMetadata Metadata)> ReadFileAsync(
+        string path, CancellationToken cancellationToken)
+    {
+        byte[] bytes = await File.ReadAllBytesAsync(path, cancellationToken);
+        if(PasswordProtectedBuffer.HasHeader(bytes))
+        {
+            if(snapshotProtection is null)
+                throw new CryptographicException("Для восстановления требуется ключ CryptoBook.");
+            byte[] plaintext = await snapshotProtection.UnprotectAsync(bytes, cancellationToken);
+            try
+            {
+                using var stream = new MemoryStream(plaintext, writable: false);
+                return await ReadEnvelopeAsync(stream, cancellationToken);
+            }
+            finally { CryptographicOperations.ZeroMemory(plaintext); }
+        }
         await using DecryptedFileContent decrypted = await secureFileProcessor
             .DecryptFileContentAsync(
-                SnapshotPath,
+                path,
                 cancellationToken: cancellationToken);
         return await ReadEnvelopeAsync(decrypted.Content, cancellationToken);
     }
 
-    public void Delete() => TryDelete(SnapshotPath);
+    public void Delete()
+    {
+        TryDelete(SnapshotPath);
+        if(!Exists) LockSnapshotNoticeStore.Delete(SnapshotPath);
+        PromotePendingSnapshot();
+    }
+
+    private void PromotePendingSnapshot()
+    {
+        string? directory = Path.GetDirectoryName(SnapshotPath);
+        if(Exists || directory is null || !Directory.Exists(directory))
+            return;
+        string? pending = Directory.EnumerateFiles(directory, Path.GetFileName(SnapshotPath) + ".*.pending")
+            .OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault();
+        if(pending is not null)
+        {
+            File.Move(pending, SnapshotPath);
+            LockSnapshotNoticeStore.Copy(pending, SnapshotPath);
+            LockSnapshotNoticeStore.Delete(pending);
+        }
+    }
 
     private async Task VerifyFileAsync(
         string path,
         CancellationToken cancellationToken)
     {
-        await using DecryptedFileContent decrypted = await secureFileProcessor
-            .DecryptFileContentAsync(path, cancellationToken: cancellationToken);
-        _ = await ReadEnvelopeAsync(decrypted.Content, cancellationToken);
+        _ = await ReadFileAsync(path, cancellationToken);
     }
 
     private async Task<(FlowDocument Document, LockSnapshotMetadata Metadata)>

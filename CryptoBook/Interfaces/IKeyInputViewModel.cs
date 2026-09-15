@@ -15,6 +15,7 @@ namespace CryptoBook.Interfaces
         string Title { get; }
         string Message { get; }
         bool ShowRepeatPassword { get; }
+        bool RequireStrongPassword { get; }
 
         void SetResult(bool accepted);
     }

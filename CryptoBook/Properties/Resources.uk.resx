@@ -1732,4 +1732,22 @@
   <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Висота сторінки не обмежена.</value></data>
   <data name="Document.BackgroundFinalizeTitle" xml:space="preserve"><value>Збереження вибраного фону</value></data>
   <data name="Document.BackgroundFinalizeWarning" xml:space="preserve"><value>У документі залишиться лише вибрана область фонового зображення. Після збереження переміщувати фон і змінювати вибрану область буде неможливо — можна буде встановити інше зображення. Продовжити збереження?</value></data>
+  <data name="Key.StrongPasswordRequired" xml:space="preserve"><value>Для шифрування потрібен пароль із 8–128 символів, що містить щонайменше 6 різних символів. Не використовуйте лише цифри, повторювані шаблони та поширені паролі. Задайте новий ключ у налаштуваннях; старі файли можна відкрити попереднім паролем.</value></data>
+  <data name="Security.WorkspaceLocked" xml:space="preserve"><value>CryptoBook заблоковано</value></data>
+  <data name="Security.Unlock" xml:space="preserve"><value>Розблокувати</value></data>
+  <data name="Security.SnapshotFailedLocked" xml:space="preserve"><value>Не вдалося зберегти знімок відновлення. CryptoBook заблоковано. Незбережена робота залишилася в пам’яті: перед закриттям застосунку розблокуйте його попереднім паролем.</value></data>
+  <data name="Key.NewPasswordPrompt" xml:space="preserve"><value>Задайте новий пароль шифрування: 8–128 символів, щонайменше 6 різних символів. Пробіли дозволено.</value></data>
+  <data name="Security.RestoreProtectedDocument" xml:space="preserve"><value>Відновити документ</value></data>
+  <data name="Security.ProtectedSnapshotAvailable" xml:space="preserve"><value>Знайдено раніше збережений захищений знімок. Відновлення документа необов’язкове.</value></data>
+  <data name="Security.RecoverySnapshotFrom" xml:space="preserve"><value>Знімок для відновлення від {0:g}</value></data>
+  <data name="Security.RecoveryDocument" xml:space="preserve"><value>Документ: {0}&#10;Початковий шлях: {1}</value></data>
+  <data name="Security.RecoveryUnknownSource" xml:space="preserve"><value>Назва початкового документа недоступна до розшифрування.&#10;Файл знімка: {0}</value></data>
+  <data name="Security.RecoveryUnsavedPath" xml:space="preserve"><value>документ ще не було збережено у файл</value></data>
+  <data name="Security.RecoveryKeyHint" xml:space="preserve"><value>Для відновлення потрібен ключ шифрування, який використовувався в CryptoBook під час створення цього знімка. Це не пароль Windows.</value></data>
+  <data name="Security.DismissRecoveryNotice" xml:space="preserve"><value>Закрити сповіщення</value></data>
+  <data name="Security.DismissRecoveryNoticeHint" xml:space="preserve"><value>Приховати до наступного запуску. Знімок залишиться збереженим.</value></data>
+  <data name="Settings.ResetEncryptionKeyNow" xml:space="preserve"><value>Скинути ключ зараз</value></data>
+  <data name="Settings.ResetEncryptionKeyShortcut" xml:space="preserve"><value>Ctrl+L — скинути ключ без перезапуску застосунку.</value></data>
+  <data name="Settings.EncryptionKeyPresent" xml:space="preserve"><value>Ключ шифрування задано.</value></data>
+  <data name="Settings.EncryptionKeyAbsent" xml:space="preserve"><value>Ключ шифрування не задано.</value></data>
 </root>

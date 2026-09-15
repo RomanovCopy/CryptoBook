@@ -28,6 +28,19 @@ internal sealed class SensitiveMemoryStream: MemoryStream
         base.Write(buffer, offset, count);
     }
 
+    public override int Capacity
+    {
+        get => base.Capacity;
+        set
+        {
+            TryGetBuffer(out ArraySegment<byte> old);
+            base.Capacity = value;
+            if(old.Array is not null && TryGetBuffer(out ArraySegment<byte> current) &&
+                !ReferenceEquals(old.Array, current.Array))
+                CryptographicOperations.ZeroMemory(old.Array);
+        }
+    }
+
     public override void Write(ReadOnlySpan<byte> buffer)
     {
         EnsureWithinLimit(buffer.Length);

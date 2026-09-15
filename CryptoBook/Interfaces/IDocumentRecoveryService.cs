@@ -9,5 +9,6 @@ namespace CryptoBook.Interfaces
         Task<bool> RestoreSnapshotAsync(
             CancellationToken cancellationToken = default);
         Task DeleteSnapshotAsync();
+        Task DeferSnapshotAsync() => Task.CompletedTask;
     }
 }

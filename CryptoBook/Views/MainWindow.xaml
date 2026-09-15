@@ -44,7 +44,8 @@
     <Window.WindowState>
         <Binding Path="WindowState" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.WindowState>
-    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid>
+    <Grid x:Name="SecurityWorkspace" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="forTitleBar" Height="Auto"/>
             <RowDefinition x:Name="forUpdateNotification" Height="Auto"/>
@@ -116,6 +117,18 @@
             <ContentControl x:Name="sidemenu" Content="{markup:ResolveUserControl UserControlType={x:Type control:SideMenu}}" Grid.Column="0"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:MyFrame}}" Grid.Column="1"/>
         </Grid>
+    </Grid>
+        <Border x:Name="SecurityLockShield" Visibility="Collapsed"
+                Background="{DynamicResource CurrentWindowBackground}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="420" Margin="24">
+                <TextBlock Text="{Binding [Security.WorkspaceLocked], Source={StaticResource Res}}"
+                           TextWrapping="Wrap" TextAlignment="Center" FontSize="18"/>
+                <Button x:Name="SecurityUnlockButton" Margin="0,20,0,0" Padding="18,8"
+                        Content="{Binding [Security.Unlock], Source={StaticResource Res}}"/>
+                <Button x:Name="SecurityCloseButton" Margin="0,8,0,0" Padding="18,8"
+                        Content="{Binding [Common.Close], Source={StaticResource Res}}"/>
+            </StackPanel>
+        </Border>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

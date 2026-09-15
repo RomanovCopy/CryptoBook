@@ -23,6 +23,10 @@ namespace CryptoBook.Injections
     public class Startup
     {
         public IContainer ConfigureServices(System.Windows.Application app)
+            => ConfigureServices(app, null);
+
+        internal IContainer ConfigureServices(System.Windows.Application app,
+            Action<ContainerBuilder>? configureOverrides)
         {
 
             ContainerBuilder builder = new();
@@ -437,7 +441,8 @@ namespace CryptoBook.Injections
                     context.Resolve<IFileTemplateRegistry>(),
                     context.Resolve<Lazy<IWorkspaceFileOpenService>>(),
                     context.Resolve<IDispatcherService>(),
-                    context.Resolve<System.Windows.Application>()))
+                    context.Resolve<System.Windows.Application>(),
+                    context.Resolve<IDocumentRecoveryService>()))
                 .As<IKeyResetService>()
                 .SingleInstance();
             builder.RegisterType<FileDisplayNameService>()
@@ -526,6 +531,7 @@ namespace CryptoBook.Injections
 
             // Контексты.
 
+            configureOverrides?.Invoke(builder);
             var container = builder.Build();
 
             return container;

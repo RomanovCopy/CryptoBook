@@ -1,6 +1,8 @@
 using CryptoBook.FileTemplates;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
+using CryptoBook.Security;
+using System.Security.Cryptography;
 
 using System.IO;
 using System.Text;
@@ -14,6 +16,105 @@ namespace CryptoBook.Tests
 {
     public sealed class DocumentRecoveryTests
     {
+        [WpfFact]
+        public async Task PlainRecovery_DoesNotDependOnCachedEncryptionPassword_AndCanBeDeferred()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var editor = CreateEditor();
+                var session = new DocumentSession(editor);
+                var template = new XamlPackageFileTemplate();
+                var registry = new FileTemplateRegistry([template]);
+                session.Open(Path.Combine(directory, "plain.XamlPackage"), template,
+                    new FlowDocument(new Paragraph(new Run("ordinary unsaved work"))));
+                session.MarkDirty();
+                using var key = new MemoryKeyProvider(new Argon2idKeyDeriver());
+                key.SetKey("cached encryption password");
+                string path = Path.Combine(directory, "current.recovery");
+                using(var recovery = new DocumentRecoveryService(session, editor,
+                    new TestSaveService(), new TestLoadService(), registry,
+                    Dispatcher.CurrentDispatcher, path, keyProvider: key))
+                {
+                    await recovery.SaveSnapshotNowAsync();
+                    Assert.False(PasswordProtectedBuffer.HasHeader(await File.ReadAllBytesAsync(path)));
+                    await recovery.DeferSnapshotAsync();
+                    Assert.False(recovery.HasSnapshot);
+                    // Ordinary work can save/close without deleting the deferred copy.
+                    await recovery.DeleteSnapshotAsync();
+                    Assert.Single(Directory.GetFiles(directory, "*.deferred"));
+                }
+                key.Clear();
+                session.Close();
+                using var reopened = new DocumentRecoveryService(session, editor,
+                    new TestSaveService(), new TestLoadService(), registry,
+                    Dispatcher.CurrentDispatcher, path, keyProvider: key);
+                Assert.True(reopened.HasSnapshot);
+                Assert.True(await reopened.RestoreSnapshotAsync());
+                Assert.Contains("ordinary unsaved work", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+                Assert.False(key.HasKey);
+            }
+            finally { Directory.Delete(directory, recursive: true); }
+        }
+
+        [WpfFact]
+        public async Task ProtectedSnapshot_RequiresCryptoBookPassword_EvenInSameWindowsAccount()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var editor = CreateEditor();
+                var session = new DocumentSession(editor);
+                var template = new SecureFileTemplate();
+                session.Open(Path.Combine(directory, "source.cbook"), template,
+                    new FlowDocument(new Paragraph(new Run("confidential recovery contents"))));
+                session.MarkDirty();
+                using var key = new MemoryKeyProvider(new Argon2idKeyDeriver());
+                // Existing weak passwords must still protect recovery without losing edits.
+                key.SetKey("1234");
+                string path = Path.Combine(directory, "current.recovery");
+                using var recovery = new DocumentRecoveryService(session, editor,
+                    new TestSaveService(), new TestLoadService(), new FileTemplateRegistry([template]),
+                    Dispatcher.CurrentDispatcher, path, keyProvider: key);
+                await recovery.SaveSnapshotNowAsync();
+                byte[] snapshot = await File.ReadAllBytesAsync(path);
+                Assert.True(PasswordProtectedBuffer.HasHeader(snapshot));
+                Assert.Throws<CryptographicException>(() => ProtectedData.Unprotect(snapshot,
+                    Encoding.UTF8.GetBytes("CryptoBook.DocumentRecovery.v1"), DataProtectionScope.CurrentUser));
+                session.Close();
+                key.Clear();
+                Assert.False(await recovery.RestoreSnapshotAsync());
+                Assert.False(session.HasDocument);
+                key.SetKey("wrong");
+                await Assert.ThrowsAsync<AuthenticationTagMismatchException>(() => recovery.RestoreSnapshotAsync());
+                Assert.False(session.HasDocument);
+                key.SetKey("1234");
+                Assert.True(await recovery.RestoreSnapshotAsync());
+                Assert.Contains("confidential recovery contents",
+                    new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+            }
+            finally { Directory.Delete(directory, recursive: true); }
+        }
+
+        [WpfFact]
+        public async Task ProtectedSessionWithoutKey_DoesNotFallBackToDpapi()
+        {
+            string path = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"), "current.recovery");
+            var editor = CreateEditor();
+            var session = new DocumentSession(editor);
+            var template = new SecureFileTemplate();
+            session.Open("protected.cbook", template);
+            session.MarkDirty();
+            using var key = new MemoryKeyProvider(new Argon2idKeyDeriver());
+            using var recovery = new DocumentRecoveryService(session, editor,
+                new TestSaveService(), new TestLoadService(), new FileTemplateRegistry([template]),
+                Dispatcher.CurrentDispatcher, path, keyProvider: key);
+            await Assert.ThrowsAsync<CryptographicException>(() => recovery.SaveSnapshotNowAsync());
+            Assert.False(File.Exists(path));
+        }
+
         [WpfFact]
         public async Task Snapshot_CleanHomeAndDirtyInactiveMarkdown_RestoresBoth()
         {

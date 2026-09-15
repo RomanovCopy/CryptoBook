@@ -305,6 +305,31 @@ namespace CryptoBook.Tests
             Assert.Equal(content, copy.ToArray());
         }
 
+        [Fact]
+        public async Task LegacyWeakPassword_ReadsAndMigratesWithNewKey_WithoutCreatingLegacyBackup()
+        {
+            string path = Path.Combine(_directory, "migration.cbook");
+            byte[] content = "legacy protected contents"u8.ToArray();
+            await CreateLegacyFileAsync(path, ".txt", content, "1234");
+            using var key = new MemoryKeyProvider(new Argon2idKeyDeriver());
+            key.SetKey("1234");
+            var legacy = new LegacySecureFileCodec(key);
+            await using DecryptedFileContent opened = await legacy.DecryptFileContentAsync(path);
+            key.SetKey("amber meadow violin 82");
+            var codec = new SecureFileV2Codec(key, new SecureFileV2Options());
+            await codec.EncryptStreamAsync(opened.Content, opened.OriginalExtension, path);
+            Assert.False(File.Exists(path + ".bak"));
+            Assert.True(await codec.HasHeaderAsync(path));
+            await using DecryptedFileContent migrated = await codec.DecryptFileContentAsync(path);
+            using var result = new MemoryStream();
+            await migrated.Content.CopyToAsync(result);
+            Assert.Equal(content, result.ToArray());
+            key.SetKey("1234");
+            await Assert.ThrowsAnyAsync<CryptographicException>(() => codec.DecryptFileContentAsync(path));
+        }
+
+        // Fast format tests; production password policy and native memory protection
+        // are exercised separately with MemoryKeyProvider in KeyProtectionTests.
         private (SecureFileProcessor Processor, TestKeyProvider Provider) CreateProcessor(string password)
         {
             SecureFileV2Options options = new()
@@ -398,6 +423,7 @@ namespace CryptoBook.Tests
             }
 
             public bool HasKey => _password is { Length: > 0 };
+            public bool CanEncrypt => HasKey;
 
             public void SetKey(ReadOnlySpan<char> password)
             {

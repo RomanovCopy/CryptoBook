@@ -1,11 +1,11 @@
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
 using CryptoBook.DTO;
+using CryptoBook.FileTemplates;
 
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using System.Windows;
 using WpfApplication = System.Windows.Application;
 using ThreadingTimer = System.Threading.Timer;
 
@@ -24,7 +24,7 @@ public sealed class AutoKeyResetService : IKeyResetService
     private readonly IFileTemplateRegistry templates;
     private readonly Lazy<IWorkspaceFileOpenService> fileOpenService;
     private readonly IDispatcherService dispatcher;
-    private readonly WpfApplication application;
+    private readonly IDocumentRecoveryService? recoveryService;
     private readonly SemaphoreSlim transitionGate = new(1, 1);
     private readonly object timerSync = new();
     private ThreadingTimer? timer;
@@ -34,6 +34,9 @@ public sealed class AutoKeyResetService : IKeyResetService
     private bool disposed;
     private int failedUnlockAttempts;
     private DateTimeOffset nextUnlockAttemptUtc;
+    private readonly PasswordProtectedBuffer unlockProtection;
+    private byte[]? unlockVerifier;
+    private bool documentRetainedAfterFailure;
 
     public AutoKeyResetService(
         IKeyProvider keyProvider,
@@ -43,16 +46,20 @@ public sealed class AutoKeyResetService : IKeyResetService
         IFileTemplateRegistry templates,
         Lazy<IWorkspaceFileOpenService> fileOpenService,
         IDispatcherService dispatcher,
-        WpfApplication application)
+        WpfApplication application,
+        IDocumentRecoveryService? recoveryService = null)
     {
         this.keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
+        unlockProtection = new PasswordProtectedBuffer(keyProvider);
         this.snapshotService = snapshotService ?? throw new ArgumentNullException(nameof(snapshotService));
         this.documentSession = documentSession ?? throw new ArgumentNullException(nameof(documentSession));
         this.richTextBox = richTextBox ?? throw new ArgumentNullException(nameof(richTextBox));
         this.templates = templates ?? throw new ArgumentNullException(nameof(templates));
         this.fileOpenService = fileOpenService ?? throw new ArgumentNullException(nameof(fileOpenService));
         this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-        this.application = application ?? throw new ArgumentNullException(nameof(application));
+        // Kept in the public constructor for existing hosts; WindowBehavior owns windows.
+        ArgumentNullException.ThrowIfNull(application);
+        this.recoveryService = recoveryService;
 
         Timeout = FromSettings(Properties.Settings.Default.KeyResetTimeoutMinutes);
         lastActivityUtc = DateTimeOffset.UtcNow;
@@ -85,6 +92,7 @@ public sealed class AutoKeyResetService : IKeyResetService
     public KeyResetState State { get; private set; } = KeyResetState.Inactive;
     public TimeSpan Timeout { get; private set; }
     public bool IsPaused => Volatile.Read(ref pauseCount) > 0;
+    public bool HasRetainedDocument => documentRetainedAfterFailure;
 
     public event EventHandler<KeyResetStateChangedEventArgs>? StateChanged;
     public event EventHandler<Exception>? SnapshotFailed;
@@ -92,6 +100,8 @@ public sealed class AutoKeyResetService : IKeyResetService
     public void Start()
     {
         ObjectDisposedException.ThrowIf(disposed, this);
+        if(!keyProvider.HasKey && snapshotService.Exists)
+            SetState(KeyResetState.KeyReset);
         lock(timerSync)
         {
             started = true;
@@ -155,6 +165,14 @@ public sealed class AutoKeyResetService : IKeyResetService
 
     public async Task<bool> ResetAsync(CancellationToken cancellationToken = default)
     {
+        if(!dispatcher.CheckAccess())
+        {
+            await Task.Yield();
+            return await await dispatcher.InvokeAsync(() => ResetAsync(cancellationToken));
+        }
+        if(State is KeyResetState.Resetting or KeyResetState.Unlocking ||
+           (State == KeyResetState.KeyReset && documentRetainedAfterFailure))
+            return false;
         if(!keyProvider.HasKey)
         {
             SetState(KeyResetState.Inactive);
@@ -163,9 +181,40 @@ public sealed class AutoKeyResetService : IKeyResetService
         if(!await transitionGate.WaitAsync(0, cancellationToken))
             return false;
 
+        WorkspaceDocumentSnapshot? inactive = null;
+        bool hasProtectedDocument = true;
         try
         {
+            var workspace = documentSession as IWorkspaceDocumentSession;
+            inactive = workspace?.CaptureInactiveDocument();
+            bool inactiveProtected = inactive?.TemplateId == "Encrypted file";
+            hasProtectedDocument = documentSession.Template is SecureFileTemplate || inactiveProtected;
+            if(!hasProtectedDocument)
+            {
+                // A cached encryption password is not an application login.
+                keyProvider.Clear();
+                documentRetainedAfterFailure = false;
+                SetState(KeyResetState.Inactive);
+                return true;
+            }
+
             SetState(KeyResetState.Resetting);
+            // A separate password verifier survives snapshot I/O failure or deletion.
+            // It contains no document data and cannot be opened using Windows credentials.
+            if(unlockVerifier is not null)
+                CryptographicOperations.ZeroMemory(unlockVerifier);
+            unlockVerifier = null;
+            unlockVerifier = await unlockProtection.ProtectAsync("CryptoBook unlock"u8.ToArray(), CancellationToken.None);
+            if(recoveryService is not null)
+                await recoveryService.StopAsync();
+            documentRetainedAfterFailure = false;
+            bool protectBothDocuments = documentSession.Template is SecureFileTemplate && inactiveProtected;
+            if(documentSession.Template is not SecureFileTemplate && inactiveProtected)
+            {
+                // Park the ordinary document and snapshot only the encrypted editor.
+                if(workspace?.SelectPage(inactive!.IsMarkdown ? "MarkdownEditor" : "Home") != true)
+                    throw new InvalidOperationException("Не удалось защитить неактивный документ.");
+            }
             if(documentSession.HasDocument)
             {
                 var metadata = new LockSnapshotMetadata(
@@ -177,49 +226,47 @@ public sealed class AutoKeyResetService : IKeyResetService
                     documentSession.IsDirty,
                     DateTimeOffset.UtcNow)
                 {
-                    InactiveDocument = (documentSession as IWorkspaceDocumentSession)
-                        ?.CaptureInactiveDocument()
+                    InactiveDocument = protectBothDocuments ? inactive : null
                 };
                 await snapshotService.CreateAndVerifyAsync(richTextBox, metadata, cancellationToken);
+                if(recoveryService is not null)
+                    await recoveryService.DeleteSnapshotAsync();
             }
 
             // Ключ очищается только после успешной записи и расшифровки снимка.
             keyProvider.Clear();
             await dispatcher.InvokeAsync(() =>
             {
-                documentSession.Close();
-                foreach(Window window in application.Windows.Cast<Window>().ToArray())
-                {
-                    if(window is not CryptoBook.Views.MainWindow)
-                        window.Close();
-                }
+                if(!protectBothDocuments && workspace is not null)
+                    workspace.CloseCurrent();
+                else
+                    documentSession.Close();
             });
             SetState(KeyResetState.KeyReset);
+            recoveryService?.Start();
             return true;
-        }
-        catch(OperationCanceledException)
-        {
-            lastActivityUtc = DateTimeOffset.UtcNow;
-            SetState(keyProvider.HasKey ? KeyResetState.Active : KeyResetState.Inactive);
-            throw;
         }
         catch(Exception exception)
         {
-            // До этой точки Clear не выполнялся: документ и ключ остаются доступны.
-            lastActivityUtc = DateTimeOffset.UtcNow;
-            SetState(KeyResetState.Active);
+            // Preserve unsaved documents in the hidden workspace, but revoke the key.
+            // If verifier creation itself failed, remain locked; retrying must not accept
+            // an arbitrary password merely because no snapshot was written.
+            documentRetainedAfterFailure = hasProtectedDocument && documentSession.HasDocument;
+            keyProvider.Clear();
+            SetState(KeyResetState.KeyReset);
             SnapshotFailed?.Invoke(this, exception);
             return false;
         }
         finally
         {
+            if(inactive is not null)
+                CryptographicOperations.ZeroMemory(inactive.Content);
             transitionGate.Release();
         }
     }
 
-    public async Task<bool> TryUnlockAsync(string key, CancellationToken cancellationToken = default)
+    public async Task<bool> TryUnlockAsync(ReadOnlyMemory<char> key, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(key);
         if(key.Length == 0)
             return false;
         if(DateTimeOffset.UtcNow < nextUnlockAttemptUtc)
@@ -227,18 +274,37 @@ public sealed class AutoKeyResetService : IKeyResetService
         if(!await transitionGate.WaitAsync(0, cancellationToken))
             return false;
 
-        char[] characters = key.ToCharArray();
+        if(State is KeyResetState.Resetting or KeyResetState.Unlocking or KeyResetState.Restoring ||
+           (!documentRetainedAfterFailure && !snapshotService.Exists))
+        {
+            transitionGate.Release();
+            return false;
+        }
+        char[] characters = GC.AllocateArray<char>(key.Length, pinned: true);
+        key.Span.CopyTo(characters);
         try
         {
             SetState(KeyResetState.Unlocking);
             keyProvider.Clear();
             keyProvider.SetKey(characters);
-            if(snapshotService.Exists)
+            if(!documentRetainedAfterFailure && snapshotService.Exists)
                 _ = await snapshotService.ReadAndVerifyAsync(cancellationToken);
+            else if(unlockVerifier is not null)
+            {
+                byte[] verified = await unlockProtection.UnprotectAsync(unlockVerifier, cancellationToken);
+                CryptographicOperations.ZeroMemory(verified);
+            }
+            else
+                throw new CryptographicException("Нет доступного подтверждения ключа.");
             failedUnlockAttempts = 0;
             nextUnlockAttemptUtc = DateTimeOffset.MinValue;
             lastActivityUtc = DateTimeOffset.UtcNow;
+            documentRetainedAfterFailure = false;
             SetState(KeyResetState.Active);
+            recoveryService?.Start();
+            if(unlockVerifier is not null)
+                CryptographicOperations.ZeroMemory(unlockVerifier);
+            unlockVerifier = null;
             return true;
         }
         catch(OperationCanceledException)
@@ -322,6 +388,9 @@ public sealed class AutoKeyResetService : IKeyResetService
             return;
         disposed = true;
         Stop();
+        if(unlockVerifier is not null)
+            CryptographicOperations.ZeroMemory(unlockVerifier);
+        keyProvider.Clear();
         transitionGate.Dispose();
     }
 
@@ -371,7 +440,8 @@ public sealed class AutoKeyResetService : IKeyResetService
 
     private void RefreshIdleState()
     {
-        if(State is KeyResetState.Resetting or KeyResetState.KeyReset or KeyResetState.Unlocking or KeyResetState.Restoring)
+        if(State is KeyResetState.Resetting or KeyResetState.Unlocking or KeyResetState.Restoring ||
+           (State == KeyResetState.KeyReset && (documentRetainedAfterFailure || !keyProvider.HasKey)))
             return;
         SetState(started && Timeout > TimeSpan.Zero && keyProvider.HasKey
             ? KeyResetState.Active

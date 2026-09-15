@@ -15,7 +15,8 @@ namespace CryptoBook.Security
             parameters.Validate();
             cancellationToken.ThrowIfCancellationRequested();
 
-            byte[] passwordCopy = password.ToArray();
+            byte[] passwordCopy = GC.AllocateArray<byte>(password.Length, pinned: true);
+            password.Span.CopyTo(passwordCopy);
             byte[] saltCopy = salt.ToArray();
             byte[]? derivedKey = null;
 

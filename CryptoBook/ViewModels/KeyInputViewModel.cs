@@ -25,14 +25,17 @@ namespace CryptoBook.ViewModels
         public WindowState WindowState { get => _model.WindowState; set => _model.WindowState = value; }
 
         public string Title { get => _model.Title; }
-        public string Message { get => _model.Message; }
+        public string Message => RequireStrongPassword
+            ? LocalizationManager.GetString("Key.NewPasswordPrompt") : _model.Message;
         public bool ShowRepeatPassword { get => _model.ShowRepeatPassword; }
         public bool Result { get; private set; }
+        public bool RequireStrongPassword { get; }
 
 
-        public KeyInputViewModel(IKeyInputModel model)
+        public KeyInputViewModel(IKeyInputModel model, IWindowContext? context = null)
         {
             _model = model ?? throw new ArgumentNullException(nameof(model));
+            RequireStrongPassword = context?.TryGet<bool>("ForDecryption", out bool decrypt) != true || !decrypt;
         }
 
         public void SetResult(bool accepted) => Result = accepted;

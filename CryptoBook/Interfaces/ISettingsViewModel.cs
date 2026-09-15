@@ -34,5 +34,7 @@ namespace CryptoBook.Interfaces
         ICommand RevealSearchResult { get; }
         ICommand CheckForUpdates { get; }
         ICommand OpenEncryptionKeyDialog { get; }
+        ICommand ResetEncryptionKey { get; }
+        string EncryptionKeyStatus { get; }
     }
 }

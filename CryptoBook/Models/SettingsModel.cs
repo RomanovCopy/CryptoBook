@@ -2,6 +2,7 @@ using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Views;
+using CryptoBook.Security;
 
 using System.Windows;
 
@@ -13,7 +14,8 @@ namespace CryptoBook.Models
     /// </summary>
     public sealed class SettingsModel:
         ViewModelBase,
-        ISettingsModel
+        ISettingsModel,
+        IDisposable
     {
         private readonly IThemeManager themeManager;
         private readonly IWindowManager windowManager;
@@ -22,6 +24,7 @@ namespace CryptoBook.Models
         private readonly IFileLauncherService? fileLauncherService;
         private readonly IWorkspaceFileOpenService? workspaceFileOpenService;
         private readonly IKeyResetService? keyResetService;
+        private readonly IKeyProvider? keyProvider;
         private ApplicationThemeOption selectedTheme;
         private ApplicationLanguageOption selectedLanguage;
         private GridLength navigationPaneWidth;
@@ -55,7 +58,8 @@ namespace CryptoBook.Models
             IFolderPickerService? folderPickerService,
             IFileLauncherService? fileLauncherService,
             IWorkspaceFileOpenService? workspaceFileOpenService = null,
-            IKeyResetService? keyResetService = null)
+            IKeyResetService? keyResetService = null,
+            IKeyProvider? keyProvider = null)
         {
             this.themeManager = themeManager ??
                 throw new ArgumentNullException(nameof(themeManager));
@@ -66,6 +70,9 @@ namespace CryptoBook.Models
             this.fileLauncherService = fileLauncherService;
             this.workspaceFileOpenService = workspaceFileOpenService;
             this.keyResetService = keyResetService;
+            this.keyProvider = keyProvider;
+            if(keyResetService is not null)
+                keyResetService.StateChanged += OnKeyResetStateChanged;
 
             selectedTheme = Themes.First(
                 option => option.Theme == themeManager.CurrentTheme);
@@ -117,6 +124,7 @@ namespace CryptoBook.Models
                 OnPropertyChanged(nameof(Themes));
                 OnPropertyChanged(nameof(SelectedTheme));
                 OnPropertyChanged(nameof(SelectedCultureName));
+                RefreshEncryptionKeyStatus();
             }
         }
 
@@ -339,7 +347,30 @@ namespace CryptoBook.Models
             Guid windowId = windowManager.CreateWindow<KeyInputWindow>();
             windowManager.ShowWindowDialog(windowId);
             keyResetService?.NotifyActivity();
+            RefreshEncryptionKeyStatus();
         }
+
+        public bool CanResetEncryptionKey => keyProvider?.HasKey == true &&
+            keyResetService?.State is KeyResetState.Active or KeyResetState.Inactive;
+
+        public string EncryptionKeyStatus => LocalizationManager.GetString(keyProvider?.HasKey == true
+            ? "Settings.EncryptionKeyPresent" : "Settings.EncryptionKeyAbsent");
+
+        public async Task ResetEncryptionKeyAsync(CancellationToken cancellationToken = default)
+        {
+            if(!CanResetEncryptionKey) return;
+            try { await keyResetService!.ResetAsync(cancellationToken); }
+            finally { RefreshEncryptionKeyStatus(); }
+        }
+
+        public void RefreshEncryptionKeyStatus()
+        {
+            OnPropertyChanged(nameof(CanResetEncryptionKey));
+            OnPropertyChanged(nameof(EncryptionKeyStatus));
+        }
+
+        private void OnKeyResetStateChanged(object? sender, KeyResetStateChangedEventArgs args) =>
+            RefreshEncryptionKeyStatus();
 
         public void Close() => windowManager.CloseWindow(WindowId);
 
@@ -353,9 +384,13 @@ namespace CryptoBook.Models
 
         public void Closed()
         {
+            if(keyResetService is not null)
+                keyResetService.StateChanged -= OnKeyResetStateChanged;
             searchCancellation?.Dispose();
             searchCancellation = null;
         }
+
+        public void Dispose() => Closed();
 
         private static string CreateSearchStatus(
             WorkspaceSearchOutcome outcome)

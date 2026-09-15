@@ -16,11 +16,13 @@ namespace CryptoBook.Services
         private readonly IMessageService messageService;
         private readonly IKeyProvider keyProvider;
         private readonly IFileTemplateRegistry templateRegistry;
+        private readonly IEncryptionKeyRequestService? keyRequestService;
 
         public DocumentSaveEncryptionPolicy(
             IMessageService messageService,
             IKeyProvider keyProvider,
-            IFileTemplateRegistry templateRegistry)
+            IFileTemplateRegistry templateRegistry,
+            IEncryptionKeyRequestService? keyRequestService = null)
         {
             this.messageService = messageService
                 ?? throw new ArgumentNullException(nameof(messageService));
@@ -28,6 +30,7 @@ namespace CryptoBook.Services
                 ?? throw new ArgumentNullException(nameof(keyProvider));
             this.templateRegistry = templateRegistry
                 ?? throw new ArgumentNullException(nameof(templateRegistry));
+            this.keyRequestService = keyRequestService;
         }
 
         public async Task<DocumentSaveTarget?> ResolveAsync(
@@ -38,7 +41,8 @@ namespace CryptoBook.Services
 
             if(target.Template is SecureFileTemplate)
             {
-                return await ConfirmAsync("Document.EncryptionSaveWarning")
+                return await ConfirmAsync("Document.EncryptionSaveWarning") &&
+                    keyRequestService?.EnsureEncryptionKeyAvailable() != false
                     ? target
                     : null;
             }
@@ -48,6 +52,8 @@ namespace CryptoBook.Services
 
             if(!await ConfirmAsync("Document.EncryptionSaveOffer"))
                 return target;
+            if(keyRequestService?.EnsureEncryptionKeyAvailable() == false)
+                return null;
 
             IFileTemplate secureTemplate = templateRegistry
                 .GetAll()

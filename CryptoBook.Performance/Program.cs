@@ -302,6 +302,7 @@ internal static class Program
         private readonly Argon2idKeyDeriver deriver = new();
         private byte[]? password;
         public bool HasKey => password is { Length: > 0 };
+        public bool CanEncrypt => HasKey;
         public void SetKey(ReadOnlySpan<char> value)
         {
             Clear();

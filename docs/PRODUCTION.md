@@ -71,5 +71,7 @@ or user crash logs in the repository or CI artifacts.
 
 - Unsaved-document RPO: 15 seconds after the most recent edit.
 - A failed save must leave the previous document and its `.bak` intact.
-- A crash-recovery snapshot is encrypted with Windows DPAPI for the current
-  user and is deleted only after a successful save or explicit discard.
+- Protected-session recovery snapshots use password-derived Argon2id/AES-256-GCM;
+  ordinary-session snapshots use Windows DPAPI for the current user. Existing
+  startup snapshots are deferred without prompting; autosave and normal closing
+  preserve deferred copies.

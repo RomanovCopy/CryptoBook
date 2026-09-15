@@ -14,8 +14,8 @@
         Background="{DynamicResource CurrentWindowBackground}"
         Foreground="{DynamicResource CurrentWindowForeground}"
         WindowStartupLocation="CenterOwner"
-        MinWidth="420"
-        MinHeight="230">
+        MinWidth="500"
+        MinHeight="330">
     
     <Window.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IKeyInputViewModel}" />
@@ -53,7 +53,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding [Key.Prompt], Source={StaticResource Res}}"
+        <TextBlock Text="{Binding Message}"
                    Foreground="{DynamicResource CurrentWindowForeground}"
                    TextWrapping="Wrap"/>
 
@@ -101,9 +101,9 @@
     </Grid>
     <i:Interaction.Behaviors>
         <behaviors:KeyInputWindowBehavior
-            MinLength="4"
+            MinLength="1"
             MaxLength="128"
-            AllowWhiteSpace="False"
+            AllowWhiteSpace="True"
             KeyProvider="{markup:ResolveService ServiceType={x:Type security:IKeyProvider}}"
             Converter="{markup:ResolveService ServiceType={x:Type interfaces:ISecureStringConverter}}">
         </behaviors:KeyInputWindowBehavior>

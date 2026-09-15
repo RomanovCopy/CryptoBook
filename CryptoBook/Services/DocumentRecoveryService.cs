@@ -1,6 +1,7 @@
 using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Security;
 
 using System.Diagnostics;
 using System.IO;
@@ -12,8 +13,8 @@ using System.Windows.Threading;
 namespace CryptoBook.Services
 {
     /// <summary>
-    /// Создаёт отложенный снимок несохранённого документа и защищает его средствами
-    /// DPAPI текущего пользователя. Снимок не заменяет обычное сохранение документа.
+    /// Защищённые сеансы сохраняются под паролем CryptoBook. DPAPI используется
+    /// только для обычных документов. Снимок не заменяет сохранение файла.
     /// </summary>
     public sealed class DocumentRecoveryService: IDocumentRecoveryService
     {
@@ -37,6 +38,9 @@ namespace CryptoBook.Services
         private readonly IFlowDocumentLoadService loadService;
         private readonly IFileTemplateRegistry templateRegistry;
         private readonly IMarkdownDocumentState? markdownDocument;
+        private readonly IKeyProvider? keyProvider;
+        private readonly PasswordProtectedBuffer? snapshotProtection;
+        private readonly IEncryptionKeyRequestService? keyRequestService;
         private readonly DispatcherTimer timer;
         private readonly string recoveryFilePath;
         private readonly Action<Exception> autosaveFailureLogger;
@@ -49,6 +53,7 @@ namespace CryptoBook.Services
         private bool stopping;
         private bool saving;
         private bool disposed;
+        private bool preserveExistingSnapshot;
         private long lastSnapshotRevision = -1;
         private long invalidationVersion;
         private DateTimeOffset? lastAutosaveFailureLoggedAt;
@@ -60,7 +65,9 @@ namespace CryptoBook.Services
             IFlowDocumentLoadService loadService,
             IFileTemplateRegistry templateRegistry,
             Dispatcher dispatcher,
-            IMarkdownDocumentState? markdownDocument = null)
+            IMarkdownDocumentState? markdownDocument = null,
+            IKeyProvider? keyProvider = null,
+            IEncryptionKeyRequestService? keyRequestService = null)
             : this(
                 documentSession,
                 richTextBox,
@@ -69,7 +76,9 @@ namespace CryptoBook.Services
                 templateRegistry,
                 dispatcher,
                 GetDefaultRecoveryFilePath(),
-                markdownDocument: markdownDocument)
+                markdownDocument: markdownDocument,
+                keyProvider: keyProvider,
+                keyRequestService: keyRequestService)
         {
         }
 
@@ -83,7 +92,9 @@ namespace CryptoBook.Services
             string recoveryFilePath,
             Action<Exception>? autosaveFailureLogger = null,
             Func<DateTimeOffset>? getUtcNow = null,
-            IMarkdownDocumentState? markdownDocument = null)
+            IMarkdownDocumentState? markdownDocument = null,
+            IKeyProvider? keyProvider = null,
+            IEncryptionKeyRequestService? keyRequestService = null)
         {
             this.documentSession = documentSession
                 ?? throw new ArgumentNullException(nameof(documentSession));
@@ -96,6 +107,9 @@ namespace CryptoBook.Services
             this.templateRegistry = templateRegistry
                 ?? throw new ArgumentNullException(nameof(templateRegistry));
             this.markdownDocument = markdownDocument;
+            this.keyProvider = keyProvider;
+            this.keyRequestService = keyRequestService;
+            snapshotProtection = keyProvider is null ? null : new PasswordProtectedBuffer(keyProvider);
             ArgumentNullException.ThrowIfNull(dispatcher);
             ArgumentException.ThrowIfNullOrWhiteSpace(recoveryFilePath);
 
@@ -104,6 +118,9 @@ namespace CryptoBook.Services
                 autosaveFailureLogger ?? WriteAutosaveFailureToLog;
             this.getUtcNow = getUtcNow ?? (() => DateTimeOffset.UtcNow);
             DeleteStaleTemporaryFiles(this.recoveryFilePath);
+            try { RestoreDeferredSnapshot(this.recoveryFilePath); }
+            catch(Exception exception) when(exception is IOException or UnauthorizedAccessException)
+            { LogAutosaveFailure(exception); }
             timer = new DispatcherTimer(
                 SaveDelay,
                 DispatcherPriority.ApplicationIdle,
@@ -152,10 +169,29 @@ namespace CryptoBook.Services
             byte[] encrypted = await File.ReadAllBytesAsync(
                 recoveryFilePath,
                 cancellationToken);
-            byte[] plaintext = ProtectedData.Unprotect(
-                encrypted,
-                AdditionalEntropy,
-                DataProtectionScope.CurrentUser);
+            byte[] plaintext;
+            if(PasswordProtectedBuffer.HasHeader(encrypted))
+            {
+                if(snapshotProtection is null)
+                    throw new CryptographicException("Для восстановления требуется ключ CryptoBook.");
+                if(keyProvider?.HasKey != true && keyRequestService?.EnsureKeyAvailable() != true)
+                    return false;
+                try
+                {
+                    plaintext = await snapshotProtection.UnprotectAsync(encrypted, cancellationToken);
+                }
+                catch(CryptographicException)
+                {
+                    keyProvider?.Clear();
+                    throw;
+                }
+            }
+            else
+            {
+                // Compatibility for existing DPAPI recovery copies. New protected sessions
+                // never write this format; old copies cannot be retroactively protected.
+                plaintext = ProtectedData.Unprotect(encrypted, AdditionalEntropy, DataProtectionScope.CurrentUser);
+            }
 
             try
             {
@@ -258,6 +294,8 @@ namespace CryptoBook.Services
             await recoveryFileGate.WaitAsync();
             try
             {
+                if(preserveExistingSnapshot)
+                    return;
                 await DeleteRecoveryFileWithRetryAsync();
             }
             finally
@@ -267,6 +305,34 @@ namespace CryptoBook.Services
             // A saved or replaced active document may still have an unsaved neighbour.
             if((documentSession as IWorkspaceDocumentSession)?.HasInactiveChanges == true)
                 ScheduleIfDirty();
+        }
+
+        public async Task DeferSnapshotAsync()
+        {
+            preserveExistingSnapshot = true;
+            await StopAsync();
+            await recoveryFileGate.WaitAsync();
+            try
+            {
+                if(File.Exists(recoveryFilePath))
+                    File.Move(recoveryFilePath, recoveryFilePath + "." + Guid.NewGuid().ToString("N") + ".deferred");
+                preserveExistingSnapshot = false;
+            }
+            finally
+            {
+                recoveryFileGate.Release();
+            }
+        }
+
+        private static void RestoreDeferredSnapshot(string path)
+        {
+            string? directory = Path.GetDirectoryName(path);
+            if(File.Exists(path) || directory is null || !Directory.Exists(directory))
+                return;
+            string? deferred = Directory.EnumerateFiles(directory, Path.GetFileName(path) + ".*.deferred")
+                .OrderBy(File.GetLastWriteTimeUtc).FirstOrDefault();
+            if(deferred is not null)
+                File.Move(deferred, path);
         }
 
         internal Task SaveSnapshotNowAsync() => GetOrStartSaveTask();
@@ -378,12 +444,18 @@ namespace CryptoBook.Services
 
         private async Task SaveSnapshotAsync()
         {
+            if(preserveExistingSnapshot)
+                throw new IOException("Предыдущий снимок восстановления сохранён: его нельзя перезаписывать до восстановления.");
             long revision = documentSession.Revision;
             // Версия инвалидируется при остановке и удалении снимка. Она не позволяет
             // уже начатому сохранению воскресить файл восстановления после очистки.
             long snapshotInvalidationVersion = invalidationVersion;
             WorkspaceDocumentSnapshot? inactiveDocument =
                 (documentSession as IWorkspaceDocumentSession)?.CaptureInactiveDocument();
+            bool requiresPassword = documentSession.Template is SecureFileTemplate ||
+                templateRegistry.GetById(inactiveDocument?.TemplateId ?? string.Empty) is SecureFileTemplate;
+            if(requiresPassword && (snapshotProtection is null || keyProvider?.HasKey != true))
+                throw new CryptographicException("Для защищённого автосохранения требуется ключ CryptoBook.");
             RecoveryMetadata metadata = new(
                 documentSession.FilePath,
                 documentSession.DisplayName,
@@ -398,12 +470,12 @@ namespace CryptoBook.Services
                     ? templateRegistry.GetById("Markdown")
                         ?? new MarkdownFileTemplate()
                     : recoveryTemplate;
-            await using MemoryStream document = new();
+            await using SensitiveMemoryStream document = new();
             await saveService.SaveToStreamAsync(
                 richTextBox,
                 document,
                 snapshotTemplate);
-            await using MemoryStream envelope = new();
+            await using SensitiveMemoryStream envelope = new();
             await BinarySnapshotEnvelope.WriteHeaderAsync(
                 envelope,
                 RecoveryMagic,
@@ -413,10 +485,9 @@ namespace CryptoBook.Services
             byte[] encrypted;
             try
             {
-                encrypted = ProtectedData.Protect(
-                    serialized,
-                    AdditionalEntropy,
-                    DataProtectionScope.CurrentUser);
+                encrypted = requiresPassword
+                    ? await snapshotProtection!.ProtectAsync(serialized)
+                    : ProtectedData.Protect(serialized, AdditionalEntropy, DataProtectionScope.CurrentUser);
             }
             finally
             {

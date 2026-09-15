@@ -891,4 +891,22 @@
   <data name="File.UnlimitedPageHeight" xml:space="preserve"><value>Die Seitenhöhe ist unbegrenzt.</value></data>
   <data name="Document.BackgroundFinalizeTitle" xml:space="preserve"><value>Hintergrundausschnitt speichern</value></data>
   <data name="Document.BackgroundFinalizeWarning" xml:space="preserve"><value>Im Dokument wird nur der gewählte Bildausschnitt gespeichert. Nach dem Speichern können Sie diesen Hintergrund nicht mehr verschieben oder neu zuschneiden, sondern nur durch ein anderes Bild ersetzen. Speichern fortsetzen?</value></data>
+  <data name="Key.StrongPasswordRequired" xml:space="preserve"><value>Verwenden Sie ein Passwort mit 8–128 Zeichen und mindestens 6 verschiedenen Zeichen. Vermeiden Sie reine Ziffernfolgen, Wiederholungen und häufige Passwörter. Legen Sie in den Einstellungen einen neuen Schlüssel fest; bestehende Dateien lassen sich weiterhin mit ihrem alten Passwort öffnen.</value></data>
+  <data name="Security.WorkspaceLocked" xml:space="preserve"><value>CryptoBook ist gesperrt</value></data>
+  <data name="Security.Unlock" xml:space="preserve"><value>Entsperren</value></data>
+  <data name="Security.SnapshotFailedLocked" xml:space="preserve"><value>Der Wiederherstellungsstand konnte nicht gespeichert werden. CryptoBook ist gesperrt. Nicht gespeicherte Arbeit bleibt im Speicher: Entsperren Sie die Anwendung mit dem bisherigen Passwort, bevor Sie sie schließen.</value></data>
+  <data name="Key.NewPasswordPrompt" xml:space="preserve"><value>Legen Sie ein neues Verschlüsselungspasswort mit 8–128 Zeichen und mindestens 6 verschiedenen Zeichen fest. Leerzeichen sind erlaubt.</value></data>
+  <data name="Security.RestoreProtectedDocument" xml:space="preserve"><value>Dokument wiederherstellen</value></data>
+  <data name="Security.ProtectedSnapshotAvailable" xml:space="preserve"><value>Ein früher gespeicherter geschützter Wiederherstellungsstand wurde gefunden. Die Wiederherstellung ist optional.</value></data>
+  <data name="Security.RecoverySnapshotFrom" xml:space="preserve"><value>Wiederherstellungsstand vom {0:g}</value></data>
+  <data name="Security.RecoveryDocument" xml:space="preserve"><value>Dokument: {0}&#10;Ursprünglicher Pfad: {1}</value></data>
+  <data name="Security.RecoveryUnknownSource" xml:space="preserve"><value>Der ursprüngliche Dokumentname ist erst nach der Entschlüsselung verfügbar.&#10;Datei des Wiederherstellungsstands: {0}</value></data>
+  <data name="Security.RecoveryUnsavedPath" xml:space="preserve"><value>das Dokument war noch nicht als Datei gespeichert</value></data>
+  <data name="Security.RecoveryKeyHint" xml:space="preserve"><value>Verwenden Sie den Verschlüsselungsschlüssel, der beim Erstellen dieses Wiederherstellungsstands in CryptoBook aktiv war. Dies ist nicht Ihr Windows-Passwort.</value></data>
+  <data name="Security.DismissRecoveryNotice" xml:space="preserve"><value>Benachrichtigung schließen</value></data>
+  <data name="Security.DismissRecoveryNoticeHint" xml:space="preserve"><value>Bis zum nächsten Start ausblenden. Der Wiederherstellungsstand bleibt erhalten.</value></data>
+  <data name="Settings.ResetEncryptionKeyNow" xml:space="preserve"><value>Schlüssel jetzt zurücksetzen</value></data>
+  <data name="Settings.ResetEncryptionKeyShortcut" xml:space="preserve"><value>Strg+L — Schlüssel ohne Neustart der Anwendung zurücksetzen.</value></data>
+  <data name="Settings.EncryptionKeyPresent" xml:space="preserve"><value>Ein Verschlüsselungsschlüssel ist gesetzt.</value></data>
+  <data name="Settings.EncryptionKeyAbsent" xml:space="preserve"><value>Kein Verschlüsselungsschlüssel ist gesetzt.</value></data>
 </root>

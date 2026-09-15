@@ -3,7 +3,7 @@ using CryptoBook.Interfaces;
 namespace CryptoBook.Services
 {
     /// <summary>
-    /// Координирует восстановление при запуске и безопасное закрытие документа,
+    /// Сохраняет аварийную копию при запуске и координирует безопасное закрытие документа,
     /// включая сохранение изменений и удаление аварийного снимка.
     /// </summary>
     public sealed class DocumentCloseCoordinator: IService
@@ -48,25 +48,15 @@ namespace CryptoBook.Services
 
         public bool IsCloseApproved { get; private set; }
 
+        public Task<bool> TryApproveDocumentReplacementAsync() => unsavedChangesGuard.CanCloseAsync();
+
         public async Task InitializeAsync()
         {
             if(recoveryService.HasSnapshot)
             {
-                if(dialogService.ConfirmRecovery())
-                {
-                    try
-                    {
-                        await recoveryService.RestoreSnapshotAsync();
-                    }
-                    catch(Exception exception)
-                    {
-                        dialogService.ShowRecoveryError(exception);
-                    }
-                }
-                else
-                {
-                    await TryDeleteSnapshotAsync();
-                }
+                // Keep the previous session's copy without prompting or letting
+                // the current session overwrite it during autosave.
+                await TryDeferSnapshotAsync();
             }
 
             recoveryService.Start();
@@ -108,6 +98,12 @@ namespace CryptoBook.Services
             {
                 dialogService.ShowRecoveryCleanupError(exception);
             }
+        }
+
+        private async Task TryDeferSnapshotAsync()
+        {
+            try { await recoveryService.DeferSnapshotAsync(); }
+            catch(Exception exception) { dialogService.ShowRecoveryCleanupError(exception); }
         }
     }
 }

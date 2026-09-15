@@ -30,6 +30,10 @@ namespace CryptoBook.Interfaces
             CancellationToken cancellationToken = default);
         void RevealSearchResult(WorkspaceSearchResult? result);
         void OpenEncryptionKeyDialog();
+        bool CanResetEncryptionKey { get; }
+        string EncryptionKeyStatus { get; }
+        Task ResetEncryptionKeyAsync(CancellationToken cancellationToken = default);
+        void RefreshEncryptionKeyStatus();
         void Close();
         void Closing();
         void Closed();

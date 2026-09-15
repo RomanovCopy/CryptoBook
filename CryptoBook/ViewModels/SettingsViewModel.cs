@@ -24,7 +24,11 @@ namespace CryptoBook.ViewModels
             this.updateNotification = updateNotification ??
                 throw new ArgumentNullException(nameof(updateNotification));
             model.PropertyChanged += (_, args) =>
+            {
                 OnPropertyChanged(args.PropertyName ?? string.Empty);
+                if(args.PropertyName == nameof(ISettingsModel.CanResetEncryptionKey))
+                    resetEncryptionKey?.RaiseCanExecuteChanged();
+            };
             updateNotification.PropertyChanged += (_, args) =>
             {
                 if(args.PropertyName == nameof(updateNotification.CheckStatus))
@@ -137,8 +141,15 @@ namespace CryptoBook.ViewModels
             new RelayCommand(_ => model.OpenEncryptionKeyDialog());
         private RelayCommand? openEncryptionKeyDialog;
 
+        public string EncryptionKeyStatus => model.EncryptionKeyStatus;
+
+        public ICommand ResetEncryptionKey => resetEncryptionKey ??=
+            new AsyncRelayCommand((_, token) => model.ResetEncryptionKeyAsync(token),
+                _ => model.CanResetEncryptionKey);
+        private AsyncRelayCommand? resetEncryptionKey;
+
         public ICommand Loaded => loaded ??=
-            new RelayCommand(_ => { });
+            new RelayCommand(_ => model.RefreshEncryptionKeyStatus());
         private RelayCommand? loaded;
 
         public ICommand Close => close ??=
