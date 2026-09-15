@@ -11,108 +11,44 @@ namespace CryptoBook.Tests
 {
     public sealed class DocumentCloseCoordinatorTests
     {
-        [Fact]
-        public async Task InitializeAsync_RestoresSnapshot_AndStartsRecovery()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task InitializeAsync_PreservesExistingSnapshot_WithoutPrompting(bool hasSnapshot)
         {
-            var recovery = new TestRecoveryService
-            {
-                HasSnapshot = true
-            };
-            var dialogs = new TestDialogService
-            {
-                Recover = true
-            };
-            var coordinator = CreateCoordinator(
-                new TestDocumentSession(),
-                recovery,
-                dialogs);
+            var recovery = new TestRecoveryService { HasSnapshot = hasSnapshot };
+            var dialogs = new TestDialogService();
+            var coordinator = CreateCoordinator(new TestDocumentSession(), recovery, dialogs);
 
             await coordinator.InitializeAsync();
 
-            Assert.Equal(1, recovery.RestoreCount);
-            Assert.Equal(0, recovery.DeleteCount);
-            Assert.Equal(1, recovery.StartCount);
-        }
-
-        [Fact]
-        public async Task InitializeAsync_ReportsRestoreFailure_AndDefersWithoutBlockingStartup()
-        {
-            var expected = new IOException("damaged snapshot");
-            var recovery = new TestRecoveryService
-            {
-                HasSnapshot = true,
-                RestoreException = expected
-            };
-            var dialogs = new TestDialogService
-            {
-                RecoveryChoices = new Queue<bool>([true, false])
-            };
-            var coordinator = CreateCoordinator(
-                new TestDocumentSession(),
-                recovery,
-                dialogs);
-
-            await coordinator.InitializeAsync();
-
-            Assert.Same(expected, dialogs.RecoveryError);
-            Assert.Equal(0, recovery.DeleteCount);
-            Assert.Equal(1, recovery.DeferCount);
-            Assert.Equal(1, recovery.StartCount);
-        }
-
-        [Fact]
-        public async Task InitializeAsync_CancelledPasswordEntryDoesNotDiscardRecovery()
-        {
-            var recovery = new TestRecoveryService
-            {
-                HasSnapshot = true,
-                RestoreResults = new Queue<bool>([false, true])
-            };
-            var coordinator = CreateCoordinator(new TestDocumentSession(), recovery,
-                new TestDialogService { Recover = true });
-            await coordinator.InitializeAsync();
-            Assert.Equal(1, recovery.RestoreCount);
-            Assert.Equal(1, recovery.DeferCount);
-            Assert.Equal(0, recovery.DeleteCount);
-            Assert.Equal(1, recovery.StartCount);
-        }
-
-        [Fact]
-        public async Task InitializeAsync_DeclinedRecovery_DeletesSnapshot()
-        {
-            var recovery = new TestRecoveryService
-            {
-                HasSnapshot = true
-            };
-            var coordinator = CreateCoordinator(
-                new TestDocumentSession(),
-                recovery,
-                new TestDialogService { Recover = false });
-
-            await coordinator.InitializeAsync();
-
+            Assert.Equal(0, dialogs.RecoveryPromptCount);
             Assert.Equal(0, recovery.RestoreCount);
-            Assert.Equal(1, recovery.DeleteCount);
+            Assert.Equal(0, recovery.DeleteCount);
+            Assert.Equal(hasSnapshot ? 1 : 0, recovery.DeferCount);
             Assert.Equal(1, recovery.StartCount);
+            Assert.Null(dialogs.RecoveryError);
+            Assert.Null(dialogs.RecoveryCleanupError);
         }
 
         [Fact]
-        public async Task InitializeAsync_DeleteFailure_IsReported_AndStillStarts()
+        public async Task InitializeAsync_DeferFailure_IsReported_AndStillStarts()
         {
             var expected = new IOException("locked snapshot");
             var recovery = new TestRecoveryService
             {
                 HasSnapshot = true,
-                DeleteException = expected
+                DeferException = expected
             };
-            var dialogs = new TestDialogService { Recover = false };
-            var coordinator = CreateCoordinator(
-                new TestDocumentSession(),
-                recovery,
-                dialogs);
+            var dialogs = new TestDialogService();
+            var coordinator = CreateCoordinator(new TestDocumentSession(), recovery, dialogs);
 
             await coordinator.InitializeAsync();
 
+            Assert.Equal(0, dialogs.RecoveryPromptCount);
+            Assert.Equal(0, recovery.RestoreCount);
+            Assert.Equal(0, recovery.DeleteCount);
+            Assert.Equal(1, recovery.DeferCount);
             Assert.Same(expected, dialogs.RecoveryCleanupError);
             Assert.Equal(1, recovery.StartCount);
         }
@@ -250,13 +186,16 @@ namespace CryptoBook.Tests
 
         private sealed class TestDialogService: IDocumentDialogService
         {
-            public bool Recover { get; init; }
-            public Queue<bool>? RecoveryChoices { get; init; }
+            public int RecoveryPromptCount { get; private set; }
             public UnsavedChangesChoice CloseChoice { get; init; }
             public Exception? RecoveryError { get; private set; }
             public Exception? RecoveryCleanupError { get; private set; }
 
-            public bool ConfirmRecovery() => RecoveryChoices?.Dequeue() ?? Recover;
+            public bool ConfirmRecovery()
+            {
+                RecoveryPromptCount++;
+                return true;
+            }
 
             public UnsavedChangesChoice ConfirmCloseWithUnsavedChanges() =>
                 CloseChoice;
@@ -285,8 +224,7 @@ namespace CryptoBook.Tests
         private sealed class TestRecoveryService: IDocumentRecoveryService
         {
             public bool HasSnapshot { get; init; }
-            public Queue<bool>? RestoreResults { get; init; }
-            public Exception? RestoreException { get; init; }
+            public Exception? DeferException { get; init; }
             public Exception? DeleteException { get; init; }
             public int StartCount { get; private set; }
             public int StopCount { get; private set; }
@@ -297,7 +235,7 @@ namespace CryptoBook.Tests
             public Task DeferSnapshotAsync()
             {
                 DeferCount++;
-                return Task.CompletedTask;
+                return DeferException is null ? Task.CompletedTask : Task.FromException(DeferException);
             }
 
             public void Start() => StartCount++;
@@ -313,9 +251,7 @@ namespace CryptoBook.Tests
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 RestoreCount++;
-                return RestoreException is null
-                    ? Task.FromResult(RestoreResults?.Dequeue() ?? true)
-                    : Task.FromException<bool>(RestoreException);
+                return Task.FromResult(true);
             }
 
             public Task DeleteSnapshotAsync()

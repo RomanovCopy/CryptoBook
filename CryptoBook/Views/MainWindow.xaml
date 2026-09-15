@@ -49,7 +49,6 @@
         <Grid.RowDefinitions>
             <RowDefinition x:Name="forTitleBar" Height="Auto"/>
             <RowDefinition x:Name="forUpdateNotification" Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="forMyFrame" Height="*"/>
             <RowDefinition x:Name="forStatusBar" Height="Auto"/>
         </Grid.RowDefinitions>
@@ -110,29 +109,7 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <Border x:Name="SecurityRecoveryNotice" Grid.Row="2" Visibility="Collapsed"
-                Margin="10,8,10,0" Padding="12,8" CornerRadius="8"
-                Background="{DynamicResource CurrentControlBackground}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <TextBlock x:Name="SecurityRecoveryDetails" TextWrapping="Wrap"/>
-                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap"
-                               Foreground="{DynamicResource CurrentMutedForeground}"
-                               Text="{Binding [Security.RecoveryKeyHint], Source={StaticResource Res}}"/>
-                    <Button x:Name="SecurityRestoreButton" HorizontalAlignment="Left" Margin="0,8,0,0"
-                            Content="{Binding [Security.RestoreProtectedDocument], Source={StaticResource Res}}"/>
-                </StackPanel>
-                <Button x:Name="SecurityDismissNoticeButton" Grid.Column="1" Content="&#xD7;"
-                        VerticalAlignment="Top" Width="32" Height="32" Margin="12,0,0,0"
-                        AutomationProperties.Name="{Binding [Security.DismissRecoveryNotice], Source={StaticResource Res}}"
-                        ToolTip="{Binding [Security.DismissRecoveryNoticeHint], Source={StaticResource Res}}"/>
-            </Grid>
-        </Border>
-        <Grid Grid.Row="3" >
+        <Grid Grid.Row="2" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>

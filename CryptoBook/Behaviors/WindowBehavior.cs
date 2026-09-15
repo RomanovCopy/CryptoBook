@@ -156,16 +156,11 @@ namespace CryptoBook.Behaviors
                 unlockButton.Click += OnUnlockClick;
             if(AssociatedObject.FindName("SecurityCloseButton") is Button closeButton)
                 closeButton.Click += OnSecurityCloseClick;
-            if(AssociatedObject.FindName("SecurityRestoreButton") is Button restoreButton)
-                restoreButton.Click += OnUnlockClick;
-            if(AssociatedObject.FindName("SecurityDismissNoticeButton") is Button dismissButton)
-                dismissButton.Click += OnDismissRecoveryNotice;
 
             if(CloseCoordinator is not null)
                 await CloseCoordinator.InitializeAsync();
 
             KeyResetService?.Start();
-            UpdateRecoveryNotice();
             AttachSystemEvents();
 
             if(ActivationService is not null &&
@@ -201,27 +196,6 @@ namespace CryptoBook.Behaviors
 
         private bool IsWorkspaceLocked => WorkspaceLockPresentation.IsLocked(KeyResetService?.State,
             KeyResetService?.HasRetainedDocument == true);
-
-        private void UpdateRecoveryNotice()
-        {
-            LockSnapshotNotice? details = SnapshotService?.GetNotice();
-            if(AssociatedObject.FindName("SecurityRecoveryNotice") is FrameworkElement notice)
-                notice.Visibility = details is not null && !IsWorkspaceLocked
-                    ? Visibility.Visible : Visibility.Collapsed;
-            if(AssociatedObject.FindName("SecurityRecoveryDetails") is TextBlock text)
-                text.Text = details is null ? string.Empty : LockSnapshotNoticePresentation.Describe(details);
-            if(AssociatedObject.FindName("SecurityRestoreButton") is Button restore)
-                restore.IsEnabled = !unlockDialogOpen && KeyResetService?.State is not
-                    (KeyResetState.Resetting or KeyResetState.Unlocking or KeyResetState.Restoring);
-        }
-
-        private void OnDismissRecoveryNotice(object sender, RoutedEventArgs args)
-        {
-            SnapshotService?.DismissNotice();
-            UpdateRecoveryNotice();
-        }
-
-        private void OnNoticeCultureChanged(object? sender, EventArgs args) => UpdateRecoveryNotice();
 
         private void OnUnlockClick(object sender, RoutedEventArgs args) => ShowUnlockDialog();
         private void OnSecurityCloseClick(object sender, RoutedEventArgs args) => AssociatedObject.Close();
@@ -301,7 +275,6 @@ namespace CryptoBook.Behaviors
                     securityHiddenWindows.Clear();
                 }
             }
-            UpdateRecoveryNotice();
         }
 
         private void OnSnapshotFailed(object? sender, Exception exception)
@@ -385,7 +358,6 @@ namespace CryptoBook.Behaviors
             finally
             {
                 unlockDialogOpen = false;
-                UpdateRecoveryNotice();
             }
         }
 
@@ -415,10 +387,6 @@ namespace CryptoBook.Behaviors
                 button.Click -= OnUnlockClick;
             if(AssociatedObject.FindName("SecurityCloseButton") is Button closeButton)
                 closeButton.Click -= OnSecurityCloseClick;
-            if(AssociatedObject.FindName("SecurityRestoreButton") is Button restoreButton)
-                restoreButton.Click -= OnUnlockClick;
-            if(AssociatedObject.FindName("SecurityDismissNoticeButton") is Button dismissButton)
-                dismissButton.Click -= OnDismissRecoveryNotice;
             securityHiddenWindows.Clear();
             Cleanup();
         }
@@ -427,7 +395,6 @@ namespace CryptoBook.Behaviors
         {
             if(serviceEventsAttached)
                 return;
-            LocalizationManager.CultureChanged += OnNoticeCultureChanged;
 
             if(RichTextBoxService is not null)
             {
@@ -472,7 +439,6 @@ namespace CryptoBook.Behaviors
 
             if(serviceEventsAttached)
             {
-                LocalizationManager.CultureChanged -= OnNoticeCultureChanged;
                 if(RichTextBoxService is not null)
                 {
                     RichTextBoxService.Service.TextChanged -=
