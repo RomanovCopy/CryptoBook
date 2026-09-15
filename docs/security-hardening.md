@@ -32,15 +32,16 @@ future file-encryption defaults must not change the snapshot reader.
 
 Older DPAPI recovery copies and V1/V2 lock snapshots remain readable. Existing
 DPAPI copies do not acquire password protection simply by installing this update.
-Recover the work and save with a new strong key; successful save/lock removes the
-ordinary recovery copy. Canceling password entry or failing restoration preserves
-the copy in a deferred file for a subsequent startup and continues opening the
-application. New autosaves and normal closing do not delete the deferred copy.
+Save protected documents with a new strong key; successful save/lock removes the
+ordinary recovery copy. On startup, an existing recovery copy is deferred without
+prompting or automatic restoration. New autosaves and normal closing do not delete
+the deferred copy.
 
 ## Locking and memory
 
-CryptoBook starts without an application password. A pending protected snapshot
-is shown as an optional restoration notice; it does not block normal work.
+CryptoBook starts without an application password. Version 1.1.3.6 removes the
+recovery banner and startup restoration prompt. Pending snapshots remain on disk;
+there is no main-window banner action for restoring them.
 Settings > Security includes "Reset key now", the current key status, and a
 Ctrl+L reminder. The shortcut works in both the main window and Settings. The
 button is disabled when no key is set or a key transition is in progress; no
@@ -52,11 +53,9 @@ unsaved work before replacing documents. Earlier pending lock snapshots are
 preserved when another encrypted document is closed, and become available after
 the latest snapshot is restored.
 
-The notice identifies the source document(s), full original path(s), snapshot
-date, and the required key: the encryption key active when the snapshot was
-created. The same explanation is displayed in the key-entry window. Closing
-the notice hides that snapshot for the current application session without
-deleting it. A newly created snapshot produces a new notice.
+Snapshot display metadata identifies source documents, original paths, and the
+snapshot date. The existing unlock flow can use this information to explain which
+key is required; the main-window recovery notice is no longer displayed.
 
 New snapshots carry a separate `.notice` file protected with CurrentUser DPAPI.
 It contains only display identities and the timestamp, never document contents

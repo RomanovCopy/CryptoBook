@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.1.3.6 - 2026-09-15
+
+### Security
+
+- Require 8–128 characters and at least six distinct case-folded characters for new encryption passwords; reject digits-only, common and repeated patterns while keeping existing files readable with their original passwords.
+- Protect recovery copies of encrypted documents with password-derived Argon2id/AES-256-GCM. Ordinary-document copies continue to use CurrentUser DPAPI; existing copies are not retroactively re-encrypted.
+- Protect the cached password with Windows process-scoped memory protection and clear owned sensitive buffers after use.
+- Retain unsaved encrypted work behind the lock screen if snapshot creation or verification fails, with a separate password verifier for unlocking.
+- Keep legacy V1 files readable and write V2 encryption; replacing a V1 file no longer creates another V1 backup. Existing backups are preserved.
+
+### Added
+
+- Add Reset key now, key status and a Ctrl+L reminder in Settings, with localized text.
+
+### Changed
+
+- Reset the key without restarting the application and preserve ordinary documents and their unsaved changes.
+- Remove the startup recovery prompt and the main-window recovery banner. Existing snapshots are preserved; restoration through the removed banner is no longer offered.
+- Update security documentation, synchronize release versions and add EncryptoBook@gmail.com to both main READMEs.
+
+Full comparison: [v1.1.3.5...v1.1.3.6](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.5...v1.1.3.6)
+
 ## 1.1.3.5 - 2026-09-13
 
 ### Added

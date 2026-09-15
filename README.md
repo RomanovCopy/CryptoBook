@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.3.5-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.5)
+[![Version](https://img.shields.io/badge/version-1.1.3.6-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.6)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -35,7 +35,7 @@ machine unless you explicitly move or share them.
 - **Rich-text editing** — formatting, lists, links, images, bookmarks and printing.
 - **File workspace** — browsing, favorites, Quick Access, sorting and clipboard operations.
 - **Search** — file-name and full-text search, including supported encrypted documents.
-- **Recovery** — crash recovery, `.bak` backups and atomic file replacement.
+- **Recovery copies** — retained snapshots, `.bak` backups and atomic file replacement.
 - **Media preview** — text, images and video playback through Flyleaf/FFmpeg.
 - **Windows integration** — system dialogs, themes and self-contained x64 releases.
 
@@ -50,17 +50,15 @@ machine unless you explicitly move or share them.
 Screenshots show version 1.1.3.5 with an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.3.5
+## New in 1.1.3.6
 
-- Reposition a document background image with **Ctrl + left mouse drag**; press **Esc** to cancel the drag.
-- Background images stay within the paper and retain their placement while zooming, scrolling and resizing.
-- Saving to XamlPackage or a protected rich-text document asks you to confirm the crop.
-  After a successful save, only the chosen image area remains embedded and its position is locked;
-  choose another background image to change the crop. Cancellation or a failed save leaves it editable.
-- Reading preview no longer shows the editor's page borders over the document.
-- Refreshed screenshots show the current editor, reading mode and Markdown views with sample content.
+- New encryption passwords require 8–128 characters and at least six distinct characters, ignoring case; common and repetitive passwords are rejected. Existing files still open with their original passwords.
+- Recovery copies of protected documents now use password-derived Argon2id and AES-256-GCM protection; ordinary documents retain Windows DPAPI recovery protection.
+- **Reset key now** in Settings shows the key status and the **Ctrl+L** shortcut. Key reset preserves open ordinary documents and their unsaved changes.
+- Strengthened in-memory password protection and handling of failed snapshot writes during key reset.
+- Removed startup recovery prompts and the recovery banner. Existing snapshots are preserved, but the main window no longer offers restoration from the banner.
 
-See the [release notes](docs/releases/v1.1.3.5.md) and [changelog](CHANGELOG.md).
+See the [release notes](docs/releases/v1.1.3.6.md), [changelog](CHANGELOG.md), and [security details](docs/security-hardening.md).
 
 ## Main features
 
@@ -85,7 +83,7 @@ See the [release notes](docs/releases/v1.1.3.5.md) and [changelog](CHANGELOG.md)
 - choose system, light, dark and Sepia themes;
 - encrypt individual files and directories;
 - automatically clear the in-memory encryption key after a configurable idle period;
-- recover unsaved document state after a crash;
+- retain recovery snapshots without startup restoration prompts;
 - save atomically and keep the previous version as a `.bak` file;
 - check GitHub for stable releases and launch downloaded installers.
 
@@ -115,7 +113,8 @@ The current `.cbook` format uses:
 - atomic file replacement after successful operations.
 
 The encryption key is kept in process memory only for the active session and can be cleared
-automatically after inactivity. Recovery snapshots use Windows DPAPI for the current user.
+automatically after inactivity or manually with Ctrl+L. Protected-document recovery snapshots use
+password-derived Argon2id/AES-256-GCM; ordinary-document snapshots use Windows DPAPI for the current user.
 Legacy `.cbox` files remain readable for backward compatibility.
 
 Encryption reduces the risk of reading a protected file without its password, but it is not a
@@ -155,7 +154,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.3.5
+./installer/Build-Installer.ps1 -Version 1.1.3.6
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:
@@ -202,6 +201,10 @@ Operational release details are documented in [docs/PRODUCTION.md](docs/PRODUCTI
 
 Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the build, test and PR
 workflow. Changes to cryptography, recovery or release automation require extra review.
+
+## Contact
+
+Email: [EncryptoBook@gmail.com](mailto:EncryptoBook@gmail.com).
 
 ## License and third-party notices
 
