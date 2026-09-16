@@ -136,10 +136,16 @@
     <value>Зовнішній вигляд</value>
   </data>
   <data name="Settings.Appearance.Description" xml:space="preserve">
-    <value>Тема застосовується негайно та зберігається для наступного запуску.</value>
+    <value>Виберіть тему інтерфейсу та екран, який CryptoBook показує під час запуску.</value>
   </data>
   <data name="Settings.ApplicationTheme" xml:space="preserve">
     <value>Тема програми</value>
+  </data>
+  <data name="Settings.StartupScreen" xml:space="preserve">
+    <value>Початковий екран під час запуску</value>
+  </data>
+  <data name="Settings.StartupScreen.Description" xml:space="preserve">
+    <value>Вибір застосовується під час наступного запуску. Файл, відкритий із Провідника, як і раніше, відкриється одразу.</value>
   </data>
   <data name="Settings.Appearance.DocumentNote" xml:space="preserve">
     <value>Зовнішній вигляд інтерфейсу не змінює кольори чи форматування, що зберігаються в документі.</value>

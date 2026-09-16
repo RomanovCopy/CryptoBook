@@ -281,6 +281,26 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
+                <TextBlock Text="{Binding [Settings.StartupScreen], Source={StaticResource Res}}"
+                           FontSize="15"
+                           FontWeight="SemiBold"
+                           Margin="0,22,0,8"/>
+                <ComboBox x:Name="StartupScreenSelector"
+                          Style="{StaticResource DropUpComboBoxStyle}"
+                          ItemsSource="{Binding StartupScreens}"
+                          SelectedItem="{Binding SelectedStartupScreen, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayName"
+                          MinWidth="220"
+                          Height="34"
+                          Foreground="{DynamicResource CurrentInputForeground}"
+                          Background="{DynamicResource CurrentInputBackground}"
+                          HorizontalAlignment="Left"
+                          AutomationProperties.Name="{Binding [Settings.StartupScreen], Source={StaticResource Res}}"/>
+                <TextBlock Text="{Binding [Settings.StartupScreen.Description], Source={StaticResource Res}}"
+                           Margin="0,8,0,0"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource CurrentMutedForeground}"/>
+
                 <Border Margin="0,12,0,0"
                         Padding="12"
                         CornerRadius="7"

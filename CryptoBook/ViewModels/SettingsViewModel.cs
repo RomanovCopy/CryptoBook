@@ -68,6 +68,15 @@ namespace CryptoBook.ViewModels
             set => model.SelectedCultureName = value;
         }
 
+        public IReadOnlyList<StartupScreenOption> StartupScreens =>
+            model.StartupScreens;
+
+        public StartupScreenOption SelectedStartupScreen
+        {
+            get => model.SelectedStartupScreen;
+            set => model.SelectedStartupScreen = value;
+        }
+
         public GridLength NavigationPaneWidth
         {
             get => model.NavigationPaneWidth;

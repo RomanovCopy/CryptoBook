@@ -221,6 +221,9 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<ThemeManager>().As<IThemeManager>().SingleInstance();
             builder.RegisterType<UserThemePreferenceStore>().As<IThemePreferenceStore>().SingleInstance();
+            builder.RegisterType<UserStartupScreenPreferenceStore>()
+                .As<IStartupScreenPreferenceStore>()
+                .SingleInstance();
             builder.RegisterType<UserDocumentBackgroundPreferenceStore>()
                 .As<IDocumentBackgroundPreferenceStore>()
                 .SingleInstance();

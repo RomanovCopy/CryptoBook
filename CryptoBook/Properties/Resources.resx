@@ -210,8 +210,10 @@
   <data name="Settings.WindowTitle" xml:space="preserve"><value>CryptoBook Settings</value></data>
   <data name="Settings.Title" xml:space="preserve"><value>Settings</value></data>
   <data name="Settings.Appearance" xml:space="preserve"><value>Appearance</value></data>
-  <data name="Settings.Appearance.Description" xml:space="preserve"><value>The theme is applied immediately and saved for the next launch.</value></data>
+  <data name="Settings.Appearance.Description" xml:space="preserve"><value>Choose the interface theme and what CryptoBook shows when it starts.</value></data>
   <data name="Settings.ApplicationTheme" xml:space="preserve"><value>Application theme</value></data>
+  <data name="Settings.StartupScreen" xml:space="preserve"><value>Initial screen at startup</value></data>
+  <data name="Settings.StartupScreen.Description" xml:space="preserve"><value>The choice takes effect on the next launch. A file opened from File Explorer will still open directly.</value></data>
   <data name="Settings.Appearance.DocumentNote" xml:space="preserve"><value>Interface appearance does not change colors or formatting stored inside the document.</value></data>
   <data name="Settings.Workspace" xml:space="preserve"><value>Workspace</value></data>
   <data name="Settings.Workspace.Description" xml:space="preserve"><value>Select the root folder where CryptoBook will search for files by name.</value></data>

@@ -10,6 +10,7 @@ namespace CryptoBook.Interfaces
         IRecentDocumentsViewModel RecentDocuments { get; }
         IPinnedDocumentsViewModel PinnedDocuments { get; }
         bool HasDocument { get; }
+        bool ShowEditor { get; }
         string WorkspaceDirectoryDisplay { get; }
 
         ICommand NewDocument { get; }
