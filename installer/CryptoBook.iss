@@ -84,8 +84,6 @@ Type: filesandordirs; Name: "{app}\zh-Hant"
 Type: filesandordirs; Name: "{app}\runtimes"
 Type: filesandordirs; Name: "{app}\LICENSES"
 Type: filesandordirs; Name: "{app}\compliance"
-; Keep legacy CryptoBook-<version>.ico files. Existing pinned taskbar
-; shortcuts can continue to reference their exact paths after an upgrade.
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -115,3 +113,86 @@ Root: HKCR; Subkey: "Applications\{#MyAppExeName}\SupportedTypes"; ValueType: st
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+const
+  SHCNE_ASSOCCHANGED = $08000000;
+  SHCNF_IDLIST = $0000;
+
+procedure SHChangeNotify(wEventId: LongWord; uFlags: LongWord;
+  dwItem1: LongInt; dwItem2: LongInt);
+  external 'SHChangeNotify@shell32.dll stdcall';
+
+function MigratePinnedTaskbarShortcutIcon: Boolean;
+var
+  ApplicationPath: String;
+  ExpectedIconLocation: String;
+  PinnedShortcutPath: String;
+  SavedIconLocation: String;
+  ShortcutTargetPath: String;
+  Shell: Variant;
+  Shortcut: Variant;
+begin
+  Result := True;
+  PinnedShortcutPath := ExpandConstant(
+    '{userappdata}\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\{#MyAppName}.lnk');
+
+  if not FileExists(PinnedShortcutPath) then
+  begin
+    Log('No existing CryptoBook taskbar shortcut requires migration.');
+    Exit;
+  end;
+
+  ApplicationPath := ExpandConstant('{app}\{#MyAppExeName}');
+  ExpectedIconLocation := ApplicationPath + ',0';
+
+  try
+    Shell := CreateOleObject('WScript.Shell');
+    Shortcut := Shell.CreateShortcut(PinnedShortcutPath);
+    ShortcutTargetPath := Shortcut.TargetPath;
+
+    if CompareText(ShortcutTargetPath, ApplicationPath) <> 0 then
+    begin
+      Log('Keeping legacy icons because the existing CryptoBook taskbar ' +
+        'shortcut targets an unexpected path: ' + ShortcutTargetPath);
+      Result := False;
+      Exit;
+    end;
+
+    Shortcut.IconLocation := ExpectedIconLocation;
+    Shortcut.WorkingDirectory := ExpandConstant('{app}');
+    Shortcut.Save;
+
+    Shortcut := Shell.CreateShortcut(PinnedShortcutPath);
+    SavedIconLocation := Shortcut.IconLocation;
+    if CompareText(SavedIconLocation, ExpectedIconLocation) <> 0 then
+    begin
+      Log('Keeping legacy icons because the migrated CryptoBook taskbar ' +
+        'shortcut could not be verified.');
+      Result := False;
+      Exit;
+    end;
+
+    Log('Migrated the CryptoBook taskbar shortcut to the executable icon.');
+    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
+  except
+    Log('Keeping legacy icons because taskbar shortcut migration failed: ' +
+      GetExceptionMessage);
+    Result := False;
+  end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssInstall then
+  begin
+    if MigratePinnedTaskbarShortcutIcon then
+    begin
+      if DelTree(ExpandConstant('{app}\CryptoBook-*.ico'),
+        False, True, False) then
+        Log('Removed obsolete versioned CryptoBook icon files.')
+      else
+        Log('One or more obsolete versioned CryptoBook icon files could not be removed.');
+    end;
+  end;
+end;

@@ -43,7 +43,6 @@ public sealed class InstallerDefinitionTests
             .ToArray();
 
         Assert.DoesNotContain("MyShortcutIconName", installer, StringComparison.Ordinal);
-        Assert.DoesNotContain("CryptoBook-*.ico", installer, StringComparison.Ordinal);
         Assert.DoesNotContain(
             "Source: \"..\\CryptoBook\\Resources\\Icons\\AppIcon.ico\"; DestDir: \"{app}\"",
             installer,
@@ -61,6 +60,47 @@ public sealed class InstallerDefinitionTests
             "ValueData: \"{app}\\{#MyAppExeName},0\"",
             line,
             StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Installer_MigratesPinnedShortcutBeforeRemovingVersionedIcons()
+    {
+        string installer = File.ReadAllText(FindRepositoryFile(
+            "installer",
+            "CryptoBook.iss"));
+
+        int cleanupSection = installer.IndexOf(
+            "[InstallDelete]",
+            StringComparison.Ordinal);
+        int filesSection = installer.IndexOf(
+            "[Files]",
+            StringComparison.Ordinal);
+        string declarativeCleanup = installer[cleanupSection..filesSection];
+
+        Assert.DoesNotContain(
+            "CryptoBook-*.ico",
+            declarativeCleanup,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "function MigratePinnedTaskbarShortcutIcon: Boolean;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Shortcut.IconLocation := ExpectedIconLocation;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "SavedIconLocation := Shortcut.IconLocation;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "if MigratePinnedTaskbarShortcutIcon then",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "DelTree(ExpandConstant('{app}\\CryptoBook-*.ico')",
+            installer,
+            StringComparison.Ordinal);
     }
 
     [Fact]
