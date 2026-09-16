@@ -87,6 +87,7 @@ namespace CryptoBook.ViewModels
                 : documentSession.HasDocument && !markdownDocument.IsActive;
 
         public bool ShowEditor => HasDocument || showEditorOnStartup;
+        public bool StartEditorAtActualSize => showEditorOnStartup;
 
         public string WorkspaceDirectoryDisplay
         {

@@ -318,6 +318,61 @@ public sealed class DocumentPageLayoutTests
     }
 
     [WpfFact]
+    public void EditorStartup_BeginsAtActualSizeWithoutLosingZoomAcrossResize()
+    {
+        var document = new FlowDocument(new Paragraph(new Run("Actual-size startup")));
+        DocumentPageLayout.Apply(document);
+        var editor = new RichTextBox(document)
+        {
+            Padding = new Thickness(0), BorderThickness = new Thickness(0),
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+        var host = new AdornerDecorator { Child = editor };
+        DocumentPageBorderBehavior.SetStartAtActualSize(editor, true);
+        DocumentPageBorderBehavior.SetIsEnabled(editor, true);
+
+        Layout(1200);
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        host.UpdateLayout();
+
+        Assert.Equal(1, editor.LayoutTransform.Value.M11, 6);
+        Point pageOrigin = editor.TranslatePoint(new Point(), host);
+        Point pageRight = editor.TranslatePoint(
+            new Point(document.PageWidth, 0),
+            host);
+        Assert.Equal(24, pageOrigin.X, 4);
+        Assert.Equal(document.PageWidth, pageRight.X - pageOrigin.X, 4);
+        Assert.True(
+            1200 - pageRight.X > 24,
+            "The 100% page remains narrower than the startup viewport instead of stretching to fit it.");
+
+        Layout(800);
+        double resizedScale = (800 - 48) / (1200d - 48);
+        Assert.Equal(resizedScale, editor.LayoutTransform.Value.M11, 6);
+
+        Assert.True(DocumentPageBorderBehavior.HandleMouseWheel(
+            editor,
+            120,
+            ModifierKeys.Control));
+        host.UpdateLayout();
+        Assert.Equal(resizedScale * 1.1, editor.LayoutTransform.Value.M11, 6);
+
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+        host.UpdateLayout();
+        editor.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+        host.UpdateLayout();
+        Assert.Equal(resizedScale * 1.1, editor.LayoutTransform.Value.M11, 6);
+
+        void Layout(double width)
+        {
+            host.Measure(new Size(width, 400));
+            host.Arrange(new Rect(0, 0, width, 400));
+            host.UpdateLayout();
+        }
+    }
+
+    [WpfFact]
     public void Editor_ControlWheelZoomPreservesDocumentAndSurvivesResizeAndReload()
     {
         var document = new FlowDocument(new Paragraph(new Run("Page zoom")));

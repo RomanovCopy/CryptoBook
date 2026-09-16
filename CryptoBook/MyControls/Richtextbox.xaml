@@ -49,6 +49,8 @@
                         <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
                         <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
                         <Setter Property="behaviors:DocumentPageBorderBehavior.IsEnabled" Value="True"/>
+                        <Setter Property="behaviors:DocumentPageBorderBehavior.StartAtActualSize"
+                                Value="{Binding DataContext.StartEditorAtActualSize, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"/>
                         <Setter Property="behaviors:DocumentBackgroundImageBehavior.FontService"
                                 Value="{markup:ResolveService ServiceType={x:Type interfaces:IFontService}}"/>
                         <Setter Property="Cursor"

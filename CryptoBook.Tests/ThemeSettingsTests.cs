@@ -729,6 +729,9 @@ public sealed class ThemeSettingsTests
 
         Assert.False(home.HasDocument);
         Assert.Equal(expectedShowEditor, home.ShowEditor);
+        Assert.Equal(
+            startupScreen == StartupScreen.Editor,
+            home.StartEditorAtActualSize);
     }
 
     [Fact]
