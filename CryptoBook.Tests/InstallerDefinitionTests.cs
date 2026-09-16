@@ -29,29 +29,38 @@ public sealed class InstallerDefinitionTests
     ];
 
     [Fact]
-    public void Installer_RemovesVersionedIconsBeforeCopyingCurrentIcon()
+    public void Installer_UsesStableExecutableIconForShellIntegration()
     {
-        string installer = File.ReadAllText(FindRepositoryFile(
+        string installerPath = FindRepositoryFile(
             "installer",
-            "CryptoBook.iss"));
+            "CryptoBook.iss");
+        string installer = File.ReadAllText(installerPath);
 
-        int cleanupSection = installer.IndexOf(
-            "[InstallDelete]",
-            StringComparison.Ordinal);
-        int cleanupEntry = installer.IndexOf(
-            "Type: files; Name: \"{app}\\CryptoBook-*.ico\"",
-            StringComparison.Ordinal);
-        int filesSection = installer.IndexOf(
-            "[Files]",
-            StringComparison.Ordinal);
+        string[] defaultIconLines = File.ReadAllLines(installerPath)
+            .Where(line => line.Contains(
+                "\\DefaultIcon\"",
+                StringComparison.Ordinal))
+            .ToArray();
 
-        Assert.True(cleanupSection >= 0);
-        Assert.True(cleanupEntry > cleanupSection);
-        Assert.True(filesSection > cleanupEntry);
-        Assert.Contains(
-            "DestName: \"{#MyShortcutIconName}\"",
+        Assert.DoesNotContain("MyShortcutIconName", installer, StringComparison.Ordinal);
+        Assert.DoesNotContain("CryptoBook-*.ico", installer, StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "Source: \"..\\CryptoBook\\Resources\\Icons\\AppIcon.ico\"; DestDir: \"{app}\"",
             installer,
             StringComparison.Ordinal);
+        Assert.Contains(
+            "Name: \"{group}\\{#MyAppName}\"; Filename: \"{app}\\{#MyAppExeName}\"; IconFilename: \"{app}\\{#MyAppExeName}\"",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Name: \"{autodesktop}\\{#MyAppName}\"; Filename: \"{app}\\{#MyAppExeName}\"; IconFilename: \"{app}\\{#MyAppExeName}\"; Tasks: desktopicon",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Equal(2, defaultIconLines.Length);
+        Assert.All(defaultIconLines, line => Assert.Contains(
+            "ValueData: \"{app}\\{#MyAppExeName},0\"",
+            line,
+            StringComparison.Ordinal));
     }
 
     [Fact]

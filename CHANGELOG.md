@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Keep taskbar, Start menu, desktop and document-association icons stable across
+  upgrades by resolving them from `CryptoBook.exe`; retain legacy versioned icon
+  files so already pinned shortcuts do not become blank.
+
 ## 1.1.3.6 - 2026-09-15
 
 ### Security
