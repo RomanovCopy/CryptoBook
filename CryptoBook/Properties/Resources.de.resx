@@ -210,8 +210,10 @@
   <data name="Settings.WindowTitle" xml:space="preserve"><value>CryptoBook-Einstellungen</value></data>
   <data name="Settings.Title" xml:space="preserve"><value>Einstellungen</value></data>
   <data name="Settings.Appearance" xml:space="preserve"><value>Darstellung</value></data>
-  <data name="Settings.Appearance.Description" xml:space="preserve"><value>Das Design wird sofort angewendet und für den nächsten Start gespeichert.</value></data>
+  <data name="Settings.Appearance.Description" xml:space="preserve"><value>Wählen Sie das Oberflächendesign und was CryptoBook beim Start anzeigt.</value></data>
   <data name="Settings.ApplicationTheme" xml:space="preserve"><value>Anwendungsdesign</value></data>
+  <data name="Settings.StartupScreen" xml:space="preserve"><value>Startbildschirm beim Programmstart</value></data>
+  <data name="Settings.StartupScreen.Description" xml:space="preserve"><value>Die Auswahl gilt ab dem nächsten Start. Eine im Explorer geöffnete Datei wird weiterhin direkt angezeigt.</value></data>
   <data name="Settings.Appearance.DocumentNote" xml:space="preserve"><value>Die Darstellung der Benutzeroberfläche ändert keine im Dokument gespeicherten Farben oder Formatierungen.</value></data>
   <data name="Settings.Workspace" xml:space="preserve"><value>Arbeitsbereich</value></data>
   <data name="Settings.Workspace.Description" xml:space="preserve"><value>Wählen Sie den Stammordner aus, in dem CryptoBook Dateien nach Namen suchen soll.</value></data>

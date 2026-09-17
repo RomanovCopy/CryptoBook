@@ -7,17 +7,16 @@
 #endif
 
 #ifndef MyAppVersion
-  #define MyAppVersion "1.1.3.6"
+  #define MyAppVersion "1.1.3.7"
 #endif
 
 #ifndef VersionInfoVersion
-  #define VersionInfoVersion "1.1.3.6"
+  #define VersionInfoVersion "1.1.3.7"
 #endif
 
 #define MyAppName "CryptoBook"
 #define MyAppPublisher "Романов Сергей"
 #define MyAppExeName "CryptoBook.exe"
-#define MyShortcutIconName "CryptoBook-" + MyAppVersion + ".ico"
 
 [Setup]
 AppId={{9D51F202-0EB4-4A62-A45E-0601F8C12D01}
@@ -85,11 +84,9 @@ Type: filesandordirs; Name: "{app}\zh-Hant"
 Type: filesandordirs; Name: "{app}\runtimes"
 Type: filesandordirs; Name: "{app}\LICENSES"
 Type: filesandordirs; Name: "{app}\compliance"
-Type: files; Name: "{app}\CryptoBook-*.ico"
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\CryptoBook\Resources\Icons\AppIcon.ico"; DestDir: "{app}"; DestName: "{#MyShortcutIconName}"; Flags: ignoreversion
 Source: "..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 Source: "..\COPYRIGHT.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\THIRD_PARTY_NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
@@ -99,20 +96,103 @@ Source: "..\LICENSES\*"; DestDir: "{app}\LICENSES"; Flags: ignoreversion recurse
 Source: "..\compliance\*"; DestDir: "{app}\compliance"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyShortcutIconName}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyShortcutIconName}"; Tasks: desktopicon
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Registry]
 Root: HKCR; Subkey: "CryptoBook.Document"; ValueType: string; ValueName: ""; ValueData: "CryptoBook document"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "CryptoBook.Document\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyShortcutIconName},0"
+Root: HKCR; Subkey: "CryptoBook.Document\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
 Root: HKCR; Subkey: "CryptoBook.Document\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 Root: HKCR; Subkey: ".cbook\OpenWithProgids"; ValueType: none; ValueName: "CryptoBook.Document"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: ".cbox\OpenWithProgids"; ValueType: none; ValueName: "CryptoBook.Document"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "Applications\{#MyAppExeName}"; ValueType: string; ValueName: "FriendlyAppName"; ValueData: "{#MyAppName}"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Applications\{#MyAppExeName}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyShortcutIconName},0"
+Root: HKCR; Subkey: "Applications\{#MyAppExeName}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
 Root: HKCR; Subkey: "Applications\{#MyAppExeName}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 Root: HKCR; Subkey: "Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".cbook"; ValueData: ""; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".cbox"; ValueData: ""; Flags: uninsdeletevalue
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+const
+  SHCNE_ASSOCCHANGED = $08000000;
+  SHCNF_IDLIST = $0000;
+
+procedure SHChangeNotify(wEventId: LongWord; uFlags: LongWord;
+  dwItem1: LongInt; dwItem2: LongInt);
+  external 'SHChangeNotify@shell32.dll stdcall';
+
+function MigratePinnedTaskbarShortcutIcon: Boolean;
+var
+  ApplicationPath: String;
+  ExpectedIconLocation: String;
+  PinnedShortcutPath: String;
+  SavedIconLocation: String;
+  SavedTargetPath: String;
+  ShortcutTargetPath: String;
+  Shell: Variant;
+  Shortcut: Variant;
+begin
+  Result := True;
+  PinnedShortcutPath := ExpandConstant(
+    '{userappdata}\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\{#MyAppName}.lnk');
+
+  if not FileExists(PinnedShortcutPath) then
+  begin
+    Log('No existing CryptoBook taskbar shortcut requires migration.');
+    Exit;
+  end;
+
+  ApplicationPath := ExpandConstant('{app}\{#MyAppExeName}');
+  ExpectedIconLocation := ApplicationPath + ',0';
+
+  try
+    Shell := CreateOleObject('WScript.Shell');
+    Shortcut := Shell.CreateShortcut(PinnedShortcutPath);
+    ShortcutTargetPath := Shortcut.TargetPath;
+
+    if CompareText(ShortcutTargetPath, ApplicationPath) <> 0 then
+      Log('Retargeting the legacy CryptoBook taskbar shortcut from: ' +
+        ShortcutTargetPath);
+
+    Shortcut.TargetPath := ApplicationPath;
+    Shortcut.IconLocation := ExpectedIconLocation;
+    Shortcut.WorkingDirectory := ExpandConstant('{app}');
+    Shortcut.Save;
+
+    Shortcut := Shell.CreateShortcut(PinnedShortcutPath);
+    SavedTargetPath := Shortcut.TargetPath;
+    SavedIconLocation := Shortcut.IconLocation;
+    if (CompareText(SavedTargetPath, ApplicationPath) <> 0) or
+       (CompareText(SavedIconLocation, ExpectedIconLocation) <> 0) then
+    begin
+      Log('Keeping legacy icons because the migrated CryptoBook taskbar ' +
+        'shortcut could not be verified.');
+      Result := False;
+      Exit;
+    end;
+
+    Log('Migrated the CryptoBook taskbar shortcut to the executable icon.');
+    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
+  except
+    Log('Keeping legacy icons because taskbar shortcut migration failed: ' +
+      GetExceptionMessage);
+    Result := False;
+  end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssInstall then
+  begin
+    if MigratePinnedTaskbarShortcutIcon then
+    begin
+      if DelTree(ExpandConstant('{app}\CryptoBook-*.ico'),
+        False, True, False) then
+        Log('Removed obsolete versioned CryptoBook icon files.')
+      else
+        Log('One or more obsolete versioned CryptoBook icon files could not be removed.');
+    end;
+  end;
+end;

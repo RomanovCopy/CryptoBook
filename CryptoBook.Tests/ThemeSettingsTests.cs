@@ -682,6 +682,59 @@ public sealed class ThemeSettingsTests
     }
 
     [Fact]
+    public void SettingsModel_LoadsAndPersistsSelectedStartupScreen()
+    {
+        var store = new StartupScreenPreferenceStoreStub(
+            StartupScreen.Editor);
+        var model = new SettingsModel(
+            new ThemeManagerStub(ApplicationTheme.Light),
+            new WindowManagerStub(),
+            workspaceService: null,
+            folderPickerService: null,
+            fileLauncherService: null,
+            startupScreenPreferenceStore: store);
+
+        Assert.Equal(
+            StartupScreen.Editor,
+            model.SelectedStartupScreen.Screen);
+        Assert.Collection(
+            model.StartupScreens,
+            option => Assert.Equal(StartupScreen.Start, option.Screen),
+            option => Assert.Equal(StartupScreen.Editor, option.Screen));
+
+        model.SelectedStartupScreen = Assert.Single(
+            model.StartupScreens,
+            option => option.Screen == StartupScreen.Start);
+
+        Assert.Equal(StartupScreen.Start, store.SavedScreen);
+    }
+
+    [WpfTheory]
+    [InlineData(StartupScreen.Start, false)]
+    [InlineData(StartupScreen.Editor, true)]
+    public void StartupScreenPreference_ControlsEmptyHomePresentation(
+        StartupScreen startupScreen,
+        bool expectedShowEditor)
+    {
+        var app = Application.Current ?? new Application();
+        var store = new StartupScreenPreferenceStoreStub(startupScreen);
+        using IContainer container = new Startup().ConfigureServices(
+            app,
+            builder => builder.RegisterInstance(store)
+                .As<IStartupScreenPreferenceStore>()
+                .SingleInstance());
+        using ILifetimeScope scope = container.BeginLifetimeScope();
+
+        IHomeViewModel home = scope.Resolve<IHomeViewModel>();
+
+        Assert.False(home.HasDocument);
+        Assert.Equal(expectedShowEditor, home.ShowEditor);
+        Assert.Equal(
+            startupScreen == StartupScreen.Editor,
+            home.StartEditorAtActualSize);
+    }
+
+    [Fact]
     public void SettingsModel_PersistsNavigationPaneWidthOnClosing()
     {
         double originalWidth =
@@ -994,6 +1047,16 @@ public sealed class ThemeSettingsTests
             AppliedTheme = theme;
             CurrentTheme = theme;
         }
+    }
+
+    private sealed class StartupScreenPreferenceStoreStub(
+        StartupScreen storedScreen): IStartupScreenPreferenceStore
+    {
+        public StartupScreen? SavedScreen { get; private set; }
+
+        public StartupScreen Load() => storedScreen;
+
+        public void Save(StartupScreen screen) => SavedScreen = screen;
     }
 
     private sealed class WindowsThemeProviderStub:

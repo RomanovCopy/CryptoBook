@@ -50,6 +50,11 @@ namespace CryptoBook.Behaviors
             DependencyProperty.RegisterAttached("IsEnabled", typeof(bool),
                 typeof(DocumentPageBorderBehavior), new PropertyMetadata(false, OnEnabledChanged));
 
+        public static readonly DependencyProperty StartAtActualSizeProperty =
+            DependencyProperty.RegisterAttached("StartAtActualSize", typeof(bool),
+                typeof(DocumentPageBorderBehavior),
+                new PropertyMetadata(false, OnStartAtActualSizeChanged));
+
         private static readonly DependencyProperty AdornerProperty =
             DependencyProperty.RegisterAttached("Adorner", typeof(PageBorderAdorner),
                 typeof(DocumentPageBorderBehavior));
@@ -58,8 +63,16 @@ namespace CryptoBook.Behaviors
             DependencyProperty.RegisterAttached("ZoomFactor", typeof(double),
                 typeof(DocumentPageBorderBehavior), new PropertyMetadata(1.0));
 
+        private static readonly DependencyProperty InitialZoomAppliedProperty =
+            DependencyProperty.RegisterAttached("InitialZoomApplied", typeof(bool),
+                typeof(DocumentPageBorderBehavior), new PropertyMetadata(false));
+
         public static bool GetIsEnabled(DependencyObject element) => (bool)element.GetValue(IsEnabledProperty);
         public static void SetIsEnabled(DependencyObject element, bool value) => element.SetValue(IsEnabledProperty, value);
+        public static bool GetStartAtActualSize(DependencyObject element) =>
+            (bool)element.GetValue(StartAtActualSizeProperty);
+        public static void SetStartAtActualSize(DependencyObject element, bool value) =>
+            element.SetValue(StartAtActualSizeProperty, value);
 
         private static void OnEnabledChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
         {
@@ -77,6 +90,18 @@ namespace CryptoBook.Behaviors
                 editor.Loaded -= Attach;
                 editor.Unloaded -= Detach;
                 Detach(editor, new RoutedEventArgs());
+            }
+        }
+
+        private static void OnStartAtActualSizeChanged(
+            DependencyObject element,
+            DependencyPropertyChangedEventArgs args)
+        {
+            if(args.NewValue is true &&
+               element is RichTextBox editor &&
+               editor.GetValue(AdornerProperty) is PageBorderAdorner adorner)
+            {
+                adorner.Update(null, EventArgs.Empty);
             }
         }
 
@@ -174,8 +199,17 @@ namespace CryptoBook.Behaviors
                    !double.IsFinite(editor.Document.PageWidth) || editor.Document.PageWidth <= 0)
                     return false;
 
+                double availableWidth = host.ActualWidth - 2 * gutter;
+                if(GetStartAtActualSize(editor) &&
+                   !(bool)editor.GetValue(InitialZoomAppliedProperty))
+                {
+                    // The editor startup screen begins at the physical page scale instead of fit-to-width.
+                    editor.SetValue(ZoomFactorProperty, editor.Document.PageWidth / availableWidth);
+                    editor.SetValue(InitialZoomAppliedProperty, true);
+                }
+
                 // Scale the view, keeping the paper size, line wrapping and saved document unchanged.
-                double scale = (host.ActualWidth - 2 * gutter) / editor.Document.PageWidth *
+                double scale = availableWidth / editor.Document.PageWidth *
                     (double)editor.GetValue(ZoomFactorProperty);
                 bool changed = false;
                 if(Math.Abs(pageScale.ScaleX - scale) > 0.0000001 || editor.LayoutTransform != pageScale)

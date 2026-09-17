@@ -1,6 +1,7 @@
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.Services;
 using CryptoBook.Views;
 using CryptoBook.Security;
 
@@ -25,8 +26,11 @@ namespace CryptoBook.Models
         private readonly IWorkspaceFileOpenService? workspaceFileOpenService;
         private readonly IKeyResetService? keyResetService;
         private readonly IKeyProvider? keyProvider;
+        private readonly IStartupScreenPreferenceStore startupScreenPreferenceStore;
         private ApplicationThemeOption selectedTheme;
         private ApplicationLanguageOption selectedLanguage;
+        private IReadOnlyList<StartupScreenOption> startupScreens;
+        private StartupScreenOption selectedStartupScreen;
         private GridLength navigationPaneWidth;
         private CancellationTokenSource? searchCancellation;
         private int selectedSectionIndex;
@@ -59,7 +63,8 @@ namespace CryptoBook.Models
             IFileLauncherService? fileLauncherService,
             IWorkspaceFileOpenService? workspaceFileOpenService = null,
             IKeyResetService? keyResetService = null,
-            IKeyProvider? keyProvider = null)
+            IKeyProvider? keyProvider = null,
+            IStartupScreenPreferenceStore? startupScreenPreferenceStore = null)
         {
             this.themeManager = themeManager ??
                 throw new ArgumentNullException(nameof(themeManager));
@@ -71,6 +76,8 @@ namespace CryptoBook.Models
             this.workspaceFileOpenService = workspaceFileOpenService;
             this.keyResetService = keyResetService;
             this.keyProvider = keyProvider;
+            this.startupScreenPreferenceStore = startupScreenPreferenceStore ??
+                new UserStartupScreenPreferenceStore();
             if(keyResetService is not null)
                 keyResetService.StateChanged += OnKeyResetStateChanged;
 
@@ -79,6 +86,10 @@ namespace CryptoBook.Models
             selectedLanguage = Languages.First(
                 option => option.CultureName ==
                     LocalizationManager.CurrentCultureName);
+            startupScreens = CreateStartupScreens();
+            selectedStartupScreen = startupScreens.First(
+                option => option.Screen ==
+                    this.startupScreenPreferenceStore.Load());
             navigationPaneWidth = new GridLength(
                 NormalizeNavigationPaneWidth(
                     Properties.Settings.Default.SettingsNavigationPaneWidth));
@@ -124,6 +135,12 @@ namespace CryptoBook.Models
                 OnPropertyChanged(nameof(Themes));
                 OnPropertyChanged(nameof(SelectedTheme));
                 OnPropertyChanged(nameof(SelectedCultureName));
+                startupScreens = CreateStartupScreens();
+                selectedStartupScreen = startupScreens.First(
+                    option => option.Screen ==
+                        startupScreenPreferenceStore.Load());
+                OnPropertyChanged(nameof(StartupScreens));
+                OnPropertyChanged(nameof(SelectedStartupScreen));
                 RefreshEncryptionKeyStatus();
             }
         }
@@ -350,6 +367,24 @@ namespace CryptoBook.Models
             RefreshEncryptionKeyStatus();
         }
 
+        public IReadOnlyList<StartupScreenOption> StartupScreens =>
+            startupScreens;
+
+        public StartupScreenOption SelectedStartupScreen
+        {
+            get => selectedStartupScreen;
+            set
+            {
+                if(value is null ||
+                   !SetProperty(ref selectedStartupScreen, value))
+                {
+                    return;
+                }
+
+                startupScreenPreferenceStore.Save(value.Screen);
+            }
+        }
+
         public bool CanResetEncryptionKey => keyProvider?.HasKey == true &&
             keyResetService?.State is KeyResetState.Active or KeyResetState.Inactive;
 
@@ -425,6 +460,17 @@ namespace CryptoBook.Models
             double.IsFinite(width)
                 ? Math.Clamp(width, 150d, 340d)
                 : 190d;
+
+        private static IReadOnlyList<StartupScreenOption>
+            CreateStartupScreens() =>
+        [
+            new(
+                StartupScreen.Start,
+                LocalizationManager.GetString("Home.StartTitle")),
+            new(
+                StartupScreen.Editor,
+                LocalizationManager.GetString("Editor.Editor"))
+        ];
 
         private void ExecuteLaunch(
             WorkspaceSearchResult? result,

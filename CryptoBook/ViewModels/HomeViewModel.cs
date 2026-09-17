@@ -1,3 +1,4 @@
+using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
@@ -21,6 +22,7 @@ namespace CryptoBook.ViewModels
         private readonly IWorkspaceService workspaceService;
         private readonly IMessageService messageService;
         private readonly IMarkdownDocumentState markdownDocument;
+        private readonly bool showEditorOnStartup;
         private readonly AsyncRelayCommand pageLoadedCommand;
         private readonly AsyncRelayCommand chooseWorkspaceCommand;
         private readonly RelayCommand noOperationCommand = new(_ => { });
@@ -36,7 +38,8 @@ namespace CryptoBook.ViewModels
             IFolderPickerService folderPickerService,
             IWorkspaceService workspaceService,
             IMessageService messageService,
-            IMarkdownDocumentState markdownDocument)
+            IMarkdownDocumentState markdownDocument,
+            IStartupScreenPreferenceStore startupScreenPreferenceStore)
         {
             DocumentView = documentView
                 ?? throw new ArgumentNullException(nameof(documentView));
@@ -60,6 +63,9 @@ namespace CryptoBook.ViewModels
                 ?? throw new ArgumentNullException(nameof(messageService));
             this.markdownDocument = markdownDocument
                 ?? throw new ArgumentNullException(nameof(markdownDocument));
+            ArgumentNullException.ThrowIfNull(startupScreenPreferenceStore);
+            showEditorOnStartup =
+                startupScreenPreferenceStore.Load() == StartupScreen.Editor;
 
             pageLoadedCommand = new AsyncRelayCommand(InitializeAsync);
             chooseWorkspaceCommand = new AsyncRelayCommand(ChooseWorkspaceAsync);
@@ -79,6 +85,9 @@ namespace CryptoBook.ViewModels
             documentSession is IWorkspaceDocumentSession workspace
                 ? workspace.HasHomeDocument
                 : documentSession.HasDocument && !markdownDocument.IsActive;
+
+        public bool ShowEditor => HasDocument || showEditorOnStartup;
+        public bool StartEditorAtActualSize => showEditorOnStartup;
 
         public string WorkspaceDirectoryDisplay
         {
@@ -168,7 +177,10 @@ namespace CryptoBook.ViewModels
         {
             if(args.PropertyName is nameof(IDocumentSession.HasDocument) or
                 nameof(IWorkspaceDocumentSession.HasHomeDocument))
+            {
                 OnPropertyChanged(nameof(HasDocument));
+                OnPropertyChanged(nameof(ShowEditor));
+            }
         }
 
         private void OnMarkdownDocumentPropertyChanged(

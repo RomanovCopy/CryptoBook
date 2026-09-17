@@ -210,8 +210,10 @@
   <data name="Settings.WindowTitle" xml:space="preserve"><value>Настройки CryptoBook</value></data>
   <data name="Settings.Title" xml:space="preserve"><value>Настройки</value></data>
   <data name="Settings.Appearance" xml:space="preserve"><value>Оформление</value></data>
-  <data name="Settings.Appearance.Description" xml:space="preserve"><value>Тема применяется сразу и сохраняется для следующего запуска.</value></data>
+  <data name="Settings.Appearance.Description" xml:space="preserve"><value>Выберите тему интерфейса и экран, который CryptoBook показывает при запуске.</value></data>
   <data name="Settings.ApplicationTheme" xml:space="preserve"><value>Тема приложения</value></data>
+  <data name="Settings.StartupScreen" xml:space="preserve"><value>Начальный экран при запуске</value></data>
+  <data name="Settings.StartupScreen.Description" xml:space="preserve"><value>Выбор применяется при следующем запуске. Файл, открытый из Проводника, по-прежнему откроется сразу.</value></data>
   <data name="Settings.Appearance.DocumentNote" xml:space="preserve"><value>Оформление интерфейса не изменяет цвета и форматирование, сохранённые внутри документа.</value></data>
   <data name="Settings.Workspace" xml:space="preserve"><value>Рабочее пространство</value></data>
   <data name="Settings.Workspace.Description" xml:space="preserve"><value>Выберите корневую папку, в которой CryptoBook будет искать файлы по имени.</value></data>

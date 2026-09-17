@@ -29,7 +29,41 @@ public sealed class InstallerDefinitionTests
     ];
 
     [Fact]
-    public void Installer_RemovesVersionedIconsBeforeCopyingCurrentIcon()
+    public void Installer_UsesStableExecutableIconForShellIntegration()
+    {
+        string installerPath = FindRepositoryFile(
+            "installer",
+            "CryptoBook.iss");
+        string installer = File.ReadAllText(installerPath);
+
+        string[] defaultIconLines = File.ReadAllLines(installerPath)
+            .Where(line => line.Contains(
+                "\\DefaultIcon\"",
+                StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.DoesNotContain("MyShortcutIconName", installer, StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "Source: \"..\\CryptoBook\\Resources\\Icons\\AppIcon.ico\"; DestDir: \"{app}\"",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Name: \"{group}\\{#MyAppName}\"; Filename: \"{app}\\{#MyAppExeName}\"; IconFilename: \"{app}\\{#MyAppExeName}\"",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Name: \"{autodesktop}\\{#MyAppName}\"; Filename: \"{app}\\{#MyAppExeName}\"; IconFilename: \"{app}\\{#MyAppExeName}\"; Tasks: desktopicon",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Equal(2, defaultIconLines.Length);
+        Assert.All(defaultIconLines, line => Assert.Contains(
+            "ValueData: \"{app}\\{#MyAppExeName},0\"",
+            line,
+            StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Installer_MigratesPinnedShortcutBeforeRemovingVersionedIcons()
     {
         string installer = File.ReadAllText(FindRepositoryFile(
             "installer",
@@ -38,18 +72,45 @@ public sealed class InstallerDefinitionTests
         int cleanupSection = installer.IndexOf(
             "[InstallDelete]",
             StringComparison.Ordinal);
-        int cleanupEntry = installer.IndexOf(
-            "Type: files; Name: \"{app}\\CryptoBook-*.ico\"",
-            StringComparison.Ordinal);
         int filesSection = installer.IndexOf(
             "[Files]",
             StringComparison.Ordinal);
+        string declarativeCleanup = installer[cleanupSection..filesSection];
 
-        Assert.True(cleanupSection >= 0);
-        Assert.True(cleanupEntry > cleanupSection);
-        Assert.True(filesSection > cleanupEntry);
+        Assert.DoesNotContain(
+            "CryptoBook-*.ico",
+            declarativeCleanup,
+            StringComparison.Ordinal);
         Assert.Contains(
-            "DestName: \"{#MyShortcutIconName}\"",
+            "function MigratePinnedTaskbarShortcutIcon: Boolean;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Shortcut.TargetPath := ApplicationPath;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Shortcut.IconLocation := ExpectedIconLocation;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "SavedTargetPath := Shortcut.TargetPath;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "SavedIconLocation := Shortcut.IconLocation;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "shortcut targets an unexpected path",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "if MigratePinnedTaskbarShortcutIcon then",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "DelTree(ExpandConstant('{app}\\CryptoBook-*.ico')",
             installer,
             StringComparison.Ordinal);
     }
