@@ -86,11 +86,23 @@ public sealed class InstallerDefinitionTests
             installer,
             StringComparison.Ordinal);
         Assert.Contains(
+            "Shortcut.TargetPath := ApplicationPath;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
             "Shortcut.IconLocation := ExpectedIconLocation;",
             installer,
             StringComparison.Ordinal);
         Assert.Contains(
+            "SavedTargetPath := Shortcut.TargetPath;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.Contains(
             "SavedIconLocation := Shortcut.IconLocation;",
+            installer,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "shortcut targets an unexpected path",
             installer,
             StringComparison.Ordinal);
         Assert.Contains(

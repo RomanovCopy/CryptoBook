@@ -1,12 +1,28 @@
 # Changelog
 
-## Unreleased
+## 1.1.3.7 - 2026-09-17
+
+### Added
+
+- Add a localized Settings option that selects whether CryptoBook opens on the
+  start page or directly in the rich-text editor. The preference is stored for
+  the current Windows user.
 
 ### Fixed
 
+- Open the editor startup screen at the actual 100% page scale instead of
+  stretching the page to the initial window width. Ctrl + mouse-wheel zoom
+  continues to persist across resize and editor reload.
 - Keep taskbar, Start menu, desktop and document-association icons stable across
   upgrades by resolving them from `CryptoBook.exe`; migrate existing pinned
   shortcuts before removing obsolete versioned icon files.
+
+### Changed
+
+- Synchronize application, installer, documentation, notices and issue-report
+  metadata for 1.1.3.7.
+
+Full comparison: [v1.1.3.6...v1.1.3.7](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.6...v1.1.3.7)
 
 ## 1.1.3.6 - 2026-09-15
 

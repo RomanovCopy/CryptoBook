@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.3.6-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.6)
+[![Version](https://img.shields.io/badge/version-1.1.3.7-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.3.7)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -50,15 +50,13 @@ machine unless you explicitly move or share them.
 Screenshots show version 1.1.3.5 with an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.3.6
+## New in 1.1.3.7
 
-- New encryption passwords require 8–128 characters and at least six distinct characters, ignoring case; common and repetitive passwords are rejected. Existing files still open with their original passwords.
-- Recovery copies of protected documents now use password-derived Argon2id and AES-256-GCM protection; ordinary documents retain Windows DPAPI recovery protection.
-- **Reset key now** in Settings shows the key status and the **Ctrl+L** shortcut. Key reset preserves open ordinary documents and their unsaved changes.
-- Strengthened in-memory password protection and handling of failed snapshot writes during key reset.
-- Removed startup recovery prompts and the recovery banner. Existing snapshots are preserved, but the main window no longer offers restoration from the banner.
+- Settings can now choose whether CryptoBook opens on the start page or directly in the rich-text editor; the choice is saved for the current Windows user.
+- Starting directly in the editor now shows the page at its actual 100% scale instead of stretching it to the initial window width. Ctrl + mouse-wheel zoom still survives resize and editor reload.
+- Taskbar, Start menu, desktop and document-association icons now use the stable `CryptoBook.exe` icon. Upgrades migrate an existing pinned taskbar shortcut before removing obsolete versioned icon files.
 
-See the [release notes](docs/releases/v1.1.3.6.md), [changelog](CHANGELOG.md), and [security details](docs/security-hardening.md).
+See the [release notes](docs/releases/v1.1.3.7.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -81,6 +79,7 @@ See the [release notes](docs/releases/v1.1.3.6.md), [changelog](CHANGELOG.md), a
 - use bookmarks and document navigation;
 - print the current document through the Windows print dialog;
 - choose system, light, dark and Sepia themes;
+- choose whether CryptoBook opens on the start page or directly in the editor;
 - encrypt individual files and directories;
 - automatically clear the in-memory encryption key after a configurable idle period;
 - retain recovery snapshots without startup restoration prompts;
@@ -154,7 +153,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.3.6
+./installer/Build-Installer.ps1 -Version 1.1.3.7
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:

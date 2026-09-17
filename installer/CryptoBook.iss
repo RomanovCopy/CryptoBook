@@ -7,11 +7,11 @@
 #endif
 
 #ifndef MyAppVersion
-  #define MyAppVersion "1.1.3.6"
+  #define MyAppVersion "1.1.3.7"
 #endif
 
 #ifndef VersionInfoVersion
-  #define VersionInfoVersion "1.1.3.6"
+  #define VersionInfoVersion "1.1.3.7"
 #endif
 
 #define MyAppName "CryptoBook"
@@ -129,6 +129,7 @@ var
   ExpectedIconLocation: String;
   PinnedShortcutPath: String;
   SavedIconLocation: String;
+  SavedTargetPath: String;
   ShortcutTargetPath: String;
   Shell: Variant;
   Shortcut: Variant;
@@ -152,20 +153,19 @@ begin
     ShortcutTargetPath := Shortcut.TargetPath;
 
     if CompareText(ShortcutTargetPath, ApplicationPath) <> 0 then
-    begin
-      Log('Keeping legacy icons because the existing CryptoBook taskbar ' +
-        'shortcut targets an unexpected path: ' + ShortcutTargetPath);
-      Result := False;
-      Exit;
-    end;
+      Log('Retargeting the legacy CryptoBook taskbar shortcut from: ' +
+        ShortcutTargetPath);
 
+    Shortcut.TargetPath := ApplicationPath;
     Shortcut.IconLocation := ExpectedIconLocation;
     Shortcut.WorkingDirectory := ExpandConstant('{app}');
     Shortcut.Save;
 
     Shortcut := Shell.CreateShortcut(PinnedShortcutPath);
+    SavedTargetPath := Shortcut.TargetPath;
     SavedIconLocation := Shortcut.IconLocation;
-    if CompareText(SavedIconLocation, ExpectedIconLocation) <> 0 then
+    if (CompareText(SavedTargetPath, ApplicationPath) <> 0) or
+       (CompareText(SavedIconLocation, ExpectedIconLocation) <> 0) then
     begin
       Log('Keeping legacy icons because the migrated CryptoBook taskbar ' +
         'shortcut could not be verified.');
