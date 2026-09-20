@@ -380,7 +380,7 @@
   <data name="Explorer.Move" xml:space="preserve"><value>Переместить</value></data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Добавить текущую директорию в избранное</value></data>
   <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Задать ключ шифрования</value></data>
-  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Зашифровать выбранные элементы</value></data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Зашифровать или заменить выбранные элементы…</value></data>
   <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Расшифровать выбранные элементы</value></data>
   <data name="Explorer.Favorites" xml:space="preserve"><value>Избранное</value></data>
   <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Удалить из избранного</value></data>
@@ -613,7 +613,7 @@
   <data name="Document.SaveOperation" xml:space="preserve"><value>Сохранение документа</value></data>
   <data name="Document.SaveError" xml:space="preserve"><value>Ошибка сохранения</value></data>
   <data name="Document.EncryptionSaveTitle" xml:space="preserve"><value>Шифрование документа</value></data>
-  <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>В приложении установлен ключ шифрования. Зашифровать файл при сохранении? Нажмите «ОК», чтобы зашифровать его, или «Отмена», чтобы сохранить без шифрования. После шифрования файл нельзя будет открыть без ключа.</value></data>
+  <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>В приложении установлен ключ шифрования. Создать защищённую копию .cbook? Исходный файл останется без изменений. Нажмите «ОК», чтобы создать копию, или «Отмена», чтобы сохранить исходный формат.</value></data>
   <data name="Document.EncryptionSaveWarning" xml:space="preserve"><value>Файл будет зашифрован, и без ключа открыть его будет невозможно. Продолжить сохранение?</value></data>
   <data name="Document.EncryptionFormatUnavailable" xml:space="preserve"><value>Формат зашифрованного документа недоступен.</value></data>
   <data name="File.CreatedFilePathUnavailable" xml:space="preserve"><value>Файл создан, но не удалось определить его путь.</value></data>
@@ -911,4 +911,10 @@
   <data name="Settings.ResetEncryptionKeyShortcut" xml:space="preserve"><value>Ctrl+L — сбросить ключ без перезапуска приложения.</value></data>
   <data name="Settings.EncryptionKeyPresent" xml:space="preserve"><value>Ключ шифрования задан.</value></data>
   <data name="Settings.EncryptionKeyAbsent" xml:space="preserve"><value>Ключ шифрования не задан.</value></data>
+  <data name="Explorer.CreateProtectedCopies" xml:space="preserve"><value>Создать защищённые копии (.cbook)</value></data>
+  <data name="Explorer.CreatingProtectedCopies" xml:space="preserve"><value>Создание защищённых копий</value></data>
+  <data name="Explorer.ProtectedCopiesResultTitle" xml:space="preserve"><value>Защищённые копии созданы</value></data>
+  <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Создано защищённых копий: {0}. Пропущено уже защищённых файлов: {1}.{2}Папка назначения: {3}. Исходные и существующие файлы сохранены; при совпадении имён созданы уникальные копии.</value></data>
+  <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>Защищённая копия не прошла проверку: сохранённый тип исходного файла не совпадает с оригиналом.</value></data>
+  <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Не удалось определить имя файла защищённой копии.</value></data>
 </root>

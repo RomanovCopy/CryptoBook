@@ -380,7 +380,7 @@
   <data name="Explorer.Move" xml:space="preserve"><value>Verschieben</value></data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Aktuelles Verzeichnis zu Favoriten hinzufügen</value></data>
   <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Verschlüsselungsschlüssel festlegen</value></data>
-  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Ausgewählte Elemente verschlüsseln</value></data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Ausgewählte Elemente verschlüsseln oder ersetzen…</value></data>
   <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Ausgewählte Elemente entschlüsseln</value></data>
   <data name="Explorer.Favorites" xml:space="preserve"><value>Favoriten</value></data>
   <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Aus Favoriten entfernen</value></data>
@@ -613,7 +613,7 @@
   <data name="Document.SaveOperation" xml:space="preserve"><value>Dokument speichern</value></data>
   <data name="Document.SaveError" xml:space="preserve"><value>Speicherfehler</value></data>
   <data name="Document.EncryptionSaveTitle" xml:space="preserve"><value>Verschlüsselung des Dokuments</value></data>
-  <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>Ein Verschlüsselungsschlüssel ist konfiguriert. Soll diese Datei beim Speichern verschlüsselt werden? Klicken Sie auf OK, um sie zu verschlüsseln, oder auf Abbrechen, um sie ohne Verschlüsselung zu speichern. Nach der Verschlüsselung kann die Datei ohne den Schlüssel nicht geöffnet werden.</value></data>
+  <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>Ein Verschlüsselungsschlüssel ist konfiguriert. Soll eine geschützte .cbook-Kopie erstellt werden? Die Originaldatei bleibt unverändert. Klicken Sie auf OK, um die Kopie zu erstellen, oder auf Abbrechen, um im ursprünglichen Format zu speichern.</value></data>
   <data name="Document.EncryptionSaveWarning" xml:space="preserve"><value>Die Datei wird verschlüsselt und kann ohne den Schlüssel nicht geöffnet werden. Speichern fortsetzen?</value></data>
   <data name="Document.EncryptionFormatUnavailable" xml:space="preserve"><value>Das verschlüsselte Dokumentformat ist nicht verfügbar.</value></data>
   <data name="File.CreatedFilePathUnavailable" xml:space="preserve"><value>Die Datei wurde erstellt, aber ihr Pfad ist nicht verfügbar.</value></data>
@@ -911,4 +911,10 @@
   <data name="Settings.ResetEncryptionKeyShortcut" xml:space="preserve"><value>Strg+L — Schlüssel ohne Neustart der Anwendung zurücksetzen.</value></data>
   <data name="Settings.EncryptionKeyPresent" xml:space="preserve"><value>Ein Verschlüsselungsschlüssel ist gesetzt.</value></data>
   <data name="Settings.EncryptionKeyAbsent" xml:space="preserve"><value>Kein Verschlüsselungsschlüssel ist gesetzt.</value></data>
+  <data name="Explorer.CreateProtectedCopies" xml:space="preserve"><value>Geschützte Kopien erstellen (.cbook)</value></data>
+  <data name="Explorer.CreatingProtectedCopies" xml:space="preserve"><value>Geschützte Kopien werden erstellt</value></data>
+  <data name="Explorer.ProtectedCopiesResultTitle" xml:space="preserve"><value>Geschützte Kopien erstellt</value></data>
+  <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Erstellte geschützte Kopien: {0}. Bereits geschützte Dateien übersprungen: {1}.{2}Ziel: {3}. Quelldateien und vorhandene Dateien wurden beibehalten; Namenskonflikte erhielten eindeutige Namen.</value></data>
+  <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>Die geschützte Kopie konnte nicht verifiziert werden, da der gespeicherte Quelldateityp nicht mit dem Original übereinstimmt.</value></data>
+  <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Der Dateiname der geschützten Kopie konnte nicht ermittelt werden.</value></data>
 </root>

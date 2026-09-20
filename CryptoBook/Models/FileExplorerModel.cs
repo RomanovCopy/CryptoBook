@@ -225,6 +225,16 @@ namespace CryptoBook.Models
                     obj,
                     StorageProviderCapabilities.Encrypt);
         }
+        public bool CanExecute_CreateProtectedCopyCommand(object? obj)
+        {
+            IReadOnlyList<ISystemItem> items = GetOperationSelection(obj);
+            return !IsCurrentDirectoryUnavailable &&
+                _keyProvider.HasKey &&
+                items.Count > 0 &&
+                items.All(item => item is IFileItem && Supports(
+                    item,
+                    StorageProviderCapabilities.Encrypt));
+        }
         public bool CanExecute_EncryptCommand(object? obj)
         {
             return !IsCurrentDirectoryUnavailable &&
@@ -604,6 +614,90 @@ namespace CryptoBook.Models
         {
             var id = _windowManager.CreateWindow<KeyInputWindow>();
             _windowManager.ShowWindowDialog(id);
+        }
+        public async void Execute_CreateProtectedCopyCommand(object? obj)
+        {
+            IReadOnlyList<ISystemItem> items = GetOperationSelection(obj);
+            if(!CanExecute_CreateProtectedCopyCommand(items))
+                return;
+
+            string errorTitle = LocalizationManager.GetString(
+                "Explorer.EncryptionError");
+            try
+            {
+                string? initialDirectory = _localFiles.GetParent(
+                    items[0].FullPath);
+                string? destinationDirectory = items.Count == 1
+                    ? initialDirectory
+                    : await _folderPickerService.PickFolderAsync(
+                        initialDirectory,
+                        CancellationToken.None);
+                if(string.IsNullOrWhiteSpace(destinationDirectory))
+                    return;
+
+                FileOperationBatchResult result =
+                    await _progressDialogService.RunAsync(
+                        LocalizationManager.GetString(
+                            "Explorer.CreatingProtectedCopies"),
+                        async (progress, token) =>
+                        {
+                            FileOperationBatchResult operationResult =
+                                await _fileSecurityService
+                                    .CreateProtectedCopiesAsync(
+                                        items,
+                                        destinationDirectory,
+                                        progress,
+                                        token);
+
+                            progress.Report(
+                                null,
+                                LocalizationManager.GetString(
+                                    "Explorer.RefreshingAfterOperation"));
+                            await RefreshOperationContainersAsync(
+                                items.Select(item => item.FullPath),
+                                destinationDirectory,
+                                token);
+                            return operationResult;
+                        });
+
+                if(result.Canceled)
+                    return;
+
+                string message = LocalizationManager.Format(
+                    "Explorer.ProtectedCopiesResult",
+                    result.CompletedCount,
+                    result.SkippedCount,
+                    Environment.NewLine,
+                    GetDisplayPath(destinationDirectory));
+                if(!result.Success)
+                {
+                    string failures = string.Join(
+                        Environment.NewLine + Environment.NewLine,
+                        result.Results
+                            .Where(item => !item.Success)
+                            .Select(item => item.ErrorMessage));
+                    message += Environment.NewLine + Environment.NewLine +
+                        LocalizationManager.Format(
+                            "Explorer.BatchOperationFailed",
+                            Environment.NewLine,
+                            failures);
+                }
+
+                await _messageService.ShowMessage(
+                    result.Success
+                        ? LocalizationManager.GetString(
+                            "Explorer.ProtectedCopiesResultTitle")
+                        : errorTitle,
+                    message);
+            }
+            catch(OperationCanceledException)
+            {
+                // Отмена пользователем является штатным завершением операции.
+            }
+            catch(Exception ex)
+            {
+                await _messageService.ShowMessage(errorTitle, ex.Message);
+            }
         }
         public async void Execute_EncryptCommand(object? obj)
         {

@@ -31,6 +31,16 @@ namespace CryptoBook.Interfaces
             CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Создаёт в выбранном каталоге проверенные защищённые копии файлов.
+        /// Исходники не изменяются, существующие назначения не перезаписываются.
+        /// </summary>
+        Task<FileOperationBatchResult> CreateProtectedCopiesAsync(
+            IReadOnlyList<ISystemItem> sources,
+            string destinationDirectory,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Деифрование файла/каталога
         /// </summary>
         /// <param name="source">Источник</param>

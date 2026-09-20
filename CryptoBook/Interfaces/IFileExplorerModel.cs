@@ -50,6 +50,7 @@ namespace CryptoBook.Interfaces
         bool CanExecute_DeleteCommand(object? obj);
         bool CanExecute_SortedCommand(object? obj);
         bool CanExecute_EncryptingKeyCommand(object? obj);
+        bool CanExecute_CreateProtectedCopyCommand(object? obj);
         bool CanExecute_EncryptCommand(object? obj);
         bool CanExecute_DecryptCommand(object? obj);
         bool CanExecute_CreateFileCommand(object? obj);
@@ -83,6 +84,7 @@ namespace CryptoBook.Interfaces
         void Execute_DeleteCommand(object? obj);  
         void Execute_SortedCommand(object? obj);
         void Execute_EncryptingKeyCommand(object? obj);
+        void Execute_CreateProtectedCopyCommand(object? obj);
         void Execute_EncryptCommand(object? obj);   
         void Execute_DecryptCommand(object? obj);
         void Execute_CreateFileCommand(object? obj);
