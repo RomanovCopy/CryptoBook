@@ -62,6 +62,186 @@ namespace CryptoBook.Services
                 cancellationToken);
         }
 
+        public async Task<FileOperationBatchResult> CreateProtectedCopiesAsync(
+            IReadOnlyList<ISystemItem> sources,
+            string destinationDirectory,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(sources);
+            if(string.IsNullOrWhiteSpace(destinationDirectory))
+            {
+                throw new ArgumentException(
+                    LocalizationManager.GetString(
+                        "Security.DestinationRequired"),
+                    nameof(destinationDirectory));
+            }
+
+            if(sources.Count == 0)
+                return new FileOperationBatchResult([], 0, 0, false, false);
+
+            using IDisposable? timerPause = keyResetService?.Pause();
+            string destination = Path.GetFullPath(destinationDirectory);
+            Directory.CreateDirectory(destination);
+
+            var work = new List<BatchSourceWork>(sources.Count);
+            foreach(ISystemItem source in sources)
+            {
+                try
+                {
+                    if(source is not IFileItem)
+                    {
+                        throw new NotSupportedException(
+                            LocalizationManager.Format(
+                                "Security.UnsupportedItemType",
+                                source.GetType().Name));
+                    }
+
+                    work.Add(MeasureSourceWork(source, cancellationToken));
+                }
+                catch(OperationCanceledException) when(
+                    cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch(Exception ex)
+                {
+                    work.Add(new BatchSourceWork(
+                        source,
+                        1,
+                        FormatPathError(source.FullPath, ex.Message)));
+                }
+            }
+
+            long totalWorkUnits = work.Aggregate(
+                0L,
+                (total, item) => SaturatingAdd(total, item.WorkUnits));
+            long completedWorkUnits = 0;
+            int completedCount = 0;
+            int skippedCount = 0;
+            bool hasFailures = false;
+            var results = new List<FileOperationResult>(work.Count);
+            var reservedPaths = new HashSet<string>(
+                StringComparer.OrdinalIgnoreCase);
+
+            progress?.Report(0.0, work[0].Source.FullPath);
+
+            foreach(BatchSourceWork item in work)
+            {
+                FileOperationResult result;
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if(item.PreparationError is not null)
+                    {
+                        result = new FileOperationResult
+                        {
+                            Success = false,
+                            ErrorMessage = item.PreparationError,
+                            AffectedPath = item.Source.FullPath
+                        };
+                    }
+                    else if(await secureFileValidator.HasCryptoBookHeaderAsync(
+                        item.Source.FullPath,
+                        cancellationToken))
+                    {
+                        result = FileOperationResult.Ok(
+                            item.Source.FullPath,
+                            skippedFileCount: 1);
+                    }
+                    else
+                    {
+                        string temporaryProtectedPath = Path.Combine(
+                            destination,
+                            $".cryptobook-copy-{Guid.NewGuid():N}.tmp");
+                        IProgressReporter? itemProgress = progress is null
+                            ? null
+                            : new BatchSourceProgressReporter(
+                                progress,
+                                completedWorkUnits,
+                                item.WorkUnits,
+                                totalWorkUnits,
+                                item.Source.FullPath);
+
+                        result = await ProcessAsync(
+                            item.Source,
+                            temporaryProtectedPath,
+                            EncryptionTargetMode.SaveAs,
+                            decrypt: false,
+                            itemProgress,
+                            cancellationToken);
+                        if(result.Success)
+                        {
+                            result = await VerifyProtectedCopyAsync(
+                                item.Source.FullPath,
+                                temporaryProtectedPath,
+                                cancellationToken);
+                            if(result.Success)
+                            {
+                                string publishedPath = PublishProtectedCopy(
+                                    item.Source.FullPath,
+                                    temporaryProtectedPath,
+                                    destination,
+                                    reservedPaths);
+                                result = FileOperationResult.Ok(
+                                    publishedPath,
+                                    processedFileCount: 1);
+                            }
+                        }
+                    }
+                }
+                catch(OperationCanceledException) when(
+                    cancellationToken.IsCancellationRequested)
+                {
+                    return new FileOperationBatchResult(
+                        results,
+                        completedCount,
+                        skippedCount,
+                        canceled: true,
+                        hasPartialChanges: completedCount > 0);
+                }
+                catch(Exception ex)
+                {
+                    result = new FileOperationResult
+                    {
+                        Success = false,
+                        ErrorMessage = FormatPathError(
+                            item.Source.FullPath,
+                            ex.Message),
+                        AffectedPath = item.Source.FullPath
+                    };
+                }
+
+                results.Add(result);
+                if(result.Success)
+                {
+                    completedCount += result.ProcessedFileCount;
+                    skippedCount += result.SkippedFileCount;
+                }
+                else
+                {
+                    hasFailures = true;
+                }
+
+                completedWorkUnits = SaturatingAdd(
+                    completedWorkUnits,
+                    item.WorkUnits);
+                progress?.Report(
+                    CalculateBatchProgress(
+                        completedWorkUnits,
+                        totalWorkUnits),
+                    item.Source.FullPath);
+            }
+
+            progress?.Report(1.0, work[^1].Source.FullPath);
+            return new FileOperationBatchResult(
+                results,
+                completedCount,
+                skippedCount,
+                canceled: false,
+                hasPartialChanges: hasFailures && completedCount > 0);
+        }
+
         public Task<FileOperationBatchResult> DecryptAsync(
             IReadOnlyList<ISystemItem> sources,
             IProgressReporter? progress = null,
@@ -405,6 +585,97 @@ namespace CryptoBook.Services
                     string.IsNullOrWhiteSpace(currentPath)
                         ? ex.Message
                         : FormatPathError(currentPath, ex.Message));
+            }
+        }
+
+        private async Task<FileOperationResult> VerifyProtectedCopyAsync(
+            string sourcePath,
+            string protectedPath,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                string expectedExtension = Path.GetExtension(sourcePath);
+                string storedExtension = await _secureFileProcessor
+                    .ReadOriginalExtensionAsync(
+                        protectedPath,
+                        cancellationToken);
+                if(!storedExtension.Equals(
+                    expectedExtension,
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidDataException(
+                        LocalizationManager.GetString(
+                            "Security.ProtectedCopyVerificationFailed"));
+                }
+
+                return FileOperationResult.Ok(
+                    protectedPath,
+                    processedFileCount: 1);
+            }
+            catch(OperationCanceledException) when(
+                cancellationToken.IsCancellationRequested)
+            {
+                TryDeleteProtectedCopy(protectedPath);
+                throw;
+            }
+            catch(Exception ex)
+            {
+                TryDeleteProtectedCopy(protectedPath);
+                return new FileOperationResult
+                {
+                    Success = false,
+                    ErrorMessage = FormatPathError(sourcePath, ex.Message),
+                    AffectedPath = sourcePath
+                };
+            }
+        }
+
+        private static void TryDeleteProtectedCopy(string path)
+        {
+            try
+            {
+                AtomicFileCommit.DeleteIfExists(path);
+            }
+            catch
+            {
+                // Ошибка очистки не должна скрывать исходную ошибку проверки.
+            }
+        }
+
+        private static string PublishProtectedCopy(
+            string sourcePath,
+            string temporaryProtectedPath,
+            string destinationDirectory,
+            ISet<string> reservedPaths)
+        {
+            try
+            {
+                while(true)
+                {
+                    string publishedPath = ProtectedCopyPathResolver
+                        .GetAvailablePath(
+                            sourcePath,
+                            destinationDirectory,
+                            reservedPaths);
+                    try
+                    {
+                        File.Move(temporaryProtectedPath, publishedPath);
+                        return publishedPath;
+                    }
+                    catch(IOException) when(
+                        File.Exists(publishedPath) ||
+                        Directory.Exists(publishedPath))
+                    {
+                        // Назначение успело появиться после выбора имени.
+                        // Следующая итерация публикует копию под новым именем.
+                    }
+                }
+            }
+            catch
+            {
+                TryDeleteProtectedCopy(temporaryProtectedPath);
+                throw;
             }
         }
 

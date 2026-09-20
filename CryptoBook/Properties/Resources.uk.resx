@@ -642,7 +642,7 @@
     <value>Встановити ключ шифрування</value>
   </data>
   <data name="Explorer.EncryptSelected" xml:space="preserve">
-    <value>Зашифрувати вибрані елементи</value>
+    <value>Зашифрувати або замінити вибрані елементи…</value>
   </data>
   <data name="Explorer.DecryptSelected" xml:space="preserve">
     <value>Розшифрувати вибрані елементи</value>
@@ -1311,7 +1311,7 @@
     <value>Шифрування документа</value>
   </data>
   <data name="Document.EncryptionSaveOffer" xml:space="preserve">
-    <value>У застосунку встановлено ключ шифрування. Зашифрувати файл під час збереження? Натисніть «ОК», щоб зашифрувати його, або «Скасувати», щоб зберегти без шифрування. Після шифрування файл неможливо буде відкрити без ключа.</value>
+    <value>У застосунку встановлено ключ шифрування. Створити захищену копію .cbook? Початковий файл залишиться без змін. Натисніть «ОК», щоб створити копію, або «Скасувати», щоб зберегти початковий формат.</value>
   </data>
   <data name="Document.EncryptionSaveWarning" xml:space="preserve">
     <value>Файл буде зашифровано, і без ключа відкрити його буде неможливо. Продовжити збереження?</value>
@@ -1756,4 +1756,10 @@
   <data name="Settings.ResetEncryptionKeyShortcut" xml:space="preserve"><value>Ctrl+L — скинути ключ без перезапуску застосунку.</value></data>
   <data name="Settings.EncryptionKeyPresent" xml:space="preserve"><value>Ключ шифрування задано.</value></data>
   <data name="Settings.EncryptionKeyAbsent" xml:space="preserve"><value>Ключ шифрування не задано.</value></data>
+  <data name="Explorer.CreateProtectedCopies" xml:space="preserve"><value>Створити захищені копії (.cbook)</value></data>
+  <data name="Explorer.CreatingProtectedCopies" xml:space="preserve"><value>Створення захищених копій</value></data>
+  <data name="Explorer.ProtectedCopiesResultTitle" xml:space="preserve"><value>Захищені копії створено</value></data>
+  <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Створено захищених копій: {0}. Пропущено вже захищених файлів: {1}.{2}Папка призначення: {3}. Початкові та наявні файли збережено; для конфліктних імен створено унікальні копії.</value></data>
+  <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>Захищена копія не пройшла перевірку: збережений тип початкового файла не відповідає оригіналу.</value></data>
+  <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Не вдалося визначити ім’я файла захищеної копії.</value></data>
 </root>

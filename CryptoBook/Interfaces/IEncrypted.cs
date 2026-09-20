@@ -10,6 +10,7 @@ namespace CryptoBook.Interfaces
     public interface IEncrypted
     {
         ICommand EncryptingKeyCommand{  get; }
+        ICommand CreateProtectedCopyCommand { get; }
         ICommand DecryptCommand{ get; }
         ICommand EncryptCommand { get; }
     }

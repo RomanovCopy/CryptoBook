@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.1.3.8 - 2026-09-20
+
+### Added
+
+- Add a File Explorer command that creates protected `.cbook` copies of one or
+  more selected files while preserving their original sources.
+- Support progress, cancellation and localized summaries for protected-copy
+  batches; already protected files are reported as skipped.
+
+### Security
+
+- Write protected copies to temporary files and verify their stored source type
+  before publication. Failed verification removes the incomplete copy.
+- Preserve every existing destination and resolve conflicts with unique numbered
+  `.cbook` names, including concurrent name creation during publication.
+
+### Changed
+
+- When the editor offers protection for an ordinary document, accepting now
+  creates a uniquely named `.cbook` copy instead of changing the source target.
+- Synchronize application, installer, documentation, notices and issue-report
+  metadata for 1.1.3.8.
+
+Full comparison: [v1.1.3.7...v1.1.3.8](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.7...v1.1.3.8)
+
 ## 1.1.3.7 - 2026-09-17
 
 ### Added

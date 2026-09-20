@@ -832,6 +832,17 @@ namespace CryptoBook.ViewModels
             _fileExplorerModel.Execute_DecryptCommand(parameter);
         }
 
+        public ICommand CreateProtectedCopyCommand =>
+            _createProtectedCopyCommand ??= new RelayCommand(
+                ExecuteCreateProtectedCopyCommand,
+                _fileExplorerModel.CanExecute_CreateProtectedCopyCommand);
+        private RelayCommand? _createProtectedCopyCommand;
+
+        private void ExecuteCreateProtectedCopyCommand(object? parameter)
+        {
+            _fileExplorerModel.Execute_CreateProtectedCopyCommand(parameter);
+        }
+
         public ICommand EncryptCommand => _encryptCommand ??= new RelayCommand(
             ExecuteEncryptCommand,
             _fileExplorerModel.CanExecute_EncryptCommand);

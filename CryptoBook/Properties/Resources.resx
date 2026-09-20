@@ -380,7 +380,7 @@
   <data name="Explorer.Move" xml:space="preserve"><value>Move</value></data>
   <data name="Explorer.AddCurrentToFavorites" xml:space="preserve"><value>Add current directory to favorites</value></data>
   <data name="Explorer.SetEncryptionKey" xml:space="preserve"><value>Set encryption key</value></data>
-  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Encrypt selected items</value></data>
+  <data name="Explorer.EncryptSelected" xml:space="preserve"><value>Encrypt or replace selected items…</value></data>
   <data name="Explorer.DecryptSelected" xml:space="preserve"><value>Decrypt selected items</value></data>
   <data name="Explorer.Favorites" xml:space="preserve"><value>Favorites</value></data>
   <data name="Explorer.RemoveFromFavorites" xml:space="preserve"><value>Remove from favorites</value></data>
@@ -613,7 +613,7 @@
   <data name="Document.SaveOperation" xml:space="preserve"><value>Saving document</value></data>
   <data name="Document.SaveError" xml:space="preserve"><value>Save error</value></data>
   <data name="Document.EncryptionSaveTitle" xml:space="preserve"><value>Document encryption</value></data>
-  <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>An encryption key is configured. Encrypt this file when saving? Click OK to encrypt it, or Cancel to save it without encryption. After encryption, the file cannot be opened without the key.</value></data>
+  <data name="Document.EncryptionSaveOffer" xml:space="preserve"><value>An encryption key is configured. Create a protected .cbook copy? The original file will remain unchanged. Click OK to create the copy, or Cancel to save in the original format.</value></data>
   <data name="Document.EncryptionSaveWarning" xml:space="preserve"><value>The file will be encrypted and cannot be opened without the key. Continue saving?</value></data>
   <data name="Document.EncryptionFormatUnavailable" xml:space="preserve"><value>The encrypted document format is unavailable.</value></data>
   <data name="File.CreatedFilePathUnavailable" xml:space="preserve"><value>The file was created, but its path is unavailable.</value></data>
@@ -911,4 +911,10 @@
   <data name="Settings.ResetEncryptionKeyShortcut" xml:space="preserve"><value>Ctrl+L — reset the key without restarting the application.</value></data>
   <data name="Settings.EncryptionKeyPresent" xml:space="preserve"><value>An encryption key is set.</value></data>
   <data name="Settings.EncryptionKeyAbsent" xml:space="preserve"><value>No encryption key is set.</value></data>
+  <data name="Explorer.CreateProtectedCopies" xml:space="preserve"><value>Create protected copies (.cbook)</value></data>
+  <data name="Explorer.CreatingProtectedCopies" xml:space="preserve"><value>Creating protected copies</value></data>
+  <data name="Explorer.ProtectedCopiesResultTitle" xml:space="preserve"><value>Protected copies created</value></data>
+  <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Created protected copies: {0}. Already protected files skipped: {1}.{2}Destination: {3}. Existing files and sources were preserved; name conflicts received unique names.</value></data>
+  <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>The protected copy failed verification because its stored source type does not match the original.</value></data>
+  <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Could not determine the protected copy file name.</value></data>
 </root>

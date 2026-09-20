@@ -62,6 +62,32 @@ public sealed class FileExplorerArchitectureTests
     }
 
     [Fact]
+    public void ProtectedCopy_IsPrimaryToolbarActionAndKeepsLegacyReplacementSeparate()
+    {
+        string viewSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Views",
+            "FileExplorer.xaml"));
+        string modelSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook",
+            "Models",
+            "FileExplorerModel.cs"));
+
+        Assert.Contains(
+            "Command=\"{Binding CreateProtectedCopyCommand, UpdateSourceTrigger=PropertyChanged}\"",
+            viewSource);
+        Assert.Contains(
+            "PlacementTarget.Tag.EncryptCommand",
+            viewSource);
+        Assert.Contains(
+            ".CreateProtectedCopiesAsync(",
+            modelSource);
+        Assert.Contains(
+            "items.All(item => item is IFileItem",
+            modelSource);
+    }
+
+    [Fact]
     public void HomeOpenCommand_DelegatesToFileExplorer()
     {
         string source = File.ReadAllText(FindRepositoryFile(

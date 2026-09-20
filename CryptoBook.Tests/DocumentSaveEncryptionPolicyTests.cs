@@ -4,6 +4,8 @@ using CryptoBook.Interfaces;
 using CryptoBook.Security;
 using CryptoBook.Services;
 
+using System.IO;
+
 using Xunit;
 
 namespace CryptoBook.Tests
@@ -25,9 +27,56 @@ namespace CryptoBook.Tests
 
             Assert.NotNull(resolved);
             Assert.IsType<SecureFileTemplate>(resolved.Template);
-            Assert.Equal(target.FilePath, resolved.FilePath);
+            Assert.Equal(
+                Path.GetFullPath("document.cbook"),
+                resolved.FilePath);
             Assert.Single(messages.Messages);
             Assert.True(messages.Messages[0].IsCanceled);
+        }
+
+        [Fact]
+        public async Task PlaintextFileWithKey_WhenProtectedNameExists_UsesUniqueCopyName()
+        {
+            string directory = Path.Combine(
+                Path.GetTempPath(),
+                "CryptoBook.Tests",
+                Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            string sourcePath = Path.Combine(directory, "document.txt");
+            string existingProtectedPath = Path.Combine(
+                directory,
+                "document.cbook");
+            await File.WriteAllTextAsync(sourcePath, "source");
+            await File.WriteAllTextAsync(existingProtectedPath, "existing");
+
+            try
+            {
+                var policy = CreatePolicy(
+                    new MessageServiceStub(true),
+                    hasKey: true);
+                var target = new DocumentSaveTarget(
+                    sourcePath,
+                    new PlainTextTemplate());
+
+                DocumentSaveTarget? resolved = await policy.ResolveAsync(
+                    target,
+                    sourceIsPlaintextFile: true);
+
+                Assert.NotNull(resolved);
+                Assert.Equal(
+                    Path.Combine(directory, "document (2).cbook"),
+                    resolved.FilePath);
+                Assert.Equal(
+                    "source",
+                    await File.ReadAllTextAsync(sourcePath));
+                Assert.Equal(
+                    "existing",
+                    await File.ReadAllTextAsync(existingProtectedPath));
+            }
+            finally
+            {
+                Directory.Delete(directory, recursive: true);
+            }
         }
 
         [Fact]

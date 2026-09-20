@@ -319,6 +319,143 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
     }
 
     [Fact]
+    public async Task CreateProtectedCopies_PreservesSourcesAndUsesUniqueCbookNames()
+    {
+        string firstDirectory = Path.Combine(testDirectory, "first-source");
+        string secondDirectory = Path.Combine(testDirectory, "second-source");
+        string destination = Path.Combine(testDirectory, "protected");
+        Directory.CreateDirectory(firstDirectory);
+        Directory.CreateDirectory(secondDirectory);
+        Directory.CreateDirectory(destination);
+        string first = Path.Combine(firstDirectory, "report.txt");
+        string second = Path.Combine(secondDirectory, "report.rtf");
+        await File.WriteAllBytesAsync(first, [1, 2, 3]);
+        await File.WriteAllBytesAsync(second, [4, 5, 6]);
+        string existing = Path.Combine(destination, "report.cbook");
+        await File.WriteAllBytesAsync(existing, [9, 9, 9]);
+
+        var processor = new VerifyingSecureFileProcessor();
+        FileSecurityService service = CreateService(
+            processor,
+            new PredicateEncryptedValidator(_ => false));
+
+        FileOperationBatchResult result =
+            await service.CreateProtectedCopiesAsync(
+                [CreateFileItem(first), CreateFileItem(second)],
+                destination);
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.CompletedCount);
+        Assert.Equal(0, result.SkippedCount);
+        Assert.Equal([1, 2, 3], await File.ReadAllBytesAsync(first));
+        Assert.Equal([4, 5, 6], await File.ReadAllBytesAsync(second));
+        Assert.Equal([9, 9, 9], await File.ReadAllBytesAsync(existing));
+        Assert.Equal(
+            [1, 2, 3],
+            await File.ReadAllBytesAsync(Path.Combine(
+                destination,
+                "report (2).cbook")));
+        Assert.Equal(
+            [4, 5, 6],
+            await File.ReadAllBytesAsync(Path.Combine(
+                destination,
+                "report (3).cbook")));
+        Assert.Empty(Directory.GetFiles(
+            destination,
+            ".cryptobook-copy-*.tmp"));
+    }
+
+    [Fact]
+    public async Task CreateProtectedCopies_SkipsAlreadyProtectedSource()
+    {
+        string source = CreateFile("protected.data", [1, 2, 3]);
+        string destination = Path.Combine(testDirectory, "copies");
+        var processor = new VerifyingSecureFileProcessor();
+        FileSecurityService service = CreateService(
+            processor,
+            new PredicateEncryptedValidator(path => path == source));
+
+        FileOperationBatchResult result =
+            await service.CreateProtectedCopiesAsync(
+                [CreateFileItem(source)],
+                destination);
+
+        Assert.True(result.Success);
+        Assert.Equal(0, result.CompletedCount);
+        Assert.Equal(1, result.SkippedCount);
+        Assert.Empty(processor.EncryptedInputs);
+        Assert.Empty(Directory.GetFiles(destination));
+        Assert.Equal([1, 2, 3], await File.ReadAllBytesAsync(source));
+    }
+
+    [Fact]
+    public async Task CreateProtectedCopies_RemovesCopyWhenVerificationFails()
+    {
+        string source = CreateFile("draft.txt", [1, 2, 3]);
+        string destination = Path.Combine(testDirectory, "copies");
+        var processor = new VerifyingSecureFileProcessor
+        {
+            StoredExtensionOverride = ".wrong"
+        };
+        FileSecurityService service = CreateService(
+            processor,
+            new PredicateEncryptedValidator(_ => false));
+
+        FileOperationBatchResult result =
+            await service.CreateProtectedCopiesAsync(
+                [CreateFileItem(source)],
+                destination);
+
+        Assert.False(result.Success);
+        Assert.Equal(0, result.CompletedCount);
+        Assert.Contains(
+            "draft.txt",
+            result.Failure?.ErrorMessage,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.False(File.Exists(Path.Combine(destination, "draft.cbook")));
+        Assert.Empty(Directory.GetFiles(
+            destination,
+            ".cryptobook-copy-*.tmp"));
+        Assert.Equal([1, 2, 3], await File.ReadAllBytesAsync(source));
+    }
+
+    [Fact]
+    public async Task CreateProtectedCopies_RealCodecRoundTripsWithoutChangingSource()
+    {
+        byte[] expected = Enumerable.Range(0, 4097)
+            .Select(value => (byte)value)
+            .ToArray();
+        string source = CreateFile("round-trip.txt", expected);
+        string destination = Path.Combine(testDirectory, "protected");
+        FileSecurityService service = CreateRealService();
+
+        FileOperationBatchResult protectedResult =
+            await service.CreateProtectedCopiesAsync(
+                [CreateFileItem(source)],
+                destination);
+
+        Assert.True(protectedResult.Success);
+        Assert.Equal(expected, await File.ReadAllBytesAsync(source));
+        string protectedPath = Path.Combine(
+            destination,
+            "round-trip.cbook");
+        Assert.True(await new SecureFileValidator()
+            .HasCryptoBookHeaderAsync(protectedPath));
+
+        string decryptedBasePath = Path.Combine(testDirectory, "published");
+        FileOperationResult decrypted = await service.DecryptAsync(
+            CreateFileItem(protectedPath),
+            decryptedBasePath,
+            EncryptionTargetMode.SaveAs);
+
+        Assert.True(decrypted.Success);
+        Assert.Equal(
+            expected,
+            await File.ReadAllBytesAsync(decryptedBasePath + ".txt"));
+        Assert.True(File.Exists(protectedPath));
+    }
+
+    [Fact]
     public async Task RealCodecBatch_RoundTripsTenFiles()
     {
         var expected = new Dictionary<string, byte[]>();
@@ -514,6 +651,66 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
             IProgressReporter? progress = null,
             CancellationToken cancellationToken = default) =>
             Task.FromException<Stream>(new NotSupportedException());
+    }
+
+    private sealed class VerifyingSecureFileProcessor: ISecureFileProcessor
+    {
+        private readonly Dictionary<string, string> storedExtensions =
+            new(StringComparer.OrdinalIgnoreCase);
+
+        public List<string> EncryptedInputs { get; } = [];
+        public string? StoredExtensionOverride { get; init; }
+
+        public async Task EncryptFileAsync(
+            string inputFile,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            EncryptedInputs.Add(inputFile);
+            storedExtensions[outputFile] = Path.GetExtension(inputFile);
+            await File.WriteAllBytesAsync(
+                outputFile,
+                await File.ReadAllBytesAsync(inputFile, cancellationToken),
+                cancellationToken);
+            progress?.Report(1.0, inputFile);
+        }
+
+        public Task<string> ReadOriginalExtensionAsync(
+            string inputFile,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(
+                StoredExtensionOverride ?? storedExtensions[inputFile]);
+        }
+
+        public Task EncryptStreamAsync(
+            Stream input,
+            string originalExtension,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task DecryptFileAsyncToFile(
+            string inputFile,
+            string outputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task<DecryptedFileContent> DecryptFileContentAsync(
+            string inputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task<Stream> DecryptFileAsyncToStream(
+            string inputFile,
+            IProgressReporter? progress = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 
     private sealed class AlwaysEncryptedValidator: ISecureFileValidator

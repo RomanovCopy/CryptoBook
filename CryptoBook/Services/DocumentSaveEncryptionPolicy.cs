@@ -4,6 +4,8 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
 
+using System.IO;
+
 namespace CryptoBook.Services
 {
     /// <summary>
@@ -63,8 +65,19 @@ namespace CryptoBook.Services
                     LocalizationManager.GetString(
                         "Document.EncryptionFormatUnavailable"));
 
+            string fullSourcePath = Path.GetFullPath(target.FilePath);
+            string destinationDirectory = Path.GetDirectoryName(
+                fullSourcePath) ?? throw new IOException(
+                    LocalizationManager.Format(
+                        "Security.DestinationDirectoryUnknown",
+                        fullSourcePath));
+            string protectedCopyPath = ProtectedCopyPathResolver
+                .GetAvailablePath(
+                    fullSourcePath,
+                    destinationDirectory);
+
             return new DocumentSaveTarget(
-                target.FilePath,
+                protectedCopyPath,
                 secureTemplate);
         }
 
