@@ -491,6 +491,12 @@
   <data name="Editor.Color" xml:space="preserve">
     <value>Колір</value>
   </data>
+  <data name="Editor.InkPalette" xml:space="preserve">
+    <value>Палітра чорнила</value>
+  </data>
+  <data name="Editor.InkPaletteHint" xml:space="preserve">
+    <value>ЛКМ — застосувати колір чорнила. ПКМ по кольору — налаштувати його.</value>
+  </data>
   <data name="Editor.Highlight" xml:space="preserve">
     <value>Виділення</value>
   </data>

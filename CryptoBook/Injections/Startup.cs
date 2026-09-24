@@ -86,6 +86,9 @@ namespace CryptoBook.Injections
                 .InstancePerLifetimeScope();
             builder.RegisterType<RichTextContextMenuViewModel>().As<IRichTextContextMenuViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<InkPaletteViewModel>()
+                .As<IInkPaletteViewModel>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<TextFormatBarViewModel>().As<ITextFormatBarViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<ListFormatBarViewModel>().As<IListFormatBarViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarksViewModel>().As<IBookmarksViewModel>().InstancePerLifetimeScope();
@@ -229,6 +232,9 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<UserDocumentLineSpacingPreferenceStore>()
                 .As<IDocumentLineSpacingPreferenceStore>()
+                .SingleInstance();
+            builder.RegisterType<UserInkPaletteStore>()
+                .As<IInkPaletteStore>()
                 .SingleInstance();
             builder.RegisterType<DocumentLineSpacing>()
                 .As<IDocumentLineSpacingService>()
@@ -521,6 +527,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<TextFormatBar>().InstancePerLifetimeScope();
             builder.RegisterType<ListFormatBar>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarksBar>().InstancePerLifetimeScope();
+            builder.RegisterType<InkPalette>().InstancePerLifetimeScope();
             builder.RegisterType<ImageViewer>().InstancePerDependency();
 
 

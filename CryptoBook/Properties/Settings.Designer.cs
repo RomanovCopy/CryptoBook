@@ -733,6 +733,18 @@ namespace CryptoBook.Properties {
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string InkPaletteColors {
+            get {
+                return ((string)(this["InkPaletteColors"]));
+            }
+            set {
+                this["InkPaletteColors"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1.2")]
         public double DocumentLineSpacingRatio {
             get {
