@@ -366,6 +366,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:FontFormatBar}}"
                                 Grid.Column="0" Margin="{StaticResource CurrentMargin}"/>
@@ -374,8 +375,10 @@
                 <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:ListFormatBar}}"
                                 Grid.Column="2" Margin="{StaticResource CurrentMargin}"/>
                 <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:BookmarksBar}}"
-                                Grid.Column="3" Margin="{StaticResource CurrentMargin}"/>
-                <ToggleButton Grid.Column="4" Margin="{StaticResource CurrentMargin}"
+                                 Grid.Column="3" Margin="{StaticResource CurrentMargin}"/>
+                <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type controls:InkPalette}}"
+                                Grid.Column="4" Margin="{StaticResource CurrentMargin}"/>
+                <ToggleButton Grid.Column="5" Margin="{StaticResource CurrentMargin}"
                               Style="{StaticResource EditorPanelToggleStyle}"
                               IsChecked="{Binding DocumentView.IsPreviewMode, Mode=OneWay}"
                               Command="{Binding DocumentView.ToggleView}"
@@ -410,7 +413,7 @@
                         <TextBlock Text="{Binding DocumentView.ToggleViewText}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton Grid.Column="5" Margin="{StaticResource CurrentMargin}"
+                <ToggleButton Grid.Column="6" Margin="{StaticResource CurrentMargin}"
                               Style="{StaticResource EditorPanelToggleStyle}"
                               IsChecked="{Binding DocumentStructure.IsOpen, Mode=OneWay}"
                               Command="{Binding DocumentStructure.ToggleCommand}"

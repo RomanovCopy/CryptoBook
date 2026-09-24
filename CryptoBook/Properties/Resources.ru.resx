@@ -330,6 +330,8 @@
   <data name="Editor.FontStretch" xml:space="preserve"><value>Ширина</value></data>
   <data name="Editor.FontSize" xml:space="preserve"><value>Размер</value></data>
   <data name="Editor.Color" xml:space="preserve"><value>Цвет</value></data>
+  <data name="Editor.InkPalette" xml:space="preserve"><value>Палитра чернил</value></data>
+  <data name="Editor.InkPaletteHint" xml:space="preserve"><value>ЛКМ — применить цвет чернил. ПКМ по цвету — настроить его.</value></data>
   <data name="Editor.Highlight" xml:space="preserve"><value>Выделение</value></data>
   <data name="Editor.Paper" xml:space="preserve"><value>Бумага</value></data>
   <data name="Editor.DocumentBackground" xml:space="preserve"><value>Фоновый цвет документа</value></data>
