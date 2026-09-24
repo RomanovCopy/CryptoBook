@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.1.4.0 - 2026-09-24
+
+### Added
+
+- Add a six-slot ink palette to the rich-text editor for applying frequently
+  used text colors with one click.
+- Let users replace a palette slot through its context menu without applying
+  the replacement color to the current text.
+
+### Changed
+
+- Persist customized ink-palette colors in the current Windows user's settings.
+- Localize the ink-palette label and usage hint for English, Russian, German
+  and Ukrainian interfaces.
+- Synchronize application, installer, documentation, notices and update tests
+  for 1.1.4.0.
+
+Full comparison: [v1.1.3.8...v1.1.4.0](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.3.8...v1.1.4.0)
+
 ## 1.1.3.8 - 2026-09-20
 
 ### Added
