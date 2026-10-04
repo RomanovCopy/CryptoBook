@@ -20,6 +20,7 @@ namespace CryptoBook.Services
         private readonly IStorageFacade? _storage;
         private readonly ISystemItemCreateService? _itemFactory;
         private readonly CancellationTokenSource _portableMonitoringCancellation = new();
+        private readonly SemaphoreSlim _refreshGate = new(1, 1);
         private Task? _portableMonitoringTask;
 
         public ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; }
@@ -62,6 +63,57 @@ namespace CryptoBook.Services
             _portableMonitoringCancellation.Cancel();
         }
 
+        public async Task RefreshAsync(CancellationToken cancellationToken = default)
+        {
+            await _refreshGate.WaitAsync(cancellationToken);
+            try
+            {
+                await Task.Run(_monitoringService.RefreshCurrentDrives, cancellationToken);
+                await _uiDispatcher.InvokeAsync(() =>
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    RefreshLocalRoots(_monitoringService.GetWritableDrives());
+                });
+                try
+                {
+                    await RefreshPortableRootsCoreAsync(cancellationToken);
+                }
+                catch(Exception exception) when(exception is not OperationCanceledException)
+                {
+                    // An unavailable optional transport must not block opening local folders.
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+            }
+            finally
+            {
+                _refreshGate.Release();
+            }
+        }
+
+        private void RefreshLocalRoots(IReadOnlyList<IDriveItem> roots)
+        {
+            var incoming = roots.ToDictionary(
+                root => root.RootDirectory,
+                StringComparer.OrdinalIgnoreCase);
+            for(int index = _writableDrives.Count - 1; index >= 0; index--)
+            {
+                IDriveItem existing = _writableDrives[index];
+                if(!existing.Location.IsLocal || incoming.ContainsKey(existing.RootDirectory))
+                    continue;
+                _writableDrives.RemoveAt(index);
+                DriveDisconnected?.Invoke(existing.RootDirectory);
+            }
+
+            foreach(IDriveItem root in roots)
+            {
+                if(_writableDrives.Any(existing => existing.Location.IsLocal &&
+                    string.Equals(existing.RootDirectory, root.RootDirectory, StringComparison.OrdinalIgnoreCase)))
+                    continue;
+                _writableDrives.Add(root);
+                DriveConnected?.Invoke(root);
+            }
+        }
+
         private async Task MonitorPortableRootsAsync(CancellationToken cancellationToken)
         {
             using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
@@ -93,6 +145,19 @@ namespace CryptoBook.Services
 
         private async Task RefreshPortableRootsAsync(CancellationToken cancellationToken)
         {
+            await _refreshGate.WaitAsync(cancellationToken);
+            try
+            {
+                await RefreshPortableRootsCoreAsync(cancellationToken);
+            }
+            finally
+            {
+                _refreshGate.Release();
+            }
+        }
+
+        private async Task RefreshPortableRootsCoreAsync(CancellationToken cancellationToken)
+        {
             if(_storage is null || _itemFactory is null)
                 return;
 
@@ -101,6 +166,7 @@ namespace CryptoBook.Services
                 .ToArray();
             await _uiDispatcher.InvokeAsync(new Action(() =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var incoming = roots.ToDictionary(
                     root => root.Location.ToString(),
                     StringComparer.OrdinalIgnoreCase);
