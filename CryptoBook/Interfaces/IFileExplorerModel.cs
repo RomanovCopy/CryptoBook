@@ -27,6 +27,7 @@ namespace CryptoBook.Interfaces
         IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get; set; }
         IReadOnlyList<string> FlatFilePathsSnapshot { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
+        Task RefreshDrivesAsync(CancellationToken cancellationToken = default);
         Task<bool> NavigateAsync(
             string path,
             FileExplorerNavigationMode mode,

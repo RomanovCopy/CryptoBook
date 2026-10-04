@@ -11,6 +11,7 @@ namespace CryptoBook.Interfaces
     public interface IDriveMonitoringService: IService, IDisposable
     {
         IReadOnlyList<IDriveItem> GetWritableDrives();
+        void RefreshCurrentDrives();
 
         event Action<IDriveItem> OnDriveConnected;
         event Action<string> OnDriveDisconnected;  // Только RootDirectory, т.к. после отключения DriveInfo недоступен
