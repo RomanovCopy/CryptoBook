@@ -225,7 +225,7 @@ jobs:
             Set-Content artifacts/SHA256SUMS.txt
 
       - name: Upload verified release assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: CryptoBook-release-assets
           path: |
