@@ -619,9 +619,15 @@ namespace CryptoBook.ViewModels
             _fileExplorerModel.Execute_Loaded(parameter);
             try
             {
+                await _fileExplorerModel.RefreshDrivesAsync();
+                if(_isClosed)
+                    return;
                 if(!await NavigateToInitialDirectoryAsync())
                     await _fileExplorerModel.RestoreLastDirectoryAsync();
                 await Favorites.InitializeAsync();
+            }
+            catch(OperationCanceledException) when(_isClosed)
+            {
             }
             catch(Exception ex)
             {

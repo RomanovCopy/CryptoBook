@@ -14,6 +14,7 @@ namespace CryptoBook.Services
     public class DriveMonitoringService:IService, IDriveMonitoringService
     {
         private readonly ISystemItemCreateService _systemItemCreateService;
+        private readonly Func<IReadOnlyList<IDriveItem>> _discoverDrives;
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private ManagementEventWatcher? _watcher;
@@ -24,8 +25,16 @@ namespace CryptoBook.Services
         public event Action<string> OnDriveDisconnected;
 
         public DriveMonitoringService(ISystemItemCreateService systemItemCreateService)
+            : this(systemItemCreateService, null)
+        {
+        }
+
+        internal DriveMonitoringService(
+            ISystemItemCreateService systemItemCreateService,
+            Func<IReadOnlyList<IDriveItem>>? discoverDrives)
         {
             _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
+            _discoverDrives = discoverDrives ?? DiscoverWritableDrives;
             RefreshCurrentDrives();
         }
 
@@ -33,7 +42,7 @@ namespace CryptoBook.Services
         {
             lock(_lock)
             {
-                return _currentDrives.AsReadOnly();
+                return _currentDrives.ToArray();
             }
         }
 
@@ -56,14 +65,24 @@ namespace CryptoBook.Services
         private async void OnVolumeChangeEvent(object sender, EventArrivedEventArgs e)
         {
             ushort eventType = (ushort)e.NewEvent["EventType"];
+            try
+            {
+                await HandleVolumeChangeAsync(eventType, e.NewEvent["DriveName"]?.ToString());
+            }
+            catch(OperationCanceledException) when(_cancellationTokenSource.IsCancellationRequested)
+            {
+            }
+        }
+
+        internal async Task HandleVolumeChangeAsync(ushort eventType, string? driveName)
+        {
             if(eventType != 2 && eventType != 3)
                 return;
 
-            string driveName = e.NewEvent["DriveName"]?.ToString();
             if(string.IsNullOrEmpty(driveName))
                 return;
 
-            string root = driveName.EndsWith(":") ? driveName + "\\" : driveName + "\\";
+            string root = driveName.TrimEnd(':', '\\') + ":\\";
 
             if(eventType == 2)  // Подключение
             {
@@ -82,12 +101,10 @@ namespace CryptoBook.Services
                 }
             } else if(eventType == 3)  // Отключение
             {
-                string normalized = root.TrimEnd('\\') + ":";  
-
                 lock(_lock)
                 {
                     var removed = _currentDrives.FirstOrDefault(d =>
-                        string.Equals(d.RootDirectory.TrimEnd('\\'), normalized, StringComparison.OrdinalIgnoreCase));
+                        string.Equals(d.RootDirectory, root, StringComparison.OrdinalIgnoreCase));
 
                     if(removed != null)
                     {
@@ -95,25 +112,23 @@ namespace CryptoBook.Services
                     }
                 }
 
-                OnDriveDisconnected?.Invoke(normalized);
+                OnDriveDisconnected?.Invoke(root);
             }
         }
 
-        private void RefreshCurrentDrives()
+        public void RefreshCurrentDrives()
         {
             lock(_lock)
             {
-                _currentDrives.Clear();
-                foreach(var drive in DriveInfo.GetDrives())
-                { 
-                    var ex = GetDriveIfWritable(drive.Name);
-                    if(ex != null)
-                    {
-                        _currentDrives.Add(ex);
-                    }
-                }
+                _currentDrives = _discoverDrives().ToList();
             }
         }
+
+        private IReadOnlyList<IDriveItem> DiscoverWritableDrives() =>
+            DriveInfo.GetDrives()
+                .Select(drive => GetDriveIfWritable(drive.Name))
+                .OfType<IDriveItem>()
+                .ToArray();
 
         private IDriveItem? GetDriveIfWritable(string root)
         {

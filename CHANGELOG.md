@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.4.1 - 2026-10-04
+
+### Fixed
+
+- Correct drive-root normalization so disconnected external drives are removed from File Explorer.
+- Refresh local and portable roots before restoring File Explorer navigation, reconciling device changes that occurred while it was closed.
+- Keep local folders accessible when an optional portable-device transport is unavailable.
+- Serialize device refreshes and handle cancellation when File Explorer closes.
+
+### Changed
+
+- Synchronize application, installer, documentation, notices and update tests for 1.1.4.1.
+
+Full comparison: [v1.1.4.0...v1.1.4.1](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.0...v1.1.4.1)
 ## 1.1.4.0 - 2026-09-24
 
 ### Added

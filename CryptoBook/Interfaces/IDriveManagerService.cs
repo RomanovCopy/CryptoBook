@@ -18,6 +18,11 @@ namespace CryptoBook.Interfaces
         ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; }
 
         /// <summary>
+        /// Сверяет список дисков и подключаемых устройств с текущим состоянием системы.
+        /// </summary>
+        Task RefreshAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Событие: подключён новый подходящий диск
         /// </summary>
         event Action<IDriveItem> DriveConnected;

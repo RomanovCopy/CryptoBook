@@ -155,6 +155,13 @@ namespace CryptoBook.Models
             GetDrives = _driveManagerService.WritableDrives;
         }
 
+        public async Task RefreshDrivesAsync(CancellationToken cancellationToken = default)
+        {
+            using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                _cancellationTokenSource.Token);
+            await _driveManagerService.RefreshAsync(linkedCancellation.Token);
+        }
 
         public bool CanExecute_BackCommand(object? obj) => _navigationHistory.CanGoBack;
         public bool CanExecute_ForwardCommand(object? obj) => _navigationHistory.CanGoForward;
