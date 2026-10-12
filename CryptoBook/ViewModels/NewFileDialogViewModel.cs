@@ -29,6 +29,13 @@ namespace CryptoBook.ViewModels
 
 
         public IReadOnlyList<IFileTemplate> Templates { get => newFileDialogModel.Templates;}
+        public IReadOnlyList<DocumentTemplate> DocumentTemplates => newFileDialogModel.DocumentTemplates;
+        public DocumentTemplate SelectedDocumentTemplate
+        {
+            get => newFileDialogModel.SelectedDocumentTemplate;
+            set => newFileDialogModel.SelectedDocumentTemplate = value;
+        }
+        public bool IsBusy => newFileDialogModel.IsBusy;
         public IReadOnlyList<DocumentPaperSize> PaperSizes { get; } = Enum.GetValues<DocumentPaperSize>();
         public DocumentPaperSize PaperSize { get => newFileDialogModel.PaperSize; set => newFileDialogModel.PaperSize = value; }
         public bool IsLandscape { get => newFileDialogModel.IsLandscape; set => newFileDialogModel.IsLandscape = value; }
@@ -78,6 +85,8 @@ namespace CryptoBook.ViewModels
                 OnPropertyChanged(nameof(Caption), nameof(CaptionToolTip));
             if(propertyName == nameof(SelectedTemplate))
                 OnPropertyChanged(nameof(HasPageLayout));
+            if(propertyName == nameof(IsBusy))
+                create?.RaiseCanExecuteChanged();
         }
 
         public void Dispose()
@@ -104,8 +113,9 @@ namespace CryptoBook.ViewModels
         public ICommand CreateDirectory => createDirectory ??= new RelayCommand(newFileDialogModel.Execute_CreateDirectory, newFileDialogModel.CanExecute_CreateDirectory);
         RelayCommand? createDirectory;
 
-        public ICommand Create => create ??= new RelayCommand(newFileDialogModel.Execute_Create, newFileDialogModel.CanExecute_Create);
-        RelayCommand? create;
+        public ICommand Create => create ??= new AsyncRelayCommand(
+            (_, token) => newFileDialogModel.Execute_CreateAsync(token), newFileDialogModel.CanExecute_Create);
+        AsyncRelayCommand? create;
 
         public ICommand Cancel => cancel ??= new RelayCommand(newFileDialogModel.Execute_Cancel, newFileDialogModel.CanExecute_Cancel);
         RelayCommand? cancel;
@@ -126,7 +136,7 @@ namespace CryptoBook.ViewModels
 
         public void RegistryCommands()
         {
-            commandService.Register(CommandKey.NewFileDialog_Create, Browse);
+            commandService.Register(CommandKey.NewFileDialog_Create, Create);
         }
 
     }

@@ -919,4 +919,142 @@
   <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Created protected copies: {0}. Already protected files skipped: {1}.{2}Destination: {3}. Existing files and sources were preserved; name conflicts received unique names.</value></data>
   <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>The protected copy failed verification because its stored source type does not match the original.</value></data>
   <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Could not determine the protected copy file name.</value></data>
+  <data name="File.DocumentTemplate" xml:space="preserve"><value>Document template</value></data>
+  <data name="Settings.DefaultDocumentTemplate" xml:space="preserve"><value>Default new document template</value></data>
+  <data name="Settings.DefaultDocumentTemplate.Description" xml:space="preserve"><value>This template will be selected when creating a new document. You can choose another template or an empty document in the creation dialog.</value></data>
+  <data name="DocumentTemplate.empty.Name" xml:space="preserve"><value>Empty document</value></data>
+  <data name="DocumentTemplate.empty.Description" xml:space="preserve"><value>A blank page without headings or prompts.</value></data>
+  <data name="DocumentTemplate.notes.Name" xml:space="preserve"><value>Notes</value></data>
+  <data name="DocumentTemplate.notes.Description" xml:space="preserve"><value>A topic, key ideas and next actions.</value></data>
+  <data name="DocumentTemplate.notes.Content" xml:space="preserve"><value># Notes
+
+Topic: [Enter a topic]
+
+Date: [yyyy-mm-dd]
+
+## Key ideas
+
+- [First idea]
+- [Second idea]
+
+## Details
+
+[Add explanations, examples and links]
+
+## Next actions
+
+- [Action and deadline]
+</value></data>
+  <data name="DocumentTemplate.plan.Name" xml:space="preserve"><value>Project plan</value></data>
+  <data name="DocumentTemplate.plan.Description" xml:space="preserve"><value>A goal, milestones, deadlines, risks and completion criteria.</value></data>
+  <data name="DocumentTemplate.plan.Content" xml:space="preserve"><value># Project plan
+
+Project: [Name]
+
+Owner: [Name]
+
+Deadline: [yyyy-mm-dd]
+
+## Goal
+
+[Describe the expected outcome]
+
+## Milestones
+
+1. [Milestone, owner and deadline]
+2. [Milestone, owner and deadline]
+3. [Milestone, owner and deadline]
+
+## Resources and risks
+
+- [Required resources]
+- [Risk and mitigation]
+
+## Completion criteria
+
+- [How to verify the outcome]
+</value></data>
+  <data name="DocumentTemplate.meeting.Name" xml:space="preserve"><value>Meeting minutes</value></data>
+  <data name="DocumentTemplate.meeting.Description" xml:space="preserve"><value>Participants, an agenda, decisions and action items.</value></data>
+  <data name="DocumentTemplate.meeting.Content" xml:space="preserve"><value># Meeting minutes
+
+Topic: [Meeting title]
+
+Date and time: [yyyy-mm-dd, hh:mm]
+
+Participants: [Names]
+
+## Agenda
+
+1. [Discussion topic]
+2. [Discussion topic]
+
+## Discussion
+
+[Key findings]
+
+## Decisions
+
+- [Decision made]
+
+## Action items
+
+- [Task — owner — deadline]
+
+Next meeting: [Date or condition]
+</value></data>
+  <data name="DocumentTemplate.journal.Name" xml:space="preserve"><value>Journal</value></data>
+  <data name="DocumentTemplate.journal.Description" xml:space="preserve"><value>The day's events, reflections and plans for tomorrow.</value></data>
+  <data name="DocumentTemplate.journal.Content" xml:space="preserve"><value># Journal
+
+Date: [yyyy-mm-dd]
+
+## Today's events
+
+[What happened today]
+
+## Thoughts and reflections
+
+[How I feel and what I learned]
+
+## Gratitude
+
+- [A good moment from today]
+
+## Plans for tomorrow
+
+- [Main task]
+- [Time for myself]
+</value></data>
+  <data name="DocumentTemplate.report.Name" xml:space="preserve"><value>Report</value></data>
+  <data name="DocumentTemplate.report.Description" xml:space="preserve"><value>A summary, completed work, results and conclusions.</value></data>
+  <data name="DocumentTemplate.report.Content" xml:space="preserve"><value># Report
+
+Title: [Report topic]
+
+Period: [Start — end]
+
+Author: [Name]
+
+## Summary
+
+[The main outcome in a few sentences]
+
+## Completed work
+
+- [Task and result]
+- [Task and result]
+
+## Results
+
+[Metrics, observations and supporting evidence]
+
+## Problems and risks
+
+- [Problem and proposed solution]
+
+## Conclusions and next steps
+
+- [Action, owner and deadline]
+</value></data>
 </root>

@@ -919,4 +919,142 @@
   <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Erstellte geschützte Kopien: {0}. Bereits geschützte Dateien übersprungen: {1}.{2}Ziel: {3}. Quelldateien und vorhandene Dateien wurden beibehalten; Namenskonflikte erhielten eindeutige Namen.</value></data>
   <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>Die geschützte Kopie konnte nicht verifiziert werden, da der gespeicherte Quelldateityp nicht mit dem Original übereinstimmt.</value></data>
   <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Der Dateiname der geschützten Kopie konnte nicht ermittelt werden.</value></data>
+  <data name="File.DocumentTemplate" xml:space="preserve"><value>Dokumentvorlage</value></data>
+  <data name="Settings.DefaultDocumentTemplate" xml:space="preserve"><value>Standardvorlage für neue Dokumente</value></data>
+  <data name="Settings.DefaultDocumentTemplate.Description" xml:space="preserve"><value>Diese Vorlage wird beim Erstellen eines neuen Dokuments vorausgewählt. Im Erstellungsdialog können Sie eine andere Vorlage oder ein leeres Dokument wählen.</value></data>
+  <data name="DocumentTemplate.empty.Name" xml:space="preserve"><value>Leeres Dokument</value></data>
+  <data name="DocumentTemplate.empty.Description" xml:space="preserve"><value>Eine leere Seite ohne Überschriften oder Hinweise.</value></data>
+  <data name="DocumentTemplate.notes.Name" xml:space="preserve"><value>Notizen</value></data>
+  <data name="DocumentTemplate.notes.Description" xml:space="preserve"><value>Thema, Kerngedanken und nächste Schritte.</value></data>
+  <data name="DocumentTemplate.notes.Content" xml:space="preserve"><value># Notizen
+
+Thema: [Thema eingeben]
+
+Datum: [TT.MM.JJJJ]
+
+## Kerngedanken
+
+- [Erster Gedanke]
+- [Zweiter Gedanke]
+
+## Einzelheiten
+
+[Erläuterungen, Beispiele und Links ergänzen]
+
+## Nächste Schritte
+
+- [Aufgabe und Termin]
+</value></data>
+  <data name="DocumentTemplate.plan.Name" xml:space="preserve"><value>Projektplan</value></data>
+  <data name="DocumentTemplate.plan.Description" xml:space="preserve"><value>Ziel, Meilensteine, Termine, Risiken und Abschlusskriterien.</value></data>
+  <data name="DocumentTemplate.plan.Content" xml:space="preserve"><value># Projektplan
+
+Projekt: [Name]
+
+Verantwortlich: [Name]
+
+Termin: [TT.MM.JJJJ]
+
+## Ziel
+
+[Erwartetes Ergebnis beschreiben]
+
+## Meilensteine
+
+1. [Meilenstein, verantwortliche Person und Termin]
+2. [Meilenstein, verantwortliche Person und Termin]
+3. [Meilenstein, verantwortliche Person und Termin]
+
+## Ressourcen und Risiken
+
+- [Benötigte Ressourcen]
+- [Risiko und Gegenmaßnahme]
+
+## Abschlusskriterien
+
+- [Wie das Ergebnis geprüft wird]
+</value></data>
+  <data name="DocumentTemplate.meeting.Name" xml:space="preserve"><value>Besprechungsprotokoll</value></data>
+  <data name="DocumentTemplate.meeting.Description" xml:space="preserve"><value>Teilnehmende, Tagesordnung, Beschlüsse und Aufgaben.</value></data>
+  <data name="DocumentTemplate.meeting.Content" xml:space="preserve"><value># Besprechungsprotokoll
+
+Thema: [Titel der Besprechung]
+
+Datum und Uhrzeit: [TT.MM.JJJJ, HH:MM]
+
+Teilnehmende: [Namen]
+
+## Tagesordnung
+
+1. [Diskussionsthema]
+2. [Diskussionsthema]
+
+## Diskussion
+
+[Wesentliche Erkenntnisse]
+
+## Beschlüsse
+
+- [Getroffener Beschluss]
+
+## Aufgaben
+
+- [Aufgabe — verantwortliche Person — Termin]
+
+Nächste Besprechung: [Datum oder Bedingung]
+</value></data>
+  <data name="DocumentTemplate.journal.Name" xml:space="preserve"><value>Tagebuch</value></data>
+  <data name="DocumentTemplate.journal.Description" xml:space="preserve"><value>Ereignisse des Tages, Eindrücke und Pläne für morgen.</value></data>
+  <data name="DocumentTemplate.journal.Content" xml:space="preserve"><value># Tagebuch
+
+Datum: [TT.MM.JJJJ]
+
+## Ereignisse des Tages
+
+[Was heute passiert ist]
+
+## Gedanken und Eindrücke
+
+[Wie ich mich fühle und was ich gelernt habe]
+
+## Dankbarkeit
+
+- [Ein schöner Moment des Tages]
+
+## Pläne für morgen
+
+- [Wichtigste Aufgabe]
+- [Zeit für mich]
+</value></data>
+  <data name="DocumentTemplate.report.Name" xml:space="preserve"><value>Bericht</value></data>
+  <data name="DocumentTemplate.report.Description" xml:space="preserve"><value>Zusammenfassung, erledigte Arbeit, Ergebnisse und Schlussfolgerungen.</value></data>
+  <data name="DocumentTemplate.report.Content" xml:space="preserve"><value># Bericht
+
+Titel: [Thema des Berichts]
+
+Zeitraum: [Beginn — Ende]
+
+Autor: [Name]
+
+## Zusammenfassung
+
+[Das wichtigste Ergebnis in wenigen Sätzen]
+
+## Erledigte Arbeit
+
+- [Aufgabe und Ergebnis]
+- [Aufgabe und Ergebnis]
+
+## Ergebnisse
+
+[Kennzahlen, Beobachtungen und Belege]
+
+## Probleme und Risiken
+
+- [Problem und Lösungsvorschlag]
+
+## Schlussfolgerungen und nächste Schritte
+
+- [Aufgabe, verantwortliche Person und Termin]
+</value></data>
 </root>

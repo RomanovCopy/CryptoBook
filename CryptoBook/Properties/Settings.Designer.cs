@@ -790,5 +790,13 @@ namespace CryptoBook.Properties {
                 this["SettingsUpgradeRequired"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("empty")]
+        public string DefaultDocumentTemplateId {
+            get { return ((string)(this["DefaultDocumentTemplateId"])); }
+            set { this["DefaultDocumentTemplateId"] = value; }
+        }
     }
 }

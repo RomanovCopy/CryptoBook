@@ -82,6 +82,15 @@ See the [release notes](docs/releases/v1.1.4.0.md) and [changelog](CHANGELOG.md)
 - save atomically and keep the previous version as a `.bak` file;
 - check GitHub for stable releases and launch downloaded installers.
 
+## Document templates
+
+When creating a document, choose an empty document or one of the built-in templates:
+notes, project plan, meeting minutes, journal or report. Change the default in
+**Settings → Appearance → Default new document template**; the creation dialog can override it.
+Templates adapt to A2/A3/A4 in either orientation. Markdown keeps source markup,
+TXT and text XAML keep text, and RTF, XamlPackage and protected documents keep formatting.
+XamlPackage and protected documents also preserve the selected page geometry.
+
 ## Supported formats
 
 | Purpose | Formats |

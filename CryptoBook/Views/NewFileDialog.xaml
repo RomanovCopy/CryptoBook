@@ -10,11 +10,11 @@
         mc:Ignorable="d"
         Title="{Binding [File.NewTitle], Source={StaticResource Res}}"
         Width="640"
-        Height="640"
+        Height="720"
         MinWidth="560"
         MinHeight="500"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         Background="{DynamicResource CurrentWindowBackground}"
@@ -41,10 +41,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="14"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -86,6 +86,16 @@
                 Background="{DynamicResource CurrentControlBackground}"
                 BorderBrush="{DynamicResource CurrentBorderColor}"
                 BorderThickness="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -99,6 +109,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="6"/>
                     <RowDefinition Height="34"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
@@ -183,6 +194,19 @@
                          VerticalContentAlignment="Center"
                          Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
                 <StackPanel Grid.Row="11" Margin="0,16,0,0">
+                    <TextBlock Style="{StaticResource FieldLabelStyle}"
+                               Text="{Binding [File.DocumentTemplate], Source={StaticResource Res}}"/>
+                    <ComboBox x:Name="DocumentTemplateSelector" Margin="0,6,0,0" Height="34"
+                              Style="{StaticResource DropUpComboBoxStyle}"
+                              ItemContainerStyle="{StaticResource NewFileDialogComboBoxItemStyle}"
+                              ItemsSource="{Binding DocumentTemplates}" DisplayMemberPath="DisplayName"
+                              SelectedItem="{Binding SelectedDocumentTemplate, Mode=TwoWay}"
+                              AutomationProperties.Name="{Binding [File.DocumentTemplate], Source={StaticResource Res}}"/>
+                    <TextBlock Margin="0,8,0,0" FontSize="12" TextWrapping="Wrap"
+                               Foreground="{DynamicResource CurrentDisabledForeground}"
+                               Text="{Binding SelectedDocumentTemplate.Description}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="12" Margin="0,16,0,0">
                     <StackPanel.Style>
                         <Style TargetType="StackPanel">
                             <Style.Triggers>
@@ -228,6 +252,7 @@
                                Text="{Binding [File.UnlimitedPageHeight], Source={StaticResource Res}}"/>
                 </StackPanel>
             </Grid>
+            </ScrollViewer>
         </Border>
 
         <Border Grid.Row="4"

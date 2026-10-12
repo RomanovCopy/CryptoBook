@@ -1768,4 +1768,142 @@
   <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Створено захищених копій: {0}. Пропущено вже захищених файлів: {1}.{2}Папка призначення: {3}. Початкові та наявні файли збережено; для конфліктних імен створено унікальні копії.</value></data>
   <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>Захищена копія не пройшла перевірку: збережений тип початкового файла не відповідає оригіналу.</value></data>
   <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Не вдалося визначити ім’я файла захищеної копії.</value></data>
+  <data name="File.DocumentTemplate" xml:space="preserve"><value>Шаблон документа</value></data>
+  <data name="Settings.DefaultDocumentTemplate" xml:space="preserve"><value>Шаблон нового документа за замовчуванням</value></data>
+  <data name="Settings.DefaultDocumentTemplate.Description" xml:space="preserve"><value>Цей шаблон буде вибрано під час створення нового документа. У діалозі створення можна вибрати інший шаблон або порожній документ.</value></data>
+  <data name="DocumentTemplate.empty.Name" xml:space="preserve"><value>Порожній документ</value></data>
+  <data name="DocumentTemplate.empty.Description" xml:space="preserve"><value>Чистий аркуш без заголовків і підказок.</value></data>
+  <data name="DocumentTemplate.notes.Name" xml:space="preserve"><value>Нотатки</value></data>
+  <data name="DocumentTemplate.notes.Description" xml:space="preserve"><value>Тема, основні думки та наступні дії.</value></data>
+  <data name="DocumentTemplate.notes.Content" xml:space="preserve"><value># Нотатки
+
+Тема: [Укажіть тему]
+
+Дата: [дд.мм.рррр]
+
+## Основні думки
+
+- [Перша думка]
+- [Друга думка]
+
+## Подробиці
+
+[Додайте пояснення, приклади та посилання]
+
+## Наступні дії
+
+- [Дія та термін]
+</value></data>
+  <data name="DocumentTemplate.plan.Name" xml:space="preserve"><value>План проєкту</value></data>
+  <data name="DocumentTemplate.plan.Description" xml:space="preserve"><value>Мета, етапи, терміни, ризики та критерії готовності.</value></data>
+  <data name="DocumentTemplate.plan.Content" xml:space="preserve"><value># План проєкту
+
+Проєкт: [Назва]
+
+Відповідальний: [Ім'я]
+
+Термін: [дд.мм.рррр]
+
+## Мета
+
+[Опишіть очікуваний результат]
+
+## Етапи
+
+1. [Етап, відповідальний і термін]
+2. [Етап, відповідальний і термін]
+3. [Етап, відповідальний і термін]
+
+## Ресурси та ризики
+
+- [Необхідні ресурси]
+- [Ризик і спосіб його зменшити]
+
+## Критерії готовності
+
+- [Як перевірити результат]
+</value></data>
+  <data name="DocumentTemplate.meeting.Name" xml:space="preserve"><value>Протокол зустрічі</value></data>
+  <data name="DocumentTemplate.meeting.Description" xml:space="preserve"><value>Учасники, порядок денний, рішення та доручення.</value></data>
+  <data name="DocumentTemplate.meeting.Content" xml:space="preserve"><value># Протокол зустрічі
+
+Тема: [Назва зустрічі]
+
+Дата й час: [дд.мм.рррр, гг:хх]
+
+Учасники: [Імена]
+
+## Порядок денний
+
+1. [Питання для обговорення]
+2. [Питання для обговорення]
+
+## Обговорення
+
+[Ключові висновки]
+
+## Рішення
+
+- [Ухвалене рішення]
+
+## Доручення
+
+- [Завдання — відповідальний — термін]
+
+Наступна зустріч: [Дата або умова]
+</value></data>
+  <data name="DocumentTemplate.journal.Name" xml:space="preserve"><value>Щоденник</value></data>
+  <data name="DocumentTemplate.journal.Description" xml:space="preserve"><value>Події дня, враження та плани на завтра.</value></data>
+  <data name="DocumentTemplate.journal.Content" xml:space="preserve"><value># Щоденник
+
+Дата: [дд.мм.рррр]
+
+## Події дня
+
+[Що сталося сьогодні]
+
+## Думки та враження
+
+[Що я відчуваю та чого навчився]
+
+## За що я вдячний
+
+- [Хороший момент дня]
+
+## Плани на завтра
+
+- [Головна справа]
+- [Час для себе]
+</value></data>
+  <data name="DocumentTemplate.report.Name" xml:space="preserve"><value>Звіт</value></data>
+  <data name="DocumentTemplate.report.Description" xml:space="preserve"><value>Коротке резюме, виконана робота, результати та висновки.</value></data>
+  <data name="DocumentTemplate.report.Content" xml:space="preserve"><value># Звіт
+
+Назва: [Тема звіту]
+
+Період: [Початок — кінець]
+
+Автор: [Ім'я]
+
+## Коротке резюме
+
+[Основний результат у кількох реченнях]
+
+## Виконана робота
+
+- [Завдання та результат]
+- [Завдання та результат]
+
+## Результати
+
+[Показники, спостереження та підтверджувальні дані]
+
+## Проблеми та ризики
+
+- [Проблема та запропоноване рішення]
+
+## Висновки та наступні кроки
+
+- [Дія, відповідальний і термін]
+</value></data>
 </root>

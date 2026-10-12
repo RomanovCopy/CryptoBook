@@ -301,6 +301,19 @@
                            TextWrapping="Wrap"
                            Foreground="{DynamicResource CurrentMutedForeground}"/>
 
+                <TextBlock Text="{Binding [Settings.DefaultDocumentTemplate], Source={StaticResource Res}}"
+                           FontSize="15" FontWeight="SemiBold" Margin="0,22,0,8"/>
+                <ComboBox x:Name="DefaultDocumentTemplateSelector"
+                          Style="{StaticResource DropUpComboBoxStyle}"
+                          ItemsSource="{Binding DocumentTemplates}"
+                          SelectedItem="{Binding SelectedDefaultDocumentTemplate, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayName"
+                          MinWidth="220" Height="34" HorizontalAlignment="Left"
+                          AutomationProperties.Name="{Binding [Settings.DefaultDocumentTemplate], Source={StaticResource Res}}"/>
+                <TextBlock Text="{Binding [Settings.DefaultDocumentTemplate.Description], Source={StaticResource Res}}"
+                           Margin="0,8,0,0" TextWrapping="Wrap"
+                           Foreground="{DynamicResource CurrentMutedForeground}"/>
+
                 <Border Margin="0,12,0,0"
                         Padding="12"
                         CornerRadius="7"

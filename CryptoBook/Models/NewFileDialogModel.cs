@@ -28,6 +28,21 @@ namespace CryptoBook.Models
         private readonly IDocumentSaveEncryptionPolicy _saveEncryptionPolicy;
         private readonly IWorkspaceFileOpenService _workspaceFileOpenService;
         private readonly IRichTextBoxService _richTextBox;
+        private readonly IDocumentTemplateCatalog _documentTemplateCatalog;
+        private readonly IDocumentTemplatePreferenceStore _documentTemplatePreferences;
+        private readonly IDocumentTemplateService _documentTemplateService;
+
+        public IReadOnlyList<DocumentTemplate> DocumentTemplates => _documentTemplateCatalog.Templates;
+        private DocumentTemplate selectedDocumentTemplate;
+        public DocumentTemplate SelectedDocumentTemplate
+        {
+            get => selectedDocumentTemplate;
+            set
+            {
+                if(value is not null)
+                    SetProperty(ref selectedDocumentTemplate, _documentTemplateCatalog.GetById(value.Id));
+            }
+        }
 
         private DocumentPaperSize paperSize = DocumentPaperSize.A4;
         public DocumentPaperSize PaperSize { get => paperSize; set => SetProperty(ref paperSize, value); }
@@ -155,10 +170,17 @@ namespace CryptoBook.Models
             IEncryptionKeyRequestService keyRequestService,
             IDocumentSaveEncryptionPolicy saveEncryptionPolicy,
             IWorkspaceFileOpenService workspaceFileOpenService,
-            IRichTextBoxService richTextBox)
+            IRichTextBoxService richTextBox,
+            IDocumentTemplateCatalog documentTemplateCatalog,
+            IDocumentTemplatePreferenceStore documentTemplatePreferences,
+            IDocumentTemplateService documentTemplateService)
         {
             WindowId = Guid.NewGuid();
             _registry = registry;
+            _documentTemplateCatalog = documentTemplateCatalog;
+            _documentTemplatePreferences = documentTemplatePreferences;
+            _documentTemplateService = documentTemplateService;
+            selectedDocumentTemplate = documentTemplateCatalog.GetById(documentTemplatePreferences.Load());
             _richTextBox = richTextBox ?? throw new ArgumentNullException(nameof(richTextBox));
             _creator = creator;
             _fileManager = fileManager;
@@ -285,11 +307,18 @@ namespace CryptoBook.Models
         /// Запускает асинхронное создание файла и закрывает окно диалога.
         /// Отменяет предыдущие операции и использует новый токен отмены.
         /// </summary>
-        public async void Execute_Create(object? obj)
+        public async Task Execute_CreateAsync(CancellationToken cancellationToken = default)
         {
+            if(IsBusy)
+                return;
             _cts?.Cancel();
-            _cts = new CancellationTokenSource();
+            _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             var ct = _cts.Token;
+            IFileTemplate? format = SelectedTemplate;
+            DocumentPaperSize size = PaperSize;
+            bool landscape = IsLandscape;
+            IsBusy = true;
+            ErrorMessage = null;
             try
             {
                 if(SelectedTemplate is SecureFileTemplate)
@@ -323,8 +352,8 @@ namespace CryptoBook.Models
                             ct);
                     if(openResult.Success)
                     {
-                        if(SelectedTemplate is not MarkdownFileTemplate)
-                            DocumentPageLayout.Apply(_richTextBox.Document, PaperSize, IsLandscape);
+                        if(format is not MarkdownFileTemplate)
+                            DocumentPageLayout.Apply(_richTextBox.Document, size, landscape);
                         _windowManager.CloseWindow(WindowId);
                     }
                     else if(!openResult.Cancelled)
@@ -343,6 +372,10 @@ namespace CryptoBook.Models
             catch(Exception exception)
             {
                 ErrorMessage = exception.Message;
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -459,16 +492,13 @@ namespace CryptoBook.Models
                 return FileOperationResult.Fail(
                     LocalizationManager.GetString("File.TypeNotSelected"));
 
-            byte[]? initialContent = null;
-            if(SelectedTemplate is XamlPackageFileTemplate or SecureFileTemplate)
-            {
-                var document = new FlowDocument(new Paragraph());
-                DocumentPageLayout.Apply(document, PaperSize, IsLandscape);
-                using var stream = new MemoryStream();
-                new TextRange(document.ContentStart, document.ContentEnd)
-                    .Save(stream, System.Windows.DataFormats.XamlPackage);
-                initialContent = XamlPackageDocumentAppearanceCodec.Preserve(document, stream.ToArray());
-            }
+            IFileTemplate format = SelectedTemplate;
+            string name = FileName;
+            IfExistsMode conflictMode = IfExists;
+            bool hidden = IsHidden;
+            bool readOnly = IsReadOnly;
+            byte[] initialContent = await _documentTemplateService.CreateContentAsync(
+                SelectedDocumentTemplate, format, PaperSize, IsLandscape, ct);
 
             return await _progressDialogService.RunAsync(
                 LocalizationManager.GetString("File.CreateOperation"),
@@ -478,11 +508,11 @@ namespace CryptoBook.Models
                         CancellationTokenSource.CreateLinkedTokenSource(ct, token);
                     return await _creator.CreateAsync(
                         targetDirectory,
-                        FileName,
-                        SelectedTemplate,
-                        IfExists,
-                        IsHidden,
-                        IsReadOnly,
+                        name,
+                        format,
+                        conflictMode,
+                        hidden,
+                        readOnly,
                         linkedTokenSource.Token,
                         progress,
                         initialContent);
@@ -499,6 +529,7 @@ namespace CryptoBook.Models
         /// <param name="ct">Токен отмены.</param>
         public async Task InitializeAsync(string initialDirectory, CancellationToken ct)
         {
+            SelectedDocumentTemplate = _documentTemplateCatalog.GetById(_documentTemplatePreferences.Load());
             TargetDirectory = initialDirectory;
             await CheckDirectoryAsync(ct);
 
