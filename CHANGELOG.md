@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.1.4.2 - 2026-10-13
+
+### Added
+
+- Built-in document templates: notes, project plan, meeting minutes, journal and report.
+- Default template selection in Appearance settings and template selection in the new-document dialog.
+- Template content adapted to the selected format, page size and orientation.
+
+### Fixed
+
+- Disable the automatic encryption-key reset timer when the idle timeout is set to Never, including after activity or key changes.
+
+### Changed
+
+- Refresh screenshots with seven current WPF views, including template creation and settings.
+- Synchronize application, installer, documentation, notices and version tests for 1.1.4.2.
+
+Full comparison: [v1.1.4.1...v1.1.4.2](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.1...v1.1.4.2)
+
 ## 1.1.4.1 - 2026-10-04
 
 ### Fixed

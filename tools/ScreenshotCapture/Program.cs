@@ -155,7 +155,28 @@ internal static class Program
         markdownVm.OpenSyntaxHelp.Execute(null);
         await Settle(window);
         Save(window, Path.Combine(output, "markdown-help.png"));
-        Console.WriteLine("SCREENSHOT_CAPTURE: PASS (5 production WPF views)");
+        theme.ApplyTheme(ApplicationTheme.Light);
+        var dialogId = manager.CreateWindow<NewFileDialog>();
+        var dialogHost = manager.FindHostWindow(dialogId)!;
+        var dialogVm = (INewFileDialogViewModel)dialogHost.Window.DataContext;
+        dialogVm.TargetDirectory = Path.Combine(output, "demo");
+        dialogVm.SelectedTemplate = dialogVm.Templates.OfType<XamlPackageFileTemplate>().First();
+        dialogVm.FileName = "План путешествия";
+        dialogVm.SelectedDocumentTemplate = dialogVm.DocumentTemplates.First(x => x.Id == "plan");
+        manager.ShowWindow(dialogId);
+        await Settle(dialogHost.Window);
+        Save(dialogHost.Window, Path.Combine(output, "new-document.png"));
+        dialogHost.Window.Hide();
+
+        var settingsId = manager.CreateWindow<SettingsWindow>();
+        var settingsHost = manager.FindHostWindow(settingsId)!;
+        settingsHost.Window.Width = 1000;
+        settingsHost.Window.Height = 960;
+        ((ISettingsViewModel)settingsHost.Window.DataContext).SelectedSectionIndex = 0;
+        manager.ShowWindow(settingsId);
+        await Settle(settingsHost.Window);
+        Save(settingsHost.Window, Path.Combine(output, "template-settings.png"));
+        Console.WriteLine("SCREENSHOT_CAPTURE: PASS (7 production WPF views)");
     }
 
     private static async Task Settle(Window window)

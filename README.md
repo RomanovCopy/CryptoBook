@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.4.1-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.1)
+[![Version](https://img.shields.io/badge/version-1.1.4.2-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.2)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -40,18 +40,21 @@ machine unless you explicitly move or share them.
 | ![Markdown document with a local illustration](docs/screenshots/markdown-preview.png) | ![Built-in Markdown syntax guide](docs/screenshots/markdown-help.png) |
 | **Sepia reading mode** | **Document navigation** |
 | ![Illustrated document in Sepia](docs/screenshots/sepia-reading.png) | ![Side menu and illustrated document](docs/screenshots/side-menu.png) |
+| **New document and templates** | **Default template settings** |
+| ![New document dialog](docs/screenshots/new-document.png) | ![Appearance and default template settings](docs/screenshots/template-settings.png) |
 
 Screenshots show an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.4.1
+## New in 1.1.4.2
 
-- Disconnected external drives are correctly removed from the File Explorer device list.
-- Opening File Explorer refreshes local drives and portable devices, including changes that occurred while the explorer was closed.
-- An unavailable portable-device transport no longer blocks opening local folders.
-- Drive refreshes are serialized and cancelled safely when File Explorer closes.
+- Create documents from built-in templates: notes, project plan, meeting minutes, journal and report.
+- Choose the default template in Settings → Appearance and override it in the updated new-document dialog.
+- Templates adapt to the selected page size, orientation and document format.
+- Fixed automatic encryption-key reset when the idle timeout is set to **Never**.
+- Refreshed screenshots show the current editor, new-document dialog and template settings.
 
-See the [release notes](docs/releases/v1.1.4.1.md) and [changelog](CHANGELOG.md).
+See the [release notes](docs/releases/v1.1.4.2.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -158,7 +161,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.4.1
+./installer/Build-Installer.ps1 -Version 1.1.4.2
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:
