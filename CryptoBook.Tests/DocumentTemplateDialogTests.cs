@@ -91,6 +91,52 @@ public sealed class DocumentTemplateDialogTests
     }
 
     [WpfFact]
+    public void SettingsSecuritySelector_NeverDisablesSharedTimerAndPersistsAfterReopening()
+    {
+        Application app = Application.Current ?? new Application();
+        ResourceDictionary previousResources = app.Resources;
+        int previousMinutes = Properties.Settings.Default.KeyResetTimeoutMinutes;
+        UserControl? settings = null;
+        try
+        {
+            Properties.Settings.Default.KeyResetTimeoutMinutes = 15;
+            app.Resources = CreateResources();
+            using IContainer container = new Startup().ConfigureServices(app);
+            using ILifetimeScope scope = container.BeginLifetimeScope();
+            var viewModel = scope.Resolve<ISettingsViewModel>();
+            var resetService = container.Resolve<IKeyResetService>();
+            Assert.Same(resetService, scope.Resolve<IKeyResetService>());
+            viewModel.SelectedSectionIndex = 2;
+            settings = LoadView("SettingsWindow", viewModel, bindCommands: false);
+            settings.Measure(new Size(760, 780));
+            settings.Arrange(new Rect(0, 0, 760, 780));
+            settings.UpdateLayout();
+            ComboBox selector = Assert.Single(FindVisualChildren<ComboBox>(settings),
+                item => ReferenceEquals(item.ItemsSource, viewModel.KeyResetIntervals));
+            Assert.Equal(15, Assert.IsType<KeyResetIntervalOption>(selector.SelectedItem).Minutes);
+
+            selector.SelectedItem = viewModel.KeyResetIntervals.Single(option => option.Minutes == 0);
+            Assert.Equal(0, viewModel.SelectedKeyResetInterval.Minutes);
+            Assert.Equal(TimeSpan.Zero, resetService.Timeout);
+            Assert.Equal(0, new Properties.Settings().KeyResetTimeoutMinutes);
+            using ILifetimeScope reopenedScope = container.BeginLifetimeScope();
+            Assert.Equal(0, reopenedScope.Resolve<ISettingsViewModel>().SelectedKeyResetInterval.Minutes);
+
+            selector.SelectedItem = viewModel.KeyResetIntervals.Single(option => option.Minutes == 5);
+            Assert.Equal(TimeSpan.FromMinutes(5), resetService.Timeout);
+            Assert.Equal(5, new Properties.Settings().KeyResetTimeoutMinutes);
+        }
+        finally
+        {
+            if(settings is not null)
+                settings.DataContext = null;
+            app.Resources = previousResources;
+            Properties.Settings.Default.KeyResetTimeoutMinutes = previousMinutes;
+            Properties.Settings.Default.Save();
+        }
+    }
+
+    [WpfFact]
     public void SettingsSelector_PersistsTemplateAndReflectsItInNextNewDialog()
     {
         Application app = Application.Current ?? new Application();

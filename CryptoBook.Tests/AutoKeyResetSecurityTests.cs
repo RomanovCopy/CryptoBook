@@ -13,8 +13,95 @@ using Xunit;
 
 namespace CryptoBook.Tests;
 
+[Collection("Settings UI")]
 public sealed class AutoKeyResetSecurityTests
 {
+    [WpfTheory]
+    [InlineData("Never")]
+    [InlineData("LongerTimeout")]
+    [InlineData("Activity")]
+    [InlineData("Pause")]
+    [InlineData("Stop")]
+    [InlineData("Unchanged")]
+    public async Task QueuedIdleReset_RechecksCurrentSettingsBeforeClearingKey(string change)
+    {
+        using var key = new MemoryKeyProvider(new Argon2idKeyDeriver());
+        key.SetKey("1234");
+        var session = new SessionStub();
+        var snapshot = new SuccessfulSnapshot();
+        var dispatcher = new QueuedDispatcher();
+        using var service = new AutoKeyResetService(key, snapshot, session,
+            DispatchProxy.Create<IRichTextBoxService, UnusedProxy>(), new FileTemplateRegistry([]),
+            new Lazy<IWorkspaceFileOpenService>(() => throw new InvalidOperationException()),
+            dispatcher, Application.Current ?? new Application());
+        service.UpdateTimeout(TimeSpan.FromMinutes(1));
+        service.Start();
+        SetLastActivity(service, DateTimeOffset.UtcNow - TimeSpan.FromMinutes(2));
+        dispatcher.IsOnUiThread = false;
+        Tick(service);
+        await dispatcher.Enqueued.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        dispatcher.IsOnUiThread = true;
+        using IDisposable? pause = change == "Pause" ? service.Pause() : null;
+        switch(change)
+        {
+            case "Never": service.UpdateTimeout(TimeSpan.Zero); break;
+            case "LongerTimeout": service.UpdateTimeout(TimeSpan.FromMinutes(5)); break;
+            case "Activity": service.NotifyActivity(); break;
+            case "Stop": service.Stop(); break;
+        }
+        await dispatcher.ExecutePendingAsync();
+
+        bool shouldReset = change == "Unchanged";
+        Assert.Equal(!shouldReset, key.HasKey);
+        Assert.Equal(!shouldReset, session.HasDocument);
+        Assert.Equal(shouldReset, snapshot.Exists);
+    }
+
+    [WpfFact]
+    public async Task NeverTimeout_PreservesKeyAfterInactivityButAllowsExplicitReset()
+    {
+        int previousMinutes = Properties.Settings.Default.KeyResetTimeoutMinutes;
+        try
+        {
+            Properties.Settings.Default.KeyResetTimeoutMinutes = 0;
+            using var key = new MemoryKeyProvider(new Argon2idKeyDeriver());
+            key.SetKey("1234");
+            var session = new SessionStub();
+            var snapshot = new SuccessfulSnapshot();
+            using var service = new AutoKeyResetService(key, snapshot, session,
+                DispatchProxy.Create<IRichTextBoxService, UnusedProxy>(), new FileTemplateRegistry([]),
+                new Lazy<IWorkspaceFileOpenService>(() => throw new InvalidOperationException()),
+                new ImmediateDispatcher(), Application.Current ?? new Application());
+            Assert.Equal(TimeSpan.Zero, service.Timeout);
+            service.Start();
+            service.NotifyActivity();
+            SetLastActivity(service, DateTimeOffset.UtcNow - TimeSpan.FromDays(1));
+            Tick(service);
+            Assert.True(key.HasKey);
+            Assert.True(session.HasDocument);
+            Assert.False(snapshot.Exists);
+            Assert.Equal(KeyResetState.Inactive, service.State);
+
+            Assert.True(await service.ResetAsync());
+            Assert.False(key.HasKey);
+            Assert.False(session.HasDocument);
+            Assert.True(snapshot.Exists);
+        }
+        finally
+        {
+            Properties.Settings.Default.KeyResetTimeoutMinutes = previousMinutes;
+        }
+    }
+
+    private static void SetLastActivity(AutoKeyResetService service, DateTimeOffset time) =>
+        typeof(AutoKeyResetService).GetField("lastActivityUtc", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(service, time);
+
+    private static void Tick(AutoKeyResetService service) =>
+        typeof(AutoKeyResetService).GetMethod("OnTimer", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .Invoke(service, [null]);
+
     [WpfFact]
     public async Task MixedWorkspace_ResetClosesOnlyEncryptedDocument_RegardlessOfActiveEditor()
     {
@@ -237,5 +324,43 @@ public sealed class AutoKeyResetSecurityTests
         { action(); return Task.CompletedTask; }
         public Task<T> InvokeAsync<T>(Func<T> action, DispatcherPriority priority = DispatcherPriority.Background) =>
             Task.FromResult(action());
+    }
+
+    private sealed class QueuedDispatcher : IDispatcherService
+    {
+        private Action? pending;
+        private Task? operation;
+        public bool IsOnUiThread { get; set; } = true;
+        public TaskCompletionSource Enqueued { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public bool CheckAccess() => IsOnUiThread;
+        public void Invoke(Action action) => action();
+        public void BeginInvoke(Action action) => action();
+        public Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Background)
+        { action(); return Task.CompletedTask; }
+        public Task<T> InvokeAsync<T>(Func<T> action, DispatcherPriority priority = DispatcherPriority.Background)
+        {
+            if(CheckAccess())
+                return Task.FromResult(action());
+            var completion = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            pending = () =>
+            {
+                try
+                {
+                    T result = action();
+                    operation = result as Task;
+                    completion.SetResult(result);
+                }
+                catch(Exception error) { completion.SetException(error); }
+            };
+            Enqueued.SetResult();
+            return completion.Task;
+        }
+        public async Task ExecutePendingAsync()
+        {
+            Assert.NotNull(pending);
+            pending();
+            if(operation is not null)
+                await operation;
+        }
     }
 }

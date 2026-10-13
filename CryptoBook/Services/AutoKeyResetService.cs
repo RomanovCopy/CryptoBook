@@ -414,11 +414,25 @@ public sealed class AutoKeyResetService : IKeyResetService
         if(State != KeyResetState.Active)
             return;
         if(DateTimeOffset.UtcNow - lastActivityUtc >= Timeout)
-            _ = ResetAsync();
+            _ = ResetIfIdleAsync();
+    }
+
+    private async Task ResetIfIdleAsync()
+    {
+        // The timer callback may wait in the UI queue while the timeout or
+        // activity changes. Recheck there before beginning the reset.
+        await await dispatcher.InvokeAsync(() =>
+            started && !IsPaused && Timeout > TimeSpan.Zero &&
+            State == KeyResetState.Active && keyProvider.HasKey &&
+            DateTimeOffset.UtcNow - lastActivityUtc >= Timeout
+                ? ResetAsync()
+                : Task.FromResult(false));
     }
 
     private void EnsureTimer()
     {
+        if(!started || Timeout == TimeSpan.Zero)
+            return;
         timer ??= new ThreadingTimer(
             OnTimer,
             null,
