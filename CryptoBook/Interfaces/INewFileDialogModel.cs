@@ -12,6 +12,8 @@ namespace CryptoBook.Interfaces
     public interface INewFileDialogModel:IModel,IWindowWithId
     {
         public IReadOnlyList<IFileTemplate> Templates { get; }
+        IReadOnlyList<DocumentTemplate> DocumentTemplates { get; }
+        DocumentTemplate SelectedDocumentTemplate { get; set; }
         DocumentPaperSize PaperSize { get; set; }
         bool IsLandscape { get; set; }
         public IFileTemplate? SelectedTemplate { get; set; }
@@ -42,7 +44,7 @@ namespace CryptoBook.Interfaces
         bool CanExecute_CreateDirectory(object? obj);
 
         public bool CanExecute_Create(object? obj);
-        public void Execute_Create(object? obj);
+        Task Execute_CreateAsync(CancellationToken cancellationToken = default);
 
         public bool CanExecute_Cancel(object? obj);
         public void Execute_Cancel(object? obj);

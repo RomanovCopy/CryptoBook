@@ -27,9 +27,13 @@ namespace CryptoBook.Models
         private readonly IKeyResetService? keyResetService;
         private readonly IKeyProvider? keyProvider;
         private readonly IStartupScreenPreferenceStore startupScreenPreferenceStore;
+        private readonly IDocumentTemplateCatalog documentTemplateCatalog;
+        private readonly IDocumentTemplatePreferenceStore documentTemplatePreferenceStore;
+        private DocumentTemplate selectedDefaultDocumentTemplate;
+        private readonly IReadOnlyList<ApplicationThemeOption> themes;
         private ApplicationThemeOption selectedTheme;
         private ApplicationLanguageOption selectedLanguage;
-        private IReadOnlyList<StartupScreenOption> startupScreens;
+        private readonly IReadOnlyList<StartupScreenOption> startupScreens;
         private StartupScreenOption selectedStartupScreen;
         private GridLength navigationPaneWidth;
         private CancellationTokenSource? searchCancellation;
@@ -64,7 +68,9 @@ namespace CryptoBook.Models
             IWorkspaceFileOpenService? workspaceFileOpenService = null,
             IKeyResetService? keyResetService = null,
             IKeyProvider? keyProvider = null,
-            IStartupScreenPreferenceStore? startupScreenPreferenceStore = null)
+            IStartupScreenPreferenceStore? startupScreenPreferenceStore = null,
+            IDocumentTemplateCatalog? documentTemplateCatalog = null,
+            IDocumentTemplatePreferenceStore? documentTemplatePreferenceStore = null)
         {
             this.themeManager = themeManager ??
                 throw new ArgumentNullException(nameof(themeManager));
@@ -78,9 +84,13 @@ namespace CryptoBook.Models
             this.keyProvider = keyProvider;
             this.startupScreenPreferenceStore = startupScreenPreferenceStore ??
                 new UserStartupScreenPreferenceStore();
+            this.documentTemplateCatalog = documentTemplateCatalog ?? new DocumentTemplateCatalog();
+            this.documentTemplatePreferenceStore = documentTemplatePreferenceStore ?? new UserDocumentTemplatePreferenceStore();
+            selectedDefaultDocumentTemplate = this.documentTemplateCatalog.GetById(this.documentTemplatePreferenceStore.Load());
             if(keyResetService is not null)
                 keyResetService.StateChanged += OnKeyResetStateChanged;
 
+            themes = themeManager.AvailableThemes;
             selectedTheme = Themes.First(
                 option => option.Theme == themeManager.CurrentTheme);
             selectedLanguage = Languages.First(
@@ -102,7 +112,7 @@ namespace CryptoBook.Models
         public Guid WindowId { get; } = Guid.NewGuid();
 
         public IReadOnlyList<ApplicationThemeOption> Themes =>
-            themeManager.AvailableThemes;
+            themes;
 
         public ApplicationThemeOption SelectedTheme
         {
@@ -130,17 +140,15 @@ namespace CryptoBook.Models
                     return;
 
                 LocalizationManager.SelectCulture(value.CultureName);
-                selectedTheme = Themes.First(
-                    option => option.Theme == themeManager.CurrentTheme);
-                OnPropertyChanged(nameof(Themes));
-                OnPropertyChanged(nameof(SelectedTheme));
+                // Обновляем подписи существующих элементов: замена ItemsSource
+                // сбрасывает визуальный выбор WPF и может оставить пустую подпись.
+                foreach(ApplicationThemeOption theme in Themes)
+                    theme.RefreshLocalization();
+                foreach(StartupScreenOption screen in startupScreens)
+                    screen.RefreshLocalization();
+                foreach(DocumentTemplate template in DocumentTemplates)
+                    template.RefreshLocalization();
                 OnPropertyChanged(nameof(SelectedCultureName));
-                startupScreens = CreateStartupScreens();
-                selectedStartupScreen = startupScreens.First(
-                    option => option.Screen ==
-                        startupScreenPreferenceStore.Load());
-                OnPropertyChanged(nameof(StartupScreens));
-                OnPropertyChanged(nameof(SelectedStartupScreen));
                 RefreshEncryptionKeyStatus();
             }
         }
@@ -172,6 +180,23 @@ namespace CryptoBook.Models
                 SetProperty(
                     ref navigationPaneWidth,
                     new GridLength(NormalizeNavigationPaneWidth(width)));
+            }
+        }
+
+        public IReadOnlyList<DocumentTemplate> DocumentTemplates => documentTemplateCatalog.Templates;
+
+        public DocumentTemplate SelectedDefaultDocumentTemplate
+        {
+            get => selectedDefaultDocumentTemplate;
+            set
+            {
+                if(value is null)
+                    return;
+                DocumentTemplate selected = documentTemplateCatalog.GetById(value.Id);
+                if(selected.Id == selectedDefaultDocumentTemplate.Id)
+                    return;
+                documentTemplatePreferenceStore.Save(selected.Id);
+                SetProperty(ref selectedDefaultDocumentTemplate, selected);
             }
         }
 

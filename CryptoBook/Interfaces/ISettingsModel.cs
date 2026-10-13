@@ -15,6 +15,8 @@ namespace CryptoBook.Interfaces
         string SelectedCultureName { get; set; }
         IReadOnlyList<StartupScreenOption> StartupScreens { get; }
         StartupScreenOption SelectedStartupScreen { get; set; }
+        IReadOnlyList<DocumentTemplate> DocumentTemplates { get; }
+        DocumentTemplate SelectedDefaultDocumentTemplate { get; set; }
         GridLength NavigationPaneWidth { get; set; }
         int SelectedSectionIndex { get; set; }
         string WorkspaceDirectory { get; }

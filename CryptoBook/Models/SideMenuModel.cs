@@ -16,7 +16,7 @@ using MenuItem = CryptoBook.DTO.MenuItem;
 
 namespace CryptoBook.Models
 {
-    public class SideMenuModel: ViewModelBase
+    public class SideMenuModel: ViewModelBase, IDisposable
     {
 
         private readonly ILifetimeScope scope;
@@ -435,6 +435,11 @@ namespace CryptoBook.Models
         }
 
         internal void Execute_Closed(object? obj)
+        {
+            Dispose();
+        }
+
+        public void Dispose()
         {
             markdownDocument.PropertyChanged -= OnMarkdownDocumentPropertyChanged;
             documentSession.PropertyChanged -= OnWorkspaceDocumentPropertyChanged;

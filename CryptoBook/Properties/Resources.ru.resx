@@ -919,4 +919,142 @@
   <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Создано защищённых копий: {0}. Пропущено уже защищённых файлов: {1}.{2}Папка назначения: {3}. Исходные и существующие файлы сохранены; при совпадении имён созданы уникальные копии.</value></data>
   <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>Защищённая копия не прошла проверку: сохранённый тип исходного файла не совпадает с оригиналом.</value></data>
   <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Не удалось определить имя файла защищённой копии.</value></data>
+  <data name="File.DocumentTemplate" xml:space="preserve"><value>Шаблон документа</value></data>
+  <data name="Settings.DefaultDocumentTemplate" xml:space="preserve"><value>Шаблон нового документа по умолчанию</value></data>
+  <data name="Settings.DefaultDocumentTemplate.Description" xml:space="preserve"><value>Этот шаблон будет выбран при создании нового документа. В диалоге создания можно выбрать другой шаблон или пустой документ.</value></data>
+  <data name="DocumentTemplate.empty.Name" xml:space="preserve"><value>Пустой документ</value></data>
+  <data name="DocumentTemplate.empty.Description" xml:space="preserve"><value>Чистый лист без заголовков и подсказок.</value></data>
+  <data name="DocumentTemplate.notes.Name" xml:space="preserve"><value>Заметки</value></data>
+  <data name="DocumentTemplate.notes.Description" xml:space="preserve"><value>Тема, основные мысли и следующие действия.</value></data>
+  <data name="DocumentTemplate.notes.Content" xml:space="preserve"><value># Заметки
+
+Тема: [Укажите тему]
+
+Дата: [дд.мм.гггг]
+
+## Основные мысли
+
+- [Первая мысль]
+- [Вторая мысль]
+
+## Подробности
+
+[Добавьте пояснения, примеры и ссылки]
+
+## Следующие действия
+
+- [Действие и срок]
+</value></data>
+  <data name="DocumentTemplate.plan.Name" xml:space="preserve"><value>План проекта</value></data>
+  <data name="DocumentTemplate.plan.Description" xml:space="preserve"><value>Цель, этапы, сроки, риски и критерии готовности.</value></data>
+  <data name="DocumentTemplate.plan.Content" xml:space="preserve"><value># План проекта
+
+Проект: [Название]
+
+Ответственный: [Имя]
+
+Срок: [дд.мм.гггг]
+
+## Цель
+
+[Опишите ожидаемый результат]
+
+## Этапы
+
+1. [Этап, ответственный и срок]
+2. [Этап, ответственный и срок]
+3. [Этап, ответственный и срок]
+
+## Ресурсы и риски
+
+- [Необходимые ресурсы]
+- [Риск и способ его уменьшить]
+
+## Критерии готовности
+
+- [Как проверить результат]
+</value></data>
+  <data name="DocumentTemplate.meeting.Name" xml:space="preserve"><value>Протокол встречи</value></data>
+  <data name="DocumentTemplate.meeting.Description" xml:space="preserve"><value>Участники, повестка, решения и поручения.</value></data>
+  <data name="DocumentTemplate.meeting.Content" xml:space="preserve"><value># Протокол встречи
+
+Тема: [Название встречи]
+
+Дата и время: [дд.мм.гггг, чч:мм]
+
+Участники: [Имена]
+
+## Повестка
+
+1. [Вопрос для обсуждения]
+2. [Вопрос для обсуждения]
+
+## Обсуждение
+
+[Ключевые выводы]
+
+## Решения
+
+- [Принятое решение]
+
+## Поручения
+
+- [Задача — ответственный — срок]
+
+Следующая встреча: [Дата или условие]
+</value></data>
+  <data name="DocumentTemplate.journal.Name" xml:space="preserve"><value>Дневник</value></data>
+  <data name="DocumentTemplate.journal.Description" xml:space="preserve"><value>События дня, впечатления и планы на завтра.</value></data>
+  <data name="DocumentTemplate.journal.Content" xml:space="preserve"><value># Дневник
+
+Дата: [дд.мм.гггг]
+
+## События дня
+
+[Что произошло сегодня]
+
+## Мысли и впечатления
+
+[Что я чувствую и чему научился]
+
+## За что я благодарен
+
+- [Хороший момент дня]
+
+## Планы на завтра
+
+- [Главное дело]
+- [Время для себя]
+</value></data>
+  <data name="DocumentTemplate.report.Name" xml:space="preserve"><value>Отчёт</value></data>
+  <data name="DocumentTemplate.report.Description" xml:space="preserve"><value>Краткое резюме, выполненная работа, результаты и выводы.</value></data>
+  <data name="DocumentTemplate.report.Content" xml:space="preserve"><value># Отчёт
+
+Название: [Тема отчёта]
+
+Период: [Начало — конец]
+
+Автор: [Имя]
+
+## Краткое резюме
+
+[Основной результат в нескольких предложениях]
+
+## Выполненная работа
+
+- [Задача и результат]
+- [Задача и результат]
+
+## Результаты
+
+[Показатели, наблюдения и подтверждающие данные]
+
+## Проблемы и риски
+
+- [Проблема и предлагаемое решение]
+
+## Выводы и следующие шаги
+
+- [Действие, ответственный и срок]
+</value></data>
 </root>

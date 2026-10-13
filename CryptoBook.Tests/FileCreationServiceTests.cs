@@ -86,6 +86,37 @@ namespace CryptoBook.Tests
             Assert.True(double.IsNaN(restored.PageHeight));
         }
 
+        [WpfTheory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Create_StoresSelectedTemplateContentBeforeFirstSave(bool encrypted)
+        {
+            var catalog = new DocumentTemplateCatalog();
+            var handlers = DocumentTemplateTests.CreateHandlers();
+            var templateService = DocumentTemplateTests.CreateService(catalog, handlers);
+            IFileTemplate format = encrypted ? new SecureFileTemplate() : new XamlPackageFileTemplate();
+            byte[] content = await templateService.CreateContentAsync(catalog.GetById("meeting"),
+                format, DocumentPaperSize.A3, true);
+            var processor = new SecureFileProcessorStub();
+            var creator = new FileCreationService(new LocalFileManagerStub(), processor,
+                new FileTemplateRegistry([new SecureFileTemplate(), new XamlPackageFileTemplate()]));
+            FileOperationResult result = await creator.CreateAsync(testDirectory, "meeting", format,
+                IfExistsMode.FailIfExists, false, false, CancellationToken.None, initialContent: content);
+            Assert.True(result.Success);
+            byte[] saved = encrypted ? processor.Plaintext! :
+                await File.ReadAllBytesAsync(result.AffectedPath!["local://".Length..]);
+            var restored = new System.Windows.Documents.FlowDocument();
+            await handlers.Find(new XamlPackageFileTemplate())!.LoadAsync(restored, saved);
+            string text = new System.Windows.Documents.TextRange(restored.ContentStart, restored.ContentEnd).Text;
+            Assert.Contains(catalog.GetById("meeting").DisplayName, text);
+            Assert.Equal(DocumentPageLayout.GetWidth(DocumentPaperSize.A3, true), restored.PageWidth);
+            if(encrypted)
+            {
+                Assert.Equal(".XamlPackage", processor.OriginalExtension);
+                Assert.All(content, value => Assert.Equal((byte)0, value));
+            }
+        }
+
         private sealed class SecureFileProcessorStub: ISecureFileProcessor
         {
             public byte[]? Plaintext { get; private set; }

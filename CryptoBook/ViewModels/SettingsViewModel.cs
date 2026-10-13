@@ -83,6 +83,13 @@ namespace CryptoBook.ViewModels
             set => model.NavigationPaneWidth = value;
         }
 
+        public IReadOnlyList<DocumentTemplate> DocumentTemplates => model.DocumentTemplates;
+        public DocumentTemplate SelectedDefaultDocumentTemplate
+        {
+            get => model.SelectedDefaultDocumentTemplate;
+            set => model.SelectedDefaultDocumentTemplate = value;
+        }
+
         public int SelectedSectionIndex
         {
             get => model.SelectedSectionIndex;

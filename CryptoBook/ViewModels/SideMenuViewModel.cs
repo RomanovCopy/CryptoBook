@@ -6,16 +6,18 @@ using CryptoBook.Models;
 using DTO = CryptoBook.DTO;
 
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
 {
-    public class SideMenuViewModel: ViewModelBase, ISideMenuViewModel
+    public class SideMenuViewModel: ViewModelBase, ISideMenuViewModel, IDisposable
     {
 
         private readonly SideMenuModel sideMenuModel;
         private readonly IDocumentTitleProvider documentTitleProvider;
+        private bool disposed;
 
         public string BookTitle => documentTitleProvider.Title;
         public IPinnedDocumentsViewModel PinnedDocuments { get; }
@@ -31,12 +33,17 @@ namespace CryptoBook.ViewModels
             sideMenuModel = new(scope);
             documentTitleProvider = scope.Resolve<IDocumentTitleProvider>();
             PinnedDocuments = scope.Resolve<IPinnedDocumentsViewModel>();
-            sideMenuModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
-            documentTitleProvider.PropertyChanged += (_, args) =>
-            {
-                if(args.PropertyName == nameof(IDocumentTitleProvider.Title))
-                    OnPropertyChanged(nameof(BookTitle));
-            };
+            sideMenuModel.PropertyChanged += OnModelPropertyChanged;
+            documentTitleProvider.PropertyChanged += OnDocumentTitleChanged;
+        }
+
+        private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs args) =>
+            OnPropertyChanged(args.PropertyName ?? string.Empty);
+
+        private void OnDocumentTitleChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(IDocumentTitleProvider.Title))
+                OnPropertyChanged(nameof(BookTitle));
         }
 
         public ICommand Loaded => loaded ??=
@@ -63,10 +70,18 @@ namespace CryptoBook.ViewModels
             new RelayCommand(ExecuteClosed, sideMenuModel.CanExecute_Lifecycle);
         RelayCommand closed;
 
-        private void ExecuteClosed(object? parameter)
+        private void ExecuteClosed(object? parameter) => Dispose();
+
+        public void Dispose()
         {
+            if(disposed)
+                return;
+            disposed = true;
+            loaded?.Cancel();
+            sideMenuModel.PropertyChanged -= OnModelPropertyChanged;
+            documentTitleProvider.PropertyChanged -= OnDocumentTitleChanged;
             PinnedDocuments.Dispose();
-            sideMenuModel.Execute_Closed(parameter);
+            sideMenuModel.Dispose();
         }
     }
 }

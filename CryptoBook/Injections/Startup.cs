@@ -227,6 +227,10 @@ namespace CryptoBook.Injections
             builder.RegisterType<UserStartupScreenPreferenceStore>()
                 .As<IStartupScreenPreferenceStore>()
                 .SingleInstance();
+            builder.RegisterType<DocumentTemplateCatalog>().As<IDocumentTemplateCatalog>().SingleInstance();
+            builder.RegisterType<DocumentTemplateService>().As<IDocumentTemplateService>().SingleInstance();
+            builder.RegisterType<UserDocumentTemplatePreferenceStore>()
+                .As<IDocumentTemplatePreferenceStore>().SingleInstance();
             builder.RegisterType<UserDocumentBackgroundPreferenceStore>()
                 .As<IDocumentBackgroundPreferenceStore>()
                 .SingleInstance();

@@ -22,6 +22,9 @@ namespace CryptoBook.Interfaces
         /// Коллекция доступных шаблонов файлов.
         /// </summary>
         public IReadOnlyList<IFileTemplate> Templates { get; }
+        IReadOnlyList<DocumentTemplate> DocumentTemplates { get; }
+        DocumentTemplate SelectedDocumentTemplate { get; set; }
+        bool IsBusy { get; }
         IReadOnlyList<DocumentPaperSize> PaperSizes { get; }
         DocumentPaperSize PaperSize { get; set; }
         bool IsLandscape { get; set; }

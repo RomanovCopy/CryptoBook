@@ -2,6 +2,9 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CryptoBook.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
+    <Setting Name="DefaultDocumentTemplateId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">empty</Value>
+    </Setting>
     <Setting Name="CultureInfo" Type="System.String" Scope="User">
       <Value Profile="(Default)">en-US</Value>
     </Setting>

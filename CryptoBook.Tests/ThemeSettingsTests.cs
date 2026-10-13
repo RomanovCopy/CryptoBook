@@ -734,6 +734,32 @@ public sealed class ThemeSettingsTests
             home.StartEditorAtActualSize);
     }
 
+    [Theory]
+    [InlineData("meeting", "meeting")]
+    [InlineData("unknown", DocumentTemplate.EmptyId)]
+    public void SettingsModel_LoadsAndPersistsDefaultDocumentTemplate(string storedId, string expectedId)
+    {
+        var store = new DocumentTemplatePreferenceStoreStub(storedId);
+        SettingsModel CreateModel() => new(new ThemeManagerStub(ApplicationTheme.Light),
+            new WindowManagerStub(), workspaceService: null, folderPickerService: null,
+            fileLauncherService: null, documentTemplatePreferenceStore: store);
+        using var model = CreateModel();
+        Assert.Equal(expectedId, model.SelectedDefaultDocumentTemplate.Id);
+        model.SelectedDefaultDocumentTemplate = model.DocumentTemplates.Single(template => template.Id == "report");
+        Assert.Equal("report", store.Load());
+        using var reopened = CreateModel();
+        Assert.Equal("report", reopened.SelectedDefaultDocumentTemplate.Id);
+        reopened.SelectedDefaultDocumentTemplate = reopened.DocumentTemplates.First();
+        Assert.Equal(DocumentTemplate.EmptyId, store.Load());
+    }
+
+    private sealed class DocumentTemplatePreferenceStoreStub(string id): IDocumentTemplatePreferenceStore
+    {
+        private string templateId = id;
+        public string Load() => templateId;
+        public void Save(string value) => templateId = value;
+    }
+
     [Fact]
     public void SettingsModel_PersistsNavigationPaneWidthOnClosing()
     {

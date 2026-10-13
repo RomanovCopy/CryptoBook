@@ -1,3 +1,5 @@
+using CryptoBook.Infrastructure;
+
 namespace CryptoBook.DTO;
 
 public enum StartupScreen
@@ -6,6 +8,13 @@ public enum StartupScreen
     Editor
 }
 
-public sealed record StartupScreenOption(
-    StartupScreen Screen,
-    string DisplayName);
+public sealed class StartupScreenOption(StartupScreen screen, string displayName): ViewModelBase
+{
+    public StartupScreen Screen { get; } = screen;
+    private string localizedDisplayName = displayName;
+    public string DisplayName => localizedDisplayName;
+
+    internal void RefreshLocalization() => SetProperty(ref localizedDisplayName,
+        LocalizationManager.GetString(Screen == StartupScreen.Editor ? "Editor.Editor" : "Home.StartTitle"),
+        nameof(DisplayName));
+}
