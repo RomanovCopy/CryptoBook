@@ -12,7 +12,10 @@ namespace CryptoBook.DTO
             string originalExtension,
             string temporaryDirectory)
         {
-            SourcePath = Path.GetFullPath(sourcePath);
+            StorageLocation source = StorageLocation.Parse(sourcePath);
+            SourcePath = source.IsLocal
+                ? Path.GetFullPath(source.OpaqueId)
+                : source.ToString();
             ContentPath = Path.GetFullPath(contentPath);
             OriginalExtension = originalExtension;
             TemporaryDirectory = Path.GetFullPath(temporaryDirectory);

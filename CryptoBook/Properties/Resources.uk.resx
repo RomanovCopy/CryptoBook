@@ -1050,6 +1050,9 @@
   <data name="Explorer.SaveDecryptedTitle" xml:space="preserve">
     <value>Зберегти розшифрований файл</value>
   </data>
+  <data name="Explorer.FileNameInvalid" xml:space="preserve">
+    <value>Введіть припустиме ім’я файлу без шляху до папки та заборонених символів.</value>
+  </data>
   <data name="Explorer.EncryptionError" xml:space="preserve">
     <value>Помилка шифрування</value>
   </data>

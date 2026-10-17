@@ -176,6 +176,7 @@
                 <RadioButton GroupName="TargetMode"
                              Style="{StaticResource DecryptionOptionRadioButtonStyle}"
                              Margin="0,5"
+                             IsEnabled="{Binding CanReplaceSource}"
                              IsChecked="{Binding SelectedTargetMode, Mode=TwoWay,
                         Converter={markup:ResolveConverter ConverterType={x:Type converters:EnumToBoolConverter}},
                         ConverterParameter={x:Static security:EncryptionTargetMode.ReplaceSource}}">

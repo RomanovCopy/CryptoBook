@@ -218,7 +218,7 @@ public sealed class WpdStorageProviderTests
             item => item.Name == "unexpected.bin");
     }
 
-    private sealed class BridgeStub: IWpdStorageBridge
+    internal sealed class BridgeStub: IWpdStorageBridge
     {
         public IReadOnlyList<WpdDeviceInfo> Devices { get; init; } = [];
         public Dictionary<(string Device, string Path), WpdStorageEntry> Entries { get; } = [];

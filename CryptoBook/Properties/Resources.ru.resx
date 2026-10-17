@@ -517,6 +517,7 @@
   <data name="Explorer.AllFilesFilter" xml:space="preserve"><value>Все файлы (*.*)|*.*</value></data>
   <data name="Explorer.SaveEncryptedTitle" xml:space="preserve"><value>Сохранить зашифрованный файл</value></data>
   <data name="Explorer.SaveDecryptedTitle" xml:space="preserve"><value>Сохранить расшифрованный файл</value></data>
+  <data name="Explorer.FileNameInvalid" xml:space="preserve"><value>Введите допустимое имя файла без пути к папке и запрещённых символов.</value></data>
   <data name="Explorer.EncryptionError" xml:space="preserve"><value>Ошибка шифрования</value></data>
   <data name="Explorer.DecryptionError" xml:space="preserve"><value>Ошибка дешифрования</value></data>
   <data name="Explorer.Encryption" xml:space="preserve"><value>Шифрование</value></data>

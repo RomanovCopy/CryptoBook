@@ -517,6 +517,7 @@
   <data name="Explorer.AllFilesFilter" xml:space="preserve"><value>All files (*.*)|*.*</value></data>
   <data name="Explorer.SaveEncryptedTitle" xml:space="preserve"><value>Save encrypted file</value></data>
   <data name="Explorer.SaveDecryptedTitle" xml:space="preserve"><value>Save decrypted file</value></data>
+  <data name="Explorer.FileNameInvalid" xml:space="preserve"><value>Enter a valid file name without a folder path or reserved characters.</value></data>
   <data name="Explorer.EncryptionError" xml:space="preserve"><value>Encryption error</value></data>
   <data name="Explorer.DecryptionError" xml:space="preserve"><value>Decryption error</value></data>
   <data name="Explorer.Encryption" xml:space="preserve"><value>Encryption</value></data>

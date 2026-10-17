@@ -14,16 +14,22 @@ namespace CryptoBook.Services
         private readonly ISecureFileValidator secureFileValidator;
         private readonly IDecryptedDocumentConversionService conversionService;
         private readonly string temporaryRoot;
+        private readonly IStorageFacade storage;
+        private readonly ITransferEngine transferEngine;
 
         public DecryptionExportService(
             ISecureFileProcessor secureFileProcessor,
             ISecureFileValidator secureFileValidator,
-            IDecryptedDocumentConversionService conversionService)
+            IDecryptedDocumentConversionService conversionService,
+            IStorageFacade? storageFacade = null,
+            ITransferEngine? transferEngine = null)
             : this(
                 secureFileProcessor,
                 secureFileValidator,
                 conversionService,
-                GetDefaultTemporaryRoot())
+                GetDefaultTemporaryRoot(),
+                storageFacade,
+                transferEngine)
         {
         }
 
@@ -31,7 +37,9 @@ namespace CryptoBook.Services
             ISecureFileProcessor secureFileProcessor,
             ISecureFileValidator secureFileValidator,
             IDecryptedDocumentConversionService conversionService,
-            string temporaryRoot)
+            string temporaryRoot,
+            IStorageFacade? storageFacade = null,
+            ITransferEngine? transferEngine = null)
         {
             this.secureFileProcessor = secureFileProcessor ??
                 throw new ArgumentNullException(nameof(secureFileProcessor));
@@ -40,6 +48,8 @@ namespace CryptoBook.Services
             this.conversionService = conversionService ??
                 throw new ArgumentNullException(nameof(conversionService));
             this.temporaryRoot = Path.GetFullPath(temporaryRoot);
+            storage = storageFacade ?? new StorageFacade([new LocalStorageProvider()]);
+            this.transferEngine = transferEngine ?? new TransferEngine(storage);
             CleanupOrphanedDirectories(this.temporaryRoot);
         }
 
@@ -49,16 +59,7 @@ namespace CryptoBook.Services
             CancellationToken cancellationToken = default)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
-            string fullSourcePath = Path.GetFullPath(sourcePath);
-            if(!await secureFileValidator.HasCryptoBookHeaderAsync(
-                fullSourcePath,
-                cancellationToken))
-            {
-                throw new InvalidDataException(
-                    LocalizationManager.GetString(
-                        "Security.NotEncryptedCryptoBookFile"));
-            }
-
+            StorageLocation sourceLocation = storage.Resolve(sourcePath);
             string directory = Path.Combine(
                 temporaryRoot,
                 $"{Environment.ProcessId}-{Guid.NewGuid():N}");
@@ -67,6 +68,27 @@ namespace CryptoBook.Services
 
             try
             {
+                string fullSourcePath = sourceLocation.IsLocal
+                    ? Path.GetFullPath(sourceLocation.OpaqueId)
+                    : Path.Combine(directory, "source.cbook");
+                if(!sourceLocation.IsLocal)
+                {
+                    FileOperationResult download = await transferEngine.CopyAsync(
+                        sourceLocation,
+                        new StorageLocation(StorageLocation.LocalProviderId, fullSourcePath),
+                        progress,
+                        cancellationToken);
+                    if(!download.Success)
+                        throw new IOException(download.ErrorMessage);
+                }
+                if(!await secureFileValidator.HasCryptoBookHeaderAsync(
+                    fullSourcePath,
+                    cancellationToken))
+                {
+                    throw new InvalidDataException(
+                        LocalizationManager.GetString("Security.NotEncryptedCryptoBookFile"));
+                }
+
                 await using DecryptedFileContent decrypted =
                     await secureFileProcessor.DecryptFileContentAsync(
                         fullSourcePath,
@@ -88,7 +110,7 @@ namespace CryptoBook.Services
                 }
 
                 return new PreparedDecryption(
-                    fullSourcePath,
+                    sourceLocation.IsLocal ? fullSourcePath : storage.Format(sourceLocation),
                     contentPath,
                     NormalizeExtension(decrypted.OriginalExtension),
                     directory);
@@ -155,8 +177,19 @@ namespace CryptoBook.Services
                         "DecryptionExport.UnsupportedConversion"));
             }
 
+            StorageLocation destinationLocation = storage.Resolve(destinationPath);
+            if(!destinationLocation.IsLocal)
+            {
+                return await PublishToRemoteAsync(
+                    prepared,
+                    options,
+                    destinationLocation,
+                    progress,
+                    cancellationToken);
+            }
+
             string finalPath = Path.ChangeExtension(
-                Path.GetFullPath(destinationPath),
+                Path.GetFullPath(destinationLocation.OpaqueId),
                 GetOutputExtension(
                     prepared.OriginalExtension,
                     options.OutputFormat));
@@ -220,12 +253,11 @@ namespace CryptoBook.Services
                 File.Move(stagingPath, finalPath);
                 progress?.Report(1.0, finalPath);
 
-                if(options.TargetMode == EncryptionTargetMode.ReplaceSource &&
-                   !PathsEqual(finalPath, prepared.SourcePath) &&
-                   File.Exists(prepared.SourcePath))
-                {
-                    AtomicFileCommit.DeleteIfExists(prepared.SourcePath);
-                }
+                await DeleteReplacedSourceAsync(
+                    prepared,
+                    options,
+                    storage.Resolve(finalPath),
+                    cancellationToken);
 
                 return finalPath;
             }
@@ -241,6 +273,77 @@ namespace CryptoBook.Services
             {
                 TryDeleteFile(stagingPath);
             }
+        }
+
+        private async Task<string> PublishToRemoteAsync(
+            PreparedDecryption prepared,
+            DecryptionOptions options,
+            StorageLocation destination,
+            IProgressReporter? progress,
+            CancellationToken cancellationToken)
+        {
+            if(await storage.GetMetadataAsync(destination, cancellationToken) is not null)
+            {
+                destination = await storage.CreateUniqueLocationAsync(
+                    destination,
+                    isContainer: false,
+                    cancellationToken);
+            }
+
+            // Conversion needs a local stream. Keep its result inside the
+            // prepared workspace, then let the transport verify the upload.
+            string stagingPath = Path.Combine(
+                prepared.TemporaryDirectory,
+                $"export-{Guid.NewGuid():N}" + GetOutputExtension(
+                    prepared.OriginalExtension,
+                    options.OutputFormat));
+            try
+            {
+                await PublishAsync(
+                    prepared,
+                    options with { TargetMode = EncryptionTargetMode.SaveAs },
+                    stagingPath,
+                    progress: null,
+                    cancellationToken);
+                FileOperationResult result = await transferEngine.MoveAsync(
+                    new StorageLocation(StorageLocation.LocalProviderId, stagingPath),
+                    destination,
+                    progress,
+                    cancellationToken);
+                if(!result.Success)
+                    throw new IOException(result.ErrorMessage);
+
+                await DeleteReplacedSourceAsync(
+                    prepared,
+                    options,
+                    destination,
+                    cancellationToken);
+
+                return storage.Format(destination);
+            }
+            finally
+            {
+                TryDeleteFile(stagingPath);
+            }
+        }
+
+        private async Task DeleteReplacedSourceAsync(
+            PreparedDecryption prepared,
+            DecryptionOptions options,
+            StorageLocation destination,
+            CancellationToken cancellationToken)
+        {
+            if(options.TargetMode != EncryptionTargetMode.ReplaceSource)
+                return;
+
+            StorageLocation source = storage.Resolve(prepared.SourcePath);
+            if(storage.AreEquivalent(source, destination))
+                return;
+
+            FileOperationResult deleted = await storage.GetProvider(source)
+                .DeleteAsync(source, cancellationToken);
+            if(!deleted.Success)
+                throw new IOException(deleted.ErrorMessage);
         }
 
         private static async Task CopyOriginalAsync(
@@ -327,11 +430,8 @@ namespace CryptoBook.Services
             }
         }
 
-        private static bool PathsEqual(string first, string second) =>
-            string.Equals(
-                Path.GetFullPath(first),
-                Path.GetFullPath(second),
-                StringComparison.OrdinalIgnoreCase);
+        private bool PathsEqual(string first, string second) =>
+            storage.AreEquivalent(storage.Resolve(first), storage.Resolve(second));
 
         private static void TryDeleteDirectory(string directory)
         {
