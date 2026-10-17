@@ -496,6 +496,23 @@ namespace CryptoBook.ViewModels
             new RelayCommand(ExecuteProperties, CanExecuteProperties);
         RelayCommand _propertiesCommand;
 
+        public ICommand DetailedPropertiesCommand => _detailedPropertiesCommand ??=
+            new RelayCommand(ExecuteDetailedProperties, CanExecuteProperties);
+        private RelayCommand? _detailedPropertiesCommand;
+
+        private void ExecuteDetailedProperties(object? parameter)
+        {
+            var selection = FileExplorerSelectionPolicy.CreateSnapshot(parameter);
+            if(selection.Count != 1)
+                return;
+            Guid id = _windowManager.CreateWindow<CryptoBook.Views.FileDetailsWindow>(
+                new Dictionary<string, object?>
+                {
+                    [FileDetailsViewModel.TargetContextKey] = FileDetailsTarget.FromItem(selection[0])
+                });
+            _windowManager.ShowWindow(id);
+        }
+
         private bool CanExecuteProperties(object? parameter) =>
             !IsCurrentDirectoryUnavailable &&
             FileExplorerSelectionPolicy.IsSingle(parameter);

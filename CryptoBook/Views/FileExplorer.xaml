@@ -616,6 +616,9 @@
                                               Command="{Binding PlacementTarget.Tag.DecryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
                                     <Separator/>
+                                    <MenuItem Header="{Binding [FileDetails.Title], Source={StaticResource Res}}"
+                                              Command="{Binding PlacementTarget.Tag.DetailedPropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
                                     <MenuItem Header="{Binding [Common.Properties], Source={StaticResource Res}}"
                                               Command="{Binding PlacementTarget.Tag.PropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Converter={StaticResource SystemItemSelectionSnapshotConverter}}"/>
@@ -765,6 +768,10 @@
                                                Command="{Binding PlacementTarget.Tag.DecryptCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                      <Separator/>
+                                     <MenuItem Header="{Binding [FileDetails.Title], Source={StaticResource Res}}"
+                                               InputGestureText="Alt+Enter"
+                                               Command="{Binding PlacementTarget.Tag.DetailedPropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                      <MenuItem Header="{Binding [Common.Properties], Source={StaticResource Res}}"
                                                Command="{Binding PlacementTarget.Tag.PropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
@@ -774,6 +781,8 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.InputBindings>
+                    <KeyBinding Key="Enter" Modifiers="Alt" Command="{Binding DetailedPropertiesCommand}"
+                                CommandParameter="{Binding SelectedItemsSnapshot}"/>
                     <KeyBinding Key="Enter" Command="{Binding RenameCommand}" CommandParameter="{Binding SelectedItem,
                         RelativeSource={RelativeSource AncestorType=ListView}}"/>
                     <KeyBinding Key="Escape" Command="{Binding CancelRenameCommand}" CommandParameter="{Binding SelectedItem,

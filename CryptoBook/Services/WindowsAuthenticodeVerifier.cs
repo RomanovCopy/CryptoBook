@@ -26,7 +26,57 @@ namespace CryptoBook.Services
         private static readonly Guid VerifyAction = new(
             "00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
 
-        public AuthenticodeStatus Verify(string filePath)
+        public AuthenticodeStatus Verify(string filePath) => Verify(filePath, false, out _);
+
+        internal AuthenticodeStatus VerifyOffline(string filePath, out int statusCode) =>
+            Verify(filePath, true, out statusCode);
+
+        internal int VerifyCatalogOffline(string catalogPath, string memberPath,
+            byte[] memberHash, IntPtr memberHandle, IntPtr catalogAdmin)
+        {
+            IntPtr hash = Marshal.AllocHGlobal(memberHash.Length);
+            IntPtr catalog = Marshal.AllocHGlobal(Marshal.SizeOf<WinTrustCatalogInfo>());
+            try
+            {
+                Marshal.Copy(memberHash, 0, hash, memberHash.Length);
+                var info = new WinTrustCatalogInfo
+                {
+                    Size = (uint)Marshal.SizeOf<WinTrustCatalogInfo>(),
+                    CatalogPath = catalogPath,
+                    MemberTag = Convert.ToHexString(memberHash),
+                    MemberPath = memberPath,
+                    MemberHandle = memberHandle,
+                    CalculatedHash = hash,
+                    CalculatedHashSize = (uint)memberHash.Length,
+                    CatalogAdmin = catalogAdmin
+                };
+                Marshal.StructureToPtr(info, catalog, false);
+                var data = new WinTrustData
+                {
+                    StructureSize = (uint)Marshal.SizeOf<WinTrustData>(),
+                    UiChoice = WtdUiNone,
+                    UnionChoice = 2, // WTD_CHOICE_CATALOG
+                    FileInfoPointer = catalog,
+                    ProviderFlags = 0x00001010
+                };
+                IntPtr pointer = Marshal.AllocHGlobal(Marshal.SizeOf<WinTrustData>());
+                try
+                {
+                    Marshal.StructureToPtr(data, pointer, false);
+                    Guid action = VerifyAction;
+                    return WinVerifyTrust(new IntPtr(-1), ref action, pointer);
+                }
+                finally { Marshal.DestroyStructure<WinTrustData>(pointer); Marshal.FreeHGlobal(pointer); }
+            }
+            finally
+            {
+                Marshal.DestroyStructure<WinTrustCatalogInfo>(catalog);
+                Marshal.FreeHGlobal(catalog);
+                Marshal.FreeHGlobal(hash);
+            }
+        }
+
+        private static AuthenticodeStatus Verify(string filePath, bool offline, out int statusCode)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
@@ -49,7 +99,7 @@ namespace CryptoBook.Services
                     UnionChoice = WtdChoiceFile,
                     FileInfoPointer = fileInfoPointer,
                     StateAction = WtdStateActionIgnore,
-                    ProviderFlags = WtdRevocationCheckChainExcludeRoot
+                    ProviderFlags = offline ? 0x00001010u : WtdRevocationCheckChainExcludeRoot
                 };
                 IntPtr trustDataPointer = Marshal.AllocHGlobal(
                     Marshal.SizeOf<WinTrustData>());
@@ -62,10 +112,12 @@ namespace CryptoBook.Services
                         new IntPtr(-1),
                         ref action,
                         trustDataPointer);
+                    statusCode = result;
                     return result switch
                     {
                         ErrorSuccess => AuthenticodeStatus.Valid,
                         TrustENoSignature => AuthenticodeStatus.NotSigned,
+                        unchecked((int)0x800B0003) when offline => AuthenticodeStatus.NotSigned,
                         _ => AuthenticodeStatus.Invalid
                     };
                 }
@@ -91,6 +143,18 @@ namespace CryptoBook.Services
             IntPtr windowHandle,
             [In] ref Guid actionId,
             IntPtr trustData);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct WinTrustCatalogInfo
+        {
+            public uint Size, CatalogVersion;
+            [MarshalAs(UnmanagedType.LPWStr)] public string CatalogPath;
+            [MarshalAs(UnmanagedType.LPWStr)] public string MemberTag;
+            [MarshalAs(UnmanagedType.LPWStr)] public string MemberPath;
+            public IntPtr MemberHandle, CalculatedHash;
+            public uint CalculatedHashSize;
+            public IntPtr CatalogContext, CatalogAdmin;
+        }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct WinTrustFileInfo

@@ -70,6 +70,8 @@ See the [release notes](docs/releases/v1.1.4.2.md) and [changelog](CHANGELOG.md)
   editor scaling and layout preservation in XamlPackage and protected rich-text saves;
 - zoom with Ctrl + mouse wheel and reset the editor view to 100%;
 - browse folders and files with sorting, favorites and change monitoring;
+- inspect [detailed file properties](docs/FILE_DETAILS.md), content signatures, extension mismatches,
+  Windows metadata, permissions, streams, digital signatures and SHA-256/SHA-512 checksums;
 - pin frequently used documents with Quick Access;
 - search file names inside the selected workspace;
 - perform full-text search across supported documents, including `.cbook` files after unlock;

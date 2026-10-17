@@ -1,0 +1,114 @@
+<Window x:Class="CryptoBook.Views.FileDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:infra="clr-namespace:CryptoBook.Infrastructure"
+        Title="{Binding Title}" Width="1120" Height="760" MinWidth="760" MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}">
+    <Window.Resources>
+        <infra:ResourceWrapper x:Key="Res"/>
+        <BooleanToVisibilityConverter x:Key="BoolVisibility"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBox Text="{Binding DisplayPath, Mode=OneWay}" IsReadOnly="True" BorderThickness="0"
+                 Background="Transparent" FontSize="14" TextWrapping="Wrap" MaxHeight="64"
+                 VerticalScrollBarVisibility="Auto"/>
+        <Border Grid.Row="1" Margin="0,10" Padding="12" BorderThickness="2" CornerRadius="4">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                    <Setter Property="Background" Value="{DynamicResource CurrentInputBackground}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasWarning}" Value="True">
+                            <Setter Property="BorderBrush" Value="#D98200"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel>
+                <TextBlock FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap">
+                    <Run Text="{Binding [FileDetails.DetectedType], Source={StaticResource Res}, Mode=OneWay}"/>
+                    <Run Text=": "/><Run Text="{Binding DetectedType, Mode=OneWay}"/>
+                </TextBlock>
+                <ScrollViewer MaxHeight="122" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
+                    <TextBlock Text="{Binding InspectionMessage}" TextWrapping="Wrap"/>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
+        <DockPanel Grid.Row="2" Margin="0,0,0,10" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="10,0,0,0">
+                <Button Content="{Binding [Common.Refresh], Source={StaticResource Res}}"
+                        Command="{Binding RefreshCommand}" Padding="10,5" Margin="0,0,6,0"/>
+                <Button Content="{Binding [FileDetails.CalculateHashes], Source={StaticResource Res}}"
+                        Command="{Binding HashCommand}" Padding="10,5"/>
+            </StackPanel>
+            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"
+                     ToolTip="{Binding [FileDetails.Search], Source={StaticResource Res}}"
+                     AutomationProperties.Name="{Binding [FileDetails.Search], Source={StaticResource Res}}"/>
+        </DockPanel>
+        <DataGrid x:Name="PropertiesGrid" Grid.Row="3" ItemsSource="{Binding VisibleRows}"
+                  IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                  SelectionMode="Extended" SelectionUnit="FullRow" HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                  Background="{DynamicResource CurrentInputBackground}" Foreground="{DynamicResource CurrentInputForeground}"
+                  BorderBrush="{DynamicResource CurrentBorderColor}" HorizontalGridLinesBrush="{DynamicResource CurrentBorderColor}"
+                  RowBackground="{DynamicResource CurrentInputBackground}" EnableRowVirtualization="True">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+                    <Setter Property="Padding" Value="8"/>
+                </Style>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+                <Style x:Key="CellText" TargetType="TextBlock">
+                    <Setter Property="Padding" Value="6"/>
+                    <Setter Property="TextWrapping" Value="Wrap"/>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{Binding [FileDetails.Category], Source={StaticResource Res}}"
+                                    Binding="{Binding Category}" Width="130" ElementStyle="{StaticResource CellText}"/>
+                <DataGridTextColumn Header="{Binding [FileDetails.Property], Source={StaticResource Res}}"
+                                    Binding="{Binding Name}" Width="200" ElementStyle="{StaticResource CellText}"/>
+                <DataGridTextColumn Header="{Binding [FileDetails.Value], Source={StaticResource Res}}"
+                                    Binding="{Binding Value}" Width="*" MinWidth="200" ElementStyle="{StaticResource CellText}"/>
+                <DataGridTextColumn Header="{Binding [FileDetails.Key], Source={StaticResource Res}}"
+                                    Binding="{Binding Key}" Width="220" ElementStyle="{StaticResource CellText}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="4" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Status}" TextWrapping="Wrap" MaxHeight="42"/>
+                <ProgressBar Height="3" Margin="0,5,0,0" Value="{Binding Progress, Mode=OneWay}" Maximum="100"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolVisibility}}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="{Binding [Common.Cancel], Source={StaticResource Res}}" Command="{Binding CancelCommand}"
+                        Padding="10,6" Margin="0,0,6,0"/>
+                <Button Content="{Binding [FileDetails.CopySelected], Source={StaticResource Res}}"
+                        Click="CopySelected_Click" Padding="10,6" Margin="0,0,6,0"/>
+                <Button Content="{Binding [FileDetails.CopyReport], Source={StaticResource Res}}"
+                        Click="CopyReport_Click" Padding="10,6" Margin="0,0,6,0"/>
+                <Button Content="{Binding [Common.Close], Source={StaticResource Res}}"
+                        Click="Close_Click" Padding="10,6" IsCancel="True"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

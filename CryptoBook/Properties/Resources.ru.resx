@@ -1057,4 +1057,96 @@
 
 - [Действие, ответственный и срок]
 </value></data>
+  <data name="FileDetails.Title" xml:space="preserve"><value>Подробные свойства</value></data>
+  <data name="FileDetails.General" xml:space="preserve"><value>Общие</value></data>
+  <data name="FileDetails.Storage" xml:space="preserve"><value>Хранение</value></data>
+  <data name="FileDetails.Security" xml:space="preserve"><value>Владелец и права</value></data>
+  <data name="FileDetails.Streams" xml:space="preserve"><value>Потоки данных</value></data>
+  <data name="FileDetails.Version" xml:space="preserve"><value>Сведения о версии</value></data>
+  <data name="FileDetails.Metadata" xml:space="preserve"><value>Метаданные Windows</value></data>
+  <data name="FileDetails.Hashes" xml:space="preserve"><value>Контрольные суммы</value></data>
+  <data name="FileDetails.Signature" xml:space="preserve"><value>Цифровая подпись</value></data>
+  <data name="FileDetails.Inspection" xml:space="preserve"><value>Проверка содержимого</value></data>
+  <data name="FileDetails.Name" xml:space="preserve"><value>Полное имя (управляющие символы раскрыты)</value></data>
+  <data name="FileDetails.Path" xml:space="preserve"><value>Отображаемый путь</value></data>
+  <data name="FileDetails.StorageLocation" xml:space="preserve"><value>Идентификатор расположения</value></data>
+  <data name="FileDetails.Size" xml:space="preserve"><value>Логический размер</value></data>
+  <data name="FileDetails.Kind" xml:space="preserve"><value>Тип объекта</value></data>
+  <data name="FileDetails.Extension" xml:space="preserve"><value>Последнее расширение</value></data>
+  <data name="FileDetails.Created" xml:space="preserve"><value>Создан (местное время / UTC)</value></data>
+  <data name="FileDetails.Modified" xml:space="preserve"><value>Изменён (местное время / UTC)</value></data>
+  <data name="FileDetails.Accessed" xml:space="preserve"><value>Последний доступ (местное время / UTC)</value></data>
+  <data name="FileDetails.Attributes" xml:space="preserve"><value>Атрибуты</value></data>
+  <data name="FileDetails.LinkTarget" xml:space="preserve"><value>Цель ссылки</value></data>
+  <data name="FileDetails.StoredSize" xml:space="preserve"><value>Размер с учётом сжатия / разреженности</value></data>
+  <data name="FileDetails.HardLinks" xml:space="preserve"><value>Количество жёстких ссылок</value></data>
+  <data name="FileDetails.FileId" xml:space="preserve"><value>ID файла (в пределах тома)</value></data>
+  <data name="FileDetails.VolumeId" xml:space="preserve"><value>Серийный номер тома</value></data>
+  <data name="FileDetails.FileSystem" xml:space="preserve"><value>Файловая система</value></data>
+  <data name="FileDetails.VolumeLabel" xml:space="preserve"><value>Метка тома</value></data>
+  <data name="FileDetails.DriveType" xml:space="preserve"><value>Тип накопителя</value></data>
+  <data name="FileDetails.Owner" xml:space="preserve"><value>Владелец</value></data>
+  <data name="FileDetails.Group" xml:space="preserve"><value>Основная группа</value></data>
+  <data name="FileDetails.AclProtected" xml:space="preserve"><value>Наследование ACL отключено</value></data>
+  <data name="FileDetails.AclCanonical" xml:space="preserve"><value>ACL в каноническом порядке</value></data>
+  <data name="FileDetails.Sddl" xml:space="preserve"><value>Дескриптор безопасности (SDDL)</value></data>
+  <data name="FileDetails.Availability" xml:space="preserve"><value>Область проверки / ограничения</value></data>
+  <data name="FileDetails.Status" xml:space="preserve"><value>Состояние</value></data>
+  <data name="FileDetails.Unavailable" xml:space="preserve"><value>Недоступно</value></data>
+  <data name="FileDetails.NoStreams" xml:space="preserve"><value>Потоки данных отсутствуют</value></data>
+  <data name="FileDetails.ZoneTruncated" xml:space="preserve"><value>Zone.Identifier длиннее 16 384 символов; показано только начало.</value></data>
+  <data name="FileDetails.RemoteLimit" xml:space="preserve"><value>Показаны доступные сведения устройства. Проверка содержимого, свойств NTFS и подписи требует локального файла.</value></data>
+  <data name="FileDetails.AclLimit" xml:space="preserve"><value>Это сохранённые правила доступа, а не расчёт эффективных разрешений. Правила аудита (SACL) требуют дополнительных привилегий и не запрашиваются.</value></data>
+  <data name="FileDetails.Directory" xml:space="preserve"><value>Каталог</value></data>
+  <data name="FileDetails.File" xml:space="preserve"><value>Файл</value></data>
+  <data name="FileDetails.NoVersion" xml:space="preserve"><value>Ресурс версии не найден</value></data>
+  <data name="FileDetails.FileChanged" xml:space="preserve"><value>Файл изменился во время расчёта. Обновите сведения и повторите.</value></data>
+  <data name="FileDetails.VariantType" xml:space="preserve"><value>Значение не удалось преобразовать в текст (тип PROPVARIANT {0}).</value></data>
+  <data name="FileDetails.SignatureValid" xml:space="preserve"><value>Подпись проверена по локальному хранилищу доверия (без сети)</value></data>
+  <data name="FileDetails.SignatureNotSigned" xml:space="preserve"><value>Поддерживаемая подпись не найдена</value></data>
+  <data name="FileDetails.SignatureInvalid" xml:space="preserve"><value>Подпись не прошла проверку или доверие не установлено</value></data>
+  <data name="FileDetails.SignatureLimit" xml:space="preserve"><value>Проверка Authenticode без сети; актуальный отзыв сертификата не проверяется. Действительная подпись не гарантирует безвредность файла.</value></data>
+  <data name="FileDetails.Subject" xml:space="preserve"><value>Субъект сертификата</value></data>
+  <data name="FileDetails.Issuer" xml:space="preserve"><value>Издатель сертификата</value></data>
+  <data name="FileDetails.SerialNumber" xml:space="preserve"><value>Серийный номер сертификата</value></data>
+  <data name="FileDetails.Thumbprint" xml:space="preserve"><value>Отпечаток сертификата</value></data>
+  <data name="FileDetails.ValidFrom" xml:space="preserve"><value>Действителен с</value></data>
+  <data name="FileDetails.ValidTo" xml:space="preserve"><value>Действителен до</value></data>
+  <data name="FileDetails.SignatureAlgorithm" xml:space="preserve"><value>Алгоритм подписи</value></data>
+  <data name="FileDetails.Certificate" xml:space="preserve"><value>Встроенный сертификат</value></data>
+  <data name="FileDetails.NoEmbeddedCertificate" xml:space="preserve"><value>Встроенный сертификат подписанта прочитать не удалось (каталожные подписи хранятся отдельно).</value></data>
+  <data name="FileDetails.DetectedType" xml:space="preserve"><value>Тип по содержимому</value></data>
+  <data name="FileDetails.Header" xml:space="preserve"><value>Начальные байты (hex)</value></data>
+  <data name="FileDetails.UnknownType" xml:space="preserve"><value>Не определён по поддерживаемым сигнатурам</value></data>
+  <data name="FileDetails.MzType" xml:space="preserve"><value>Исполняемый заголовок MZ (DOS / PE / повреждённый исполняемый файл)</value></data>
+  <data name="FileDetails.ScriptType" xml:space="preserve"><value>Скрипт с заголовком интерпретатора</value></data>
+  <data name="FileDetails.ExecutableAsImage" xml:space="preserve"><value>ВНИМАНИЕ: под расширением изображения обнаружено исполняемое содержимое или ярлык.</value></data>
+  <data name="FileDetails.ActiveContent" xml:space="preserve"><value>Обнаружен заголовок программы, скрипта или ярлыка. Файл содержит признаки активного содержимого.</value></data>
+  <data name="FileDetails.ActiveExtension" xml:space="preserve"><value>Последнее расширение {0} может запускать код, открывать ссылку или изменять настройки системы.</value></data>
+  <data name="FileDetails.DoubleExtension" xml:space="preserve"><value>После расширения изображения стоит активное расширение. Полное имя может вводить в заблуждение.</value></data>
+  <data name="FileDetails.HiddenNameCharacters" xml:space="preserve"><value>Имя содержит невидимые символы или символы управления направлением текста. В отчёте они раскрыты как \uXXXX.</value></data>
+  <data name="FileDetails.TypeMismatch" xml:space="preserve"><value>Последнее расширение {0} не соответствует обнаруженной сигнатуре {1}.</value></data>
+  <data name="FileDetails.ImageUnconfirmed" xml:space="preserve"><value>У файла расширение изображения, но поддерживаемая сигнатура изображения не подтверждена. Возможен другой формат, повреждение или маскировка.</value></data>
+  <data name="FileDetails.InspectionFailed" xml:space="preserve"><value>Не удалось проверить содержимое. Тип файла не подтверждён.</value></data>
+  <data name="FileDetails.DirectoryLimit" xml:space="preserve"><value>Проверка сигнатуры содержимого применяется к файлам. Ниже показаны свойства каталога.</value></data>
+  <data name="FileDetails.Loading" xml:space="preserve"><value>Чтение свойств…</value></data>
+  <data name="FileDetails.CheckingSignature" xml:space="preserve"><value>Проверка цифровой подписи…</value></data>
+  <data name="FileDetails.Loaded" xml:space="preserve"><value>Собрано свойств: {0}</value></data>
+  <data name="FileDetails.Cancelled" xml:space="preserve"><value>Отменено. Собранные сведения сохранены.</value></data>
+  <data name="FileDetails.Hashing" xml:space="preserve"><value>Расчёт SHA-256 и SHA-512…</value></data>
+  <data name="FileDetails.CalculateHashes" xml:space="preserve"><value>Рассчитать хеши</value></data>
+  <data name="FileDetails.Search" xml:space="preserve"><value>Поиск по названиям, значениям и ключам свойств</value></data>
+  <data name="FileDetails.Category" xml:space="preserve"><value>Раздел</value></data>
+  <data name="FileDetails.Property" xml:space="preserve"><value>Свойство</value></data>
+  <data name="FileDetails.Value" xml:space="preserve"><value>Значение</value></data>
+  <data name="FileDetails.Key" xml:space="preserve"><value>Технический ключ</value></data>
+  <data name="FileDetails.CopySelected" xml:space="preserve"><value>Копировать выбранное</value></data>
+  <data name="FileDetails.CopyReport" xml:space="preserve"><value>Копировать весь отчёт</value></data>
+  <data name="FileDetails.ContentLimit" xml:space="preserve"><value>Сигнатуры определяют лишь часть форматов. Сигнатура изображения, знакомый значок или неизвестный тип не гарантируют безопасность. Проверка не запускает файл и не заменяет антивирус.</value></data>
+  <data name="FileDetails.PE" xml:space="preserve"><value>Заголовки PE</value></data>
+  <data name="FileDetails.RawValue" xml:space="preserve"><value>Значение без форматирования</value></data>
+  <data name="FileDetails.AllocationSize" xml:space="preserve"><value>Выделенное место на диске</value></data>
+  <data name="FileDetails.EmbeddedSignature" xml:space="preserve"><value>Состояние встроенной подписи</value></data>
+  <data name="FileDetails.CatalogCount" xml:space="preserve"><value>Найдено каталожных подписей</value></data>
+  <data name="FileDetails.CatalogPath" xml:space="preserve"><value>Каталог подписи</value></data>
 </root>
