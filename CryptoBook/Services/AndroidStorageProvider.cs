@@ -434,7 +434,9 @@ public sealed class AndroidStorageProvider:
         entry.LastWriteTimeUtc,
         entry.IsHidden,
         false,
-        Capabilities,
+        !entry.IsContainer
+            ? Capabilities | StorageProviderCapabilities.Encrypt
+            : Capabilities,
         entry.Path);
 
     private async Task EnsureOnlineAsync(

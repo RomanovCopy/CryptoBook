@@ -85,6 +85,9 @@ public sealed class WpdStorageProviderTests
         Assert.Contains(children, item => item.Name == "DCIM" && item.IsContainer);
         StorageItemMetadata file = Assert.Single(children, item => item.Name == "note.txt");
         Assert.Equal(12, file.Size);
+        Assert.True(file.Capabilities.HasFlag(StorageProviderCapabilities.Encrypt));
+        Assert.False(Assert.Single(children, item => item.IsContainer)
+            .Capabilities.HasFlag(StorageProviderCapabilities.Encrypt));
         Assert.DoesNotContain("/note.txt", file.Location.OpaqueId);
         Assert.Equal(root, provider.GetParent(file.Location));
     }
@@ -226,7 +229,7 @@ public sealed class WpdStorageProviderTests
         public bool CopyToLocalCalled { get; private set; }
         public bool CopyFromLocalCalled { get; private set; }
         public bool DestinationExistedBeforeDelete { get; private set; }
-        public bool CorruptCopiedFiles { get; init; }
+        public bool CorruptCopiedFiles { get; set; }
         public bool AddUnexpectedDestinationEntry { get; init; }
 
         public Task<IReadOnlyList<WpdDeviceInfo>> GetDevicesAsync(

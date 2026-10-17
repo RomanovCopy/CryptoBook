@@ -90,10 +90,11 @@ try
     var engine = new TransferEngine(storage);
 
     await DecryptionIntegration.RunAsync(storage, provider, remoteTestFolder.Value, localRoot);
-    if(args.Contains("--decryption-only", StringComparer.OrdinalIgnoreCase))
+    if(args.Contains("--decryption-only", StringComparer.OrdinalIgnoreCase) ||
+       args.Contains("--security-only", StringComparer.OrdinalIgnoreCase))
     {
         await DeleteRemoteTestFolderAsync();
-        Console.WriteLine("REMOTE_WPD_DECRYPTION_TEST: PASS");
+        Console.WriteLine("REMOTE_WPD_FILE_SECURITY_TEST: PASS");
         return 0;
     }
 

@@ -29,6 +29,8 @@ internal static class DecryptionIntegration
         var options = new DecryptionOptions(
             EncryptionTargetMode.SaveAs,
             DecryptionOutputFormat.Original);
+        var security = new FileSecurityService(
+            new UnusedItemFactory(), processor, storageFacade: storage, transferEngine: engine);
         (string Name, byte[] Content)[] fixtures =
         [
             ("Текст.txt", Encoding.UTF8.GetBytes(string.Concat(
@@ -39,6 +41,49 @@ internal static class DecryptionIntegration
 
         foreach((string name, byte[] content) in fixtures)
         {
+            StorageLocation rawSource = provider.GetChild(remoteFolder, "Исходник-" + name);
+            string rawLocal = Path.Combine(localRoot, "Исходник-" + name);
+            await File.WriteAllBytesAsync(rawLocal, content);
+            EnsureSuccess(await engine.CopyAsync(storage.Resolve(rawLocal), rawSource));
+            var rawItem = new FileItem
+            {
+                FullPath = rawSource.ToString(),
+                Name = "Исходник-" + Path.GetFileNameWithoutExtension(name),
+                Extension = Path.GetExtension(name), Size = content.Length
+            };
+            FileOperationBatchResult protectedCopy = await security.CreateProtectedCopiesAsync(
+                [rawItem], remoteFolder.ToString());
+            if(!protectedCopy.Success || protectedCopy.CompletedCount != 1)
+                throw new IOException(protectedCopy.Results.FirstOrDefault()?.ErrorMessage);
+            await VerifyRemoteAsync(rawSource, content);
+            string protectedPath = protectedCopy.Results[0].AffectedPath!;
+            await using(PreparedDecryption prepared = await export.PrepareAsync(protectedPath))
+            {
+                if(!SHA256.HashData(await File.ReadAllBytesAsync(prepared.ContentPath))
+                    .SequenceEqual(SHA256.HashData(content)))
+                    throw new IOException("Android protected-copy round trip failed.");
+            }
+            Console.WriteLine($"Android {Path.GetExtension(name)} -> Android .cbook: SHA256 OK; source preserved");
+
+            FileOperationResult replaced = await security.EncryptAsync(
+                rawItem, rawItem.FullPath, EncryptionTargetMode.ReplaceSource);
+            EnsureSuccess(replaced);
+            if(await provider.GetMetadataAsync(rawSource) is not null)
+                throw new IOException("Encrypted source was not replaced.");
+            // The copy already owns the desired .cbook name. Replacement must
+            // publish to a unique sibling and leave that earlier copy intact.
+            if(storage.AreEquivalent(storage.Resolve(protectedPath), storage.Resolve(replaced.AffectedPath!)))
+                throw new IOException("Existing protected copy was overwritten.");
+            await using(PreparedDecryption prepared = await export.PrepareAsync(replaced.AffectedPath!))
+            {
+                string restored = await export.PublishAsync(prepared,
+                    options with { TargetMode = EncryptionTargetMode.ReplaceSource }, rawSource.ToString());
+                await VerifyRemoteAsync(storage.Resolve(restored), content);
+            }
+            if(await provider.GetMetadataAsync(storage.Resolve(replaced.AffectedPath!)) is not null)
+                throw new IOException("Decrypted container was not replaced.");
+            Console.WriteLine($"Android encrypt/replace -> decrypt/replace {Path.GetExtension(name)}: SHA256 OK; conflict copy preserved");
+
             string extension = Path.GetExtension(name);
             string encrypted = Path.Combine(localRoot, name + ".cbook");
             await using(var input = new MemoryStream(content, writable: false))
@@ -93,6 +138,12 @@ internal static class DecryptionIntegration
             if(!SHA256.HashData(content).SequenceEqual(actualHash))
                 throw new IOException("Windows -> Android decrypted content mismatch.");
         }
+
+        static void EnsureSuccess(FileOperationResult result)
+        {
+            if(!result.Success)
+                throw new IOException(result.ErrorMessage);
+        }
     }
 
     private static void EnsureWorkspaceRemoved(string directory)
@@ -108,6 +159,13 @@ internal static class DecryptionIntegration
         public Task ConvertAsync(Stream source, string originalExtension,
             DecryptionOutputFormat targetFormat, Stream destination,
             CancellationToken cancellationToken = default) => throw new NotSupportedException();
+    }
+
+    private sealed class UnusedItemFactory: ISystemItemCreateService
+    {
+        public IDriveItem CreateRoot(string path) => throw new NotSupportedException();
+        public IDirectoryItem CreateDirectory(string path, ISystemItem? parent) => throw new NotSupportedException();
+        public IFileItem CreateFile(string path, ISystemItem? parent) => throw new NotSupportedException();
     }
 
     // A disposable random password used only for generated integration fixtures.
