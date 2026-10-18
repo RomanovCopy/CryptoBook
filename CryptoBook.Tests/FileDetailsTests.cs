@@ -118,7 +118,10 @@ public sealed class FileDetailsTests: IDisposable
         Assert.Contains(rows, row => row.Key == "FileId" && row.Value.Length == 16);
         Assert.Contains(rows, row => row.Key == ":Zone.Identifier:$DATA");
         Assert.Contains(rows, row => row.Key == "Zone.Identifier" && row.Value.Contains("HostUrl="));
-        Assert.True(rows.Any(row => row.Key == "System.FileName" && row.Value.Contains("sample.png")),
+        // Windows can hide the extension in the formatted property value;
+        // the reader preserves the complete native value in the .Raw row.
+        Assert.True(rows.Any(row => row.Key is "System.FileName" or "System.FileName.Raw" &&
+            row.Value == "sample.png"),
             string.Join(Environment.NewLine, rows.Select(row => $"{row.Category}: {row.Key} = {row.Value}")));
         Assert.Contains(rows, row => row.Key == "System.Image.HorizontalSize" && row.Value.Contains('1'));
         Assert.DoesNotContain(rows, row => row.Key == "Error");
