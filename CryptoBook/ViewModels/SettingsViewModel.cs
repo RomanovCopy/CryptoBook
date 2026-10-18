@@ -1,5 +1,6 @@
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
+using CryptoBook.AI;
 using CryptoBook.Interfaces;
 
 using System.Reflection;
@@ -14,15 +15,18 @@ namespace CryptoBook.ViewModels
     {
         private readonly ISettingsModel model;
         private readonly IUpdateNotificationViewModel updateNotification;
+        public AiAssistantViewModel? Ai { get; }
 
         public SettingsViewModel(
             ISettingsModel model,
-            IUpdateNotificationViewModel updateNotification)
+            IUpdateNotificationViewModel updateNotification,
+            AiAssistantViewModel? ai = null)
         {
             this.model = model ??
                 throw new ArgumentNullException(nameof(model));
             this.updateNotification = updateNotification ??
                 throw new ArgumentNullException(nameof(updateNotification));
+            Ai = ai;
             model.PropertyChanged += (_, args) =>
             {
                 OnPropertyChanged(args.PropertyName ?? string.Empty);

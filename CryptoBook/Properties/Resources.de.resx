@@ -1150,4 +1150,85 @@ Autor: [Name]
   <data name="FileDetails.EmbeddedSignature" xml:space="preserve"><value>Status der eingebetteten Signatur</value></data>
   <data name="FileDetails.CatalogCount" xml:space="preserve"><value>Gefundene Katalogsignaturen</value></data>
   <data name="FileDetails.CatalogPath" xml:space="preserve"><value>Signaturkatalog</value></data>
+  <data name="AI.Assistant" xml:space="preserve"><value>KI-Assistent</value></data>
+  <data name="AI.You" xml:space="preserve"><value>Sie</value></data>
+  <data name="AI.ModelSettings" xml:space="preserve"><value>Modelleinstellungen</value></data>
+  <data name="AI.LocalDescription" xml:space="preserve"><value>Wählen Sie eine GGUF-Modelldatei. Das Modell läuft in CryptoBook auf diesem Computer. Eine separate Anwendung oder ein Server ist nicht erforderlich.</value></data>
+  <data name="AI.Enable" xml:space="preserve"><value>KI-Assistent aktivieren</value></data>
+  <data name="AI.ModelPath" xml:space="preserve"><value>Modelldatei (.gguf)</value></data>
+  <data name="AI.Browse" xml:space="preserve"><value>Durchsuchen…</value></data>
+  <data name="AI.SelectModel" xml:space="preserve"><value>Sprachmodell auswählen</value></data>
+  <data name="AI.ModelFilter" xml:space="preserve"><value>GGUF-Modelle (*.gguf)|*.gguf</value></data>
+  <data name="AI.ContextLength" xml:space="preserve"><value>Kontext (Token)</value></data>
+  <data name="AI.MaxTokens" xml:space="preserve"><value>Maximale Antwort (Token)</value></data>
+  <data name="AI.Temperature" xml:space="preserve"><value>Kreativität (0–2)</value></data>
+  <data name="AI.IdleMinutes" xml:space="preserve"><value>Entladen nach Inaktivität (Minuten)</value></data>
+  <data name="AI.Advanced" xml:space="preserve"><value>Erweiterte Einstellungen</value></data>
+  <data name="AI.GpuLayers" xml:space="preserve"><value>Schichten auf der Grafikkarte</value></data>
+  <data name="AI.GpuHint" xml:space="preserve"><value>0 — nur RAM und CPU; -1 — alle Schichten auf der Grafikkarte. Bei Grafikspeichermangel den Wert verringern.</value></data>
+  <data name="AI.Reasoning" xml:space="preserve"><value>Ausführliches Nachdenken zulassen (Qwen und Gemma)</value></data>
+  <data name="AI.SystemPrompt" xml:space="preserve"><value>Anweisungen für das Modell</value></data>
+  <data name="AI.IdleHint" xml:space="preserve"><value>0 deaktiviert das automatische Entladen. Einstellungen werden für jede Modelldatei separat gespeichert.</value></data>
+  <data name="AI.TestModel" xml:space="preserve"><value>Modell testen</value></data>
+  <data name="AI.Stop" xml:space="preserve"><value>Stoppen</value></data>
+  <data name="AI.ModelMissing" xml:space="preserve"><value>Wählen Sie zuerst eine vorhandene Modelldatei.</value></data>
+  <data name="AI.InvalidModel" xml:space="preserve"><value>Wählen Sie ein Sprachmodell im GGUF-Format, keine mmproj-Projektordatei.</value></data>
+  <data name="AI.InvalidParameters" xml:space="preserve"><value>Prüfen Sie die Modellparameter.</value></data>
+  <data name="AI.LoadFailed" xml:space="preserve"><value>Modell konnte nicht geladen werden. Möglicherweise fehlt Speicher oder das GGUF-Format wird noch nicht unterstützt. Weniger GPU-Schichten oder ein kleineres Modell versuchen.</value></data>
+  <data name="AI.ContextFull" xml:space="preserve"><value>Der Dialog ist für den Modellkontext zu lang. Chat leeren, weniger Text anhängen oder den Kontext in den Modelleinstellungen erhöhen.</value></data>
+  <data name="AI.Loading" xml:space="preserve"><value>Modell wird geladen…</value></data>
+  <data name="AI.LoadProgress" xml:space="preserve"><value>Modell wird geladen: {0}%</value></data>
+  <data name="AI.Generating" xml:space="preserve"><value>Antwort wird erzeugt…</value></data>
+  <data name="AI.ProcessingImage" xml:space="preserve"><value>Bild wird verarbeitet…</value></data>
+  <data name="AI.Ready" xml:space="preserve"><value>Antwort fertig</value></data>
+  <data name="AI.Stopped" xml:space="preserve"><value>Generierung gestoppt</value></data>
+  <data name="AI.Unloaded" xml:space="preserve"><value>Modell aus dem Speicher entladen</value></data>
+  <data name="AI.SaveFailed" xml:space="preserve"><value>KI-Einstellungen konnten nicht gespeichert werden.</value></data>
+  <data name="AI.NoModel" xml:space="preserve"><value>Kein Modell ausgewählt</value></data>
+  <data name="AI.EmptyAnswer" xml:space="preserve"><value>Das Modell hat keinen sichtbaren Text zurückgegeben. Maximale Antwortlänge erhöhen.</value></data>
+  <data name="AI.GenerationFailed" xml:space="preserve"><value>Antwort konnte nicht erzeugt werden. Modelleinstellungen und freien Speicher prüfen.</value></data>
+  <data name="AI.CopyFailed" xml:space="preserve"><value>Zwischenablage ist belegt. Erneut versuchen.</value></data>
+  <data name="AI.DocumentChanged" xml:space="preserve"><value>Das ursprüngliche Dokument wurde geändert oder ist schreibgeschützt. Antwort kopieren und die Einfügestelle wählen.</value></data>
+  <data name="AI.Inserted" xml:space="preserve"><value>Antwort eingefügt; Strg+Z macht die Änderung rückgängig</value></data>
+  <data name="AI.ModelWorks" xml:space="preserve"><value>Modell geladen und Antwort erfolgreich erzeugt.</value></data>
+  <data name="AI.Unload" xml:space="preserve"><value>Modell entladen</value></data>
+  <data name="AI.Clear" xml:space="preserve"><value>Chat leeren</value></data>
+  <data name="AI.DisabledHint" xml:space="preserve"><value>Assistent aktivieren und in den Modelleinstellungen ein Modell auswählen.</value></data>
+  <data name="AI.Insert" xml:space="preserve"><value>Antwort einfügen</value></data>
+  <data name="AI.Replace" xml:space="preserve"><value>Auswahl ersetzen</value></data>
+  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Angehängten Text entfernen</value></data>
+  <data name="AI.AttachDocument" xml:space="preserve"><value>Aktuelles Dokument</value></data>
+  <data name="AI.Prompt" xml:space="preserve"><value>Nachricht an das Modell; Strg+Eingabe zum Senden</value></data>
+  <data name="AI.Send" xml:space="preserve"><value>Senden</value></data>
+  <data name="AI.ChatPrivacy" xml:space="preserve"><value>Lokale Verarbeitung. Chatnachrichten werden nicht auf Festplatte gespeichert.</value></data>
+  <data name="AI.OpenPanel" xml:space="preserve"><value>KI-Seitenleiste öffnen</value></data>
+  <data name="AI.ResponseSection" xml:space="preserve"><value>Modellantwort</value></data>
+  <data name="AI.MemorySection" xml:space="preserve"><value>Speicher und Leistung</value></data>
+  <data name="AI.BehaviorSection" xml:space="preserve"><value>Modellverhalten</value></data>
+  <data name="AI.MemoryMode.Automatic" xml:space="preserve"><value>Automatisch · RAM + Grafikspeicher</value></data>
+  <data name="AI.MemoryMode.CpuOnly" xml:space="preserve"><value>Nur CPU · RAM</value></data>
+  <data name="AI.MemoryMode.Manual" xml:space="preserve"><value>GPU-Schichten manuell festlegen</value></data>
+  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook wählt die Schichten für den Grafikspeicher und hält den Rest im RAM. Schlägt das Laden fehl, wird es mit weniger GPU-Schichten bis hin zum reinen CPU-Betrieb wiederholt.</value></data>
+  <data name="AI.MemoryHint.CpuOnly" xml:space="preserve"><value>Das Modell verwendet RAM und CPU. Grafikspeicher ist nicht erforderlich; Antworten können länger dauern.</value></data>
+  <data name="AI.MemoryHint.Manual" xml:space="preserve"><value>Wählen Sie die Anzahl der Schichten auf der Grafikkarte. Die übrigen verwenden RAM und CPU.</value></data>
+  <data name="AI.ResizePanel" xml:space="preserve"><value>Ziehen Sie den linken Rand, um die Breite des KI-Panels zu ändern</value></data>
+  <data name="AI.InvalidContextLength" xml:space="preserve"><value>Die Kontextlänge muss zwischen 512 und 131072 Token liegen.</value></data>
+  <data name="AI.InvalidMaxTokens" xml:space="preserve"><value>Die maximale Antwortlänge muss zwischen 1 und 131072 Token liegen.</value></data>
+  <data name="AI.InvalidTemperature" xml:space="preserve"><value>Kreativität muss eine Zahl zwischen 0 und 2 sein.</value></data>
+  <data name="AI.InvalidGpuLayers" xml:space="preserve"><value>Die Anzahl der GPU-Schichten muss zwischen -1 und 999 liegen.</value></data>
+  <data name="AI.InvalidMemoryMode" xml:space="preserve"><value>Wählen Sie einen Speichermodus aus der Liste.</value></data>
+  <data name="AI.InvalidIdleMinutes" xml:space="preserve"><value>Die Leerlaufzeit bis zum Entladen muss zwischen 0 und 120 Minuten liegen.</value></data>
+  <data name="AI.InvalidNumber" xml:space="preserve"><value>Geben Sie eine gültige Zahl im markierten Feld ein.</value></data>
+  <data name="AI.ReplyLimitHint" xml:space="preserve"><value>Das Antwortlimit ist eine Obergrenze. Bei weniger verbleibendem Kontext wird die Antwort automatisch entsprechend begrenzt.</value></data>
+  <data name="AI.AttachFiles" xml:space="preserve"><value>Dateien anhängen…</value></data>
+  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Dokumente und Bilder|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff</value></data>
+  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Dieses Dateiformat wird nicht unterstützt. Wählen Sie ein Textdokument, RTF, DOCX, XamlPackage oder ein unterstütztes Bild.</value></data>
+  <data name="AI.AttachmentTooLarge" xml:space="preserve"><value>Die Datei ist zu groß: höchstens 32 MB, 500000 Textzeichen und 100 Megapixel vor der Bildverkleinerung.</value></data>
+  <data name="AI.AttachmentEmpty" xml:space="preserve"><value>Das Dokument enthält keinen Text für das Modell.</value></data>
+  <data name="AI.AttachmentLimit" xml:space="preserve"><value>Pro Nachricht können bis zu vier Dateien angehängt werden.</value></data>
+  <data name="AI.AttachmentReadFailed" xml:space="preserve"><value>Die Datei konnte nicht gelesen werden. Prüfen Sie Format und Zugriffsrechte.</value></data>
+  <data name="AI.NoDocument" xml:space="preserve"><value>Öffnen Sie ein Dokument mit Text, um es anzuhängen.</value></data>
+  <data name="AI.DefaultFilePrompt" xml:space="preserve"><value>Analysiere die angehängten Dateien.</value></data>
+  <data name="AI.ImageNeedsVisionModel" xml:space="preserve"><value>Bilder benötigen ein Vision-Modell mit passender mmproj-GGUF-Datei im selben Ordner. Wählen Sie ein solches Modell in den Einstellungen.</value></data>
+  <data name="AI.ImageLoadFailed" xml:space="preserve"><value>Der Bildencoder konnte nicht geladen oder das Bild nicht verarbeitet werden.</value></data>
 </root>

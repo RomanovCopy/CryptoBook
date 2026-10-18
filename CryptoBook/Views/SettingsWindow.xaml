@@ -178,6 +178,12 @@
                             <TextBlock Text="{Binding [Settings.Developers], Source={StaticResource Res}}"/>
                         </StackPanel>
                     </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="AI" FontWeight="SemiBold" Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding [AI.Assistant], Source={StaticResource Res}}"/>
+                        </StackPanel>
+                    </ListBoxItem>
                 </ListBox>
             </DockPanel>
         </Border>
@@ -192,6 +198,23 @@
                       Focusable="False"
                       Cursor="SizeWE"
                       Background="{DynamicResource CurrentControlHoverBackground}"/>
+
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Style><Style TargetType="ScrollViewer"><Setter Property="Visibility" Value="Collapsed"/>
+                <Style.Triggers><DataTrigger Binding="{Binding SelectedSectionIndex}" Value="6"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+            </Style></ScrollViewer.Style>
+            <StackPanel Margin="28,24" DataContext="{Binding Ai}">
+                <TextBlock Text="{Binding [AI.Assistant], Source={StaticResource Res}}" FontSize="24" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding [AI.LocalDescription], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,8,0,22"/>
+                <CheckBox Style="{StaticResource ThemedCheckBoxStyle}" Content="{Binding [AI.Enable], Source={StaticResource Res}}" IsChecked="{Binding Enabled}" Margin="0,0,0,16"/>
+                <TextBlock Text="{Binding ModelName}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                <WrapPanel>
+                    <Button Content="{Binding [AI.ModelSettings], Source={StaticResource Res}}" Command="{Binding OpenSettings}" Padding="14,8" Margin="0,0,8,8"/>
+                    <Button Content="{Binding [AI.OpenPanel], Source={StaticResource Res}}" Command="{Binding OpenPanel}" Padding="14,8" Margin="0,0,0,8"/>
+                </WrapPanel>
+                <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
 
         <ScrollViewer Grid.Column="2"
                       VerticalScrollBarVisibility="Auto"

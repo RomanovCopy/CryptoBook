@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Accessors;
+using CryptoBook.AI;
 using CryptoBook.Composition;
 using CryptoBook.Converters;
 using CryptoBook.DTO;
@@ -35,6 +36,12 @@ namespace CryptoBook.Injections
             // Приложение.
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
             builder.RegisterInstance(dispatcher);
+            builder.RegisterType<AiSettingsStore>().SingleInstance();
+            builder.RegisterType<LocalAiInferenceService>().As<IAiInferenceService>().SingleInstance();
+            builder.RegisterType<AiEditorContext>().SingleInstance();
+            builder.RegisterType<AiAttachmentService>().SingleInstance();
+            builder.RegisterType<AiSettingsWindowService>().SingleInstance();
+            builder.RegisterType<AiAssistantViewModel>().SingleInstance();
 
 
 

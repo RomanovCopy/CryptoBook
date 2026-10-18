@@ -1,8 +1,8 @@
 # Third-party notices
 
 CryptoBook uses the third-party components listed below. This notice is based
-on the dependency locks committed for CryptoBook 1.1.4.3 and was audited on
-2026-09-07. A package's own license and notices control if this summary differs
+on the dependency locks for CryptoBook 1.1.4.4 and was updated on 2026-10-18. A package's own license
+and notices control if this summary differs
 from them. CryptoBook does not claim ownership of third-party software.
 
 The GNU GPL v3 text is in `LICENSE`. Other standard license texts are in
@@ -54,6 +54,15 @@ Project: <https://github.com/xoofx/markdig>. License text:
 
 ### MIT
 
+- `LLamaSharp`, `LLamaSharp.Backend.Vulkan.Windows`, and `LLamaSharp.Backend.Cpu`
+  0.30.0 — SciSharp STACK and the llama.cpp authors. The native inference engine
+  is based on llama.cpp commit `c0c7e147e7efa6c5858754b47259ba4880f8a906`.
+  Project: <https://github.com/SciSharp/LLamaSharp>. Exact notices:
+  `LICENSES/LLAMASHARP-0.30.0-LICENSE.txt` and `LICENSES/LLAMA-CPP-LICENSE.txt`.
+- `Microsoft.Extensions.AI.Abstractions` 10.11.0;
+  `Microsoft.Extensions.Logging.Abstractions`, `Microsoft.Bcl.AsyncInterfaces`,
+  and `Microsoft.Bcl.Memory` 10.0.13 — Microsoft and .NET Foundation contributors.
+
 - Self-contained Microsoft .NET Runtime and Windows Desktop Runtime 10.0.11 —
   Copyright © .NET Foundation and contributors. Exact runtime license and
   bundled notices: `LICENSES/DOTNET-10.0.11-LICENSE.txt` and
@@ -67,7 +76,7 @@ Project: <https://github.com/xoofx/markdig>. License text:
 - `Dragablz` 0.0.3.234 — Copyright James Willock, Mulholland Software and
   contributors.
 - `Microsoft.Data.Sqlite` and `Microsoft.Data.Sqlite.Core` 10.0.11;
-  `Microsoft.Extensions.DependencyInjection.Abstractions` 10.0.9;
+  `Microsoft.Extensions.DependencyInjection.Abstractions` 10.0.13;
   `Microsoft.Xaml.Behaviors.Wpf` 1.1.158; `System.Management` 10.0.11 —
   Microsoft and .NET Foundation contributors.
 - `Mono.Posix.NETStandard` 5.20.1-preview — Mono contributors/Microsoft.

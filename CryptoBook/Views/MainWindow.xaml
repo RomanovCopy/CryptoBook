@@ -113,9 +113,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <ContentControl x:Name="sidemenu" Content="{markup:ResolveUserControl UserControlType={x:Type control:SideMenu}}" Grid.Column="0"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:MyFrame}}" Grid.Column="1"/>
+            <control:AiAssistantPanel x:Name="AiPanel" Grid.Column="2" DataContext="{Binding Ai}"/>
         </Grid>
     </Grid>
         <Border x:Name="SecurityLockShield" Visibility="Collapsed"

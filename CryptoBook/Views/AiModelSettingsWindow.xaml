@@ -1,0 +1,151 @@
+<Window x:Class="CryptoBook.Views.AiModelSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding [AI.ModelSettings], Source={StaticResource Res}}"
+        Width="740" Height="820" MinWidth="600" MinHeight="540"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource CurrentWindowBackground}"
+        Foreground="{DynamicResource CurrentWindowForeground}"
+        Icon="{DynamicResource ApplicationWindowIcon}">
+    <Window.BindingGroup><BindingGroup/></Window.BindingGroup>
+    <Window.Resources>
+        <Style x:Key="SectionCard" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+        <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="Padding" Value="0,0,0,6"/>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Padding" Value="9,6"/>
+            <Setter Property="MinHeight" Value="34"/>
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="Foreground" Value="{DynamicResource CurrentInputForeground}"/>
+            <Setter Property="Background" Value="{DynamicResource CurrentInputBackground}"/>
+            <Style.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="24">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,20">
+            <TextBlock Text="{Binding [AI.ModelSettings], Source={StaticResource Res}}" FontSize="24" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding [AI.LocalDescription], Source={StaticResource Res}}" TextWrapping="Wrap"
+                       Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,6,0,0"/>
+        </StackPanel>
+        <ScrollViewer x:Name="SettingsScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
+            <StackPanel>
+                <Border Style="{StaticResource SectionCard}">
+                    <StackPanel>
+                        <CheckBox Style="{StaticResource ThemedCheckBoxStyle}" Content="{Binding [AI.Enable], Source={StaticResource Res}}" IsChecked="{Binding Enabled}" Margin="0,0,0,16"/>
+                        <Label Content="{Binding [AI.ModelPath], Source={StaticResource Res}}" Target="{Binding ElementName=ModelPathBox}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBox x:Name="ModelPathBox" Text="{Binding ModelPath, UpdateSourceTrigger=LostFocus}" ToolTip="{Binding ModelPath}"/>
+                            <Button Grid.Column="1" Content="{Binding [AI.Browse], Source={StaticResource Res}}" Command="{Binding Browse}" Margin="8,0,0,0" Padding="12,5"/>
+                        </Grid>
+                        <ComboBox x:Name="RecentModelsBox" ItemsSource="{Binding RecentModels}" SelectedItem="{Binding SelectedRecentModel, Mode=TwoWay}" Height="34" Margin="0,10,0,0" ToolTip="{Binding ModelPath}">
+                            <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource DropUpComboBoxStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RecentModels.Count}" Value="0"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+                                    <DataTrigger Binding="{Binding RecentModels.Count}" Value="1"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+                                </Style.Triggers>
+                            </Style></ComboBox.Style>
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource SectionCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding [AI.ResponseSection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,14"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                            <Label Content="{Binding [AI.ContextLength], Source={StaticResource Res}}" Target="{Binding ElementName=ContextBox}"/>
+                            <TextBox x:Name="ContextBox" Grid.Row="1" Text="{Binding ContextLength, ValidatesOnExceptions=True}" Margin="0,0,0,14"/>
+                            <Label Grid.Column="2" Content="{Binding [AI.MaxTokens], Source={StaticResource Res}}" Target="{Binding ElementName=TokensBox}"/>
+                            <TextBox x:Name="TokensBox" Grid.Row="1" Grid.Column="2" Text="{Binding MaxTokens, ValidatesOnExceptions=True}" ToolTip="{Binding [AI.ReplyLimitHint], Source={StaticResource Res}}" Margin="0,0,0,14"/>
+                            <Label Grid.Row="2" Content="{Binding [AI.Temperature], Source={StaticResource Res}}" Target="{Binding ElementName=TemperatureBox}"/>
+                            <TextBox x:Name="TemperatureBox" Grid.Row="3" Text="{Binding Temperature, ValidatesOnExceptions=True}"/>
+                            <Label Grid.Row="2" Grid.Column="2" Content="{Binding [AI.IdleMinutes], Source={StaticResource Res}}" Target="{Binding ElementName=IdleBox}"/>
+                            <TextBox x:Name="IdleBox" Grid.Row="3" Grid.Column="2" Text="{Binding IdleMinutes, ValidatesOnExceptions=True}"/>
+                        </Grid>
+                        <TextBlock Text="{Binding [AI.ReplyLimitHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,10,0,0"/>
+                        <TextBlock Text="{Binding [AI.IdleHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Expander x:Name="AdvancedSettings" Header="{Binding [AI.Advanced], Source={StaticResource Res}}" IsExpanded="True">
+                    <Expander.Template>
+                        <ControlTemplate TargetType="Expander">
+                            <StackPanel>
+                                <ToggleButton IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" HorizontalContentAlignment="Stretch" Margin="0,0,0,12">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border x:Name="HeaderBorder" Padding="12,10" CornerRadius="6" Background="{DynamicResource CurrentControlBackground}" BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="1">
+                                                <Grid>
+                                                    <ContentPresenter Content="{Binding Header, RelativeSource={RelativeSource AncestorType=Expander}}" Margin="0,0,24,0"/>
+                                                    <Path x:Name="Chevron" Data="M 0 0 L 5 5 L 10 0" Stroke="{DynamicResource CurrentWindowForeground}" StrokeThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5"/>
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True"><Setter TargetName="Chevron" Property="RenderTransform"><Setter.Value><RotateTransform Angle="180"/></Setter.Value></Setter></Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource CurrentControlHoverBackground}"/></Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource CurrentAccent}"/></Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ContentPresenter x:Name="AdvancedContent" Visibility="Collapsed"/>
+                            </StackPanel>
+                            <ControlTemplate.Triggers><Trigger Property="IsExpanded" Value="True"><Setter TargetName="AdvancedContent" Property="Visibility" Value="Visible"/></Trigger></ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Expander.Template>
+                    <StackPanel>
+                        <Border Style="{StaticResource SectionCard}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding [AI.MemorySection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,12"/>
+                                <ComboBox x:Name="MemoryModeBox" Style="{StaticResource DropUpComboBoxStyle}" ItemsSource="{Binding MemoryModes}" DisplayMemberPath="DisplayName" SelectedValuePath="Value" SelectedValue="{Binding MemoryMode}" Height="34"/>
+                                <TextBlock Text="{Binding MemoryDescription}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,8,0,0"/>
+                                <StackPanel Margin="0,14,0,0">
+                                    <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsManualMemoryMode}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
+                                    <Label Content="{Binding [AI.GpuLayers], Source={StaticResource Res}}" Target="{Binding ElementName=GpuBox}"/>
+                                    <TextBox x:Name="GpuBox" Text="{Binding GpuLayers, ValidatesOnExceptions=True}" MaxWidth="160" HorizontalAlignment="Left" MinWidth="120"/>
+                                    <TextBlock Text="{Binding [AI.GpuHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SectionCard}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding [AI.BehaviorSection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,14"/>
+                                <CheckBox Style="{StaticResource ThemedCheckBoxStyle}" Content="{Binding [AI.Reasoning], Source={StaticResource Res}}" IsChecked="{Binding UseReasoning}" Margin="0,0,0,16"/>
+                                <Label Content="{Binding [AI.SystemPrompt], Source={StaticResource Res}}" Target="{Binding ElementName=SystemPromptBox}"/>
+                                <TextBox x:Name="SystemPromptBox" Text="{Binding SystemPrompt}" AcceptsReturn="True" TextWrapping="Wrap" Height="100" VerticalScrollBarVisibility="Auto"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="2" Margin="0,16,0,0">
+            <TextBlock Text="{Binding Status}" TextWrapping="Wrap" MaxHeight="100" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,10"/>
+            <WrapPanel HorizontalAlignment="Right">
+                <Button x:Name="TestModelButton" Content="{Binding [AI.TestModel], Source={StaticResource Res}}" Click="TestWindow" IsEnabled="{Binding CanTest}" Padding="12,7" Margin="0,0,8,0"/>
+                <Button Content="{Binding [AI.Stop], Source={StaticResource Res}}" Command="{Binding StopTest}" Padding="12,7" Margin="0,0,8,0"/>
+                <Button x:Name="SaveModelButton" Content="{Binding [Common.Save], Source={StaticResource Res}}" Click="SaveWindow" Padding="16,7" Margin="0,0,8,0"/>
+                <Button Content="{Binding [Common.Cancel], Source={StaticResource Res}}" Click="CloseWindow" Padding="12,7" IsCancel="True"/>
+            </WrapPanel>
+        </StackPanel>
+    </Grid>
+</Window>

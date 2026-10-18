@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using CryptoBook.Infrastructure;
+using CryptoBook.AI;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 
@@ -34,16 +35,21 @@ namespace CryptoBook.ViewModels
         public static Action Ready { get => MainWindowModel.Ready; set => MainWindowModel.Ready = value; }
 
         public IUpdateNotificationViewModel UpdateNotification { get; }
+        public AiAssistantViewModel? Ai { get; }
 
         public MainWindowViewModel(
             IMainWindowModel mainWindowModel,
             IUpdateNotificationViewModel updateNotification,
-            IKeyResetService? keyResetService = null)
+            IKeyResetService? keyResetService = null,
+            AiAssistantViewModel? ai = null,
+            IPageNavigationService? navigation = null)
         {
             this.mainWindowModel = mainWindowModel ?? throw new ArgumentNullException(nameof(mainWindowModel));
             UpdateNotification = updateNotification ??
                 throw new ArgumentNullException(nameof(updateNotification));
             this.keyResetService = keyResetService;
+            Ai = ai;
+            if(navigation is not null) Ai?.BindWorkspace(navigation);
             this.mainWindowModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
         }
 
