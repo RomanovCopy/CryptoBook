@@ -118,7 +118,8 @@ public sealed class FileDetailsTests: IDisposable
         Assert.Contains(rows, row => row.Key == "FileId" && row.Value.Length == 16);
         Assert.Contains(rows, row => row.Key == ":Zone.Identifier:$DATA");
         Assert.Contains(rows, row => row.Key == "Zone.Identifier" && row.Value.Contains("HostUrl="));
-        Assert.Contains(rows, row => row.Key == "System.FileName" && row.Value.Contains("sample.png"));
+        Assert.True(rows.Any(row => row.Key == "System.FileName" && row.Value.Contains("sample.png")),
+            string.Join(Environment.NewLine, rows.Select(row => $"{row.Category}: {row.Key} = {row.Value}")));
         Assert.Contains(rows, row => row.Key == "System.Image.HorizontalSize" && row.Value.Contains('1'));
         Assert.DoesNotContain(rows, row => row.Key == "Error");
     }
