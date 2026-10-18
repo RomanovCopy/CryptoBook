@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.1.4.3 - 2026-10-18
+
+### Added
+
+- Detailed file properties with content-based type detection, extension mismatch indicators, Windows metadata, permissions, alternate streams and digital signatures.
+- SHA-256/SHA-512 calculation with progress and cancellation, plus searchable and copyable property reports.
+
+### Fixed
+
+- Encrypt, decrypt and create protected copies of Android/MTP files using local staging and verified transfers between local and portable storage.
+- Export decrypted `.cbook` content to Android/MTP destinations with the original extension and available format conversions.
+- Preserve existing destination files through unique names and check that the source is unchanged before deleting it during explicit replacement.
+
+### Changed
+
+- Synchronize application, installer, documentation, notices and version tests for 1.1.4.3.
+
+Full comparison: [v1.1.4.2...v1.1.4.3](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.2...v1.1.4.3)
+
 ## 1.1.4.2 - 2026-10-13
 
 ### Added
