@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.4.4 - 2026-10-18
+
+### Added
+
+- Local AI inference inside CryptoBook from a selected GGUF file, without a separate application or server.
+- AI settings, per-model parameters and a right-side assistant panel with streamed replies, cancellation, explicit document context and undoable insertion/replacement.
+- Automatic RAM/GPU layer placement with CPU fallback on weight-loading failure, themed model settings, and Gemma 4 text-chat support.
+- Resizable AI panel with model selection in the model settings window.
+- Consistent AI Test/Save validation and reply limits capped to the remaining context, fixing profile validation when the requested reply limit exceeds the context size.
+- File attachments for documents and images, whole-document snapshots, file cards and drag-and-drop; local vision inference with automatic matching projector discovery and vision-resource unloading.
+- Prevent an empty image reply caused by selecting an end-of-generation token before any answer; show image processing separately and count image tokens in the context budget.
+- Manual and idle model unloading, cancellation before unloading, and chat/model cleanup when the protected workspace is locked.
+
 ## 1.1.4.3 - 2026-10-18
 
 ### Added

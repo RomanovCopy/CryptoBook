@@ -1,0 +1,748 @@
+using Autofac;
+using CryptoBook.AI;
+using CryptoBook.FileTemplates;
+using CryptoBook.Injections;
+using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
+using CryptoBook.Services;
+using CryptoBook.Security;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Threading;
+using System.Windows.Data;
+using Xunit;
+
+namespace CryptoBook.Tests;
+
+public sealed class AiIntegrationTests
+{
+    [Fact]
+    public void VisionReplyStart_ExcludesAllStopTokensForOneSampleThenRestoresNormalTermination()
+    {
+        float[] scores = [14, 12, 15, -2];
+        var original = scores.ToArray();
+        var first = AiReplyStartSampler.Sample(scores, [0, 2], () =>
+        {
+            Assert.True(float.IsNegativeInfinity(scores[0]));
+            Assert.True(float.IsNegativeInfinity(scores[2]));
+            Assert.Equal(12, scores[1]);
+            return (LLama.Native.LLamaToken)Array.IndexOf(scores, scores.Max());
+        });
+        Assert.Equal((LLama.Native.LLamaToken)1, first);
+        Assert.Equal(original, scores);
+        Assert.Equal(2, Array.IndexOf(scores, scores.Max()));
+    }
+
+    [Fact]
+    public void VisionReplyStart_RestoresNativeScoresWhenSamplingThrows()
+    {
+        float[] scores = [14, 12];
+        Assert.Throws<InvalidOperationException>(() => AiReplyStartSampler.Sample(scores, [0],
+            () => throw new InvalidOperationException("sampling failed")));
+        Assert.Equal(new float[] { 14, 12 }, scores);
+    }
+
+    [WpfFact]
+    public async Task ImageRequest_ShowsProcessingBeforeTextAndGeneratingWhileStreaming()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                File.WriteAllBytes(Path.Combine(directory, "mmproj-model.gguf"), "GGUF"u8.ToArray());
+                var start = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                runtime.BeforeText = start.Task;
+                vm.Attachments.Add(new("image.png", "", new byte[] { 1 }, null, 1));
+                vm.Prompt = "Describe the image";
+                var sending = vm.Send.ExecuteAsync();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.Equal(LocalizationManager.GetString("AI.ProcessingImage"), vm.Status);
+                Assert.True(vm.IsBusy);
+                var generating = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                vm.PropertyChanged += (_, args) =>
+                {
+                    if(args.PropertyName == nameof(vm.Status) && vm.Status == LocalizationManager.GetString("AI.Generating"))
+                        generating.TrySetResult();
+                };
+                start.SetResult();
+                await generating.Task.WaitAsync(TimeSpan.FromSeconds(10));
+                Assert.Equal(LocalizationManager.GetString("AI.Generating"), vm.Status);
+                vm.Stop.Execute(null);
+                await sending;
+                Assert.False(vm.IsBusy);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Fact]
+    public void ImageHistory_ReplaysSnapshotsWithLatestQuestionWithoutMutatingVisibleMessages()
+    {
+        var first = new AiAttachment("first.png", "", new byte[] { 1 }, null, 1);
+        var second = new AiAttachment("second.png", "", new byte[] { 2 }, null, 1);
+        var document = AiAttachmentService.Document("notes.txt", "original notes");
+        AiTurn[] original = [new("user", "first question", [document, first]), new("assistant", "answer"),
+            new("user", "follow-up", [second])];
+        var formatted = AiChatFormat.WithImagesInLatestTurn(original);
+        Assert.Equal(2, original[0].Attachments!.Count);
+        Assert.Same(document, Assert.Single(formatted[0].Attachments!));
+        Assert.Equal(new[] { first, second }, formatted[2].Attachments);
+        Assert.Equal("follow-up", formatted[2].Content);
+        Assert.DoesNotContain("<media>", AiChatFormat.Content(formatted[0]));
+        Assert.Contains("first.png", AiChatFormat.Content(formatted[2]));
+        Assert.Contains("second.png", AiChatFormat.Content(formatted[2]));
+    }
+
+    [Fact]
+    public async Task FileAttachments_ReadDocxTextAndRejectUnsupportedOrOversizedFiles()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string document = Path.Combine(directory, "sample.DOCX");
+            using(var zip = ZipFile.Open(document, ZipArchiveMode.Create))
+            using(var writer = new StreamWriter(zip.CreateEntry("word/document.xml").Open()))
+                writer.Write("<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"><w:body><w:p><w:r><w:t>Budget 128450</w:t></w:r></w:p><w:p><w:r><w:t>ORBIT-731</w:t></w:r></w:p></w:body></w:document>");
+            var service = new AiAttachmentService([]);
+            var file = await service.ReadAsync(document);
+            Assert.Equal("sample.DOCX", file.Name);
+            Assert.Equal("Budget 128450\nORBIT-731", file.Text);
+            Assert.False(file.IsImage);
+            var error = await Assert.ThrowsAsync<AiException>(() => service.ReadAsync(Path.Combine(directory, "unsupported.exe")));
+            Assert.Equal("AI.UnsupportedAttachment", error.ResourceKey);
+            string large = Path.Combine(directory, "large.txt");
+            using(var stream = File.Create(large)) stream.SetLength(AiAttachmentService.MaxFileBytes + 1L);
+            error = await Assert.ThrowsAsync<AiException>(() => service.ReadAsync(large));
+            Assert.Equal("AI.AttachmentTooLarge", error.ResourceKey);
+        }
+        finally { Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task FileAttachments_ImageGetsFrozenPreviewAndKeepsOriginalFileUnchanged()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string path = Path.Combine(directory, "sample.png");
+            var image = System.Windows.Media.Imaging.BitmapSource.Create(2, 1, 96, 96, System.Windows.Media.PixelFormats.Bgra32,
+                null, new byte[] { 0, 0, 255, 255, 255, 0, 0, 255 }, 8);
+            var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+            encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(image));
+            using(var output = File.Create(path)) encoder.Save(output);
+            byte[] original = await File.ReadAllBytesAsync(path);
+            var file = await new AiAttachmentService([]).ReadAsync(path);
+            Assert.True(file.IsImage);
+            Assert.NotNull(file.Preview);
+            Assert.True(file.Preview.IsFrozen);
+            Assert.Equal(2, file.Preview.PixelWidth);
+            Assert.True(file.ImageData.Span.StartsWith(new byte[] { 137, 80, 78, 71 }));
+            Assert.Equal(original, await File.ReadAllBytesAsync(path));
+        }
+        finally { Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task FileAttachments_SendKeepsSnapshotInHistoryAndDoesNotExposeDocumentAsMessageText()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                runtime.CompleteImmediately = true;
+                string path = Path.Combine(directory, "source.txt");
+                await File.WriteAllTextAsync(path, "Original private document");
+                await vm.AttachPathsAsync([path]);
+                await File.WriteAllTextAsync(path, "Changed file on disk");
+                vm.Prompt = "Summarize the file";
+                await vm.Send.ExecuteAsync();
+                Assert.Empty(vm.Attachments);
+                var message = vm.Messages.First();
+                Assert.Equal("Summarize the file", message.Content);
+                Assert.Equal("Original private document", Assert.Single(message.Attachments).Text);
+                var turn = Assert.Single(runtime.LastConversation);
+                Assert.Contains("Original private document", AiChatFormat.Content(turn));
+                Assert.DoesNotContain("Changed file on disk", AiChatFormat.Content(turn));
+                vm.Prompt = "Follow-up";
+                await vm.Send.ExecuteAsync();
+                Assert.Single(runtime.LastConversation[0].Attachments!);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task FileAttachments_RequireVisionWithoutDroppingPendingImage_AndLimitPendingFiles()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                vm.Attachments.Add(new("image.png", "", new byte[] { 1 }, null, 1));
+                Assert.True(vm.Send.CanExecute(null));
+                await vm.Send.ExecuteAsync();
+                Assert.Null(runtime.LastSettings);
+                Assert.Empty(vm.Messages);
+                Assert.Single(vm.Attachments);
+                Assert.Equal(AiAssistantViewModel.ErrorText(new AiException("AI.ImageNeedsVisionModel")), vm.Status);
+                vm.RemoveAttachment.Execute(vm.Attachments[0]);
+                var paths = Enumerable.Range(0, 5).Select(index => Path.Combine(directory, $"{index}.txt")).ToArray();
+                foreach(string path in paths) await File.WriteAllTextAsync(path, "file text");
+                await vm.AttachPathsAsync(paths);
+                Assert.Equal(4, vm.Attachments.Count);
+                Assert.False(vm.CanAttach);
+                Assert.Equal(AiAssistantViewModel.ErrorText(new AiException("AI.AttachmentLimit")), vm.Status);
+                vm.RemoveAttachment.Execute(vm.Attachments[0]);
+                Assert.True(vm.CanAttach);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public void FileAttachments_CurrentDocumentUsesWholeTextInsteadOfSelection()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, _, _) = CreateAssistant(directory, "SELECTED and the rest of the document");
+            using(vm)
+            {
+                vm.AttachDocument.Execute(null);
+                var file = Assert.Single(vm.Attachments);
+                Assert.Equal("source.txt", file.Name);
+                Assert.Contains("SELECTED and the rest of the document", file.Text);
+                Assert.False(file.IsImage);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Theory]
+    [InlineData(10000, 256, 3839)]
+    [InlineData(512, 256, 512)]
+    [InlineData(512, 4000, 95)]
+    [InlineData(10000, 4094, 1)]
+    public void ReplyLimit_UsesRemainingContextInsteadOfRejectingLargeRequestedLimit(int requested, int input, int expected)
+    {
+        var settings = new AiModelSettings { ContextLength = 4096, MaxTokens = requested };
+        Assert.Equal(expected, settings.OutputTokenLimit(input));
+    }
+
+    [Theory]
+    [InlineData(4095)]
+    [InlineData(4096)]
+    [InlineData(5000)]
+    public void ReplyLimit_RejectsPromptOnlyWhenNoRoomForOutputRemains(int input)
+    {
+        var error = Assert.Throws<AiException>(() => new AiModelSettings { ContextLength = 4096 }.OutputTokenLimit(input));
+        Assert.Equal("AI.ContextFull", error.ResourceKey);
+    }
+
+    [WpfFact]
+    public async Task ModelSettings_TestThenSave_AllowsReplyLimitLargerThanContext()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (assistant, store, runtime, _) = CreateAssistant(directory);
+            using(assistant)
+            using(var settings = new AiModelSettingsViewModel(store, runtime))
+            {
+                runtime.CompleteImmediately = true;
+                settings.ContextLength = 4096;
+                settings.MaxTokens = 10000;
+                await settings.Test.ExecuteAsync();
+                Assert.NotNull(runtime.LastSettings);
+                Assert.Equal(128, runtime.LastSettings.MaxTokens);
+                bool saved = false;
+                settings.Saved += (_, _) => saved = true;
+                settings.Save.Execute(null);
+                Assert.True(saved);
+                Assert.Equal(10000, new AiSettingsStore(Path.Combine(directory, "settings.json")).Current.SelectedModel.MaxTokens);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfTheory]
+    [InlineData(4096, -1, "AI.InvalidMaxTokens")]
+    [InlineData(0, 512, "AI.InvalidContextLength")]
+    [InlineData(4096, 131073, "AI.InvalidMaxTokens")]
+    public async Task ModelSettings_TestAndSave_ValidateTheSameOriginalValues(int context, int reply, string key)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (assistant, store, runtime, _) = CreateAssistant(directory);
+            using(assistant)
+            using(var settings = new AiModelSettingsViewModel(store, runtime))
+            {
+                settings.ContextLength = context;
+                settings.MaxTokens = reply;
+                await settings.Test.ExecuteAsync();
+                string testError = settings.Status;
+                Assert.Equal(AiAssistantViewModel.ErrorText(new AiException(key)), testError);
+                Assert.Null(runtime.LastSettings);
+                bool saved = false;
+                settings.Saved += (_, _) => saved = true;
+                settings.Save.Execute(null);
+                Assert.False(saved);
+                Assert.Equal(testError, settings.Status);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Theory]
+    [InlineData("plain text", "plain text")]
+    [InlineData("a<think>private reasoning</think>b", "ab")]
+    [InlineData("<think>unfinished", "")]
+    [InlineData("<think>x</think><think>y</think>готово", "готово")]
+    [InlineData("answer < tag", "answer < tag")]
+    [InlineData("<|channel|>analysis<|message|>private<|end|><|start|>assistant<|channel|>final<|message|>ready", "ready")]
+    [InlineData("<|channel>thought\nprivate<channel|>ready<turn|>", "ready")]
+    public void ThinkingFilter_RemovesReasoningAcrossEveryChunkBoundary(string input, string expected)
+    {
+        for(int chunkSize = 1; chunkSize <= Math.Max(1, input.Length); chunkSize++)
+        {
+            var filter = new AiThinkingFilter();
+            var output = new StringBuilder();
+            for(int i = 0; i < input.Length; i += chunkSize)
+                output.Append(filter.Append(input.Substring(i, Math.Min(chunkSize, input.Length - i))));
+            output.Append(filter.Flush());
+            Assert.Equal(expected, output.ToString());
+        }
+    }
+
+    [Theory]
+    [InlineData(0L)]
+    [InlineData(512L * 1024 * 1024)]
+    public void AutomaticMemory_NoUsableGpuBudget_UsesRam(long gpuBudget)
+    {
+        const long size = 20L * 1024 * 1024 * 1024;
+        var plan = AiMemoryPlanner.Calculate(AiMemoryMode.Automatic, -1, size, 40, 16 * 1024 * 1024,
+            gpuBudget, 24L * 1024 * 1024 * 1024);
+        Assert.Equal(0, plan.GpuLayers);
+        Assert.Equal(size, plan.EstimatedRamWeightBytes);
+    }
+
+    [Fact]
+    public void AutomaticMemory_LargeModel_SplitsAcrossRamAndGpuWithHeadroom()
+    {
+        const long gib = 1024L * 1024 * 1024, size = 23 * gib, gpuBudget = 8 * gib;
+        var plan = AiMemoryPlanner.Calculate(AiMemoryMode.Automatic, -1, size, 40, 32 * 1024 * 1024,
+            gpuBudget, 24 * gib);
+        Assert.InRange(plan.GpuLayers, 1, 39);
+        Assert.InRange(plan.EstimatedGpuWeightBytes + plan.GpuLayers * 32L * 1024 * 1024, 1, 7 * gib);
+        Assert.True(plan.EstimatedRamWeightBytes > 0);
+        Assert.Equal(size, plan.EstimatedRamWeightBytes + plan.EstimatedGpuWeightBytes);
+        Assert.Equal(0, AiMemoryPlanner.Calculate(AiMemoryMode.CpuOnly, -1, size, 40, 0, gpuBudget, 24 * gib).GpuLayers);
+        Assert.Equal(7, AiMemoryPlanner.Calculate(AiMemoryMode.Manual, 7, size, 40, 0, gpuBudget, 24 * gib).GpuLayers);
+    }
+
+    [Fact]
+    public void Gemma4_TextChat_UsesNativeTurnsAndThinkingPrefix()
+    {
+        var settings = new AiModelSettings { SystemPrompt = "Be brief" };
+        var prompt = AiChatFormat.Gemma4(settings, [new("user", "one"), new("assistant", "two"), new("user", "three")]);
+        Assert.Equal("<|turn>system\nBe brief<turn|>\n<|turn>user\none<turn|>\n<|turn>model\ntwo<turn|>\n<|turn>user\nthree<turn|>\n<|turn>model\n<|channel>thought\n<channel|>", prompt);
+        prompt = AiChatFormat.Gemma4(settings with { UseReasoning = true }, [new("user", "one")]);
+        Assert.Contains("<|turn>system\n<|think|>\nBe brief", prompt);
+        Assert.EndsWith("<|turn>model\n", prompt);
+    }
+
+    [Fact]
+    public void Settings_RoundTripKeepsSeparateModelProfilesAndNoConversation()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            string path = Path.Combine(directory, "settings.json");
+            var store = new AiSettingsStore(path);
+            store.Save(new() { Enabled = true, SelectedModelPath = "b.gguf", IdleMinutes = 3,
+                Models = [new() { ModelPath = "a.gguf", Temperature = 0.1f }, new() { ModelPath = "b.gguf", ContextLength = 8192, MemoryMode = AiMemoryMode.CpuOnly }] });
+            var restored = new AiSettingsStore(path);
+            Assert.True(restored.Current.Enabled);
+            Assert.Equal(3, restored.Current.IdleMinutes);
+            Assert.Equal(8192, restored.Current.SelectedModel.ContextLength);
+            Assert.Equal(AiMemoryMode.CpuOnly, restored.Current.SelectedModel.MemoryMode);
+            Assert.Equal(0.1f, restored.Current.Models[0].Temperature);
+            Assert.DoesNotContain("Messages", File.ReadAllText(path));
+            Assert.DoesNotContain("SelectedModel\"", File.ReadAllText(path));
+            File.WriteAllText(path, "{corrupt");
+            Assert.False(new AiSettingsStore(path).Current.Enabled);
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, recursive: true); }
+    }
+
+    [Fact]
+    public async Task MissingModel_DoesNotLoadRuntime_AndUnloadIsIdempotent()
+    {
+        using var service = new LocalAiInferenceService();
+        var error = await Assert.ThrowsAsync<AiException>(() => service.GenerateAsync(
+            new() { ModelPath = "missing-" + Guid.NewGuid().ToString("N") + ".gguf" },
+            [new("user", "test")], _ => { }, null, CancellationToken.None));
+        Assert.Equal("AI.ModelMissing", error.ResourceKey);
+        await service.UnloadAsync();
+        await service.UnloadAsync();
+        Assert.False(service.IsLoaded);
+    }
+
+    [Fact]
+    public void ModelSettings_SwitchingFilesKeepsParameters_AndEmptyRecentSelectionKeepsTypedPath()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string first = Path.Combine(directory, "first.gguf"), second = Path.Combine(directory, "second.gguf"), third = Path.Combine(directory, "third.gguf");
+            foreach(string path in new[] { first, second, third }) File.WriteAllBytes(path, "GGUF"u8.ToArray());
+            var store = new AiSettingsStore(Path.Combine(directory, "settings.json"));
+            store.Save(new() { Enabled = true, SelectedModelPath = first,
+                Models = [new() { ModelPath = first }, new() { ModelPath = second, Temperature = 0.6f }] });
+            using var vm = new AiModelSettingsViewModel(store, new RuntimeStub());
+            vm.Temperature = 1.2f;
+            vm.ModelPath = second;
+            Assert.Equal(0.6f, vm.Temperature);
+            vm.ModelPath = third;
+            vm.SelectedRecentModel = null;
+            Assert.Equal(third, vm.ModelPath);
+            vm.SelectedRecentModel = first;
+            Assert.Equal(1.2f, vm.Temperature);
+            vm.Save.Execute(null);
+            var restored = new AiSettingsStore(Path.Combine(directory, "settings.json"));
+            Assert.Equal(1.2f, restored.Current.SelectedModel.Temperature);
+            Assert.Equal(0.6f, restored.Current.Models.Single(m => m.ModelPath == second).Temperature);
+        }
+        finally { Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public void Editor_RejectsChangedOrReadOnlyDocument_AndReplacementIsUndoable()
+    {
+        IRichTextBoxService editor = new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        var markdown = new MarkdownDocumentState();
+        var session = new DocumentSession(editor, markdown);
+        var navigation = new Navigation();
+        var context = new AiEditorContext(editor, markdown, session, navigation);
+        var run = new Run("original text");
+        var document = new FlowDocument(new Paragraph(run));
+        session.Open("test.txt", new PlainTextTemplate(), document);
+        var host = new Window { Content = editor.Service, Width = 400, Height = 250 };
+        host.Show();
+        try
+        {
+        editor.Service.UpdateLayout();
+        editor.Focus();
+        editor.Selection.Select(run.ContentStart, run.ContentEnd);
+        var target = context.Capture()!;
+        editor.Service.IsUndoEnabled = false;
+        editor.Service.IsUndoEnabled = true;
+        Assert.True(target.Apply("replacement", true));
+        Assert.Contains("replacement", new TextRange(document.ContentStart, document.ContentEnd).Text);
+        editor.Undo();
+        Assert.Contains("original text", new TextRange(document.ContentStart, document.ContentEnd).Text);
+        editor.Selection.Select(document.ContentStart, document.ContentEnd);
+        target = context.Capture()!;
+        session.MarkDirty();
+        Assert.False(target.Apply("stale", true));
+        target = context.Capture()!;
+        editor.IsReadOnly = true;
+        Assert.False(target.Apply("read only", false));
+        }
+        finally { host.Close(); }
+    }
+
+    private sealed class ParagraphFactory : IParagraphFactory
+    {
+        public IParagraphService Create(Inline? inline = null)
+        {
+            var paragraph = new ParagraphService();
+            if(inline is not null) paragraph.Inlines.Add(inline);
+            return paragraph;
+        }
+    }
+
+    [WpfFact]
+    public void Markdown_ReplacementSupportsUndo_AndRejectsReopenedDocument()
+    {
+        IRichTextBoxService rich = new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        var markdown = new MarkdownDocumentState();
+        var session = new DocumentSession(rich, markdown);
+        var textDocument = new MarkdownTextDocument("original text", Encoding.UTF8, []);
+        markdown.Activate(textDocument, "sample.md");
+        session.Open("sample.md", new MarkdownFileTemplate());
+        var source = new TextBox { AcceptsReturn = true };
+        source.SetBinding(TextBox.TextProperty, new Binding(nameof(IMarkdownDocumentState.Text))
+            { Source = markdown, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+        var page = new Page { Content = source };
+        NameScope.SetNameScope(page, new NameScope());
+        page.RegisterName("SourceEditor", source);
+        var navigation = new Navigation { CurrentKey = "MarkdownEditor", CurrentPage = page };
+        var context = new AiEditorContext(rich, markdown, session, navigation);
+        var host = new Window { Content = page, Width = 400, Height = 250 };
+        host.Show();
+        try
+        {
+            source.UpdateLayout(); source.Focus(); source.Select(0, 8);
+            var target = context.Capture()!;
+            Assert.True(rich.IsReadOnly); // The hidden rich-text editor is read-only for Markdown.
+            Assert.True(target.Apply("new", true));
+            Assert.Equal("new text", markdown.Text);
+            source.Undo();
+            Assert.Equal("original text", markdown.Text);
+            source.Select(0, 8);
+            target = context.Capture()!;
+            markdown.Activate(textDocument, "sample.md");
+            Assert.False(target.Apply("stale", true));
+        }
+        finally { host.Close(); }
+    }
+    private sealed class UriNavigation : IUriNavigationService
+    {
+        public bool TryOpen(Uri uri) => false;
+    }
+
+    [WpfFact]
+    public async Task Unload_StopsGenerationAndKeepsUnloadedStatus()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                vm.Prompt = "test";
+                Task send = vm.Send.ExecuteAsync();
+                Assert.True(vm.IsBusy);
+                await vm.Unload.ExecuteAsync();
+                await send;
+                Assert.False(runtime.IsLoaded);
+                Assert.False(vm.IsBusy);
+                Assert.Equal(CryptoBook.Infrastructure.LocalizationManager.GetString("AI.Unloaded"), vm.Status);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task IdleUnload_PreservesChat_ButLockClearsChatAndDraft()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, keyReset) = CreateAssistant(directory);
+            using(vm)
+            {
+                vm.Messages.Add(new("user", "private text"));
+                vm.Attachments.Add(AiAttachmentService.Document("private.txt", "private file"));
+                vm.Prompt = "private draft";
+                runtime.IsLoaded = true;
+                runtime.LastUsedUtc = DateTime.UtcNow.AddMinutes(-20);
+                runtime.IsBusy = true;
+                await vm.CheckIdleAsync(DateTime.UtcNow);
+                Assert.True(runtime.IsLoaded);
+                runtime.IsBusy = false;
+                await vm.CheckIdleAsync(DateTime.UtcNow);
+                Assert.False(runtime.IsLoaded);
+                Assert.Single(vm.Messages);
+                runtime.IsLoaded = true;
+                keyReset.Reset();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.Empty(vm.Messages);
+                Assert.Empty(vm.Prompt);
+                Assert.Empty(vm.Attachments);
+                Assert.False(runtime.IsLoaded);
+                store.Save(store.Current with { Enabled = false });
+                Assert.False(vm.Enabled);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task ModelSettings_SwitchCancelsGenerationUnloadsAndUsesSavedParameters()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                string first = store.Current.SelectedModelPath, second = Path.Combine(directory, "second.gguf");
+                File.WriteAllBytes(second, "GGUF"u8.ToArray());
+                store.Save(store.Current with { Models = [.. store.Current.Models,
+                    new() { ModelPath = second, Temperature = 0.8f, ContextLength = 4096, MaxTokens = 10000, MemoryMode = AiMemoryMode.CpuOnly }] });
+                using var settings = new AiModelSettingsViewModel(store, runtime) { ModelPath = second };
+                vm.Prompt = "first model";
+                var generating = vm.Send.ExecuteAsync();
+                Assert.True(runtime.IsBusy);
+                settings.Save.Execute(null);
+                await generating;
+                Assert.False(runtime.IsLoaded);
+                Assert.Empty(vm.Messages);
+                Assert.Equal(second, store.Current.SelectedModelPath);
+                vm.Prompt = "second model";
+                generating = vm.Send.ExecuteAsync();
+                Assert.Equal(0.8f, runtime.LastSettings!.Temperature);
+                Assert.Equal(4096, runtime.LastSettings.ContextLength);
+                Assert.Equal(10000, runtime.LastSettings.MaxTokens);
+                Assert.Equal(AiMemoryMode.CpuOnly, runtime.LastSettings.MemoryMode);
+                await vm.Unload.ExecuteAsync();
+                await generating;
+                Assert.Equal(second, new AiSettingsStore(Path.Combine(directory, "settings.json")).Current.SelectedModelPath);
+                Assert.Equal(0.3f, store.Current.Models.Single(model => model.ModelPath == first).Temperature);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public void ModelSettings_SavePreservesProfilesAddedWhileWindowIsOpen()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            using(var settings = new AiModelSettingsViewModel(store, runtime))
+            {
+                string second = Path.Combine(directory, "second.gguf");
+                File.WriteAllBytes(second, "GGUF"u8.ToArray());
+                store.Save(store.Current with { Models = [.. store.Current.Models, new() { ModelPath = second }] });
+                Assert.Equal(AiMemoryMode.Automatic, store.Current.SelectedModel.MemoryMode);
+                Assert.Null(runtime.LastSettings);
+                settings.Save.Execute(null);
+                var restored = new AiSettingsStore(Path.Combine(directory, "settings.json"));
+                Assert.Contains(restored.Current.Models, model => model.ModelPath == second);
+                Assert.Equal(2, restored.Current.Models.Count);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task ModelSettings_InvalidFilePreservesSelectionAndConversation()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                string selected = store.Current.SelectedModelPath;
+                vm.Messages.Add(new("user", "keep this conversation"));
+                runtime.IsLoaded = true;
+                using var settings = new AiModelSettingsViewModel(store, runtime) { ModelPath = Path.Combine(directory, "missing.gguf") };
+                await settings.Test.ExecuteAsync();
+                settings.Save.Execute(null);
+                Assert.Equal(selected, store.Current.SelectedModelPath);
+                Assert.Single(vm.Messages);
+                Assert.True(runtime.IsLoaded);
+                Assert.Single(store.Current.Models);
+                Assert.Equal(AiAssistantViewModel.ErrorText(new AiException("AI.ModelMissing")), settings.Status);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    private static (AiAssistantViewModel, AiSettingsStore, RuntimeStub, KeyResetStub) CreateAssistant(string directory, string? documentText = null)
+    {
+        Directory.CreateDirectory(directory);
+        string path = Path.Combine(directory, "model.gguf");
+        File.WriteAllBytes(path, "GGUF"u8.ToArray());
+        var store = new AiSettingsStore(Path.Combine(directory, "settings.json"));
+        store.Save(new() { Enabled = true, SelectedModelPath = path, Models = [new() { ModelPath = path }] });
+        var runtime = new RuntimeStub();
+        var keyReset = new KeyResetStub();
+        IRichTextBoxService editor = new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        var markdown = new MarkdownDocumentState();
+        var session = new DocumentSession(editor, markdown);
+        if(documentText is not null)
+        {
+            var document = new FlowDocument(new Paragraph(new Run(documentText)));
+            session.Open("source.txt", new PlainTextTemplate(), document);
+            editor.Selection.Select(document.ContentStart, document.ContentStart.GetPositionAtOffset(8)!);
+        }
+        var context = new AiEditorContext(editor, markdown, session, new Navigation());
+        return (new AiAssistantViewModel(store, runtime, context, new AiSettingsWindowService(store, runtime), keyReset,
+            Dispatcher.CurrentDispatcher), store, runtime, keyReset);
+    }
+
+    private sealed class RuntimeStub : IAiInferenceService
+    {
+        public bool IsLoaded { get; set; }
+        public int UnloadCount { get; private set; }
+        public AiModelSettings? LastSettings { get; private set; }
+        public IReadOnlyList<AiTurn> LastConversation { get; private set; } = [];
+        public bool CompleteImmediately { get; set; }
+        public Task? BeforeText { get; set; }
+        public bool IsBusy { get; set; }
+        public DateTime LastUsedUtc { get; set; } = DateTime.UtcNow;
+        public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
+            Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken)
+        {
+            LastSettings = settings;
+            LastConversation = conversation.ToArray();
+            IsLoaded = IsBusy = true;
+            try
+            {
+                loadProgress?.Report(1);
+                if(BeforeText is not null) await BeforeText.WaitAsync(cancellationToken);
+                onText("partial answer");
+                if(!CompleteImmediately) await Task.Delay(Timeout.Infinite, cancellationToken);
+            }
+            finally { IsBusy = false; }
+        }
+        public Task UnloadAsync(CancellationToken cancellationToken = default) { UnloadCount++; IsLoaded = false; return Task.CompletedTask; }
+        public void Dispose() { }
+    }
+
+    private sealed class KeyResetStub : IKeyResetService
+    {
+        public KeyResetState State { get; private set; } = KeyResetState.Active;
+        public TimeSpan Timeout => TimeSpan.Zero;
+        public bool IsPaused => false;
+        public bool HasRetainedDocument => false;
+        public event EventHandler<KeyResetStateChangedEventArgs>? StateChanged;
+        public event EventHandler<Exception>? SnapshotFailed { add { } remove { } }
+        public void Reset() { State = KeyResetState.Resetting; StateChanged?.Invoke(this, new(State)); }
+        public void Start() { }
+        public void Stop() { }
+        public void NotifyActivity() { }
+        public void UpdateTimeout(TimeSpan timeout) { }
+        public IDisposable Pause() => this;
+        public Task<bool> ResetAsync(CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> TryUnlockAsync(ReadOnlyMemory<char> key, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task RestoreSnapshotAsync(bool restoreAsUnsaved, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public void Dispose() { }
+    }
+
+    private sealed class Navigation : IPageNavigationService
+    {
+        public System.ComponentModel.PropertyChangedEventHandler? Handler;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged { add => Handler += value; remove => Handler -= value; }
+        public Page? CurrentPage { get; set; }
+        public string? CurrentKey { get; set; } = "Home";
+        public bool CanGoBack => false;
+        public bool CanGoForward => false;
+        public IReadOnlyList<string>? Keys => ["Home"];
+        public void Navigate(string key, object? args = null) { }
+        public void GoBack() { }
+        public void GoForward() { }
+        public void Remove(string key) { }
+    }
+}

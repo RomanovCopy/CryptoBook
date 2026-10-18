@@ -372,6 +372,8 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ThemedCheckBoxStyle" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Type CheckBox}}"/>
+
     <Style TargetType="{x:Type RadioButton}">
         <Setter Property="Foreground"
                 Value="{DynamicResource CurrentWindowForeground}"/>

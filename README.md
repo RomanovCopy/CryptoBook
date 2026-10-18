@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.4.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.3)
+[![Version](https://img.shields.io/badge/version-1.1.4.4-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.4)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -31,6 +31,7 @@ machine unless you explicitly move or share them.
 - **Search** — file-name and full-text search, including supported encrypted documents.
 - **Recovery copies** — retained snapshots, `.bak` backups and atomic file replacement.
 - **Media preview** — text, images and video playback through Flyleaf/FFmpeg.
+- **Local AI assistant** — GGUF chat, document/image attachments and editor actions.
 - **Windows integration** — system dialogs, themes and self-contained x64 releases.
 
 ## Screenshots
@@ -46,15 +47,17 @@ machine unless you explicitly move or share them.
 Screenshots show an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.4.3
+## New in 1.1.4.4
 
-- Open detailed file properties from the context menu or with **Alt+Enter**: content-based type detection, extension mismatch indicators, Windows metadata, permissions and digital signatures.
-- Calculate SHA-256 and SHA-512 checksums with progress and cancellation; search and copy property reports.
-- Fixed encryption, decryption and protected-copy creation for Android/MTP files, including transfers between Windows and Android.
-- Fixed saving decrypted `.cbook` content to Android/MTP destinations, preserving the original file type and supporting available export formats.
-- Remote writes use local staging and verified transfers; name conflicts receive unique names, and source replacement checks that the source has not changed before deletion.
+- Use the built-in [local AI assistant](docs/LOCAL_AI.md) with a GGUF model, streamed replies and cancellation; no separate server is required.
+- Configure each model separately and resize the right-side chat panel. Use automatic RAM/GPU placement, CPU mode or manual GPU layers.
+- Attach documents and images, drag files into the chat or include a snapshot of the current document. Image analysis requires a compatible vision model and matching mmproj file.
+- Copy answers, insert them at the editor cursor or replace the original selection, with undo support.
+- Unload models manually or after idle time. Locking the protected workspace clears the chat, attachments and draft and unloads the model.
+- Improved context-budget validation, image-processing status and handling of image replies that would otherwise end before producing text.
 
-See the [release notes](docs/releases/v1.1.4.3.md) and [changelog](CHANGELOG.md).
+GGUF models and vision projectors are selected separately and are not bundled with the installer.
+See the [release notes](docs/releases/v1.1.4.4.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -163,7 +166,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.4.3
+./installer/Build-Installer.ps1 -Version 1.1.4.4
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:

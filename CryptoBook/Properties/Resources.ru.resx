@@ -1150,4 +1150,85 @@
   <data name="FileDetails.EmbeddedSignature" xml:space="preserve"><value>Состояние встроенной подписи</value></data>
   <data name="FileDetails.CatalogCount" xml:space="preserve"><value>Найдено каталожных подписей</value></data>
   <data name="FileDetails.CatalogPath" xml:space="preserve"><value>Каталог подписи</value></data>
+  <data name="AI.Assistant" xml:space="preserve"><value>AI-помощник</value></data>
+  <data name="AI.You" xml:space="preserve"><value>Вы</value></data>
+  <data name="AI.ModelSettings" xml:space="preserve"><value>Настройки модели</value></data>
+  <data name="AI.LocalDescription" xml:space="preserve"><value>Выберите файл модели GGUF. Модель работает внутри CryptoBook на этом компьютере. Отдельное приложение или сервер не нужны.</value></data>
+  <data name="AI.Enable" xml:space="preserve"><value>Включить AI-помощника</value></data>
+  <data name="AI.ModelPath" xml:space="preserve"><value>Файл модели (.gguf)</value></data>
+  <data name="AI.Browse" xml:space="preserve"><value>Обзор…</value></data>
+  <data name="AI.SelectModel" xml:space="preserve"><value>Выберите языковую модель</value></data>
+  <data name="AI.ModelFilter" xml:space="preserve"><value>Модели GGUF (*.gguf)|*.gguf</value></data>
+  <data name="AI.ContextLength" xml:space="preserve"><value>Контекст (токены)</value></data>
+  <data name="AI.MaxTokens" xml:space="preserve"><value>Длина ответа (токены)</value></data>
+  <data name="AI.Temperature" xml:space="preserve"><value>Креативность (0–2)</value></data>
+  <data name="AI.IdleMinutes" xml:space="preserve"><value>Выгрузка при простое (минуты)</value></data>
+  <data name="AI.Advanced" xml:space="preserve"><value>Дополнительные параметры</value></data>
+  <data name="AI.GpuLayers" xml:space="preserve"><value>Слоёв на видеокарте</value></data>
+  <data name="AI.GpuHint" xml:space="preserve"><value>0 — только ОЗУ и процессор; -1 — все слои на видеокарте. При нехватке видеопамяти уменьшите значение.</value></data>
+  <data name="AI.Reasoning" xml:space="preserve"><value>Разрешить развёрнутые рассуждения (Qwen и Gemma)</value></data>
+  <data name="AI.SystemPrompt" xml:space="preserve"><value>Инструкция для модели</value></data>
+  <data name="AI.IdleHint" xml:space="preserve"><value>0 отключает автовыгрузку. Параметры запоминаются отдельно для каждого файла модели.</value></data>
+  <data name="AI.TestModel" xml:space="preserve"><value>Проверить модель</value></data>
+  <data name="AI.Stop" xml:space="preserve"><value>Остановить</value></data>
+  <data name="AI.ModelMissing" xml:space="preserve"><value>Сначала выберите существующий файл модели.</value></data>
+  <data name="AI.InvalidModel" xml:space="preserve"><value>Выберите языковую модель в формате GGUF, а не файл проектора mmproj.</value></data>
+  <data name="AI.InvalidParameters" xml:space="preserve"><value>Проверьте значения параметров модели.</value></data>
+  <data name="AI.LoadFailed" xml:space="preserve"><value>Не удалось загрузить модель. Возможно, не хватает памяти или формат GGUF пока не поддерживается. Попробуйте уменьшить число слоёв GPU или выбрать модель меньшего размера.</value></data>
+  <data name="AI.ContextFull" xml:space="preserve"><value>Диалог не помещается в контекст модели. Очистите чат, приложите меньше текста или увеличьте контекст в настройках модели.</value></data>
+  <data name="AI.Loading" xml:space="preserve"><value>Загрузка модели…</value></data>
+  <data name="AI.LoadProgress" xml:space="preserve"><value>Загрузка модели: {0}%</value></data>
+  <data name="AI.Generating" xml:space="preserve"><value>Генерация ответа…</value></data>
+  <data name="AI.ProcessingImage" xml:space="preserve"><value>Обработка изображения…</value></data>
+  <data name="AI.Ready" xml:space="preserve"><value>Ответ готов</value></data>
+  <data name="AI.Stopped" xml:space="preserve"><value>Генерация остановлена</value></data>
+  <data name="AI.Unloaded" xml:space="preserve"><value>Модель выгружена из памяти</value></data>
+  <data name="AI.SaveFailed" xml:space="preserve"><value>Не удалось сохранить настройки AI.</value></data>
+  <data name="AI.NoModel" xml:space="preserve"><value>Модель не выбрана</value></data>
+  <data name="AI.EmptyAnswer" xml:space="preserve"><value>Модель не вернула текст ответа. Попробуйте увеличить длину ответа.</value></data>
+  <data name="AI.GenerationFailed" xml:space="preserve"><value>Не удалось получить ответ. Проверьте параметры модели и свободную память.</value></data>
+  <data name="AI.CopyFailed" xml:space="preserve"><value>Буфер обмена занят. Повторите попытку.</value></data>
+  <data name="AI.DocumentChanged" xml:space="preserve"><value>Исходный документ изменился или доступен только для чтения. Скопируйте ответ и выберите место вставки.</value></data>
+  <data name="AI.Inserted" xml:space="preserve"><value>Ответ вставлен; Ctrl+Z отменяет изменение</value></data>
+  <data name="AI.ModelWorks" xml:space="preserve"><value>Модель загружена и успешно сгенерировала ответ.</value></data>
+  <data name="AI.Unload" xml:space="preserve"><value>Выгрузить модель</value></data>
+  <data name="AI.Clear" xml:space="preserve"><value>Очистить чат</value></data>
+  <data name="AI.DisabledHint" xml:space="preserve"><value>Включите помощника и выберите модель в её настройках.</value></data>
+  <data name="AI.Insert" xml:space="preserve"><value>Вставить ответ</value></data>
+  <data name="AI.Replace" xml:space="preserve"><value>Заменить выделение</value></data>
+  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Убрать приложенный текст</value></data>
+  <data name="AI.AttachDocument" xml:space="preserve"><value>Текущий документ</value></data>
+  <data name="AI.Prompt" xml:space="preserve"><value>Сообщение модели; Ctrl+Enter — отправить</value></data>
+  <data name="AI.Send" xml:space="preserve"><value>Отправить</value></data>
+  <data name="AI.ChatPrivacy" xml:space="preserve"><value>Обработка на компьютере. Диалог не сохраняется на диск.</value></data>
+  <data name="AI.OpenPanel" xml:space="preserve"><value>Открыть панель AI</value></data>
+  <data name="AI.ResponseSection" xml:space="preserve"><value>Ответ модели</value></data>
+  <data name="AI.MemorySection" xml:space="preserve"><value>Память и производительность</value></data>
+  <data name="AI.BehaviorSection" xml:space="preserve"><value>Поведение модели</value></data>
+  <data name="AI.MemoryMode.Automatic" xml:space="preserve"><value>Автоматически · ОЗУ + видеопамять</value></data>
+  <data name="AI.MemoryMode.CpuOnly" xml:space="preserve"><value>Только процессор · ОЗУ</value></data>
+  <data name="AI.MemoryMode.Manual" xml:space="preserve"><value>Число слоёв GPU вручную</value></data>
+  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook подбирает число слоёв для видеопамяти, остальные размещает в ОЗУ. При ошибке загрузки уменьшает нагрузку на GPU, вплоть до работы на процессоре.</value></data>
+  <data name="AI.MemoryHint.CpuOnly" xml:space="preserve"><value>Модель использует ОЗУ и процессор. Видеопамять не требуется; ответы могут занимать больше времени.</value></data>
+  <data name="AI.MemoryHint.Manual" xml:space="preserve"><value>Укажите число слоёв на видеокарте. Оставшиеся слои используют ОЗУ и процессор.</value></data>
+  <data name="AI.ResizePanel" xml:space="preserve"><value>Потяните левую границу, чтобы изменить ширину AI-панели</value></data>
+  <data name="AI.InvalidContextLength" xml:space="preserve"><value>Длина контекста должна быть от 512 до 131072 токенов.</value></data>
+  <data name="AI.InvalidMaxTokens" xml:space="preserve"><value>Максимальная длина ответа должна быть от 1 до 131072 токенов.</value></data>
+  <data name="AI.InvalidTemperature" xml:space="preserve"><value>Креативность должна быть числом от 0 до 2.</value></data>
+  <data name="AI.InvalidGpuLayers" xml:space="preserve"><value>Число слоёв GPU должно быть от -1 до 999.</value></data>
+  <data name="AI.InvalidMemoryMode" xml:space="preserve"><value>Выберите режим использования памяти из списка.</value></data>
+  <data name="AI.InvalidIdleMinutes" xml:space="preserve"><value>Время выгрузки при простое должно быть от 0 до 120 минут.</value></data>
+  <data name="AI.InvalidNumber" xml:space="preserve"><value>Введите корректное число в выделенном поле.</value></data>
+  <data name="AI.ReplyLimitHint" xml:space="preserve"><value>Лимит ответа — верхняя граница. Если в контексте осталось меньше места, ответ автоматически ограничивается доступным объёмом.</value></data>
+  <data name="AI.AttachFiles" xml:space="preserve"><value>Прикрепить файлы…</value></data>
+  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Документы и изображения|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff</value></data>
+  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Этот формат файла не поддерживается. Выберите текстовый документ, RTF, DOCX, XamlPackage или изображение.</value></data>
+  <data name="AI.AttachmentTooLarge" xml:space="preserve"><value>Файл слишком большой: не более 32 МБ, 500000 символов текста и 100 мегапикселей до уменьшения изображения.</value></data>
+  <data name="AI.AttachmentEmpty" xml:space="preserve"><value>В документе нет текста для отправки модели.</value></data>
+  <data name="AI.AttachmentLimit" xml:space="preserve"><value>К одному сообщению можно прикрепить до четырёх файлов.</value></data>
+  <data name="AI.AttachmentReadFailed" xml:space="preserve"><value>Не удалось прочитать файл. Проверьте его формат и доступ к нему.</value></data>
+  <data name="AI.NoDocument" xml:space="preserve"><value>Откройте документ с текстом, чтобы прикрепить его.</value></data>
+  <data name="AI.DefaultFilePrompt" xml:space="preserve"><value>Проанализируй прикреплённые файлы.</value></data>
+  <data name="AI.ImageNeedsVisionModel" xml:space="preserve"><value>Для изображений нужна модель с поддержкой зрения и соответствующим файлом mmproj GGUF в той же папке. Выберите такую модель в настройках.</value></data>
+  <data name="AI.ImageLoadFailed" xml:space="preserve"><value>Не удалось загрузить модуль обработки изображений или обработать изображение.</value></data>
 </root>
