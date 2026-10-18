@@ -184,6 +184,110 @@ public sealed class DecryptionExportServiceTests: IDisposable
         Assert.True(File.Exists(source));
     }
 
+    [Theory]
+    [InlineData(DecryptionOutputFormat.Original, ".mp4")]
+    [InlineData(DecryptionOutputFormat.Rtf, ".XamlPackage")]
+    [InlineData(DecryptionOutputFormat.PlainText, ".XamlPackage")]
+    public async Task MtpDestination_PublishesDecryptedOutputAndKeepsProtectedSource(
+        DecryptionOutputFormat format,
+        string originalExtension)
+    {
+        byte[] payload = [0, 1, 2, 3, 254, 255];
+        var bridge = new WpdStorageProviderTests.BridgeStub();
+        DecryptionExportService service = CreateService(
+            payload,
+            originalExtension,
+            bridge: bridge);
+        string source = CreateSource("video.cbook");
+        await using PreparedDecryption prepared = await service.PrepareAsync(source);
+        string remotePath = "/Внутреннее хранилище/Download/Результат" +
+            service.GetOutputExtension(originalExtension, format);
+        StorageLocation destination = WpdLocatorCodec.Encode("device", remotePath);
+
+        string result = await service.PublishAsync(
+            prepared,
+            new DecryptionOptions(EncryptionTargetMode.SaveAs, format),
+            destination.ToString());
+
+        Assert.Equal(destination.ToString(), result);
+        Assert.Equal(payload, bridge.Content[("device", remotePath)]);
+        Assert.True(bridge.CopyFromLocalCalled);
+        Assert.Equal(new byte[] { 99 }, await File.ReadAllBytesAsync(source));
+        Assert.Equal([prepared.ContentPath], Directory.GetFiles(prepared.TemporaryDirectory));
+    }
+
+    [Fact]
+    public async Task MtpDestination_PreservesExistingFileAndUsesUniqueName()
+    {
+        var bridge = new WpdStorageProviderTests.BridgeStub();
+        const string existingPath = "/Download/Результат.txt";
+        bridge.Entries[("device", existingPath)] = new WpdStorageEntry(
+            existingPath, "Результат.txt", false, 3, null);
+        bridge.Content[("device", existingPath)] = [9, 9, 9];
+        DecryptionExportService service = CreateService([1, 2, 3], ".txt", bridge: bridge);
+        string source = CreateSource("conflict-remote.cbook");
+        await using PreparedDecryption prepared = await service.PrepareAsync(source);
+
+        string result = await service.PublishAsync(
+            prepared,
+            new DecryptionOptions(EncryptionTargetMode.SaveAs, DecryptionOutputFormat.Original),
+            WpdLocatorCodec.Encode("device", existingPath).ToString());
+
+        Assert.Equal(
+            WpdLocatorCodec.Encode("device", "/Download/Результат - Copy.txt").ToString(),
+            result);
+        Assert.Equal(new byte[] { 9, 9, 9 }, bridge.Content[("device", existingPath)]);
+        Assert.Equal(new byte[] { 1, 2, 3 }, bridge.Content[("device", "/Download/Результат - Copy.txt")]);
+    }
+
+    [Fact]
+    public async Task MtpDestination_CorruptedUploadKeepsProtectedSourceAndCleansStaging()
+    {
+        var bridge = new WpdStorageProviderTests.BridgeStub { CorruptCopiedFiles = true };
+        DecryptionExportService service = CreateService([1, 2, 3], ".txt", bridge: bridge);
+        string source = CreateSource("corrupt-remote.cbook");
+        await using PreparedDecryption prepared = await service.PrepareAsync(source);
+
+        await Assert.ThrowsAsync<IOException>(() => service.PublishAsync(
+            prepared,
+            new DecryptionOptions(EncryptionTargetMode.ReplaceSource, DecryptionOutputFormat.Original),
+            WpdLocatorCodec.Encode("device", "/Download/corrupt.txt").ToString()));
+
+        Assert.True(File.Exists(source));
+        Assert.Equal([prepared.ContentPath], Directory.GetFiles(prepared.TemporaryDirectory));
+    }
+
+    [Fact]
+    public async Task MtpSource_PublishesToWindowsAndKeepsRemoteProtectedFile()
+    {
+        byte[] protectedBytes = [99, 98, 97];
+        var bridge = new WpdStorageProviderTests.BridgeStub();
+        const string sourcePath = "/Download/Источник.cbook";
+        bridge.Entries[("device", sourcePath)] = new WpdStorageEntry(
+            sourcePath, "Источник.cbook", false, protectedBytes.Length, null);
+        bridge.Content[("device", sourcePath)] = protectedBytes;
+        StorageLocation source = WpdLocatorCodec.Encode("device", sourcePath);
+        byte[] decryptedBytes = [0, 1, 2, 254, 255];
+        DecryptionExportService service = CreateService(decryptedBytes, ".png", bridge: bridge);
+        string temporaryDirectory;
+
+        await using(PreparedDecryption prepared = await service.PrepareAsync(source.ToString()))
+        {
+            temporaryDirectory = prepared.TemporaryDirectory;
+            Assert.Equal(source.ToString(), prepared.SourcePath);
+            Assert.True(bridge.CopyToLocalCalled);
+            string result = await service.PublishAsync(
+                prepared,
+                new DecryptionOptions(EncryptionTargetMode.SaveAs, DecryptionOutputFormat.Original),
+                Path.Combine(directory, "Результат.png"));
+
+            Assert.Equal(decryptedBytes, await File.ReadAllBytesAsync(result));
+            Assert.Equal(protectedBytes, bridge.Content[("device", sourcePath)]);
+        }
+
+        Assert.False(Directory.Exists(temporaryDirectory));
+    }
+
     public void Dispose()
     {
         if(Directory.Exists(directory))
@@ -195,7 +299,8 @@ public sealed class DecryptionExportServiceTests: IDisposable
         string originalExtension,
         bool canConvert = true,
         Exception? conversionFailure = null,
-        CancellationTokenSource? cancelDuringDecrypt = null) =>
+        CancellationTokenSource? cancelDuringDecrypt = null,
+        WpdStorageProviderTests.BridgeStub? bridge = null) =>
         new(
             new StubSecureFileProcessor(
                 payload,
@@ -203,7 +308,9 @@ public sealed class DecryptionExportServiceTests: IDisposable
                 cancelDuringDecrypt),
             new AlwaysEncryptedValidator(),
             new StubConversionService(canConvert, conversionFailure),
-            Path.Combine(directory, "temporary"));
+            Path.Combine(directory, "temporary"),
+            bridge is null ? null : new StorageFacade(
+                [new LocalStorageProvider(), new WpdStorageProvider(bridge)]));
 
     private string CreateSource(string name)
     {

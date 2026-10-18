@@ -8,7 +8,7 @@ using System.IO;
 
 namespace CryptoBook.Services
 {
-    public class FileSecurityService: IFileSecurityService
+    public partial class FileSecurityService: IFileSecurityService
     {
         private readonly ISecureFileProcessor _secureFileProcessor;
         private readonly ISecureFileValidator secureFileValidator;
@@ -20,7 +20,9 @@ namespace CryptoBook.Services
             ISecureFileProcessor secureFileProcessor,
             IKeyResetService? keyResetService = null,
             ISecureFileValidator? secureFileValidator = null,
-            IEncryptionKeyRequestService? keyRequestService = null)
+            IEncryptionKeyRequestService? keyRequestService = null,
+            IStorageFacade? storageFacade = null,
+            ITransferEngine? transferEngine = null)
         {
             ArgumentNullException.ThrowIfNull(createService);
             _secureFileProcessor = secureFileProcessor ?? throw new ArgumentNullException(nameof(secureFileProcessor));
@@ -28,6 +30,8 @@ namespace CryptoBook.Services
             this.keyRequestService = keyRequestService;
             this.secureFileValidator = secureFileValidator ??
                 new SecureFileValidator();
+            storage = storageFacade ?? new StorageFacade([new LocalStorageProvider()]);
+            this.transferEngine = transferEngine ?? new TransferEngine(storage);
         }
 
         public Task<FileOperationResult> EncryptAsync( ISystemItem source, string destinationPath, EncryptionTargetMode mode, IProgressReporter? progress = null,
@@ -79,6 +83,13 @@ namespace CryptoBook.Services
 
             if(sources.Count == 0)
                 return new FileOperationBatchResult([], 0, 0, false, false);
+
+            if(!storage.Resolve(destinationDirectory).IsLocal ||
+               sources.Any(source => !source.Location.IsLocal))
+            {
+                return await CreateStorageProtectedCopiesAsync(
+                    sources, destinationDirectory, progress, cancellationToken);
+            }
 
             using IDisposable? timerPause = keyResetService?.Pause();
             string destination = Path.GetFullPath(destinationDirectory);
@@ -271,7 +282,7 @@ namespace CryptoBook.Services
                 decrypt: true,
                 progress,
                 cancellationToken,
-                Path.GetFullPath(destinationDirectory));
+                storage.Format(storage.Resolve(destinationDirectory)));
         }
 
         private async Task<FileOperationBatchResult> ProcessBatchAsync(
@@ -382,7 +393,7 @@ namespace CryptoBook.Services
 
                 if(!result.Success)
                     hasFailures = true;
-                else if(result.ProcessedFileCount > 0 || !decrypt)
+                else if(result.ProcessedFileCount > 0 || (!decrypt && result.SkippedFileCount == 0))
                     completedCount++;
                 skippedCount += result.SkippedFileCount;
 
@@ -431,6 +442,12 @@ namespace CryptoBook.Services
                             "Security.DestinationRequired"));
 
                 cancellationToken.ThrowIfCancellationRequested();
+
+                if(!source.Location.IsLocal || !storage.Resolve(destinationPath).IsLocal)
+                {
+                    return await ProcessStorageFileAsync(
+                        source, destinationPath, mode, decrypt, progress, cancellationToken);
+                }
 
                 string sourcePath = Path.GetFullPath(source.FullPath);
                 if(!decrypt && keyRequestService?.EnsureEncryptionKeyAvailable() == false)
@@ -740,10 +757,19 @@ namespace CryptoBook.Services
             }
         }
 
-        private static string GetBatchDestinationPath(
+        private string GetBatchDestinationPath(
             ISystemItem source,
             string destinationDirectory)
         {
+            if(!source.Location.IsLocal || !storage.Resolve(destinationDirectory).IsLocal)
+            {
+                return storage.Format(storage.GetChild(
+                    storage.Resolve(destinationDirectory),
+                    source.Location.IsLocal
+                        ? Path.GetFileName(source.FullPath)
+                        : source.Name + (source as IFileItem)?.Extension));
+            }
+
             string name = source is IDirectoryItem
                 ? Path.GetFileName(Path.TrimEndingDirectorySeparator(
                     source.FullPath))
@@ -922,6 +948,9 @@ namespace CryptoBook.Services
 
             switch(source)
             {
+                case IFileItem when !source.Location.IsLocal:
+                    return new BatchSourceWork(source, Math.Max(1L, source.Size));
+
                 case IFileItem:
                     FileInfo file = new(source.FullPath);
                     if(!file.Exists)

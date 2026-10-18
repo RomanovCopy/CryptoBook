@@ -517,6 +517,7 @@
   <data name="Explorer.AllFilesFilter" xml:space="preserve"><value>All files (*.*)|*.*</value></data>
   <data name="Explorer.SaveEncryptedTitle" xml:space="preserve"><value>Save encrypted file</value></data>
   <data name="Explorer.SaveDecryptedTitle" xml:space="preserve"><value>Save decrypted file</value></data>
+  <data name="Explorer.FileNameInvalid" xml:space="preserve"><value>Enter a valid file name without a folder path or reserved characters.</value></data>
   <data name="Explorer.EncryptionError" xml:space="preserve"><value>Encryption error</value></data>
   <data name="Explorer.DecryptionError" xml:space="preserve"><value>Decryption error</value></data>
   <data name="Explorer.Encryption" xml:space="preserve"><value>Encryption</value></data>
@@ -1057,4 +1058,96 @@ Author: [Name]
 
 - [Action, owner and deadline]
 </value></data>
+  <data name="FileDetails.Title" xml:space="preserve"><value>Detailed properties</value></data>
+  <data name="FileDetails.General" xml:space="preserve"><value>General</value></data>
+  <data name="FileDetails.Storage" xml:space="preserve"><value>Storage</value></data>
+  <data name="FileDetails.Security" xml:space="preserve"><value>Owner and permissions</value></data>
+  <data name="FileDetails.Streams" xml:space="preserve"><value>Data streams</value></data>
+  <data name="FileDetails.Version" xml:space="preserve"><value>Version information</value></data>
+  <data name="FileDetails.Metadata" xml:space="preserve"><value>Windows metadata</value></data>
+  <data name="FileDetails.Hashes" xml:space="preserve"><value>Checksums</value></data>
+  <data name="FileDetails.Signature" xml:space="preserve"><value>Digital signature</value></data>
+  <data name="FileDetails.Inspection" xml:space="preserve"><value>Content inspection</value></data>
+  <data name="FileDetails.Name" xml:space="preserve"><value>Full name (escaped controls)</value></data>
+  <data name="FileDetails.Path" xml:space="preserve"><value>Display path</value></data>
+  <data name="FileDetails.StorageLocation" xml:space="preserve"><value>Storage identifier</value></data>
+  <data name="FileDetails.Size" xml:space="preserve"><value>Logical size</value></data>
+  <data name="FileDetails.Kind" xml:space="preserve"><value>Object type</value></data>
+  <data name="FileDetails.Extension" xml:space="preserve"><value>Final extension</value></data>
+  <data name="FileDetails.Created" xml:space="preserve"><value>Created (local / UTC)</value></data>
+  <data name="FileDetails.Modified" xml:space="preserve"><value>Modified (local / UTC)</value></data>
+  <data name="FileDetails.Accessed" xml:space="preserve"><value>Accessed (local / UTC)</value></data>
+  <data name="FileDetails.Attributes" xml:space="preserve"><value>Attributes</value></data>
+  <data name="FileDetails.LinkTarget" xml:space="preserve"><value>Link target</value></data>
+  <data name="FileDetails.StoredSize" xml:space="preserve"><value>Compressed / sparse size</value></data>
+  <data name="FileDetails.HardLinks" xml:space="preserve"><value>Hard link count</value></data>
+  <data name="FileDetails.FileId" xml:space="preserve"><value>File ID (volume scoped)</value></data>
+  <data name="FileDetails.VolumeId" xml:space="preserve"><value>Volume serial number</value></data>
+  <data name="FileDetails.FileSystem" xml:space="preserve"><value>File system</value></data>
+  <data name="FileDetails.VolumeLabel" xml:space="preserve"><value>Volume label</value></data>
+  <data name="FileDetails.DriveType" xml:space="preserve"><value>Drive type</value></data>
+  <data name="FileDetails.Owner" xml:space="preserve"><value>Owner</value></data>
+  <data name="FileDetails.Group" xml:space="preserve"><value>Primary group</value></data>
+  <data name="FileDetails.AclProtected" xml:space="preserve"><value>ACL inheritance disabled</value></data>
+  <data name="FileDetails.AclCanonical" xml:space="preserve"><value>ACL is canonical</value></data>
+  <data name="FileDetails.Sddl" xml:space="preserve"><value>Security descriptor (SDDL)</value></data>
+  <data name="FileDetails.Availability" xml:space="preserve"><value>Scope / limitations</value></data>
+  <data name="FileDetails.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="FileDetails.Unavailable" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="FileDetails.NoStreams" xml:space="preserve"><value>No data streams</value></data>
+  <data name="FileDetails.ZoneTruncated" xml:space="preserve"><value>Zone.Identifier exceeds 16,384 characters; only the beginning is shown.</value></data>
+  <data name="FileDetails.RemoteLimit" xml:space="preserve"><value>Only available device metadata is shown. Content, NTFS properties and signatures require a local file.</value></data>
+  <data name="FileDetails.AclLimit" xml:space="preserve"><value>These are stored access rules, not effective permissions. Audit rules (SACL) require additional privileges and are not requested.</value></data>
+  <data name="FileDetails.Directory" xml:space="preserve"><value>Directory</value></data>
+  <data name="FileDetails.File" xml:space="preserve"><value>File</value></data>
+  <data name="FileDetails.NoVersion" xml:space="preserve"><value>No version resource found</value></data>
+  <data name="FileDetails.FileChanged" xml:space="preserve"><value>The file changed during hashing. Refresh and try again.</value></data>
+  <data name="FileDetails.VariantType" xml:space="preserve"><value>Value cannot be formatted (PROPVARIANT type {0}).</value></data>
+  <data name="FileDetails.SignatureValid" xml:space="preserve"><value>Signature verified using the local trust store (offline)</value></data>
+  <data name="FileDetails.SignatureNotSigned" xml:space="preserve"><value>No supported signature found</value></data>
+  <data name="FileDetails.SignatureInvalid" xml:space="preserve"><value>Signature verification failed or trust could not be established</value></data>
+  <data name="FileDetails.SignatureLimit" xml:space="preserve"><value>Offline Authenticode check; certificate revocation is not checked online. A valid signature does not establish that a file is harmless.</value></data>
+  <data name="FileDetails.Subject" xml:space="preserve"><value>Certificate subject</value></data>
+  <data name="FileDetails.Issuer" xml:space="preserve"><value>Issuer</value></data>
+  <data name="FileDetails.SerialNumber" xml:space="preserve"><value>Certificate serial number</value></data>
+  <data name="FileDetails.Thumbprint" xml:space="preserve"><value>Certificate thumbprint</value></data>
+  <data name="FileDetails.ValidFrom" xml:space="preserve"><value>Valid from</value></data>
+  <data name="FileDetails.ValidTo" xml:space="preserve"><value>Valid until</value></data>
+  <data name="FileDetails.SignatureAlgorithm" xml:space="preserve"><value>Signature algorithm</value></data>
+  <data name="FileDetails.Certificate" xml:space="preserve"><value>Embedded certificate</value></data>
+  <data name="FileDetails.NoEmbeddedCertificate" xml:space="preserve"><value>No embedded signer certificate could be read (catalog signatures are separate).</value></data>
+  <data name="FileDetails.DetectedType" xml:space="preserve"><value>Type detected from content</value></data>
+  <data name="FileDetails.Header" xml:space="preserve"><value>First bytes (hex)</value></data>
+  <data name="FileDetails.UnknownType" xml:space="preserve"><value>Not identified by supported signatures</value></data>
+  <data name="FileDetails.MzType" xml:space="preserve"><value>MZ executable header (DOS / PE / malformed executable)</value></data>
+  <data name="FileDetails.ScriptType" xml:space="preserve"><value>Script with an interpreter header</value></data>
+  <data name="FileDetails.ExecutableAsImage" xml:space="preserve"><value>WARNING: executable or shortcut content was found under an image extension.</value></data>
+  <data name="FileDetails.ActiveContent" xml:space="preserve"><value>Executable, script or shortcut header detected. Treat this file as active content.</value></data>
+  <data name="FileDetails.ActiveExtension" xml:space="preserve"><value>The final extension {0} can launch code, open a link or change system settings.</value></data>
+  <data name="FileDetails.DoubleExtension" xml:space="preserve"><value>An image extension is followed by an active extension. The full name can be misleading.</value></data>
+  <data name="FileDetails.HiddenNameCharacters" xml:space="preserve"><value>The name contains invisible or text-direction control characters. They are displayed as \uXXXX in this report.</value></data>
+  <data name="FileDetails.TypeMismatch" xml:space="preserve"><value>The final extension {0} does not match the detected {1} signature.</value></data>
+  <data name="FileDetails.ImageUnconfirmed" xml:space="preserve"><value>An image extension is present, but this check could not confirm a supported image signature. The file may use another format, be damaged or be disguised.</value></data>
+  <data name="FileDetails.InspectionFailed" xml:space="preserve"><value>Content inspection failed. The file type has not been confirmed.</value></data>
+  <data name="FileDetails.DirectoryLimit" xml:space="preserve"><value>Content signature inspection applies to files. Directory properties are shown below.</value></data>
+  <data name="FileDetails.Loading" xml:space="preserve"><value>Reading properties…</value></data>
+  <data name="FileDetails.CheckingSignature" xml:space="preserve"><value>Checking digital signature…</value></data>
+  <data name="FileDetails.Loaded" xml:space="preserve"><value>Properties collected: {0}</value></data>
+  <data name="FileDetails.Cancelled" xml:space="preserve"><value>Cancelled. Collected properties are retained.</value></data>
+  <data name="FileDetails.Hashing" xml:space="preserve"><value>Calculating SHA-256 and SHA-512…</value></data>
+  <data name="FileDetails.CalculateHashes" xml:space="preserve"><value>Calculate hashes</value></data>
+  <data name="FileDetails.Search" xml:space="preserve"><value>Search property names, values and keys</value></data>
+  <data name="FileDetails.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="FileDetails.Property" xml:space="preserve"><value>Property</value></data>
+  <data name="FileDetails.Value" xml:space="preserve"><value>Value</value></data>
+  <data name="FileDetails.Key" xml:space="preserve"><value>Technical key</value></data>
+  <data name="FileDetails.CopySelected" xml:space="preserve"><value>Copy selected</value></data>
+  <data name="FileDetails.CopyReport" xml:space="preserve"><value>Copy full report</value></data>
+  <data name="FileDetails.ContentLimit" xml:space="preserve"><value>Signatures identify only some formats. An image signature, a trusted icon or an unknown result does not guarantee safety. This check does not run the file and is not an antivirus scan.</value></data>
+  <data name="FileDetails.PE" xml:space="preserve"><value>PE headers</value></data>
+  <data name="FileDetails.RawValue" xml:space="preserve"><value>Unformatted value</value></data>
+  <data name="FileDetails.AllocationSize" xml:space="preserve"><value>Allocated disk space</value></data>
+  <data name="FileDetails.EmbeddedSignature" xml:space="preserve"><value>Embedded signature status</value></data>
+  <data name="FileDetails.CatalogCount" xml:space="preserve"><value>Catalog signatures found</value></data>
+  <data name="FileDetails.CatalogPath" xml:space="preserve"><value>Signature catalog</value></data>
 </root>

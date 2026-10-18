@@ -96,6 +96,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarkEntryViewModel>().As<IBookmarkEntryViewModel>().AsSelf();
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
+            builder.RegisterType<FileDetailsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FavoriteDirectoriesViewModel>().As<IFavoriteDirectoriesViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<PinnedDocumentsViewModel>()
                 .As<IPinnedDocumentsViewModel>()
@@ -167,6 +168,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<BookmarksEditor>().InstancePerDependency();
             builder.RegisterType<NewFileDialog>().InstancePerDependency();
             builder.RegisterType<FileExplorer>().InstancePerDependency();
+            builder.RegisterType<FileDetailsWindow>().InstancePerDependency();
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
             builder.RegisterType<DirectoryNameDialog>().InstancePerDependency();
@@ -364,6 +366,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<WindowsFilePropertiesService>()
                 .As<IFilePropertiesService>()
                 .SingleInstance();
+            builder.RegisterType<FileDetailsService>().As<IFileDetailsService>().SingleInstance();
             builder.RegisterType<FileSecurityService>().As<IFileSecurityService>().SingleInstance();
             builder.RegisterType<DecryptedDocumentConversionService>()
                 .As<IDecryptedDocumentConversionService>()

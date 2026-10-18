@@ -28,6 +28,8 @@ namespace CryptoBook.ViewModels
             WindowId = Guid.NewGuid();
             OriginalExtension = context.Get<string>("originalExtension");
             ProcessedPath = context.Get<string>("sourcePath");
+            CanReplaceSource = !context.TryGet<bool>("canReplaceSource", out bool canReplace)
+                || canReplace;
             IReadOnlyList<DecryptionOutputFormat> availableFormats =
                 context.Get<IReadOnlyList<DecryptionOutputFormat>>(
                     "availableFormats");
@@ -66,6 +68,7 @@ namespace CryptoBook.ViewModels
         public string ProcessedPath { get; }
         public string OriginalExtension { get; }
         public bool HasConvertibleFormats { get; }
+        public bool CanReplaceSource { get; }
         public bool HasResult { get; private set; }
 
         public DecryptionOutputFormat SelectedOutputFormat
@@ -83,6 +86,8 @@ namespace CryptoBook.ViewModels
             get => selectedTargetMode;
             set
             {
+                if(value == EncryptionTargetMode.ReplaceSource && !CanReplaceSource)
+                    return;
                 if(SetProperty(ref selectedTargetMode, value))
                     OnPropertyChanged(nameof(WarningMessage));
             }

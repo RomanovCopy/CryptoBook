@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.4.2-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.2)
+[![Version](https://img.shields.io/badge/version-1.1.4.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.3)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -46,15 +46,15 @@ machine unless you explicitly move or share them.
 Screenshots show an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.4.2
+## New in 1.1.4.3
 
-- Create documents from built-in templates: notes, project plan, meeting minutes, journal and report.
-- Choose the default template in Settings → Appearance and override it in the updated new-document dialog.
-- Templates adapt to the selected page size, orientation and document format.
-- Fixed automatic encryption-key reset when the idle timeout is set to **Never**.
-- Refreshed screenshots show the current editor, new-document dialog and template settings.
+- Open detailed file properties from the context menu or with **Alt+Enter**: content-based type detection, extension mismatch indicators, Windows metadata, permissions and digital signatures.
+- Calculate SHA-256 and SHA-512 checksums with progress and cancellation; search and copy property reports.
+- Fixed encryption, decryption and protected-copy creation for Android/MTP files, including transfers between Windows and Android.
+- Fixed saving decrypted `.cbook` content to Android/MTP destinations, preserving the original file type and supporting available export formats.
+- Remote writes use local staging and verified transfers; name conflicts receive unique names, and source replacement checks that the source has not changed before deletion.
 
-See the [release notes](docs/releases/v1.1.4.2.md) and [changelog](CHANGELOG.md).
+See the [release notes](docs/releases/v1.1.4.3.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -70,6 +70,8 @@ See the [release notes](docs/releases/v1.1.4.2.md) and [changelog](CHANGELOG.md)
   editor scaling and layout preservation in XamlPackage and protected rich-text saves;
 - zoom with Ctrl + mouse wheel and reset the editor view to 100%;
 - browse folders and files with sorting, favorites and change monitoring;
+- inspect [detailed file properties](docs/FILE_DETAILS.md), content signatures, extension mismatches,
+  Windows metadata, permissions, streams, digital signatures and SHA-256/SHA-512 checksums;
 - pin frequently used documents with Quick Access;
 - search file names inside the selected workspace;
 - perform full-text search across supported documents, including `.cbook` files after unlock;
@@ -161,7 +163,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.4.2
+./installer/Build-Installer.ps1 -Version 1.1.4.3
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:

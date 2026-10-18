@@ -26,24 +26,31 @@ try
 {
     IReadOnlyList<StorageItemMetadata> roots = await provider.GetRootsAsync();
     Console.WriteLine($"MTP roots: {roots.Count}");
-    if(roots.Count != 1)
+    string? deviceName = GetOption("--device");
+    StorageItemMetadata[] matchingDevices = roots.Where(item =>
+        deviceName is null || item.Name.Equals(deviceName, StringComparison.OrdinalIgnoreCase))
+        .ToArray();
+    if(matchingDevices.Length != 1)
         throw new InvalidOperationException(
-            $"Expected exactly one MTP root, found {roots.Count}.");
+            $"Select exactly one MTP root with --device. Matches: {matchingDevices.Length}.");
+    StorageItemMetadata deviceRoot = matchingDevices[0];
 
     IReadOnlyList<StorageItemMetadata> rootChildren = await provider.GetChildrenAsync(
-        roots[0].Location);
+        deviceRoot.Location);
+    string? storageName = GetOption("--storage");
     StorageItemMetadata[] storageRoots = rootChildren
-        .Where(item => item.IsContainer)
+        .Where(item => item.IsContainer && (storageName is null ||
+            item.Name.Equals(storageName, StringComparison.OrdinalIgnoreCase)))
         .ToArray();
     if(storageRoots.Length != 1)
     {
         throw new InvalidOperationException(
-            $"Expected exactly one MTP storage container, found {storageRoots.Length}.");
+            $"Select exactly one storage container with --storage. Matches: {storageRoots.Length}.");
     }
 
     StorageItemMetadata storageRoot = storageRoots[0];
     Console.WriteLine(
-        $"Device: {roots[0].Name}; status: {roots[0].StatusText}; " +
+        $"Device: {deviceRoot.Name}; status: {deviceRoot.StatusText}; " +
         $"storage: {storageRoot.Name}");
 
     if(args.Contains("--cleanup", StringComparer.OrdinalIgnoreCase))
@@ -81,6 +88,15 @@ try
     var localProvider = new LocalStorageProvider();
     var storage = new StorageFacade([localProvider, provider]);
     var engine = new TransferEngine(storage);
+
+    await DecryptionIntegration.RunAsync(storage, provider, remoteTestFolder.Value, localRoot);
+    if(args.Contains("--decryption-only", StringComparer.OrdinalIgnoreCase) ||
+       args.Contains("--security-only", StringComparer.OrdinalIgnoreCase))
+    {
+        await DeleteRemoteTestFolderAsync();
+        Console.WriteLine("REMOTE_WPD_FILE_SECURITY_TEST: PASS");
+        return 0;
+    }
 
     byte[] payload = [0, 1, 2, 3, 127, 128, 254, 255];
     string uploadPath = Path.Combine(localRoot, "upload.bin");
@@ -255,6 +271,16 @@ finally
 }
 
 return failure is null ? 0 : 1;
+
+string? GetOption(string name)
+{
+    int index = Array.FindIndex(args, argument => argument.Equals(name, StringComparison.OrdinalIgnoreCase));
+    if(index < 0)
+        return null;
+    if(index + 1 >= args.Length || args[index + 1].StartsWith("--", StringComparison.Ordinal))
+        throw new ArgumentException($"A value is required for {name}.");
+    return args[index + 1];
+}
 
 async Task DeleteRemoteTestFolderAsync()
 {

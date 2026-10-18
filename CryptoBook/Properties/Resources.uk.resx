@@ -1050,6 +1050,9 @@
   <data name="Explorer.SaveDecryptedTitle" xml:space="preserve">
     <value>Зберегти розшифрований файл</value>
   </data>
+  <data name="Explorer.FileNameInvalid" xml:space="preserve">
+    <value>Введіть припустиме ім’я файлу без шляху до папки та заборонених символів.</value>
+  </data>
   <data name="Explorer.EncryptionError" xml:space="preserve">
     <value>Помилка шифрування</value>
   </data>
@@ -1906,4 +1909,96 @@
 
 - [Дія, відповідальний і термін]
 </value></data>
+  <data name="FileDetails.Title" xml:space="preserve"><value>Докладні властивості</value></data>
+  <data name="FileDetails.General" xml:space="preserve"><value>Загальні</value></data>
+  <data name="FileDetails.Storage" xml:space="preserve"><value>Зберігання</value></data>
+  <data name="FileDetails.Security" xml:space="preserve"><value>Власник і права</value></data>
+  <data name="FileDetails.Streams" xml:space="preserve"><value>Потоки даних</value></data>
+  <data name="FileDetails.Version" xml:space="preserve"><value>Відомості про версію</value></data>
+  <data name="FileDetails.Metadata" xml:space="preserve"><value>Метадані Windows</value></data>
+  <data name="FileDetails.Hashes" xml:space="preserve"><value>Контрольні суми</value></data>
+  <data name="FileDetails.Signature" xml:space="preserve"><value>Цифровий підпис</value></data>
+  <data name="FileDetails.Inspection" xml:space="preserve"><value>Перевірка вмісту</value></data>
+  <data name="FileDetails.Name" xml:space="preserve"><value>Повне ім’я (керівні символи розкрито)</value></data>
+  <data name="FileDetails.Path" xml:space="preserve"><value>Відображуваний шлях</value></data>
+  <data name="FileDetails.StorageLocation" xml:space="preserve"><value>Ідентифікатор розташування</value></data>
+  <data name="FileDetails.Size" xml:space="preserve"><value>Логічний розмір</value></data>
+  <data name="FileDetails.Kind" xml:space="preserve"><value>Тип об’єкта</value></data>
+  <data name="FileDetails.Extension" xml:space="preserve"><value>Останнє розширення</value></data>
+  <data name="FileDetails.Created" xml:space="preserve"><value>Створено (місцевий час / UTC)</value></data>
+  <data name="FileDetails.Modified" xml:space="preserve"><value>Змінено (місцевий час / UTC)</value></data>
+  <data name="FileDetails.Accessed" xml:space="preserve"><value>Останній доступ (місцевий час / UTC)</value></data>
+  <data name="FileDetails.Attributes" xml:space="preserve"><value>Атрибути</value></data>
+  <data name="FileDetails.LinkTarget" xml:space="preserve"><value>Ціль посилання</value></data>
+  <data name="FileDetails.StoredSize" xml:space="preserve"><value>Розмір з урахуванням стиснення / розрідженості</value></data>
+  <data name="FileDetails.HardLinks" xml:space="preserve"><value>Кількість жорстких посилань</value></data>
+  <data name="FileDetails.FileId" xml:space="preserve"><value>ID файлу (у межах тому)</value></data>
+  <data name="FileDetails.VolumeId" xml:space="preserve"><value>Серійний номер тому</value></data>
+  <data name="FileDetails.FileSystem" xml:space="preserve"><value>Файлова система</value></data>
+  <data name="FileDetails.VolumeLabel" xml:space="preserve"><value>Мітка тому</value></data>
+  <data name="FileDetails.DriveType" xml:space="preserve"><value>Тип накопичувача</value></data>
+  <data name="FileDetails.Owner" xml:space="preserve"><value>Власник</value></data>
+  <data name="FileDetails.Group" xml:space="preserve"><value>Основна група</value></data>
+  <data name="FileDetails.AclProtected" xml:space="preserve"><value>Успадкування ACL вимкнено</value></data>
+  <data name="FileDetails.AclCanonical" xml:space="preserve"><value>ACL у канонічному порядку</value></data>
+  <data name="FileDetails.Sddl" xml:space="preserve"><value>Дескриптор безпеки (SDDL)</value></data>
+  <data name="FileDetails.Availability" xml:space="preserve"><value>Обсяг перевірки / обмеження</value></data>
+  <data name="FileDetails.Status" xml:space="preserve"><value>Стан</value></data>
+  <data name="FileDetails.Unavailable" xml:space="preserve"><value>Недоступно</value></data>
+  <data name="FileDetails.NoStreams" xml:space="preserve"><value>Потоки даних відсутні</value></data>
+  <data name="FileDetails.ZoneTruncated" xml:space="preserve"><value>Zone.Identifier довший за 16 384 символи; показано лише початок.</value></data>
+  <data name="FileDetails.RemoteLimit" xml:space="preserve"><value>Показано доступні відомості пристрою. Перевірка вмісту, властивостей NTFS і підпису потребує локального файлу.</value></data>
+  <data name="FileDetails.AclLimit" xml:space="preserve"><value>Це збережені правила доступу, а не розрахунок ефективних дозволів. Правила аудиту (SACL) потребують додаткових привілеїв і не запитуються.</value></data>
+  <data name="FileDetails.Directory" xml:space="preserve"><value>Каталог</value></data>
+  <data name="FileDetails.File" xml:space="preserve"><value>Файл</value></data>
+  <data name="FileDetails.NoVersion" xml:space="preserve"><value>Ресурс версії не знайдено</value></data>
+  <data name="FileDetails.FileChanged" xml:space="preserve"><value>Файл змінився під час розрахунку. Оновіть відомості та повторіть.</value></data>
+  <data name="FileDetails.VariantType" xml:space="preserve"><value>Значення не вдалося перетворити на текст (тип PROPVARIANT {0}).</value></data>
+  <data name="FileDetails.SignatureValid" xml:space="preserve"><value>Підпис перевірено за локальним сховищем довіри (без мережі)</value></data>
+  <data name="FileDetails.SignatureNotSigned" xml:space="preserve"><value>Підтримуваний підпис не знайдено</value></data>
+  <data name="FileDetails.SignatureInvalid" xml:space="preserve"><value>Підпис не пройшов перевірку або довіру не встановлено</value></data>
+  <data name="FileDetails.SignatureLimit" xml:space="preserve"><value>Перевірка Authenticode без мережі; актуальне відкликання сертифіката не перевіряється. Чинний підпис не гарантує нешкідливість файлу.</value></data>
+  <data name="FileDetails.Subject" xml:space="preserve"><value>Суб’єкт сертифіката</value></data>
+  <data name="FileDetails.Issuer" xml:space="preserve"><value>Видавець сертифіката</value></data>
+  <data name="FileDetails.SerialNumber" xml:space="preserve"><value>Серійний номер сертифіката</value></data>
+  <data name="FileDetails.Thumbprint" xml:space="preserve"><value>Відбиток сертифіката</value></data>
+  <data name="FileDetails.ValidFrom" xml:space="preserve"><value>Чинний з</value></data>
+  <data name="FileDetails.ValidTo" xml:space="preserve"><value>Чинний до</value></data>
+  <data name="FileDetails.SignatureAlgorithm" xml:space="preserve"><value>Алгоритм підпису</value></data>
+  <data name="FileDetails.Certificate" xml:space="preserve"><value>Вбудований сертифікат</value></data>
+  <data name="FileDetails.NoEmbeddedCertificate" xml:space="preserve"><value>Вбудований сертифікат підписанта прочитати не вдалося (каталожні підписи зберігаються окремо).</value></data>
+  <data name="FileDetails.DetectedType" xml:space="preserve"><value>Тип за вмістом</value></data>
+  <data name="FileDetails.Header" xml:space="preserve"><value>Початкові байти (hex)</value></data>
+  <data name="FileDetails.UnknownType" xml:space="preserve"><value>Не визначено за підтримуваними сигнатурами</value></data>
+  <data name="FileDetails.MzType" xml:space="preserve"><value>Виконуваний заголовок MZ (DOS / PE / пошкоджений виконуваний файл)</value></data>
+  <data name="FileDetails.ScriptType" xml:space="preserve"><value>Скрипт із заголовком інтерпретатора</value></data>
+  <data name="FileDetails.ExecutableAsImage" xml:space="preserve"><value>УВАГА: під розширенням зображення виявлено виконуваний вміст або ярлик.</value></data>
+  <data name="FileDetails.ActiveContent" xml:space="preserve"><value>Виявлено заголовок програми, скрипта або ярлика. Файл має ознаки активного вмісту.</value></data>
+  <data name="FileDetails.ActiveExtension" xml:space="preserve"><value>Останнє розширення {0} може запускати код, відкривати посилання або змінювати налаштування системи.</value></data>
+  <data name="FileDetails.DoubleExtension" xml:space="preserve"><value>Після розширення зображення стоїть активне розширення. Повне ім’я може вводити в оману.</value></data>
+  <data name="FileDetails.HiddenNameCharacters" xml:space="preserve"><value>Ім’я містить невидимі символи або символи керування напрямком тексту. У звіті їх розкрито як \uXXXX.</value></data>
+  <data name="FileDetails.TypeMismatch" xml:space="preserve"><value>Останнє розширення {0} не відповідає виявленій сигнатурі {1}.</value></data>
+  <data name="FileDetails.ImageUnconfirmed" xml:space="preserve"><value>Файл має розширення зображення, але підтримувану сигнатуру зображення не підтверджено. Можливий інший формат, пошкодження або маскування.</value></data>
+  <data name="FileDetails.InspectionFailed" xml:space="preserve"><value>Не вдалося перевірити вміст. Тип файлу не підтверджено.</value></data>
+  <data name="FileDetails.DirectoryLimit" xml:space="preserve"><value>Перевірка сигнатури вмісту застосовується до файлів. Нижче показано властивості каталогу.</value></data>
+  <data name="FileDetails.Loading" xml:space="preserve"><value>Читання властивостей…</value></data>
+  <data name="FileDetails.CheckingSignature" xml:space="preserve"><value>Перевірка цифрового підпису…</value></data>
+  <data name="FileDetails.Loaded" xml:space="preserve"><value>Зібрано властивостей: {0}</value></data>
+  <data name="FileDetails.Cancelled" xml:space="preserve"><value>Скасовано. Зібрані відомості збережено.</value></data>
+  <data name="FileDetails.Hashing" xml:space="preserve"><value>Розрахунок SHA-256 і SHA-512…</value></data>
+  <data name="FileDetails.CalculateHashes" xml:space="preserve"><value>Розрахувати хеші</value></data>
+  <data name="FileDetails.Search" xml:space="preserve"><value>Пошук за назвами, значеннями й ключами властивостей</value></data>
+  <data name="FileDetails.Category" xml:space="preserve"><value>Розділ</value></data>
+  <data name="FileDetails.Property" xml:space="preserve"><value>Властивість</value></data>
+  <data name="FileDetails.Value" xml:space="preserve"><value>Значення</value></data>
+  <data name="FileDetails.Key" xml:space="preserve"><value>Технічний ключ</value></data>
+  <data name="FileDetails.CopySelected" xml:space="preserve"><value>Копіювати вибране</value></data>
+  <data name="FileDetails.CopyReport" xml:space="preserve"><value>Копіювати весь звіт</value></data>
+  <data name="FileDetails.ContentLimit" xml:space="preserve"><value>Сигнатури визначають лише частину форматів. Сигнатура зображення, знайомий значок або невідомий тип не гарантують безпеку. Перевірка не запускає файл і не замінює антивірус.</value></data>
+  <data name="FileDetails.PE" xml:space="preserve"><value>Заголовки PE</value></data>
+  <data name="FileDetails.RawValue" xml:space="preserve"><value>Значення без форматування</value></data>
+  <data name="FileDetails.AllocationSize" xml:space="preserve"><value>Виділене місце на диску</value></data>
+  <data name="FileDetails.EmbeddedSignature" xml:space="preserve"><value>Стан вбудованого підпису</value></data>
+  <data name="FileDetails.CatalogCount" xml:space="preserve"><value>Знайдено каталожних підписів</value></data>
+  <data name="FileDetails.CatalogPath" xml:space="preserve"><value>Каталог підпису</value></data>
 </root>

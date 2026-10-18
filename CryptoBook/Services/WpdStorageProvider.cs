@@ -436,7 +436,9 @@ public sealed class WpdStorageProvider:
         entry.LastWriteTimeUtc,
         entry.IsHidden,
         entry.IsReadOnly,
-        Capabilities,
+        !entry.IsContainer && !entry.IsReadOnly
+            ? Capabilities | StorageProviderCapabilities.Encrypt
+            : Capabilities,
         entry.RelativePath,
         "online");
 

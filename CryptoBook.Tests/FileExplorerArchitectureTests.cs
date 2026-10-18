@@ -4,6 +4,7 @@ using CryptoBook.DTO;
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
+using CryptoBook.Security;
 using CryptoBook.ViewModels;
 
 using System.IO;
@@ -451,6 +452,27 @@ public sealed class FileExplorerArchitectureTests
         Assert.Contains(
             "ResolveDisplayPath(",
             modelSource);
+    }
+
+    [Fact]
+    public void RemoteDecryptionOptions_KeepSaveCopyMode()
+    {
+        var viewModel = new DecryptionOptionsViewModel(
+            new WindowContext(new Dictionary<string, object?>
+            {
+                ["sourcePath"] = "/Download/book.cbook",
+                ["originalExtension"] = ".png",
+                ["availableFormats"] = new[] { DecryptionOutputFormat.Original },
+                ["defaultFormat"] = DecryptionOutputFormat.Original,
+                ["canReplaceSource"] = false
+            }),
+            new WindowManagerStub());
+
+        viewModel.SelectedTargetMode = EncryptionTargetMode.ReplaceSource;
+        viewModel.ButtonOk.Execute(null);
+
+        Assert.False(viewModel.CanReplaceSource);
+        Assert.Equal(EncryptionTargetMode.SaveAs, viewModel.Result?.TargetMode);
     }
 
     private static void AssertConstructorUsesWorkspaceOpener(Type type)
