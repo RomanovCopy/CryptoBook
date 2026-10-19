@@ -2059,7 +2059,7 @@
   <data name="AI.MemoryMode.Automatic" xml:space="preserve"><value>Автоматично · ОЗП + відеопам’ять</value></data>
   <data name="AI.MemoryMode.CpuOnly" xml:space="preserve"><value>Лише процесор · ОЗП</value></data>
   <data name="AI.MemoryMode.Manual" xml:space="preserve"><value>Кількість шарів GPU вручну</value></data>
-  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook добирає кількість шарів для відеопам’яті, решту розміщує в ОЗП. У разі помилки завантаження зменшує навантаження на GPU, аж до роботи на процесорі.</value></data>
+  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook перевіряє завантаження моделі та пробну генерацію в окремому процесі. За збою змінює оптимізації, зменшує пакети й кількість шарів GPU, пробує CPU. Зменшення контексту можна дозволити нижче. Фактичні параметри та історію спроб показано в діагностиці.</value></data>
   <data name="AI.MemoryHint.CpuOnly" xml:space="preserve"><value>Модель використовує ОЗП і процесор. Відеопам’ять не потрібна; відповіді можуть тривати довше.</value></data>
   <data name="AI.MemoryHint.Manual" xml:space="preserve"><value>Укажіть кількість шарів на відеокарті. Решта шарів використовує ОЗП і процесор.</value></data>
   <data name="AI.ResizePanel" xml:space="preserve"><value>Потягніть ліву межу, щоб змінити ширину AI-панелі</value></data>
@@ -2082,4 +2082,49 @@
   <data name="AI.DefaultFilePrompt" xml:space="preserve"><value>Проаналізуй прикріплені файли.</value></data>
   <data name="AI.ImageNeedsVisionModel" xml:space="preserve"><value>Для зображень потрібна модель із підтримкою зору та відповідним файлом mmproj GGUF у тій самій папці. Виберіть таку модель в налаштуваннях.</value></data>
   <data name="AI.ImageLoadFailed" xml:space="preserve"><value>Не вдалося завантажити модуль обробки зображень або обробити зображення.</value></data>
+  <data name="AI.AutoInspect" xml:space="preserve"><value>Перевірка моделі та доступної пам’яті в окремому процесі…</value></data>
+  <data name="AI.AutoResources" xml:space="preserve"><value>Перед завантаженням доступно: ОЗП {0:N0} МБ, відеопам’ять {1:N0} МБ. GPU: {2}.</value></data>
+  <data name="AI.AutoGenerating" xml:space="preserve"><value>Виконання запиту з перевіреними параметрами…</value></data>
+  <data name="AI.AutoComplete" xml:space="preserve"><value>Запит завершено. Модель залишається в пам’яті до вивантаження або тайм-ауту простою.</value></data>
+  <data name="AI.AutoAttempt" xml:space="preserve"><value>Спроба {0}/{1}, до 120 с: контекст {2}, шари GPU {3}, пакет {4}/{5}, Flash Attention {6}.</value></data>
+  <data name="AI.AutoCached" xml:space="preserve"><value>Перевірка збереженого профілю, до 120 с: контекст {2}, шари GPU {3}, пакет {4}/{5}, Flash Attention {6}.</value></data>
+  <data name="AI.AutoAttemptFailed" xml:space="preserve"><value>Процес AI не зміг завершити спробу. Причина: {0}.</value></data>
+  <data name="AI.AutoPartialReply" xml:space="preserve"><value>Генерацію перервано після часткової відповіді. Текст залишено в діалозі; повторіть запит для повної відповіді.</value></data>
+  <data name="AI.AutoManualFailure" xml:space="preserve"><value>Вибрані ручні параметри не спрацювали. Їх не змінено. Виберіть автоматичний режим або зменште витрати пам’яті.</value></data>
+  <data name="AI.AutoRecovering" xml:space="preserve"><value>Основна програма продовжує працювати. Підбір безпечнішої конфігурації перед повтором запиту…</value></data>
+  <data name="AI.AutoCancelled" xml:space="preserve"><value>Зупинено. Процес AI закрито, його пам’ять звільнено. Наступний запит завантажить модель знову.</value></data>
+  <data name="AI.AutoFailed" xml:space="preserve"><value>Операцію не виконано. Подробиці — в історії спроб і повідомленні про помилку нижче.</value></data>
+  <data name="AI.InspectionFailed" xml:space="preserve"><value>Не вдалося прочитати модель в окремому процесі. Перевірте файл, сумісність моделі та доступну ОЗП.</value></data>
+  <data name="AI.InspectionTimeout" xml:space="preserve"><value>Читання моделі тривало понад 60 секунд і було зупинено. Звільніть пам’ять або виберіть меншу модель.</value></data>
+  <data name="AI.AutoVerified" xml:space="preserve"><value>Завантаження моделі, створення контексту та пробна генерація пройшли успішно.</value></data>
+  <data name="AI.AutoReducedContext" xml:space="preserve"><value>Контекст зменшено з {0} до {1} для робочого профілю. У ньому вміщується менше історії; задане вами значення збережено.</value></data>
+  <data name="AI.AutoCpuSelected" xml:space="preserve"><value>Вибрано процесор і ОЗП. Відповіді можуть бути повільнішими; модель не використовує відеопам’ять.</value></data>
+  <data name="AI.AutoFlashDisabled" xml:space="preserve"><value>Flash Attention вимкнено для сумісності. Вибрані шари GPU продовжують працювати на відеокарті.</value></data>
+  <data name="AI.AutoSaved" xml:space="preserve"><value>Перевірені параметри збережено для цієї моделі, обладнання, драйвера та версії рушія. Вміст діалогу не записується.</value></data>
+  <data name="AI.AutoCacheUnavailable" xml:space="preserve"><value>Сховище робочих профілів недоступне. Перевірка триває; результат може не зберегтися.</value></data>
+  <data name="AI.AutoNoConfiguration" xml:space="preserve"><value>Робочу конфігурацію не знайдено. Звільніть ОЗП, виберіть меншу модель або оновіть відеодрайвер. Основна програма продовжує працювати.</value></data>
+  <data name="AI.WorkerFailed" xml:space="preserve"><value>Збій окремого процесу AI. Документ залишається відкритим. Подробиці та подальші дії — в історії спроб.</value></data>
+  <data name="AI.AutoContextFull" xml:space="preserve"><value>Запит не вміщується в автоматично зменшений контекст. Очистьте діалог, скоротіть запит або забороніть зменшення контексту й перевірте модель знову.</value></data>
+  <data name="AI.AutoUnloaded" xml:space="preserve"><value>Процес AI закрито; пам’ять моделі та модуля зображень звільнено.</value></data>
+  <data name="AI.AutoReset" xml:space="preserve"><value>Збережені робочі профілі цієї моделі видалено. Наступна перевірка добере параметри знову.</value></data>
+  <data name="AI.AutoSummary" xml:space="preserve"><value>Робочі параметри: контекст {0}; шари GPU {1}; пакет {2}/{3}; Flash Attention {4}.</value></data>
+  <data name="AI.AutoDetails" xml:space="preserve"><value>Перевірки, зміни параметрів і причини збоїв</value></data>
+  <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Дозволяти автоматичному режиму зменшувати контекст за потреби. Фактичний розмір та обмеження буде показано.</value></data>
+  <data name="AI.AutoRetune" xml:space="preserve"><value>Добрати знову</value></data>
+  <data name="AI.AutoNoGpu" xml:space="preserve"><value>немає придатного бюджету GPU</value></data>
+  <data name="AI.AutoTimeout" xml:space="preserve"><value>Досягнуто ліміту пробної генерації 120 секунд; процес зупинено.</value></data>
+  <data name="AI.AutoDisconnected" xml:space="preserve"><value>З’єднання з процесом AI втрачено.</value></data>
+  <data name="AI.AutoStartFailed" xml:space="preserve"><value>Не вдалося запустити окремий процес AI. Перевірте файли програми та дозволи Windows.</value></data>
+  <data name="AI.TransferTooLarge" xml:space="preserve"><value>Діалог і вкладення завеликі для безпечної передачі. Очистьте діалог або приберіть вкладення; вміст не обрізався.</value></data>
+  <data name="AI.AutoProfileRejected" xml:space="preserve"><value>Раніше збережені параметри не спрацювали на поточному запиті. Робочі профілі цієї моделі скинуто.</value></data>
+  <data name="AI.SendEmpty" xml:space="preserve"><value>Введіть повідомлення або прикріпіть файл, щоб надіслати запит.</value></data>
+  <data name="AI.SendBusy" xml:space="preserve"><value>Виконується запит. Дочекайтеся завершення або натисніть «Зупинити».</value></data>
+  <data name="AI.SendAttaching" xml:space="preserve"><value>Читання вкладень. Надсилання стане доступним після обробки файлів.</value></data>
+  <data name="AI.SendLocked" xml:space="preserve"><value>Захищений робочий простір заблоковано. Розблокуйте його для надсилання запиту.</value></data>
+  <data name="AI.ReasoningWarning" xml:space="preserve"><value>Не всі моделі підтримують вимкнення міркувань.</value></data>
+  <data name="AI.ReasoningHint" xml:space="preserve"><value>Увімкнений режим дає моделі час на додатковий аналіз; відповідь може з'явитися пізніше. Міркування показано в окремому згортаному блоці. Копіювання та вставлення використовують лише підсумкову відповідь. Перевірка використовує поточний стан прапорця; для застосування в чаті натисніть «Зберегти».</value></data>
+  <data name="AI.ReasoningDetails" xml:space="preserve"><value>Міркування моделі</value></data>
+  <data name="AI.TestReasoningOnly" xml:space="preserve"><value>У короткій перевірці отримано міркування без підсумкової відповіді. Спробуйте запит у чаті з більшим лімітом відповіді або вимкніть міркування, якщо модель підтримує цей режим.</value></data>
+  <data name="AI.Thinking" xml:space="preserve"><value>Модель міркує… Аналіз доступний в окремому блоці повідомлення.</value></data>
+  <data name="AI.ReasoningOnly" xml:space="preserve"><value>Модель повернула міркування без підсумкової відповіді. Їх збережено в окремому блоці. Збільште ліміт відповіді або вимкніть міркування, якщо модель підтримує цей режим.</value></data>
 </root>

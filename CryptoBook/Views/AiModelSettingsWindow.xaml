@@ -1,6 +1,7 @@
 <Window x:Class="CryptoBook.Views.AiModelSettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CryptoBook.MyControls"
         Title="{Binding [AI.ModelSettings], Source={StaticResource Res}}"
         Width="740" Height="820" MinWidth="600" MinHeight="540"
         WindowStartupLocation="CenterOwner"
@@ -48,7 +49,8 @@
         </StackPanel>
         <ScrollViewer x:Name="SettingsScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
             <StackPanel>
-                <Border Style="{StaticResource SectionCard}">
+                <controls:AiRuntimeDetails DataContext="{Binding Runtime}"/>
+                <Border Style="{StaticResource SectionCard}" IsEnabled="{Binding CanEdit}">
                     <StackPanel>
                         <CheckBox Style="{StaticResource ThemedCheckBoxStyle}" Content="{Binding [AI.Enable], Source={StaticResource Res}}" IsChecked="{Binding Enabled}" Margin="0,0,0,16"/>
                         <Label Content="{Binding [AI.ModelPath], Source={StaticResource Res}}" Target="{Binding ElementName=ModelPathBox}"/>
@@ -67,7 +69,7 @@
                         </ComboBox>
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource SectionCard}">
+                <Border Style="{StaticResource SectionCard}" IsEnabled="{Binding CanEdit}">
                     <StackPanel>
                         <TextBlock Text="{Binding [AI.ResponseSection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,14"/>
                         <Grid>
@@ -86,7 +88,7 @@
                         <TextBlock Text="{Binding [AI.IdleHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,10,0,0"/>
                     </StackPanel>
                 </Border>
-                <Expander x:Name="AdvancedSettings" Header="{Binding [AI.Advanced], Source={StaticResource Res}}" IsExpanded="True">
+                <Expander x:Name="AdvancedSettings" Header="{Binding [AI.Advanced], Source={StaticResource Res}}" IsExpanded="True" IsEnabled="{Binding CanEdit}">
                     <Expander.Template>
                         <ControlTemplate TargetType="Expander">
                             <StackPanel>
@@ -117,6 +119,9 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding [AI.MemorySection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,12"/>
                                 <ComboBox x:Name="MemoryModeBox" Style="{StaticResource DropUpComboBoxStyle}" ItemsSource="{Binding MemoryModes}" DisplayMemberPath="DisplayName" SelectedValuePath="Value" SelectedValue="{Binding MemoryMode}" Height="34"/>
+                                <CheckBox Style="{StaticResource ThemedCheckBoxStyle}" IsChecked="{Binding AutoReduceContext}" IsEnabled="{Binding IsAutomaticMemoryMode}" Margin="0,12,0,0">
+                                    <TextBlock Text="{Binding [AI.AutoAllowReduce], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                                </CheckBox>
                                 <TextBlock Text="{Binding MemoryDescription}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,8,0,0"/>
                                 <StackPanel Margin="0,14,0,0">
                                     <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsManualMemoryMode}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
@@ -129,7 +134,9 @@
                         <Border Style="{StaticResource SectionCard}">
                             <StackPanel>
                                 <TextBlock Text="{Binding [AI.BehaviorSection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,14"/>
-                                <CheckBox Style="{StaticResource ThemedCheckBoxStyle}" Content="{Binding [AI.Reasoning], Source={StaticResource Res}}" IsChecked="{Binding UseReasoning}" Margin="0,0,0,16"/>
+                                <CheckBox x:Name="ReasoningCheckBox" Style="{StaticResource ThemedCheckBoxStyle}" Content="{Binding [AI.Reasoning], Source={StaticResource Res}}" IsChecked="{Binding UseReasoning}" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="ReasoningWarning" Text="{Binding [AI.ReasoningWarning], Source={StaticResource Res}}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                <TextBlock Text="{Binding [AI.ReasoningHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11" Margin="0,0,0,16"/>
                                 <Label Content="{Binding [AI.SystemPrompt], Source={StaticResource Res}}" Target="{Binding ElementName=SystemPromptBox}"/>
                                 <TextBox x:Name="SystemPromptBox" Text="{Binding SystemPrompt}" AcceptsReturn="True" TextWrapping="Wrap" Height="100" VerticalScrollBarVisibility="Auto"/>
                             </StackPanel>
@@ -139,8 +146,15 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="2" Margin="0,16,0,0">
+            <TextBlock Text="{Binding Runtime.Stage}" TextWrapping="Wrap" MaxHeight="64" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,6"/>
             <TextBlock Text="{Binding Status}" TextWrapping="Wrap" MaxHeight="100" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,10"/>
+            <ProgressBar IsIndeterminate="True" Height="4" Margin="0,0,0,10">
+                <ProgressBar.Style><Style TargetType="ProgressBar"><Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers><DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+                </Style></ProgressBar.Style>
+            </ProgressBar>
             <WrapPanel HorizontalAlignment="Right">
+                <Button x:Name="RetuneModelButton" Content="{Binding [AI.AutoRetune], Source={StaticResource Res}}" Click="RetuneWindow" IsEnabled="{Binding CanRetune}" Padding="12,7" Margin="0,0,8,8"/>
                 <Button x:Name="TestModelButton" Content="{Binding [AI.TestModel], Source={StaticResource Res}}" Click="TestWindow" IsEnabled="{Binding CanTest}" Padding="12,7" Margin="0,0,8,0"/>
                 <Button Content="{Binding [AI.Stop], Source={StaticResource Res}}" Command="{Binding StopTest}" Padding="12,7" Margin="0,0,8,0"/>
                 <Button x:Name="SaveModelButton" Content="{Binding [Common.Save], Source={StaticResource Res}}" Click="SaveWindow" Padding="16,7" Margin="0,0,8,0"/>

@@ -1200,6 +1200,10 @@ Autor: [Name]
   <data name="AI.AttachDocument" xml:space="preserve"><value>Aktuelles Dokument</value></data>
   <data name="AI.Prompt" xml:space="preserve"><value>Nachricht an das Modell; Strg+Eingabe zum Senden</value></data>
   <data name="AI.Send" xml:space="preserve"><value>Senden</value></data>
+  <data name="AI.SendEmpty" xml:space="preserve"><value>Nachricht eingeben oder eine Datei anhängen, um eine Anfrage zu senden.</value></data>
+  <data name="AI.SendBusy" xml:space="preserve"><value>Eine Anfrage läuft. Auf den Abschluss warten oder Stoppen wählen.</value></data>
+  <data name="AI.SendAttaching" xml:space="preserve"><value>Anhänge werden gelesen. Nach der Dateiverarbeitung ist das Senden verfügbar.</value></data>
+  <data name="AI.SendLocked" xml:space="preserve"><value>Der geschützte Arbeitsbereich ist gesperrt. Zum Senden einer Anfrage entsperren.</value></data>
   <data name="AI.ChatPrivacy" xml:space="preserve"><value>Lokale Verarbeitung. Chatnachrichten werden nicht auf Festplatte gespeichert.</value></data>
   <data name="AI.OpenPanel" xml:space="preserve"><value>KI-Seitenleiste öffnen</value></data>
   <data name="AI.ResponseSection" xml:space="preserve"><value>Modellantwort</value></data>
@@ -1208,7 +1212,7 @@ Autor: [Name]
   <data name="AI.MemoryMode.Automatic" xml:space="preserve"><value>Automatisch · RAM + Grafikspeicher</value></data>
   <data name="AI.MemoryMode.CpuOnly" xml:space="preserve"><value>Nur CPU · RAM</value></data>
   <data name="AI.MemoryMode.Manual" xml:space="preserve"><value>GPU-Schichten manuell festlegen</value></data>
-  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook wählt die Schichten für den Grafikspeicher und hält den Rest im RAM. Schlägt das Laden fehl, wird es mit weniger GPU-Schichten bis hin zum reinen CPU-Betrieb wiederholt.</value></data>
+  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook prüft Modellladen und Testgenerierung in einem separaten Prozess. Bei Fehlern werden sicherere Optimierungen, kleinere Batches, weniger GPU-Schichten und CPU geprüft. Kontextreduzierung kann unten erlaubt werden. Parameter und Versuchsverlauf werden angezeigt.</value></data>
   <data name="AI.MemoryHint.CpuOnly" xml:space="preserve"><value>Das Modell verwendet RAM und CPU. Grafikspeicher ist nicht erforderlich; Antworten können länger dauern.</value></data>
   <data name="AI.MemoryHint.Manual" xml:space="preserve"><value>Wählen Sie die Anzahl der Schichten auf der Grafikkarte. Die übrigen verwenden RAM und CPU.</value></data>
   <data name="AI.ResizePanel" xml:space="preserve"><value>Ziehen Sie den linken Rand, um die Breite des KI-Panels zu ändern</value></data>
@@ -1231,4 +1235,45 @@ Autor: [Name]
   <data name="AI.DefaultFilePrompt" xml:space="preserve"><value>Analysiere die angehängten Dateien.</value></data>
   <data name="AI.ImageNeedsVisionModel" xml:space="preserve"><value>Bilder benötigen ein Vision-Modell mit passender mmproj-GGUF-Datei im selben Ordner. Wählen Sie ein solches Modell in den Einstellungen.</value></data>
   <data name="AI.ImageLoadFailed" xml:space="preserve"><value>Der Bildencoder konnte nicht geladen oder das Bild nicht verarbeitet werden.</value></data>
+  <data name="AI.AutoInspect" xml:space="preserve"><value>Modell und verfügbaren Speicher in einem separaten Prozess prüfen…</value></data>
+  <data name="AI.AutoResources" xml:space="preserve"><value>Vor dem Laden verfügbar: {0:N0} MB RAM, {1:N0} MB Grafikspeicher. GPU: {2}.</value></data>
+  <data name="AI.AutoGenerating" xml:space="preserve"><value>Anfrage mit geprüften Einstellungen ausführen…</value></data>
+  <data name="AI.AutoComplete" xml:space="preserve"><value>Anfrage abgeschlossen. Das Modell bleibt bis zum Entladen oder Leerlauf-Timeout geladen.</value></data>
+  <data name="AI.AutoAttempt" xml:space="preserve"><value>Versuch {0}/{1}, bis zu 120 s: Kontext {2}, GPU-Schichten {3}, Batch {4}/{5}, Flash Attention {6}.</value></data>
+  <data name="AI.AutoCached" xml:space="preserve"><value>Gespeichertes Profil prüfen, bis zu 120 s: Kontext {2}, GPU-Schichten {3}, Batch {4}/{5}, Flash Attention {6}.</value></data>
+  <data name="AI.AutoAttemptFailed" xml:space="preserve"><value>Der AI-Prozess konnte diesen Versuch nicht abschließen. Ursache: {0}.</value></data>
+  <data name="AI.AutoPartialReply" xml:space="preserve"><value>Generierung nach einer Teilantwort abgebrochen. Der Text bleibt im Chat; Anfrage für eine vollständige Antwort wiederholen.</value></data>
+  <data name="AI.AutoManualFailure" xml:space="preserve"><value>Die manuellen Einstellungen sind fehlgeschlagen und wurden beibehalten. Automatik wählen oder Speicherbedarf reduzieren.</value></data>
+  <data name="AI.AutoRecovering" xml:space="preserve"><value>Die Anwendung läuft weiter. Sicherere Konfiguration vor dem erneuten Ausführen auswählen…</value></data>
+  <data name="AI.AutoCancelled" xml:space="preserve"><value>Gestoppt. AI-Prozess beendet und Speicher freigegeben. Die nächste Anfrage lädt das Modell erneut.</value></data>
+  <data name="AI.AutoFailed" xml:space="preserve"><value>Vorgang fehlgeschlagen. Details stehen im Versuchsverlauf und in der Fehlermeldung.</value></data>
+  <data name="AI.InspectionFailed" xml:space="preserve"><value>Modell konnte im separaten Prozess nicht gelesen werden. Datei, Kompatibilität und freien RAM prüfen.</value></data>
+  <data name="AI.InspectionTimeout" xml:space="preserve"><value>Modellprüfung nach 60 Sekunden abgebrochen. Speicher freigeben oder kleineres Modell wählen.</value></data>
+  <data name="AI.AutoVerified" xml:space="preserve"><value>Modellladen, Kontexterstellung und Testgenerierung erfolgreich.</value></data>
+  <data name="AI.AutoReducedContext" xml:space="preserve"><value>Kontext für dieses Laufzeitprofil von {0} auf {1} reduziert. Weniger Verlauf passt hinein; der eingestellte Wert bleibt erhalten.</value></data>
+  <data name="AI.AutoCpuSelected" xml:space="preserve"><value>CPU und RAM gewählt. Antworten können langsamer sein; das Modell nutzt keinen Grafikspeicher.</value></data>
+  <data name="AI.AutoFlashDisabled" xml:space="preserve"><value>Flash Attention aus Kompatibilitätsgründen deaktiviert. Gewählte GPU-Schichten bleiben beschleunigt.</value></data>
+  <data name="AI.AutoSaved" xml:space="preserve"><value>Geprüfte Parameter für Modell, Hardware, Treiber und Engine-Version gespeichert. Keine Chatinhalte gespeichert.</value></data>
+  <data name="AI.AutoCacheUnavailable" xml:space="preserve"><value>Laufzeitprofile sind nicht verfügbar. Prüfung wird fortgesetzt; das Ergebnis wird möglicherweise nicht gespeichert.</value></data>
+  <data name="AI.AutoNoConfiguration" xml:space="preserve"><value>Keine funktionierende Konfiguration gefunden. RAM freigeben, kleineres Modell wählen oder Grafiktreiber aktualisieren. Die Anwendung bleibt verfügbar.</value></data>
+  <data name="AI.WorkerFailed" xml:space="preserve"><value>Der separate AI-Prozess ist fehlgeschlagen. Das Dokument bleibt geöffnet. Details und nächste Schritte stehen im Versuchsverlauf.</value></data>
+  <data name="AI.AutoContextFull" xml:space="preserve"><value>Die Anfrage passt nicht in den automatisch reduzierten Kontext. Chat leeren, Anfrage kürzen oder Kontextreduzierung deaktivieren und erneut prüfen.</value></data>
+  <data name="AI.AutoUnloaded" xml:space="preserve"><value>AI-Prozess beendet; Speicher für Modell und Bildencoder freigegeben.</value></data>
+  <data name="AI.AutoReset" xml:space="preserve"><value>Gespeicherte Profile dieses Modells entfernt. Die nächste Prüfung wählt neue Parameter.</value></data>
+  <data name="AI.AutoSummary" xml:space="preserve"><value>Laufzeitparameter: Kontext {0}; GPU-Schichten {1}; Batch {2}/{3}; Flash Attention {4}.</value></data>
+  <data name="AI.AutoDetails" xml:space="preserve"><value>Prüfungen, Änderungen und Fehlerursachen</value></data>
+  <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Automatische Kontextreduzierung bei Bedarf erlauben. Tatsächliche Größe und Einschränkungen werden angezeigt.</value></data>
+  <data name="AI.AutoRetune" xml:space="preserve"><value>Neu abstimmen</value></data>
+  <data name="AI.AutoNoGpu" xml:space="preserve"><value>kein geeignetes GPU-Budget</value></data>
+  <data name="AI.AutoTimeout" xml:space="preserve"><value>Testlimit von 120 Sekunden erreicht; Prozess beendet.</value></data>
+  <data name="AI.AutoDisconnected" xml:space="preserve"><value>Verbindung zum AI-Prozess unterbrochen.</value></data>
+  <data name="AI.AutoStartFailed" xml:space="preserve"><value>Separater AI-Prozess konnte nicht gestartet werden. Anwendungsdateien und Windows-Berechtigungen prüfen.</value></data>
+  <data name="AI.TransferTooLarge" xml:space="preserve"><value>Chat und Anhänge sind für eine sichere Übertragung zu groß. Chat leeren oder Anhänge entfernen; nichts wurde gekürzt.</value></data>
+  <data name="AI.AutoProfileRejected" xml:space="preserve"><value>Die gespeicherten Parameter sind bei dieser Anfrage fehlgeschlagen. Die Profile dieses Modells wurden gelöscht.</value></data>
+  <data name="AI.ReasoningWarning" xml:space="preserve"><value>Nicht bei allen Modellen lassen sich Überlegungen deaktivieren.</value></data>
+  <data name="AI.ReasoningHint" xml:space="preserve"><value>Wenn aktiviert, kann das Modell vor der Antwort mehr Zeit für die Analyse nutzen. Überlegungen erscheinen in einem separaten ausklappbaren Bereich. Kopieren und Einfügen verwenden nur die endgültige Antwort. Der Test verwendet den aktuellen Wert; mit Speichern wird er für den Chat übernommen.</value></data>
+  <data name="AI.ReasoningDetails" xml:space="preserve"><value>Überlegungen des Modells</value></data>
+  <data name="AI.TestReasoningOnly" xml:space="preserve"><value>Der kurze Test lieferte Überlegungen ohne endgültige Antwort. Eine Chatanfrage mit höherem Antwortlimit versuchen oder Überlegungen deaktivieren, falls das Modell dies unterstützt.</value></data>
+  <data name="AI.Thinking" xml:space="preserve"><value>Das Modell denkt nach… Die Analyse steht im separaten Bereich der Nachricht.</value></data>
+  <data name="AI.ReasoningOnly" xml:space="preserve"><value>Das Modell hat Überlegungen ohne endgültige Antwort zurückgegeben. Sie bleiben im separaten Bereich erhalten. Antwortlimit erhöhen oder Überlegungen deaktivieren, falls das Modell dies unterstützt.</value></data>
 </root>

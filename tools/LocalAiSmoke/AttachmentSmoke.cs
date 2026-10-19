@@ -36,7 +36,8 @@ internal static class AttachmentSmoke
 
     private static async Task RunAsync(Application app, string model, string directory, Dictionary<string, object?> report)
     {
-        using var container = new Startup().ConfigureServices(app);
+        using var container = new Startup().ConfigureServices(app,
+            builder => builder.RegisterInstance(new AiRuntimeProfileStore(Path.Combine(directory, "runtime-profiles.json"))));
         var runtime = container.Resolve<IAiInferenceService>();
         var files = container.Resolve<AiAttachmentService>();
         var store = new AiSettingsStore(Path.Combine(directory, "settings.json"));

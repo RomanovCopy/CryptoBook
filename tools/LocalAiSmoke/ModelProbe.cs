@@ -1,4 +1,5 @@
 using CryptoBook.AI;
+using LLama.Native;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -8,6 +9,8 @@ internal static class ModelProbe
 {
     public static async Task RunAsync(string path, string reportPath, AiMemoryMode memoryMode = AiMemoryMode.Automatic)
     {
+        // Keep native diagnostics in this synthetic probe so an abort still leaves its cause.
+        NativeLibraryConfig.All.WithLogCallback((_, message) => Console.Error.Write(message));
         var watch = Stopwatch.StartNew();
         using var runtime = new LocalAiInferenceService();
         using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(5));

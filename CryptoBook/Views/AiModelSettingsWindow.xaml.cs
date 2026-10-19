@@ -23,6 +23,11 @@ public partial class AiModelSettingsWindow : Window
         if(CommitInputs() && DataContext is AiModelSettingsViewModel viewModel && viewModel.Test.CanExecute(null))
             viewModel.Test.Execute(null);
     }
+    private void RetuneWindow(object sender, RoutedEventArgs e)
+    {
+        if(CommitInputs() && DataContext is AiModelSettingsViewModel viewModel && viewModel.Retune.CanExecute(null))
+            viewModel.Retune.Execute(null);
+    }
     private bool CommitInputs()
     {
         bool updated = BindingGroup.UpdateSources();

@@ -8,9 +8,12 @@ using System.Runtime.CompilerServices;
 
 namespace CryptoBook.AI;
 
-/// <summary>In-process inference only: no server, HTTP, child process or saved chat.</summary>
+/// <summary>Native engine used inside the isolated AI worker. No network or saved chat.</summary>
 public sealed class LocalAiInferenceService : IAiInferenceService
 {
+    private readonly AiRuntimeOptions? runtimeOptions;
+    public LocalAiInferenceService() { }
+    internal LocalAiInferenceService(AiRuntimeOptions options) => runtimeOptions = options;
     private readonly SemaphoreSlim gate = new(1, 1);
     private LLamaWeights? weights;
     private MtmdWeights? projector;
@@ -29,7 +32,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService
     public DateTime LastUsedUtc { get; private set; } = DateTime.UtcNow;
 
     public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
-        Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken)
+        Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null)
     {
         settings.Validate();
         var images = conversation.SelectMany(turn => turn.Attachments ?? []).Where(file => file.IsImage).ToArray();
@@ -52,9 +55,11 @@ public sealed class LocalAiInferenceService : IAiInferenceService
             {
                 ContextSize = (uint)settings.ContextLength,
                 GpuLayerCount = settings.GpuLayers,
-                BatchSize = 256,
-                UBatchSize = 128,
+                BatchSize = runtimeOptions?.BatchSize ?? 256,
+                UBatchSize = runtimeOptions?.UBatchSize ?? 128,
+                FlashAttention = runtimeOptions?.FlashAttention,
                 Threads = Math.Max(1, Environment.ProcessorCount / 2),
+                BatchThreads = Math.Max(1, Environment.ProcessorCount / 2),
                 LoadMode = LLamaLoadMode.MemoryMap,
             };
             if(weights is null || loadedPath != settings.ModelPath || loadedLayers != settings.GpuLayers ||
@@ -78,7 +83,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService
                             break;
                         }
                         catch(LLama.Exceptions.LoadWeightsFailedException) when(
-                            settings.MemoryMode == AiMemoryMode.Automatic && parameters.GpuLayerCount > 0 && attempt < 2)
+                            runtimeOptions is null && settings.MemoryMode == AiMemoryMode.Automatic && parameters.GpuLayerCount > 0 && attempt < 2)
                         {
                             cancellationToken.ThrowIfCancellationRequested();
                             parameters.GpuLayerCount = attempt == 0 ? parameters.GpuLayerCount / 2 : 0;
@@ -102,6 +107,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService
             parameters.GpuLayerCount = LastMemoryPlan?.GpuLayers ?? settings.GpuLayers;
             parameters.NoKqvOffload = parameters.GpuLayerCount == 0;
             parameters.OpOffload = parameters.GpuLayerCount != 0;
+            parameters = ApplyContextCompatibility(parameters, weights.Metadata, LastMemoryPlan!.TotalLayers);
             if(projectorPath is not null && (projector is null || loadedProjectorPath != projectorPath))
             {
                 projector?.Dispose(); projector = null;
@@ -126,7 +132,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService
                 string mediaMarker = images.Length > 0 ? NativeApi.MtmdDefaultMarker() ?? "<media>" : "<media>";
                 var promptTurns = images.Length > 0 ? AiChatFormat.WithImagesInLatestTurn(conversation) : conversation;
                 weights.Metadata.TryGetValue("general.architecture", out string? architecture);
-                if(architecture == "gemma4") prompt = AiChatFormat.Gemma4(settings, promptTurns, mediaMarker);
+                if(architecture == "gemma4") prompt = AiChatFormat.Gemma4(settings, promptTurns, mediaMarker, weights.Metadata);
                 else
                 {
                     var template = new LLamaTemplate(weights) { AddAssistant = true };
@@ -168,10 +174,11 @@ public sealed class LocalAiInferenceService : IAiInferenceService
                     {
                         var executor = new StatelessExecutor(weights, parameters);
                         context = executor.Context;
-                        generation = executor.InferAsync(prompt, new InferenceParams { MaxTokens = outputTokens,
+                        // Keep channel boundaries until AiThinkingFilter has removed hidden reasoning.
+                        generation = executor.InferAsync(prompt, new InferenceParams { MaxTokens = outputTokens, DecodeSpecialTokens = true,
                             SamplingPipeline = sampling, OverflowStrategy = ContextOverflowStrategy.ThrowException }, cancellationToken);
                     }
-                    var filter = new AiThinkingFilter();
+                    var filter = new AiThinkingFilter(onReasoning, AiThinkingFilter.StartsInReasoning(prompt));
                     await foreach(string fragment in generation.ConfigureAwait(false))
                     {
                         cancellationToken.ThrowIfCancellationRequested();
@@ -198,6 +205,26 @@ public sealed class LocalAiInferenceService : IAiInferenceService
             IsBusy = false;
             gate.Release();
         }
+    }
+
+    internal static ModelParams ApplyContextCompatibility(ModelParams parameters,
+        IReadOnlyDictionary<string, string> metadata, int totalLayers)
+    {
+        // Gemma 4 E2B/E4B shares KV between layers. With partial GPU offload, Flash
+        // Attention can exceed the bundled ggml scheduler's split-input limit and abort
+        // the process (llama.cpp #21730/#22133). Apply before both text and vision contexts,
+        // including requests which reuse loaded weights; a managed catch cannot recover.
+        if(NeedsNonFlashAttention(parameters.GpuLayerCount, metadata, totalLayers))
+            return parameters with { FlashAttention = false };
+        return parameters;
+    }
+
+    internal static bool NeedsNonFlashAttention(int gpuLayers, IReadOnlyDictionary<string, string> metadata, int totalLayers)
+    {
+        bool partialOffload = gpuLayers > 0 && gpuLayers <= totalLayers;
+        return partialOffload && metadata.TryGetValue("general.architecture", out string? architecture) &&
+           architecture == "gemma4" && metadata.TryGetValue("gemma4.embedding_length_per_layer_input", out string? embedding) &&
+           int.TryParse(embedding, out int size) && size > 0;
     }
 
     private async IAsyncEnumerable<string> InferVisionAsync(LLamaContext context, SafeMtmdInputChunks chunks,
@@ -265,7 +292,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService
     }
 }
 
-/// <summary>Removes thinking blocks even when tags span streamed fragments.</summary>
+/// <summary>Separates reasoning from the answer even when tags span streamed fragments.</summary>
 public sealed class AiThinkingFilter
 {
     private static readonly (string Tag, bool? Thinking)[] Tags =
@@ -278,6 +305,19 @@ public sealed class AiThinkingFilter
     ];
     private string pending = string.Empty;
     private bool thinking;
+    private readonly Action<string>? onReasoning;
+    public AiThinkingFilter(Action<string>? onReasoning = null, bool startsInReasoning = false)
+    {
+        this.onReasoning = onReasoning;
+        thinking = startsInReasoning;
+    }
+    internal static bool StartsInReasoning(string prompt)
+    {
+        string suffix = prompt.TrimEnd();
+        return suffix.EndsWith("<think>", StringComparison.Ordinal) ||
+            suffix.EndsWith("<|channel>thought", StringComparison.Ordinal) ||
+            suffix.EndsWith("<|channel|>analysis<|message|>", StringComparison.Ordinal);
+    }
     public string Append(string fragment)
     {
         pending += fragment;
@@ -293,7 +333,7 @@ public sealed class AiThinkingFilter
             }
             if(index >= 0)
             {
-                if(!thinking) visible.Append(pending.AsSpan(0, index));
+                AppendContent(visible, pending.AsSpan(0, index));
                 pending = pending[(index + match.Tag.Length)..];
                 if(match.Thinking is bool state) thinking = state;
                 continue;
@@ -302,7 +342,7 @@ public sealed class AiThinkingFilter
             foreach(var tag in Tags)
                 for(int count = 1; count < tag.Tag.Length && count <= pending.Length; count++)
                     if(count > keep && pending.EndsWith(tag.Tag[..count], StringComparison.Ordinal)) keep = count;
-            if(!thinking) visible.Append(pending.AsSpan(0, pending.Length - keep));
+            AppendContent(visible, pending.AsSpan(0, pending.Length - keep));
             pending = keep == 0 ? string.Empty : pending[^keep..];
             break;
         }
@@ -310,8 +350,15 @@ public sealed class AiThinkingFilter
     }
     public string Flush()
     {
+        if(thinking && pending.Length > 0) onReasoning?.Invoke(pending);
         string result = thinking ? string.Empty : pending;
         pending = string.Empty;
         return result;
+    }
+    private void AppendContent(StringBuilder visible, ReadOnlySpan<char> content)
+    {
+        if(content.Length == 0) return;
+        if(thinking) onReasoning?.Invoke(content.ToString());
+        else visible.Append(content);
     }
 }

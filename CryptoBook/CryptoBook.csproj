@@ -8,11 +8,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
-    <StartupObject>CryptoBook.App</StartupObject>
+    <StartupObject>CryptoBook.AI.AiProgram</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\Icons\AppIcon.ico</ApplicationIcon>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <VersionPrefix>1.1.4.4</VersionPrefix>
+    <VersionPrefix>1.1.4.5</VersionPrefix>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>

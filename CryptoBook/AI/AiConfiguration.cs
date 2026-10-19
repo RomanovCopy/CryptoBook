@@ -13,6 +13,7 @@ public sealed record AiModelSettings
     public float Temperature { get; init; } = 0.3f;
     public int GpuLayers { get; init; } = 20;
     public AiMemoryMode MemoryMode { get; init; } = AiMemoryMode.Automatic;
+    public bool AutoReduceContext { get; init; } = true;
     public bool UseReasoning { get; init; }
     public string SystemPrompt { get; init; } = string.Empty;
 
@@ -69,6 +70,6 @@ public interface IAiInferenceService : IDisposable
     bool IsBusy { get; }
     DateTime LastUsedUtc { get; }
     Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
-        Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken);
+        Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null);
     Task UnloadAsync(CancellationToken cancellationToken = default);
 }

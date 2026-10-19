@@ -140,7 +140,7 @@ internal static class UiPreview
         Console.WriteLine($"AI panel resize passed: {initialWidth:0} -> {wideWidth:0}; close/reopen, window resize and minimum width.");
     }
 
-    private static void CaptureWindow(Window window, string path)
+    internal static void CaptureWindow(Window window, string path)
     {
         window.UpdateLayout();
         var frame = new DispatcherFrame();

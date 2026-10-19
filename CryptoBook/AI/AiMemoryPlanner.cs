@@ -84,6 +84,11 @@ public static class AiMemoryPlanner
         var status = new MemoryStatus { Length = (uint)Marshal.SizeOf<MemoryStatus>() };
         return GlobalMemoryStatusEx(ref status) ? (long)status.AvailablePhysical : 0;
     }
+    internal static ulong ReadTotalRam()
+    {
+        var status = new MemoryStatus { Length = (uint)Marshal.SizeOf<MemoryStatus>() };
+        return GlobalMemoryStatusEx(ref status) ? status.TotalPhysical : 0;
+    }
     [StructLayout(LayoutKind.Sequential)]
     private struct MemoryStatus
     {
