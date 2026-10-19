@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.1.4.5 - 2026-10-19
+
+### Added
+
+- Isolated AI worker process for model inspection, trial generation and real requests, with cancellation and automatic cleanup when CryptoBook exits.
+- Bounded automatic runtime selection with Flash Attention, batch-size, GPU-layer and CPU fallback, plus optional context reduction down to 512 tokens.
+- Verified runtime profile cache, Retune action, actual parameter display and timestamped attempt history in the assistant and model settings.
+- Reasoning controls for supported Qwen/Gemma models and a separate collapsible analysis block; copying, editor actions and follow-up history use the final answer.
+
+### Fixed
+
+- Recover from native AI worker failures before the first output without closing the main application; preserve partial replies without automatic replay.
+- Restore Send-button availability when a protected workspace has a pending recovery snapshot, and commit pending settings input before model validation.
+
+### Changed
+
+- Synchronize application, installer, documentation, notices and version tests for 1.1.4.5.
+
+Full comparison: [v1.1.4.4...v1.1.4.5](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.4...v1.1.4.5)
+
 ## 1.1.4.4 - 2026-10-18
 
 ### Added
