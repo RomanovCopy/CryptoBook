@@ -35,7 +35,8 @@ internal static class ImageProfileSmoke
 
         async Task RunAsync()
         {
-            using var container = new Startup().ConfigureServices(app);
+            using var container = new Startup().ConfigureServices(app,
+                builder => builder.RegisterInstance(new AiRuntimeProfileStore(Path.Combine(outputDirectory, "runtime-profiles.json"))));
             var runtime = container.Resolve<IAiInferenceService>();
             var store = new AiSettingsStore(settingsPath); // No Save: do not alter the user's profile.
             var settings = store.Current.SelectedModel;

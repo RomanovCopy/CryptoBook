@@ -37,7 +37,8 @@ namespace CryptoBook.Injections
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
             builder.RegisterInstance(dispatcher);
             builder.RegisterType<AiSettingsStore>().SingleInstance();
-            builder.RegisterType<LocalAiInferenceService>().As<IAiInferenceService>().SingleInstance();
+            builder.RegisterType<AiRuntimeProfileStore>().SingleInstance();
+            builder.RegisterType<AdaptiveAiInferenceService>().As<IAiInferenceService>().SingleInstance();
             builder.RegisterType<AiEditorContext>().SingleInstance();
             builder.RegisterType<AiAttachmentService>().SingleInstance();
             builder.RegisterType<AiSettingsWindowService>().SingleInstance();

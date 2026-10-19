@@ -4,6 +4,19 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
+if(args.Length > 0 && args[0] == "--worker-owner")
+{
+    using var worker = new AiWorkerProcess();
+    await worker.ExecuteAsync(new("inspect", new() { ModelPath = args[1] }, new(4096, 0, CpuBackend: true), []), _ => { }, null, CancellationToken.None);
+    Console.WriteLine(worker.ProcessId);
+    await Task.Delay(Timeout.Infinite);
+    return;
+}
+if(args.Length > 0 && args[0] is "--adaptive" or "--adaptive-cpu")
+{
+    await AdaptiveProbe.RunAsync(args[1], args[2], args[0] == "--adaptive-cpu");
+    return;
+}
 if(args.Length > 0 && args[0] == "--resources")
 {
     await ResourceProbe.RunAsync(args[1], args[2]);
@@ -21,6 +34,11 @@ if(args.Length > 0 && args[0] == "--probe")
     await ModelProbe.RunAsync(args[1], args[2], args.Length > 3 && args[3] == "cpu" ? AiMemoryMode.CpuOnly : AiMemoryMode.Automatic);
     return;
 }
+if(args.Length > 0 && args[0] == "--reasoning-probe")
+{
+    await ReasoningProbe.RunAsync(args[1], args[2]);
+    return;
+}
 if(args.Length > 0 && args[0] == "--ui")
 {
     var uiThread = new Thread(() => UiPreview.Run(args[1], args[2]));
@@ -31,6 +49,13 @@ if(args.Length > 0 && args[0] == "--ui")
 if(args.Length > 0 && args[0] == "--settings-regression")
 {
     var uiThread = new Thread(() => SettingsRegression.Run(args[1], args[2], args[3]));
+    uiThread.SetApartmentState(ApartmentState.STA);
+    uiThread.Start(); uiThread.Join();
+    return;
+}
+if(args.Length > 0 && args[0] is "--send-button" or "--reasoning-ui")
+{
+    var uiThread = new Thread(() => SendButtonSmoke.Run(args[1], args[2], args[0] == "--reasoning-ui"));
     uiThread.SetApartmentState(ApartmentState.STA);
     uiThread.Start(); uiThread.Join();
     return;

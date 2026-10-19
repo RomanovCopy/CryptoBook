@@ -22,28 +22,15 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     public AiModelSettingsViewModel(AiSettingsStore store, IAiInferenceService inference)
     {
         this.store = store; this.inference = inference;
+        Runtime = new(inference);
         foreach(var profile in store.Current.Models) profiles[profile.ModelPath] = profile;
         enabled = store.Current.Enabled; idleMinutes = store.Current.IdleMinutes;
         ModelPath = store.Current.SelectedModelPath;
         Browse = new RelayCommand(_ => BrowseModel(), _ => !IsBusy);
         Save = new RelayCommand(_ => SaveSettings(), _ => !IsBusy);
-        Test = new AsyncRelayCommand(async (_, token) =>
-        {
-            IsBusy = true;
-            Status = LocalizationManager.GetString("AI.Loading");
-            try
-            {
-                var profile = ValidatedParameters();
-                var progress = new Progress<float>(v => Status = LocalizationManager.Format("AI.LoadProgress", (int)(v * 100)));
-                await inference.GenerateAsync(profile with { MaxTokens = 128 },
-                    [new("user", "Reply with one word: ready")], _ => { }, progress, token);
-                Status = LocalizationManager.GetString("AI.ModelWorks");
-            }
-            catch(OperationCanceledException) { Status = LocalizationManager.GetString("AI.Stopped"); }
-            catch(Exception e) { Status = AiAssistantViewModel.ErrorText(e); }
-            finally { IsBusy = false; }
-        }, _ => CanTest);
-        StopTest = new RelayCommand(_ => Test.Cancel(), _ => IsBusy);
+        Test = new AsyncRelayCommand((_, token) => RunTestAsync(false, token), _ => CanTest);
+        Retune = new AsyncRelayCommand((_, token) => RunTestAsync(true, token), _ => CanRetune);
+        StopTest = new RelayCommand(_ => { Test.Cancel(); Retune.Cancel(); }, _ => IsBusy);
         LocalizationManager.CultureChanged += OnCultureChanged;
     }
 
@@ -60,11 +47,12 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
         private set
         {
             SetProperty(ref isBusy, value);
-            OnPropertyChanged(nameof(CanTest));
+            OnPropertyChanged(nameof(CanTest), nameof(CanEdit), nameof(CanRetune));
             (Browse as RelayCommand)?.RaiseCanExecuteChanged();
             (Save as RelayCommand)?.RaiseCanExecuteChanged();
             (StopTest as RelayCommand)?.RaiseCanExecuteChanged();
             Test?.RaiseCanExecuteChanged();
+            Retune?.RaiseCanExecuteChanged();
         }
     }
     public string ModelPath
@@ -79,9 +67,10 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
             parameters = profiles.TryGetValue(value, out var profile) ? profile : new() { ModelPath = value };
             OnPropertyChanged(nameof(ModelPath), nameof(ContextLength), nameof(MaxTokens), nameof(Temperature),
                 nameof(GpuLayers), nameof(UseReasoning), nameof(SystemPrompt), nameof(RecentModels), nameof(SelectedRecentModel),
-                nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(MemoryDescription));
+                nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(IsAutomaticMemoryMode), nameof(AutoReduceContext), nameof(MemoryDescription));
             Test?.RaiseCanExecuteChanged();
-            OnPropertyChanged(nameof(CanTest));
+            Retune?.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(CanTest), nameof(CanRetune));
         }
     }
     public int ContextLength { get => parameters.ContextLength; set { parameters = parameters with { ContextLength = value }; OnPropertyChanged(); } }
@@ -97,10 +86,16 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
         {
             if(value == parameters.MemoryMode) return;
             parameters = parameters with { MemoryMode = value };
-            OnPropertyChanged(nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(MemoryDescription));
+            OnPropertyChanged(nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(IsAutomaticMemoryMode), nameof(MemoryDescription), nameof(CanRetune));
+            Retune?.RaiseCanExecuteChanged();
         }
     }
     public bool IsManualMemoryMode => MemoryMode == AiMemoryMode.Manual;
+    public bool IsAutomaticMemoryMode => MemoryMode == AiMemoryMode.Automatic;
+    public bool AutoReduceContext { get => parameters.AutoReduceContext; set { parameters = parameters with { AutoReduceContext = value }; OnPropertyChanged(); } }
+    public bool CanEdit => !IsBusy;
+    public bool CanRetune => CanTest && IsAutomaticMemoryMode && inference is IAiRuntimeStatusSource;
+    public AiRuntimeMonitor Runtime { get; }
     public string MemoryDescription => LocalizationManager.GetString("AI.MemoryHint." + MemoryMode);
     public bool UseReasoning { get => parameters.UseReasoning; set { parameters = parameters with { UseReasoning = value }; OnPropertyChanged(); } }
     public string SystemPrompt { get => parameters.SystemPrompt; set { parameters = parameters with { SystemPrompt = value }; OnPropertyChanged(); } }
@@ -110,7 +105,34 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     public ICommand Browse { get; }
     public ICommand Save { get; }
     public AsyncRelayCommand Test { get; }
+    public AsyncRelayCommand Retune { get; }
     public ICommand StopTest { get; }
+
+    private async Task RunTestAsync(bool retune, CancellationToken token)
+    {
+        IsBusy = true;
+        Status = LocalizationManager.GetString("AI.Loading");
+        try
+        {
+            var profile = ValidatedParameters();
+            if(retune && inference is IAiRuntimeStatusSource source)
+                await source.ResetAutoProfileAsync(profile.ModelPath, token);
+            var progress = new Progress<float>(value =>
+            {
+                if(!token.IsCancellationRequested && IsBusy)
+                    Status = value >= 1 ? LocalizationManager.GetString("AI.Generating")
+                        : LocalizationManager.Format("AI.LoadProgress", (int)(value * 100));
+            });
+            bool hasAnswer = false, hasReasoning = false;
+            await inference.GenerateAsync(profile with { MaxTokens = 128 },
+                [new("user", "Reply with one word: ready")], text => hasAnswer |= !string.IsNullOrWhiteSpace(text), progress, token,
+                text => hasReasoning |= !string.IsNullOrWhiteSpace(text));
+            Status = LocalizationManager.GetString(hasAnswer ? "AI.ModelWorks" : hasReasoning ? "AI.TestReasoningOnly" : "AI.EmptyAnswer");
+        }
+        catch(OperationCanceledException) { Status = LocalizationManager.GetString("AI.Stopped"); }
+        catch(Exception error) { Status = AiAssistantViewModel.ErrorText(error); }
+        finally { IsBusy = false; }
+    }
 
     private AiModelSettings CurrentParameters() => parameters with { ModelPath = ModelPath };
     private AiModelSettings ValidatedParameters()
@@ -150,5 +172,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     {
         LocalizationManager.CultureChanged -= OnCultureChanged;
         Test.Cancel();
+        Retune.Cancel();
+        Runtime.Dispose();
     }
 }

@@ -20,6 +20,121 @@ namespace CryptoBook.Tests;
 
 public sealed class AiIntegrationTests
 {
+    [WpfTheory]
+    [InlineData(KeyResetState.Inactive, false, true)]
+    [InlineData(KeyResetState.Active, false, true)]
+    [InlineData(KeyResetState.KeyReset, false, true)]
+    [InlineData(KeyResetState.Unlocking, false, true)]
+    [InlineData(KeyResetState.Restoring, false, true)]
+    [InlineData(KeyResetState.Resetting, false, false)]
+    [InlineData(KeyResetState.KeyReset, true, false)]
+    [InlineData(KeyResetState.Unlocking, true, false)]
+    public async Task Send_PendingProtectedSnapshotDoesNotLockNormalWorkspace(
+        KeyResetState state, bool retainedDocument, bool expectedEnabled)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, _, keyReset) = CreateAssistant(directory);
+            using(vm)
+            {
+                var input = new TextBox();
+                input.SetBinding(TextBox.TextProperty, new Binding(nameof(vm.Prompt))
+                    { Source = vm, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+                input.Text = "test";
+                keyReset.SetState(state, retainedDocument);
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                // A reset clears sensitive drafts; enter a new draft to test the current lock state.
+                input.Text = "new question";
+                Assert.Equal("new question", vm.Prompt);
+                Assert.Equal(expectedEnabled, vm.Send.CanExecute(null));
+                Assert.Equal(expectedEnabled, vm.CanAttach);
+                Assert.Equal(expectedEnabled ? string.Empty : LocalizationManager.GetString("AI.SendLocked"), vm.SendUnavailableReason);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task Send_AvailabilityAndExplanationUpdateAfterTypingAttachmentsSettingsAndStop()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, _, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                var input = new TextBox();
+                input.SetBinding(TextBox.TextProperty, new Binding(nameof(vm.Prompt))
+                    { Source = vm, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+                var send = vm.Send;
+                var hint = new TextBlock();
+                hint.SetBinding(TextBlock.TextProperty, new Binding(nameof(vm.SendUnavailableReason)) { Source = vm });
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.False(send.CanExecute(null));
+                Assert.Equal(LocalizationManager.GetString("AI.SendEmpty"), hint.Text);
+                input.Text = "test";
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.True(send.CanExecute(null));
+                Assert.Empty(hint.Text);
+                input.Text = "   ";
+                Assert.False(send.CanExecute(null));
+                vm.Attachments.Add(AiAttachmentService.Document("file.txt", "text"));
+                Assert.True(send.CanExecute(null));
+                vm.Attachments.Clear();
+                Assert.False(send.CanExecute(null));
+                store.Save(store.Current with { Enabled = false });
+                input.Text = "question";
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.False(send.CanExecute(null));
+                Assert.Equal(LocalizationManager.GetString("AI.DisabledHint"), hint.Text);
+                store.Save(store.Current with { Enabled = true });
+                input.Text = "question";
+                Assert.True(send.CanExecute(null));
+                Task sending = vm.Send.ExecuteAsync();
+                input.Text = "next question";
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.False(send.CanExecute(null));
+                Assert.Equal(LocalizationManager.GetString("AI.SendBusy"), hint.Text);
+                vm.Stop.Execute(null);
+                await sending;
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.True(send.CanExecute(null));
+                Assert.Empty(hint.Text);
+                Assert.Equal("next question", vm.Prompt);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Theory]
+    [InlineData("gemma4", "256", 1, false)]
+    [InlineData("gemma4", "256", 16, false)]
+    [InlineData("gemma4", "256", 42, false)]
+    [InlineData("gemma4", "256", 0, null)]
+    [InlineData("gemma4", "256", -1, null)]
+    [InlineData("gemma4", "256", 43, null)]
+    [InlineData("gemma4", "0", 16, null)]
+    [InlineData("gemma4", null, 16, null)]
+    [InlineData("qwen3", "256", 16, null)]
+    public void ContextCompatibility_Gemma4EdgePartialOffload_AvoidsFatalFlashAttentionGraph(
+        string architecture, string? perLayerEmbedding, int gpuLayers, bool? expectedFlashAttention)
+    {
+        var metadata = new Dictionary<string, string> { ["general.architecture"] = architecture };
+        if(perLayerEmbedding is not null) metadata[architecture + ".embedding_length_per_layer_input"] = perLayerEmbedding;
+        var parameters = new LLama.Common.ModelParams("model.gguf")
+        {
+            GpuLayerCount = gpuLayers, ContextSize = 4096, BatchSize = 256, UBatchSize = 128
+        };
+        var safe = LocalAiInferenceService.ApplyContextCompatibility(parameters, metadata, 42);
+        Assert.Equal(expectedFlashAttention, safe.FlashAttention);
+        Assert.Equal(gpuLayers, safe.GpuLayerCount);
+        Assert.Equal(parameters.ContextSize, safe.ContextSize);
+        Assert.Equal(parameters.BatchSize, safe.BatchSize);
+        Assert.Equal(parameters.UBatchSize, safe.UBatchSize);
+        Assert.Null(parameters.FlashAttention);
+    }
+
     [Fact]
     public void VisionReplyStart_ExcludesAllStopTokensForOneSampleThenRestoresNormalTermination()
     {
@@ -328,6 +443,130 @@ public sealed class AiIntegrationTests
     }
 
     [Theory]
+    [InlineData("a<think>analysis</think>b", false, "ab", "analysis")]
+    [InlineData("<think>unfinished analysis", false, "", "unfinished analysis")]
+    [InlineData("analysis</think>answer", true, "answer", "analysis")]
+    [InlineData("<|channel>thought\nanalysis<channel|>answer", false, "answer", "analysis")]
+    [InlineData("<|channel|>analysis<|message|>analysis<|end|><|start|>assistant<|channel|>final<|message|>answer", false, "answer", "analysis")]
+    public void ThinkingFilter_StreamsReasoningSeparatelyAcrossEveryChunkBoundary(
+        string input, bool alreadyThinking, string expectedAnswer, string expectedReasoning)
+    {
+        for(int chunkSize = 1; chunkSize <= input.Length; chunkSize++)
+        {
+            var reasoning = new StringBuilder();
+            var answer = new StringBuilder();
+            var filter = new AiThinkingFilter(text => reasoning.Append(text), alreadyThinking);
+            for(int i = 0; i < input.Length; i += chunkSize)
+                answer.Append(filter.Append(input.Substring(i, Math.Min(chunkSize, input.Length - i))));
+            answer.Append(filter.Flush());
+            Assert.Equal(expectedReasoning, reasoning.ToString());
+            Assert.Equal(expectedAnswer, answer.ToString());
+        }
+    }
+
+    [Theory]
+    [InlineData("<|im_start|>assistant\n<think>\n", true)]
+    [InlineData("<|turn>model\n<|channel>thought\n", true)]
+    [InlineData("<|start|>assistant<|channel|>analysis<|message|>", true)]
+    [InlineData("<|turn>model\n", false)]
+    [InlineData("<think>\n\n</think>\n\n", false)]
+    public void ThinkingFilter_RecognizesAnAlreadyOpenedReasoningChannel(string prompt, bool thinking) =>
+        Assert.Equal(thinking, AiThinkingFilter.StartsInReasoning(prompt));
+
+    [WpfFact]
+    public async Task Chat_UnexpectedReasoningIsSeparate_AndOnlyAnswerIsInsertedOrSentAsHistory()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            IRichTextBoxService editor = new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+            var (vm, _, runtime, _) = CreateAssistant(directory, "original document", editor);
+            using(vm)
+            {
+                runtime.CompleteImmediately = true;
+                runtime.ReasoningToEmit = "separate model analysis";
+                vm.Prompt = "question";
+                await vm.Send.ExecuteAsync();
+                var answer = vm.Messages.Last();
+                Assert.Equal("separate model analysis", answer.Reasoning);
+                Assert.True(answer.HasReasoning);
+                Assert.Equal("partial answer", answer.Content);
+                Assert.True(vm.Insert.CanExecute(null));
+                vm.Insert.Execute(null);
+                string document = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text;
+                Assert.Contains("partial answer", document);
+                Assert.DoesNotContain("separate model analysis", document);
+                vm.Prompt = "follow-up";
+                await vm.Send.ExecuteAsync();
+                Assert.Equal("partial answer", Assert.Single(runtime.LastConversation, turn => turn.Role == "assistant").Content);
+                Assert.All(runtime.LastConversation, turn => Assert.DoesNotContain("separate model analysis", turn.Content));
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task Chat_ReasoningWithoutAnswerIsKeptAndExplained_ButExcludedFromHistory()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, keyReset) = CreateAssistant(directory);
+            using(vm)
+            {
+                runtime.CompleteImmediately = true;
+                runtime.ReasoningToEmit = "analysis without final answer";
+                runtime.ReplyText = "";
+                using(var settings = new AiModelSettingsViewModel(new AiSettingsStore(Path.Combine(directory, "settings.json")), runtime))
+                {
+                    await settings.Test.ExecuteAsync();
+                    Assert.Equal(LocalizationManager.GetString("AI.TestReasoningOnly"), settings.Status);
+                }
+                vm.Prompt = "question";
+                await vm.Send.ExecuteAsync();
+                Assert.True(vm.Messages.Last().HasReasoning);
+                Assert.Equal(LocalizationManager.GetString("AI.ReasoningOnly"), vm.Status);
+                Assert.False(vm.Copy.CanExecute(null));
+                Assert.False(vm.Insert.CanExecute(null));
+                runtime.ReplyText = "answer";
+                vm.Prompt = "follow-up";
+                await vm.Send.ExecuteAsync();
+                Assert.DoesNotContain(runtime.LastConversation, turn => turn.Role == "assistant");
+                keyReset.Reset();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.Empty(vm.Messages);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task Chat_CancellationWhileThinkingKeepsPartialAnalysisAndStopsTheRequest()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                runtime.ReasoningToEmit = "partial analysis";
+                runtime.BeforeText = new TaskCompletionSource().Task;
+                vm.Prompt = "question";
+                var sending = vm.Send.ExecuteAsync();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.Equal(LocalizationManager.GetString("AI.Thinking"), vm.Status);
+                vm.Stop.Execute(null);
+                await sending;
+                Assert.False(vm.IsBusy);
+                Assert.Equal("partial analysis", vm.Messages.Last().Reasoning);
+                Assert.Empty(vm.Messages.Last().Content);
+                Assert.Equal(LocalizationManager.GetString("AI.Stopped"), vm.Status);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Theory]
     [InlineData(0L)]
     [InlineData(512L * 1024 * 1024)]
     public void AutomaticMemory_NoUsableGpuBudget_UsesRam(long gpuBudget)
@@ -362,6 +601,54 @@ public sealed class AiIntegrationTests
         prompt = AiChatFormat.Gemma4(settings with { UseReasoning = true }, [new("user", "one")]);
         Assert.Contains("<|turn>system\n<|think|>\nBe brief", prompt);
         Assert.EndsWith("<|turn>model\n", prompt);
+    }
+
+    [Theory]
+    [InlineData("256", false)]
+    [InlineData("128", false)]
+    [InlineData("0", true)]
+    [InlineData(null, true)]
+    public void Gemma4_DisabledThinking_UsesTheModelFamilyPrefix(string? perLayerEmbedding, bool emptyThought)
+    {
+        var metadata = new Dictionary<string, string>();
+        if(perLayerEmbedding is not null) metadata["gemma4.embedding_length_per_layer_input"] = perLayerEmbedding;
+        var prompt = AiChatFormat.Gemma4(new(), [new("user", "17 + 25?")], metadata: metadata);
+        string expected = "<|turn>user\n17 + 25?<turn|>\n<|turn>model\n";
+        if(emptyThought) expected += "<|channel>thought\n<channel|>";
+        Assert.Equal(expected, prompt);
+        var enabled = AiChatFormat.Gemma4(new() { UseReasoning = true }, [new("user", "17 + 25?")], metadata: metadata);
+        Assert.StartsWith("<|turn>system\n<|think|>\n<turn|>\n", enabled);
+        Assert.EndsWith("<|turn>model\n", enabled);
+        Assert.DoesNotContain("<|channel>thought\n<channel|>", enabled);
+    }
+
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReasoningSetting_TestSaveReloadAndChatUseTheSelectedValue(bool enabled)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (assistant, store, runtime, _) = CreateAssistant(directory);
+            using(assistant)
+            using(var settings = new AiModelSettingsViewModel(store, runtime))
+            {
+                runtime.CompleteImmediately = true;
+                settings.UseReasoning = enabled;
+                await settings.Test.ExecuteAsync();
+                Assert.Equal(enabled, runtime.LastSettings!.UseReasoning);
+                settings.Save.Execute(null);
+                var restored = new AiSettingsStore(Path.Combine(directory, "settings.json"));
+                Assert.Equal(enabled, restored.Current.SelectedModel.UseReasoning);
+                using var reopened = new AiModelSettingsViewModel(restored, runtime);
+                Assert.Equal(enabled, reopened.UseReasoning);
+                assistant.Prompt = "test";
+                await assistant.Send.ExecuteAsync();
+                Assert.Equal(enabled, runtime.LastSettings.UseReasoning);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }
 
     [Fact]
@@ -659,7 +946,8 @@ public sealed class AiIntegrationTests
         finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }
 
-    private static (AiAssistantViewModel, AiSettingsStore, RuntimeStub, KeyResetStub) CreateAssistant(string directory, string? documentText = null)
+    private static (AiAssistantViewModel, AiSettingsStore, RuntimeStub, KeyResetStub) CreateAssistant(
+        string directory, string? documentText = null, IRichTextBoxService? richTextEditor = null)
     {
         Directory.CreateDirectory(directory);
         string path = Path.Combine(directory, "model.gguf");
@@ -668,7 +956,7 @@ public sealed class AiIntegrationTests
         store.Save(new() { Enabled = true, SelectedModelPath = path, Models = [new() { ModelPath = path }] });
         var runtime = new RuntimeStub();
         var keyReset = new KeyResetStub();
-        IRichTextBoxService editor = new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        IRichTextBoxService editor = richTextEditor ?? new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
         var markdown = new MarkdownDocumentState();
         var session = new DocumentSession(editor, markdown);
         if(documentText is not null)
@@ -690,10 +978,12 @@ public sealed class AiIntegrationTests
         public IReadOnlyList<AiTurn> LastConversation { get; private set; } = [];
         public bool CompleteImmediately { get; set; }
         public Task? BeforeText { get; set; }
+        public string ReasoningToEmit { get; set; } = "";
+        public string ReplyText { get; set; } = "partial answer";
         public bool IsBusy { get; set; }
         public DateTime LastUsedUtc { get; set; } = DateTime.UtcNow;
         public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
-            Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken)
+            Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null)
         {
             LastSettings = settings;
             LastConversation = conversation.ToArray();
@@ -701,8 +991,9 @@ public sealed class AiIntegrationTests
             try
             {
                 loadProgress?.Report(1);
+                if(ReasoningToEmit.Length > 0) onReasoning?.Invoke(ReasoningToEmit);
                 if(BeforeText is not null) await BeforeText.WaitAsync(cancellationToken);
-                onText("partial answer");
+                if(ReplyText.Length > 0) onText(ReplyText);
                 if(!CompleteImmediately) await Task.Delay(Timeout.Infinite, cancellationToken);
             }
             finally { IsBusy = false; }
@@ -716,10 +1007,15 @@ public sealed class AiIntegrationTests
         public KeyResetState State { get; private set; } = KeyResetState.Active;
         public TimeSpan Timeout => TimeSpan.Zero;
         public bool IsPaused => false;
-        public bool HasRetainedDocument => false;
+        public bool HasRetainedDocument { get; private set; }
         public event EventHandler<KeyResetStateChangedEventArgs>? StateChanged;
         public event EventHandler<Exception>? SnapshotFailed { add { } remove { } }
-        public void Reset() { State = KeyResetState.Resetting; StateChanged?.Invoke(this, new(State)); }
+        public void Reset() => SetState(KeyResetState.Resetting);
+        public void SetState(KeyResetState state, bool retainedDocument = false)
+        {
+            State = state; HasRetainedDocument = retainedDocument;
+            StateChanged?.Invoke(this, new(State));
+        }
         public void Start() { }
         public void Stop() { }
         public void NotifyActivity() { }

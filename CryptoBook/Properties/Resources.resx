@@ -1167,6 +1167,12 @@ Author: [Name]
   <data name="AI.GpuLayers" xml:space="preserve"><value>Layers on graphics card</value></data>
   <data name="AI.GpuHint" xml:space="preserve"><value>0 — RAM and CPU only; -1 — all layers on the graphics card. Reduce the value if graphics memory is insufficient.</value></data>
   <data name="AI.Reasoning" xml:space="preserve"><value>Allow extended reasoning (Qwen and Gemma)</value></data>
+  <data name="AI.ReasoningWarning" xml:space="preserve"><value>Not all models support disabling reasoning.</value></data>
+  <data name="AI.ReasoningHint" xml:space="preserve"><value>When enabled, the model can spend more time on analysis before replying. Reasoning appears in a separate collapsible block. Copy and insert use only the final answer. Testing uses the current checkbox value; select Save to apply it to chat.</value></data>
+  <data name="AI.ReasoningDetails" xml:space="preserve"><value>Model reasoning</value></data>
+  <data name="AI.TestReasoningOnly" xml:space="preserve"><value>The short test produced reasoning without a final answer. Try a chat request with a higher reply limit or disable reasoning if the model supports it.</value></data>
+  <data name="AI.Thinking" xml:space="preserve"><value>The model is reasoning… Analysis is available in the message's separate block.</value></data>
+  <data name="AI.ReasoningOnly" xml:space="preserve"><value>The model returned reasoning without a final answer. It is kept in a separate block. Increase the reply limit or disable reasoning if the model supports it.</value></data>
   <data name="AI.SystemPrompt" xml:space="preserve"><value>Instructions for the model</value></data>
   <data name="AI.IdleHint" xml:space="preserve"><value>0 disables automatic unloading. Model settings are remembered separately for each file.</value></data>
   <data name="AI.TestModel" xml:space="preserve"><value>Test model</value></data>
@@ -1200,6 +1206,10 @@ Author: [Name]
   <data name="AI.AttachDocument" xml:space="preserve"><value>Current document</value></data>
   <data name="AI.Prompt" xml:space="preserve"><value>Message to the model; Ctrl+Enter to send</value></data>
   <data name="AI.Send" xml:space="preserve"><value>Send</value></data>
+  <data name="AI.SendEmpty" xml:space="preserve"><value>Enter a message or attach a file to send a request.</value></data>
+  <data name="AI.SendBusy" xml:space="preserve"><value>A request is running. Wait for it to finish or select Stop.</value></data>
+  <data name="AI.SendAttaching" xml:space="preserve"><value>Reading attachments. Sending will be available after the files are processed.</value></data>
+  <data name="AI.SendLocked" xml:space="preserve"><value>The protected workspace is locked. Unlock it to send a request.</value></data>
   <data name="AI.ChatPrivacy" xml:space="preserve"><value>Local processing. Chat messages are not saved to disk.</value></data>
   <data name="AI.OpenPanel" xml:space="preserve"><value>Open AI panel</value></data>
   <data name="AI.ResponseSection" xml:space="preserve"><value>Response</value></data>
@@ -1208,7 +1218,7 @@ Author: [Name]
   <data name="AI.MemoryMode.Automatic" xml:space="preserve"><value>Automatic · RAM + graphics memory</value></data>
   <data name="AI.MemoryMode.CpuOnly" xml:space="preserve"><value>CPU only · RAM</value></data>
   <data name="AI.MemoryMode.Manual" xml:space="preserve"><value>Manual GPU layer count</value></data>
-  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook chooses how many layers fit in graphics memory and keeps the rest in RAM. If loading fails, it retries with fewer GPU layers, down to CPU only.</value></data>
+  <data name="AI.MemoryHint.Automatic" xml:space="preserve"><value>CryptoBook checks model loading and trial generation in a separate process. On failure it tries safer optimizations, smaller batches, fewer GPU layers and CPU. Context reduction can be allowed below. The actual parameters and attempt history are shown.</value></data>
   <data name="AI.MemoryHint.CpuOnly" xml:space="preserve"><value>The model uses RAM and the processor. Graphics memory is not required; responses may take longer.</value></data>
   <data name="AI.MemoryHint.Manual" xml:space="preserve"><value>Choose the number of layers placed on the graphics card. Remaining layers use RAM and the processor.</value></data>
   <data name="AI.ResizePanel" xml:space="preserve"><value>Drag the left edge to resize the AI panel</value></data>
@@ -1231,4 +1241,39 @@ Author: [Name]
   <data name="AI.DefaultFilePrompt" xml:space="preserve"><value>Analyze the attached files.</value></data>
   <data name="AI.ImageNeedsVisionModel" xml:space="preserve"><value>Images require a vision model with its matching mmproj GGUF file in the same folder. Select such a model in model settings.</value></data>
   <data name="AI.ImageLoadFailed" xml:space="preserve"><value>Could not load the image encoder or process the image.</value></data>
+  <data name="AI.AutoInspect" xml:space="preserve"><value>Inspecting the model and available memory in an isolated process…</value></data>
+  <data name="AI.AutoResources" xml:space="preserve"><value>Before loading: {0:N0} MB RAM and {1:N0} MB graphics memory available. GPU: {2}.</value></data>
+  <data name="AI.AutoGenerating" xml:space="preserve"><value>Running your request with the checked configuration…</value></data>
+  <data name="AI.AutoComplete" xml:space="preserve"><value>Request completed. The model stays loaded until unloading or the idle timeout.</value></data>
+  <data name="AI.AutoAttempt" xml:space="preserve"><value>Attempt {0}/{1}, up to 120 s: context {2}, GPU layers {3}, batch {4}/{5}, Flash Attention {6}.</value></data>
+  <data name="AI.AutoCached" xml:space="preserve"><value>Checking the saved profile, up to 120 s: context {2}, GPU layers {3}, batch {4}/{5}, Flash Attention {6}.</value></data>
+  <data name="AI.AutoAttemptFailed" xml:space="preserve"><value>The AI process could not finish this attempt. Reason: {0}.</value></data>
+  <data name="AI.AutoPartialReply" xml:space="preserve"><value>Generation stopped after a partial reply. It was kept; retry the request to obtain a complete answer.</value></data>
+  <data name="AI.AutoManualFailure" xml:space="preserve"><value>The selected manual settings failed. They were not changed. Use Automatic mode or reduce memory usage.</value></data>
+  <data name="AI.AutoRecovering" xml:space="preserve"><value>The main application is still running. Trying a safer configuration before repeating the request…</value></data>
+  <data name="AI.AutoCancelled" xml:space="preserve"><value>Stopped. The AI process was closed and its memory released. The next request reloads the model.</value></data>
+  <data name="AI.AutoFailed" xml:space="preserve"><value>The operation failed. See the attempt history and the error message below.</value></data>
+  <data name="AI.InspectionFailed" xml:space="preserve"><value>Could not read this model in the isolated process. Check the file, model compatibility and available RAM.</value></data>
+  <data name="AI.InspectionTimeout" xml:space="preserve"><value>Model inspection exceeded 60 seconds and was stopped. Free memory or choose a smaller model.</value></data>
+  <data name="AI.AutoVerified" xml:space="preserve"><value>Model loading, context creation and trial generation passed.</value></data>
+  <data name="AI.AutoReducedContext" xml:space="preserve"><value>Context reduced from {0} to {1} for this runtime profile. Less history fits; your requested setting is kept.</value></data>
+  <data name="AI.AutoCpuSelected" xml:space="preserve"><value>CPU and RAM selected. Responses can be slower; GPU memory is not used by the model.</value></data>
+  <data name="AI.AutoFlashDisabled" xml:space="preserve"><value>Flash Attention is disabled for compatibility. GPU layers, if selected, remain accelerated.</value></data>
+  <data name="AI.AutoSaved" xml:space="preserve"><value>Verified parameters saved for this model, hardware, driver and engine version. No chat content was saved.</value></data>
+  <data name="AI.AutoCacheUnavailable" xml:space="preserve"><value>The runtime profile cache is unavailable. Checks continue; the result may not be saved.</value></data>
+  <data name="AI.AutoNoConfiguration" xml:space="preserve"><value>No working configuration was found. Free RAM, choose a smaller model or update the graphics driver. The main application remains available.</value></data>
+  <data name="AI.WorkerFailed" xml:space="preserve"><value>The isolated AI process failed. The document is still open. Details and suggested next steps are in the attempt history.</value></data>
+  <data name="AI.AutoContextFull" xml:space="preserve"><value>The request does not fit the automatically reduced context. Clear the chat, shorten the request or disable automatic context reduction and check the model again.</value></data>
+  <data name="AI.AutoUnloaded" xml:space="preserve"><value>AI process closed; model and image encoder memory released.</value></data>
+  <data name="AI.AutoReset" xml:space="preserve"><value>Saved profiles removed for this model. The next check will select parameters again.</value></data>
+  <data name="AI.AutoSummary" xml:space="preserve"><value>Runtime parameters: context {0}; GPU layers {1}; batch {2}/{3}; Flash Attention {4}.</value></data>
+  <data name="AI.AutoDetails" xml:space="preserve"><value>Checks, changes and failure reasons</value></data>
+  <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Allow Automatic mode to reduce context when necessary. The actual context and limitations will be shown.</value></data>
+  <data name="AI.AutoRetune" xml:space="preserve"><value>Retune</value></data>
+  <data name="AI.AutoNoGpu" xml:space="preserve"><value>no suitable GPU budget</value></data>
+  <data name="AI.AutoTimeout" xml:space="preserve"><value>The 120-second trial limit was reached; the worker was stopped.</value></data>
+  <data name="AI.AutoDisconnected" xml:space="preserve"><value>Connection to the AI process was lost.</value></data>
+  <data name="AI.AutoStartFailed" xml:space="preserve"><value>Could not start the isolated AI process. Check application files and Windows permissions.</value></data>
+  <data name="AI.TransferTooLarge" xml:space="preserve"><value>The chat and attachments are too large to transfer safely. Clear the chat or remove attachments; nothing was truncated.</value></data>
+  <data name="AI.AutoProfileRejected" xml:space="preserve"><value>The previously saved parameters failed on this request. Saved profiles for this model have been cleared.</value></data>
 </root>

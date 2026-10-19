@@ -22,7 +22,8 @@ internal static class SettingsRegression
         var app = UiPreview.CreateApplication();
         try
         {
-            using var container = new Startup().ConfigureServices(app);
+            using var container = new Startup().ConfigureServices(app,
+                builder => builder.RegisterInstance(new AiRuntimeProfileStore(Path.Combine(outputDirectory, "runtime-profiles.json"))));
             var runtime = container.Resolve<IAiInferenceService>();
             var store = new AiSettingsStore(Path.Combine(outputDirectory, "settings.json"));
             store.Save(new() { Enabled = true, SelectedModelPath = firstModel, Models =
@@ -37,6 +38,12 @@ internal static class SettingsRegression
                     () => settingsVm.Status);
                 Check(settingsVm.ContextLength == 4096 && settingsVm.MaxTokens == 10000, "Test did not commit the typed values.");
                 report["test_with_4096_context_and_10000_reply"] = true;
+                UiPreview.CaptureWindow(settings, Path.Combine(outputDirectory, "auto-settings-light.png"));
+                settings.Width = settings.MinWidth; settings.Height = settings.MinHeight;
+                UiPreview.CaptureWindow(settings, Path.Combine(outputDirectory, "auto-settings-small-light.png"));
+                settings.Width = 740; settings.Height = 820;
+                report["runtime_summary"] = settingsVm.Runtime.Summary;
+                report["runtime_history"] = settingsVm.Runtime.Details;
                 Invoke((Button)settings.FindName("SaveModelButton"));
                 PumpUntil(() => !settings.IsVisible, () => settingsVm.Status);
                 Check(store.Current.SelectedModel.MaxTokens == 10000, "Save lost the requested reply limit.");

@@ -30,7 +30,8 @@ public static class AiChatFormat
         return result.ToString();
     }
 
-    public static string Gemma4(AiModelSettings settings, IReadOnlyList<AiTurn> conversation, string mediaMarker = "<media>")
+    public static string Gemma4(AiModelSettings settings, IReadOnlyList<AiTurn> conversation, string mediaMarker = "<media>",
+        IReadOnlyDictionary<string, string>? metadata = null)
     {
         var prompt = new StringBuilder();
         if(settings.UseReasoning || !string.IsNullOrWhiteSpace(settings.SystemPrompt))
@@ -43,7 +44,11 @@ public static class AiChatFormat
             prompt.Append("<|turn>").Append(turn.Role == "assistant" ? "model" : turn.Role)
                 .Append('\n').Append(Content(turn, mediaMarker).Trim()).Append("<turn|>\n");
         prompt.Append("<|turn>model\n");
-        if(!settings.UseReasoning) prompt.Append("<|channel>thought\n<channel|>");
+        // E2B/E4B use the plain model turn when thinking is off. The empty thought
+        // channel belongs to the larger Gemma 4 models and elicits analysis on Edge.
+        bool edge = metadata is not null && metadata.TryGetValue("gemma4.embedding_length_per_layer_input", out string? embedding) &&
+            int.TryParse(embedding, out int size) && size > 0;
+        if(!settings.UseReasoning && !edge) prompt.Append("<|channel>thought\n<channel|>");
         return prompt.ToString();
     }
 }

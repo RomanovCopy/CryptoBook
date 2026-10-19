@@ -1,3 +1,4 @@
+using CryptoBook.Behaviors;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
@@ -10,9 +11,16 @@ namespace CryptoBook.AI;
 public sealed class AiChatMessage(string role, string text, IReadOnlyList<AiAttachment>? attachments = null) : ViewModelBase
 {
     private string content = text;
+    private string reasoning = string.Empty;
     public string Role { get; } = role;
     public string RoleLabel => LocalizationManager.GetString(Role == "user" ? "AI.You" : "AI.Assistant");
     public string Content { get => content; set => SetProperty(ref content, value); }
+    public string Reasoning
+    {
+        get => reasoning;
+        set { if(SetProperty(ref reasoning, value)) OnPropertyChanged(nameof(HasReasoning)); }
+    }
+    public bool HasReasoning => !string.IsNullOrWhiteSpace(reasoning);
     public IReadOnlyList<AiAttachment> Attachments { get; } = attachments ?? [];
 }
 
@@ -40,6 +48,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         this.store = store; this.inference = inference; this.editor = editor;
         this.settingsWindow = settingsWindow; this.keyReset = keyReset; this.dispatcher = dispatcher;
         this.attachmentService = attachmentService ?? new AiAttachmentService([]);
+        Runtime = new(inference);
         Send = new AsyncRelayCommand((_, token) => SendAsync(token), _ =>
             Enabled && !IsBusy && !isAttaching && (!string.IsNullOrWhiteSpace(Prompt) || HasAttachments) && !IsLocked);
         Stop = new RelayCommand(_ => cancellation?.Cancel(), _ => IsBusy);
@@ -77,6 +86,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
 
     public ObservableCollection<AiChatMessage> Messages { get; } = [];
+    public AiRuntimeMonitor Runtime { get; }
     public ObservableCollection<AiAttachment> Attachments { get; } = [];
     public void BindWorkspace(IPageNavigationService navigation) => editor.BindWorkspace(navigation);
     public bool IsOpen { get => isOpen; set => SetProperty(ref isOpen, value); }
@@ -93,11 +103,20 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     public string ModelName => string.IsNullOrWhiteSpace(store.Current.SelectedModelPath)
         ? LocalizationManager.GetString("AI.NoModel") : System.IO.Path.GetFileNameWithoutExtension(store.Current.SelectedModelPath);
-    public string Prompt { get => prompt; set { SetProperty(ref prompt, value); Send.RaiseCanExecuteChanged(); } }
+    public string Prompt
+    {
+        get => prompt;
+        set { SetProperty(ref prompt, value); OnPropertyChanged(nameof(SendUnavailableReason)); Send.RaiseCanExecuteChanged(); }
+    }
     public string Status { get => status; private set => SetProperty(ref status, value); }
+    public string SendUnavailableReason => !Enabled ? LocalizationManager.GetString("AI.DisabledHint")
+        : IsLocked ? LocalizationManager.GetString("AI.SendLocked")
+        : IsBusy ? LocalizationManager.GetString("AI.SendBusy")
+        : isAttaching ? LocalizationManager.GetString("AI.SendAttaching")
+        : string.IsNullOrWhiteSpace(Prompt) && !HasAttachments ? LocalizationManager.GetString("AI.SendEmpty") : string.Empty;
     public bool HasAttachments => Attachments.Count > 0;
     public bool CanAttach => !IsBusy && !isAttaching && !IsLocked && Attachments.Count < AiAttachmentService.MaxFiles;
-    private bool IsLocked => keyReset.State is KeyResetState.Resetting or KeyResetState.KeyReset or KeyResetState.Unlocking or KeyResetState.Restoring;
+    private bool IsLocked => WorkspaceLockPresentation.IsLocked(keyReset.State, keyReset.HasRetainedDocument);
     private bool CanApply => !IsBusy && !IsLocked && !string.IsNullOrWhiteSpace(lastResponse?.Content);
     public AsyncRelayCommand Send { get; }
     public ICommand Stop { get; }
@@ -164,7 +183,8 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         responseTarget = editor.Capture();
         Attachments.Clear();
         Prompt = string.Empty;
-        var conversation = Messages.Select(m => new AiTurn(m.Role, m.Content, m.Attachments)).ToList();
+        var conversation = Messages.Where(m => m.Role != "assistant" || !string.IsNullOrWhiteSpace(m.Content))
+            .Select(m => new AiTurn(m.Role, m.Content, m.Attachments)).ToList();
         conversation.Add(new("user", input, files));
         Messages.Add(new("user", input, files));
         var answer = new AiChatMessage("assistant", string.Empty);
@@ -181,7 +201,8 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
             var progress = new Progress<float>(value =>
             {
                 if(!requestCancellation.IsCancellationRequested && !disposed && version == operationVersion)
-                    Status = value >= 1 ? LocalizationManager.GetString(hasImages && answer.Content.Length == 0 ? "AI.ProcessingImage" : "AI.Generating")
+                    Status = value >= 1 ? LocalizationManager.GetString(answer.HasReasoning && answer.Content.Length == 0 ? "AI.Thinking"
+                        : hasImages && answer.Content.Length == 0 ? "AI.ProcessingImage" : "AI.Generating")
                         : LocalizationManager.Format("AI.LoadProgress", (int)(value * 100));
             });
             await inference.GenerateAsync(store.Current.SelectedModel, conversation, text =>
@@ -194,18 +215,29 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
                         Status = LocalizationManager.GetString("AI.Generating");
                     }
                 }, DispatcherPriority.Normal);
-            }, progress, requestCancellation.Token);
+            }, progress, requestCancellation.Token, text =>
+            {
+                dispatcher.InvokeAsync(() =>
+                {
+                    if(!requestCancellation.IsCancellationRequested && !disposed && version == operationVersion)
+                    {
+                        answer.Reasoning += text;
+                        if(answer.Content.Length == 0) Status = LocalizationManager.GetString("AI.Thinking");
+                    }
+                }, DispatcherPriority.Normal);
+            });
             // Drain queued stream fragments before evaluating the final answer.
             await dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
             if(version == operationVersion)
-                Status = LocalizationManager.GetString(string.IsNullOrWhiteSpace(answer.Content) ? "AI.EmptyAnswer" : "AI.Ready");
+                Status = LocalizationManager.GetString(string.IsNullOrWhiteSpace(answer.Content)
+                    ? answer.HasReasoning ? "AI.ReasoningOnly" : "AI.EmptyAnswer" : "AI.Ready");
         }
         catch(OperationCanceledException) { if(version == operationVersion) Status = LocalizationManager.GetString("AI.Stopped"); }
         catch(Exception e) { if(version == operationVersion) Status = ErrorText(e); }
         finally
         {
             cancellation = null;
-            if(string.IsNullOrWhiteSpace(answer.Content)) Messages.Remove(answer);
+            if(string.IsNullOrWhiteSpace(answer.Content) && !answer.HasReasoning) Messages.Remove(answer);
             IsBusy = false;
         }
     }
@@ -233,8 +265,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     private void Refresh()
     {
-        OnPropertyChanged(nameof(IsModelLoaded));
-        OnPropertyChanged(nameof(CanAttach));
+        OnPropertyChanged(nameof(IsModelLoaded), nameof(CanAttach), nameof(SendUnavailableReason));
         Send?.RaiseCanExecuteChanged();
         AttachFiles?.RaiseCanExecuteChanged();
         foreach(ICommand command in new[] { Stop, AttachDocument, RemoveAttachment, ClearChat, Insert, Replace, Copy })
@@ -277,7 +308,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     private void OnCultureChanged(object? sender, EventArgs e)
     {
-        OnPropertyChanged(nameof(ModelName));
+        OnPropertyChanged(nameof(ModelName), nameof(SendUnavailableReason));
         foreach(var message in Messages) message.OnPropertyChanged(nameof(AiChatMessage.RoleLabel));
     }
     public static string ErrorText(Exception error)
@@ -293,6 +324,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         store.Changed -= OnSettingsChanged;
         keyReset.StateChanged -= OnKeyStateChanged;
         LocalizationManager.CultureChanged -= OnCultureChanged;
+        Runtime.Dispose();
         Clear();
     }
 }
