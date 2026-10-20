@@ -64,6 +64,7 @@ jobs:
           dotnet test --solution CryptoBook/CryptoBook.sln -c Release --no-restore
           --results-directory artifacts/TestResults --minimum-expected-tests 1
           --report-xunit-trx --report-xunit-trx-filename tests.trx
+          --output Detailed
 
       - name: Verify Flyleaf WPF template compatibility
         run: >-

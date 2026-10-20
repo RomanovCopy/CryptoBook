@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\CryptoBook\Styles\ComboBoxStyles.xaml"
           Link="TestAssets\ComboBoxStyles.xaml"
           CopyToOutputDirectory="PreserveNewest" />
