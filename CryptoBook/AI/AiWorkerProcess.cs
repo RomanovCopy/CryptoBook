@@ -75,6 +75,9 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
                     case "progress": progress?.Report(message.Progress); break;
                     case "inspection": inspection = message.Inspection; break;
                     case "done": return inspection;
+                    case "repetition":
+                        if(message.Repetition is not { KeepCharacters: >= 0 } stop) throw new AiWorkerException("Protocol");
+                        throw new AiRepetitionException(stop);
                     case "error": throw new AiException(message.Text is not null && message.Text.StartsWith("AI.", StringComparison.Ordinal)
                         ? message.Text : "AI.GenerationFailed");
                     default: throw new AiWorkerException("Protocol");

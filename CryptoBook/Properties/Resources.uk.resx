@@ -2148,4 +2148,7 @@
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Дочекайтеся відповіді помічника.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Відкрийте документ для редагування. Для Markdown перейдіть до редактора вихідного тексту.</value></data>
   <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Виділіть у документі текст, який потрібно замінити.</value></data>
+  <data name="AI.RepetitionProtection" xml:space="preserve"><value>Захист від повторюваних відповідей</value></data>
+  <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Пригнічує повторювані фрагменти та зупиняє стійкі повтори у відповідях і міркуваннях. Корисний початок зберігається. Вимкніть для завдань, де потрібно навмисно повторювати той самий текст.</value></data>
+  <data name="AI.RepetitionStopped" xml:space="preserve"><value>Генерацію зупинено: модель почала повторюватися. Корисний початок збережено.</value></data>
 </root>

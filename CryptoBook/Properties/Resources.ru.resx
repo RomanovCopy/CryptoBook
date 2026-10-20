@@ -1297,4 +1297,7 @@
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Дождитесь ответа помощника.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Откройте документ для редактирования. Для Markdown переключитесь в редактор исходного текста.</value></data>
   <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Выделите в документе текст, который нужно заменить.</value></data>
+  <data name="AI.RepetitionProtection" xml:space="preserve"><value>Защита от повторяющихся ответов</value></data>
+  <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Подавляет повторяющиеся фрагменты и останавливает устойчивые повторы в ответах и рассуждениях. Полезное начало сохраняется. Отключите для задач, где нужно намеренно повторять один и тот же текст.</value></data>
+  <data name="AI.RepetitionStopped" xml:space="preserve"><value>Генерация остановлена: модель начала повторяться. Полезное начало сохранено.</value></data>
 </root>

@@ -1297,4 +1297,7 @@ Autor: [Name]
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Warten Sie auf die Antwort des Assistenten.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Ein bearbeitbares Dokument öffnen. Bei Markdown zum Quelltexteditor wechseln.</value></data>
   <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Den zu ersetzenden Text im Dokument markieren.</value></data>
+  <data name="AI.RepetitionProtection" xml:space="preserve"><value>Vor wiederholten Antworten schützen</value></data>
+  <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Wirkt wiederholten Passagen entgegen und stoppt anhaltende Schleifen in Antworten und Überlegungen. Der nützliche Anfang bleibt erhalten. Für Aufgaben mit absichtlichen Textwiederholungen deaktivieren.</value></data>
+  <data name="AI.RepetitionStopped" xml:space="preserve"><value>Generierung gestoppt, weil sich das Modell wiederholt hat. Der nützliche Anfang bleibt erhalten.</value></data>
 </root>

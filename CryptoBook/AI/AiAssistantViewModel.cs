@@ -273,6 +273,20 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
                 Status = LocalizationManager.GetString(string.IsNullOrWhiteSpace(answer.Content)
                     ? answer.HasReasoning ? "AI.ReasoningOnly" : "AI.EmptyAnswer" : "AI.Ready");
         }
+        catch(AiRepetitionException error)
+        {
+            // Keep ordering with queued fragments, without cancelling their dispatcher callbacks.
+            await dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+            if(version == operationVersion && !disposed)
+            {
+                var stop = error.Stop;
+                string text = stop.IsReasoning ? answer.Reasoning : answer.Content;
+                string useful = text[..Math.Min(text.Length, stop.KeepCharacters)];
+                if(stop.IsReasoning) answer.Reasoning = useful;
+                else answer.Content = useful;
+                Status = LocalizationManager.GetString("AI.RepetitionStopped");
+            }
+        }
         catch(OperationCanceledException) { if(version == operationVersion) Status = LocalizationManager.GetString("AI.Stopped"); }
         catch(Exception e) { if(version == operationVersion) Status = ErrorText(e); }
         finally

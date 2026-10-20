@@ -168,7 +168,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                     void ReportUsage() => TokenUsageChanged?.Invoke(new(settings.ContextLength, inputTokens, generatedTokens));
                     ReportUsage();
                     int outputTokens = settings.OutputTokenLimit(inputTokens);
-                    using var sampling = new TokenCountingPipeline(token =>
+                    using var sampling = new TokenCountingPipeline(settings.RepetitionProtection, token =>
                     {
                         if(token.IsEndOfGeneration(weights.Vocab)) return;
                         generatedTokens++;
@@ -190,18 +190,10 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                         generation = executor.InferAsync(prompt, new InferenceParams { MaxTokens = outputTokens, DecodeSpecialTokens = true,
                             SamplingPipeline = sampling, OverflowStrategy = ContextOverflowStrategy.ThrowException }, cancellationToken);
                     }
-                    var filter = new AiThinkingFilter(onReasoning, AiThinkingFilter.StartsInReasoning(prompt));
                     try
                     {
-                        await foreach(string fragment in generation.ConfigureAwait(false))
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-                            string visible = filter.Append(fragment);
-                            if(visible.Length > 0) onText(visible);
-                        }
-                        cancellationToken.ThrowIfCancellationRequested();
-                        string remaining = filter.Flush();
-                        if(remaining.Length > 0) onText(remaining);
+                        await AiResponseStream.ReadAsync(generation, onText, onReasoning,
+                            AiThinkingFilter.StartsInReasoning(prompt), settings.RepetitionProtection, cancellationToken).ConfigureAwait(false);
                     }
                     finally { ReportUsage(); }
                 }
@@ -223,8 +215,24 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
         }
     }
 
-    private sealed class TokenCountingPipeline(Action<LLamaToken> onToken) : DefaultSamplingPipeline
+    private sealed class TokenCountingPipeline(bool protect, Action<LLamaToken> onToken) : DefaultSamplingPipeline
     {
+        protected override SafeLLamaSamplerChainHandle CreateChain(SafeLLamaContextHandle context)
+        {
+            if(!protect) return base.CreateChain(context);
+            using var defaults = base.CreateChain(context);
+            var chain = SafeLLamaSamplerChainHandle.Create(LLamaSamplerChainParams.Default());
+            try
+            {
+                // Penalize growing sequences before probability filters, preserving the
+                // library's remaining stages and avoiding a blanket penalty on terminology.
+                chain.AddDry(context.ModelHandle, ["\n", ":", "\"", "*"], 0.5f, 1.75f, 4, 512);
+                for(int i = 0; i < defaults.Count; i++) chain.AddClone(defaults, i);
+                return chain;
+            }
+            catch { chain.Dispose(); throw; }
+        }
+
         public override LLamaToken Sample(SafeLLamaContextHandle ctx, int index)
         {
             var token = base.Sample(ctx, index);
@@ -346,8 +354,13 @@ public sealed class AiThinkingFilter
     }
     public string Append(string fragment)
     {
-        pending += fragment;
         var visible = new StringBuilder();
+        Append(fragment, text => visible.Append(text));
+        return visible.ToString();
+    }
+    internal void Append(string fragment, Action<string> onText)
+    {
+        pending += fragment;
         while(pending.Length > 0)
         {
             int index = -1;
@@ -359,7 +372,7 @@ public sealed class AiThinkingFilter
             }
             if(index >= 0)
             {
-                AppendContent(visible, pending.AsSpan(0, index));
+                AppendContent(onText, pending.AsSpan(0, index));
                 pending = pending[(index + match.Tag.Length)..];
                 if(match.Thinking is bool state) thinking = state;
                 continue;
@@ -368,11 +381,10 @@ public sealed class AiThinkingFilter
             foreach(var tag in Tags)
                 for(int count = 1; count < tag.Tag.Length && count <= pending.Length; count++)
                     if(count > keep && pending.EndsWith(tag.Tag[..count], StringComparison.Ordinal)) keep = count;
-            AppendContent(visible, pending.AsSpan(0, pending.Length - keep));
+            AppendContent(onText, pending.AsSpan(0, pending.Length - keep));
             pending = keep == 0 ? string.Empty : pending[^keep..];
             break;
         }
-        return visible.ToString();
     }
     public string Flush()
     {
@@ -381,10 +393,10 @@ public sealed class AiThinkingFilter
         pending = string.Empty;
         return result;
     }
-    private void AppendContent(StringBuilder visible, ReadOnlySpan<char> content)
+    private void AppendContent(Action<string> onText, ReadOnlySpan<char> content)
     {
         if(content.Length == 0) return;
         if(thinking) onReasoning?.Invoke(content.ToString());
-        else visible.Append(content);
+        else onText(content.ToString());
     }
 }

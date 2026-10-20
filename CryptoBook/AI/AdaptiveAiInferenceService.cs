@@ -119,6 +119,12 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
                 { throw new AiException("AI.AutoContextFull"); }
             }
         }
+        catch(AiRepetitionException)
+        {
+            // A controlled stop is not a failed hardware configuration. Keep the verified
+            // worker/profile and never regenerate a partially delivered answer automatically.
+            Emit("AI.RepetitionStopped"); throw;
+        }
         catch(OperationCanceledException)
         {
             StopWorker(); Emit("AI.AutoCancelled"); throw;

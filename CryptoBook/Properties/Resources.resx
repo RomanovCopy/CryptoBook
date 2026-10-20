@@ -1297,4 +1297,7 @@ Author: [Name]
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Wait for the assistant's answer.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Open an editable document. For Markdown, switch to the source editor.</value></data>
   <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Select text in the document to replace it.</value></data>
+  <data name="AI.RepetitionProtection" xml:space="preserve"><value>Protect against repetitive answers</value></data>
+  <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Discourage repeated passages and stop sustained loops in answers and reasoning. Keeps the useful beginning. Disable for tasks that intentionally repeat the same text.</value></data>
+  <data name="AI.RepetitionStopped" xml:space="preserve"><value>Generation stopped because the model kept repeating itself. The useful beginning has been kept.</value></data>
 </root>

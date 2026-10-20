@@ -651,6 +651,71 @@ public sealed class AiIntegrationTests
         finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }
 
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RepetitionProtection_TestSaveReloadAndModelSwitchKeepTheSelectedValue(bool enabled)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (assistant, store, runtime, _) = CreateAssistant(directory);
+            using(assistant)
+            using(var settings = new AiModelSettingsViewModel(store, runtime))
+            {
+                runtime.CompleteImmediately = true;
+                settings.RepetitionProtection = enabled;
+                await settings.Test.ExecuteAsync();
+                Assert.Equal(enabled, runtime.LastSettings!.RepetitionProtection);
+                string first = settings.ModelPath;
+                settings.ModelPath = Path.Combine(directory, "other.gguf");
+                Assert.True(settings.RepetitionProtection);
+                settings.ModelPath = first;
+                Assert.Equal(enabled, settings.RepetitionProtection);
+                settings.Save.Execute(null);
+                var restored = new AiSettingsStore(Path.Combine(directory, "settings.json"));
+                using var reopened = new AiModelSettingsViewModel(restored, runtime);
+                Assert.Equal(enabled, reopened.RepetitionProtection);
+                assistant.Prompt = "test";
+                await assistant.Send.ExecuteAsync();
+                Assert.Equal(enabled, runtime.LastSettings.RepetitionProtection);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RepetitionStop_DrainsStreamAndTrimsOnlyTheAffectedChannelBeforeNextRequest(bool isReasoning)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (assistant, _, runtime, _) = CreateAssistant(directory);
+            using(assistant)
+            {
+                runtime.ReplyText = isReasoning ? "useful final" : "useful final repeated tail";
+                runtime.ReasoningToEmit = isReasoning ? "useful analysis repeated tail" : "useful analysis";
+                runtime.ErrorAfterText = new AiRepetitionException(new(isReasoning, isReasoning ? 15 : 12));
+                assistant.Prompt = "first question";
+                await assistant.Send.ExecuteAsync();
+                var answer = assistant.Messages.Last();
+                Assert.Equal("useful final", answer.Content);
+                Assert.Equal("useful analysis", answer.Reasoning);
+                Assert.Equal(LocalizationManager.GetString("AI.RepetitionStopped"), assistant.Status);
+                Assert.False(assistant.IsBusy);
+                runtime.ErrorAfterText = null;
+                runtime.CompleteImmediately = true;
+                assistant.Prompt = "next question";
+                await assistant.Send.ExecuteAsync();
+                Assert.Equal("useful final", Assert.Single(runtime.LastConversation, turn => turn.Role == "assistant").Content);
+                Assert.DoesNotContain(runtime.LastConversation, turn => turn.Content.Contains("repeated tail", StringComparison.Ordinal));
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
     [Fact]
     public void Settings_RoundTripKeepsSeparateModelProfilesAndNoConversation()
     {
@@ -1255,6 +1320,7 @@ public sealed class AiIntegrationTests
         public Task? BeforeText { get; set; }
         public string ReasoningToEmit { get; set; } = "";
         public string ReplyText { get; set; } = "partial answer";
+        public Exception? ErrorAfterText { get; set; }
         public bool IsBusy { get; set; }
         public DateTime LastUsedUtc { get; set; } = DateTime.UtcNow;
         public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
@@ -1271,6 +1337,7 @@ public sealed class AiIntegrationTests
                 if(ReasoningToEmit.Length > 0) onReasoning?.Invoke(ReasoningToEmit);
                 if(BeforeText is not null) await BeforeText.WaitAsync(cancellationToken);
                 if(ReplyText.Length > 0) onText(ReplyText);
+                if(ErrorAfterText is not null) throw ErrorAfterText;
                 if(!CompleteImmediately) await Task.Delay(Timeout.Infinite, cancellationToken);
             }
             finally { IsBusy = false; }

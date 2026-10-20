@@ -15,6 +15,7 @@ public sealed record AiModelSettings
     public AiMemoryMode MemoryMode { get; init; } = AiMemoryMode.Automatic;
     public bool AutoReduceContext { get; init; } = true;
     public bool UseReasoning { get; init; }
+    public bool RepetitionProtection { get; init; } = true;
     public string SystemPrompt { get; init; } = string.Empty;
 
     public void Validate()
@@ -59,7 +60,7 @@ public sealed record AiConfiguration
 
 public sealed record AiTurn(string Role, string Content, IReadOnlyList<AiAttachment>? Attachments = null);
 
-public sealed class AiException(string resourceKey, Exception? inner = null)
+public class AiException(string resourceKey, Exception? inner = null)
     : Exception(resourceKey, inner)
 {
     public string ResourceKey { get; } = resourceKey;

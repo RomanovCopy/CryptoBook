@@ -89,6 +89,10 @@ internal static class AiProgram
                     else return 2;
                     messages.Writer.TryWrite(new("done"));
                 }
+                catch(AiRepetitionException error)
+                {
+                    messages.Writer.TryWrite(new("repetition", Repetition: error.Stop));
+                }
                 catch(Exception error)
                 {
                     messages.Writer.TryWrite(new("error", Text: error is AiException ai ? ai.ResourceKey

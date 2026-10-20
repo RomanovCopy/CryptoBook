@@ -14,7 +14,7 @@ internal sealed record AiWorkerTurn(string Role, string Content, AiWorkerAttachm
 }
 internal sealed record AiWorkerRequest(string Command, AiModelSettings Settings, AiRuntimeOptions Options, AiWorkerTurn[] Turns);
 internal sealed record AiWorkerEvent(string Kind, string? Text = null, float Progress = 0, AiModelInspection? Inspection = null,
-    AiTokenUsage? Usage = null);
+    AiTokenUsage? Usage = null, AiRepetitionStop? Repetition = null);
 
 internal interface IAiWorkerSession : IDisposable
 {

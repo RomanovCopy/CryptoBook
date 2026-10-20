@@ -136,6 +136,45 @@ public sealed class AdaptiveAiInferenceTests : IDisposable
     }
 
     [Fact]
+    public async Task RepetitionStop_KeepsVerifiedWorkerAndProfile_WithoutAutomaticRetry()
+    {
+        bool repeat = true;
+        using var runtime = Create((request, text, _) =>
+        {
+            if(request.Command == "generate")
+            {
+                text("useful answer");
+                if(repeat) throw new AiRepetitionException(new(false, 13));
+            }
+            return Task.CompletedTask;
+        });
+        await Assert.ThrowsAsync<AiRepetitionException>(() => Generate(runtime, Settings));
+        Assert.True(runtime.IsLoaded);
+        Assert.False(runtime.IsBusy);
+        Assert.Single(requests, request => request.Command == "generate");
+        Assert.Contains(runtime.Notices, notice => notice.ResourceKey == "AI.RepetitionStopped");
+        Assert.DoesNotContain(runtime.Notices, notice => notice.ResourceKey is "AI.AutoFailed" or "AI.AutoRecovering");
+        Assert.True(File.Exists(Path.Combine(directory, "profiles.json")));
+        repeat = false;
+        await Generate(runtime, Settings with { RepetitionProtection = false });
+        Assert.Single(requests, request => request.Command == "probe");
+        Assert.Single(requests, request => request.Command == "inspect");
+        Assert.False(requests.Last().Settings.RepetitionProtection);
+    }
+
+    [Fact]
+    public async Task RepetitionStop_RoundTripsOnlyChannelAndOffsetOverThePipe()
+    {
+        using var stream = new MemoryStream();
+        var expected = new AiRepetitionStop(true, 42);
+        await AiWorkerProtocol.WriteAsync(stream, new AiWorkerEvent("repetition", Repetition: expected), CancellationToken.None);
+        stream.Position = 0;
+        var decoded = await AiWorkerProtocol.ReadAsync<AiWorkerEvent>(stream, CancellationToken.None);
+        Assert.Equal(expected, decoded!.Repetition);
+        Assert.Null(decoded.Text);
+    }
+
+    [Fact]
     public async Task CrashBeforeReply_Retunes_WhilePartialReplyIsNotRepeated()
     {
         bool fail = true;
