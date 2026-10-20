@@ -16,7 +16,7 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
     internal int? ProcessId { get { lock(sync) return process?.Id; } }
 
     public async Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText,
-        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null)
+        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
         Process current;
@@ -71,6 +71,7 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
                 {
                     case "text": onText(message.Text ?? ""); break;
                     case "reasoning": onReasoning?.Invoke(message.Text ?? ""); break;
+                    case "usage": if(message.Usage is not null) onUsage?.Invoke(message.Usage); break;
                     case "progress": progress?.Report(message.Progress); break;
                     case "inspection": inspection = message.Inspection; break;
                     case "done": return inspection;

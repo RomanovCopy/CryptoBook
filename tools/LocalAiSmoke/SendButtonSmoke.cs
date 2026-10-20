@@ -1,5 +1,6 @@
 using Autofac;
 using CryptoBook.AI;
+using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
@@ -39,6 +40,8 @@ internal static class SendButtonSmoke
             var keyReset = container.Resolve<IKeyResetService>();
             var assistant = container.Resolve<AiAssistantViewModel>();
             var runtime = container.Resolve<IAiInferenceService>();
+            var usageUpdates = new List<AiTokenUsage>();
+            ((IAiTokenUsageSource)runtime).TokenUsageChanged += usage => { lock(usageUpdates) usageUpdates.Add(usage); };
             var panel = new AiAssistantPanel { DataContext = assistant };
             var host = new Window { Content = panel, Width = 500, Height = 900, ShowInTaskbar = false, ShowActivated = false };
             assistant.IsOpen = true;
@@ -63,6 +66,13 @@ internal static class SendButtonSmoke
             string answer = assistant.Messages.LastOrDefault(message => message.Role == "assistant")?.Content ?? "";
             Check(answer.Contains("ready", StringComparison.OrdinalIgnoreCase), "Unexpected answer: " + assistant.Status);
             report["real_button_invocation_generated_answer"] = answer;
+            lock(usageUpdates)
+            {
+                Check(usageUpdates.Count >= 2 && usageUpdates[0].InputTokens > 0 && usageUpdates[0].OutputTokens == 0 &&
+                    usageUpdates[^1].OutputTokens > 0 && usageUpdates[^1].RemainingTokens < usageUpdates[0].RemainingTokens,
+                    "The native worker did not report prompt and generated token counts.");
+                report["native_token_usage"] = usageUpdates.ToArray();
+            }
             input.SetCurrentValue(TextBox.TextProperty, "next question");
             PumpUntil(() => send.IsEnabled && hint.Visibility == Visibility.Collapsed);
             report["send_reenabled_for_followup"] = true;
@@ -114,6 +124,12 @@ internal static class SendButtonSmoke
                 }
                 report["checkbox_off_on_off_with_real_replies"] = modeResults;
             }
+            if(!checkReasoning)
+            {
+                VerifyEditorButtons(container, assistant, panel, host, outputDirectory);
+                report["insert_and_replace_buttons_use_current_editor_and_selection"] = true;
+                report["answer_can_be_inserted_repeatedly_and_changes_are_undoable"] = true;
+            }
             var unloading = runtime.UnloadAsync();
             PumpUntil(() => unloading.IsCompleted); unloading.GetAwaiter().GetResult();
             report["unloaded"] = !runtime.IsLoaded;
@@ -136,6 +152,61 @@ internal static class SendButtonSmoke
             File.WriteAllText(Path.Combine(outputDirectory, "result.json"), json);
             Console.WriteLine(json);
         }
+    }
+
+    private static void VerifyEditorButtons(IContainer container, AiAssistantViewModel assistant, AiAssistantPanel panel,
+        Window host, string outputDirectory)
+    {
+        var editor = container.Resolve<IRichTextBoxService>();
+        var session = container.Resolve<IDocumentSession>();
+        const string original = "Исходный текст документа";
+        var run = new Run(original);
+        var document = new FlowDocument(new Paragraph(run));
+        session.Open("ai-apply-smoke.txt", new PlainTextTemplate(), document);
+        assistant.BindWorkspace(new EditorNavigation());
+        host.Content = null;
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
+        grid.Children.Add(editor.Service);
+        Grid.SetColumn(panel, 1); grid.Children.Add(panel);
+        host.Content = grid; host.Width = 1050;
+        editor.Selection.Select(run.ContentStart, run.ContentStart);
+        UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "apply-insert-enabled.png"));
+        var insert = (Button)panel.FindName("InsertResponseButton");
+        var replace = (Button)panel.FindName("ReplaceSelectionButton");
+        Check(insert.IsEnabled && !replace.IsEnabled, "Insert did not become available after opening the editor: " + assistant.InsertUnavailableReason);
+        editor.Selection.Select(run.ContentStart, run.ContentEnd);
+        UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "apply-replace-enabled.png"));
+        Check(replace.IsEnabled, "Selecting text after the answer did not enable Replace: " + assistant.ReplaceUnavailableReason);
+        string answer = assistant.Messages.Last(message => message.Role == "assistant").Content;
+        ((IInvokeProvider)new ButtonAutomationPeer(replace).GetPattern(PatternInterface.Invoke)).Invoke();
+        PumpUntil(() => new TextRange(document.ContentStart, document.ContentEnd).Text.TrimEnd('\r', '\n') == answer);
+        Check(insert.IsEnabled, "Applying a reply disabled further insertion.");
+        editor.Undo();
+        Check(new TextRange(document.ContentStart, document.ContentEnd).Text.Contains(original), "Undo did not restore the replaced selection.");
+        var end = document.Blocks.LastBlock!.ContentEnd;
+        editor.Selection.Select(end, end);
+        ((IInvokeProvider)new ButtonAutomationPeer(insert).GetPattern(PatternInterface.Invoke)).Invoke();
+        PumpUntil(() => new TextRange(document.ContentStart, document.ContentEnd).Text.Contains(original + answer));
+        Check(insert.IsEnabled, "Insert became disabled after its first use.");
+        ((IInvokeProvider)new ButtonAutomationPeer(insert).GetPattern(PatternInterface.Invoke)).Invoke();
+        PumpUntil(() => new TextRange(document.ContentStart, document.ContentEnd).Text.Contains(original + answer + answer));
+        UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "apply-inserted-twice.png"));
+    }
+
+    private sealed class EditorNavigation : IPageNavigationService
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged { add { } remove { } }
+        public Page? CurrentPage => null;
+        public string? CurrentKey => "Home";
+        public bool CanGoBack => false;
+        public bool CanGoForward => false;
+        public IReadOnlyList<string>? Keys => ["Home"];
+        public void Navigate(string key, object? args = null) { }
+        public void GoBack() { }
+        public void GoForward() { }
+        public void Remove(string key) { }
     }
 
     private static void PumpUntil(Func<bool> completed)

@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 namespace CryptoBook.AI;
 
 /// <summary>Native engine used inside the isolated AI worker. No network or saved chat.</summary>
-public sealed class LocalAiInferenceService : IAiInferenceService
+public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsageSource
 {
     private readonly AiRuntimeOptions? runtimeOptions;
     public LocalAiInferenceService() { }
@@ -30,6 +30,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService
     public bool IsLoaded => weights is not null;
     public bool IsBusy { get; private set; }
     public DateTime LastUsedUtc { get; private set; } = DateTime.UtcNow;
+    public event Action<AiTokenUsage>? TokenUsageChanged;
 
     public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
         Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null)
@@ -162,8 +163,19 @@ public sealed class LocalAiInferenceService : IAiInferenceService
                         inputTokens = checked((int)Math.Max(imageChunks.CountTokens(), (ulong)imageChunks.CountPositions()));
                     }
                     else inputTokens = weights.Tokenize(prompt, add_bos: true, special: true, Encoding.UTF8).Length;
+                    int generatedTokens = 0;
+                    long lastUsageUpdate = Environment.TickCount64;
+                    void ReportUsage() => TokenUsageChanged?.Invoke(new(settings.ContextLength, inputTokens, generatedTokens));
+                    ReportUsage();
                     int outputTokens = settings.OutputTokenLimit(inputTokens);
-                    using var sampling = new DefaultSamplingPipeline { Temperature = settings.Temperature };
+                    using var sampling = new TokenCountingPipeline(token =>
+                    {
+                        if(token.IsEndOfGeneration(weights.Vocab)) return;
+                        generatedTokens++;
+                        if(Environment.TickCount64 - lastUsageUpdate < 100) return;
+                        lastUsageUpdate = Environment.TickCount64;
+                        ReportUsage();
+                    }) { Temperature = settings.Temperature };
                     IAsyncEnumerable<string> generation;
                     if(images.Length > 0)
                     {
@@ -179,15 +191,19 @@ public sealed class LocalAiInferenceService : IAiInferenceService
                             SamplingPipeline = sampling, OverflowStrategy = ContextOverflowStrategy.ThrowException }, cancellationToken);
                     }
                     var filter = new AiThinkingFilter(onReasoning, AiThinkingFilter.StartsInReasoning(prompt));
-                    await foreach(string fragment in generation.ConfigureAwait(false))
+                    try
                     {
+                        await foreach(string fragment in generation.ConfigureAwait(false))
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            string visible = filter.Append(fragment);
+                            if(visible.Length > 0) onText(visible);
+                        }
                         cancellationToken.ThrowIfCancellationRequested();
-                        string visible = filter.Append(fragment);
-                        if(visible.Length > 0) onText(visible);
+                        string remaining = filter.Flush();
+                        if(remaining.Length > 0) onText(remaining);
                     }
-                    cancellationToken.ThrowIfCancellationRequested();
-                    string remaining = filter.Flush();
-                    if(remaining.Length > 0) onText(remaining);
+                    finally { ReportUsage(); }
                 }
                 finally
                 {
@@ -204,6 +220,16 @@ public sealed class LocalAiInferenceService : IAiInferenceService
             LastUsedUtc = DateTime.UtcNow;
             IsBusy = false;
             gate.Release();
+        }
+    }
+
+    private sealed class TokenCountingPipeline(Action<LLamaToken> onToken) : DefaultSamplingPipeline
+    {
+        public override LLamaToken Sample(SafeLLamaContextHandle ctx, int index)
+        {
+            var token = base.Sample(ctx, index);
+            onToken(token);
+            return token;
         }
     }
 

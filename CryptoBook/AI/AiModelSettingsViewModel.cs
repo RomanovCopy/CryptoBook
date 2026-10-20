@@ -162,7 +162,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
             if(!string.IsNullOrWhiteSpace(ModelPath)) profiles[ModelPath] = profile;
             var merged = store.Current.Models.ToDictionary(model => model.ModelPath, StringComparer.OrdinalIgnoreCase);
             foreach(var draft in profiles.Values) merged[draft.ModelPath] = draft;
-            store.Save(new() { Enabled = Enabled, SelectedModelPath = ModelPath, IdleMinutes = IdleMinutes, Models = merged.Values.ToList() });
+            store.Save(store.Current with { Enabled = Enabled, SelectedModelPath = ModelPath, IdleMinutes = IdleMinutes, Models = merged.Values.ToList() });
             Saved?.Invoke(this, EventArgs.Empty);
         }
         catch(Exception e) { Status = e is AiException ? AiAssistantViewModel.ErrorText(e) : LocalizationManager.GetString("AI.SaveFailed"); }

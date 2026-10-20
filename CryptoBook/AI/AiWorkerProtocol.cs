@@ -13,13 +13,14 @@ internal sealed record AiWorkerTurn(string Role, string Content, AiWorkerAttachm
         new AiAttachment(file.Name, file.Text, file.Image, null, file.Size)).ToArray());
 }
 internal sealed record AiWorkerRequest(string Command, AiModelSettings Settings, AiRuntimeOptions Options, AiWorkerTurn[] Turns);
-internal sealed record AiWorkerEvent(string Kind, string? Text = null, float Progress = 0, AiModelInspection? Inspection = null);
+internal sealed record AiWorkerEvent(string Kind, string? Text = null, float Progress = 0, AiModelInspection? Inspection = null,
+    AiTokenUsage? Usage = null);
 
 internal interface IAiWorkerSession : IDisposable
 {
     bool IsAlive { get; }
     Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText,
-        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null);
+        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null);
     void Stop();
 }
 

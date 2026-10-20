@@ -264,11 +264,29 @@ public sealed class AdaptiveAiInferenceTests : IDisposable
 
     public void Dispose() => Directory.Delete(directory, true);
 
+    [Fact]
+    public async Task TokenUsage_IsForwardedOnlyForGeneration_AndRoundTripsThroughPipe()
+    {
+        var expected = new AiTokenUsage(2048, 1200, 37);
+        AiTokenUsage? received = null;
+        using var runtime = Create();
+        runtime.TokenUsageChanged += usage => received = usage;
+        await Generate(runtime, Settings);
+        Assert.Equal(expected, received);
+        using var stream = new MemoryStream();
+        await AiWorkerProtocol.WriteAsync(stream, new AiWorkerEvent("usage", Usage: expected), CancellationToken.None);
+        stream.Position = 0;
+        Assert.Equal(expected, (await AiWorkerProtocol.ReadAsync<AiWorkerEvent>(stream, CancellationToken.None))!.Usage);
+    }
+
     private sealed class FakeWorker(Func<AiWorkerRequest, Action<string>, Action<string>?, CancellationToken, Task<AiModelInspection?>> execute) : IAiWorkerSession
     {
         public bool IsAlive { get; private set; } = true;
-        public Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText, IProgress<float>? progress, CancellationToken token, Action<string>? onReasoning = null)
-            => execute(request, onText, onReasoning, token);
+        public Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText, IProgress<float>? progress, CancellationToken token, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null)
+        {
+            if(request.Command == "generate") onUsage?.Invoke(new(2048, 1200, 37));
+            return execute(request, onText, onReasoning, token);
+        }
         public void Stop() => IsAlive = false;
         public void Dispose() => Stop();
     }

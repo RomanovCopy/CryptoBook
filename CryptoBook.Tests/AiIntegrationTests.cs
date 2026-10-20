@@ -946,8 +946,279 @@ public sealed class AiIntegrationTests
         finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }
 
+    [WpfFact]
+    public async Task ChatAppearance_SaveDuringGenerationPreservesChatDraftAttachmentsAndRuntime()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                vm.Prompt = "question";
+                var generating = vm.Send.ExecuteAsync();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                vm.Prompt = "next draft";
+                vm.Attachments.Add(AiAttachmentService.Document("next.txt", "attachment"));
+                var appearance = new AiChatAppearanceViewModel(store)
+                {
+                    FontFamily = "Consolas", FontSize = 20, UserColor = "#123abc", AssistantColor = "#456DEF", ShowMessageBorders = true,
+                    RenderMarkdown = false
+                };
+                appearance.Save.Execute(null);
+                Assert.True(vm.IsBusy);
+                Assert.True(runtime.IsLoaded);
+                Assert.Equal(0, runtime.UnloadCount);
+                Assert.Equal(2, vm.Messages.Count);
+                Assert.Equal("next draft", vm.Prompt);
+                Assert.Single(vm.Attachments);
+                Assert.Equal("#123ABC", vm.Appearance.UserColor);
+                Assert.False(vm.Appearance.RenderMarkdown);
+                Assert.Equal(vm.Appearance, new AiSettingsStore(Path.Combine(directory, "settings.json")).Current.ChatAppearance);
+                using var settings = new AiModelSettingsViewModel(store, runtime);
+                settings.Save.Execute(null);
+                Assert.Equal(vm.Appearance, store.Current.ChatAppearance);
+                Assert.True(vm.IsBusy);
+                vm.Stop.Execute(null);
+                await generating;
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public void ChatAppearance_InvalidInputDoesNotOverwriteSettings_AndOldFilesGetDefaults()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                var original = store.Current;
+                var appearance = new AiChatAppearanceViewModel(store) { UserColor = "Transparent", FontSize = 0 };
+                appearance.Save.Execute(null);
+                Assert.Same(original, store.Current);
+                Assert.NotEmpty(appearance.Status);
+                File.WriteAllText(Path.Combine(directory, "old.json"), "{\"Enabled\":true,\"IdleMinutes\":7}");
+                var old = new AiSettingsStore(Path.Combine(directory, "old.json"));
+                Assert.True(old.Current.Enabled);
+                Assert.Equal(7, old.Current.IdleMinutes);
+                Assert.Equal(new AiChatAppearance(), old.Current.ChatAppearance);
+                File.WriteAllText(Path.Combine(directory, "old.json"), "{\"ChatAppearance\":{\"FontFamily\":null,\"UserColor\":null,\"AssistantColor\":\"bad\",\"FontSize\":999}}");
+                Assert.Equal(new AiChatAppearance(), new AiSettingsStore(Path.Combine(directory, "old.json")).Current.ChatAppearance);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task ContextCounter_UsesActualReducedContextAndAllOutputTokens_ThenResetsForNewChat()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                vm.Prompt = "question";
+                runtime.UsageToEmit = new(2048, 1900, 100);
+                runtime.ReasoningToEmit = "hidden reasoning";
+                var generating = vm.Send.ExecuteAsync();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                vm.UpdateContextBudget();
+                Assert.Equal(2048, vm.ContextLength);
+                Assert.Equal(47, vm.RemainingTokens);
+                Assert.Equal(47, vm.ReplyTokenLimit);
+                Assert.True(vm.IsContextLow);
+                Assert.DoesNotContain("≈", vm.ContextSummary);
+                Assert.True(runtime.HasUsageSubscribers);
+                vm.Stop.Execute(null);
+                await generating;
+                Assert.False(runtime.HasUsageSubscribers);
+                vm.ClearChat.Execute(null);
+                Assert.Equal(4096, vm.ContextLength);
+                Assert.Equal(vm.ContextLength, vm.RemainingTokens);
+                Assert.Equal(0, vm.ContextUsagePercent);
+                Assert.False(vm.IsContextLow);
+                Assert.Contains("≈", vm.ContextSummary);
+                int empty = vm.RemainingTokens;
+                vm.Prompt = new string('Ж', 900);
+                vm.UpdateContextBudget();
+                Assert.True(vm.RemainingTokens < empty);
+                vm.Attachments.Add(AiAttachmentService.Document("document.txt", new string('文', 900)));
+                int withoutFile = vm.RemainingTokens;
+                vm.UpdateContextBudget();
+                Assert.True(vm.RemainingTokens < withoutFile);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ChatReset_RestoresFullBudgetImmediately_AndIgnoresPreviousChatUsage(bool newChat)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                runtime.UsageToEmit = new(4096, 3900, 100);
+                runtime.CompleteImmediately = true;
+                vm.Prompt = new string('Ж', 5000);
+                await vm.Send.ExecuteAsync();
+                var previousUsage = runtime.LastUsageCallback;
+                Assert.NotNull(previousUsage);
+                vm.Prompt = "old draft";
+                vm.Attachments.Add(AiAttachmentService.Document("old.txt", "old attachment"));
+                vm.UpdateContextBudget();
+                Assert.True(vm.IsContextLow);
+                var reset = newChat ? vm.NewChat : vm.ClearChat;
+                Assert.True(reset.CanExecute(null));
+                reset.Execute(null);
+                Assert.Empty(vm.Messages);
+                Assert.Empty(vm.Prompt);
+                Assert.Empty(vm.Attachments);
+                Assert.Equal(vm.ContextLength, vm.RemainingTokens);
+                Assert.Equal(0, vm.ContextUsagePercent);
+                Assert.Equal(512, vm.ReplyTokenLimit);
+                Assert.False(vm.IsContextLow);
+                Assert.True(runtime.IsLoaded);
+                Assert.Equal(0, runtime.UnloadCount);
+
+                previousUsage(new(4096, 4090, 5));
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                vm.UpdateContextBudget();
+                Assert.Equal(vm.ContextLength, vm.RemainingTokens);
+
+                runtime.UsageToEmit = new(4096, 15, 1);
+                vm.Prompt = "fresh question";
+                await vm.Send.ExecuteAsync();
+                vm.UpdateContextBudget();
+                Assert.Equal("fresh question", Assert.Single(runtime.LastConversation).Content);
+                Assert.Equal(2, vm.Messages.Count);
+                Assert.True(vm.RemainingTokens > 4000);
+                Assert.False(vm.IsContextLow);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Fact]
+    public void ContextEstimate_IncludesSystemPromptHistoryAndDocuments_AndClampsOverflow()
+    {
+        AiTurn[] turns = [new("user", "first"), new("assistant", "answer"),
+            new("user", "next", [AiAttachmentService.Document("doc.txt", new string('Ж', 600))])];
+        int full = AiContextBudget.Estimate(new() { SystemPrompt = new string('文', 600) }, turns);
+        int withoutSystem = AiContextBudget.Estimate(new(), turns);
+        int withoutHistory = AiContextBudget.Estimate(new(), turns.Skip(2));
+        Assert.True(full > withoutSystem);
+        Assert.True(withoutSystem > withoutHistory);
+        Assert.Equal(0, new AiTokenUsage(512, 600, 1).RemainingTokens);
+    }
+
+    [WpfTheory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task ApplyReply_UsesCurrentSelectionAfterAnswer_AndAllowsRepeatedInsertion(bool useMarkdownEditor, bool renderMarkdown)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        var rich = (IRichTextBoxService)new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        var markdown = new MarkdownDocumentState();
+        var session = new DocumentSession(rich, markdown);
+        var navigation = new Navigation();
+        var run = new Run("alpha beta");
+        var document = new FlowDocument(new Paragraph(run));
+        TextBox? source = null;
+        var host = new Window { Width = 500, Height = 300, ShowInTaskbar = false, ShowActivated = false };
+        try
+        {
+            if(useMarkdownEditor)
+            {
+                markdown.Activate(new("alpha beta", Encoding.UTF8, []), "source.md");
+                session.Open("source.md", new MarkdownFileTemplate());
+                source = new TextBox { AcceptsReturn = true };
+                source.SetBinding(TextBox.TextProperty, new Binding(nameof(IMarkdownDocumentState.Text))
+                    { Source = markdown, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+                var page = new Page { Content = source };
+                NameScope.SetNameScope(page, new NameScope()); page.RegisterName("SourceEditor", source);
+                navigation.CurrentKey = "MarkdownEditor"; navigation.CurrentPage = page; host.Content = page;
+            }
+            else { session.Open("source.txt", new PlainTextTemplate(), document); host.Content = rich.Service; }
+            host.Show();
+            var (vm, store, runtime, _) = CreateAssistant(directory, richTextEditor: rich, markdownState: markdown,
+                documentSession: session, navigation: navigation);
+            using(vm)
+            {
+                store.Save(store.Current with { ChatAppearance = store.Current.ChatAppearance with { RenderMarkdown = renderMarkdown } });
+                runtime.CompleteImmediately = true; runtime.ReplyText = "**reply**";
+                if(source is not null) source.Select(0, 0); else rich.Selection.Select(run.ContentStart, run.ContentStart);
+                vm.Prompt = "question";
+                await vm.Send.ExecuteAsync();
+                Assert.True(vm.Insert.CanExecute(null));
+                Assert.False(vm.Replace.CanExecute(null));
+                int notifications = 0;
+                vm.Replace.CanExecuteChanged += (_, _) => notifications++;
+                if(source is not null) source.Select(6, 4);
+                else rich.Selection.Select(run.ContentStart.GetPositionAtOffset(6)!, run.ContentEnd);
+                Assert.True(vm.Replace.CanExecute(null));
+                Assert.True(notifications > 0);
+                vm.Replace.Execute(null);
+                string Text() => source is not null ? markdown.Text : new TextRange(document.ContentStart, document.ContentEnd).Text.TrimEnd('\r', '\n');
+                Assert.Equal("alpha **reply**", Text());
+                Assert.True(vm.Insert.CanExecute(null));
+                Assert.False(vm.Replace.CanExecute(null));
+                if(source is not null) source.Undo(); else rich.Undo();
+                Assert.Equal("alpha beta", Text());
+                if(source is not null) source.Select(source.Text.Length, 0);
+                else rich.Selection.Select(document.Blocks.LastBlock!.ContentEnd, document.Blocks.LastBlock.ContentEnd);
+                vm.Insert.Execute(null);
+                Assert.Equal("alpha beta**reply**", Text());
+                Assert.True(vm.Insert.CanExecute(null));
+                vm.Insert.Execute(null);
+                Assert.Equal("alpha beta**reply****reply**", Text());
+                if(source is not null) source.IsReadOnly = true; else rich.IsReadOnly = true;
+                Assert.False(vm.Insert.CanExecute(null)); Assert.False(vm.Replace.CanExecute(null));
+                Assert.NotEmpty(vm.InsertUnavailableReason);
+            }
+        }
+        finally { host.Close(); if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task ApplyReply_BecomesAvailableWhenEditableSurfaceOpensAfterAnswer()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        var rich = (IRichTextBoxService)new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        var host = new Window { Width = 400, Height = 250, ShowInTaskbar = false, ShowActivated = false };
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory, richTextEditor: rich);
+            using(vm)
+            {
+                runtime.CompleteImmediately = true;
+                vm.Prompt = "question"; await vm.Send.ExecuteAsync();
+                Assert.True(vm.Copy.CanExecute(null)); Assert.False(vm.Insert.CanExecute(null));
+                int notifications = 0; vm.Insert.CanExecuteChanged += (_, _) => notifications++;
+                host.Content = rich.Service; host.Show();
+                Assert.True(notifications > 0);
+                Assert.True(vm.Insert.CanExecute(null));
+                vm.Insert.Execute(null);
+                Assert.Contains(runtime.ReplyText, new TextRange(rich.Document.ContentStart, rich.Document.ContentEnd).Text);
+                Assert.True(vm.Insert.CanExecute(null));
+            }
+        }
+        finally { host.Close(); if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
     private static (AiAssistantViewModel, AiSettingsStore, RuntimeStub, KeyResetStub) CreateAssistant(
-        string directory, string? documentText = null, IRichTextBoxService? richTextEditor = null)
+        string directory, string? documentText = null, IRichTextBoxService? richTextEditor = null,
+        MarkdownDocumentState? markdownState = null, IDocumentSession? documentSession = null, IPageNavigationService? navigation = null)
     {
         Directory.CreateDirectory(directory);
         string path = Path.Combine(directory, "model.gguf");
@@ -957,21 +1228,25 @@ public sealed class AiIntegrationTests
         var runtime = new RuntimeStub();
         var keyReset = new KeyResetStub();
         IRichTextBoxService editor = richTextEditor ?? new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
-        var markdown = new MarkdownDocumentState();
-        var session = new DocumentSession(editor, markdown);
+        var markdown = markdownState ?? new MarkdownDocumentState();
+        var session = documentSession ?? new DocumentSession(editor, markdown);
         if(documentText is not null)
         {
             var document = new FlowDocument(new Paragraph(new Run(documentText)));
             session.Open("source.txt", new PlainTextTemplate(), document);
             editor.Selection.Select(document.ContentStart, document.ContentStart.GetPositionAtOffset(8)!);
         }
-        var context = new AiEditorContext(editor, markdown, session, new Navigation());
+        var context = new AiEditorContext(editor, markdown, session, navigation ?? new Navigation());
         return (new AiAssistantViewModel(store, runtime, context, new AiSettingsWindowService(store, runtime), keyReset,
             Dispatcher.CurrentDispatcher), store, runtime, keyReset);
     }
 
-    private sealed class RuntimeStub : IAiInferenceService
+    private sealed class RuntimeStub : IAiInferenceService, IAiTokenUsageSource
     {
+        public event Action<AiTokenUsage>? TokenUsageChanged;
+        public bool HasUsageSubscribers => TokenUsageChanged is not null;
+        public AiTokenUsage? UsageToEmit { get; set; }
+        public Action<AiTokenUsage>? LastUsageCallback { get; private set; }
         public bool IsLoaded { get; set; }
         public int UnloadCount { get; private set; }
         public AiModelSettings? LastSettings { get; private set; }
@@ -991,6 +1266,8 @@ public sealed class AiIntegrationTests
             try
             {
                 loadProgress?.Report(1);
+                LastUsageCallback = TokenUsageChanged;
+                if(UsageToEmit is not null) TokenUsageChanged?.Invoke(UsageToEmit);
                 if(ReasoningToEmit.Length > 0) onReasoning?.Invoke(ReasoningToEmit);
                 if(BeforeText is not null) await BeforeText.WaitAsync(cancellationToken);
                 if(ReplyText.Length > 0) onText(ReplyText);

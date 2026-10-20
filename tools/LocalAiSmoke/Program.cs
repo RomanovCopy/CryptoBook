@@ -39,6 +39,13 @@ if(args.Length > 0 && args[0] == "--reasoning-probe")
     await ReasoningProbe.RunAsync(args[1], args[2]);
     return;
 }
+if(args.Length > 0 && args[0] == "--chat-appearance")
+{
+    var uiThread = new Thread(() => ChatAppearanceSmoke.Run(args[1]));
+    uiThread.SetApartmentState(ApartmentState.STA);
+    uiThread.Start(); uiThread.Join();
+    return;
+}
 if(args.Length > 0 && args[0] == "--ui")
 {
     var uiThread = new Thread(() => UiPreview.Run(args[1], args[2]));
