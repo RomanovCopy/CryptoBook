@@ -1194,6 +1194,8 @@ public sealed class AiIntegrationTests
     {
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
         var rich = (IRichTextBoxService)new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        // Exercise selection/editing without acquiring desktop keyboard focus on hosted CI.
+        rich.Service.Focusable = false;
         var markdown = new MarkdownDocumentState();
         var session = new DocumentSession(rich, markdown);
         var navigation = new Navigation();
@@ -1207,7 +1209,7 @@ public sealed class AiIntegrationTests
             {
                 markdown.Activate(new("alpha beta", Encoding.UTF8, []), "source.md");
                 session.Open("source.md", new MarkdownFileTemplate());
-                source = new TextBox { AcceptsReturn = true };
+                source = new TextBox { AcceptsReturn = true, Focusable = false };
                 source.SetBinding(TextBox.TextProperty, new Binding(nameof(IMarkdownDocumentState.Text))
                     { Source = markdown, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
                 var page = new Page { Content = source };
@@ -1260,6 +1262,7 @@ public sealed class AiIntegrationTests
     {
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
         var rich = (IRichTextBoxService)new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        rich.Service.Focusable = false;
         var host = new Window { Width = 400, Height = 250, ShowInTaskbar = false, ShowActivated = false };
         try
         {
