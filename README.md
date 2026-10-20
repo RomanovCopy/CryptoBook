@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.4.5-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.5)
+[![Version](https://img.shields.io/badge/version-1.1.4.6-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.6)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -47,17 +47,17 @@ machine unless you explicitly move or share them.
 Screenshots show an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.4.5
+## New in 1.1.4.6
 
-- Improved [local AI](docs/LOCAL_AI.md) compatibility on PCs with limited memory: automatic mode probes loading and generation, adjusts batch sizes and GPU layers, disables Flash Attention when needed and can fall back to CPU.
-- Allow automatic context reduction when memory is insufficient; the requested context is preserved and the actual value is shown with a warning.
-- Run model inspection and inference in a separate process so a native engine crash does not close CryptoBook. Failed requests can recover automatically before the first output; partial replies remain available after a failure.
-- View actual runtime parameters and a timestamped history of attempts in the chat panel and model settings. Cache verified configurations and use **Retune** to select them again.
-- Configure reasoning for supported Qwen/Gemma models and view model analysis in a separate collapsible block. Editor actions and conversation history use the final answer.
-- Improved Send-button availability when restoring a protected workspace, pending settings validation and model switching.
+- Customize [local AI chat](docs/LOCAL_AI.md) fonts, sizes, question/answer colors and message borders; appearance is saved and can change during a reply.
+- Render Markdown headings, lists, tables, links and code in chat, or switch existing messages to source text. Copying and editor actions preserve the original answer text.
+- Track available context, usage and reply capacity, with actual token counts during generation and a prompt to start a new chat when space runs low.
+- Insert answers into the current document or replace the current selection, including a selection made after generation. Undo and repeated insertion are supported.
+- Start a new chat or clear it to reset history, draft, attachments and token counters without unloading the model.
+- Protect against repetitive answers and reasoning by default. A per-model setting combines a DRY sampler with a bounded verbatim-loop detector, preserves useful output and reports why generation stopped.
 
 GGUF models and vision projectors are selected separately and are not bundled with the installer.
-See the [release notes](docs/releases/v1.1.4.5.md) and [changelog](CHANGELOG.md).
+See the [release notes](docs/releases/v1.1.4.6.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -166,7 +166,7 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.4.5
+./installer/Build-Installer.ps1 -Version 1.1.4.6
 ```
 
 To build a self-contained x64 package and installer, install Inno Setup 6 and run:

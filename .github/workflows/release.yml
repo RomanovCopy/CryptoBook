@@ -60,10 +60,8 @@ jobs:
         run: ./tools/compliance/Test-FfmpegProvenance.ps1
 
       - name: Verify Release
-        run: >-
-          dotnet test --solution CryptoBook/CryptoBook.sln -c Release --no-restore
-          --results-directory artifacts/TestResults --minimum-expected-tests 1
-          --report-xunit-trx --report-xunit-trx-filename tests.trx
+        shell: pwsh
+        run: ./tools/Run-ReleaseTests.ps1
 
       - name: Verify Flyleaf WPF template compatibility
         run: >-

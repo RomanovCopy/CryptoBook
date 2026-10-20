@@ -1276,4 +1276,28 @@ Author: [Name]
   <data name="AI.AutoStartFailed" xml:space="preserve"><value>Could not start the isolated AI process. Check application files and Windows permissions.</value></data>
   <data name="AI.TransferTooLarge" xml:space="preserve"><value>The chat and attachments are too large to transfer safely. Clear the chat or remove attachments; nothing was truncated.</value></data>
   <data name="AI.AutoProfileRejected" xml:space="preserve"><value>The previously saved parameters failed on this request. Saved profiles for this model have been cleared.</value></data>
+  <data name="AI.Appearance" xml:space="preserve"><value>Chat appearance</value></data>
+  <data name="AI.ChatFont" xml:space="preserve"><value>Font</value></data>
+  <data name="AI.ChatFontSize" xml:space="preserve"><value>Font size</value></data>
+  <data name="AI.UserColor" xml:space="preserve"><value>Question text color</value></data>
+  <data name="AI.AssistantColor" xml:space="preserve"><value>Answer text color</value></data>
+  <data name="AI.ColorHint" xml:space="preserve"><value>Use … to choose a color or enter #RRGGBB. Leave empty to follow the theme.</value></data>
+  <data name="AI.MessageBorders" xml:space="preserve"><value>Show message borders</value></data>
+  <data name="AI.AppearanceReset" xml:space="preserve"><value>Reset</value></data>
+  <data name="AI.AppearanceInvalid" xml:space="preserve"><value>Choose a font, a size from 8 to 40 and colors in #RRGGBB format.</value></data>
+  <data name="AI.NewChat" xml:space="preserve"><value>New chat</value></data>
+  <data name="AI.ContextEstimate" xml:space="preserve"><value>≈ {0:N0} of {1:N0} tokens free · answer up to {2:N0}</value></data>
+  <data name="AI.ContextUsage" xml:space="preserve"><value>{0:N0} of {1:N0} tokens free · answer remaining up to {2:N0}</value></data>
+  <data name="AI.ContextHint" xml:space="preserve"><value>Questions and answers share one context window. While typing, this is an estimate calibrated to the last request; images are measured on send. During generation, the engine counts prompt, attachment and reasoning tokens. The answer limit is a ceiling. New chat clears the history.</value></data>
+  <data name="AI.ContextCapacity" xml:space="preserve"><value>Context usage</value></data>
+  <data name="AI.ContextLow" xml:space="preserve"><value>Context is almost full. Start a new chat soon.</value></data>
+  <data name="AI.RenderMarkdown" xml:space="preserve"><value>Render Markdown</value></data>
+  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Format questions and answers as Markdown. Turn off to show the source text. Copy and insert use the source text.</value></data>
+  <data name="AI.CopySourceHint" xml:space="preserve"><value>Copy the original answer text (including Markdown)</value></data>
+  <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Wait for the assistant's answer.</value></data>
+  <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Open an editable document. For Markdown, switch to the source editor.</value></data>
+  <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Select text in the document to replace it.</value></data>
+  <data name="AI.RepetitionProtection" xml:space="preserve"><value>Protect against repetitive answers</value></data>
+  <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Discourage repeated passages and stop sustained loops in answers and reasoning. Keeps the useful beginning. Disable for tasks that intentionally repeat the same text.</value></data>
+  <data name="AI.RepetitionStopped" xml:space="preserve"><value>Generation stopped because the model kept repeating itself. The useful beginning has been kept.</value></data>
 </root>

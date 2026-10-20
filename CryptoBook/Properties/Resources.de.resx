@@ -1276,4 +1276,28 @@ Autor: [Name]
   <data name="AI.TestReasoningOnly" xml:space="preserve"><value>Der kurze Test lieferte Überlegungen ohne endgültige Antwort. Eine Chatanfrage mit höherem Antwortlimit versuchen oder Überlegungen deaktivieren, falls das Modell dies unterstützt.</value></data>
   <data name="AI.Thinking" xml:space="preserve"><value>Das Modell denkt nach… Die Analyse steht im separaten Bereich der Nachricht.</value></data>
   <data name="AI.ReasoningOnly" xml:space="preserve"><value>Das Modell hat Überlegungen ohne endgültige Antwort zurückgegeben. Sie bleiben im separaten Bereich erhalten. Antwortlimit erhöhen oder Überlegungen deaktivieren, falls das Modell dies unterstützt.</value></data>
+  <data name="AI.Appearance" xml:space="preserve"><value>Chatdarstellung</value></data>
+  <data name="AI.ChatFont" xml:space="preserve"><value>Schriftart</value></data>
+  <data name="AI.ChatFontSize" xml:space="preserve"><value>Schriftgröße</value></data>
+  <data name="AI.UserColor" xml:space="preserve"><value>Textfarbe der Fragen</value></data>
+  <data name="AI.AssistantColor" xml:space="preserve"><value>Textfarbe der Antworten</value></data>
+  <data name="AI.ColorHint" xml:space="preserve"><value>Mit … eine Farbe wählen oder #RRGGBB eingeben. Leer bedeutet die Farbe des aktuellen Designs.</value></data>
+  <data name="AI.MessageBorders" xml:space="preserve"><value>Nachrichtenrahmen anzeigen</value></data>
+  <data name="AI.AppearanceReset" xml:space="preserve"><value>Zurücksetzen</value></data>
+  <data name="AI.AppearanceInvalid" xml:space="preserve"><value>Schriftart, Größe von 8 bis 40 und Farben im Format #RRGGBB wählen.</value></data>
+  <data name="AI.NewChat" xml:space="preserve"><value>Neuer Chat</value></data>
+  <data name="AI.ContextEstimate" xml:space="preserve"><value>≈ {0:N0} von {1:N0} Token frei · Antwort bis {2:N0}</value></data>
+  <data name="AI.ContextUsage" xml:space="preserve"><value>{0:N0} von {1:N0} Token frei · Antwort noch bis {2:N0}</value></data>
+  <data name="AI.ContextHint" xml:space="preserve"><value>Fragen und Antworten teilen ein Kontextfenster. Beim Tippen wird anhand der letzten Anfrage geschätzt; Bilder werden beim Senden gezählt. Während der Generierung zählt die Engine Anfrage, Anhänge und Denktext. Das Antwortlimit ist eine Obergrenze. Neuer Chat löscht den Verlauf.</value></data>
+  <data name="AI.ContextCapacity" xml:space="preserve"><value>Kontextbelegung</value></data>
+  <data name="AI.ContextLow" xml:space="preserve"><value>Der Kontext ist fast voll. Bald einen neuen Chat beginnen.</value></data>
+  <data name="AI.RenderMarkdown" xml:space="preserve"><value>Markdown darstellen</value></data>
+  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Fragen und Antworten als Markdown formatieren. Ausschalten, um den Quelltext anzuzeigen. Kopieren und Einfügen verwenden den Quelltext.</value></data>
+  <data name="AI.CopySourceHint" xml:space="preserve"><value>Originaltext der Antwort kopieren (einschließlich Markdown)</value></data>
+  <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Warten Sie auf die Antwort des Assistenten.</value></data>
+  <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Ein bearbeitbares Dokument öffnen. Bei Markdown zum Quelltexteditor wechseln.</value></data>
+  <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Den zu ersetzenden Text im Dokument markieren.</value></data>
+  <data name="AI.RepetitionProtection" xml:space="preserve"><value>Vor wiederholten Antworten schützen</value></data>
+  <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Wirkt wiederholten Passagen entgegen und stoppt anhaltende Schleifen in Antworten und Überlegungen. Der nützliche Anfang bleibt erhalten. Für Aufgaben mit absichtlichen Textwiederholungen deaktivieren.</value></data>
+  <data name="AI.RepetitionStopped" xml:space="preserve"><value>Generierung gestoppt, weil sich das Modell wiederholt hat. Der nützliche Anfang bleibt erhalten.</value></data>
 </root>

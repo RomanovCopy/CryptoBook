@@ -1276,4 +1276,28 @@
   <data name="AI.AutoStartFailed" xml:space="preserve"><value>Не удалось запустить отдельный процесс AI. Проверьте файлы приложения и разрешения Windows.</value></data>
   <data name="AI.TransferTooLarge" xml:space="preserve"><value>Диалог и вложения слишком велики для безопасной передачи. Очистите диалог или уберите вложения; содержимое не обрезалось.</value></data>
   <data name="AI.AutoProfileRejected" xml:space="preserve"><value>Ранее сохранённые параметры не сработали на текущем запросе. Рабочие профили этой модели сброшены.</value></data>
+  <data name="AI.Appearance" xml:space="preserve"><value>Оформление чата</value></data>
+  <data name="AI.ChatFont" xml:space="preserve"><value>Шрифт</value></data>
+  <data name="AI.ChatFontSize" xml:space="preserve"><value>Размер шрифта</value></data>
+  <data name="AI.UserColor" xml:space="preserve"><value>Цвет текста вопросов</value></data>
+  <data name="AI.AssistantColor" xml:space="preserve"><value>Цвет текста ответов</value></data>
+  <data name="AI.ColorHint" xml:space="preserve"><value>Нажмите … для выбора цвета или введите #RRGGBB. Пустое поле — цвет текущей темы.</value></data>
+  <data name="AI.MessageBorders" xml:space="preserve"><value>Рамки вокруг сообщений</value></data>
+  <data name="AI.AppearanceReset" xml:space="preserve"><value>Сбросить</value></data>
+  <data name="AI.AppearanceInvalid" xml:space="preserve"><value>Выберите шрифт, размер от 8 до 40 и цвета в формате #RRGGBB.</value></data>
+  <data name="AI.NewChat" xml:space="preserve"><value>Новый чат</value></data>
+  <data name="AI.ContextEstimate" xml:space="preserve"><value>≈ {0:N0} из {1:N0} токенов свободно · ответ до {2:N0}</value></data>
+  <data name="AI.ContextUsage" xml:space="preserve"><value>{0:N0} из {1:N0} токенов свободно · на ответ ещё до {2:N0}</value></data>
+  <data name="AI.ContextHint" xml:space="preserve"><value>Вопросы и ответы используют общее окно контекста. При наборе показана оценка с поправкой по последнему запросу; изображения измеряются при отправке. Во время генерации движок считает токены запроса, вложений и рассуждений. Лимит ответа — верхняя граница. Новый чат очищает историю.</value></data>
+  <data name="AI.ContextCapacity" xml:space="preserve"><value>Использование контекста</value></data>
+  <data name="AI.ContextLow" xml:space="preserve"><value>Контекст почти заполнен. Скоро стоит начать новый чат.</value></data>
+  <data name="AI.RenderMarkdown" xml:space="preserve"><value>Визуализировать Markdown</value></data>
+  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Оформлять вопросы и ответы по разметке Markdown. Выключите для просмотра исходного текста. Копирование и вставка используют исходный текст.</value></data>
+  <data name="AI.CopySourceHint" xml:space="preserve"><value>Копировать исходный текст ответа (включая Markdown)</value></data>
+  <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Дождитесь ответа помощника.</value></data>
+  <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Откройте документ для редактирования. Для Markdown переключитесь в редактор исходного текста.</value></data>
+  <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Выделите в документе текст, который нужно заменить.</value></data>
+  <data name="AI.RepetitionProtection" xml:space="preserve"><value>Защита от повторяющихся ответов</value></data>
+  <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Подавляет повторяющиеся фрагменты и останавливает устойчивые повторы в ответах и рассуждениях. Полезное начало сохраняется. Отключите для задач, где нужно намеренно повторять один и тот же текст.</value></data>
+  <data name="AI.RepetitionStopped" xml:space="preserve"><value>Генерация остановлена: модель начала повторяться. Полезное начало сохранено.</value></data>
 </root>

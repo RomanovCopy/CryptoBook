@@ -66,7 +66,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
             modelPath = value;
             parameters = profiles.TryGetValue(value, out var profile) ? profile : new() { ModelPath = value };
             OnPropertyChanged(nameof(ModelPath), nameof(ContextLength), nameof(MaxTokens), nameof(Temperature),
-                nameof(GpuLayers), nameof(UseReasoning), nameof(SystemPrompt), nameof(RecentModels), nameof(SelectedRecentModel),
+                nameof(GpuLayers), nameof(UseReasoning), nameof(RepetitionProtection), nameof(SystemPrompt), nameof(RecentModels), nameof(SelectedRecentModel),
                 nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(IsAutomaticMemoryMode), nameof(AutoReduceContext), nameof(MemoryDescription));
             Test?.RaiseCanExecuteChanged();
             Retune?.RaiseCanExecuteChanged();
@@ -98,6 +98,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     public AiRuntimeMonitor Runtime { get; }
     public string MemoryDescription => LocalizationManager.GetString("AI.MemoryHint." + MemoryMode);
     public bool UseReasoning { get => parameters.UseReasoning; set { parameters = parameters with { UseReasoning = value }; OnPropertyChanged(); } }
+    public bool RepetitionProtection { get => parameters.RepetitionProtection; set { parameters = parameters with { RepetitionProtection = value }; OnPropertyChanged(); } }
     public string SystemPrompt { get => parameters.SystemPrompt; set { parameters = parameters with { SystemPrompt = value }; OnPropertyChanged(); } }
     public int IdleMinutes { get => idleMinutes; set => SetProperty(ref idleMinutes, value); }
     public string Status { get => status; private set => SetProperty(ref status, value); }
@@ -162,7 +163,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
             if(!string.IsNullOrWhiteSpace(ModelPath)) profiles[ModelPath] = profile;
             var merged = store.Current.Models.ToDictionary(model => model.ModelPath, StringComparer.OrdinalIgnoreCase);
             foreach(var draft in profiles.Values) merged[draft.ModelPath] = draft;
-            store.Save(new() { Enabled = Enabled, SelectedModelPath = ModelPath, IdleMinutes = IdleMinutes, Models = merged.Values.ToList() });
+            store.Save(store.Current with { Enabled = Enabled, SelectedModelPath = ModelPath, IdleMinutes = IdleMinutes, Models = merged.Values.ToList() });
             Saved?.Invoke(this, EventArgs.Empty);
         }
         catch(Exception e) { Status = e is AiException ? AiAssistantViewModel.ErrorText(e) : LocalizationManager.GetString("AI.SaveFailed"); }

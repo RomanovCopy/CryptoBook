@@ -1,7 +1,7 @@
 # Third-party notices
 
 CryptoBook uses the third-party components listed below. This notice is based
-on the dependency locks for CryptoBook 1.1.4.5 and was updated on 2026-10-19. A package's own license
+on the dependency locks for CryptoBook 1.1.4.6 and was updated on 2026-10-20. A package's own license
 and notices control if this summary differs
 from them. CryptoBook does not claim ownership of third-party software.
 

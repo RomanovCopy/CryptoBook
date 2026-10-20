@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.1.4.6 - 2026-10-20
+
+### Added
+
+- Saved chat appearance settings: fonts, sizes, separate question/answer colors, message borders and optional Markdown rendering.
+- Context usage and available reply budget, actual native token counts during generation and a low-context prompt to start a new chat.
+- Per-model repetition protection enabled by default: a mild DRY sampler and a bounded detector for sustained verbatim loops in answers and reasoning.
+
+### Fixed
+
+- Apply an answer to the current document and selection, including selections changed after generation; support undo and repeated insertion.
+- Reset chat history, draft, attachments and context measurements together when clearing or starting a new chat.
+- Preserve useful output when repetition is detected, excluding the repeated tail from editor actions and future history without retrying or invalidating runtime profiles.
+
+### Changed
+
+- Render streaming Markdown while keeping original text for copying, editor actions, token estimates and model history.
+- Synchronize application, installer, documentation, notices and version tests for 1.1.4.6.
+
+Full comparison: [v1.1.4.5...v1.1.4.6](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.5...v1.1.4.6)
+
 ## 1.1.4.5 - 2026-10-19
 
 ### Added

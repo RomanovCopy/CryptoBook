@@ -72,13 +72,26 @@ internal static class AiProgram
                             turns = [new("user", "Say OK.")];
                         }
                         else turns = request.Turns.Select(turn => turn.ToTurn()).ToArray();
-                        await engine.GenerateAsync(settings, turns,
-                            text => { if(request.Command == "generate") messages.Writer.TryWrite(new("text", Text: text)); },
-                            new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), CancellationToken.None,
-                            text => { if(request.Command == "generate") messages.Writer.TryWrite(new("reasoning", Text: text)); }).ConfigureAwait(false);
+                        void ReportUsage(AiTokenUsage usage)
+                        {
+                            if(request.Command == "generate") messages.Writer.TryWrite(new("usage", Usage: usage));
+                        }
+                        engine.TokenUsageChanged += ReportUsage;
+                        try
+                        {
+                            await engine.GenerateAsync(settings, turns,
+                                text => { if(request.Command == "generate") messages.Writer.TryWrite(new("text", Text: text)); },
+                                new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), CancellationToken.None,
+                                text => { if(request.Command == "generate") messages.Writer.TryWrite(new("reasoning", Text: text)); }).ConfigureAwait(false);
+                        }
+                        finally { engine.TokenUsageChanged -= ReportUsage; }
                     }
                     else return 2;
                     messages.Writer.TryWrite(new("done"));
+                }
+                catch(AiRepetitionException error)
+                {
+                    messages.Writer.TryWrite(new("repetition", Repetition: error.Stop));
                 }
                 catch(Exception error)
                 {

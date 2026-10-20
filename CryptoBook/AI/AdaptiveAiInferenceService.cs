@@ -15,7 +15,7 @@ public interface IAiRuntimeStatusSource
 }
 
 /// <summary>Owns isolated native processes and never executes llama.cpp in the UI process.</summary>
-public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntimeStatusSource
+public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntimeStatusSource, IAiTokenUsageSource
 {
     private readonly AiRuntimeProfileStore profiles;
     private readonly Func<IAiWorkerSession> createWorker;
@@ -38,6 +38,7 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
     public int RequestedContextLength { get; private set; }
     public string ModelPath { get; private set; } = "";
     public event EventHandler? RuntimeChanged;
+    public event Action<AiTokenUsage>? TokenUsageChanged;
     public IReadOnlyList<AiRuntimeNotice> Notices { get { lock(sync) return notices.ToArray(); } }
 
     public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
@@ -87,7 +88,8 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
                     Emit("AI.AutoGenerating");
                     var request = new AiWorkerRequest("generate", settings, RuntimeOptions!, conversation.Select(AiWorkerTurn.From).ToArray());
                     await worker!.ExecuteAsync(request, text => { sentOutput = true; onText(text); }, loadProgress, linked.Token,
-                        text => { sentOutput = true; onReasoning?.Invoke(text); }).ConfigureAwait(false);
+                        text => { sentOutput = true; onReasoning?.Invoke(text); },
+                        usage => TokenUsageChanged?.Invoke(usage)).ConfigureAwait(false);
                     Emit("AI.AutoComplete");
                     break;
                 }
@@ -116,6 +118,12 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
                 catch(AiException error) when(error.ResourceKey == "AI.ContextFull" && RuntimeOptions!.ContextLength < settings.ContextLength)
                 { throw new AiException("AI.AutoContextFull"); }
             }
+        }
+        catch(AiRepetitionException)
+        {
+            // A controlled stop is not a failed hardware configuration. Keep the verified
+            // worker/profile and never regenerate a partially delivered answer automatically.
+            Emit("AI.RepetitionStopped"); throw;
         }
         catch(OperationCanceledException)
         {

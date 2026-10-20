@@ -4,9 +4,15 @@
              xmlns:ai="clr-namespace:CryptoBook.AI"
              xmlns:controls="clr-namespace:CryptoBook.MyControls"
              xmlns:markup="clr-namespace:CryptoBook.Markup"
+             xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
              Foreground="{DynamicResource CurrentWindowForeground}" AllowDrop="True" PreviewDragOver="FilesDragOver" PreviewDrop="FilesDropped">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolVisibility"/>
+        <Style x:Key="ChatText" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="FontFamily" Value="{Binding DataContext.Appearance.FontFamily, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+            <Setter Property="FontSize" Value="{Binding DataContext.Appearance.FontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+            <Setter Property="Foreground" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=StackPanel}}"/>
+        </Style>
         <DataTemplate x:Key="AttachmentCard">
             <Border Padding="8" CornerRadius="6" BorderThickness="1" BorderBrush="{DynamicResource CurrentBorderColor}" Background="{DynamicResource CurrentControlBackground}" ToolTip="{Binding Name}">
                 <Grid>
@@ -52,22 +58,51 @@
                 <controls:AiRuntimeDetails DataContext="{Binding Runtime}"/>
                 <WrapPanel Margin="0,0,0,8">
                     <Button Content="{Binding [AI.ModelSettings], Source={StaticResource Res}}" Command="{Binding OpenSettings}" Padding="9,5" Margin="0,0,6,6"/>
+                    <Button Content="{Binding [AI.Appearance], Source={StaticResource Res}}" Command="{Binding OpenAppearance}" Padding="9,5" Margin="0,0,6,6"/>
                     <Button Content="{Binding [AI.Unload], Source={StaticResource Res}}" Command="{Binding Unload}" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button Content="{Binding [AI.Clear], Source={StaticResource Res}}" Command="{Binding ClearChat}" Padding="9,5" Margin="0,0,0,6"/>
+                    <Button x:Name="ClearChatButton" Content="{Binding [AI.Clear], Source={StaticResource Res}}" Command="{Binding ClearChat}" Padding="9,5" Margin="0,0,6,6"/>
+                    <Button x:Name="NewChatButton" Content="{Binding [AI.NewChat], Source={StaticResource Res}}" Command="{Binding NewChat}" Padding="9,5" Margin="0,0,0,6"/>
                 </WrapPanel>
             </StackPanel>
             <ScrollViewer x:Name="ConversationScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" ScrollChanged="ConversationScrollChanged">
                 <ItemsControl ItemsSource="{Binding Messages}">
                     <ItemsControl.ItemTemplate><DataTemplate>
-                        <Border Padding="10" Margin="0,0,4,10" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource CurrentBorderColor}" Background="{DynamicResource CurrentControlBackground}">
+                        <Border Padding="6,8" Margin="0,0,4,10" CornerRadius="8" BorderBrush="{DynamicResource CurrentBorderColor}">
+                            <Border.Style><Style TargetType="Border"><Setter Property="BorderThickness" Value="0"/>
+                                <Style.Triggers><DataTrigger Binding="{Binding DataContext.Appearance.ShowMessageBorders, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+                                </DataTrigger></Style.Triggers>
+                            </Style></Border.Style>
                             <StackPanel>
-                                <TextBlock Text="{Binding RoleLabel}" Foreground="{DynamicResource CurrentMutedForeground}" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                <StackPanel.Style><Style TargetType="StackPanel">
+                                    <Setter Property="TextElement.Foreground" Value="{DynamicResource CurrentWindowForeground}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Role}" Value="user"><Setter Property="TextElement.Foreground" Value="{DynamicResource CurrentAccent}"/></DataTrigger>
+                                        <MultiDataTrigger><MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Role}" Value="user"/>
+                                            <Condition Binding="{Binding DataContext.Appearance.HasUserColor, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
+                                        </MultiDataTrigger.Conditions><Setter Property="TextElement.Foreground" Value="{Binding DataContext.Appearance.UserColor, RelativeSource={RelativeSource AncestorType=UserControl}}"/></MultiDataTrigger>
+                                        <MultiDataTrigger><MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Role}" Value="assistant"/>
+                                            <Condition Binding="{Binding DataContext.Appearance.HasAssistantColor, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
+                                        </MultiDataTrigger.Conditions><Setter Property="TextElement.Foreground" Value="{Binding DataContext.Appearance.AssistantColor, RelativeSource={RelativeSource AncestorType=UserControl}}"/></MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style></StackPanel.Style>
+                                <TextBlock Text="{Binding RoleLabel}" Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=StackPanel}}" FontWeight="SemiBold" Margin="0,0,0,5"/>
                                 <Border BorderThickness="1" BorderBrush="{DynamicResource CurrentBorderColor}" Background="{DynamicResource CurrentInputBackground}" CornerRadius="6" Padding="8" Margin="0,3,0,8" Visibility="{Binding HasReasoning, Converter={StaticResource BoolVisibility}}">
                                     <Expander x:Name="ReasoningExpander" Header="{Binding [AI.ReasoningDetails], Source={StaticResource Res}}" Foreground="{DynamicResource CurrentMutedForeground}" IsExpanded="False">
-                                        <TextBox Text="{Binding Reasoning, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource CurrentMutedForeground}" Padding="0" Margin="0,8,0,0" MaxHeight="220" VerticalScrollBarVisibility="Auto"/>
+                                        <TextBox Style="{StaticResource ChatText}" Text="{Binding Reasoning, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource CurrentMutedForeground}" Padding="0" Margin="0,8,0,0" MaxHeight="220" VerticalScrollBarVisibility="Auto"/>
                                     </Expander>
                                 </Border>
-                                <TextBox Text="{Binding Content, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0" VerticalScrollBarVisibility="Disabled"/>
+                                <RichTextBox x:Name="MessageContent" IsReadOnly="True" IsReadOnlyCaretVisible="True" IsUndoEnabled="False" IsDocumentEnabled="True"
+                                             BorderThickness="0" Background="Transparent" Padding="0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled"
+                                             FontFamily="{Binding DataContext.Appearance.FontFamily, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                             FontSize="{Binding DataContext.Appearance.FontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                             Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                             behaviors:AiChatMarkdownBehavior.Text="{Binding Content, Mode=OneWay}"
+                                             behaviors:AiChatMarkdownBehavior.RenderMarkdown="{Binding DataContext.Appearance.RenderMarkdown, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                             behaviors:HyperlinkCommandBehavior.Command="{Binding DataContext.OpenHyperlink, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                 <ItemsControl ItemsSource="{Binding Attachments}" ItemTemplate="{StaticResource AttachmentCard}" Margin="0,8,0,0">
                                     <ItemsControl.Style><Style TargetType="ItemsControl"><Style.Triggers><Trigger Property="HasItems" Value="False"><Setter Property="Visibility" Value="Collapsed"/></Trigger></Style.Triggers></Style></ItemsControl.Style>
                                     <ItemsControl.ItemContainerStyle><Style TargetType="ContentPresenter"><Setter Property="Margin" Value="0,0,0,6"/></Style></ItemsControl.ItemContainerStyle>
@@ -79,9 +114,9 @@
             </ScrollViewer>
             <StackPanel Grid.Row="3" Margin="0,8,0,0">
                 <WrapPanel>
-                    <Button Content="{Binding [AI.Insert], Source={StaticResource Res}}" Command="{Binding Insert}" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button Content="{Binding [AI.Replace], Source={StaticResource Res}}" Command="{Binding Replace}" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button Content="{Binding [Common.Copy], Source={StaticResource Res}}" Command="{Binding Copy}" Padding="9,5" Margin="0,0,0,6"/>
+                    <Button x:Name="InsertResponseButton" Content="{Binding [AI.Insert], Source={StaticResource Res}}" Command="{Binding Insert}" ToolTip="{Binding InsertUnavailableReason}" ToolTipService.ShowOnDisabled="True" Padding="9,5" Margin="0,0,6,6"/>
+                    <Button x:Name="ReplaceSelectionButton" Content="{Binding [AI.Replace], Source={StaticResource Res}}" Command="{Binding Replace}" ToolTip="{Binding ReplaceUnavailableReason}" ToolTipService.ShowOnDisabled="True" Padding="9,5" Margin="0,0,6,6"/>
+                    <Button Content="{Binding [Common.Copy], Source={StaticResource Res}}" ToolTip="{Binding [AI.CopySourceHint], Source={StaticResource Res}}" Command="{Binding Copy}" Padding="9,5" Margin="0,0,0,6"/>
                 </WrapPanel>
                 <ScrollViewer MaxHeight="156" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,4,0,8" Visibility="{Binding HasAttachments, Converter={StaticResource BoolVisibility}}">
                     <ItemsControl ItemsSource="{Binding Attachments}"><ItemsControl.ItemTemplate><DataTemplate>
@@ -98,9 +133,19 @@
                 </WrapPanel>
             </StackPanel>
             <TextBox x:Name="PromptBox" Grid.Row="4" Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="74" MaxHeight="170" VerticalScrollBarVisibility="Auto" Padding="9" Margin="0,3,0,8" AutomationProperties.Name="{Binding [AI.Prompt], Source={StaticResource Res}}">
+                <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                    <Setter Property="FontFamily" Value="{Binding Appearance.FontFamily}"/>
+                    <Setter Property="FontSize" Value="{Binding Appearance.FontSize}"/>
+                    <Style.Triggers><DataTrigger Binding="{Binding Appearance.HasUserColor}" Value="True"><Setter Property="Foreground" Value="{Binding Appearance.UserColor}"/></DataTrigger></Style.Triggers>
+                </Style></TextBox.Style>
                 <TextBox.InputBindings><KeyBinding Key="Enter" Modifiers="Control" Command="{Binding Send}"/></TextBox.InputBindings>
             </TextBox>
             <StackPanel Grid.Row="5">
+                <StackPanel ToolTip="{Binding [AI.ContextHint], Source={StaticResource Res}}" Margin="0,0,0,8">
+                    <TextBlock x:Name="ContextCounter" Text="{Binding ContextSummary}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11"/>
+                    <ProgressBar Value="{Binding ContextUsagePercent, Mode=OneWay}" Minimum="0" Maximum="100" Height="3" Margin="0,5,0,0" AutomationProperties.Name="{Binding [AI.ContextCapacity], Source={StaticResource Res}}"/>
+                    <TextBlock Text="{Binding [AI.ContextLow], Source={StaticResource Res}}" TextWrapping="Wrap" Margin="0,5,0,0" Foreground="{DynamicResource CurrentAccent}" FontSize="11" Visibility="{Binding IsContextLow, Converter={StaticResource BoolVisibility}}" AutomationProperties.LiveSetting="Polite"/>
+                </StackPanel>
                 <TextBlock x:Name="SendAvailabilityHint" Text="{Binding SendUnavailableReason}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite">
                     <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
                         <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger>

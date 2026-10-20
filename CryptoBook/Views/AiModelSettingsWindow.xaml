@@ -134,6 +134,10 @@
                         <Border Style="{StaticResource SectionCard}">
                             <StackPanel>
                                 <TextBlock Text="{Binding [AI.BehaviorSection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,14"/>
+                                <CheckBox x:Name="RepetitionProtectionCheckBox" Style="{StaticResource ThemedCheckBoxStyle}" IsChecked="{Binding RepetitionProtection}" Margin="0,0,0,6">
+                                    <TextBlock Text="{Binding [AI.RepetitionProtection], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                                </CheckBox>
+                                <TextBlock Text="{Binding [AI.RepetitionProtectionHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11" Margin="0,0,0,16"/>
                                 <CheckBox x:Name="ReasoningCheckBox" Style="{StaticResource ThemedCheckBoxStyle}" Content="{Binding [AI.Reasoning], Source={StaticResource Res}}" IsChecked="{Binding UseReasoning}" Margin="0,0,0,6"/>
                                 <TextBlock x:Name="ReasoningWarning" Text="{Binding [AI.ReasoningWarning], Source={StaticResource Res}}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,6"/>
                                 <TextBlock Text="{Binding [AI.ReasoningHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11" Margin="0,0,0,16"/>

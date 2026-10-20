@@ -136,6 +136,45 @@ public sealed class AdaptiveAiInferenceTests : IDisposable
     }
 
     [Fact]
+    public async Task RepetitionStop_KeepsVerifiedWorkerAndProfile_WithoutAutomaticRetry()
+    {
+        bool repeat = true;
+        using var runtime = Create((request, text, _) =>
+        {
+            if(request.Command == "generate")
+            {
+                text("useful answer");
+                if(repeat) throw new AiRepetitionException(new(false, 13));
+            }
+            return Task.CompletedTask;
+        });
+        await Assert.ThrowsAsync<AiRepetitionException>(() => Generate(runtime, Settings));
+        Assert.True(runtime.IsLoaded);
+        Assert.False(runtime.IsBusy);
+        Assert.Single(requests, request => request.Command == "generate");
+        Assert.Contains(runtime.Notices, notice => notice.ResourceKey == "AI.RepetitionStopped");
+        Assert.DoesNotContain(runtime.Notices, notice => notice.ResourceKey is "AI.AutoFailed" or "AI.AutoRecovering");
+        Assert.True(File.Exists(Path.Combine(directory, "profiles.json")));
+        repeat = false;
+        await Generate(runtime, Settings with { RepetitionProtection = false });
+        Assert.Single(requests, request => request.Command == "probe");
+        Assert.Single(requests, request => request.Command == "inspect");
+        Assert.False(requests.Last().Settings.RepetitionProtection);
+    }
+
+    [Fact]
+    public async Task RepetitionStop_RoundTripsOnlyChannelAndOffsetOverThePipe()
+    {
+        using var stream = new MemoryStream();
+        var expected = new AiRepetitionStop(true, 42);
+        await AiWorkerProtocol.WriteAsync(stream, new AiWorkerEvent("repetition", Repetition: expected), CancellationToken.None);
+        stream.Position = 0;
+        var decoded = await AiWorkerProtocol.ReadAsync<AiWorkerEvent>(stream, CancellationToken.None);
+        Assert.Equal(expected, decoded!.Repetition);
+        Assert.Null(decoded.Text);
+    }
+
+    [Fact]
     public async Task CrashBeforeReply_Retunes_WhilePartialReplyIsNotRepeated()
     {
         bool fail = true;
@@ -264,11 +303,29 @@ public sealed class AdaptiveAiInferenceTests : IDisposable
 
     public void Dispose() => Directory.Delete(directory, true);
 
+    [Fact]
+    public async Task TokenUsage_IsForwardedOnlyForGeneration_AndRoundTripsThroughPipe()
+    {
+        var expected = new AiTokenUsage(2048, 1200, 37);
+        AiTokenUsage? received = null;
+        using var runtime = Create();
+        runtime.TokenUsageChanged += usage => received = usage;
+        await Generate(runtime, Settings);
+        Assert.Equal(expected, received);
+        using var stream = new MemoryStream();
+        await AiWorkerProtocol.WriteAsync(stream, new AiWorkerEvent("usage", Usage: expected), CancellationToken.None);
+        stream.Position = 0;
+        Assert.Equal(expected, (await AiWorkerProtocol.ReadAsync<AiWorkerEvent>(stream, CancellationToken.None))!.Usage);
+    }
+
     private sealed class FakeWorker(Func<AiWorkerRequest, Action<string>, Action<string>?, CancellationToken, Task<AiModelInspection?>> execute) : IAiWorkerSession
     {
         public bool IsAlive { get; private set; } = true;
-        public Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText, IProgress<float>? progress, CancellationToken token, Action<string>? onReasoning = null)
-            => execute(request, onText, onReasoning, token);
+        public Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText, IProgress<float>? progress, CancellationToken token, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null)
+        {
+            if(request.Command == "generate") onUsage?.Invoke(new(2048, 1200, 37));
+            return execute(request, onText, onReasoning, token);
+        }
         public void Stop() => IsAlive = false;
         public void Dispose() => Stop();
     }
