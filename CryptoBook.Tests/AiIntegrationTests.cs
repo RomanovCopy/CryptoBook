@@ -1192,12 +1192,8 @@ public sealed class AiIntegrationTests
     [InlineData(true, true)]
     public async Task ApplyReply_UsesCurrentSelectionAfterAnswer_AndAllowsRepeatedInsertion(bool useMarkdownEditor, bool renderMarkdown)
     {
-        void Phase(string name) => Console.WriteLine($"AI editor test ({useMarkdownEditor}, {renderMarkdown}): {name}");
-        Phase("create controls");
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
         var rich = (IRichTextBoxService)new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
-        // Exercise selection/editing without acquiring desktop keyboard focus on hosted CI.
-        rich.Service.Focusable = false;
         var markdown = new MarkdownDocumentState();
         var session = new DocumentSession(rich, markdown);
         var navigation = new Navigation();
@@ -1211,7 +1207,7 @@ public sealed class AiIntegrationTests
             {
                 markdown.Activate(new("alpha beta", Encoding.UTF8, []), "source.md");
                 session.Open("source.md", new MarkdownFileTemplate());
-                source = new TextBox { AcceptsReturn = true, Focusable = false };
+                source = new TextBox { AcceptsReturn = true };
                 source.SetBinding(TextBox.TextProperty, new Binding(nameof(IMarkdownDocumentState.Text))
                     { Source = markdown, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
                 var page = new Page { Content = source };
@@ -1219,9 +1215,7 @@ public sealed class AiIntegrationTests
                 navigation.CurrentKey = "MarkdownEditor"; navigation.CurrentPage = page; host.Content = page;
             }
             else { session.Open("source.txt", new PlainTextTemplate(), document); host.Content = rich.Service; }
-            Phase("show host");
             host.Show();
-            Phase("create assistant");
             var (vm, store, runtime, _) = CreateAssistant(directory, richTextEditor: rich, markdownState: markdown,
                 documentSession: session, navigation: navigation);
             using(vm)
@@ -1230,9 +1224,7 @@ public sealed class AiIntegrationTests
                 runtime.CompleteImmediately = true; runtime.ReplyText = "**reply**";
                 if(source is not null) source.Select(0, 0); else rich.Selection.Select(run.ContentStart, run.ContentStart);
                 vm.Prompt = "question";
-                Phase("send");
                 await vm.Send.ExecuteAsync();
-                Phase("answer received");
                 Assert.True(vm.Insert.CanExecute(null));
                 Assert.False(vm.Replace.CanExecute(null));
                 int notifications = 0;
@@ -1241,31 +1233,26 @@ public sealed class AiIntegrationTests
                 else rich.Selection.Select(run.ContentStart.GetPositionAtOffset(6)!, run.ContentEnd);
                 Assert.True(vm.Replace.CanExecute(null));
                 Assert.True(notifications > 0);
-                Phase("replace selection");
                 vm.Replace.Execute(null);
-                Phase("selection replaced");
                 string Text() => source is not null ? markdown.Text : new TextRange(document.ContentStart, document.ContentEnd).Text.TrimEnd('\r', '\n');
                 Assert.Equal("alpha **reply**", Text());
                 Assert.True(vm.Insert.CanExecute(null));
                 Assert.False(vm.Replace.CanExecute(null));
                 if(source is not null) source.Undo(); else rich.Undo();
-                Phase("undo completed");
                 Assert.Equal("alpha beta", Text());
                 if(source is not null) source.Select(source.Text.Length, 0);
                 else rich.Selection.Select(document.Blocks.LastBlock!.ContentEnd, document.Blocks.LastBlock.ContentEnd);
                 vm.Insert.Execute(null);
-                Phase("first insertion completed");
                 Assert.Equal("alpha beta**reply**", Text());
                 Assert.True(vm.Insert.CanExecute(null));
                 vm.Insert.Execute(null);
-                Phase("second insertion completed");
                 Assert.Equal("alpha beta**reply****reply**", Text());
                 if(source is not null) source.IsReadOnly = true; else rich.IsReadOnly = true;
                 Assert.False(vm.Insert.CanExecute(null)); Assert.False(vm.Replace.CanExecute(null));
                 Assert.NotEmpty(vm.InsertUnavailableReason);
             }
         }
-        finally { Phase("close host"); host.Close(); if(Directory.Exists(directory)) Directory.Delete(directory, true); Phase("finished"); }
+        finally { host.Close(); if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }
 
     [WpfFact]
@@ -1273,7 +1260,6 @@ public sealed class AiIntegrationTests
     {
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
         var rich = (IRichTextBoxService)new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
-        rich.Service.Focusable = false;
         var host = new Window { Width = 400, Height = 250, ShowInTaskbar = false, ShowActivated = false };
         try
         {

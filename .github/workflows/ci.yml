@@ -39,15 +39,7 @@ jobs:
 
       - name: Test Release
         shell: pwsh
-        run: |
-          New-Item artifacts/TestResults -ItemType Directory -Force | Out-Null
-          dotnet run --project CryptoBook.Tests/CryptoBook.Tests.csproj -c Release --no-restore -- `
-            -longRunning 30 -reporter verbose -result-trx "$PWD/artifacts/TestResults/tests.trx"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          [xml]$results = Get-Content artifacts/TestResults/tests.trx
-          if ([int]$results.TestRun.ResultSummary.Counters.total -lt 1) {
-            throw 'Expected at least one Release test.'
-          }
+        run: ./tools/Run-ReleaseTests.ps1
 
       - name: Verify Flyleaf WPF template compatibility
         run: >-
