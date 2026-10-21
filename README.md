@@ -80,6 +80,7 @@ See the [release notes](docs/releases/v1.1.4.7.md) and [changelog](CHANGELOG.md)
 - pin frequently used documents with Quick Access;
 - search file names inside the selected workspace;
 - perform full-text search across supported documents, including `.cbook` files after unlock;
+- find text in the current document with case matching, highlighted results and keyboard navigation;
 - preview text and images and play video through Flyleaf/FFmpeg;
 - use bookmarks and document navigation;
 - print the current document through the Windows print dialog;
@@ -100,6 +101,26 @@ notes, project plan, meeting minutes, journal or report. Change the default in
 Templates adapt to A2/A3/A4 in either orientation. Markdown keeps source markup,
 TXT and text XAML keep text, and RTF, XamlPackage and protected documents keep formatting.
 XamlPackage and protected documents also preserve the selected page geometry.
+
+## Local AI assistant
+
+Open **Settings → AI assistant → Model settings**, enable the assistant and select a
+local `.gguf` model. Open the **AI** panel in the title bar, enter a request and press
+**Ctrl+Enter**. No separate server is required. Models are not included in the release.
+
+- Attach documents and images, or a snapshot of the current document including unsaved changes.
+  Image analysis requires a compatible vision model and a matching `mmproj*.gguf` beside it.
+- Copy an answer, insert it at the current cursor or replace the current selection.
+  The document and selection can change after generation; insertion supports undo.
+- Customize chat fonts, colors, borders and Markdown rendering. Context usage, reply capacity
+  and a per-model repetition guard help manage longer conversations.
+- Model loading and generation run in an isolated worker process. Automatic memory tuning can
+  adjust GPU offloading and use a CPU fallback; manual settings and cancellation are available.
+- Chat history stays in memory. Clearing the chat resets messages, draft, attachments and
+  counters; locking the protected workspace also clears the chat and unloads the model.
+
+See [local AI setup and limits](docs/LOCAL_AI.md) for supported attachments, reasoning,
+memory settings and runtime profiles.
 
 ## Supported formats
 
@@ -147,12 +168,26 @@ The installer is self-contained and does not require a separate .NET Desktop Run
 
 ## Download and run
 
-For most users, download the installer from the
-[latest release](https://github.com/RomanovCopy/CryptoBook/releases/latest).
-A portable `win-x64` ZIP is also published with release assets.
+The published release is [CryptoBook 1.1.4.7](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.7),
+released on October 21, 2026.
 
-Release assets include SHA-256 checksums, SPDX SBOM data and signing-status information.
-See [CHANGELOG.md](CHANGELOG.md) for release highlights.
+| File | Purpose |
+| --- | --- |
+| [Windows x64 installer](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/CryptoBook-Setup-1.1.4.7.exe) | Install or update CryptoBook |
+| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/CryptoBook-win-x64.zip) | Extract to a separate folder and run `CryptoBook.exe` |
+| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/SHA256SUMS.txt) | Verify downloaded files |
+| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/SIGNING-STATUS.txt) | Check the declared signing status |
+
+The 1.1.4.7 installer and application are **not digitally signed**. Before running a download,
+compare its SHA-256 with the entry in `SHA256SUMS.txt`, for example:
+
+```powershell
+Get-FileHash .\CryptoBook-Setup-1.1.4.7.exe -Algorithm SHA256
+```
+
+The release also includes the license archive, FFmpeg/Flyleaf provenance archive, dependency
+lock and SPDX SBOM. See the [release notes](docs/releases/v1.1.4.7.md) and
+[changelog](CHANGELOG.md). The built-in updater verifies the installer checksum before launch.
 
 ## Build from source
 
@@ -165,20 +200,23 @@ git clone https://github.com/RomanovCopy/CryptoBook.git
 cd CryptoBook
 dotnet restore CryptoBook/CryptoBook.sln --locked-mode
 dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
-dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
+./tools/Run-ReleaseTests.ps1
+
+# Check the production video-player WPF template
+dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c Release --no-restore -- --template-only
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
 ./installer/Build-Installer.ps1 -Version 1.1.4.7
 ```
 
-To build a self-contained x64 package and installer, install Inno Setup 6 and run:
-
-```powershell
-./installer/Build-Installer.ps1 -Version 1.2.3
-```
+`Run-ReleaseTests.ps1` runs all tests in three isolated processes: AI integration,
+document search and the remaining tests. This prevents interference from process-wide WPF
+application state. The 1.1.4.7 release passed **901 tests**, without failures or skips.
+TRX reports are written to `artifacts/TestResults`; the installer is written to
+`artifacts/CryptoBook-Setup-1.1.4.7.exe`.
 
 The project uses xUnit and STA tests for WPF. Compiler warnings and detected NuGet
-vulnerabilities are treated as errors in the release workflow.
+vulnerabilities are treated as errors.
 
 ## Project structure
 
@@ -205,9 +243,14 @@ injection.
 
 ## CI and releases
 
-GitHub Actions restores locked dependencies, runs Release tests and builds the Windows x64
-installer. Production releases are created from tags such as `v1.2.3` or `v1.2.3.4` and include
-an installer, portable ZIP, SHA-256 checksums, an SPDX SBOM and signing status.
+GitHub Actions restores locked dependencies, verifies FFmpeg provenance, runs isolated Release
+tests, checks the Flyleaf WPF template and builds the Windows x64 installer. A version tag
+starts the production workflow, which stores the verified release files as an artifact.
+Public release publication is a separate step after candidate approval and successful CI;
+the approved local installer is preserved.
+
+Release 1.1.4.7 contains eight files: installer, portable ZIP, license archive, FFmpeg provenance
+archive, dependency lock, SPDX SBOM, signing status and SHA-256 manifest.
 
 Operational release details are documented in [docs/PRODUCTION.md](docs/PRODUCTION.md).
 
