@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.1.4.7 - 2026-10-21
+
+### Added
+
+- Literal find in the current rich-text document and Markdown source with Ctrl+F, case matching, all-match highlighting and a current/total result counter.
+- Wrapping result navigation with Enter/F3 and Shift+Enter/Shift+F3, and Esc to close search and return focus to the editor.
+- Automatic search refresh after query/content changes and a switch from document preview to the corresponding editor when opening search.
+- Regression coverage for formatted text, structural boundaries, navigation, focus, scrolling, bindings and event cleanup without modifying content or undo history.
+
+### Changed
+
+- Refresh eight production WPF screenshots, including the document search bar.
+- Synchronize application, manifest, installer, documentation, notices and version tests for 1.1.4.7.
+
+Full comparison: [v1.1.4.6...v1.1.4.7](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.6...v1.1.4.7)
+
 ## 1.1.4.6 - 2026-10-20
 
 ### Added
