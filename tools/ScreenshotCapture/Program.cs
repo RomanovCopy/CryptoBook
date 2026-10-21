@@ -100,6 +100,16 @@ internal static class Program
         session.MarkSaved(documentPath, new XamlPackageFileTemplate());
         Save(window, Path.Combine(output, "editor.png"));
 
+        var search = ViewModel<IRichtextboxViewModel>(window).Search;
+        search.Open.Execute(null);
+        search.Query = "день";
+        await Settle(window);
+        if(search.ResultCount != 3)
+            throw new InvalidOperationException($"Expected 3 document search matches, found {search.ResultCount}.");
+        Save(window, Path.Combine(output, "document-search.png"));
+        search.Close.Execute(null);
+        await Settle(window);
+
         host.Scope.Resolve<IMainWindowModel>().IsMenuOpen = true;
         await Settle(window);
         Save(window, Path.Combine(output, "side-menu.png"));
@@ -176,7 +186,7 @@ internal static class Program
         manager.ShowWindow(settingsId);
         await Settle(settingsHost.Window);
         Save(settingsHost.Window, Path.Combine(output, "template-settings.png"));
-        Console.WriteLine("SCREENSHOT_CAPTURE: PASS (7 production WPF views)");
+        Console.WriteLine("SCREENSHOT_CAPTURE: PASS (8 production WPF views; 3 document search matches)");
     }
 
     private static async Task Settle(Window window)

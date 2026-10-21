@@ -1300,4 +1300,11 @@ Author: [Name]
   <data name="AI.RepetitionProtection" xml:space="preserve"><value>Protect against repetitive answers</value></data>
   <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Discourage repeated passages and stop sustained loops in answers and reasoning. Keeps the useful beginning. Disable for tasks that intentionally repeat the same text.</value></data>
   <data name="AI.RepetitionStopped" xml:space="preserve"><value>Generation stopped because the model kept repeating itself. The useful beginning has been kept.</value></data>
+  <data name="DocumentSearch.Find" xml:space="preserve"><value>Find in document</value></data>
+  <data name="DocumentSearch.MatchCase" xml:space="preserve"><value>Match case</value></data>
+  <data name="DocumentSearch.Previous" xml:space="preserve"><value>Previous match (Shift+Enter / Shift+F3)</value></data>
+  <data name="DocumentSearch.Next" xml:space="preserve"><value>Next match (Enter / F3)</value></data>
+  <data name="DocumentSearch.Close" xml:space="preserve"><value>Close search (Esc)</value></data>
+  <data name="DocumentSearch.NotFound" xml:space="preserve"><value>No matches</value></data>
+  <data name="DocumentSearch.Count" xml:space="preserve"><value>{0} of {1}</value></data>
 </root>

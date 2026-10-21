@@ -781,6 +781,7 @@ public sealed class DocumentStructureTests
     {
         private static ICommand NoOp { get; } = new RelayCommand(_ => { });
 
+        public DocumentSearchViewModel Search { get; } = new();
         public bool IsPreviewMode { get; private set; }
         public bool IsFitToWindow => false;
         public string ModeLabel => string.Empty;

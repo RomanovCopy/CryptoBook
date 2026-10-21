@@ -14,6 +14,11 @@
     <UserControl.DataContext>
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IRichtextboxViewModel}"/>
     </UserControl.DataContext>
+    <i:Interaction.Behaviors>
+        <behaviors:DocumentSearchBehavior Search="{Binding Search}"
+                                         EditorName="EditorHost"
+                                         SearchPanelName="SearchPanel"/>
+    </i:Interaction.Behaviors>
     <UserControl.InputBindings>
         <KeyBinding Key="S"
                     Modifiers="Control"
@@ -23,6 +28,8 @@
                     Command="{Binding SaveDocumentAs}"/>
     </UserControl.InputBindings>
     <Border BorderBrush="{DynamicResource CurrentBorderColor}" BorderThickness="1,1,1,0">
+        <DockPanel>
+        <local:DocumentSearchBar x:Name="SearchPanel" DockPanel.Dock="Top" DataContext="{Binding Search}"/>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -133,6 +140,10 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Margin="24,4,24,4">
+                <Button Content="{Binding [DocumentSearch.Find], Source={StaticResource Res}}"
+                        Command="{Binding Search.Open}"
+                        ToolTip="Ctrl+F"
+                        Margin="0,0,16,0" Padding="8,2"/>
                 <TextBlock Text="{Binding [Editor.Zoom], Source={StaticResource Res}}"
                            Foreground="{DynamicResource CurrentMutedForeground}"
                            VerticalAlignment="Center"
@@ -175,6 +186,7 @@
                 </Button>
             </StackPanel>
         </Grid>
+        </DockPanel>
     </Border>
 
     <i:Interaction.Triggers>

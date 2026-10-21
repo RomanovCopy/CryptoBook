@@ -12,17 +12,20 @@ dotnet build $project -c Release --no-restore
 if ($LASTEXITCODE -ne 0) { throw 'Release test build failed.' }
 
 # Other WPF tests create Application.Current on their own STA thread. Keep AI
-# command notification tests in a fresh process so they cannot invoke that stale
-# dispatcher synchronously. Include/exclude the same class to run every test once.
+# command notification and document search XAML tests in fresh processes so they
+# cannot invoke that stale dispatcher synchronously. Exclude both classes from
+# the remaining group to run every test once.
 $groups = @(
-    @{ Name = 'ai-integration'; Filter = '-class' },
-    @{ Name = 'remaining'; Filter = '-class-' }
+    @{ Name = 'ai-integration'; Arguments = @('-class', 'CryptoBook.Tests.AiIntegrationTests') },
+    @{ Name = 'document-search'; Arguments = @('-class', 'CryptoBook.Tests.DocumentSearchTests') },
+    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests') }
 )
 $total = 0
 foreach ($group in $groups) {
     $report = Join-Path $ResultsDirectory ($group.Name + '.trx')
+    $filterArguments = $group.Arguments
     dotnet run --project $project -c Release --no-build --no-restore -- `
-        $group.Filter 'CryptoBook.Tests.AiIntegrationTests' `
+        @filterArguments `
         -longRunning 30 -reporter verbose -result-trx $report
     if ($LASTEXITCODE -ne 0) { throw "Release tests failed: $($group.Name)." }
     [xml]$results = Get-Content -LiteralPath $report

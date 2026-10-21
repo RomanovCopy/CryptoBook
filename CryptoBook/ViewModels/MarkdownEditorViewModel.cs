@@ -51,6 +51,8 @@ namespace CryptoBook.ViewModels
             set => markdownDocument.Text = value;
         }
 
+        public DocumentSearchViewModel Search { get; } = new();
+
         public bool IsPreviewMode
         {
             get => isPreviewMode;
@@ -151,7 +153,10 @@ namespace CryptoBook.ViewModels
             }
         }
 
-        private void OnCultureChanged(object? sender, EventArgs args) =>
+        private void OnCultureChanged(object? sender, EventArgs args)
+        {
             OnPropertyChanged(nameof(ModeLabel), nameof(ToggleViewText));
+            Search.OnPropertyChanged(nameof(Search.Status));
+        }
     }
 }

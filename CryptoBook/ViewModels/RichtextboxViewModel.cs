@@ -35,6 +35,7 @@ namespace CryptoBook.ViewModels
             this.menuFile = menuFile
                 ?? throw new ArgumentNullException(nameof(menuFile));
             this.fontService = fontService;
+            Search.FocusRequested += OnSearchFocusRequested;
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             LocalizationManager.CultureChanged += OnCultureChanged;
             if(fontService is not null)
@@ -53,6 +54,8 @@ namespace CryptoBook.ViewModels
                     OnPropertyChanged(nameof(ModeLabel), nameof(ToggleViewText));
             }
         }
+
+        public DocumentSearchViewModel Search { get; } = new();
 
         public string ModeLabel => LocalizationManager.GetString(
             IsPreviewMode ? "Editor.PagedPreview" : "Editor.Editing");
@@ -124,6 +127,7 @@ namespace CryptoBook.ViewModels
                 parameter =>
                 {
                     LocalizationManager.CultureChanged -= OnCultureChanged;
+                    Search.FocusRequested -= OnSearchFocusRequested;
                     if(fontService is not null)
                     {
                         fontService.DocumentBackgroundChanged -=
@@ -148,14 +152,20 @@ namespace CryptoBook.ViewModels
             }
 
             PreviewDocument = previewService.CreatePreview(richTextBox.Document);
+            Search.Close.Execute(null);
             IsPreviewMode = true;
         }
 
-        private void OnCultureChanged(object? sender, EventArgs args) =>
+        private void OnSearchFocusRequested(object? sender, EventArgs args) => SetPreviewMode(false);
+
+        private void OnCultureChanged(object? sender, EventArgs args)
+        {
             OnPropertyChanged(
                 nameof(ModeLabel),
                 nameof(ToggleViewText),
                 nameof(FitToWindowText));
+            Search.OnPropertyChanged(nameof(Search.Status));
+        }
 
         private void OnDocumentBackgroundChanged(
             object? sender,
