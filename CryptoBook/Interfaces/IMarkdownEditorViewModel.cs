@@ -8,6 +8,7 @@ namespace CryptoBook.Interfaces
         IPageViewModel,
         INotifyPropertyChanged
     {
+        CryptoBook.ViewModels.DocumentSearchViewModel Search { get; }
         string MarkdownText { get; set; }
         bool IsPreviewMode { get; }
         string ModeLabel { get; }

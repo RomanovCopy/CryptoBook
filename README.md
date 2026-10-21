@@ -29,6 +29,7 @@ machine unless you explicitly move or share them.
 - **Rich-text editing** — formatting, lists, links, images, bookmarks and printing.
 - **File workspace** — browsing, favorites, Quick Access, sorting and clipboard operations.
 - **Search** — file-name and full-text search, including supported encrypted documents.
+- **Find in document** — Ctrl+F opens search and highlights all matches; Enter/F3 and Shift+Enter/Shift+F3 navigate results, and Esc closes the bar. Supports rich documents and Markdown; searching from paged preview opens the editor.
 - **Recovery copies** — retained snapshots, `.bak` backups and atomic file replacement.
 - **Media preview** — text, images and video playback through Flyleaf/FFmpeg.
 - **Local AI assistant** — GGUF chat, document/image attachments and editor actions.

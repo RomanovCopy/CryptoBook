@@ -2151,4 +2151,11 @@
   <data name="AI.RepetitionProtection" xml:space="preserve"><value>Захист від повторюваних відповідей</value></data>
   <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Пригнічує повторювані фрагменти та зупиняє стійкі повтори у відповідях і міркуваннях. Корисний початок зберігається. Вимкніть для завдань, де потрібно навмисно повторювати той самий текст.</value></data>
   <data name="AI.RepetitionStopped" xml:space="preserve"><value>Генерацію зупинено: модель почала повторюватися. Корисний початок збережено.</value></data>
+  <data name="DocumentSearch.Find" xml:space="preserve"><value>Знайти в документі</value></data>
+  <data name="DocumentSearch.MatchCase" xml:space="preserve"><value>Враховувати регістр</value></data>
+  <data name="DocumentSearch.Previous" xml:space="preserve"><value>Попередній збіг (Shift+Enter / Shift+F3)</value></data>
+  <data name="DocumentSearch.Next" xml:space="preserve"><value>Наступний збіг (Enter / F3)</value></data>
+  <data name="DocumentSearch.Close" xml:space="preserve"><value>Закрити пошук (Esc)</value></data>
+  <data name="DocumentSearch.NotFound" xml:space="preserve"><value>Нічого не знайдено</value></data>
+  <data name="DocumentSearch.Count" xml:space="preserve"><value>{0} із {1}</value></data>
 </root>

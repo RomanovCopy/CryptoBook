@@ -354,6 +354,9 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
+            <Grid.InputBindings>
+                <KeyBinding Key="F" Modifiers="Control" Command="{Binding DocumentView.Search.Open}"/>
+            </Grid.InputBindings>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

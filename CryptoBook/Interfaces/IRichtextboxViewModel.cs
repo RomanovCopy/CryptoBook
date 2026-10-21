@@ -6,6 +6,7 @@ namespace CryptoBook.Interfaces
     /// </summary>
     public interface IRichtextboxViewModel: IViewModel
     {
+        CryptoBook.ViewModels.DocumentSearchViewModel Search { get; }
         bool IsPreviewMode { get; }
         bool IsFitToWindow { get; }
         string ModeLabel { get; }

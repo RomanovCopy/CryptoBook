@@ -1300,4 +1300,11 @@
   <data name="AI.RepetitionProtection" xml:space="preserve"><value>Защита от повторяющихся ответов</value></data>
   <data name="AI.RepetitionProtectionHint" xml:space="preserve"><value>Подавляет повторяющиеся фрагменты и останавливает устойчивые повторы в ответах и рассуждениях. Полезное начало сохраняется. Отключите для задач, где нужно намеренно повторять один и тот же текст.</value></data>
   <data name="AI.RepetitionStopped" xml:space="preserve"><value>Генерация остановлена: модель начала повторяться. Полезное начало сохранено.</value></data>
+  <data name="DocumentSearch.Find" xml:space="preserve"><value>Найти в документе</value></data>
+  <data name="DocumentSearch.MatchCase" xml:space="preserve"><value>Учитывать регистр</value></data>
+  <data name="DocumentSearch.Previous" xml:space="preserve"><value>Предыдущее совпадение (Shift+Enter / Shift+F3)</value></data>
+  <data name="DocumentSearch.Next" xml:space="preserve"><value>Следующее совпадение (Enter / F3)</value></data>
+  <data name="DocumentSearch.Close" xml:space="preserve"><value>Закрыть поиск (Esc)</value></data>
+  <data name="DocumentSearch.NotFound" xml:space="preserve"><value>Ничего не найдено</value></data>
+  <data name="DocumentSearch.Count" xml:space="preserve"><value>{0} из {1}</value></data>
 </root>
