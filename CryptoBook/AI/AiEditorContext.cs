@@ -1,9 +1,12 @@
 using CryptoBook.Interfaces;
+using CryptoBook.Security;
+using CryptoBook.Services;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using TextBox = System.Windows.Controls.TextBox;
+using DataFormats = System.Windows.DataFormats;
 
 namespace CryptoBook.AI;
 
@@ -94,11 +97,20 @@ public sealed class AiEditorContext : IDisposable
                 if(richText.IsReadOnly || navigation.CurrentKey != pageKey ||
                    !ReferenceEquals(richText.Document, document) || session.Revision != revision ||
                    range.Text != text || (replace && string.IsNullOrEmpty(text))) return false;
+                // Render an independent fragment once. Later edits belong to
+                // the rich-text document and are never rebuilt from AI source.
+                var fragment = new MarkdownFlowDocumentRenderer().Render(answer, null);
+                AiDocumentFragmentFormatter.Apply(fragment, document);
+                using var stream = new SensitiveMemoryStream();
+                var lastBlock = fragment.Blocks.LastBlock!;
+                var end = lastBlock is Paragraph ? lastBlock.ContentEnd : lastBlock.ElementEnd;
+                new TextRange(fragment.ContentStart, end).Save(stream, DataFormats.XamlPackage, true);
+                stream.Position = 0;
                 richText.BeginChange();
                 try
                 {
                     var target = replace ? range : new TextRange(range.End, range.End);
-                    target.Text = answer;
+                    target.Load(stream, DataFormats.XamlPackage);
                     richText.Selection.Select(target.End, target.End);
                 }
                 finally { richText.EndChange(); }

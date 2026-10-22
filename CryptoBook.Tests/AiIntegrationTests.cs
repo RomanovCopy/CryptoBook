@@ -1235,7 +1235,8 @@ public sealed class AiIntegrationTests
                 Assert.True(notifications > 0);
                 vm.Replace.Execute(null);
                 string Text() => source is not null ? markdown.Text : new TextRange(document.ContentStart, document.ContentEnd).Text.TrimEnd('\r', '\n');
-                Assert.Equal("alpha **reply**", Text());
+                string reply = useMarkdownEditor ? "**reply**" : "reply";
+                Assert.Equal("alpha " + reply, Text());
                 Assert.True(vm.Insert.CanExecute(null));
                 Assert.False(vm.Replace.CanExecute(null));
                 if(source is not null) source.Undo(); else rich.Undo();
@@ -1243,10 +1244,10 @@ public sealed class AiIntegrationTests
                 if(source is not null) source.Select(source.Text.Length, 0);
                 else rich.Selection.Select(document.Blocks.LastBlock!.ContentEnd, document.Blocks.LastBlock.ContentEnd);
                 vm.Insert.Execute(null);
-                Assert.Equal("alpha beta**reply**", Text());
+                Assert.Equal("alpha beta" + reply, Text());
                 Assert.True(vm.Insert.CanExecute(null));
                 vm.Insert.Execute(null);
-                Assert.Equal("alpha beta**reply****reply**", Text());
+                Assert.Equal("alpha beta" + reply + reply, Text());
                 if(source is not null) source.IsReadOnly = true; else rich.IsReadOnly = true;
                 Assert.False(vm.Insert.CanExecute(null)); Assert.False(vm.Replace.CanExecute(null));
                 Assert.NotEmpty(vm.InsertUnavailableReason);

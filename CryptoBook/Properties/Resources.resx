@@ -1292,7 +1292,7 @@ Author: [Name]
   <data name="AI.ContextCapacity" xml:space="preserve"><value>Context usage</value></data>
   <data name="AI.ContextLow" xml:space="preserve"><value>Context is almost full. Start a new chat soon.</value></data>
   <data name="AI.RenderMarkdown" xml:space="preserve"><value>Render Markdown</value></data>
-  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Format questions and answers as Markdown. Turn off to show the source text. Copy and insert use the source text.</value></data>
+  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Format questions and answers as Markdown. Turn off to show the source text. Copy uses the source text. Answers are inserted with formatting in the main document and as source text in the Markdown editor.</value></data>
   <data name="AI.CopySourceHint" xml:space="preserve"><value>Copy the original answer text (including Markdown)</value></data>
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Wait for the assistant's answer.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Open an editable document. For Markdown, switch to the source editor.</value></data>
@@ -1307,4 +1307,12 @@ Author: [Name]
   <data name="DocumentSearch.Close" xml:space="preserve"><value>Close search (Esc)</value></data>
   <data name="DocumentSearch.NotFound" xml:space="preserve"><value>No matches</value></data>
   <data name="DocumentSearch.Count" xml:space="preserve"><value>{0} of {1}</value></data>
+  <data name="Editor.Table" xml:space="preserve"><value>Table</value></data>
+  <data name="Editor.TableHint" xml:space="preserve"><value>Place the caret in a cell. Structural edits require a rectangular table without merged cells. Deleting the last row or column removes the table; Ctrl+Z undoes the action.</value></data>
+  <data name="Editor.InsertRowAbove" xml:space="preserve"><value>Insert row above</value></data>
+  <data name="Editor.InsertRowBelow" xml:space="preserve"><value>Insert row below</value></data>
+  <data name="Editor.InsertColumnLeft" xml:space="preserve"><value>Insert column left</value></data>
+  <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Insert column right</value></data>
+  <data name="Editor.DeleteRow" xml:space="preserve"><value>Delete row</value></data>
+  <data name="Editor.DeleteColumn" xml:space="preserve"><value>Delete column</value></data>
 </root>

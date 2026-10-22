@@ -19,5 +19,6 @@ namespace CryptoBook.Interfaces
 
         ICommand ClearDocument { get; }
         ICommand RemoveEmptyParagraphs { get; }
+        ICommand EditTable { get; }
     }
 }

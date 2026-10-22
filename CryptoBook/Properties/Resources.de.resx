@@ -1292,7 +1292,7 @@ Autor: [Name]
   <data name="AI.ContextCapacity" xml:space="preserve"><value>Kontextbelegung</value></data>
   <data name="AI.ContextLow" xml:space="preserve"><value>Der Kontext ist fast voll. Bald einen neuen Chat beginnen.</value></data>
   <data name="AI.RenderMarkdown" xml:space="preserve"><value>Markdown darstellen</value></data>
-  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Fragen und Antworten als Markdown formatieren. Ausschalten, um den Quelltext anzuzeigen. Kopieren und Einfügen verwenden den Quelltext.</value></data>
+  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Fragen und Antworten als Markdown formatieren. Ausschalten, um den Quelltext anzuzeigen. Kopieren verwendet den Quelltext. Antworten werden im Hauptdokument formatiert und im Markdown-Editor als Quelltext eingefügt.</value></data>
   <data name="AI.CopySourceHint" xml:space="preserve"><value>Originaltext der Antwort kopieren (einschließlich Markdown)</value></data>
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Warten Sie auf die Antwort des Assistenten.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Ein bearbeitbares Dokument öffnen. Bei Markdown zum Quelltexteditor wechseln.</value></data>
@@ -1307,4 +1307,12 @@ Autor: [Name]
   <data name="DocumentSearch.Close" xml:space="preserve"><value>Suche schließen (Esc)</value></data>
   <data name="DocumentSearch.NotFound" xml:space="preserve"><value>Keine Treffer</value></data>
   <data name="DocumentSearch.Count" xml:space="preserve"><value>{0} von {1}</value></data>
+  <data name="Editor.Table" xml:space="preserve"><value>Tabelle</value></data>
+  <data name="Editor.TableHint" xml:space="preserve"><value>Setzen Sie den Cursor in eine Zelle. Strukturänderungen erfordern eine rechteckige Tabelle ohne verbundene Zellen. Das Löschen der letzten Zeile oder Spalte entfernt die Tabelle; Strg+Z macht dies rückgängig.</value></data>
+  <data name="Editor.InsertRowAbove" xml:space="preserve"><value>Zeile oberhalb einfügen</value></data>
+  <data name="Editor.InsertRowBelow" xml:space="preserve"><value>Zeile unterhalb einfügen</value></data>
+  <data name="Editor.InsertColumnLeft" xml:space="preserve"><value>Spalte links einfügen</value></data>
+  <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Spalte rechts einfügen</value></data>
+  <data name="Editor.DeleteRow" xml:space="preserve"><value>Zeile löschen</value></data>
+  <data name="Editor.DeleteColumn" xml:space="preserve"><value>Spalte löschen</value></data>
 </root>

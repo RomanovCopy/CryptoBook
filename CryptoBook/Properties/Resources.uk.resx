@@ -2143,7 +2143,7 @@
   <data name="AI.ContextCapacity" xml:space="preserve"><value>Використання контексту</value></data>
   <data name="AI.ContextLow" xml:space="preserve"><value>Контекст майже заповнений. Невдовзі варто почати новий чат.</value></data>
   <data name="AI.RenderMarkdown" xml:space="preserve"><value>Візуалізувати Markdown</value></data>
-  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Оформлювати запитання й відповіді за розміткою Markdown. Вимкніть для перегляду вихідного тексту. Копіювання та вставлення використовують вихідний текст.</value></data>
+  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Оформлювати запитання й відповіді за розміткою Markdown. Вимкніть для перегляду вихідного тексту. Копіювання використовує вихідний текст. В основний документ відповідь вставляється з оформленням, у Markdown-редактор — як вихідний текст.</value></data>
   <data name="AI.CopySourceHint" xml:space="preserve"><value>Копіювати вихідний текст відповіді (зокрема Markdown)</value></data>
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Дочекайтеся відповіді помічника.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Відкрийте документ для редагування. Для Markdown перейдіть до редактора вихідного тексту.</value></data>
@@ -2158,4 +2158,12 @@
   <data name="DocumentSearch.Close" xml:space="preserve"><value>Закрити пошук (Esc)</value></data>
   <data name="DocumentSearch.NotFound" xml:space="preserve"><value>Нічого не знайдено</value></data>
   <data name="DocumentSearch.Count" xml:space="preserve"><value>{0} із {1}</value></data>
+  <data name="Editor.Table" xml:space="preserve"><value>Таблиця</value></data>
+  <data name="Editor.TableHint" xml:space="preserve"><value>Установіть курсор у клітинку. Зміна структури доступна для прямокутних таблиць без об’єднаних клітинок. Видалення останнього рядка чи стовпця видаляє таблицю; Ctrl+Z скасовує дію.</value></data>
+  <data name="Editor.InsertRowAbove" xml:space="preserve"><value>Вставити рядок вище</value></data>
+  <data name="Editor.InsertRowBelow" xml:space="preserve"><value>Вставити рядок нижче</value></data>
+  <data name="Editor.InsertColumnLeft" xml:space="preserve"><value>Вставити стовпець ліворуч</value></data>
+  <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Вставити стовпець праворуч</value></data>
+  <data name="Editor.DeleteRow" xml:space="preserve"><value>Видалити рядок</value></data>
+  <data name="Editor.DeleteColumn" xml:space="preserve"><value>Видалити стовпець</value></data>
 </root>

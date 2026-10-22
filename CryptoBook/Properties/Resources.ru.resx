@@ -1292,7 +1292,7 @@
   <data name="AI.ContextCapacity" xml:space="preserve"><value>Использование контекста</value></data>
   <data name="AI.ContextLow" xml:space="preserve"><value>Контекст почти заполнен. Скоро стоит начать новый чат.</value></data>
   <data name="AI.RenderMarkdown" xml:space="preserve"><value>Визуализировать Markdown</value></data>
-  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Оформлять вопросы и ответы по разметке Markdown. Выключите для просмотра исходного текста. Копирование и вставка используют исходный текст.</value></data>
+  <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Оформлять вопросы и ответы по разметке Markdown. Выключите для просмотра исходного текста. Копирование использует исходный текст. В основной документ ответ вставляется с оформлением, в Markdown-редактор — как исходный текст.</value></data>
   <data name="AI.CopySourceHint" xml:space="preserve"><value>Копировать исходный текст ответа (включая Markdown)</value></data>
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Дождитесь ответа помощника.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Откройте документ для редактирования. Для Markdown переключитесь в редактор исходного текста.</value></data>
@@ -1307,4 +1307,12 @@
   <data name="DocumentSearch.Close" xml:space="preserve"><value>Закрыть поиск (Esc)</value></data>
   <data name="DocumentSearch.NotFound" xml:space="preserve"><value>Ничего не найдено</value></data>
   <data name="DocumentSearch.Count" xml:space="preserve"><value>{0} из {1}</value></data>
+  <data name="Editor.Table" xml:space="preserve"><value>Таблица</value></data>
+  <data name="Editor.TableHint" xml:space="preserve"><value>Установите курсор в ячейку. Изменение структуры доступно для прямоугольных таблиц без объединённых ячеек. Удаление последней строки или столбца удаляет таблицу; Ctrl+Z отменяет действие.</value></data>
+  <data name="Editor.InsertRowAbove" xml:space="preserve"><value>Вставить строку выше</value></data>
+  <data name="Editor.InsertRowBelow" xml:space="preserve"><value>Вставить строку ниже</value></data>
+  <data name="Editor.InsertColumnLeft" xml:space="preserve"><value>Вставить столбец слева</value></data>
+  <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Вставить столбец справа</value></data>
+  <data name="Editor.DeleteRow" xml:space="preserve"><value>Удалить строку</value></data>
+  <data name="Editor.DeleteColumn" xml:space="preserve"><value>Удалить столбец</value></data>
 </root>

@@ -12,6 +12,7 @@ namespace CryptoBook.ViewModels
     public sealed class RichTextContextMenuViewModel: ViewModelBase, IRichTextContextMenuViewModel
     {
         private readonly IRichTextBoxService richTextBox;
+        private readonly ITableEditingService tableEditing;
 
         public IFontFormatBar_ViewModel FontFormatting { get; }
         public ITextFormatBarViewModel TextFormatting { get; }
@@ -34,10 +35,21 @@ namespace CryptoBook.ViewModels
                          richTextBox.HasEmptyParagraphs());
         private RelayCommand? removeEmptyParagraphs;
 
+        public ICommand EditTable => editTable ??= new RelayCommand(
+            parameter =>
+            {
+                if(parameter is TableEditOperation operation)
+                    tableEditing.Edit(operation);
+            },
+            parameter => parameter is TableEditOperation && tableEditing.CanEdit);
+        private RelayCommand? editTable;
+
         public RichTextContextMenuViewModel( IRichTextBoxService richTextBox, IFontFormatBar_ViewModel fontFormatting,
-            ITextFormatBarViewModel textFormatting, IListFormatBarViewModel listFormatting)
+            ITextFormatBarViewModel textFormatting, IListFormatBarViewModel listFormatting,
+            ITableEditingService tableEditing)
         {
             this.richTextBox = richTextBox ?? throw new ArgumentNullException(nameof(richTextBox));
+            this.tableEditing = tableEditing ?? throw new ArgumentNullException(nameof(tableEditing));
             FontFormatting = fontFormatting ?? throw new ArgumentNullException(nameof(fontFormatting));
             TextFormatting = textFormatting ?? throw new ArgumentNullException(nameof(textFormatting));
             ListFormatting = listFormatting ?? throw new ArgumentNullException(nameof(listFormatting));
