@@ -298,6 +298,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ParagraphService>().As<IParagraphService>().InstancePerDependency();
             builder.RegisterType<InlineService>().As<IInlineService>().SingleInstance();
             builder.RegisterType<ListService>().As<IListService>().SingleInstance();
+            builder.RegisterType<TableEditingService>().As<ITableEditingService>().SingleInstance();
             builder.RegisterType<BookmarksService>().As<IBookmarkService>().SingleInstance();
             builder.RegisterType<BookmarkValidationService>().As<IBookmarkValidationService>().SingleInstance();
             builder.RegisterType<FileClipboardService>().As<IFileClipboardService>().SingleInstance();

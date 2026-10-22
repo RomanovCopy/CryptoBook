@@ -371,6 +371,22 @@
         </MenuItem>
     </MenuItem>
 
+    <MenuItem Header="{Binding [Editor.Table], Source={StaticResource Res}}"
+              ToolTip="{Binding [Editor.TableHint], Source={StaticResource Res}}">
+        <MenuItem Header="{Binding [Editor.InsertRowAbove], Source={StaticResource Res}}"
+                  Command="{Binding EditTable}" CommandParameter="{x:Static interfaces:TableEditOperation.InsertRowAbove}"/>
+        <MenuItem Header="{Binding [Editor.InsertRowBelow], Source={StaticResource Res}}"
+                  Command="{Binding EditTable}" CommandParameter="{x:Static interfaces:TableEditOperation.InsertRowBelow}"/>
+        <MenuItem Header="{Binding [Editor.InsertColumnLeft], Source={StaticResource Res}}"
+                  Command="{Binding EditTable}" CommandParameter="{x:Static interfaces:TableEditOperation.InsertColumnLeft}"/>
+        <MenuItem Header="{Binding [Editor.InsertColumnRight], Source={StaticResource Res}}"
+                  Command="{Binding EditTable}" CommandParameter="{x:Static interfaces:TableEditOperation.InsertColumnRight}"/>
+        <MenuItem Header="{Binding [Editor.DeleteRow], Source={StaticResource Res}}"
+                  Command="{Binding EditTable}" CommandParameter="{x:Static interfaces:TableEditOperation.DeleteRow}"/>
+        <MenuItem Header="{Binding [Editor.DeleteColumn], Source={StaticResource Res}}"
+                  Command="{Binding EditTable}" CommandParameter="{x:Static interfaces:TableEditOperation.DeleteColumn}"/>
+    </MenuItem>
+
     <MenuItem Header="{Binding [Editor.Image], Source={StaticResource Res}}">
         <MenuItem.Icon>
             <Viewbox Width="16" Height="16">

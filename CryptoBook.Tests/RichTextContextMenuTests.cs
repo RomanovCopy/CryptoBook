@@ -167,7 +167,8 @@ public sealed class RichTextContextMenuTests
             service,
             fontFormatting,
             textFormatting,
-            listFormatting);
+            listFormatting,
+            new TableEditingService(service));
 
         var paragraph = new Paragraph(new Run(text));
         service.Document.Blocks.Clear();

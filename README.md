@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.4.7-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.7)
+[![Version](https://img.shields.io/badge/version-1.1.4.8-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.8)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -50,16 +50,15 @@ machine unless you explicitly move or share them.
 Screenshots show an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.4.7
+## New in 1.1.4.8
 
-- Find text in the current rich-text document or Markdown source with Ctrl+F, including text split across formatting boundaries.
-- Highlight all matches, show the current result and total count, and optionally match case. Search updates when the query or document changes.
-- Navigate results with Enter/F3 and Shift+Enter/Shift+F3, wrapping at either end; Esc closes the search bar and returns focus to the editor.
-- Searching from paged rich-text or Markdown preview opens the corresponding editor. Highlights do not change document content, formatting, saved state or undo history.
-- Refresh application screenshots and include the new document search bar.
+- Insert AI replies into rich-text documents as editable headings, lists, quotes, code and tables, preserving surrounding text and supporting single-step undo. The Markdown editor keeps the source markup.
+- Edit table rows and columns from the context menu, with undo/redo and preservation of cell contents. Structural editing supports rectangular tables without merged cells.
+- Select any questions and answers, select all or clear the selection, then copy, insert or replace with the selected messages in conversation order. Reasoning and attachment contents are excluded.
+- Keep manual message selection across follow-up requests; otherwise select the latest nonempty answer automatically. Selection controls are disabled during generation and cleared with the chat or workspace lock.
 
 GGUF models and vision projectors are selected separately and are not bundled with the installer.
-See the [release notes](docs/releases/v1.1.4.7.md) and [changelog](CHANGELOG.md).
+See the [release notes](docs/releases/v1.1.4.8.md), [table editing guide](docs/AI_TABLE_EDITING.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -168,25 +167,25 @@ The installer is self-contained and does not require a separate .NET Desktop Run
 
 ## Download and run
 
-The published release is [CryptoBook 1.1.4.7](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.7),
-released on October 21, 2026.
+The published release is [CryptoBook 1.1.4.8](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.8),
+released on October 22, 2026.
 
 | File | Purpose |
 | --- | --- |
-| [Windows x64 installer](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/CryptoBook-Setup-1.1.4.7.exe) | Install or update CryptoBook |
-| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/CryptoBook-win-x64.zip) | Extract to a separate folder and run `CryptoBook.exe` |
-| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/SHA256SUMS.txt) | Verify downloaded files |
-| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/SIGNING-STATUS.txt) | Check the declared signing status |
+| [Windows x64 installer](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/CryptoBook-Setup-1.1.4.8.exe) | Install or update CryptoBook |
+| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/CryptoBook-win-x64.zip) | Extract to a separate folder and run `CryptoBook.exe` |
+| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/SHA256SUMS.txt) | Verify downloaded files |
+| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/SIGNING-STATUS.txt) | Check the declared signing status |
 
-The 1.1.4.7 installer and application are **not digitally signed**. Before running a download,
+The 1.1.4.8 installer and application are **not digitally signed**. Before running a download,
 compare its SHA-256 with the entry in `SHA256SUMS.txt`, for example:
 
 ```powershell
-Get-FileHash .\CryptoBook-Setup-1.1.4.7.exe -Algorithm SHA256
+Get-FileHash .\CryptoBook-Setup-1.1.4.8.exe -Algorithm SHA256
 ```
 
 The release also includes the license archive, FFmpeg/Flyleaf provenance archive, dependency
-lock and SPDX SBOM. See the [release notes](docs/releases/v1.1.4.7.md) and
+lock and SPDX SBOM. See the [release notes](docs/releases/v1.1.4.8.md) and
 [changelog](CHANGELOG.md). The built-in updater verifies the installer checksum before launch.
 
 ## Build from source
@@ -206,14 +205,14 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c Release --no-restore -- --template-only
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.4.7
+./installer/Build-Installer.ps1 -Version 1.1.4.8
 ```
 
 `Run-ReleaseTests.ps1` runs all tests in three isolated processes: AI integration,
 document search and the remaining tests. This prevents interference from process-wide WPF
-application state. The 1.1.4.7 release passed **901 tests**, without failures or skips.
+application state. The 1.1.4.8 candidate passed **935 tests**, without failures or skips. See [the release notes](docs/releases/v1.1.4.8.md).
 TRX reports are written to `artifacts/TestResults`; the installer is written to
-`artifacts/CryptoBook-Setup-1.1.4.7.exe`.
+`artifacts/CryptoBook-Setup-1.1.4.8.exe`.
 
 The project uses xUnit and STA tests for WPF. Compiler warnings and detected NuGet
 vulnerabilities are treated as errors.
@@ -249,7 +248,7 @@ starts the production workflow, which stores the verified release files as an ar
 Public release publication is a separate step after candidate approval and successful CI;
 the approved local installer is preserved.
 
-Release 1.1.4.7 contains eight files: installer, portable ZIP, license archive, FFmpeg provenance
+Release 1.1.4.8 contains eight files: installer, portable ZIP, license archive, FFmpeg provenance
 archive, dependency lock, SPDX SBOM, signing status and SHA-256 manifest.
 
 Operational release details are documented in [docs/PRODUCTION.md](docs/PRODUCTION.md).

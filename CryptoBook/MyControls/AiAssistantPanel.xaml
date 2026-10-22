@@ -89,7 +89,17 @@
                                         </MultiDataTrigger.Conditions><Setter Property="TextElement.Foreground" Value="{Binding DataContext.Appearance.AssistantColor, RelativeSource={RelativeSource AncestorType=UserControl}}"/></MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style></StackPanel.Style>
-                                <TextBlock Text="{Binding RoleLabel}" Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=StackPanel}}" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                <CheckBox x:Name="SelectMessageCheckBox" Content="{Binding RoleLabel}" IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                          Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=StackPanel}}" FontWeight="SemiBold" Margin="0,0,0,5"
+                                          ToolTip="{Binding [AI.SelectMessage], Source={StaticResource Res}}" AutomationProperties.HelpText="{Binding [AI.SelectMessage], Source={StaticResource Res}}">
+                                    <CheckBox.Style><Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                        <Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding HasContent}" Value="True"/>
+                                            <Condition Binding="{Binding DataContext.CanSelectMessages, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
+                                        </MultiDataTrigger.Conditions><Setter Property="IsEnabled" Value="True"/></MultiDataTrigger></Style.Triggers>
+                                    </Style></CheckBox.Style>
+                                </CheckBox>
                                 <Border BorderThickness="1" BorderBrush="{DynamicResource CurrentBorderColor}" Background="{DynamicResource CurrentInputBackground}" CornerRadius="6" Padding="8" Margin="0,3,0,8" Visibility="{Binding HasReasoning, Converter={StaticResource BoolVisibility}}">
                                     <Expander x:Name="ReasoningExpander" Header="{Binding [AI.ReasoningDetails], Source={StaticResource Res}}" Foreground="{DynamicResource CurrentMutedForeground}" IsExpanded="False">
                                         <TextBox Style="{StaticResource ChatText}" Text="{Binding Reasoning, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource CurrentMutedForeground}" Padding="0" Margin="0,8,0,0" MaxHeight="220" VerticalScrollBarVisibility="Auto"/>
@@ -113,6 +123,11 @@
                 </ItemsControl>
             </ScrollViewer>
             <StackPanel Grid.Row="3" Margin="0,8,0,0">
+                <WrapPanel>
+                    <TextBlock x:Name="MessageSelectionCounter" Text="{Binding MessageSelectionSummary}" VerticalAlignment="Center" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,8,6"/>
+                    <Button x:Name="SelectAllMessagesButton" Content="{Binding [AI.SelectAllMessages], Source={StaticResource Res}}" Command="{Binding SelectAllMessages}" Padding="6,3" Margin="0,0,6,6"/>
+                    <Button x:Name="ClearMessageSelectionButton" Content="{Binding [AI.ClearMessageSelection], Source={StaticResource Res}}" Command="{Binding ClearMessageSelection}" Padding="6,3" Margin="0,0,0,6"/>
+                </WrapPanel>
                 <WrapPanel>
                     <Button x:Name="InsertResponseButton" Content="{Binding [AI.Insert], Source={StaticResource Res}}" Command="{Binding Insert}" ToolTip="{Binding InsertUnavailableReason}" ToolTipService.ShowOnDisabled="True" Padding="9,5" Margin="0,0,6,6"/>
                     <Button x:Name="ReplaceSelectionButton" Content="{Binding [AI.Replace], Source={StaticResource Res}}" Command="{Binding Replace}" ToolTip="{Binding ReplaceUnavailableReason}" ToolTipService.ShowOnDisabled="True" Padding="9,5" Margin="0,0,6,6"/>

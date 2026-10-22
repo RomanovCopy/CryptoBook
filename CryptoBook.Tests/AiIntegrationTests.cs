@@ -1235,7 +1235,8 @@ public sealed class AiIntegrationTests
                 Assert.True(notifications > 0);
                 vm.Replace.Execute(null);
                 string Text() => source is not null ? markdown.Text : new TextRange(document.ContentStart, document.ContentEnd).Text.TrimEnd('\r', '\n');
-                Assert.Equal("alpha **reply**", Text());
+                string reply = useMarkdownEditor ? "**reply**" : "reply";
+                Assert.Equal("alpha " + reply, Text());
                 Assert.True(vm.Insert.CanExecute(null));
                 Assert.False(vm.Replace.CanExecute(null));
                 if(source is not null) source.Undo(); else rich.Undo();
@@ -1243,10 +1244,10 @@ public sealed class AiIntegrationTests
                 if(source is not null) source.Select(source.Text.Length, 0);
                 else rich.Selection.Select(document.Blocks.LastBlock!.ContentEnd, document.Blocks.LastBlock.ContentEnd);
                 vm.Insert.Execute(null);
-                Assert.Equal("alpha beta**reply**", Text());
+                Assert.Equal("alpha beta" + reply, Text());
                 Assert.True(vm.Insert.CanExecute(null));
                 vm.Insert.Execute(null);
-                Assert.Equal("alpha beta**reply****reply**", Text());
+                Assert.Equal("alpha beta" + reply + reply, Text());
                 if(source is not null) source.IsReadOnly = true; else rich.IsReadOnly = true;
                 Assert.False(vm.Insert.CanExecute(null)); Assert.False(vm.Replace.CanExecute(null));
                 Assert.NotEmpty(vm.InsertUnavailableReason);
@@ -1279,6 +1280,201 @@ public sealed class AiIntegrationTests
             }
         }
         finally { host.Close(); if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Chat_SelectedMessagesTransferInConversationOrder_WithFormattingAndUndo(bool useMarkdownEditor)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        var rich = (IRichTextBoxService)new RichTextBoxService(new ParagraphFactory(), new UriNavigation(), new DocumentAppearanceDefaults());
+        var markdown = new MarkdownDocumentState();
+        var session = new DocumentSession(rich, markdown);
+        var navigation = new Navigation();
+        var document = new FlowDocument(new Paragraph(new Run("original document")));
+        TextBox? source = null;
+        var host = new Window { Width = 500, Height = 300, ShowInTaskbar = false, ShowActivated = false };
+        try
+        {
+            if(useMarkdownEditor)
+            {
+                markdown.Activate(new("original document", Encoding.UTF8, []), "source.md");
+                session.Open("source.md", new MarkdownFileTemplate());
+                source = new TextBox { AcceptsReturn = true };
+                source.SetBinding(TextBox.TextProperty, new Binding(nameof(IMarkdownDocumentState.Text))
+                    { Source = markdown, Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+                var page = new Page { Content = source };
+                NameScope.SetNameScope(page, new NameScope()); page.RegisterName("SourceEditor", source);
+                navigation.CurrentKey = "MarkdownEditor"; navigation.CurrentPage = page; host.Content = page;
+            }
+            else { session.Open("source.txt", new PlainTextTemplate(), document); host.Content = rich.Service; }
+            host.Show();
+            var (vm, _, runtime, _) = CreateAssistant(directory, richTextEditor: rich, markdownState: markdown,
+                documentSession: session, navigation: navigation);
+            using(vm)
+            {
+                runtime.CompleteImmediately = true;
+                runtime.ReasoningToEmit = "private analysis";
+                runtime.ReplyText = "**earlier answer**";
+                vm.Attachments.Add(AiAttachmentService.Document("attachment.txt", "private attachment"));
+                vm.Prompt = "earlier question"; await vm.Send.ExecuteAsync();
+                runtime.ReplyText = "later answer";
+                vm.Prompt = "later question"; await vm.Send.ExecuteAsync();
+                Assert.Equal(1, vm.SelectedMessageCount);
+                Assert.Equal("later answer", vm.GetSelectedText());
+
+                // Select an earlier reply after a later one has arrived.
+                vm.ClearMessageSelection.Execute(null);
+                vm.Messages[1].IsSelected = true;
+                Assert.Equal("**earlier answer**", vm.GetSelectedText());
+                if(source is not null) source.Select(source.Text.Length, 0);
+                else rich.Selection.Select(document.Blocks.LastBlock!.ContentEnd, document.Blocks.LastBlock.ContentEnd);
+                vm.Insert.Execute(null);
+                string Text() => source is not null ? markdown.Text : new TextRange(document.ContentStart, document.ContentEnd).Text.TrimEnd('\r', '\n');
+                Assert.Equal("original document" + (useMarkdownEditor ? "**earlier answer**" : "earlier answer"), Text());
+                if(source is not null) source.Undo(); else rich.Undo();
+                Assert.Equal("original document", Text());
+
+                // Click in reverse order; the document must still follow the conversation.
+                vm.ClearMessageSelection.Execute(null);
+                vm.Messages[3].IsSelected = true;
+                vm.Messages[0].IsSelected = true;
+                string selected = $"**{vm.Messages[0].RoleLabel}:**\n\nearlier question\n\n---\n\n**{vm.Messages[3].RoleLabel}:**\n\nlater answer";
+                Assert.Equal(selected, vm.GetSelectedText());
+                if(source is not null) source.Select(0, source.Text.Length);
+                else rich.Selection.Select(document.ContentStart, document.ContentEnd);
+                Assert.True(vm.Replace.CanExecute(null));
+                vm.Replace.Execute(null);
+                if(useMarkdownEditor) Assert.Equal(selected, Text());
+                else
+                {
+                    Assert.True(Text().IndexOf("earlier question", StringComparison.Ordinal) < Text().IndexOf("later answer", StringComparison.Ordinal));
+                    Assert.DoesNotContain("earlier answer", Text());
+                    Assert.DoesNotContain("later question", Text());
+                }
+                if(source is not null) source.Undo(); else rich.Undo();
+                Assert.Equal("original document", Text());
+
+                vm.SelectAllMessages.Execute(null);
+                Assert.Equal(4, vm.SelectedMessageCount);
+                Assert.False(vm.SelectAllMessages.CanExecute(null));
+                Assert.True(vm.Copy.CanExecute(null));
+                selected = vm.GetSelectedText();
+                Assert.Contains("**earlier answer**", selected);
+                Assert.Contains("later question", selected);
+                Assert.DoesNotContain("private analysis", selected);
+                Assert.DoesNotContain("private attachment", selected);
+                if(source is not null) source.Select(source.Text.Length, 0);
+                else rich.Selection.Select(document.Blocks.LastBlock!.ContentEnd, document.Blocks.LastBlock.ContentEnd);
+                vm.Insert.Execute(null);
+                if(useMarkdownEditor) Assert.Equal("original document" + selected, Text());
+                else
+                {
+                    Assert.Contains("earlier question", Text()); Assert.Contains("later question", Text());
+                    Assert.Contains("earlier answer", Text()); Assert.Contains("later answer", Text());
+                    Assert.Contains(new CryptoBook.Infrastructure.FlowDocumentWalker().Traverse(document),
+                        element => element is Run { Text: "earlier answer", FontWeight: var weight } && weight == FontWeights.Bold);
+                }
+                if(source is not null) source.Undo(); else rich.Undo();
+                Assert.Equal("original document", Text());
+            }
+        }
+        finally { host.Close(); if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task Chat_DefaultSelectionUsesLatestUsefulAnswer_AndManualSelectionSurvivesFollowUps()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, _) = CreateAssistant(directory, "original document");
+            using(vm)
+            {
+                runtime.CompleteImmediately = true;
+                runtime.ReplyText = "first answer";
+                vm.Prompt = "first question"; await vm.Send.ExecuteAsync();
+                runtime.ReplyText = "second answer";
+                vm.Prompt = "second question"; await vm.Send.ExecuteAsync();
+                Assert.Equal("second answer", vm.GetSelectedText());
+                Assert.False(vm.Messages[1].IsSelected);
+
+                runtime.ReplyText = ""; runtime.ReasoningToEmit = "analysis only";
+                vm.Prompt = "no final answer"; await vm.Send.ExecuteAsync();
+                Assert.Equal("second answer", vm.GetSelectedText());
+                Assert.False(vm.Messages.Last().IsSelected);
+                vm.ClearMessageSelection.Execute(null);
+                Assert.Equal(0, vm.SelectedMessageCount);
+                Assert.False(vm.Insert.CanExecute(null)); Assert.False(vm.Replace.CanExecute(null)); Assert.False(vm.Copy.CanExecute(null));
+                Assert.Equal(LocalizationManager.GetString("AI.ApplyNeedsMessages"), vm.InsertUnavailableReason);
+
+                runtime.ReplyText = "third answer"; runtime.ReasoningToEmit = "";
+                vm.Prompt = "third question"; await vm.Send.ExecuteAsync();
+                Assert.Equal(0, vm.SelectedMessageCount);
+                vm.Messages[0].IsSelected = true;
+                vm.UpdateContextBudget();
+                int remaining = vm.RemainingTokens;
+                vm.SelectAllMessages.Execute(null);
+                Assert.False(vm.Messages[5].IsSelected); // Reasoning alone is never exported.
+                vm.UpdateContextBudget(); Assert.Equal(remaining, vm.RemainingTokens);
+                string selection = vm.GetSelectedText();
+                vm.Prompt = "fourth question"; await vm.Send.ExecuteAsync();
+                Assert.Equal(selection, vm.GetSelectedText());
+                Assert.Contains(runtime.LastConversation, turn => turn.Content == "third answer");
+
+                vm.NewChat.Execute(null);
+                Assert.Equal(0, vm.SelectedMessageCount);
+                Assert.False(vm.SelectAllMessages.CanExecute(null));
+                Assert.False(vm.ClearMessageSelection.CanExecute(null));
+                vm.Prompt = "new chat question"; await vm.Send.ExecuteAsync();
+                Assert.Equal(1, vm.SelectedMessageCount);
+                Assert.Equal("third answer", vm.GetSelectedText());
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task Chat_SelectionIsDisabledDuringGeneration_AndClearedOnWorkspaceLock()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, _, runtime, keyReset) = CreateAssistant(directory, "original document");
+            using(vm)
+            {
+                vm.Prompt = "question";
+                var sending = vm.Send.ExecuteAsync();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.False(vm.CanSelectMessages);
+                Assert.False(vm.SelectAllMessages.CanExecute(null)); Assert.False(vm.ClearMessageSelection.CanExecute(null));
+                Assert.False(vm.Insert.CanExecute(null)); Assert.False(vm.Copy.CanExecute(null));
+                vm.Stop.Execute(null); await sending;
+                Assert.True(vm.CanSelectMessages);
+                Assert.Equal("partial answer", vm.GetSelectedText());
+                vm.SelectAllMessages.Execute(null);
+                Assert.Equal(2, vm.SelectedMessageCount);
+                var removed = vm.Messages.Last();
+                vm.Messages.Remove(removed);
+                Assert.Equal(1, vm.SelectedMessageCount);
+                vm.Messages[0].Content = " ";
+                Assert.Equal(0, vm.SelectedMessageCount);
+                Assert.False(vm.Copy.CanExecute(null));
+                vm.Messages[0].Content = "question";
+                Assert.True(vm.Copy.CanExecute(null));
+                keyReset.Reset();
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.Empty(vm.Messages); Assert.Equal(0, vm.SelectedMessageCount);
+                Assert.False(vm.CanSelectMessages);
+                int notifications = 0;
+                vm.Copy.CanExecuteChanged += (_, _) => notifications++;
+                removed.IsSelected = false;
+                Assert.Equal(0, notifications);
+                Assert.Empty(vm.GetSelectedText());
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }
 
     private static (AiAssistantViewModel, AiSettingsStore, RuntimeStub, KeyResetStub) CreateAssistant(
