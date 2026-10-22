@@ -3,7 +3,7 @@
 [English](README.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Версия](https://img.shields.io/badge/version-1.1.4.7-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.7)
+[![Версия](https://img.shields.io/badge/version-1.1.4.8-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.8)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -49,15 +49,14 @@ CryptoBook объединяет форматированный текстовы�
 Скриншоты показывают дневник путешествия с иллюстрацией и фоном страницы.
 [Описание съёмки и примеры документов](docs/screenshots/README.md).
 
-## Новое в 1.1.4.7
+## Новое в 1.1.4.8
 
-- Поиск по Ctrl+F в текущем обычном документе и исходном тексте Markdown, в том числе по тексту с разным форматированием.
-- Подсветка всех совпадений, номер текущего результата и общее количество, переключатель учёта регистра. Результаты обновляются при изменении запроса или документа.
-- Переходы по Enter/F3 и Shift+Enter/Shift+F3 с возвратом к началу или концу списка; Esc закрывает панель и возвращает фокус в редактор.
-- Поиск из постраничного просмотра обычного документа или предпросмотра Markdown открывает соответствующий редактор. Подсветка не меняет содержимое, форматирование, состояние сохранения и историю отмены.
-- Обновлены скриншоты интерфейса, добавлен снимок панели поиска в документе.
+- Ответы AI вставляются в обычный документ как редактируемые заголовки, списки, цитаты, код и таблицы. Окружающий текст сохраняется, вставка отменяется одним действием. В Markdown-редактор переносится исходная разметка.
+- Контекстное меню таблицы позволяет добавлять и удалять строки и столбцы с отменой и повтором. Структурные команды поддерживают прямоугольные таблицы без объединённых ячеек.
+- Можно отметить любые вопросы и ответы, выбрать всю переписку или снять выбор, затем скопировать, вставить или заменить выделение выбранными сообщениями в порядке диалога. Рассуждения и содержимое вложений не переносятся.
+- Ручной выбор сохраняется при следующих запросах; по умолчанию выбирается последний непустой ответ. Во время генерации выбор недоступен; очистка чата и блокировка рабочей области сбрасывают его.
 
-Подробнее — в [описании релиза](docs/releases/v1.1.4.7.md) и [истории изменений](CHANGELOG.md).
+Подробнее — в [описании релиза](docs/releases/v1.1.4.8.md), [руководстве по таблицам](docs/AI_TABLE_EDITING.md) и [истории изменений](CHANGELOG.md).
 
 ## Основные возможности
 
@@ -158,25 +157,25 @@ Argon2id и AES-256-GCM; снимки обычных документов — Wi
 
 ## Скачать и запустить
 
-Опубликован [CryptoBook 1.1.4.7](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.7)
-от 21 октября 2026 года.
+Опубликован [CryptoBook 1.1.4.8](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.8)
+от 22 октября 2026 года.
 
 | Файл | Назначение |
 | --- | --- |
-| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/CryptoBook-Setup-1.1.4.7.exe) | Установка или обновление CryptoBook |
-| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
-| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/SHA256SUMS.txt) | Проверка загруженных файлов |
-| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.7/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
+| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/CryptoBook-Setup-1.1.4.8.exe) | Установка или обновление CryptoBook |
+| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
+| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/SHA256SUMS.txt) | Проверка загруженных файлов |
+| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.8/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
 
-Установщик и приложение версии 1.1.4.7 **не подписаны цифровой подписью**. Перед запуском
+Установщик и приложение версии 1.1.4.8 **не подписаны цифровой подписью**. Перед запуском
 сравните SHA-256 загруженного файла с соответствующей записью в `SHA256SUMS.txt`, например:
 
 ```powershell
-Get-FileHash .\CryptoBook-Setup-1.1.4.7.exe -Algorithm SHA256
+Get-FileHash .\CryptoBook-Setup-1.1.4.8.exe -Algorithm SHA256
 ```
 
 В релиз также входят архив лицензий, архив происхождения FFmpeg/Flyleaf, файл зафиксированных
-зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.4.7.md) и
+зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.4.8.md) и
 [CHANGELOG.md](CHANGELOG.md). Встроенное обновление проверяет SHA-256 установщика перед запуском.
 
 ## Сборка из исходников
@@ -199,14 +198,14 @@ dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c R
 Для self-contained x64-сборки и установщика требуется Inno Setup 6:
 
 ```powershell
-./installer/Build-Installer.ps1 -Version 1.1.4.7
+./installer/Build-Installer.ps1 -Version 1.1.4.8
 ```
 
 `Run-ReleaseTests.ps1` выполняет все тесты в трёх отдельных процессах: интеграция AI,
 поиск в документе и остальные тесты. Это исключает взаимное влияние глобального состояния
-WPF-приложения. Для релиза 1.1.4.7 пройден **901 тест**, без ошибок и пропусков.
+WPF-приложения. Для кандидата 1.1.4.8 пройдено **935 тестов**, без ошибок и пропусков. Подробнее — в [описании релиза](docs/releases/v1.1.4.8.md).
 TRX-отчёты сохраняются в `artifacts/TestResults`, установщик — в
-`artifacts/CryptoBook-Setup-1.1.4.7.exe`.
+`artifacts/CryptoBook-Setup-1.1.4.8.exe`.
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные
 NuGet-уязвимости считаются ошибками.
@@ -241,7 +240,7 @@ GitHub Actions восстанавливает зафиксированные з�
 Публичная публикация выполняется отдельно после одобрения кандидата и успешного CI;
 одобренный локальный установщик сохраняется.
 
-Релиз 1.1.4.7 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
+Релиз 1.1.4.8 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
 происхождения FFmpeg, файл зафиксированных зависимостей, SPDX SBOM, статус подписи и список SHA-256.
 
 Подробности выпуска описаны в [docs/PRODUCTION.md](docs/PRODUCTION.md).

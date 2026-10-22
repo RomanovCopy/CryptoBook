@@ -1195,12 +1195,12 @@ Author: [Name]
   <data name="AI.GenerationFailed" xml:space="preserve"><value>Cannot generate a reply. Check model settings and available memory.</value></data>
   <data name="AI.CopyFailed" xml:space="preserve"><value>Clipboard is busy. Try again.</value></data>
   <data name="AI.DocumentChanged" xml:space="preserve"><value>The original document has changed or is read-only. Copy the reply and choose where to insert it.</value></data>
-  <data name="AI.Inserted" xml:space="preserve"><value>Reply inserted; Ctrl+Z undoes the change</value></data>
+  <data name="AI.Inserted" xml:space="preserve"><value>Selected messages inserted; Ctrl+Z undoes the change</value></data>
   <data name="AI.ModelWorks" xml:space="preserve"><value>Model loaded and generated a reply successfully.</value></data>
   <data name="AI.Unload" xml:space="preserve"><value>Unload model</value></data>
   <data name="AI.Clear" xml:space="preserve"><value>Clear chat</value></data>
   <data name="AI.DisabledHint" xml:space="preserve"><value>Enable the assistant and choose a model in model settings.</value></data>
-  <data name="AI.Insert" xml:space="preserve"><value>Insert reply</value></data>
+  <data name="AI.Insert" xml:space="preserve"><value>Insert selected</value></data>
   <data name="AI.Replace" xml:space="preserve"><value>Replace selection</value></data>
   <data name="AI.RemoveAttachment" xml:space="preserve"><value>Remove attached text</value></data>
   <data name="AI.AttachDocument" xml:space="preserve"><value>Current document</value></data>
@@ -1293,7 +1293,12 @@ Author: [Name]
   <data name="AI.ContextLow" xml:space="preserve"><value>Context is almost full. Start a new chat soon.</value></data>
   <data name="AI.RenderMarkdown" xml:space="preserve"><value>Render Markdown</value></data>
   <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Format questions and answers as Markdown. Turn off to show the source text. Copy uses the source text. Answers are inserted with formatting in the main document and as source text in the Markdown editor.</value></data>
-  <data name="AI.CopySourceHint" xml:space="preserve"><value>Copy the original answer text (including Markdown)</value></data>
+  <data name="AI.CopySourceHint" xml:space="preserve"><value>Copy the original text of selected messages (including Markdown)</value></data>
+  <data name="AI.SelectMessage" xml:space="preserve"><value>Select this message for insertion, replacement or copying</value></data>
+  <data name="AI.SelectAllMessages" xml:space="preserve"><value>Select all</value></data>
+  <data name="AI.ClearMessageSelection" xml:space="preserve"><value>Clear selection</value></data>
+  <data name="AI.SelectedMessages" xml:space="preserve"><value>Selected messages: {0}</value></data>
+  <data name="AI.ApplyNeedsMessages" xml:space="preserve"><value>Select questions or answers to transfer.</value></data>
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Wait for the assistant's answer.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Open an editable document. For Markdown, switch to the source editor.</value></data>
   <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Select text in the document to replace it.</value></data>

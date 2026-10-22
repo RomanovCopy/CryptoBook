@@ -14,9 +14,16 @@ public sealed class AiChatMessage(string role, string text, IReadOnlyList<AiAtta
 {
     private string content = text;
     private string reasoning = string.Empty;
+    private bool isSelected;
     public string Role { get; } = role;
     public string RoleLabel => LocalizationManager.GetString(Role == "user" ? "AI.You" : "AI.Assistant");
-    public string Content { get => content; set => SetProperty(ref content, value); }
+    public string Content
+    {
+        get => content;
+        set { if(SetProperty(ref content, value)) OnPropertyChanged(nameof(HasContent)); }
+    }
+    public bool HasContent => !string.IsNullOrWhiteSpace(Content);
+    public bool IsSelected { get => isSelected; set => SetProperty(ref isSelected, value); }
     public string Reasoning
     {
         get => reasoning;
@@ -44,7 +51,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     private int contextLength, remainingTokens, replyTokenLimit;
     private readonly AiAttachmentService attachmentService;
     private CancellationTokenSource? cancellation;
-    private AiChatMessage? lastResponse;
+    private bool selectLatestResponse = true, updatingSelection;
     private bool isOpen, isBusy, isAttaching, disposed;
     private long operationVersion;
     private string prompt = string.Empty, status = string.Empty;
@@ -83,6 +90,10 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         Insert = new RelayCommand(_ => Apply(false), _ => CanApply && editor.CanInsert);
         Replace = new RelayCommand(_ => Apply(true), _ => CanApply && editor.CanReplace);
         Copy = new RelayCommand(_ => CopyResponse(), _ => CanApply);
+        SelectAllMessages = new RelayCommand(_ => SetMessageSelection(message => message.HasContent),
+            _ => CanSelectMessages && Messages.Any(message => message.HasContent && !message.IsSelected));
+        ClearMessageSelection = new RelayCommand(_ => SetMessageSelection(_ => false),
+            _ => CanSelectMessages && Messages.Any(message => message.IsSelected));
         Unload = new AsyncRelayCommand(async (_, _) =>
         {
             operationVersion++;
@@ -145,12 +156,15 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public bool CanAttach => !IsBusy && !isAttaching && !IsLocked && Attachments.Count < AiAttachmentService.MaxFiles;
     public string InsertUnavailableReason => IsBusy ? LocalizationManager.GetString("AI.SendBusy")
         : IsLocked ? LocalizationManager.GetString("AI.SendLocked")
-        : !CanApply ? LocalizationManager.GetString("AI.ApplyNeedsAnswer")
+        : !CanApply ? LocalizationManager.GetString("AI.ApplyNeedsMessages")
         : !editor.CanInsert ? LocalizationManager.GetString("AI.ApplyNeedsEditor") : string.Empty;
     public string ReplaceUnavailableReason => InsertUnavailableReason.Length > 0 ? InsertUnavailableReason
         : !editor.CanReplace ? LocalizationManager.GetString("AI.ApplyNeedsSelection") : string.Empty;
     private bool IsLocked => WorkspaceLockPresentation.IsLocked(keyReset.State, keyReset.HasRetainedDocument);
-    private bool CanApply => !IsBusy && !IsLocked && !string.IsNullOrWhiteSpace(lastResponse?.Content);
+    public bool CanSelectMessages => !IsBusy && !IsLocked;
+    public int SelectedMessageCount => Messages.Count(message => message.IsSelected && message.HasContent);
+    public string MessageSelectionSummary => LocalizationManager.Format("AI.SelectedMessages", SelectedMessageCount);
+    private bool CanApply => CanSelectMessages && SelectedMessageCount > 0;
     public AsyncRelayCommand Send { get; }
     public ICommand Stop { get; }
     public ICommand Toggle { get; }
@@ -166,6 +180,8 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public ICommand Insert { get; }
     public ICommand Replace { get; }
     public ICommand Copy { get; }
+    public ICommand SelectAllMessages { get; }
+    public ICommand ClearMessageSelection { get; }
     public AsyncRelayCommand Unload { get; }
 
     private void AttachCurrentDocument()
@@ -226,7 +242,6 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         Messages.Add(new("user", input, files));
         var answer = new AiChatMessage("assistant", string.Empty);
         Messages.Add(answer);
-        lastResponse = answer;
         using var requestCancellation = CancellationTokenSource.CreateLinkedTokenSource(commandToken);
         long version = ++operationVersion;
         var usageSource = inference as IAiTokenUsageSource;
@@ -294,6 +309,11 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
             if(usageSource is not null) usageSource.TokenUsageChanged -= ReportUsage;
             cancellation = null;
             if(string.IsNullOrWhiteSpace(answer.Content) && !answer.HasReasoning) Messages.Remove(answer);
+            if(selectLatestResponse)
+            {
+                var latest = Messages.LastOrDefault(message => message.Role == "assistant" && message.HasContent);
+                SetMessageSelection(message => ReferenceEquals(message, latest), true);
+            }
             IsBusy = false;
         }
     }
@@ -302,22 +322,50 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     {
         if(!CanApply || !editor.CanInsert || replace && !editor.CanReplace) return;
         // Capture the current cursor/selection immediately before this explicit user action.
-        if(editor.Capture()?.Apply(lastResponse!.Content, replace) != true)
+        if(editor.Capture()?.Apply(GetSelectedText(), replace) != true)
             Status = LocalizationManager.GetString("AI.DocumentChanged");
         else { Status = LocalizationManager.GetString("AI.Inserted"); Refresh(); }
     }
 
     private void CopyResponse()
     {
-        try { System.Windows.Clipboard.SetText(lastResponse!.Content); }
+        if(!CanApply) return;
+        try { System.Windows.Clipboard.SetText(GetSelectedText()); }
         catch(System.Runtime.InteropServices.ExternalException) { Status = LocalizationManager.GetString("AI.CopyFailed"); }
+    }
+
+    internal string GetSelectedText()
+    {
+        var selected = Messages.Where(message => message.IsSelected && message.HasContent).ToArray();
+        return selected.Length == 1 ? selected[0].Content
+            : string.Join("\n\n---\n\n", selected.Select(message => $"**{message.RoleLabel}:**\n\n{message.Content}"));
+    }
+
+    private void SetMessageSelection(Func<AiChatMessage, bool> select, bool latestResponse = false)
+    {
+        updatingSelection = true;
+        try
+        {
+            foreach(var message in Messages) message.IsSelected = select(message);
+            selectLatestResponse = latestResponse;
+        }
+        finally { updatingSelection = false; }
+        RefreshMessageSelection();
+    }
+
+    private void RefreshMessageSelection()
+    {
+        OnPropertyChanged(nameof(CanSelectMessages), nameof(SelectedMessageCount), nameof(MessageSelectionSummary),
+            nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
+        foreach(ICommand command in new[] { Insert, Replace, Copy, SelectAllMessages, ClearMessageSelection })
+            (command as RelayCommand)?.RaiseCanExecuteChanged();
     }
 
     private void Clear()
     {
         operationVersion++;
         tokenUsage = null; requestEstimate = 0; contextCorrection = 0;
-        Messages.Clear(); lastResponse = null;
+        Messages.Clear(); selectLatestResponse = true;
         AttachFiles.Cancel();
         Prompt = string.Empty; Attachments.Clear(); Status = string.Empty; Refresh();
         UpdateContextBudget();
@@ -329,8 +377,9 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
             nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
         Send?.RaiseCanExecuteChanged();
         AttachFiles?.RaiseCanExecuteChanged();
-        foreach(ICommand command in new[] { Stop, AttachDocument, RemoveAttachment, ClearChat, Insert, Replace, Copy })
+        foreach(ICommand command in new[] { Stop, AttachDocument, RemoveAttachment, ClearChat })
             (command as RelayCommand)?.RaiseCanExecuteChanged();
+        RefreshMessageSelection();
     }
     private async void OnIdle(object? sender, EventArgs e)
     {
@@ -375,7 +424,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     private void OnCultureChanged(object? sender, EventArgs e)
     {
-        OnPropertyChanged(nameof(ModelName), nameof(SendUnavailableReason), nameof(ContextSummary),
+        OnPropertyChanged(nameof(ModelName), nameof(SendUnavailableReason), nameof(ContextSummary), nameof(MessageSelectionSummary),
             nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
         foreach(var message in Messages) message.OnPropertyChanged(nameof(AiChatMessage.RoleLabel));
     }
@@ -399,8 +448,20 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         foreach(var message in Messages)
             if(observedMessages.Add(message)) message.PropertyChanged += OnMessageChanged;
         contextDirty = true;
+        RefreshMessageSelection();
     }
-    private void OnMessageChanged(object? sender, PropertyChangedEventArgs e) => contextDirty = true;
+    private void OnMessageChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName == nameof(AiChatMessage.IsSelected))
+        {
+            if(updatingSelection) return;
+            selectLatestResponse = false;
+            RefreshMessageSelection();
+            return;
+        }
+        contextDirty = true;
+        if(e.PropertyName == nameof(AiChatMessage.Content)) RefreshMessageSelection();
+    }
     private void OnRuntimeChanged(object? sender, EventArgs e) => _ = dispatcher.InvokeAsync(() => contextDirty = true);
     private void OnTokenUsage(AiTokenUsage usage, long version, CancellationToken requestToken)
     {

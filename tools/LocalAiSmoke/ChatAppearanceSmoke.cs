@@ -83,6 +83,7 @@ internal static class ChatAppearanceSmoke
                 { Source = new Uri("/CryptoBook;component/Themes/LightTheme.xaml", UriKind.Relative) });
             UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-custom-borderless-light.png"));
             VerifyMarkdown(app, host, panel, assistant, store, outputDirectory);
+            VerifyMessageSelection(app, host, panel, assistant, outputDirectory);
             foreach(string name in new[] { "ClearChatButton", "NewChatButton" })
             {
                 assistant.Messages.Add(new("user", new string('Ж', 5000)));
@@ -97,10 +98,11 @@ internal static class ChatAppearanceSmoke
                     "Chat reset left previous content: " + name);
                 Check(assistant.RemainingTokens == assistant.ContextLength && assistant.ContextUsagePercent == 0 && !assistant.IsContextLow,
                     "Chat reset did not restore the full context budget: " + name);
+                Check(assistant.SelectedMessageCount == 0 && !assistant.Copy.CanExecute(null), "Chat reset left selected messages: " + name);
             }
             host.Close();
             report["passed"] = true;
-            report["checked"] = "WPF controls, font/color bindings, borders on/off, light/dark themes, minimum settings window size, persistence, Markdown checkbox on/off with source and token preservation, conversation preservation and both chat reset buttons restoring the full token budget";
+            report["checked"] = "WPF controls, font/color bindings, borders on/off, light/dark themes, minimum settings window size, persistence, Markdown checkbox on/off with source and token preservation, message checkbox bindings, selection counter, select/clear all, disabled empty messages, selection layout at narrow width, conversation preservation and both chat reset buttons restoring the full token budget and clearing selection";
         }
         catch(Exception error)
         {
@@ -155,6 +157,46 @@ internal static class ChatAppearanceSmoke
         app.Resources.MergedDictionaries.Add(new ResourceDictionary
             { Source = new Uri("/CryptoBook;component/Themes/LightTheme.xaml", UriKind.Relative) });
         host.Height = 900;
+    }
+
+    private static void VerifyMessageSelection(Application app, Window host, AiAssistantPanel panel,
+        AiAssistantViewModel assistant, string outputDirectory)
+    {
+        assistant.Messages[1].Reasoning = "Рассуждения не переносятся";
+        assistant.Messages.Add(new("user", "Можно перенести только этот вопрос и предыдущий ответ?"));
+        assistant.Messages.Add(new("assistant", "Да. Отметьте нужные сообщения флажками и нажмите «Вставить выбранное»."));
+        assistant.Messages.Add(new("assistant", "") { Reasoning = "Только рассуждения" });
+        host.Height = 1000;
+        UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-selection-empty.png"));
+        var checkboxes = Descendants(panel).OfType<CheckBox>().Where(box => box.Name == "SelectMessageCheckBox").ToArray();
+        Check(checkboxes.Length == 5 && !checkboxes[4].IsEnabled, "Empty messages should not be selectable.");
+        foreach(int index in new[] { 2, 1 })
+            ((IToggleProvider)new CheckBoxAutomationPeer(checkboxes[index]).GetPattern(PatternInterface.Toggle)).Toggle();
+        UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-selection-light.png"));
+        Check(assistant.SelectedMessageCount == 2 && assistant.Messages[1].IsSelected && assistant.Messages[2].IsSelected,
+            "Message checkbox bindings did not update the selection.");
+        var counter = (TextBlock)panel.FindName("MessageSelectionCounter");
+        Check(counter.Text == assistant.MessageSelectionSummary, "The selection counter binding failed.");
+        Check(assistant.GetSelectedText().IndexOf("# План работы", StringComparison.Ordinal) <
+            assistant.GetSelectedText().IndexOf("Можно перенести", StringComparison.Ordinal), "Selected messages are out of order.");
+        Check(!assistant.GetSelectedText().Contains("Рассуждения"), "Reasoning was included in the selected text.");
+        app.Resources.MergedDictionaries.Add(new ResourceDictionary
+            { Source = new Uri("/CryptoBook;component/Themes/DarkTheme.xaml", UriKind.Relative) });
+        panel.Width = 280;
+        UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-selection-narrow-dark.png"));
+        foreach(string name in new[] { "SelectAllMessagesButton", "ClearMessageSelectionButton" })
+        {
+            var button = (Button)panel.FindName(name);
+            Check(button.IsVisible && button.IsEnabled, "Selection button is unavailable: " + name);
+            ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-selection-" + name + ".png"));
+            Check(assistant.SelectedMessageCount == (name == "SelectAllMessagesButton" ? 4 : 0), "Bulk selection failed: " + name);
+        }
+        Check(checkboxes.All(box => box.IsChecked == false), "Clearing selection did not update the checkboxes.");
+        Check(!assistant.Copy.CanExecute(null), "Copy should be disabled without selected messages.");
+        panel.Width = 390; host.Height = 900;
+        app.Resources.MergedDictionaries.Add(new ResourceDictionary
+            { Source = new Uri("/CryptoBook;component/Themes/LightTheme.xaml", UriKind.Relative) });
     }
 
     private static string Read(RichTextBox viewer) => new TextRange(viewer.Document.ContentStart, viewer.Document.ContentEnd).Text;

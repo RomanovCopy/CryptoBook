@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.1.4.8 - 2026-10-22
+
+### Added
+
+- Editable formatted AI insertion into rich-text documents, including headings, lists, quotes, code and real WPF tables, with single-step undo; Markdown source insertion remains available in the Markdown editor.
+- Table context-menu commands to insert/delete rows and columns in rectangular tables without merged cells, with undo/redo and preservation of neighboring content.
+- Selection of individual chat questions and answers, select-all/clear controls and a selection count; copy, insert and replace use selected messages in conversation order, excluding reasoning and attachment contents.
+
+### Changed
+
+- Automatically select the latest nonempty AI answer until the user makes a manual selection; preserve manual selections across follow-ups and reset them when clearing the chat or locking the workspace.
+- Synchronize application, manifest, installer, documentation, notices and version tests for 1.1.4.8.
+
+Full comparison: [v1.1.4.7...v1.1.4.8](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.7...v1.1.4.8)
+
 ## 1.1.4.7 - 2026-10-21
 
 ### Added

@@ -1189,12 +1189,12 @@ Autor: [Name]
   <data name="AI.GenerationFailed" xml:space="preserve"><value>Antwort konnte nicht erzeugt werden. Modelleinstellungen und freien Speicher prüfen.</value></data>
   <data name="AI.CopyFailed" xml:space="preserve"><value>Zwischenablage ist belegt. Erneut versuchen.</value></data>
   <data name="AI.DocumentChanged" xml:space="preserve"><value>Das ursprüngliche Dokument wurde geändert oder ist schreibgeschützt. Antwort kopieren und die Einfügestelle wählen.</value></data>
-  <data name="AI.Inserted" xml:space="preserve"><value>Antwort eingefügt; Strg+Z macht die Änderung rückgängig</value></data>
+  <data name="AI.Inserted" xml:space="preserve"><value>Ausgewählte Nachrichten eingefügt; Strg+Z macht die Änderung rückgängig</value></data>
   <data name="AI.ModelWorks" xml:space="preserve"><value>Modell geladen und Antwort erfolgreich erzeugt.</value></data>
   <data name="AI.Unload" xml:space="preserve"><value>Modell entladen</value></data>
   <data name="AI.Clear" xml:space="preserve"><value>Chat leeren</value></data>
   <data name="AI.DisabledHint" xml:space="preserve"><value>Assistent aktivieren und in den Modelleinstellungen ein Modell auswählen.</value></data>
-  <data name="AI.Insert" xml:space="preserve"><value>Antwort einfügen</value></data>
+  <data name="AI.Insert" xml:space="preserve"><value>Auswahl einfügen</value></data>
   <data name="AI.Replace" xml:space="preserve"><value>Auswahl ersetzen</value></data>
   <data name="AI.RemoveAttachment" xml:space="preserve"><value>Angehängten Text entfernen</value></data>
   <data name="AI.AttachDocument" xml:space="preserve"><value>Aktuelles Dokument</value></data>
@@ -1293,7 +1293,12 @@ Autor: [Name]
   <data name="AI.ContextLow" xml:space="preserve"><value>Der Kontext ist fast voll. Bald einen neuen Chat beginnen.</value></data>
   <data name="AI.RenderMarkdown" xml:space="preserve"><value>Markdown darstellen</value></data>
   <data name="AI.RenderMarkdownHint" xml:space="preserve"><value>Fragen und Antworten als Markdown formatieren. Ausschalten, um den Quelltext anzuzeigen. Kopieren verwendet den Quelltext. Antworten werden im Hauptdokument formatiert und im Markdown-Editor als Quelltext eingefügt.</value></data>
-  <data name="AI.CopySourceHint" xml:space="preserve"><value>Originaltext der Antwort kopieren (einschließlich Markdown)</value></data>
+  <data name="AI.CopySourceHint" xml:space="preserve"><value>Originaltext der ausgewählten Nachrichten kopieren (einschließlich Markdown)</value></data>
+  <data name="AI.SelectMessage" xml:space="preserve"><value>Diese Nachricht zum Einfügen, Ersetzen oder Kopieren auswählen</value></data>
+  <data name="AI.SelectAllMessages" xml:space="preserve"><value>Alle auswählen</value></data>
+  <data name="AI.ClearMessageSelection" xml:space="preserve"><value>Auswahl aufheben</value></data>
+  <data name="AI.SelectedMessages" xml:space="preserve"><value>Ausgewählte Nachrichten: {0}</value></data>
+  <data name="AI.ApplyNeedsMessages" xml:space="preserve"><value>Wählen Sie Fragen oder Antworten zum Übertragen aus.</value></data>
   <data name="AI.ApplyNeedsAnswer" xml:space="preserve"><value>Warten Sie auf die Antwort des Assistenten.</value></data>
   <data name="AI.ApplyNeedsEditor" xml:space="preserve"><value>Ein bearbeitbares Dokument öffnen. Bei Markdown zum Quelltexteditor wechseln.</value></data>
   <data name="AI.ApplyNeedsSelection" xml:space="preserve"><value>Den zu ersetzenden Text im Dokument markieren.</value></data>
