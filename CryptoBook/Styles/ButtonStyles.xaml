@@ -297,6 +297,67 @@
         </Setter>
     </Style>
 
+    <Style x:Key="AiAssistantToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Command" Value="{Binding Toggle}"/>
+        <Setter Property="IsChecked" Value="{Binding IsOpen, Mode=OneWay}"/>
+        <Setter Property="ToolTipService.InitialShowDelay" Value="350"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Padding" Value="10,4"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="{DynamicResource CurrentControlBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CurrentAccent}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CurrentAccent}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid SnapsToDevicePixels="True">
+                        <Border x:Name="Root" CornerRadius="8"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"/>
+                        <Border x:Name="Tint" CornerRadius="8" Margin="1"
+                                Background="{DynamicResource CurrentAccent}" Opacity="0.08"
+                                IsHitTestVisible="False"/>
+                        <StackPanel Orientation="Horizontal" Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Width="16" Height="16" Stretch="Uniform" Margin="0,0,6,0"
+                                  Fill="{TemplateBinding Foreground}"
+                                  Data="M9,2 C10,7 11,8 16,9 C11,10 10,11 9,16 C8,11 7,10 2,9 C7,8 8,7 9,2 Z M18,0 C18.5,3 19,3.5 22,4 C19,4.5 18.5,5 18,8 C17.5,5 17,4.5 14,4 C17,3.5 17.5,3 18,0 Z"/>
+                            <TextBlock Text="AI" FontWeight="SemiBold" FontSize="12"
+                                       Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Border x:Name="FocusRing" CornerRadius="10" Margin="-3"
+                                BorderBrush="{DynamicResource CurrentAccent}" BorderThickness="2"
+                                IsHitTestVisible="False" Visibility="Collapsed"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource CurrentSelectionBackground}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CurrentSelectionForeground}"/>
+                            <Setter TargetName="Tint" Property="Opacity" Value="0.14"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Tint" Property="Opacity" Value="0.18"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Tint" Property="Opacity" Value="0.28"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4"/>
+                            <Setter Property="Cursor" Value="Arrow"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="EditorToolbarPopupBorderStyle" TargetType="{x:Type Border}">
         <Setter Property="Background" Value="{DynamicResource CurrentWindowBackground}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>

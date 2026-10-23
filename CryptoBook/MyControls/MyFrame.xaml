@@ -14,10 +14,54 @@
         <markup:ResolveViewModel ViewModelType="{x:Type interfaces:IMyFrameViewModel}"/>
     </UserControl.DataContext>
     <Grid Background="{DynamicResource CurrentWindowBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <!-- WPF Page requires Window or Frame as its visual parent. Page
              lifetime itself remains owned by PageNavigationService. -->
         <Frame Content="{Binding CurrentPage}"
                NavigationUIVisibility="Hidden"/>
+        <!-- The rich-text editor has its own footer, with AI between search and zoom. -->
+        <ContentControl Grid.Row="1" Content="{Binding CurrentPage.DataContext}">
+            <ContentControl.Resources>
+                <DataTemplate x:Key="AssistantFooter">
+                    <ToggleButton Style="{StaticResource AiAssistantToggleStyle}"
+                                  DataContext="{Binding DataContext.Ai, RelativeSource={RelativeSource AncestorType=Window}}"
+                                  AutomationProperties.Name="{Binding [AI.Assistant], Source={StaticResource Res}}"
+                                  ToolTip="{Binding [AI.Assistant], Source={StaticResource Res}}"
+                                  HorizontalAlignment="Right" Margin="24,4,24,4"/>
+                </DataTemplate>
+                <DataTemplate x:Key="HomeAssistantFooter">
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ShowEditor}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <ToggleButton Style="{StaticResource AiAssistantToggleStyle}"
+                                      DataContext="{Binding DataContext.Ai, RelativeSource={RelativeSource AncestorType=Window}}"
+                                      HorizontalAlignment="Right" Margin="24,4,24,4"
+                                      AutomationProperties.Name="{Binding [AI.Assistant], Source={StaticResource Res}}"
+                                      ToolTip="{Binding [AI.Assistant], Source={StaticResource Res}}"/>
+                    </Grid>
+                </DataTemplate>
+            </ContentControl.Resources>
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Setter Property="ContentTemplate" Value="{StaticResource AssistantFooter}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentPageKey}" Value="Home">
+                            <Setter Property="ContentTemplate" Value="{StaticResource HomeAssistantFooter}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
     </Grid>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

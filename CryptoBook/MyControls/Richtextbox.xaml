@@ -143,7 +143,13 @@
                 <Button Content="{Binding [DocumentSearch.Find], Source={StaticResource Res}}"
                         Command="{Binding Search.Open}"
                         ToolTip="Ctrl+F"
-                        Margin="0,0,16,0" Padding="8,2"/>
+                        Margin="0,0,10,0" Padding="8,2" VerticalAlignment="Center"/>
+                <ToggleButton x:Name="AiAssistantButton"
+                              DataContext="{Binding Ai}"
+                              Style="{StaticResource AiAssistantToggleStyle}"
+                              AutomationProperties.Name="{Binding [AI.Assistant], Source={StaticResource Res}}"
+                              ToolTip="{Binding [AI.Assistant], Source={StaticResource Res}}"
+                              Margin="0,0,16,0"/>
                 <TextBlock Text="{Binding [Editor.Zoom], Source={StaticResource Res}}"
                            Foreground="{DynamicResource CurrentMutedForeground}"
                            VerticalAlignment="Center"
