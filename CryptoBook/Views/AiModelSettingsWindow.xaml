@@ -88,6 +88,21 @@
                         <TextBlock Text="{Binding [AI.IdleHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,10,0,0"/>
                     </StackPanel>
                 </Border>
+                <Border Style="{StaticResource SectionCard}" IsEnabled="{Binding CanEdit}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding [AI.PerformanceSection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="BoostPermissionCheckBox" Style="{StaticResource ThemedCheckBoxStyle}" IsChecked="{Binding AllowPerformanceBoost, UpdateSourceTrigger=PropertyChanged, BindingGroupName=ImmediatePerformanceConsent}" Margin="0,0,0,8">
+                            <TextBlock Text="{Binding [AI.PerformancePermission], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </CheckBox>
+                        <TextBlock Text="{Binding [AI.PerformanceHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,10"/>
+                        <CheckBox x:Name="BoostOnlyOnAcCheckBox" Style="{StaticResource ThemedCheckBoxStyle}" IsChecked="{Binding BoostOnlyOnAc}" IsEnabled="{Binding AllowPerformanceBoost}" Margin="0,0,0,12">
+                            <TextBlock Text="{Binding [AI.PerformanceOnlyOnAc], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </CheckBox>
+                        <Button x:Name="PerformanceTestButton" Content="{Binding [AI.PerformanceTest], Source={StaticResource Res}}" Click="PerformanceTestWindow" IsEnabled="{Binding CanPerformanceTest}" HorizontalAlignment="Left" Padding="12,7" Margin="0,0,0,10"/>
+                        <TextBlock Text="{Binding [AI.PerformanceTestHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="PerformanceResultText" Text="{Binding PerformanceSummary}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
                 <Expander x:Name="AdvancedSettings" Header="{Binding [AI.Advanced], Source={StaticResource Res}}" IsExpanded="True" IsEnabled="{Binding CanEdit}">
                     <Expander.Template>
                         <ControlTemplate TargetType="Expander">

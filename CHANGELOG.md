@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Restore AI model inspection with performance permission enabled: do not send a zero CPU rate to Windows for an ordinary protected operation. Apply resource limits only to a measured acceleration profile and fall back to ordinary generation when acceleration controls are unavailable.
+- Wait for AI process exit and memory-budget recovery between benchmark trials; include the loaded worker's existing commit when limiting additional allocations on subsequent requests.
+
+### Added
+
+- Optional per-model AI performance testing with explicit consent, separate prompt/generation measurements, saved profiles and an AC-only option. Increased load is applied only after a measured gain of at least 5%.
+- Resource limits and memory-pressure monitoring for the isolated AI process; only AI is stopped when resources are insufficient. Other programs and the system power plan are left under the user's control. Changing resource permission preserves the conversation and draft.
+
 ## 1.1.4.8 - 2026-10-22
 
 ### Added

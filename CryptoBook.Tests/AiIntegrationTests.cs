@@ -987,6 +987,32 @@ public sealed class AiIntegrationTests
     }
 
     [WpfFact]
+    public async Task PerformancePermissionChange_PreservesConversationAndDraft()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                vm.Messages.Add(new("user", "keep question"));
+                vm.Messages.Add(new("assistant", "keep answer"));
+                vm.Prompt = "keep draft";
+                foreach(bool enabled in new[] { true, false })
+                {
+                    store.Save(store.Current with { Models = [store.Current.SelectedModel with { AllowPerformanceBoost = enabled }] });
+                    await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                    Assert.Equal(2, vm.Messages.Count);
+                    Assert.Equal("keep draft", vm.Prompt);
+                    Assert.Equal("keep answer", vm.Messages[1].Content);
+                    Assert.False(runtime.IsLoaded);
+                }
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
     public async Task ModelSettings_InvalidFilePreservesSelectionAndConversation()
     {
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));

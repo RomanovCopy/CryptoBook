@@ -1324,4 +1324,33 @@ Author: [Name]
   <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Insert column right</value></data>
   <data name="Editor.DeleteRow" xml:space="preserve"><value>Delete row</value></data>
   <data name="Editor.DeleteColumn" xml:space="preserve"><value>Delete column</value></data>
+  <data name="AI.PerformanceSection" xml:space="preserve"><value>AI performance</value></data>
+  <data name="AI.PerformancePermission" xml:space="preserve"><value>Allow increased load during generation</value></data>
+  <data name="AI.PerformanceHint" xml:space="preserve"><value>May speed up replies and increase heat, fan noise and power use, or slow down other apps. CryptoBook reserves memory and does not close other programs. Permission takes effect after saving settings.</value></data>
+  <data name="AI.PerformanceOnlyOnAc" xml:space="preserve"><value>Increased load only while plugged in</value></data>
+  <data name="AI.PerformanceTest" xml:space="preserve"><value>Test performance</value></data>
+  <data name="AI.PerformanceTestHint" xml:space="preserve"><value>The test temporarily increases load and compares modes using sample text. Up to 6 minutes; can be stopped. Model context stays unchanged. Use Stop to cancel.</value></data>
+  <data name="AI.PerformanceNotTested" xml:space="preserve"><value>No test for these settings yet. Normal mode is used until a successful test.</value></data>
+  <data name="AI.PerformancePreparing" xml:space="preserve"><value>Preparing performance test…</value></data>
+  <data name="AI.PerformanceTrial" xml:space="preserve"><value>Test {0} of {1}: generation threads {2}, prompt threads {3}.</value></data>
+  <data name="AI.PerformanceMeasured" xml:space="preserve"><value>Prompt: {0:F1} tok/s; generation: {1:F1} tok/s. Peak RAM: {2} MB; GPU memory: {3} MB.</value></data>
+  <data name="AI.PerformanceTrialFailed" xml:space="preserve"><value>This mode failed or timed out; testing the next one.</value></data>
+  <data name="AI.PerformanceSelected" xml:space="preserve"><value>Faster profile selected: measured gain {0:F1}%.</value></data>
+  <data name="AI.PerformanceNoGain" xml:space="preserve"><value>No meaningful speedup — normal mode selected.</value></data>
+  <data name="AI.PerformanceGain" xml:space="preserve"><value>Measured gain: {0:F1}%.</value></data>
+  <data name="AI.PerformanceDone" xml:space="preserve"><value>Test complete. Result saved; click Save to apply permission.</value></data>
+  <data name="AI.PerformanceResult" xml:space="preserve"><value>Last test: {0:g}
+Normal — prompt {1:F1}, generation {2:F1} tok/s.
+Selected — prompt {3:F1}, generation {4:F1} tok/s.
+Peak RAM: {5} MB; GPU memory: {6} MB.
+{7}</value></data>
+  <data name="AI.PerformanceConsentRequired" xml:space="preserve"><value>Allow increased load before testing. Plug in if the AC-only option is enabled.</value></data>
+  <data name="AI.ResourcePressure" xml:space="preserve"><value>Not enough free memory for safe AI operation. AI was stopped; other programs are not closed. Free memory or choose a smaller model.</value></data>
+  <data name="AI.ResourceGuardUnavailable" xml:space="preserve"><value>Could not enable AI resource limits. Increased load was cancelled.</value></data>
+  <data name="AI.PerformancePowerChanged" xml:space="preserve"><value>AC power was disconnected. Increased AI load was stopped.</value></data>
+  <data name="AI.PerformanceTooShort" xml:space="preserve"><value>The model produced too few tokens for a reliable speed measurement. Profile unchanged.</value></data>
+  <data name="AI.PerformanceTimeout" xml:space="preserve"><value>The test exceeded 6 minutes. Previous profile retained; choose a smaller model or try again.</value></data>
+  <data name="AI.PerformanceUsing" xml:space="preserve"><value>Using the performance profile with resource limits.</value></data>
+  <data name="AI.PerformanceTrialTimeout" xml:space="preserve"><value>The baseline trial exceeded 90 seconds. Previous profile retained; choose a smaller model or try again.</value></data>
+  <data name="AI.PerformanceFallback" xml:space="preserve"><value>Increased load is unavailable. Continuing in normal mode.</value></data>
 </root>

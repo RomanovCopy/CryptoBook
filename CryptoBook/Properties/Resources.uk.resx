@@ -2175,4 +2175,33 @@
   <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Вставити стовпець праворуч</value></data>
   <data name="Editor.DeleteRow" xml:space="preserve"><value>Видалити рядок</value></data>
   <data name="Editor.DeleteColumn" xml:space="preserve"><value>Видалити стовпець</value></data>
+  <data name="AI.PerformanceSection" xml:space="preserve"><value>Продуктивність AI</value></data>
+  <data name="AI.PerformancePermission" xml:space="preserve"><value>Дозволяти підвищене навантаження під час генерації</value></data>
+  <data name="AI.PerformanceHint" xml:space="preserve"><value>Може прискорити відповіді, підвищити нагрівання, шум і споживання енергії та сповільнити інші застосунки. CryptoBook залишає запас пам’яті й не закриває інші програми. Дозвіл застосовується після збереження.</value></data>
+  <data name="AI.PerformanceOnlyOnAc" xml:space="preserve"><value>Підвищене навантаження лише від мережі</value></data>
+  <data name="AI.PerformanceTest" xml:space="preserve"><value>Перевірити продуктивність</value></data>
+  <data name="AI.PerformanceTestHint" xml:space="preserve"><value>Тест тимчасово підвищить навантаження й порівняє режими на службовому тексті. До 6 хвилин; можна зупинити. Контекст моделі не змінюється. Для скасування натисніть «Зупинити».</value></data>
+  <data name="AI.PerformanceNotTested" xml:space="preserve"><value>Тест для цих параметрів ще не виконано. До успішного тесту використовується звичайний режим.</value></data>
+  <data name="AI.PerformancePreparing" xml:space="preserve"><value>Підготовка тесту продуктивності…</value></data>
+  <data name="AI.PerformanceTrial" xml:space="preserve"><value>Тест {0} з {1}: потоки генерації {2}, обробки запиту {3}.</value></data>
+  <data name="AI.PerformanceMeasured" xml:space="preserve"><value>Обробка: {0:F1} ток/с; генерація: {1:F1} ток/с. Пік ОЗП: {2} МБ; відеопам’яті: {3} МБ.</value></data>
+  <data name="AI.PerformanceTrialFailed" xml:space="preserve"><value>Варіант не пройшов тест або перевищив час очікування; перевіряємо наступний.</value></data>
+  <data name="AI.PerformanceSelected" xml:space="preserve"><value>Вибрано швидший профіль: виміряний виграш {0:F1}%.</value></data>
+  <data name="AI.PerformanceNoGain" xml:space="preserve"><value>Помітного прискорення немає — вибрано звичайний режим.</value></data>
+  <data name="AI.PerformanceGain" xml:space="preserve"><value>Виміряний виграш: {0:F1}%.</value></data>
+  <data name="AI.PerformanceDone" xml:space="preserve"><value>Тест завершено. Результат збережено; для застосування дозволу натисніть «Зберегти».</value></data>
+  <data name="AI.PerformanceResult" xml:space="preserve"><value>Останній тест: {0:g}
+Звичайний режим — обробка {1:F1}, генерація {2:F1} ток/с.
+Вибраний режим — обробка {3:F1}, генерація {4:F1} ток/с.
+Пік ОЗП: {5} МБ; відеопам’яті: {6} МБ.
+{7}</value></data>
+  <data name="AI.PerformanceConsentRequired" xml:space="preserve"><value>Дозвольте підвищене навантаження перед тестом. Підключіть живлення від мережі, якщо це обмеження ввімкнено.</value></data>
+  <data name="AI.ResourcePressure" xml:space="preserve"><value>Недостатньо вільної пам’яті для безпечної роботи AI. Операцію AI зупинено; інші програми не закриваються. Звільніть пам’ять або виберіть меншу модель.</value></data>
+  <data name="AI.ResourceGuardUnavailable" xml:space="preserve"><value>Не вдалося ввімкнути обмеження ресурсів AI. Підвищене навантаження скасовано.</value></data>
+  <data name="AI.PerformancePowerChanged" xml:space="preserve"><value>Живлення від мережі відключено. Підвищене навантаження AI зупинено.</value></data>
+  <data name="AI.PerformanceTooShort" xml:space="preserve"><value>Модель видала замало токенів для надійного вимірювання швидкості. Профіль не змінено.</value></data>
+  <data name="AI.PerformanceTimeout" xml:space="preserve"><value>Тест перевищив 6 хвилин. Попередній профіль збережено; виберіть меншу модель або повторіть тест.</value></data>
+  <data name="AI.PerformanceUsing" xml:space="preserve"><value>Застосовуємо профіль продуктивності з обмеженнями ресурсів.</value></data>
+  <data name="AI.PerformanceTrialTimeout" xml:space="preserve"><value>Звичайний режим не завершив пробу за 90 секунд. Попередній профіль збережено; виберіть меншу модель або повторіть тест.</value></data>
+  <data name="AI.PerformanceFallback" xml:space="preserve"><value>Підвищене навантаження недоступне. Продовжуємо у звичайному режимі.</value></data>
 </root>

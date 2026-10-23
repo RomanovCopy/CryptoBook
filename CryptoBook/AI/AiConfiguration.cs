@@ -16,6 +16,8 @@ public sealed record AiModelSettings
     public bool AutoReduceContext { get; init; } = true;
     public bool UseReasoning { get; init; }
     public bool RepetitionProtection { get; init; } = true;
+    public bool AllowPerformanceBoost { get; init; }
+    public bool BoostOnlyOnAc { get; init; } = true;
     public string SystemPrompt { get; init; } = string.Empty;
 
     public void Validate()

@@ -9,6 +9,9 @@ namespace CryptoBook.AI;
 /// <summary>One native engine, owned by this process. Cancellation destroys its entire address space.</summary>
 internal sealed class AiWorkerProcess : IAiWorkerSession
 {
+    private readonly Func<AiResourceSnapshot> readResources;
+    internal AiWorkerProcess() : this(AiResourceSnapshot.Read) { }
+    internal AiWorkerProcess(Func<AiResourceSnapshot> readResources) => this.readResources = readResources;
     private Process? process;
     private SafeFileHandle? job;
     private readonly object sync = new();
@@ -16,7 +19,8 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
     internal int? ProcessId { get { lock(sync) return process?.Id; } }
 
     public async Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText,
-        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null)
+        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null,
+        Action<AiTokenUsage>? onUsage = null, Action<AiPerformanceMeasurement>? onMeasurement = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
         Process current;
@@ -55,8 +59,39 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
             current = process;
         }
         using var cancel = cancellationToken.Register(Stop);
+        using var watchStop = new CancellationTokenSource();
+        int resourceFailure = 0;
+        bool cpuLimited = false;
+        Task watch = Task.CompletedTask;
         try
         {
+            bool protect = request.ProtectResources || request.Command == "benchmark" || request.Options.PerformanceBoost;
+            if(request.Options.PerformanceBoost && !AiPerformancePolicy.IsAllowed(request.Settings, readResources()))
+                throw new AiException("AI.PerformanceConsentRequired");
+            if(protect)
+            {
+                var resources = readResources();
+                if(!resources.HasHeadroom || resources.CommitLimit < 512L * 1024 * 1024)
+                    throw new AiException("AI.ResourcePressure");
+                lock(sync)
+                {
+                    if(job is null || job.IsClosed) throw new OperationCanceledException(cancellationToken);
+                    current.Refresh();
+                    var limits = new JobLimits { Basic = new() { LimitFlags = 0x2000 | 0x100 },
+                        // Existing weights already consume system commit. Limit only additional allocations by free headroom.
+                        ProcessMemory = (UIntPtr)(ulong)resources.ProcessCommitLimit(current.PrivateMemorySize64) };
+                    if(!SetInformationJobObject(job, 9, ref limits, Marshal.SizeOf<JobLimits>()))
+                        throw new AiException("AI.ResourceGuardUnavailable");
+                    if(request.Options.PerformanceBoost)
+                    {
+                        var cpu = new CpuLimits { Flags = 0x1 | 0x4, Rate = 8000 };
+                        if(!SetInformationJobObject(job, 15, ref cpu, Marshal.SizeOf<CpuLimits>()))
+                            throw new AiException("AI.ResourceGuardUnavailable");
+                        cpuLimited = true;
+                    }
+                }
+                watch = WatchResourcesAsync();
+            }
             await Task.Run(() => AiWorkerProtocol.WriteAsync(current.StandardInput.BaseStream, request, cancellationToken), cancellationToken).ConfigureAwait(false);
             AiModelInspection? inspection = null;
             while(true)
@@ -74,22 +109,63 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
                     case "usage": if(message.Usage is not null) onUsage?.Invoke(message.Usage); break;
                     case "progress": progress?.Report(message.Progress); break;
                     case "inspection": inspection = message.Inspection; break;
+                    case "measurement":
+                        if(message.Measurement is not { IsValid: true }) throw new AiWorkerException("Protocol");
+                        onMeasurement?.Invoke(message.Measurement); break;
                     case "done": return inspection;
                     case "repetition":
                         if(message.Repetition is not { KeepCharacters: >= 0 } stop) throw new AiWorkerException("Protocol");
                         throw new AiRepetitionException(stop);
-                    case "error": throw new AiException(message.Text is not null && message.Text.StartsWith("AI.", StringComparison.Ordinal)
+                    case "error":
+                        if(message.Text == "AI.ResourcePressure") Stop();
+                        throw new AiException(message.Text is not null && message.Text.StartsWith("AI.", StringComparison.Ordinal)
                         ? message.Text : "AI.GenerationFailed");
                     default: throw new AiWorkerException("Protocol");
                 }
             }
         }
+        catch(AiException error) when(error.ResourceKey is "AI.ResourcePressure" or "AI.ResourceGuardUnavailable" or "AI.PerformanceConsentRequired")
+        { Stop(); throw; }
+        catch(Exception) when(Volatile.Read(ref resourceFailure) != 0 && !cancellationToken.IsCancellationRequested)
+        { throw new AiException(Volatile.Read(ref resourceFailure) == 2 ? "AI.PerformancePowerChanged" : "AI.ResourcePressure"); }
         catch(Exception error) when(error is IOException or JsonException or ObjectDisposedException or InvalidOperationException)
         {
             cancellationToken.ThrowIfCancellationRequested();
             throw new AiWorkerException(current.HasExited ? $"0x{unchecked((uint)current.ExitCode):X8}" : "ConnectionLost");
         }
-        finally { if(cancellationToken.IsCancellationRequested) Stop(); }
+        finally
+        {
+            watchStop.Cancel();
+            await watch.ConfigureAwait(false);
+            lock(sync)
+            {
+                if(cpuLimited && job is { IsClosed: false })
+                {
+                    // CpuRate must be nonzero even when ControlFlags disables rate control.
+                    var cpu = new CpuLimits { Rate = 10000 };
+                    if(!SetInformationJobObject(job, 15, ref cpu, Marshal.SizeOf<CpuLimits>())) Stop();
+                }
+            }
+            if(cancellationToken.IsCancellationRequested) Stop();
+        }
+
+        async Task WatchResourcesAsync()
+        {
+            try
+            {
+                using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(200));
+                while(await timer.WaitForNextTickAsync(watchStop.Token).ConfigureAwait(false))
+                {
+                    var snapshot = readResources();
+                    int failure = !snapshot.HasHeadroom ? 1 : request.Options.PerformanceBoost &&
+                        request.Settings.BoostOnlyOnAc && !snapshot.OnAc ? 2 : 0;
+                    if(failure == 0) continue;
+                    Interlocked.Exchange(ref resourceFailure, failure);
+                    Stop(); return;
+                }
+            }
+            catch(OperationCanceledException) when(watchStop.IsCancellationRequested) { }
+        }
     }
 
     private static async Task DrainAsync(StreamReader reader)
@@ -118,6 +194,16 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
         Stop();
         lock(sync) { process?.Dispose(); process = null; }
     }
+    public async Task StopAsync()
+    {
+        Process? current;
+        lock(sync) current = process;
+        Stop();
+        if(current is null) return;
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        try { await current.WaitForExitAsync(timeout.Token).ConfigureAwait(false); }
+        catch(OperationCanceledException) { throw new AiWorkerException("WorkerStopTimeout"); }
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct BasicLimits
@@ -136,6 +222,11 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
         public ulong ReadOps, WriteOps, OtherOps, ReadBytes, WriteBytes, OtherBytes;
         public UIntPtr ProcessMemory, JobMemory, PeakProcessMemory, PeakJobMemory;
     }
+    [StructLayout(LayoutKind.Sequential)]
+    private struct CpuLimits { public uint Flags, Rate; }
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetInformationJobObject(SafeFileHandle job, int type, ref CpuLimits limits, int size);
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern SafeFileHandle CreateJobObject(IntPtr attributes, string? name);
     [DllImport("kernel32.dll", SetLastError = true)]

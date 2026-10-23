@@ -4,6 +4,20 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
+if(args.Length > 0 && args[0] is "--performance-generate" or "--performance-benchmark")
+{
+    await PerformanceProbe.RunAsync(args[1], args[2], args[0] == "--performance-benchmark");
+    return;
+}
+
+if(args.Length > 0 && args[0] == "--performance-ui")
+{
+    var uiThread = new Thread(() => PerformanceSettingsSmoke.Run(args[1]));
+    uiThread.SetApartmentState(ApartmentState.STA);
+    uiThread.Start(); uiThread.Join();
+    return;
+}
+
 if(args.Length > 0 && args[0] == "--worker-owner")
 {
     using var worker = new AiWorkerProcess();
