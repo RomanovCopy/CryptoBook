@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 namespace CryptoBook.AI;
 
 public enum AiMemoryMode { Automatic, CpuOnly, Manual }
+public enum AiPerformanceMode { Balanced, PowerSaving, Optimal }
 
 public sealed record AiModelSettings
 {
@@ -16,6 +17,13 @@ public sealed record AiModelSettings
     public bool AutoReduceContext { get; init; } = true;
     public bool UseReasoning { get; init; }
     public bool RepetitionProtection { get; init; } = true;
+    public bool AllowPerformanceBoost { get; init; }
+    // Null preserves profiles written before performance modes were introduced.
+    public AiPerformanceMode? PerformanceMode { get; init; }
+    [JsonIgnore]
+    public AiPerformanceMode EffectivePerformanceMode => PerformanceMode ??
+        (AllowPerformanceBoost ? AiPerformanceMode.Optimal : AiPerformanceMode.Balanced);
+    public bool BoostOnlyOnAc { get; init; } = true;
     public string SystemPrompt { get; init; } = string.Empty;
 
     public void Validate()
@@ -34,6 +42,7 @@ public sealed record AiModelSettings
         if(!float.IsFinite(Temperature) || Temperature is < 0 or > 2) throw new AiException("AI.InvalidTemperature");
         if(GpuLayers is < -1 or > 999) throw new AiException("AI.InvalidGpuLayers");
         if(!Enum.IsDefined(MemoryMode)) throw new AiException("AI.InvalidMemoryMode");
+        if(!Enum.IsDefined(EffectivePerformanceMode)) throw new AiException("AI.InvalidPerformanceMode");
     }
 
     public int OutputTokenLimit(int inputTokens)

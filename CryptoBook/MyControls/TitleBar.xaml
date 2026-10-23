@@ -89,11 +89,6 @@
             </i:Interaction.Triggers>
         </Grid>
         <StackPanel Orientation="Horizontal" Grid.Column="2">
-            <Button Style="{StaticResource buttons}" Content="AI" Padding="10,3"
-                    Command="{Binding DataContext.Ai.Toggle, RelativeSource={RelativeSource AncestorType=Window}}"
-                    AutomationProperties.Name="{Binding [AI.Assistant], Source={StaticResource Res}}"
-                    ToolTip="{Binding [AI.Assistant], Source={StaticResource Res}}"/>
-            
             <Button x:Name="settings" Style="{StaticResource buttons}" 
                     Command="{Binding ButtonSettingsClick, UpdateSourceTrigger=PropertyChanged}"
                     AutomationProperties.Name="{Binding [Settings.Title], Source={StaticResource Res}}"

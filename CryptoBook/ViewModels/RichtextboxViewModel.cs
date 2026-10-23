@@ -1,3 +1,4 @@
+using CryptoBook.AI;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 
@@ -24,7 +25,8 @@ namespace CryptoBook.ViewModels
             IDocumentPreviewService previewService,
             IUriNavigationService uriNavigationService,
             IMenuFileViewModel menuFile,
-            IFontService? fontService = null)
+            IFontService? fontService = null,
+            AiAssistantViewModel? ai = null)
         {
             this.richtextboxModel = richtextboxModel ??
                 throw new ArgumentNullException(nameof(richtextboxModel));
@@ -35,6 +37,7 @@ namespace CryptoBook.ViewModels
             this.menuFile = menuFile
                 ?? throw new ArgumentNullException(nameof(menuFile));
             this.fontService = fontService;
+            Ai = ai;
             Search.FocusRequested += OnSearchFocusRequested;
             richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             LocalizationManager.CultureChanged += OnCultureChanged;
@@ -56,6 +59,7 @@ namespace CryptoBook.ViewModels
         }
 
         public DocumentSearchViewModel Search { get; } = new();
+        public AiAssistantViewModel? Ai { get; }
 
         public string ModeLabel => LocalizationManager.GetString(
             IsPreviewMode ? "Editor.PagedPreview" : "Editor.Editing");

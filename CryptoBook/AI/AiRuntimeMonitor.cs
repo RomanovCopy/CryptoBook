@@ -27,6 +27,11 @@ public sealed class AiRuntimeMonitor : ViewModelBase, IDisposable
             if(source?.RuntimeOptions is not { } options) return "";
             string summary = LocalizationManager.Format("AI.AutoSummary", options.ContextLength, options.GpuLayers,
                 options.BatchSize, options.UBatchSize, options.FlashAttention == false ? "off" : "auto");
+            summary += "\n" + LocalizationManager.Format("AI.RuntimePerformance",
+                LocalizationManager.GetString("AI.PerformanceMode." + (options.PowerSaving ? AiPerformanceMode.PowerSaving :
+                    options.PerformanceBoost ? AiPerformanceMode.Optimal : AiPerformanceMode.Balanced)),
+                options.Threads > 0 ? options.Threads : Math.Max(1, Environment.ProcessorCount / 2),
+                options.BatchThreads > 0 ? options.BatchThreads : Math.Max(1, Environment.ProcessorCount / 2));
             if(source.MemoryPlan is { } plan)
                 summary += "\n" + LocalizationManager.Format("AI.AutoResources", plan.AvailableRamBytes / (1024 * 1024),
                     plan.AvailableGpuBytes / (1024 * 1024), plan.GpuName);

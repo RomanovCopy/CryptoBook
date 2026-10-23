@@ -6,15 +6,18 @@ using System.Text.Json;
 namespace CryptoBook.AI;
 
 public sealed record AiRuntimeOptions(int ContextLength, int GpuLayers, uint BatchSize = 256,
-    uint UBatchSize = 128, bool? FlashAttention = null, bool CpuBackend = false)
+    uint UBatchSize = 128, bool? FlashAttention = null, bool CpuBackend = false,
+    int Threads = 0, int BatchThreads = 0, bool PerformanceBoost = false, bool PowerSaving = false)
 {
     internal bool IsValid => ContextLength is >= 512 and <= 131072 && GpuLayers is >= -1 and <= 999 &&
         BatchSize is >= 32 and <= 256 && UBatchSize is >= 32 and <= 128 && UBatchSize <= BatchSize &&
-        (!CpuBackend || GpuLayers == 0);
+        Threads is >= 0 and <= 1024 && BatchThreads is >= 0 and <= 1024 && (!CpuBackend || GpuLayers == 0) &&
+        !(PerformanceBoost && PowerSaving);
 }
 
 internal sealed record AiModelInspection(AiMemoryPlan Plan, Dictionary<string, string> Metadata, string HardwareKey);
-internal sealed record AiRuntimeProfile(string Key, string ModelPath, AiRuntimeOptions Options, DateTime VerifiedUtc);
+internal sealed record AiRuntimeProfile(string Key, string ModelPath, AiRuntimeOptions Options, DateTime VerifiedUtc,
+    AiPerformanceResult? Performance = null);
 
 /// <summary>Only verified runtime parameters. Prompts, replies and attachments never enter this store.</summary>
 public sealed class AiRuntimeProfileStore
@@ -29,7 +32,7 @@ public sealed class AiRuntimeProfileStore
     {
         var file = new FileInfo(settings.ModelPath);
         string identity = string.Join('|', Path.GetFullPath(settings.ModelPath).ToUpperInvariant(), file.Length,
-            file.LastWriteTimeUtc.Ticks, settings.ContextLength, settings.AutoReduceContext, hardwareKey,
+            file.LastWriteTimeUtc.Ticks, settings.ContextLength, settings.AutoReduceContext, settings.EffectivePerformanceMode, hardwareKey,
             typeof(LocalAiInferenceService).Assembly.ManifestModule.ModuleVersionId,
             typeof(LLama.LLamaWeights).Assembly.ManifestModule.ModuleVersionId);
         return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));
@@ -48,6 +51,13 @@ public sealed class AiRuntimeProfileStore
             Write(profiles);
         }
     }
+    internal AiPerformanceResult? LastPerformance(AiModelSettings settings)
+    {
+        lock(sync) return Read().Where(profile => profile.Options.ContextLength == settings.ContextLength &&
+            profile.Key.EndsWith($"|performance|{settings.MemoryMode}|{settings.GpuLayers}", StringComparison.Ordinal) &&
+            string.Equals(profile.ModelPath, settings.ModelPath, StringComparison.OrdinalIgnoreCase) &&
+            profile.Performance is { IsValid: true }).OrderByDescending(profile => profile.VerifiedUtc).FirstOrDefault()?.Performance;
+    }
     internal void Remove(string modelPath)
     {
         lock(sync) Write(Read().Where(item => !string.Equals(item.ModelPath, modelPath, StringComparison.OrdinalIgnoreCase)).ToList());
@@ -57,7 +67,8 @@ public sealed class AiRuntimeProfileStore
         if(!File.Exists(path)) return [];
         // A corrupt cache must not prevent a fresh isolated check.
         try { return (JsonSerializer.Deserialize<List<AiRuntimeProfile>>(File.ReadAllText(path)) ?? [])
-                .Where(profile => profile is not null && profile.Options is { IsValid: true } && !string.IsNullOrEmpty(profile.Key)).ToList(); }
+                .Where(profile => profile is not null && profile.Options is { IsValid: true } && !string.IsNullOrEmpty(profile.Key))
+                .Select(profile => profile.Performance is not null && !profile.Performance.IsValid ? profile with { Performance = null } : profile).ToList(); }
         catch(JsonException) { return []; }
     }
     private void Write(List<AiRuntimeProfile> profiles)

@@ -11,6 +11,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 internal static class ChatAppearanceSmoke
 {
@@ -63,6 +64,9 @@ internal static class ChatAppearanceSmoke
             Check(runtime.UnloadCount == 0, "Appearance save unloaded the model.");
             var messages = Descendants(panel).OfType<RichTextBox>().Where(box => box.DataContext is AiChatMessage && box.Name == "MessageContent").ToArray();
             Check(messages.Length == 2, "Message templates were not created.");
+            // Message rendering coalesces formatting updates on a background timer.
+            WaitUntil(() => messages.All(box => box.Document.FontFamily.Source == "Consolas" && box.Document.FontSize == 20));
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-custom-dark.png"));
             foreach(var box in messages)
             {
                 Check(box.FontFamily.Source == "Consolas" && box.FontSize == 20, "Message font binding failed.");
@@ -84,25 +88,22 @@ internal static class ChatAppearanceSmoke
             UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-custom-borderless-light.png"));
             VerifyMarkdown(app, host, panel, assistant, store, outputDirectory);
             VerifyMessageSelection(app, host, panel, assistant, outputDirectory);
-            foreach(string name in new[] { "ClearChatButton", "NewChatButton" })
-            {
-                assistant.Messages.Add(new("user", new string('Ж', 5000)));
-                assistant.Prompt = "Черновик прошлого чата";
-                assistant.UpdateContextBudget();
-                Check(assistant.ContextUsagePercent > 0, "The current chat did not consume any context.");
-                var reset = (Button)panel.FindName(name);
-                Check(reset.IsVisible && reset.IsEnabled, "The chat reset button is unavailable: " + name);
-                ((IInvokeProvider)new ButtonAutomationPeer(reset).GetPattern(PatternInterface.Invoke)).Invoke();
-                UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-reset-" + name + ".png"));
-                Check(assistant.Messages.Count == 0 && assistant.Prompt.Length == 0 && assistant.Attachments.Count == 0,
-                    "Chat reset left previous content: " + name);
-                Check(assistant.RemainingTokens == assistant.ContextLength && assistant.ContextUsagePercent == 0 && !assistant.IsContextLow,
-                    "Chat reset did not restore the full context budget: " + name);
-                Check(assistant.SelectedMessageCount == 0 && !assistant.Copy.CanExecute(null), "Chat reset left selected messages: " + name);
-            }
+            assistant.Messages.Add(new("user", new string('Ж', 5000)));
+            assistant.Prompt = "Черновик прошлого чата";
+            assistant.UpdateContextBudget();
+            Check(assistant.ContextUsagePercent > 0, "The current chat did not consume any context.");
+            var reset = (Button)panel.FindName("NewChatButton");
+            Check(reset.IsVisible && reset.IsEnabled, "The chat reset button is unavailable.");
+            ((IInvokeProvider)new ButtonAutomationPeer(reset).GetPattern(PatternInterface.Invoke)).Invoke();
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-reset.png"));
+            Check(assistant.Messages.Count == 0 && assistant.Prompt.Length == 0 && assistant.Attachments.Count == 0,
+                "Chat reset left previous content.");
+            Check(assistant.RemainingTokens == assistant.ContextLength && assistant.ContextUsagePercent == 0 && !assistant.IsContextLow,
+                "Chat reset did not restore the full context budget.");
+            Check(assistant.SelectedMessageCount == 0 && !assistant.Copy.CanExecute(null), "Chat reset left selected messages.");
             host.Close();
             report["passed"] = true;
-            report["checked"] = "WPF controls, font/color bindings, borders on/off, light/dark themes, minimum settings window size, persistence, Markdown checkbox on/off with source and token preservation, message checkbox bindings, selection counter, select/clear all, disabled empty messages, selection layout at narrow width, conversation preservation and both chat reset buttons restoring the full token budget and clearing selection";
+            report["checked"] = "WPF controls, font/color bindings, borders on/off, light/dark themes, minimum settings window size, persistence, Markdown checkbox on/off with source and token preservation, message checkbox bindings, selection counter, select/clear all, disabled empty messages, selection layout at narrow width, conversation preservation and the unified new chat button restoring the full token budget and clearing selection";
         }
         catch(Exception error)
         {
@@ -136,6 +137,11 @@ internal static class ChatAppearanceSmoke
             var settingsVm = new AiChatAppearanceViewModel(store);
             var window = new AiChatAppearanceWindow(settingsVm) { ShowInTaskbar = false, ShowActivated = false };
             window.Show();
+            ((ComboBox)window.FindName("CodeFontBox")).SelectedItem = "Courier New";
+            var codeColor = (TextBox)window.FindName("CodeColorBox");
+            codeColor.Text = "#a060d0";
+            codeColor.BringIntoView();
+            UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "appearance-code-settings.png"));
             var checkbox = (CheckBox)window.FindName("RenderMarkdownCheckBox");
             Check(checkbox.IsChecked == !enabled, "The Markdown checkbox did not restore the saved value.");
             checkbox.BringIntoView();
@@ -147,6 +153,14 @@ internal static class ChatAppearanceSmoke
             Check(!window.IsVisible && new AiSettingsStore(Path.Combine(outputDirectory, "settings.json")).Current.ChatAppearance.RenderMarkdown == enabled,
                 "The Markdown choice was not persisted.");
             Check(Read(viewer).Contains("**") != enabled, "Switching Markdown did not update the current message.");
+            var persisted = new AiSettingsStore(Path.Combine(outputDirectory, "settings.json")).Current.ChatAppearance;
+            Check(persisted.CodeFontFamily == "Courier New" && persisted.CodeColor == "#A060D0", "Code appearance was not persisted.");
+            if(enabled)
+            {
+                WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+                    paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground.ToString() == "#FFA060D0"));
+                UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-custom-code-light.png"));
+            }
             assistant.UpdateContextBudget();
             Check(assistant.Messages[1].Content == source && assistant.RemainingTokens == tokens,
                 "Markdown rendering changed the source message or token budget.");
@@ -215,6 +229,16 @@ internal static class ChatAppearanceSmoke
     private static void Check(bool condition, string message)
     {
         if(!condition) throw new InvalidOperationException(message);
+    }
+    private static void WaitUntil(Func<bool> ready)
+    {
+        if(ready()) return;
+        var frame = new DispatcherFrame();
+        DateTime deadline = DateTime.UtcNow.AddSeconds(3);
+        var timer = new DispatcherTimer(TimeSpan.FromMilliseconds(25), DispatcherPriority.Background,
+            (_, _) => { if(ready() || DateTime.UtcNow >= deadline) frame.Continue = false; }, Dispatcher.CurrentDispatcher);
+        Dispatcher.PushFrame(frame); timer.Stop();
+        Check(ready(), "Message formatting did not settle.");
     }
     private sealed class IdleRuntime : IAiInferenceService
     {

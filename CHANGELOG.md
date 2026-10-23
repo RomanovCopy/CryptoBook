@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.1.4.9 - 2026-10-23
+
+### Fixed
+
+- Restore AI model inspection with performance permission enabled: do not send a zero CPU rate to Windows for an ordinary protected operation. Apply resource limits only to a measured acceleration profile and fall back to ordinary generation when acceleration controls are unavailable.
+- Wait for AI process exit and memory-budget recovery between benchmark trials; include the loaded worker's existing commit when limiting additional allocations on subsequent requests.
+
+### Added
+
+- Optional per-model AI performance testing with explicit consent, separate prompt/generation measurements, saved profiles and an AC-only option. Increased load is applied only after a measured gain of at least 5%.
+- Resource limits and memory-pressure monitoring for the isolated AI process; only AI is stopped when resources are insufficient. Other programs and the system power plan are left under the user's control. Changing resource permission preserves the conversation and draft.
+- Per-model Balanced, Power saving and Optimal (measured) performance modes, with migration of existing performance permissions.
+- Separate font and text color settings for AI code blocks.
+
+### Changed
+
+- Reorganize the AI assistant panel and move its toggle to the bottom of the window.
+- Preserve the conversation and draft when changing performance modes; fall back to balanced settings on battery when AC-only acceleration is selected.
+- Synchronize application, manifest, installer, documentation, notices and version tests for 1.1.4.9.
+
+Full comparison: [v1.1.4.8...v1.1.4.9](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.8...v1.1.4.9)
+
 ## 1.1.4.8 - 2026-10-22
 
 ### Added

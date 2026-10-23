@@ -321,7 +321,7 @@ public sealed class AdaptiveAiInferenceTests : IDisposable
     private sealed class FakeWorker(Func<AiWorkerRequest, Action<string>, Action<string>?, CancellationToken, Task<AiModelInspection?>> execute) : IAiWorkerSession
     {
         public bool IsAlive { get; private set; } = true;
-        public Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText, IProgress<float>? progress, CancellationToken token, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null)
+        public Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText, IProgress<float>? progress, CancellationToken token, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null, Action<AiPerformanceMeasurement>? onMeasurement = null)
         {
             if(request.Command == "generate") onUsage?.Invoke(new(2048, 1200, 37));
             return execute(request, onText, onReasoning, token);

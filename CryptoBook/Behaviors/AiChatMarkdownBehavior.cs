@@ -13,6 +13,10 @@ public static class AiChatMarkdownBehavior
         "Text", typeof(string), typeof(AiChatMarkdownBehavior), new PropertyMetadata(null, OnChanged));
     public static readonly DependencyProperty RenderMarkdownProperty = DependencyProperty.RegisterAttached(
         "RenderMarkdown", typeof(bool), typeof(AiChatMarkdownBehavior), new PropertyMetadata(true, OnChanged));
+    public static readonly DependencyProperty CodeFontFamilyProperty = DependencyProperty.RegisterAttached(
+        "CodeFontFamily", typeof(string), typeof(AiChatMarkdownBehavior), new PropertyMetadata(AiChatAppearance.DefaultCodeFontFamily, OnChanged));
+    public static readonly DependencyProperty CodeColorProperty = DependencyProperty.RegisterAttached(
+        "CodeColor", typeof(string), typeof(AiChatMarkdownBehavior), new PropertyMetadata("", OnChanged));
     private static readonly DependencyProperty StateProperty = DependencyProperty.RegisterAttached(
         "State", typeof(RenderState), typeof(AiChatMarkdownBehavior));
 
@@ -20,6 +24,10 @@ public static class AiChatMarkdownBehavior
     public static void SetText(DependencyObject target, string value) => target.SetValue(TextProperty, value);
     public static bool GetRenderMarkdown(DependencyObject target) => (bool)target.GetValue(RenderMarkdownProperty);
     public static void SetRenderMarkdown(DependencyObject target, bool value) => target.SetValue(RenderMarkdownProperty, value);
+    public static string GetCodeFontFamily(DependencyObject target) => (string)target.GetValue(CodeFontFamilyProperty);
+    public static void SetCodeFontFamily(DependencyObject target, string value) => target.SetValue(CodeFontFamilyProperty, value);
+    public static string GetCodeColor(DependencyObject target) => (string)target.GetValue(CodeColorProperty);
+    public static void SetCodeColor(DependencyObject target, string value) => target.SetValue(CodeColorProperty, value);
 
     private static void OnChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
     {
@@ -87,7 +95,7 @@ public static class AiChatMarkdownBehavior
         {
             if(!viewer.IsLoaded || !viewer.IsVisible) return;
             viewer.Document = AiChatDocumentRenderer.Render(GetText(viewer), GetRenderMarkdown(viewer),
-                viewer.FontFamily, viewer.FontSize, viewer.Foreground);
+                viewer.FontFamily, viewer.FontSize, viewer.Foreground, GetCodeFontFamily(viewer), GetCodeColor(viewer));
         }
     }
 }

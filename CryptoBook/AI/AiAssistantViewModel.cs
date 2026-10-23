@@ -402,6 +402,18 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         contextDirty = true;
         if(previous.Enabled == store.Current.Enabled && previous.SelectedModel == store.Current.SelectedModel)
             return;
+        var currentModel = store.Current.SelectedModel;
+        if(previous.Enabled == store.Current.Enabled && (previous.SelectedModel with
+            { AllowPerformanceBoost = currentModel.AllowPerformanceBoost, PerformanceMode = currentModel.PerformanceMode,
+                BoostOnlyOnAc = currentModel.BoostOnlyOnAc }) == currentModel)
+        {
+            // Resource permission does not change the conversation or its prompt parameters.
+            cancellation?.Cancel();
+            try { await inference.UnloadAsync(); }
+            catch(Exception error) { Status = ErrorText(error); }
+            finally { Refresh(); }
+            return;
+        }
         cancellation?.Cancel();
         Clear();
         OnPropertyChanged(nameof(Enabled), nameof(ModelName));

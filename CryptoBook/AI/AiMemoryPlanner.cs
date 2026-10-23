@@ -84,6 +84,29 @@ public static class AiMemoryPlanner
         var status = new MemoryStatus { Length = (uint)Marshal.SizeOf<MemoryStatus>() };
         return GlobalMemoryStatusEx(ref status) ? (long)status.AvailablePhysical : 0;
     }
+    // DXGI reports this process's usage and budget. Query inside the AI worker, not the UI process.
+    internal static (long Used, long Available) ReadGpuMemory()
+    {
+        long used = 0, available = long.MaxValue;
+        try
+        {
+            using var factory = DXGI.CreateDXGIFactory1<IDXGIFactory1>();
+            for(uint index = 0; factory.EnumAdapters1(index, out var adapter).Success; index++)
+            {
+                using(adapter)
+                using(var memoryAdapter = adapter.QueryInterfaceOrNull<IDXGIAdapter3>())
+                {
+                    if(memoryAdapter is null || (adapter.Description1.Flags & AdapterFlags.Software) != 0) continue;
+                    var memory = memoryAdapter.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local);
+                    if(memory.CurrentUsage == 0) continue;
+                    used += (long)memory.CurrentUsage;
+                    available = Math.Min(available, memory.Budget > memory.CurrentUsage ? (long)(memory.Budget - memory.CurrentUsage) : 0);
+                }
+            }
+        }
+        catch(Exception error) when(error is SharpGen.Runtime.SharpGenException or DllNotFoundException or EntryPointNotFoundException) { }
+        return (used, available);
+    }
     internal static ulong ReadTotalRam()
     {
         var status = new MemoryStatus { Length = (uint)Marshal.SizeOf<MemoryStatus>() };

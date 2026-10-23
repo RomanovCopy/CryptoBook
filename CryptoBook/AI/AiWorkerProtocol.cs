@@ -12,16 +12,19 @@ internal sealed record AiWorkerTurn(string Role, string Content, AiWorkerAttachm
     internal AiTurn ToTurn() => new(Role, Content, Attachments.Select(file =>
         new AiAttachment(file.Name, file.Text, file.Image, null, file.Size)).ToArray());
 }
-internal sealed record AiWorkerRequest(string Command, AiModelSettings Settings, AiRuntimeOptions Options, AiWorkerTurn[] Turns);
+internal sealed record AiWorkerRequest(string Command, AiModelSettings Settings, AiRuntimeOptions Options, AiWorkerTurn[] Turns,
+    bool ProtectResources = false);
 internal sealed record AiWorkerEvent(string Kind, string? Text = null, float Progress = 0, AiModelInspection? Inspection = null,
-    AiTokenUsage? Usage = null, AiRepetitionStop? Repetition = null);
+    AiTokenUsage? Usage = null, AiRepetitionStop? Repetition = null, AiPerformanceMeasurement? Measurement = null);
 
 internal interface IAiWorkerSession : IDisposable
 {
     bool IsAlive { get; }
     Task<AiModelInspection?> ExecuteAsync(AiWorkerRequest request, Action<string> onText,
-        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null, Action<AiTokenUsage>? onUsage = null);
+        IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null,
+        Action<AiTokenUsage>? onUsage = null, Action<AiPerformanceMeasurement>? onMeasurement = null);
     void Stop();
+    Task StopAsync() { Stop(); return Task.CompletedTask; }
 }
 
 internal sealed class AiWorkerException(string reason) : Exception(reason);

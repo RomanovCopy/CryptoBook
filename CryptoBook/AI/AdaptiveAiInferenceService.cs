@@ -15,10 +15,11 @@ public interface IAiRuntimeStatusSource
 }
 
 /// <summary>Owns isolated native processes and never executes llama.cpp in the UI process.</summary>
-public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntimeStatusSource, IAiTokenUsageSource
+public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntimeStatusSource, IAiTokenUsageSource, IAiPerformanceService
 {
     private readonly AiRuntimeProfileStore profiles;
     private readonly Func<IAiWorkerSession> createWorker;
+    private readonly Func<AiResourceSnapshot> readResources;
     private readonly SemaphoreSlim gate = new(1, 1);
     private readonly object sync = new();
     private readonly List<AiRuntimeNotice> notices = [];
@@ -28,8 +29,9 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
     private long epoch;
     private bool disposed, verified;
     public AdaptiveAiInferenceService(AiRuntimeProfileStore profiles) : this(profiles, () => new AiWorkerProcess()) { }
-    internal AdaptiveAiInferenceService(AiRuntimeProfileStore profiles, Func<IAiWorkerSession> createWorker)
-    { this.profiles = profiles; this.createWorker = createWorker; }
+    internal AdaptiveAiInferenceService(AiRuntimeProfileStore profiles, Func<IAiWorkerSession> createWorker,
+        Func<AiResourceSnapshot>? readResources = null)
+    { this.profiles = profiles; this.createWorker = createWorker; this.readResources = readResources ?? AiResourceSnapshot.Read; }
     public bool IsLoaded => verified && worker?.IsAlive == true;
     public bool IsBusy { get; private set; }
     public DateTime LastUsedUtc { get; private set; } = DateTime.UtcNow;
@@ -62,13 +64,14 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
             RequestedContextLength = settings.ContextLength;
             ModelPath = settings.ModelPath;
             var file = new FileInfo(settings.ModelPath);
-            string identity = $"{file.FullName.ToUpperInvariant()}|{file.Length}|{file.LastWriteTimeUtc.Ticks}|{settings.ContextLength}|{settings.MemoryMode}|{settings.GpuLayers}|{settings.AutoReduceContext}";
+            bool allowBoost = AiPerformancePolicy.IsAllowed(settings, readResources());
+            string identity = $"{file.FullName.ToUpperInvariant()}|{file.Length}|{file.LastWriteTimeUtc.Ticks}|{settings.ContextLength}|{settings.MemoryMode}|{settings.GpuLayers}|{settings.AutoReduceContext}|{settings.EffectivePerformanceMode}|{allowBoost}";
             AiModelInspection? inspection = null;
             string? key = null;
             var failed = new HashSet<AiRuntimeOptions>();
             if(!IsLoaded || loadedIdentity != identity)
             {
-                StopWorker();
+                await StopWorkerAsync().ConfigureAwait(false);
                 lock(sync) notices.Clear();
                 RuntimeOptions = null;
                 Emit("AI.AutoInspect");
@@ -93,19 +96,20 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
                     Emit("AI.AutoComplete");
                     break;
                 }
-                catch(Exception error) when(IsRetryable(error) && !linked.IsCancellationRequested)
+                catch(Exception error) when((IsRetryable(error) || RuntimeOptions!.PerformanceBoost && IsBoostUnavailable(error)) && !linked.IsCancellationRequested)
                 {
                     var failedOptions = RuntimeOptions!;
+                    bool boostUnavailable = failedOptions.PerformanceBoost && IsBoostUnavailable(error);
                     failed.Add(failedOptions);
-                    StopWorker();
+                    await StopWorkerAsync().ConfigureAwait(false);
                     Emit("AI.AutoAttemptFailed", FailureReason(error));
                     if(settings.MemoryMode == AiMemoryMode.Automatic) RejectProfile(settings.ModelPath);
-                    if(settings.MemoryMode != AiMemoryMode.Automatic || sentOutput)
+                    if(settings.MemoryMode != AiMemoryMode.Automatic && !boostUnavailable || sentOutput)
                     {
                         Emit(sentOutput ? "AI.AutoPartialReply" : "AI.AutoManualFailure");
                         throw new AiException("AI.WorkerFailed");
                     }
-                    Emit("AI.AutoRecovering");
+                    Emit(boostUnavailable ? "AI.PerformanceFallback" : "AI.AutoRecovering");
                     if(inspection is null)
                     {
                         inspection = await InspectAsync(settings, linked.Token).ConfigureAwait(false);
@@ -127,11 +131,11 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
         }
         catch(OperationCanceledException)
         {
-            StopWorker(); Emit("AI.AutoCancelled"); throw;
+            await StopWorkerAsync().ConfigureAwait(false); Emit("AI.AutoCancelled"); throw;
         }
         catch
         {
-            StopWorker(); Emit("AI.AutoFailed"); throw;
+            await StopWorkerAsync().ConfigureAwait(false); Emit("AI.AutoFailed"); throw;
         }
         finally
         {
@@ -141,33 +145,36 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
         }
     }
 
-    private async Task<AiModelInspection> InspectAsync(AiModelSettings settings, CancellationToken token)
+    private async Task<AiModelInspection> InspectAsync(AiModelSettings settings, CancellationToken token, bool protectResources = false)
     {
-        StopWorker(); worker = createWorker();
+        await StopWorkerAsync().ConfigureAwait(false); worker = createWorker();
         try
         {
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
             timeout.CancelAfter(TimeSpan.FromSeconds(60));
-            return await worker.ExecuteAsync(new("inspect", settings with { SystemPrompt = "" }, new(settings.ContextLength, 0, CpuBackend: true), []),
+            return await worker.ExecuteAsync(new("inspect", settings with { SystemPrompt = "" }, new(settings.ContextLength, 0, CpuBackend: true), [], protectResources),
                 _ => { }, null, timeout.Token).ConfigureAwait(false) ?? throw new AiException("AI.InspectionFailed");
         }
         catch(OperationCanceledException) when(!token.IsCancellationRequested) { throw new AiException("AI.InspectionTimeout"); }
         catch(AiWorkerException error) { Emit("AI.AutoAttemptFailed", FailureReason(error)); throw new AiException("AI.InspectionFailed"); }
         catch(AiException error) when(error.ResourceKey is "AI.LoadFailed" or "AI.GenerationFailed")
         { Emit("AI.AutoAttemptFailed", error.ResourceKey); throw new AiException("AI.InspectionFailed"); }
-        finally { StopWorker(); }
+        finally { await StopWorkerAsync().ConfigureAwait(false); }
     }
 
     private async Task SelectAsync(AiModelSettings settings, AiModelInspection inspection, string key,
-        HashSet<AiRuntimeOptions> failed, IProgress<float>? progress, CancellationToken token)
+        HashSet<AiRuntimeOptions> failed, IProgress<float>? progress, CancellationToken token, bool calibration = false)
     {
-        var candidates = AiRuntimeCandidates.Create(settings, inspection).ToList();
+        var candidates = AiRuntimeCandidates.Create(settings, inspection)
+            .Select(options => calibration ? options : AiPerformancePolicy.ApplyMode(options, settings, Environment.ProcessorCount)).ToList();
         AiRuntimeProfile? cached = null;
         if(settings.MemoryMode == AiMemoryMode.Automatic)
         {
             try { cached = profiles.Find(key); }
             catch(Exception error) when(error is IOException or UnauthorizedAccessException) { Emit("AI.AutoCacheUnavailable"); }
-            if(cached is not null && cached.Options.GpuLayers >= 0 && cached.Options.GpuLayers <= inspection.Plan.GpuLayers &&
+            if(cached is not null && !cached.Options.PerformanceBoost &&
+               cached.Options.PowerSaving == (settings.EffectivePerformanceMode == AiPerformanceMode.PowerSaving) &&
+               cached.Options.GpuLayers >= 0 && cached.Options.GpuLayers <= inspection.Plan.GpuLayers &&
                cached.Options.ContextLength <= settings.ContextLength &&
                (settings.AutoReduceContext || cached.Options.ContextLength == settings.ContextLength))
             {
@@ -175,13 +182,26 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
                 if(candidates.Count > 13) candidates.RemoveAt(1);
             }
         }
+        if(!calibration && AiPerformancePolicy.IsAllowed(settings, readResources()))
+        {
+            try
+            {
+                var tuned = profiles.Find(PerformanceKey(settings, inspection.HardwareKey));
+                if(tuned?.Performance is { IsValid: true, BoostSelected: true } &&
+                    tuned.Options.PerformanceBoost && tuned.Options.ContextLength == settings.ContextLength &&
+                    (tuned.Options.GpuLayers == inspection.Plan.GpuLayers ||
+                     tuned.Options.GpuLayers >= 0 && tuned.Options.GpuLayers <= inspection.Plan.GpuLayers))
+                { candidates.Insert(0, tuned.Options); Emit("AI.PerformanceUsing"); }
+            }
+            catch(Exception error) when(error is IOException or UnauthorizedAccessException) { Emit("AI.AutoCacheUnavailable"); }
+        }
         int attempt = failed.Count;
         int total = Math.Min(13, failed.Count + candidates.Count(candidate => !failed.Contains(candidate)));
         foreach(var candidate in candidates.Where(candidate => !failed.Contains(candidate)))
         {
             if(attempt >= 13) break;
             token.ThrowIfCancellationRequested();
-            StopWorker();
+            await StopWorkerAsync().ConfigureAwait(false);
             RuntimeOptions = candidate;
             Emit(cached?.Options == candidate ? "AI.AutoCached" : "AI.AutoAttempt", ++attempt, total,
                 candidate.ContextLength, candidate.GpuLayers, candidate.BatchSize, candidate.UBatchSize,
@@ -193,7 +213,7 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
                 timeout.CancelAfter(TimeSpan.FromMinutes(2));
                 try
                 {
-                    await worker.ExecuteAsync(new("probe", settings with { SystemPrompt = "" }, candidate, []), _ => { }, progress, timeout.Token).ConfigureAwait(false);
+                    await worker.ExecuteAsync(new("probe", settings with { SystemPrompt = "" }, candidate, [], ProtectResources: calibration), _ => { }, progress, timeout.Token).ConfigureAwait(false);
                 }
                 catch(OperationCanceledException) when(!token.IsCancellationRequested) { throw new AiWorkerException("Timeout120s"); }
                 verified = true;
@@ -201,16 +221,17 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
                 if(candidate.ContextLength < settings.ContextLength) Emit("AI.AutoReducedContext", settings.ContextLength, candidate.ContextLength);
                 if(candidate.GpuLayers == 0) Emit("AI.AutoCpuSelected");
                 if(candidate.FlashAttention == false) Emit("AI.AutoFlashDisabled");
-                if(settings.MemoryMode == AiMemoryMode.Automatic)
+                if(!calibration && !candidate.PerformanceBoost && settings.MemoryMode == AiMemoryMode.Automatic)
                 {
                     try { profiles.Save(new(key, settings.ModelPath, candidate, DateTime.UtcNow)); Emit("AI.AutoSaved"); }
                     catch(Exception error) when(error is IOException or UnauthorizedAccessException) { Emit("AI.AutoCacheUnavailable"); }
                 }
                 return;
             }
-            catch(Exception error) when(IsRetryable(error) && !token.IsCancellationRequested)
+            catch(Exception error) when((IsRetryable(error) || candidate.PerformanceBoost && IsBoostUnavailable(error)) && !token.IsCancellationRequested)
             {
-                failed.Add(candidate); StopWorker(); Emit("AI.AutoAttemptFailed", FailureReason(error));
+                failed.Add(candidate); await StopWorkerAsync().ConfigureAwait(false); Emit("AI.AutoAttemptFailed", FailureReason(error));
+                if(candidate.PerformanceBoost && IsBoostUnavailable(error)) Emit("AI.PerformanceFallback");
                 if(cached?.Options == candidate) RejectProfile(settings.ModelPath);
                 if(settings.MemoryMode != AiMemoryMode.Automatic) Emit("AI.AutoManualFailure");
             }
@@ -220,6 +241,8 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
 
     private static bool IsRetryable(Exception error) => error is AiWorkerException || error is AiException
         { ResourceKey: "AI.LoadFailed" or "AI.GenerationFailed" or "AI.ImageLoadFailed" };
+    private static bool IsBoostUnavailable(Exception error) => error is AiException
+        { ResourceKey: "AI.ResourceGuardUnavailable" or "AI.PerformanceConsentRequired" or "AI.PerformancePowerChanged" };
     private static string FailureReason(Exception error) => error is AiWorkerException ? error.Message switch
     {
         "Timeout120s" => "AI.AutoTimeout",
@@ -246,11 +269,19 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
     {
         worker?.Dispose(); worker = null; verified = false; loadedIdentity = null;
     }
+    private async Task StopWorkerAsync()
+    {
+        var stopping = worker;
+        worker = null; verified = false; loadedIdentity = null;
+        if(stopping is null) return;
+        try { await stopping.StopAsync().ConfigureAwait(false); }
+        finally { stopping.Dispose(); }
+    }
     public async Task UnloadAsync(CancellationToken cancellationToken = default)
     {
         lock(sync) { epoch++; active?.Cancel(); }
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try { StopWorker(); Emit("AI.AutoUnloaded"); }
+        try { await StopWorkerAsync().ConfigureAwait(false); Emit("AI.AutoUnloaded"); }
         finally { gate.Release(); }
     }
     public async Task ResetAutoProfileAsync(string modelPath, CancellationToken cancellationToken = default)
@@ -259,7 +290,7 @@ public sealed class AdaptiveAiInferenceService : IAiInferenceService, IAiRuntime
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            StopWorker();
+            await StopWorkerAsync().ConfigureAwait(false);
             profiles.Remove(modelPath);
             Emit("AI.AutoReset");
         }

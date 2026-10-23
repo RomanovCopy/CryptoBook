@@ -14,9 +14,9 @@ public sealed class AiChatMarkdownTests
     [WpfFact]
     public void Markdown_RendersStructureAndChatTypography_WithoutDocumentPageWidth()
     {
-        const string source = "# Heading\n\n**bold** and *italic*\n\n- item\n\n> quote\n\n| A | B |\n|---|---|\n| 1 | 2 |\n\n```cs\nint n = 1;\n```";
+        const string source = "# Heading\n\n**bold** and *italic* with `inline`\n\n- item\n\n> quote\n\n| A | B |\n|---|---|\n| 1 | 2 |\n\n```cs\nint n = 1;\n```";
         var foreground = Brushes.DarkGreen;
-        var document = AiChatDocumentRenderer.Render(source, true, new FontFamily("Consolas"), 20, foreground);
+        var document = AiChatDocumentRenderer.Render(source, true, new FontFamily("Consolas"), 20, foreground, "Courier New", "#123456");
         Assert.Contains(document.Blocks, block => block is System.Windows.Documents.List);
         Assert.Contains(document.Blocks, block => block is Table);
         Assert.Contains(document.Blocks, block => block is Section);
@@ -32,6 +32,14 @@ public sealed class AiChatMarkdownTests
         string displayed = new TextRange(document.ContentStart, document.ContentEnd).Text;
         Assert.Contains("int n = 1;", displayed);
         Assert.DoesNotContain("**bold**", displayed);
+        var code = document.Blocks.OfType<Paragraph>().Single(paragraph => paragraph.Inlines.OfType<Run>().Any(run => run.Text.Contains("int n")));
+        Assert.Equal("Courier New", code.FontFamily.Source);
+        Assert.Equal("#FF123456", code.Foreground.ToString());
+        var inline = Descendants(document).OfType<Run>().Single(run => run.Text == "inline");
+        Assert.Equal(AiChatAppearance.DefaultCodeFontFamily, inline.FontFamily.Source);
+        Assert.Same(foreground, inline.Foreground);
+        var preview = new CryptoBook.Services.MarkdownFlowDocumentRenderer().Render("```\ncode\n```", null);
+        Assert.Equal(AiChatAppearance.DefaultCodeFontFamily, Assert.IsType<Paragraph>(preview.Blocks.FirstBlock).FontFamily.Source);
     }
 
     [WpfFact]
@@ -92,6 +100,14 @@ public sealed class AiChatMarkdownTests
             await Task.Delay(300);
             Assert.DoesNotContain("##", Read(viewer));
             Assert.Contains("After reload", Read(viewer));
+            AiChatMarkdownBehavior.SetText(viewer, "```cs\nstyled\n```");
+            AiChatMarkdownBehavior.SetCodeFontFamily(viewer, "Courier New");
+            AiChatMarkdownBehavior.SetCodeColor(viewer, "#123456");
+            await WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+                paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground.ToString() == "#FF123456"));
+            AiChatMarkdownBehavior.SetCodeColor(viewer, "");
+            await WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+                paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground == Brushes.DarkBlue));
         }
         finally { window.Close(); }
     }
@@ -111,8 +127,11 @@ public sealed class AiChatMarkdownTests
             settings.RenderMarkdown = true; settings.Save.Execute(null);
             Assert.True(new AiSettingsStore(path).Current.ChatAppearance.RenderMarkdown);
             settings.RenderMarkdown = false;
+            settings.CodeFontFamily = "Courier New"; settings.CodeColor = "#123456";
             settings.Reset.Execute(null); settings.Save.Execute(null);
             Assert.True(new AiSettingsStore(path).Current.ChatAppearance.RenderMarkdown);
+            Assert.Equal(AiChatAppearance.DefaultCodeFontFamily, new AiSettingsStore(path).Current.ChatAppearance.CodeFontFamily);
+            Assert.Empty(new AiSettingsStore(path).Current.ChatAppearance.CodeColor);
         }
         finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }

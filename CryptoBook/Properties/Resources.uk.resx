@@ -2109,6 +2109,7 @@
   <data name="AI.AutoReset" xml:space="preserve"><value>Збережені робочі профілі цієї моделі видалено. Наступна перевірка добере параметри знову.</value></data>
   <data name="AI.AutoSummary" xml:space="preserve"><value>Робочі параметри: контекст {0}; шари GPU {1}; пакет {2}/{3}; Flash Attention {4}.</value></data>
   <data name="AI.AutoDetails" xml:space="preserve"><value>Перевірки, зміни параметрів і причини збоїв</value></data>
+  <data name="AI.RuntimeInfo" xml:space="preserve"><value>Робота моделі</value></data>
   <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Дозволяти автоматичному режиму зменшувати контекст за потреби. Фактичний розмір та обмеження буде показано.</value></data>
   <data name="AI.AutoRetune" xml:space="preserve"><value>Добрати знову</value></data>
   <data name="AI.AutoNoGpu" xml:space="preserve"><value>немає придатного бюджету GPU</value></data>
@@ -2130,6 +2131,9 @@
   <data name="AI.Appearance" xml:space="preserve"><value>Оформлення чату</value></data>
   <data name="AI.ChatFont" xml:space="preserve"><value>Шрифт</value></data>
   <data name="AI.ChatFontSize" xml:space="preserve"><value>Розмір шрифту</value></data>
+  <data name="AI.CodeFont" xml:space="preserve"><value>Шрифт блоків коду</value></data>
+  <data name="AI.CodeColor" xml:space="preserve"><value>Колір тексту блоків коду</value></data>
+  <data name="AI.CodeColorHint" xml:space="preserve"><value>Виберіть колір через … або введіть #RRGGBB. Порожнє поле — колір тексту повідомлення.</value></data>
   <data name="AI.UserColor" xml:space="preserve"><value>Колір тексту запитань</value></data>
   <data name="AI.AssistantColor" xml:space="preserve"><value>Колір тексту відповідей</value></data>
   <data name="AI.ColorHint" xml:space="preserve"><value>Натисніть … для вибору кольору або введіть #RRGGBB. Порожнє поле — колір поточної теми.</value></data>
@@ -2171,4 +2175,42 @@
   <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Вставити стовпець праворуч</value></data>
   <data name="Editor.DeleteRow" xml:space="preserve"><value>Видалити рядок</value></data>
   <data name="Editor.DeleteColumn" xml:space="preserve"><value>Видалити стовпець</value></data>
+  <data name="AI.PerformanceSection" xml:space="preserve"><value>Продуктивність AI</value></data>
+  <data name="AI.PerformancePermission" xml:space="preserve"><value>Дозволяти підвищене навантаження під час генерації</value></data>
+  <data name="AI.PerformanceHint" xml:space="preserve"><value>Оптимальний режим може підвищити нагрівання, шум вентиляторів і споживання енергії. Вибраний режим застосовується після збереження налаштувань.</value></data>
+  <data name="AI.PerformanceOnlyOnAc" xml:space="preserve"><value>Підвищене навантаження лише від мережі</value></data>
+  <data name="AI.PerformanceTest" xml:space="preserve"><value>Підібрати оптимальний режим</value></data>
+  <data name="AI.PerformanceTestHint" xml:space="preserve"><value>Тест тимчасово підвищить навантаження й порівняє режими на службовому тексті. До 6 хвилин; можна зупинити. Контекст моделі не змінюється. Для скасування натисніть «Зупинити».</value></data>
+  <data name="AI.PerformanceNotTested" xml:space="preserve"><value>Вимірювання для оптимального режиму з цими параметрами ще не виконано. До успішного тесту оптимальний режим використовує збалансовані налаштування.</value></data>
+  <data name="AI.PerformancePreparing" xml:space="preserve"><value>Підготовка тесту продуктивності…</value></data>
+  <data name="AI.PerformanceTrial" xml:space="preserve"><value>Тест {0} з {1}: потоки генерації {2}, обробки запиту {3}.</value></data>
+  <data name="AI.PerformanceMeasured" xml:space="preserve"><value>Обробка: {0:F1} ток/с; генерація: {1:F1} ток/с. Пік ОЗП: {2} МБ; відеопам’яті: {3} МБ.</value></data>
+  <data name="AI.PerformanceTrialFailed" xml:space="preserve"><value>Варіант не пройшов тест або перевищив час очікування; перевіряємо наступний.</value></data>
+  <data name="AI.PerformanceSelected" xml:space="preserve"><value>Вибрано швидший профіль: виміряний виграш {0:F1}%.</value></data>
+  <data name="AI.PerformanceNoGain" xml:space="preserve"><value>Помітного прискорення немає — вибрано звичайний режим.</value></data>
+  <data name="AI.PerformanceGain" xml:space="preserve"><value>Виміряний виграш: {0:F1}%.</value></data>
+  <data name="AI.PerformanceDone" xml:space="preserve"><value>Оптимальний профіль збережено. Щоб застосувати вибраний режим, натисніть «Зберегти».</value></data>
+  <data name="AI.PerformanceResult" xml:space="preserve"><value>Останній тест: {0:g}
+Звичайний режим — обробка {1:F1}, генерація {2:F1} ток/с.
+Вибраний режим — обробка {3:F1}, генерація {4:F1} ток/с.
+Пік ОЗП: {5} МБ; відеопам’яті: {6} МБ.
+{7}</value></data>
+  <data name="AI.PerformanceConsentRequired" xml:space="preserve"><value>Перед тестом виберіть оптимальний режим. Підключіть живлення від мережі, якщо це обмеження ввімкнено.</value></data>
+  <data name="AI.ResourcePressure" xml:space="preserve"><value>Недостатньо вільної пам’яті для безпечної роботи AI. Операцію AI зупинено; інші програми не закриваються. Звільніть пам’ять або виберіть меншу модель.</value></data>
+  <data name="AI.ResourceGuardUnavailable" xml:space="preserve"><value>Не вдалося ввімкнути обмеження ресурсів AI. Підвищене навантаження скасовано.</value></data>
+  <data name="AI.PerformancePowerChanged" xml:space="preserve"><value>Живлення від мережі відключено. Підвищене навантаження AI зупинено.</value></data>
+  <data name="AI.PerformanceTooShort" xml:space="preserve"><value>Модель видала замало токенів для надійного вимірювання швидкості. Профіль не змінено.</value></data>
+  <data name="AI.PerformanceTimeout" xml:space="preserve"><value>Тест перевищив 6 хвилин. Попередній профіль збережено; виберіть меншу модель або повторіть тест.</value></data>
+  <data name="AI.PerformanceUsing" xml:space="preserve"><value>Застосовуємо профіль продуктивності з обмеженнями ресурсів.</value></data>
+  <data name="AI.PerformanceTrialTimeout" xml:space="preserve"><value>Звичайний режим не завершив пробу за 90 секунд. Попередній профіль збережено; виберіть меншу модель або повторіть тест.</value></data>
+  <data name="AI.PerformanceFallback" xml:space="preserve"><value>Підвищене навантаження недоступне. Продовжуємо у звичайному режимі.</value></data>
+  <data name="AI.PerformanceModeLabel" xml:space="preserve"><value>Режим продуктивності</value></data>
+  <data name="AI.PerformanceMode.Balanced" xml:space="preserve"><value>Збалансований</value></data>
+  <data name="AI.PerformanceMode.PowerSaving" xml:space="preserve"><value>Економний</value></data>
+  <data name="AI.PerformanceMode.Optimal" xml:space="preserve"><value>Оптимальний (за вимірюванням)</value></data>
+  <data name="AI.PerformanceModeHint.Balanced" xml:space="preserve"><value>Стандартне навантаження CPU та звичайне планування Windows. Для генерації й обробки запиту використовується половина логічних процесорів.</value></data>
+  <data name="AI.PerformanceModeHint.PowerSaving" xml:space="preserve"><value>Використовує чверть логічних процесорів і запитує економне планування для процесу AI. Відповіді можуть займати більше часу. Шари GPU та контекст зберігаються; потужність відеокарти не обмежується.</value></data>
+  <data name="AI.PerformanceModeHint.Optimal" xml:space="preserve"><value>Кнопка «Підібрати оптимальний режим» порівняє налаштування CPU на цій моделі та комп’ютері. Прискорений профіль застосовується за виміряного виграшу від 5%, інакше використовуються збалансовані налаштування. Обмеження живлення від мережі вмикає збалансовані налаштування під час роботи від батареї.</value></data>
+  <data name="AI.InvalidPerformanceMode" xml:space="preserve"><value>Невідомий режим продуктивності AI.</value></data>
+  <data name="AI.RuntimePerformance" xml:space="preserve"><value>Продуктивність: {0}. Потоки генерації: {1}; обробки запиту: {2}.</value></data>
 </root>

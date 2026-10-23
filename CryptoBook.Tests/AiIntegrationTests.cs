@@ -685,6 +685,40 @@ public sealed class AiIntegrationTests
     }
 
     [WpfTheory]
+    [InlineData(AiPerformanceMode.Balanced)]
+    [InlineData(AiPerformanceMode.PowerSaving)]
+    [InlineData(AiPerformanceMode.Optimal)]
+    public async Task PerformanceMode_TestSaveReloadAndModelSwitchKeepTheSelectedValue(AiPerformanceMode mode)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (assistant, store, runtime, _) = CreateAssistant(directory);
+            using(assistant)
+            using(var settings = new AiModelSettingsViewModel(store, runtime))
+            {
+                runtime.CompleteImmediately = true;
+                settings.PerformanceMode = mode;
+                await settings.Test.ExecuteAsync();
+                Assert.Equal(mode, runtime.LastSettings!.EffectivePerformanceMode);
+                string first = settings.ModelPath;
+                settings.ModelPath = Path.Combine(directory, "other.gguf");
+                Assert.Equal(AiPerformanceMode.Balanced, settings.PerformanceMode);
+                settings.ModelPath = first;
+                Assert.Equal(mode, settings.PerformanceMode);
+                settings.Save.Execute(null);
+                var restored = new AiSettingsStore(Path.Combine(directory, "settings.json"));
+                using var reopened = new AiModelSettingsViewModel(restored, runtime);
+                Assert.Equal(mode, reopened.PerformanceMode);
+                assistant.Prompt = "test";
+                await assistant.Send.ExecuteAsync();
+                Assert.Equal(mode, runtime.LastSettings.EffectivePerformanceMode);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfTheory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task RepetitionStop_DrainsStreamAndTrimsOnlyTheAffectedChannelBeforeNextRequest(bool isReasoning)
@@ -987,6 +1021,41 @@ public sealed class AiIntegrationTests
     }
 
     [WpfFact]
+    public async Task PerformancePermissionChange_PreservesConversationAndDraft()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (vm, store, runtime, _) = CreateAssistant(directory);
+            using(vm)
+            {
+                vm.Messages.Add(new("user", "keep question"));
+                vm.Messages.Add(new("assistant", "keep answer"));
+                vm.Prompt = "keep draft";
+                foreach(bool enabled in new[] { true, false })
+                {
+                    store.Save(store.Current with { Models = [store.Current.SelectedModel with { AllowPerformanceBoost = enabled }] });
+                    await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                    Assert.Equal(2, vm.Messages.Count);
+                    Assert.Equal("keep draft", vm.Prompt);
+                    Assert.Equal("keep answer", vm.Messages[1].Content);
+                    Assert.False(runtime.IsLoaded);
+                }
+                foreach(var mode in Enum.GetValues<AiPerformanceMode>())
+                {
+                    store.Save(store.Current with { Models = [store.Current.SelectedModel with { PerformanceMode = mode }] });
+                    await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                    Assert.Equal(2, vm.Messages.Count);
+                    Assert.Equal("keep draft", vm.Prompt);
+                    Assert.Equal("keep answer", vm.Messages[1].Content);
+                    Assert.False(runtime.IsLoaded);
+                }
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
     public async Task ModelSettings_InvalidFilePreservesSelectionAndConversation()
     {
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
@@ -1028,7 +1097,7 @@ public sealed class AiIntegrationTests
                 var appearance = new AiChatAppearanceViewModel(store)
                 {
                     FontFamily = "Consolas", FontSize = 20, UserColor = "#123abc", AssistantColor = "#456DEF", ShowMessageBorders = true,
-                    RenderMarkdown = false
+                    RenderMarkdown = false, CodeFontFamily = "Courier New", CodeColor = "#ab1234"
                 };
                 appearance.Save.Execute(null);
                 Assert.True(vm.IsBusy);
@@ -1038,6 +1107,8 @@ public sealed class AiIntegrationTests
                 Assert.Equal("next draft", vm.Prompt);
                 Assert.Single(vm.Attachments);
                 Assert.Equal("#123ABC", vm.Appearance.UserColor);
+                Assert.Equal("Courier New", vm.Appearance.CodeFontFamily);
+                Assert.Equal("#AB1234", vm.Appearance.CodeColor);
                 Assert.False(vm.Appearance.RenderMarkdown);
                 Assert.Equal(vm.Appearance, new AiSettingsStore(Path.Combine(directory, "settings.json")).Current.ChatAppearance);
                 using var settings = new AiModelSettingsViewModel(store, runtime);
@@ -1065,12 +1136,18 @@ public sealed class AiIntegrationTests
                 appearance.Save.Execute(null);
                 Assert.Same(original, store.Current);
                 Assert.NotEmpty(appearance.Status);
+                appearance = new AiChatAppearanceViewModel(store) { CodeColor = "invalid" };
+                appearance.Save.Execute(null);
+                Assert.Same(original, store.Current);
+                appearance = new AiChatAppearanceViewModel(store) { CodeFontFamily = "" };
+                appearance.Save.Execute(null);
+                Assert.Same(original, store.Current);
                 File.WriteAllText(Path.Combine(directory, "old.json"), "{\"Enabled\":true,\"IdleMinutes\":7}");
                 var old = new AiSettingsStore(Path.Combine(directory, "old.json"));
                 Assert.True(old.Current.Enabled);
                 Assert.Equal(7, old.Current.IdleMinutes);
                 Assert.Equal(new AiChatAppearance(), old.Current.ChatAppearance);
-                File.WriteAllText(Path.Combine(directory, "old.json"), "{\"ChatAppearance\":{\"FontFamily\":null,\"UserColor\":null,\"AssistantColor\":\"bad\",\"FontSize\":999}}");
+                File.WriteAllText(Path.Combine(directory, "old.json"), "{\"ChatAppearance\":{\"FontFamily\":null,\"UserColor\":null,\"AssistantColor\":\"bad\",\"FontSize\":999,\"CodeFontFamily\":null,\"CodeColor\":\"bad\"}}");
                 Assert.Equal(new AiChatAppearance(), new AiSettingsStore(Path.Combine(directory, "old.json")).Current.ChatAppearance);
             }
         }

@@ -8,7 +8,7 @@ using System.Threading.Channels;
 
 namespace CryptoBook.AI;
 
-internal static class AiProgram
+internal static partial class AiProgram
 {
     [STAThread]
     public static int Main(string[] args)
@@ -48,9 +48,32 @@ internal static class AiProgram
                     await foreach(var message in messages.Reader.ReadAllAsync().ConfigureAwait(false))
                         await AiWorkerProtocol.WriteAsync(output, message, CancellationToken.None).ConfigureAwait(false);
                 });
+                using var resourceWatchStop = new CancellationTokenSource();
+                long peakGpu = 0;
+                Task resourceWatch = Task.CompletedTask;
                 try
                 {
                     request.Settings.Validate();
+                    if(request.Options.PerformanceBoost && !AiPerformancePolicy.IsAllowed(request.Settings, AiResourceSnapshot.Read()))
+                        throw new AiException("AI.PerformanceConsentRequired");
+                    using var execution = new AiExecutionScope(request.Options.PerformanceBoost, request.Options.PowerSaving);
+                    if(request.ProtectResources || request.Options.PerformanceBoost || request.Command == "benchmark")
+                        resourceWatch = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(200));
+                                while(await timer.WaitForNextTickAsync(resourceWatchStop.Token).ConfigureAwait(false))
+                                {
+                                    var memory = AiMemoryPlanner.ReadGpuMemory();
+                                    peakGpu = Math.Max(peakGpu, memory.Used);
+                                    if(memory.Available >= 256L * 1024 * 1024) continue;
+                                    messages.Writer.TryWrite(new("error", Text: "AI.ResourcePressure"));
+                                    return; // The owner terminates only this worker on this event.
+                                }
+                            }
+                            catch(OperationCanceledException) when(resourceWatchStop.IsCancellationRequested) { }
+                        });
                     if(request.Command == "inspect")
                     {
                         using var vocabulary = await LLamaWeights.LoadFromFileAsync(new ModelParams(request.Settings.ModelPath)
@@ -59,6 +82,13 @@ internal static class AiProgram
                             pair.Key.EndsWith(".embedding_length_per_layer_input", StringComparison.Ordinal)).ToDictionary();
                         var plan = AiMemoryPlanner.Create(request.Settings, vocabulary.Metadata);
                         messages.Writer.TryWrite(new("inspection", Inspection: new(plan, metadata, HardwareKey(plan.GpuName))));
+                    }
+                    else if(request.Command == "benchmark")
+                    {
+                        engine ??= new(request.Options);
+                        var measurement = await BenchmarkAsync(engine, request.Settings, request.Options).ConfigureAwait(false);
+                        measurement = measurement with { PeakGpuBytes = Math.Max(peakGpu, AiMemoryPlanner.ReadGpuMemory().Used) };
+                        messages.Writer.TryWrite(new("measurement", Measurement: measurement));
                     }
                     else if(request.Command is "probe" or "generate")
                     {
@@ -87,6 +117,8 @@ internal static class AiProgram
                         finally { engine.TokenUsageChanged -= ReportUsage; }
                     }
                     else return 2;
+                    resourceWatchStop.Cancel();
+                    await resourceWatch.ConfigureAwait(false);
                     messages.Writer.TryWrite(new("done"));
                 }
                 catch(AiRepetitionException error)
@@ -98,7 +130,12 @@ internal static class AiProgram
                     messages.Writer.TryWrite(new("error", Text: error is AiException ai ? ai.ResourceKey
                         : request.Command == "inspect" ? "AI.LoadFailed" : "AI.GenerationFailed"));
                 }
-                finally { messages.Writer.TryComplete(); await pump.ConfigureAwait(false); }
+                finally
+                {
+                    resourceWatchStop.Cancel();
+                    await resourceWatch.ConfigureAwait(false);
+                    messages.Writer.TryComplete(); await pump.ConfigureAwait(false);
+                }
                 request = null;
             }
         }
@@ -107,7 +144,7 @@ internal static class AiProgram
 
     private static string HardwareKey(string gpuName)
     {
-        string video = "";
+        string video = "", cpu = "";
         try
         {
             using var search = new ManagementObjectSearcher("SELECT Name,PNPDeviceID,DriverVersion FROM Win32_VideoController");
@@ -119,7 +156,18 @@ internal static class AiProgram
             video = string.Join(';', devices.Order(StringComparer.Ordinal));
         }
         catch(Exception error) when(error is ManagementException or COMException or UnauthorizedAccessException) { }
-        return $"{Environment.OSVersion}|{RuntimeInformation.ProcessArchitecture}|{Environment.ProcessorCount}|{AiMemoryPlanner.ReadTotalRam()}|{gpuName}|{video}";
+        try
+        {
+            using var search = new ManagementObjectSearcher("SELECT Name,NumberOfCores,NumberOfLogicalProcessors FROM Win32_Processor");
+            search.Options.Timeout = TimeSpan.FromSeconds(5);
+            using var results = search.Get();
+            var processors = new List<string>();
+            foreach(ManagementObject processor in results)
+                using(processor) processors.Add($"{processor["Name"]}|{processor["NumberOfCores"]}|{processor["NumberOfLogicalProcessors"]}");
+            cpu = string.Join(';', processors.Order(StringComparer.Ordinal));
+        }
+        catch(Exception error) when(error is ManagementException or COMException or UnauthorizedAccessException) { }
+        return $"{Environment.OSVersion}|{RuntimeInformation.ProcessArchitecture}|{Environment.ProcessorCount}|{AiMemoryPlanner.ReadTotalRam()}|{gpuName}|{video}|{cpu}";
     }
     [DllImport("kernel32.dll")]
     private static extern uint SetErrorMode(uint mode);

@@ -18,6 +18,7 @@ using MdTable = Markdig.Extensions.Tables.Table;
 using MdTableCell = Markdig.Extensions.Tables.TableCell;
 using MdTableRow = Markdig.Extensions.Tables.TableRow;
 using WpfBlock = System.Windows.Documents.Block;
+using WpfBrush = System.Windows.Media.Brush;
 using WpfFontFamily = System.Windows.Media.FontFamily;
 using WpfImage = System.Windows.Controls.Image;
 using WpfInline = System.Windows.Documents.Inline;
@@ -45,6 +46,10 @@ namespace CryptoBook.Services
         public FlowDocument Render(
             string markdown,
             string? markdownFilePath)
+            => Render(markdown, markdownFilePath, null, null);
+
+        internal FlowDocument Render(string markdown, string? markdownFilePath,
+            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground)
         {
             var document = new FlowDocument();
             DocumentPageLayout.Apply(document);
@@ -62,7 +67,7 @@ namespace CryptoBook.Services
                 markdown ?? string.Empty,
                 Pipeline);
             var context = new RenderContext(GetSourceDirectory(
-                markdownFilePath));
+                markdownFilePath), codeFontFamily, codeForeground);
             foreach(MdBlock block in parsed)
             {
                 foreach(WpfBlock rendered in RenderBlock(block, context))
@@ -115,20 +120,20 @@ namespace CryptoBook.Services
                 case FencedCodeBlock fenced:
                     yield return RenderCodeBlock(
                         fenced.Lines.ToString(),
-                        fenced.Info);
+                        fenced.Info, context);
                     yield break;
 
                 case CodeBlock code:
                     yield return RenderCodeBlock(
                         code.Lines.ToString(),
-                        null);
+                        null, context);
                     yield break;
 
                 case HtmlBlock html:
                     // Raw HTML is deliberately shown as inert source text.
                     yield return RenderCodeBlock(
                         html.Lines.ToString(),
-                        "html");
+                        "html", context);
                     yield break;
 
                 case LeafBlock leaf when leaf.Inline is not null:
@@ -238,17 +243,19 @@ namespace CryptoBook.Services
 
         private static WpfBlock RenderCodeBlock(
             string code,
-            string? language)
+            string? language,
+            RenderContext context)
         {
             var paragraph = new Paragraph
             {
-                FontFamily = new WpfFontFamily("Cascadia Mono, Consolas"),
+                FontFamily = context.CodeFontFamily ?? new WpfFontFamily("Cascadia Mono, Consolas"),
                 FontSize = 13,
                 BorderThickness = new Thickness(1),
                 Padding = new Thickness(12, 9, 12, 9),
                 Margin = new Thickness(0, 8, 0, 12)
             };
             ApplyBlockSurfaceTheme(paragraph);
+            if(context.CodeForeground is not null) paragraph.Foreground = context.CodeForeground;
             if(!string.IsNullOrWhiteSpace(language))
             {
                 var languageLabel = new Run(language.Trim())
@@ -627,6 +634,6 @@ namespace CryptoBook.Services
             }
         }
 
-        private sealed record RenderContext(string? SourceDirectory);
+        private sealed record RenderContext(string? SourceDirectory, WpfFontFamily? CodeFontFamily, WpfBrush? CodeForeground);
     }
 }

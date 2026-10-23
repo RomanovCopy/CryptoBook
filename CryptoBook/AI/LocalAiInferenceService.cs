@@ -11,6 +11,7 @@ namespace CryptoBook.AI;
 /// <summary>Native engine used inside the isolated AI worker. No network or saved chat.</summary>
 public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsageSource
 {
+    internal AiGenerationTiming? LastTiming { get; private set; }
     private readonly AiRuntimeOptions? runtimeOptions;
     public LocalAiInferenceService() { }
     internal LocalAiInferenceService(AiRuntimeOptions options) => runtimeOptions = options;
@@ -59,8 +60,8 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                 BatchSize = runtimeOptions?.BatchSize ?? 256,
                 UBatchSize = runtimeOptions?.UBatchSize ?? 128,
                 FlashAttention = runtimeOptions?.FlashAttention,
-                Threads = Math.Max(1, Environment.ProcessorCount / 2),
-                BatchThreads = Math.Max(1, Environment.ProcessorCount / 2),
+                Threads = runtimeOptions?.Threads is > 0 ? runtimeOptions.Threads : Math.Max(1, Environment.ProcessorCount / 2),
+                BatchThreads = runtimeOptions?.BatchThreads is > 0 ? runtimeOptions.BatchThreads : Math.Max(1, Environment.ProcessorCount / 2),
                 LoadMode = LLamaLoadMode.MemoryMap,
             };
             if(weights is null || loadedPath != settings.ModelPath || loadedLayers != settings.GpuLayers ||
@@ -116,7 +117,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                 // Keep the vision encoder in RAM so model layers and context can share the GPU budget.
                 visionParameters.UseGpu = false;
                 visionParameters.Warmup = false;
-                visionParameters.NThreads = Math.Max(1, Environment.ProcessorCount / 2);
+                visionParameters.NThreads = parameters.Threads ?? Math.Max(1, Environment.ProcessorCount / 2);
                 try
                 {
                     projector = await MtmdWeights.LoadFromFileAsync(projectorPath, weights, visionParameters, cancellationToken).ConfigureAwait(false);
@@ -168,9 +169,13 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                     void ReportUsage() => TokenUsageChanged?.Invoke(new(settings.ContextLength, inputTokens, generatedTokens));
                     ReportUsage();
                     int outputTokens = settings.OutputTokenLimit(inputTokens);
+                    LastTiming = null;
+                    long samplingStarted = 0, firstToken = 0, lastToken = 0;
                     using var sampling = new TokenCountingPipeline(settings.RepetitionProtection, token =>
                     {
                         if(token.IsEndOfGeneration(weights.Vocab)) return;
+                        lastToken = System.Diagnostics.Stopwatch.GetTimestamp();
+                        if(firstToken == 0) firstToken = lastToken;
                         generatedTokens++;
                         if(Environment.TickCount64 - lastUsageUpdate < 100) return;
                         lastUsageUpdate = Environment.TickCount64;
@@ -192,10 +197,18 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                     }
                     try
                     {
+                        samplingStarted = System.Diagnostics.Stopwatch.GetTimestamp();
                         await AiResponseStream.ReadAsync(generation, onText, onReasoning,
                             AiThinkingFilter.StartsInReasoning(prompt), settings.RepetitionProtection, cancellationToken).ConfigureAwait(false);
                     }
-                    finally { ReportUsage(); }
+                    finally
+                    {
+                        if(firstToken > 0 && samplingStarted > 0)
+                            LastTiming = new(inputTokens, generatedTokens,
+                                System.Diagnostics.Stopwatch.GetElapsedTime(samplingStarted, firstToken).TotalSeconds,
+                                System.Diagnostics.Stopwatch.GetElapsedTime(firstToken, lastToken).TotalSeconds);
+                        ReportUsage();
+                    }
                 }
                 finally
                 {

@@ -1268,6 +1268,7 @@ Author: [Name]
   <data name="AI.AutoReset" xml:space="preserve"><value>Saved profiles removed for this model. The next check will select parameters again.</value></data>
   <data name="AI.AutoSummary" xml:space="preserve"><value>Runtime parameters: context {0}; GPU layers {1}; batch {2}/{3}; Flash Attention {4}.</value></data>
   <data name="AI.AutoDetails" xml:space="preserve"><value>Checks, changes and failure reasons</value></data>
+  <data name="AI.RuntimeInfo" xml:space="preserve"><value>Model runtime</value></data>
   <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Allow Automatic mode to reduce context when necessary. The actual context and limitations will be shown.</value></data>
   <data name="AI.AutoRetune" xml:space="preserve"><value>Retune</value></data>
   <data name="AI.AutoNoGpu" xml:space="preserve"><value>no suitable GPU budget</value></data>
@@ -1279,6 +1280,9 @@ Author: [Name]
   <data name="AI.Appearance" xml:space="preserve"><value>Chat appearance</value></data>
   <data name="AI.ChatFont" xml:space="preserve"><value>Font</value></data>
   <data name="AI.ChatFontSize" xml:space="preserve"><value>Font size</value></data>
+  <data name="AI.CodeFont" xml:space="preserve"><value>Code block font</value></data>
+  <data name="AI.CodeColor" xml:space="preserve"><value>Code block text color</value></data>
+  <data name="AI.CodeColorHint" xml:space="preserve"><value>Use … to choose a color or enter #RRGGBB. Leave empty to use the message text color.</value></data>
   <data name="AI.UserColor" xml:space="preserve"><value>Question text color</value></data>
   <data name="AI.AssistantColor" xml:space="preserve"><value>Answer text color</value></data>
   <data name="AI.ColorHint" xml:space="preserve"><value>Use … to choose a color or enter #RRGGBB. Leave empty to follow the theme.</value></data>
@@ -1320,4 +1324,42 @@ Author: [Name]
   <data name="Editor.InsertColumnRight" xml:space="preserve"><value>Insert column right</value></data>
   <data name="Editor.DeleteRow" xml:space="preserve"><value>Delete row</value></data>
   <data name="Editor.DeleteColumn" xml:space="preserve"><value>Delete column</value></data>
+  <data name="AI.PerformanceSection" xml:space="preserve"><value>AI performance</value></data>
+  <data name="AI.PerformancePermission" xml:space="preserve"><value>Allow increased load during generation</value></data>
+  <data name="AI.PerformanceHint" xml:space="preserve"><value>Optimal mode may increase heat, fan noise and power use. The selected mode takes effect after saving settings.</value></data>
+  <data name="AI.PerformanceOnlyOnAc" xml:space="preserve"><value>Increased load only while plugged in</value></data>
+  <data name="AI.PerformanceTest" xml:space="preserve"><value>Find optimal mode</value></data>
+  <data name="AI.PerformanceTestHint" xml:space="preserve"><value>The test temporarily increases load and compares modes using sample text. Up to 6 minutes; can be stopped. Model context stays unchanged. Use Stop to cancel.</value></data>
+  <data name="AI.PerformanceNotTested" xml:space="preserve"><value>No measurement for optimal mode with these settings yet. Optimal mode uses balanced settings until a successful test.</value></data>
+  <data name="AI.PerformancePreparing" xml:space="preserve"><value>Preparing performance test…</value></data>
+  <data name="AI.PerformanceTrial" xml:space="preserve"><value>Test {0} of {1}: generation threads {2}, prompt threads {3}.</value></data>
+  <data name="AI.PerformanceMeasured" xml:space="preserve"><value>Prompt: {0:F1} tok/s; generation: {1:F1} tok/s. Peak RAM: {2} MB; GPU memory: {3} MB.</value></data>
+  <data name="AI.PerformanceTrialFailed" xml:space="preserve"><value>This mode failed or timed out; testing the next one.</value></data>
+  <data name="AI.PerformanceSelected" xml:space="preserve"><value>Faster profile selected: measured gain {0:F1}%.</value></data>
+  <data name="AI.PerformanceNoGain" xml:space="preserve"><value>No meaningful speedup — normal mode selected.</value></data>
+  <data name="AI.PerformanceGain" xml:space="preserve"><value>Measured gain: {0:F1}%.</value></data>
+  <data name="AI.PerformanceDone" xml:space="preserve"><value>Optimal profile saved. Click Save to apply the selected mode.</value></data>
+  <data name="AI.PerformanceResult" xml:space="preserve"><value>Last test: {0:g}
+Normal — prompt {1:F1}, generation {2:F1} tok/s.
+Selected — prompt {3:F1}, generation {4:F1} tok/s.
+Peak RAM: {5} MB; GPU memory: {6} MB.
+{7}</value></data>
+  <data name="AI.PerformanceConsentRequired" xml:space="preserve"><value>Select optimal mode before testing. Plug in if the AC-only option is enabled.</value></data>
+  <data name="AI.ResourcePressure" xml:space="preserve"><value>Not enough free memory for safe AI operation. AI was stopped; other programs are not closed. Free memory or choose a smaller model.</value></data>
+  <data name="AI.ResourceGuardUnavailable" xml:space="preserve"><value>Could not enable AI resource limits. Increased load was cancelled.</value></data>
+  <data name="AI.PerformancePowerChanged" xml:space="preserve"><value>AC power was disconnected. Increased AI load was stopped.</value></data>
+  <data name="AI.PerformanceTooShort" xml:space="preserve"><value>The model produced too few tokens for a reliable speed measurement. Profile unchanged.</value></data>
+  <data name="AI.PerformanceTimeout" xml:space="preserve"><value>The test exceeded 6 minutes. Previous profile retained; choose a smaller model or try again.</value></data>
+  <data name="AI.PerformanceUsing" xml:space="preserve"><value>Using the performance profile with resource limits.</value></data>
+  <data name="AI.PerformanceTrialTimeout" xml:space="preserve"><value>The baseline trial exceeded 90 seconds. Previous profile retained; choose a smaller model or try again.</value></data>
+  <data name="AI.PerformanceFallback" xml:space="preserve"><value>Increased load is unavailable. Continuing in normal mode.</value></data>
+  <data name="AI.PerformanceModeLabel" xml:space="preserve"><value>Performance mode</value></data>
+  <data name="AI.PerformanceMode.Balanced" xml:space="preserve"><value>Balanced</value></data>
+  <data name="AI.PerformanceMode.PowerSaving" xml:space="preserve"><value>Power saving</value></data>
+  <data name="AI.PerformanceMode.Optimal" xml:space="preserve"><value>Optimal (measured)</value></data>
+  <data name="AI.PerformanceModeHint.Balanced" xml:space="preserve"><value>Standard CPU parallelism and Windows scheduling. Uses half the logical processors for generation and prompt processing.</value></data>
+  <data name="AI.PerformanceModeHint.PowerSaving" xml:space="preserve"><value>Uses a quarter of the logical processors and requests energy-efficient scheduling for the AI worker. Replies may take longer. GPU layers and context stay unchanged; GPU power is not capped.</value></data>
+  <data name="AI.PerformanceModeHint.Optimal" xml:space="preserve"><value>Find optimal mode compares CPU settings on this model and computer. A measured gain of at least 5% enables the faster profile; otherwise balanced settings are used. The AC-only option uses balanced settings on battery.</value></data>
+  <data name="AI.InvalidPerformanceMode" xml:space="preserve"><value>Unknown AI performance mode.</value></data>
+  <data name="AI.RuntimePerformance" xml:space="preserve"><value>Performance: {0}. Generation threads: {1}; prompt threads: {2}.</value></data>
 </root>

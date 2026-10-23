@@ -35,6 +35,11 @@ public partial class AiModelSettingsWindow : Window
         if(DataContext is AiModelSettingsViewModel viewModel) viewModel.ReportInvalidInput();
         return false;
     }
+    private void PerformanceTestWindow(object sender, RoutedEventArgs e)
+    {
+        if(CommitInputs() && DataContext is AiModelSettingsViewModel viewModel && viewModel.PerformanceTest.CanExecute(null))
+            viewModel.PerformanceTest.Execute(null);
+    }
     private static bool HasValidationError(DependencyObject element)
     {
         if(Validation.GetHasError(element)) return true;
