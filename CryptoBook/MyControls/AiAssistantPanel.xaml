@@ -153,6 +153,8 @@
                                              Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=StackPanel}}"
                                              behaviors:AiChatMarkdownBehavior.Text="{Binding Content, Mode=OneWay}"
                                              behaviors:AiChatMarkdownBehavior.RenderMarkdown="{Binding DataContext.Appearance.RenderMarkdown, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                             behaviors:AiChatMarkdownBehavior.CodeFontFamily="{Binding DataContext.Appearance.CodeFontFamily, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                             behaviors:AiChatMarkdownBehavior.CodeColor="{Binding DataContext.Appearance.CodeColor, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                              behaviors:HyperlinkCommandBehavior.Command="{Binding DataContext.OpenHyperlink, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                 <ItemsControl ItemsSource="{Binding Attachments}" ItemTemplate="{StaticResource AttachmentCard}" Margin="0,8,0,0">
                                     <ItemsControl.Style><Style TargetType="ItemsControl"><Style.Triggers><Trigger Property="HasItems" Value="False"><Setter Property="Visibility" Value="Collapsed"/></Trigger></Style.Triggers></Style></ItemsControl.Style>

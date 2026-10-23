@@ -2131,6 +2131,9 @@
   <data name="AI.Appearance" xml:space="preserve"><value>Оформлення чату</value></data>
   <data name="AI.ChatFont" xml:space="preserve"><value>Шрифт</value></data>
   <data name="AI.ChatFontSize" xml:space="preserve"><value>Розмір шрифту</value></data>
+  <data name="AI.CodeFont" xml:space="preserve"><value>Шрифт блоків коду</value></data>
+  <data name="AI.CodeColor" xml:space="preserve"><value>Колір тексту блоків коду</value></data>
+  <data name="AI.CodeColorHint" xml:space="preserve"><value>Виберіть колір через … або введіть #RRGGBB. Порожнє поле — колір тексту повідомлення.</value></data>
   <data name="AI.UserColor" xml:space="preserve"><value>Колір тексту запитань</value></data>
   <data name="AI.AssistantColor" xml:space="preserve"><value>Колір тексту відповідей</value></data>
   <data name="AI.ColorHint" xml:space="preserve"><value>Натисніть … для вибору кольору або введіть #RRGGBB. Порожнє поле — колір поточної теми.</value></data>

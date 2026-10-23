@@ -4,8 +4,11 @@ namespace CryptoBook.AI;
 
 public sealed record AiChatAppearance
 {
+    internal const string DefaultCodeFontFamily = "Cascadia Mono, Consolas";
     public string FontFamily { get; init; } = "Segoe UI";
     public double FontSize { get; init; } = 14;
+    public string CodeFontFamily { get; init; } = DefaultCodeFontFamily;
+    public string CodeColor { get; init; } = "";
     // Empty colors follow the active theme.
     public string UserColor { get; init; } = "";
     public string AssistantColor { get; init; } = "";
@@ -18,6 +21,8 @@ public sealed record AiChatAppearance
     {
         FontFamily = string.IsNullOrWhiteSpace(FontFamily) || FontFamily.Length > 200 ? "Segoe UI" : FontFamily,
         FontSize = double.IsFinite(FontSize) && FontSize is >= 8 and <= 40 ? FontSize : 14,
+        CodeFontFamily = string.IsNullOrWhiteSpace(CodeFontFamily) || CodeFontFamily.Length > 200 ? DefaultCodeFontFamily : CodeFontFamily,
+        CodeColor = ValidColor(CodeColor) ? CodeColor.ToUpperInvariant() : "",
         UserColor = ValidColor(UserColor) ? UserColor.ToUpperInvariant() : "",
         AssistantColor = ValidColor(AssistantColor) ? AssistantColor.ToUpperInvariant() : ""
     };

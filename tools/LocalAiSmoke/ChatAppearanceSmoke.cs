@@ -137,6 +137,11 @@ internal static class ChatAppearanceSmoke
             var settingsVm = new AiChatAppearanceViewModel(store);
             var window = new AiChatAppearanceWindow(settingsVm) { ShowInTaskbar = false, ShowActivated = false };
             window.Show();
+            ((ComboBox)window.FindName("CodeFontBox")).SelectedItem = "Courier New";
+            var codeColor = (TextBox)window.FindName("CodeColorBox");
+            codeColor.Text = "#a060d0";
+            codeColor.BringIntoView();
+            UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "appearance-code-settings.png"));
             var checkbox = (CheckBox)window.FindName("RenderMarkdownCheckBox");
             Check(checkbox.IsChecked == !enabled, "The Markdown checkbox did not restore the saved value.");
             checkbox.BringIntoView();
@@ -148,6 +153,14 @@ internal static class ChatAppearanceSmoke
             Check(!window.IsVisible && new AiSettingsStore(Path.Combine(outputDirectory, "settings.json")).Current.ChatAppearance.RenderMarkdown == enabled,
                 "The Markdown choice was not persisted.");
             Check(Read(viewer).Contains("**") != enabled, "Switching Markdown did not update the current message.");
+            var persisted = new AiSettingsStore(Path.Combine(outputDirectory, "settings.json")).Current.ChatAppearance;
+            Check(persisted.CodeFontFamily == "Courier New" && persisted.CodeColor == "#A060D0", "Code appearance was not persisted.");
+            if(enabled)
+            {
+                WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+                    paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground.ToString() == "#FFA060D0"));
+                UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-custom-code-light.png"));
+            }
             assistant.UpdateContextBudget();
             Check(assistant.Messages[1].Content == source && assistant.RemainingTokens == tokens,
                 "Markdown rendering changed the source message or token budget.");

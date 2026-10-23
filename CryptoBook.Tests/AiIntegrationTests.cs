@@ -1028,7 +1028,7 @@ public sealed class AiIntegrationTests
                 var appearance = new AiChatAppearanceViewModel(store)
                 {
                     FontFamily = "Consolas", FontSize = 20, UserColor = "#123abc", AssistantColor = "#456DEF", ShowMessageBorders = true,
-                    RenderMarkdown = false
+                    RenderMarkdown = false, CodeFontFamily = "Courier New", CodeColor = "#ab1234"
                 };
                 appearance.Save.Execute(null);
                 Assert.True(vm.IsBusy);
@@ -1038,6 +1038,8 @@ public sealed class AiIntegrationTests
                 Assert.Equal("next draft", vm.Prompt);
                 Assert.Single(vm.Attachments);
                 Assert.Equal("#123ABC", vm.Appearance.UserColor);
+                Assert.Equal("Courier New", vm.Appearance.CodeFontFamily);
+                Assert.Equal("#AB1234", vm.Appearance.CodeColor);
                 Assert.False(vm.Appearance.RenderMarkdown);
                 Assert.Equal(vm.Appearance, new AiSettingsStore(Path.Combine(directory, "settings.json")).Current.ChatAppearance);
                 using var settings = new AiModelSettingsViewModel(store, runtime);
@@ -1065,12 +1067,18 @@ public sealed class AiIntegrationTests
                 appearance.Save.Execute(null);
                 Assert.Same(original, store.Current);
                 Assert.NotEmpty(appearance.Status);
+                appearance = new AiChatAppearanceViewModel(store) { CodeColor = "invalid" };
+                appearance.Save.Execute(null);
+                Assert.Same(original, store.Current);
+                appearance = new AiChatAppearanceViewModel(store) { CodeFontFamily = "" };
+                appearance.Save.Execute(null);
+                Assert.Same(original, store.Current);
                 File.WriteAllText(Path.Combine(directory, "old.json"), "{\"Enabled\":true,\"IdleMinutes\":7}");
                 var old = new AiSettingsStore(Path.Combine(directory, "old.json"));
                 Assert.True(old.Current.Enabled);
                 Assert.Equal(7, old.Current.IdleMinutes);
                 Assert.Equal(new AiChatAppearance(), old.Current.ChatAppearance);
-                File.WriteAllText(Path.Combine(directory, "old.json"), "{\"ChatAppearance\":{\"FontFamily\":null,\"UserColor\":null,\"AssistantColor\":\"bad\",\"FontSize\":999}}");
+                File.WriteAllText(Path.Combine(directory, "old.json"), "{\"ChatAppearance\":{\"FontFamily\":null,\"UserColor\":null,\"AssistantColor\":\"bad\",\"FontSize\":999,\"CodeFontFamily\":null,\"CodeColor\":\"bad\"}}");
                 Assert.Equal(new AiChatAppearance(), new AiSettingsStore(Path.Combine(directory, "old.json")).Current.ChatAppearance);
             }
         }

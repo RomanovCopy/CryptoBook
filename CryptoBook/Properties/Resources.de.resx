@@ -1280,6 +1280,9 @@ Autor: [Name]
   <data name="AI.Appearance" xml:space="preserve"><value>Chatdarstellung</value></data>
   <data name="AI.ChatFont" xml:space="preserve"><value>Schriftart</value></data>
   <data name="AI.ChatFontSize" xml:space="preserve"><value>Schriftgröße</value></data>
+  <data name="AI.CodeFont" xml:space="preserve"><value>Schriftart für Codeblöcke</value></data>
+  <data name="AI.CodeColor" xml:space="preserve"><value>Textfarbe für Codeblöcke</value></data>
+  <data name="AI.CodeColorHint" xml:space="preserve"><value>Mit … eine Farbe wählen oder #RRGGBB eingeben. Leer bedeutet die Textfarbe der Nachricht.</value></data>
   <data name="AI.UserColor" xml:space="preserve"><value>Textfarbe der Fragen</value></data>
   <data name="AI.AssistantColor" xml:space="preserve"><value>Textfarbe der Antworten</value></data>
   <data name="AI.ColorHint" xml:space="preserve"><value>Mit … eine Farbe wählen oder #RRGGBB eingeben. Leer bedeutet die Farbe des aktuellen Designs.</value></data>

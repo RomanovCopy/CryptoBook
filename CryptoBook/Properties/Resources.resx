@@ -1280,6 +1280,9 @@ Author: [Name]
   <data name="AI.Appearance" xml:space="preserve"><value>Chat appearance</value></data>
   <data name="AI.ChatFont" xml:space="preserve"><value>Font</value></data>
   <data name="AI.ChatFontSize" xml:space="preserve"><value>Font size</value></data>
+  <data name="AI.CodeFont" xml:space="preserve"><value>Code block font</value></data>
+  <data name="AI.CodeColor" xml:space="preserve"><value>Code block text color</value></data>
+  <data name="AI.CodeColorHint" xml:space="preserve"><value>Use … to choose a color or enter #RRGGBB. Leave empty to use the message text color.</value></data>
   <data name="AI.UserColor" xml:space="preserve"><value>Question text color</value></data>
   <data name="AI.AssistantColor" xml:space="preserve"><value>Answer text color</value></data>
   <data name="AI.ColorHint" xml:space="preserve"><value>Use … to choose a color or enter #RRGGBB. Leave empty to follow the theme.</value></data>

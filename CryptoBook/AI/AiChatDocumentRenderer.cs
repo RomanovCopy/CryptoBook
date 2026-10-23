@@ -11,13 +11,17 @@ internal static class AiChatDocumentRenderer
 {
     private static readonly MarkdownFlowDocumentRenderer Markdown = new();
 
-    internal static FlowDocument Render(string source, bool renderMarkdown, FontFamily fontFamily, double fontSize, Brush foreground)
+    internal static FlowDocument Render(string source, bool renderMarkdown, FontFamily fontFamily, double fontSize, Brush foreground,
+        string? codeFontFamily = null, string? codeColor = null)
     {
         FlowDocument document;
         try
         {
             // A chat has no source directory: Markdown images cannot read local files or fetch URLs.
-            document = renderMarkdown ? Markdown.Render(source, null) : PlainText(source);
+            var codeFont = string.IsNullOrWhiteSpace(codeFontFamily) ? null : new FontFamily(codeFontFamily);
+            var codeForeground = AiChatAppearance.ValidColor(codeColor)
+                ? (Brush?)new System.Windows.Media.BrushConverter().ConvertFromInvariantString(codeColor!) : null;
+            document = renderMarkdown ? Markdown.Render(source, null, codeFont, codeForeground) : PlainText(source);
         }
         catch(Exception error) when(error is ArgumentException or InvalidOperationException or NotSupportedException or FormatException)
         {
