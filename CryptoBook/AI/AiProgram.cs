@@ -56,7 +56,7 @@ internal static partial class AiProgram
                     request.Settings.Validate();
                     if(request.Options.PerformanceBoost && !AiPerformancePolicy.IsAllowed(request.Settings, AiResourceSnapshot.Read()))
                         throw new AiException("AI.PerformanceConsentRequired");
-                    using var execution = new AiExecutionScope(request.Options.PerformanceBoost);
+                    using var execution = new AiExecutionScope(request.Options.PerformanceBoost, request.Options.PowerSaving);
                     if(request.ProtectResources || request.Options.PerformanceBoost || request.Command == "benchmark")
                         resourceWatch = Task.Run(async () =>
                         {

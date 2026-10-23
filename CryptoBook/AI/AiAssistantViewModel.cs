@@ -404,7 +404,8 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
             return;
         var currentModel = store.Current.SelectedModel;
         if(previous.Enabled == store.Current.Enabled && (previous.SelectedModel with
-            { AllowPerformanceBoost = currentModel.AllowPerformanceBoost, BoostOnlyOnAc = currentModel.BoostOnlyOnAc }) == currentModel)
+            { AllowPerformanceBoost = currentModel.AllowPerformanceBoost, PerformanceMode = currentModel.PerformanceMode,
+                BoostOnlyOnAc = currentModel.BoostOnlyOnAc }) == currentModel)
         {
             // Resource permission does not change the conversation or its prompt parameters.
             cancellation?.Cancel();

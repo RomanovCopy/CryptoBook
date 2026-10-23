@@ -23,17 +23,21 @@ internal static class PerformanceSettingsSmoke
         using var viewModel = new AiModelSettingsViewModel(store, runtime);
         var window = new AiModelSettingsWindow(viewModel);
         window.Show(); window.UpdateLayout();
-        var permission = (CheckBox)window.FindName("BoostPermissionCheckBox");
+        var mode = (ComboBox)window.FindName("PerformanceModeBox");
+        var onlyAc = (CheckBox)window.FindName("BoostOnlyOnAcCheckBox");
         var test = (Button)window.FindName("PerformanceTestButton");
-        Check(permission.IsChecked == false && !test.IsEnabled, "Consent must default to off.");
-        Toggle(permission);
+        Check((AiPerformanceMode)mode.SelectedValue == AiPerformanceMode.Balanced && !test.IsEnabled, "Must default to balanced mode.");
+        mode.SelectedValue = AiPerformanceMode.PowerSaving;
+        PumpUntil(() => viewModel.PerformanceMode == AiPerformanceMode.PowerSaving);
+        Check(!test.IsEnabled && !onlyAc.IsEnabled, "Power saving must not enable calibration or boost controls.");
+        mode.SelectedValue = AiPerformanceMode.Optimal;
         PumpUntil(() => test.IsEnabled);
-        Check(!store.Current.SelectedModel.AllowPerformanceBoost, "Draft consent was saved automatically.");
+        Check(store.Current.SelectedModel.EffectivePerformanceMode == AiPerformanceMode.Balanced, "Draft mode was saved automatically.");
         Invoke(test);
         PumpUntil(() => viewModel.IsBusy);
         PumpUntil(() => !viewModel.PerformanceTest.IsRunning);
         Check(runtime.GetLastPerformance(store.Current.SelectedModel)?.BoostSelected == true, "No measured profile was saved.");
-        Check(!store.Current.SelectedModel.AllowPerformanceBoost, "Testing silently enabled generation boost.");
+        Check(store.Current.SelectedModel.EffectivePerformanceMode == AiPerformanceMode.Balanced, "Testing silently changed the saved mode.");
         ((FrameworkElement)test.Parent).BringIntoView();
         UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "performance-light.png"));
         app.Resources.MergedDictionaries.Add(new ResourceDictionary
@@ -51,21 +55,20 @@ internal static class PerformanceSettingsSmoke
         Invoke((Button)window.FindName("SaveModelButton"));
         PumpUntil(() => !window.IsVisible);
         var restored = new AiSettingsStore(Path.Combine(outputDirectory, "settings.json"));
-        Check(restored.Current.SelectedModel.AllowPerformanceBoost && restored.Current.SelectedModel.BoostOnlyOnAc,
-            "Saved permission or power constraint was lost.");
+        Check(restored.Current.SelectedModel.EffectivePerformanceMode == AiPerformanceMode.Optimal && restored.Current.SelectedModel.BoostOnlyOnAc,
+            "Saved mode or power constraint was lost.");
         using var reopened = new AiModelSettingsViewModel(restored, runtime);
+        Check(reopened.PerformanceMode == AiPerformanceMode.Optimal, "Saved mode is not shown after reopening.");
         Check(reopened.PerformanceSummary.Contains("Обычный режим"), "Persisted result is not shown after reopening.");
         File.WriteAllText(Path.Combine(outputDirectory, "result.json"), JsonSerializer.Serialize(new
         {
-            passed = true, uses_native_model = false, consent_default_off = true,
-            test_does_not_save_consent = true, cancellation_passed = true, saved_and_reopened = true,
+            passed = true, uses_native_model = false, balanced_default = true, power_saving_controls = true,
+            test_does_not_save_mode = true, cancellation_passed = true, saved_and_reopened = true,
             note = "Real WPF controls and commands; deterministic benchmark worker, no user settings or model required."
         }, new JsonSerializerOptions { WriteIndented = true }));
         app.Shutdown();
         Console.WriteLine("AI performance settings UI passed: " + outputDirectory);
     }
-    private static void Toggle(CheckBox checkBox) => ((IToggleProvider)new CheckBoxAutomationPeer(checkBox)
-        .GetPattern(PatternInterface.Toggle)).Toggle();
     private static void Invoke(Button button)
     {
         Check(button.IsEnabled, "Target button is disabled.");

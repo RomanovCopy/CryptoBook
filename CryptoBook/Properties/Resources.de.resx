@@ -1326,11 +1326,11 @@ Autor: [Name]
   <data name="Editor.DeleteColumn" xml:space="preserve"><value>Spalte löschen</value></data>
   <data name="AI.PerformanceSection" xml:space="preserve"><value>KI-Leistung</value></data>
   <data name="AI.PerformancePermission" xml:space="preserve"><value>Erhöhte Last beim Generieren erlauben</value></data>
-  <data name="AI.PerformanceHint" xml:space="preserve"><value>Kann Antworten beschleunigen, Wärme, Lüftergeräusche und Stromverbrauch erhöhen und andere Apps verlangsamen. CryptoBook reserviert Speicher und schließt keine anderen Programme. Die Erlaubnis gilt nach dem Speichern.</value></data>
+  <data name="AI.PerformanceHint" xml:space="preserve"><value>Der optimale Modus kann Wärme, Lüftergeräusche und Stromverbrauch erhöhen. Der gewählte Modus gilt nach dem Speichern der Einstellungen.</value></data>
   <data name="AI.PerformanceOnlyOnAc" xml:space="preserve"><value>Erhöhte Last nur im Netzbetrieb</value></data>
-  <data name="AI.PerformanceTest" xml:space="preserve"><value>Leistung testen</value></data>
+  <data name="AI.PerformanceTest" xml:space="preserve"><value>Optimalen Modus ermitteln</value></data>
   <data name="AI.PerformanceTestHint" xml:space="preserve"><value>Der Test erhöht vorübergehend die Last und vergleicht Modi mit Beispieltext. Bis zu 6 Minuten; stoppbar. Der Modellkontext bleibt unverändert. Mit Stopp abbrechen.</value></data>
-  <data name="AI.PerformanceNotTested" xml:space="preserve"><value>Für diese Einstellungen liegt noch kein Test vor. Bis zum erfolgreichen Test gilt der normale Modus.</value></data>
+  <data name="AI.PerformanceNotTested" xml:space="preserve"><value>Für diese Einstellungen liegt noch keine Messung vor. Der optimale Modus verwendet bis zu einem erfolgreichen Test ausgewogene Einstellungen.</value></data>
   <data name="AI.PerformancePreparing" xml:space="preserve"><value>Leistungstest wird vorbereitet…</value></data>
   <data name="AI.PerformanceTrial" xml:space="preserve"><value>Test {0} von {1}: Generierungs-Threads {2}, Eingabe-Threads {3}.</value></data>
   <data name="AI.PerformanceMeasured" xml:space="preserve"><value>Eingabe: {0:F1} Tok/s; Generierung: {1:F1} Tok/s. RAM-Spitze: {2} MB; GPU-Speicher: {3} MB.</value></data>
@@ -1338,13 +1338,13 @@ Autor: [Name]
   <data name="AI.PerformanceSelected" xml:space="preserve"><value>Schnelleres Profil gewählt: gemessener Gewinn {0:F1}%.</value></data>
   <data name="AI.PerformanceNoGain" xml:space="preserve"><value>Keine wesentliche Beschleunigung — normaler Modus gewählt.</value></data>
   <data name="AI.PerformanceGain" xml:space="preserve"><value>Gemessener Gewinn: {0:F1}%.</value></data>
-  <data name="AI.PerformanceDone" xml:space="preserve"><value>Test abgeschlossen. Ergebnis gespeichert; mit Speichern die Erlaubnis übernehmen.</value></data>
+  <data name="AI.PerformanceDone" xml:space="preserve"><value>Optimales Profil gespeichert. Mit Speichern den gewählten Modus übernehmen.</value></data>
   <data name="AI.PerformanceResult" xml:space="preserve"><value>Letzter Test: {0:g}
 Normal — Eingabe {1:F1}, Generierung {2:F1} Tok/s.
 Gewählt — Eingabe {3:F1}, Generierung {4:F1} Tok/s.
 RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
 {7}</value></data>
-  <data name="AI.PerformanceConsentRequired" xml:space="preserve"><value>Vor dem Test erhöhte Last erlauben. Bei aktivierter Netzbetrieb-Option Netzteil anschließen.</value></data>
+  <data name="AI.PerformanceConsentRequired" xml:space="preserve"><value>Vor dem Test den optimalen Modus wählen. Bei aktivierter Netzbetrieb-Option Netzteil anschließen.</value></data>
   <data name="AI.ResourcePressure" xml:space="preserve"><value>Nicht genug freier Speicher für sicheren KI-Betrieb. Die KI wurde gestoppt; andere Programme werden nicht geschlossen. Speicher freigeben oder kleineres Modell wählen.</value></data>
   <data name="AI.ResourceGuardUnavailable" xml:space="preserve"><value>KI-Ressourcenlimits konnten nicht aktiviert werden. Erhöhte Last abgebrochen.</value></data>
   <data name="AI.PerformancePowerChanged" xml:space="preserve"><value>Netzstrom getrennt. Erhöhte KI-Last gestoppt.</value></data>
@@ -1353,4 +1353,13 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="AI.PerformanceUsing" xml:space="preserve"><value>Leistungsprofil mit Ressourcenlimits wird verwendet.</value></data>
   <data name="AI.PerformanceTrialTimeout" xml:space="preserve"><value>Der normale Modus benötigte mehr als 90 Sekunden. Vorheriges Profil bleibt erhalten; kleineres Modell wählen oder erneut testen.</value></data>
   <data name="AI.PerformanceFallback" xml:space="preserve"><value>Erhöhte Last ist nicht verfügbar. Fortsetzung im normalen Modus.</value></data>
+  <data name="AI.PerformanceModeLabel" xml:space="preserve"><value>Leistungsmodus</value></data>
+  <data name="AI.PerformanceMode.Balanced" xml:space="preserve"><value>Ausgewogen</value></data>
+  <data name="AI.PerformanceMode.PowerSaving" xml:space="preserve"><value>Energiesparend</value></data>
+  <data name="AI.PerformanceMode.Optimal" xml:space="preserve"><value>Optimal (gemessen)</value></data>
+  <data name="AI.PerformanceModeHint.Balanced" xml:space="preserve"><value>Standardmäßige CPU-Parallelität und Windows-Planung. Nutzt die Hälfte der logischen Prozessoren für Generierung und Prompt-Verarbeitung.</value></data>
+  <data name="AI.PerformanceModeHint.PowerSaving" xml:space="preserve"><value>Nutzt ein Viertel der logischen Prozessoren und fordert energiesparende Planung für den KI-Prozess an. Antworten können länger dauern. GPU-Schichten und Kontext bleiben erhalten; die GPU-Leistung wird nicht begrenzt.</value></data>
+  <data name="AI.PerformanceModeHint.Optimal" xml:space="preserve"><value>Der Test vergleicht CPU-Einstellungen für dieses Modell und diesen Computer. Ab 5% gemessenem Gewinn wird das schnellere Profil verwendet, sonst ausgewogene Einstellungen. Die Netzbetrieb-Option verwendet im Akkubetrieb ausgewogene Einstellungen.</value></data>
+  <data name="AI.InvalidPerformanceMode" xml:space="preserve"><value>Unbekannter KI-Leistungsmodus.</value></data>
+  <data name="AI.RuntimePerformance" xml:space="preserve"><value>Leistung: {0}. Generierungs-Threads: {1}; Prompt-Threads: {2}.</value></data>
 </root>

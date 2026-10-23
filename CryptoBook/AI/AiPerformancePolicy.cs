@@ -65,7 +65,13 @@ internal readonly record struct AiResourceSnapshot(long TotalRam, long Available
 internal static class AiPerformancePolicy
 {
     internal static bool IsAllowed(AiModelSettings settings, AiResourceSnapshot resources) =>
-        settings.AllowPerformanceBoost && (!settings.BoostOnlyOnAc || resources.OnAc);
+        settings.EffectivePerformanceMode == AiPerformanceMode.Optimal && (!settings.BoostOnlyOnAc || resources.OnAc);
+
+    internal static AiRuntimeOptions ApplyMode(AiRuntimeOptions options, AiModelSettings settings, int processors) =>
+        settings.EffectivePerformanceMode == AiPerformanceMode.PowerSaving
+            ? options with { Threads = Math.Max(1, processors / 4), BatchThreads = Math.Max(1, processors / 4),
+                PerformanceBoost = false, PowerSaving = true }
+            : options;
 
     internal static IReadOnlyList<AiRuntimeOptions> Candidates(AiRuntimeOptions baseline, int processors)
     {

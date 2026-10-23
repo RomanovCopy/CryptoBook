@@ -57,19 +57,21 @@ public sealed class AiWorkerSafetyTests
         finally { if(!independent.HasExited) { independent.Kill(); await independent.WaitForExitAsync(); } }
     }
 
-    [Fact]
-    public void QosScope_RestoresPreviousProcessPolicy()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void QosScope_RestoresPreviousProcessPolicy(bool powerSaving)
     {
         using var process = Process.GetCurrentProcess();
         var previousPriority = process.PriorityClass;
         var before = new PowerPolicy { Version = 1 };
         if(!GetProcessInformation(process.Handle, 4, ref before, Marshal.SizeOf<PowerPolicy>())) return;
-        using(new AiExecutionScope(true))
+        using(new AiExecutionScope(!powerSaving, powerSaving))
         {
             var active = new PowerPolicy { Version = 1 };
             Assert.True(GetProcessInformation(process.Handle, 4, ref active, Marshal.SizeOf<PowerPolicy>()));
             Assert.Equal(1u, active.ControlMask & 1);
-            Assert.Equal(0u, active.StateMask & 1);
+            Assert.Equal(powerSaving ? 1u : 0u, active.StateMask & 1);
             Assert.Equal(previousPriority, process.PriorityClass);
         }
         var after = new PowerPolicy { Version = 1 };

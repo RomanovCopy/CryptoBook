@@ -7,6 +7,7 @@ using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 namespace CryptoBook.AI;
 
 public sealed record AiMemoryOption(AiMemoryMode Value, string DisplayName);
+public sealed record AiPerformanceOption(AiPerformanceMode Value, string DisplayName);
 
 public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
 {
@@ -74,7 +75,8 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(ModelPath), nameof(ContextLength), nameof(MaxTokens), nameof(Temperature),
                 nameof(GpuLayers), nameof(UseReasoning), nameof(RepetitionProtection), nameof(SystemPrompt), nameof(RecentModels), nameof(SelectedRecentModel),
                 nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(IsAutomaticMemoryMode), nameof(AutoReduceContext), nameof(MemoryDescription),
-                nameof(AllowPerformanceBoost), nameof(BoostOnlyOnAc), nameof(CanPerformanceTest));
+                nameof(PerformanceMode), nameof(PerformanceDescription), nameof(IsOptimalPerformanceMode),
+                nameof(BoostOnlyOnAc), nameof(CanPerformanceTest));
             RefreshPerformance();
             Test?.RaiseCanExecuteChanged();
             Retune?.RaiseCanExecuteChanged();
@@ -103,18 +105,23 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     public bool IsManualMemoryMode => MemoryMode == AiMemoryMode.Manual;
     public bool IsAutomaticMemoryMode => MemoryMode == AiMemoryMode.Automatic;
     public bool AutoReduceContext { get => parameters.AutoReduceContext; set { parameters = parameters with { AutoReduceContext = value }; OnPropertyChanged(); } }
-    public bool AllowPerformanceBoost
+    public IReadOnlyList<AiPerformanceOption> PerformanceModes => Enum.GetValues<AiPerformanceMode>()
+        .Select(mode => new AiPerformanceOption(mode, LocalizationManager.GetString("AI.PerformanceMode." + mode))).ToArray();
+    public AiPerformanceMode PerformanceMode
     {
-        get => parameters.AllowPerformanceBoost;
+        get => parameters.EffectivePerformanceMode;
         set
         {
-            parameters = parameters with { AllowPerformanceBoost = value };
-            OnPropertyChanged(nameof(AllowPerformanceBoost), nameof(CanPerformanceTest));
+            if(value == PerformanceMode) return;
+            parameters = parameters with { PerformanceMode = value, AllowPerformanceBoost = value == AiPerformanceMode.Optimal };
+            OnPropertyChanged(nameof(PerformanceMode), nameof(PerformanceDescription), nameof(IsOptimalPerformanceMode), nameof(CanPerformanceTest));
             PerformanceTest?.RaiseCanExecuteChanged();
         }
     }
+    public bool IsOptimalPerformanceMode => PerformanceMode == AiPerformanceMode.Optimal;
+    public string PerformanceDescription => LocalizationManager.GetString("AI.PerformanceModeHint." + PerformanceMode);
     public bool BoostOnlyOnAc { get => parameters.BoostOnlyOnAc; set { parameters = parameters with { BoostOnlyOnAc = value }; OnPropertyChanged(); } }
-    public bool CanPerformanceTest => CanTest && AllowPerformanceBoost && inference is IAiPerformanceService;
+    public bool CanPerformanceTest => CanTest && IsOptimalPerformanceMode && inference is IAiPerformanceService;
     public string PerformanceSummary => performanceResult is { } result ? LocalizationManager.Format("AI.PerformanceResult",
         result.TestedUtc.ToLocalTime(), result.Baseline.PromptTokensPerSecond, result.Baseline.GenerationTokensPerSecond,
         result.Selected.PromptTokensPerSecond, result.Selected.GenerationTokensPerSecond,
@@ -229,7 +236,8 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
         }
         catch(Exception e) { Status = e is AiException ? AiAssistantViewModel.ErrorText(e) : LocalizationManager.GetString("AI.SaveFailed"); }
     }
-    private void OnCultureChanged(object? sender, EventArgs e) => OnPropertyChanged(nameof(MemoryModes), nameof(MemoryDescription), nameof(PerformanceSummary));
+    private void OnCultureChanged(object? sender, EventArgs e) => OnPropertyChanged(nameof(MemoryModes), nameof(MemoryDescription),
+        nameof(PerformanceModes), nameof(PerformanceDescription), nameof(PerformanceSummary));
     public void Dispose()
     {
         LocalizationManager.CultureChanged -= OnCultureChanged;

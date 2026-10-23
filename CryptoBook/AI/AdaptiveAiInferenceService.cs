@@ -65,7 +65,7 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
             ModelPath = settings.ModelPath;
             var file = new FileInfo(settings.ModelPath);
             bool allowBoost = AiPerformancePolicy.IsAllowed(settings, readResources());
-            string identity = $"{file.FullName.ToUpperInvariant()}|{file.Length}|{file.LastWriteTimeUtc.Ticks}|{settings.ContextLength}|{settings.MemoryMode}|{settings.GpuLayers}|{settings.AutoReduceContext}|{allowBoost}";
+            string identity = $"{file.FullName.ToUpperInvariant()}|{file.Length}|{file.LastWriteTimeUtc.Ticks}|{settings.ContextLength}|{settings.MemoryMode}|{settings.GpuLayers}|{settings.AutoReduceContext}|{settings.EffectivePerformanceMode}|{allowBoost}";
             AiModelInspection? inspection = null;
             string? key = null;
             var failed = new HashSet<AiRuntimeOptions>();
@@ -165,13 +165,16 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
     private async Task SelectAsync(AiModelSettings settings, AiModelInspection inspection, string key,
         HashSet<AiRuntimeOptions> failed, IProgress<float>? progress, CancellationToken token, bool calibration = false)
     {
-        var candidates = AiRuntimeCandidates.Create(settings, inspection).ToList();
+        var candidates = AiRuntimeCandidates.Create(settings, inspection)
+            .Select(options => calibration ? options : AiPerformancePolicy.ApplyMode(options, settings, Environment.ProcessorCount)).ToList();
         AiRuntimeProfile? cached = null;
         if(settings.MemoryMode == AiMemoryMode.Automatic)
         {
             try { cached = profiles.Find(key); }
             catch(Exception error) when(error is IOException or UnauthorizedAccessException) { Emit("AI.AutoCacheUnavailable"); }
-            if(cached is not null && cached.Options.GpuLayers >= 0 && cached.Options.GpuLayers <= inspection.Plan.GpuLayers &&
+            if(cached is not null && !cached.Options.PerformanceBoost &&
+               cached.Options.PowerSaving == (settings.EffectivePerformanceMode == AiPerformanceMode.PowerSaving) &&
+               cached.Options.GpuLayers >= 0 && cached.Options.GpuLayers <= inspection.Plan.GpuLayers &&
                cached.Options.ContextLength <= settings.ContextLength &&
                (settings.AutoReduceContext || cached.Options.ContextLength == settings.ContextLength))
             {

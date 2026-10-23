@@ -7,11 +7,12 @@ namespace CryptoBook.AI;
 
 public sealed record AiRuntimeOptions(int ContextLength, int GpuLayers, uint BatchSize = 256,
     uint UBatchSize = 128, bool? FlashAttention = null, bool CpuBackend = false,
-    int Threads = 0, int BatchThreads = 0, bool PerformanceBoost = false)
+    int Threads = 0, int BatchThreads = 0, bool PerformanceBoost = false, bool PowerSaving = false)
 {
     internal bool IsValid => ContextLength is >= 512 and <= 131072 && GpuLayers is >= -1 and <= 999 &&
         BatchSize is >= 32 and <= 256 && UBatchSize is >= 32 and <= 128 && UBatchSize <= BatchSize &&
-        Threads is >= 0 and <= 1024 && BatchThreads is >= 0 and <= 1024 && (!CpuBackend || GpuLayers == 0);
+        Threads is >= 0 and <= 1024 && BatchThreads is >= 0 and <= 1024 && (!CpuBackend || GpuLayers == 0) &&
+        !(PerformanceBoost && PowerSaving);
 }
 
 internal sealed record AiModelInspection(AiMemoryPlan Plan, Dictionary<string, string> Metadata, string HardwareKey);
@@ -31,7 +32,7 @@ public sealed class AiRuntimeProfileStore
     {
         var file = new FileInfo(settings.ModelPath);
         string identity = string.Join('|', Path.GetFullPath(settings.ModelPath).ToUpperInvariant(), file.Length,
-            file.LastWriteTimeUtc.Ticks, settings.ContextLength, settings.AutoReduceContext, hardwareKey,
+            file.LastWriteTimeUtc.Ticks, settings.ContextLength, settings.AutoReduceContext, settings.EffectivePerformanceMode, hardwareKey,
             typeof(LocalAiInferenceService).Assembly.ManifestModule.ModuleVersionId,
             typeof(LLama.LLamaWeights).Assembly.ManifestModule.ModuleVersionId);
         return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));

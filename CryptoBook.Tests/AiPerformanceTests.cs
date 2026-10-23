@@ -42,12 +42,92 @@ public sealed class AiPerformanceTests : IDisposable
     {
         var existing = JsonSerializer.Deserialize<AiModelSettings>("{\"ContextLength\":4096}")!;
         Assert.False(existing.AllowPerformanceBoost);
+        Assert.Equal(AiPerformanceMode.Balanced, existing.EffectivePerformanceMode);
+        Assert.Equal(AiPerformanceMode.Optimal,
+            JsonSerializer.Deserialize<AiModelSettings>("{\"AllowPerformanceBoost\":true}")!.EffectivePerformanceMode);
         Assert.True(existing.BoostOnlyOnAc);
         var store = new AiSettingsStore(Path.Combine(directory, "settings.json"));
         store.Save(new() { Models = [Settings, Settings with { ModelPath = "second.gguf", AllowPerformanceBoost = false }] });
         var loaded = new AiSettingsStore(Path.Combine(directory, "settings.json")).Current;
         Assert.True(loaded.Models[0].AllowPerformanceBoost);
         Assert.False(loaded.Models[1].AllowPerformanceBoost);
+    }
+
+    [Theory]
+    [InlineData(AiPerformanceMode.Balanced)]
+    [InlineData(AiPerformanceMode.PowerSaving)]
+    [InlineData(AiPerformanceMode.Optimal)]
+    public void ExplicitMode_OverridesLegacyPermission_AndRoundTrips(AiPerformanceMode mode)
+    {
+        var settings = Settings with { PerformanceMode = mode, AllowPerformanceBoost = false };
+        var restored = JsonSerializer.Deserialize<AiModelSettings>(JsonSerializer.Serialize(settings))!;
+        Assert.Equal(mode, restored.EffectivePerformanceMode);
+        Assert.Equal(mode == AiPerformanceMode.Optimal, AiPerformancePolicy.IsAllowed(restored, resources));
+        settings.Validate();
+        var error = Assert.Throws<AiException>(() => (settings with { PerformanceMode = (AiPerformanceMode)999 }).Validate());
+        Assert.Equal("AI.InvalidPerformanceMode", error.ResourceKey);
+    }
+
+    [Fact]
+    public async Task ChangingModes_ReloadsWorkerAndRestoresMeasuredProfile()
+    {
+        using var service = Create();
+        await service.TestPerformanceAsync(Settings, CancellationToken.None);
+        await Generate(service, Settings);
+        Assert.True(requests.Last().Options.PerformanceBoost);
+        var boostedWorker = workers.Last();
+        await Generate(service, Settings with { PerformanceMode = AiPerformanceMode.PowerSaving });
+        Assert.False(boostedWorker.IsAlive);
+        var saving = requests.Last().Options;
+        Assert.True(saving.PowerSaving);
+        Assert.False(saving.PerformanceBoost);
+        Assert.Equal(Math.Max(1, Environment.ProcessorCount / 4), saving.Threads);
+        Assert.Equal(saving.Threads, saving.BatchThreads);
+        await Generate(service, Settings with { PerformanceMode = AiPerformanceMode.Balanced });
+        Assert.False(requests.Last().Options.PowerSaving);
+        Assert.False(requests.Last().Options.PerformanceBoost);
+        Assert.Equal(saving.GpuLayers, requests.Last().Options.GpuLayers);
+        Assert.Equal(saving.ContextLength, requests.Last().Options.ContextLength);
+        await Generate(service, Settings);
+        Assert.True(requests.Last().Options.PerformanceBoost);
+    }
+
+    [Fact]
+    public async Task PowerSaving_FallbackAndCachedProfileKeepReducedParallelism()
+    {
+        var settings = Settings with { PerformanceMode = AiPerformanceMode.PowerSaving };
+        using(var service = Create((request, _) =>
+        {
+            if(request.Command == "probe" && request.Options.FlashAttention is null)
+                throw new AiException("AI.LoadFailed");
+            return Task.CompletedTask;
+        }))
+            await Generate(service, settings);
+        int previousCount = requests.Count;
+        using(var service = Create()) await Generate(service, settings);
+        Assert.Contains(requests.Skip(previousCount), request => request.Command == "probe" && request.Options.FlashAttention == false);
+        Assert.All(requests.Where(request => request.Command != "inspect"), request =>
+        {
+            Assert.True(request.Options.PowerSaving);
+            Assert.False(request.Options.PerformanceBoost);
+            Assert.Equal(Math.Max(1, Environment.ProcessorCount / 4), request.Options.Threads);
+        });
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(8)]
+    [InlineData(128)]
+    public void PowerSaving_KeepsMemorySettingsAndReducesCpuParallelism(int processors)
+    {
+        var baseline = new AiRuntimeOptions(8192, 12);
+        var saving = AiPerformancePolicy.ApplyMode(baseline, Settings with { PerformanceMode = AiPerformanceMode.PowerSaving }, processors);
+        Assert.True(saving.IsValid);
+        Assert.Equal(Math.Max(1, processors / 4), saving.Threads);
+        Assert.Equal(saving.Threads, saving.BatchThreads);
+        Assert.Equal(baseline, saving with { Threads = 0, BatchThreads = 0, PowerSaving = false });
+        Assert.False((saving with { PerformanceBoost = true }).IsValid);
     }
 
     [Theory]
