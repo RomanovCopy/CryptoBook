@@ -1262,6 +1262,7 @@ Autor: [Name]
   <data name="AI.AutoReset" xml:space="preserve"><value>Gespeicherte Profile dieses Modells entfernt. Die nächste Prüfung wählt neue Parameter.</value></data>
   <data name="AI.AutoSummary" xml:space="preserve"><value>Laufzeitparameter: Kontext {0}; GPU-Schichten {1}; Batch {2}/{3}; Flash Attention {4}.</value></data>
   <data name="AI.AutoDetails" xml:space="preserve"><value>Prüfungen, Änderungen und Fehlerursachen</value></data>
+  <data name="AI.RuntimeInfo" xml:space="preserve"><value>Modellstatus</value></data>
   <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Automatische Kontextreduzierung bei Bedarf erlauben. Tatsächliche Größe und Einschränkungen werden angezeigt.</value></data>
   <data name="AI.AutoRetune" xml:space="preserve"><value>Neu abstimmen</value></data>
   <data name="AI.AutoNoGpu" xml:space="preserve"><value>kein geeignetes GPU-Budget</value></data>

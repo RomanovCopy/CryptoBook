@@ -1268,6 +1268,7 @@
   <data name="AI.AutoReset" xml:space="preserve"><value>Сохранённые рабочие профили этой модели удалены. Следующая проверка подберёт параметры заново.</value></data>
   <data name="AI.AutoSummary" xml:space="preserve"><value>Рабочие параметры: контекст {0}; слои GPU {1}; пакет {2}/{3}; Flash Attention {4}.</value></data>
   <data name="AI.AutoDetails" xml:space="preserve"><value>Проверки, изменения параметров и причины сбоев</value></data>
+  <data name="AI.RuntimeInfo" xml:space="preserve"><value>Работа модели</value></data>
   <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Разрешать автоматическому режиму уменьшать контекст при необходимости. Фактический размер и ограничения будут показаны.</value></data>
   <data name="AI.AutoRetune" xml:space="preserve"><value>Подобрать заново</value></data>
   <data name="AI.AutoNoGpu" xml:space="preserve"><value>нет подходящего бюджета GPU</value></data>

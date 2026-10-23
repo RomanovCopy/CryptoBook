@@ -1268,6 +1268,7 @@ Author: [Name]
   <data name="AI.AutoReset" xml:space="preserve"><value>Saved profiles removed for this model. The next check will select parameters again.</value></data>
   <data name="AI.AutoSummary" xml:space="preserve"><value>Runtime parameters: context {0}; GPU layers {1}; batch {2}/{3}; Flash Attention {4}.</value></data>
   <data name="AI.AutoDetails" xml:space="preserve"><value>Checks, changes and failure reasons</value></data>
+  <data name="AI.RuntimeInfo" xml:space="preserve"><value>Model runtime</value></data>
   <data name="AI.AutoAllowReduce" xml:space="preserve"><value>Allow Automatic mode to reduce context when necessary. The actual context and limitations will be shown.</value></data>
   <data name="AI.AutoRetune" xml:space="preserve"><value>Retune</value></data>
   <data name="AI.AutoNoGpu" xml:space="preserve"><value>no suitable GPU budget</value></data>

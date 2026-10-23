@@ -8,6 +8,21 @@
              Foreground="{DynamicResource CurrentWindowForeground}" AllowDrop="True" PreviewDragOver="FilesDragOver" PreviewDrop="FilesDropped">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolVisibility"/>
+        <Style x:Key="ChatIconButton" TargetType="Button" BasedOn="{StaticResource EditorToolButtonStyle}">
+            <Setter Property="Focusable" Value="True"/>
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
+        </Style>
+        <Style x:Key="ChatToolbarIcon" TargetType="Path" BasedOn="{StaticResource EditorToolbarIconStyle}">
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+        </Style>
+        <Style x:Key="ChatToolbarSeparator" TargetType="Border">
+            <Setter Property="Width" Value="1"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Background" Value="{DynamicResource CurrentBorderColor}"/>
+        </Style>
         <Style x:Key="ChatText" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="FontFamily" Value="{Binding DataContext.Appearance.FontFamily, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
             <Setter Property="FontSize" Value="{Binding DataContext.Appearance.FontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
@@ -50,19 +65,45 @@
             </Grid.RowDefinitions>
             <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <Button x:Name="ClosePanelButton" Grid.Column="1" Command="{Binding Toggle}" Content="&#x2715;" Padding="8,4" ToolTip="{Binding [Common.Close], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [Common.Close], Source={StaticResource Res}}"/>
+                <Button x:Name="ClosePanelButton" Grid.Column="1" Style="{StaticResource ChatIconButton}" Command="{Binding Toggle}"
+                        ToolTip="{Binding [Common.Close], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [Common.Close], Source={StaticResource Res}}">
+                    <Path Data="{StaticResource Icon.Close}" Style="{StaticResource ChatToolbarIcon}"/>
+                </Button>
                 <TextBlock Text="{Binding [AI.Assistant], Source={StaticResource Res}}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </Grid>
             <StackPanel Grid.Row="1">
                 <TextBlock Text="{Binding ModelName}" TextTrimming="CharacterEllipsis" ToolTip="{Binding ModelName}" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,8"/>
-                <controls:AiRuntimeDetails DataContext="{Binding Runtime}"/>
-                <WrapPanel Margin="0,0,0,8">
-                    <Button Content="{Binding [AI.ModelSettings], Source={StaticResource Res}}" Command="{Binding OpenSettings}" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button Content="{Binding [AI.Appearance], Source={StaticResource Res}}" Command="{Binding OpenAppearance}" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button Content="{Binding [AI.Unload], Source={StaticResource Res}}" Command="{Binding Unload}" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button x:Name="ClearChatButton" Content="{Binding [AI.Clear], Source={StaticResource Res}}" Command="{Binding ClearChat}" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button x:Name="NewChatButton" Content="{Binding [AI.NewChat], Source={StaticResource Res}}" Command="{Binding NewChat}" Padding="9,5" Margin="0,0,0,6"/>
-                </WrapPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <Button x:Name="NewChatButton" Style="{StaticResource ChatIconButton}" Command="{Binding NewChat}"
+                            AutomationProperties.Name="{Binding [AI.NewChat], Source={StaticResource Res}}">
+                        <Button.ToolTip><TextBlock><TextBlock.Text><MultiBinding StringFormat="{}{0} — {1}">
+                            <Binding Path="[AI.NewChat]" Source="{StaticResource Res}"/>
+                            <Binding Path="[AI.Clear]" Source="{StaticResource Res}"/>
+                        </MultiBinding></TextBlock.Text></TextBlock></Button.ToolTip>
+                        <Path Data="{StaticResource Icon.ChatNew}" Style="{StaticResource ChatToolbarIcon}"/>
+                    </Button>
+                    <Border Style="{StaticResource ChatToolbarSeparator}"/>
+                    <Button x:Name="ModelSettingsButton" Style="{StaticResource ChatIconButton}" Command="{Binding OpenSettings}"
+                            ToolTip="{Binding [AI.ModelSettings], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.ModelSettings], Source={StaticResource Res}}">
+                        <Path Data="{StaticResource Icon.Settings}" Style="{StaticResource ChatToolbarIcon}"/>
+                    </Button>
+                    <Button x:Name="AppearanceButton" Style="{StaticResource ChatIconButton}" Command="{Binding OpenAppearance}"
+                            ToolTip="{Binding [AI.Appearance], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.Appearance], Source={StaticResource Res}}">
+                        <Path Data="{StaticResource Icon.FontColor}" Style="{StaticResource ChatToolbarIcon}"/>
+                    </Button>
+                    <Button x:Name="UnloadModelButton" Style="{StaticResource ChatIconButton}" Command="{Binding Unload}"
+                            ToolTip="{Binding [AI.Unload], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.Unload], Source={StaticResource Res}}">
+                        <Path Data="{StaticResource Icon.Unload}" Style="{StaticResource ChatToolbarIcon}"/>
+                    </Button>
+                </StackPanel>
+                <Expander x:Name="RuntimeDetailsExpander" Header="{Binding [AI.RuntimeInfo], Source={StaticResource Res}}" IsExpanded="False"
+                          ToolTip="{Binding [AI.AutoDetails], Source={StaticResource Res}}" Margin="0,0,0,6"
+                          Visibility="{Binding Runtime.HasInfo, Converter={StaticResource BoolVisibility}}"
+                          AutomationProperties.Name="{Binding [AI.RuntimeInfo], Source={StaticResource Res}}">
+                    <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,6,0,0">
+                        <controls:AiRuntimeDetails DataContext="{Binding Runtime}"/>
+                    </ScrollViewer>
+                </Expander>
             </StackPanel>
             <ScrollViewer x:Name="ConversationScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" ScrollChanged="ConversationScrollChanged">
                 <ItemsControl ItemsSource="{Binding Messages}">
@@ -123,38 +164,108 @@
                 </ItemsControl>
             </ScrollViewer>
             <StackPanel Grid.Row="3" Margin="0,8,0,0">
-                <WrapPanel>
-                    <TextBlock x:Name="MessageSelectionCounter" Text="{Binding MessageSelectionSummary}" VerticalAlignment="Center" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,8,6"/>
-                    <Button x:Name="SelectAllMessagesButton" Content="{Binding [AI.SelectAllMessages], Source={StaticResource Res}}" Command="{Binding SelectAllMessages}" Padding="6,3" Margin="0,0,6,6"/>
-                    <Button x:Name="ClearMessageSelectionButton" Content="{Binding [AI.ClearMessageSelection], Source={StaticResource Res}}" Command="{Binding ClearMessageSelection}" Padding="6,3" Margin="0,0,0,6"/>
-                </WrapPanel>
-                <WrapPanel>
-                    <Button x:Name="InsertResponseButton" Content="{Binding [AI.Insert], Source={StaticResource Res}}" Command="{Binding Insert}" ToolTip="{Binding InsertUnavailableReason}" ToolTipService.ShowOnDisabled="True" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button x:Name="ReplaceSelectionButton" Content="{Binding [AI.Replace], Source={StaticResource Res}}" Command="{Binding Replace}" ToolTip="{Binding ReplaceUnavailableReason}" ToolTipService.ShowOnDisabled="True" Padding="9,5" Margin="0,0,6,6"/>
-                    <Button Content="{Binding [Common.Copy], Source={StaticResource Res}}" ToolTip="{Binding [AI.CopySourceHint], Source={StaticResource Res}}" Command="{Binding Copy}" Padding="9,5" Margin="0,0,0,6"/>
+                <WrapPanel Margin="0,0,0,4">
+                    <TextBlock x:Name="MessageSelectionCounter" Text="{Binding MessageSelectionSummary}" ToolTip="{Binding MessageSelectionSummary}"
+                               FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource CurrentMutedForeground}" Margin="2,0,8,0"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="SelectAllMessagesButton" Style="{StaticResource ChatIconButton}" Command="{Binding SelectAllMessages}"
+                                ToolTip="{Binding [AI.SelectAllMessages], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.SelectAllMessages], Source={StaticResource Res}}">
+                            <Path Data="{StaticResource Icon.SelectAll}" Style="{StaticResource ChatToolbarIcon}"/>
+                        </Button>
+                        <Button x:Name="ClearMessageSelectionButton" Style="{StaticResource ChatIconButton}" Command="{Binding ClearMessageSelection}"
+                                ToolTip="{Binding [AI.ClearMessageSelection], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.ClearMessageSelection], Source={StaticResource Res}}">
+                            <Path Data="{StaticResource Icon.ClearSelection}" Style="{StaticResource ChatToolbarIcon}"/>
+                        </Button>
+                        <Border Style="{StaticResource ChatToolbarSeparator}"/>
+                        <Button x:Name="InsertResponseButton" Command="{Binding Insert}" AutomationProperties.Name="{Binding [AI.Insert], Source={StaticResource Res}}">
+                            <Button.Style><Style TargetType="Button" BasedOn="{StaticResource ChatIconButton}">
+                                <Setter Property="ToolTip" Value="{Binding InsertUnavailableReason}"/>
+                                <Style.Triggers><DataTrigger Binding="{Binding InsertUnavailableReason}" Value="">
+                                    <Setter Property="ToolTip" Value="{Binding [AI.Insert], Source={StaticResource Res}}"/>
+                                </DataTrigger></Style.Triggers>
+                            </Style></Button.Style>
+                            <Path Data="{StaticResource Icon.Insert}" Style="{StaticResource ChatToolbarIcon}"/>
+                        </Button>
+                        <Button x:Name="ReplaceSelectionButton" Command="{Binding Replace}" AutomationProperties.Name="{Binding [AI.Replace], Source={StaticResource Res}}">
+                            <Button.Style><Style TargetType="Button" BasedOn="{StaticResource ChatIconButton}">
+                                <Setter Property="ToolTip" Value="{Binding ReplaceUnavailableReason}"/>
+                                <Style.Triggers><DataTrigger Binding="{Binding ReplaceUnavailableReason}" Value="">
+                                    <Setter Property="ToolTip" Value="{Binding [AI.Replace], Source={StaticResource Res}}"/>
+                                </DataTrigger></Style.Triggers>
+                            </Style></Button.Style>
+                            <Path Data="{StaticResource Icon.Replace}" Style="{StaticResource ChatToolbarIcon}"/>
+                        </Button>
+                        <Button x:Name="CopyMessagesButton" Style="{StaticResource ChatIconButton}" Command="{Binding Copy}"
+                                ToolTip="{Binding [AI.CopySourceHint], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [Common.Copy], Source={StaticResource Res}}">
+                            <Path Data="{StaticResource Icon.Copy}" Style="{StaticResource ChatToolbarIcon}"/>
+                        </Button>
+                    </StackPanel>
                 </WrapPanel>
                 <ScrollViewer MaxHeight="156" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,4,0,8" Visibility="{Binding HasAttachments, Converter={StaticResource BoolVisibility}}">
                     <ItemsControl ItemsSource="{Binding Attachments}"><ItemsControl.ItemTemplate><DataTemplate>
                         <Grid Margin="0,0,0,6">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource AttachmentCard}"/>
-                            <Button Grid.Column="1" Content="&#x2715;" Command="{Binding DataContext.RemoveAttachment, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Padding="6,4" Margin="5,0,0,0" VerticalAlignment="Top" AutomationProperties.Name="{Binding [AI.RemoveAttachment], Source={StaticResource Res}}"/>
+                            <Button Grid.Column="1" Style="{StaticResource ChatIconButton}" Command="{Binding DataContext.RemoveAttachment, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}" Margin="5,0,0,0" VerticalAlignment="Top"
+                                    ToolTip="{Binding [AI.RemoveAttachment], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.RemoveAttachment], Source={StaticResource Res}}">
+                                <Path Data="{StaticResource Icon.Close}" Style="{StaticResource ChatToolbarIcon}"/>
+                            </Button>
                         </Grid>
                     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
                 </ScrollViewer>
-                <WrapPanel>
-                    <Button Content="{Binding [AI.AttachFiles], Source={StaticResource Res}}" Command="{Binding AttachFiles}" Padding="8,5" Margin="0,0,6,6"/>
-                    <Button Content="{Binding [AI.AttachDocument], Source={StaticResource Res}}" Command="{Binding AttachDocument}" Padding="8,5" Margin="0,0,0,6"/>
-                </WrapPanel>
             </StackPanel>
-            <TextBox x:Name="PromptBox" Grid.Row="4" Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="74" MaxHeight="170" VerticalScrollBarVisibility="Auto" Padding="9" Margin="0,3,0,8" AutomationProperties.Name="{Binding [AI.Prompt], Source={StaticResource Res}}">
-                <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                    <Setter Property="FontFamily" Value="{Binding Appearance.FontFamily}"/>
-                    <Setter Property="FontSize" Value="{Binding Appearance.FontSize}"/>
-                    <Style.Triggers><DataTrigger Binding="{Binding Appearance.HasUserColor}" Value="True"><Setter Property="Foreground" Value="{Binding Appearance.UserColor}"/></DataTrigger></Style.Triggers>
-                </Style></TextBox.Style>
-                <TextBox.InputBindings><KeyBinding Key="Enter" Modifiers="Control" Command="{Binding Send}"/></TextBox.InputBindings>
-            </TextBox>
+            <Border Grid.Row="4" Background="{DynamicResource CurrentInputBackground}" BorderThickness="1" CornerRadius="6" Margin="0,3,0,8">
+                <Border.Style><Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="{DynamicResource CurrentBorderColor}"/>
+                    <Style.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource CurrentAccent}"/>
+                    </Trigger></Style.Triggers>
+                </Style></Border.Style>
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <TextBox x:Name="PromptBox" Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="74" MaxHeight="170" VerticalScrollBarVisibility="Auto"
+                             BorderThickness="0" Background="Transparent" Padding="9" Margin="2,2,2,0" AutomationProperties.Name="{Binding [AI.Prompt], Source={StaticResource Res}}">
+                        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Setter Property="FontFamily" Value="{Binding Appearance.FontFamily}"/>
+                            <Setter Property="FontSize" Value="{Binding Appearance.FontSize}"/>
+                            <Style.Triggers><DataTrigger Binding="{Binding Appearance.HasUserColor}" Value="True"><Setter Property="Foreground" Value="{Binding Appearance.UserColor}"/></DataTrigger></Style.Triggers>
+                        </Style></TextBox.Style>
+                        <TextBox.InputBindings><KeyBinding Key="Enter" Modifiers="Control" Command="{Binding Send}"/></TextBox.InputBindings>
+                    </TextBox>
+                    <Grid Grid.Row="1" Margin="4,0,4,4">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="AttachFilesButton" Style="{StaticResource ChatIconButton}" Command="{Binding AttachFiles}"
+                                    ToolTip="{Binding [AI.AttachFiles], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.AttachFiles], Source={StaticResource Res}}">
+                                <Path Data="{StaticResource Icon.Attach}" Style="{StaticResource ChatToolbarIcon}"/>
+                            </Button>
+                            <Button x:Name="AttachDocumentButton" Style="{StaticResource ChatIconButton}" Command="{Binding AttachDocument}"
+                                    ToolTip="{Binding [AI.AttachDocument], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.AttachDocument], Source={StaticResource Res}}">
+                                <Path Data="{StaticResource Icon.AttachDocument}" Style="{StaticResource ChatToolbarIcon}"/>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button x:Name="StopButton" Style="{StaticResource ChatIconButton}" Command="{Binding Stop}"
+                                    ToolTip="{Binding [AI.Stop], Source={StaticResource Res}}" AutomationProperties.Name="{Binding [AI.Stop], Source={StaticResource Res}}">
+                                <Path Data="{StaticResource Icon.Stop}" Style="{StaticResource ChatToolbarIcon}"/>
+                            </Button>
+                            <Button x:Name="SendButton" Command="{Binding Send}" AutomationProperties.Name="{Binding [AI.Send], Source={StaticResource Res}}">
+                                <Button.Style><Style TargetType="Button" BasedOn="{StaticResource ChatIconButton}">
+                                    <Setter Property="Foreground" Value="{DynamicResource CurrentAccent}"/>
+                                    <Setter Property="ToolTip" Value="{Binding SendUnavailableReason}"/>
+                                    <Style.Triggers><DataTrigger Binding="{Binding SendUnavailableReason}" Value="">
+                                        <Setter Property="ToolTip"><Setter.Value>
+                                            <TextBlock><Run Text="{Binding [AI.Send], Source={StaticResource Res}, Mode=OneWay}"/><Run Text=" (Ctrl+Enter)"/></TextBlock>
+                                        </Setter.Value></Setter>
+                                    </DataTrigger></Style.Triggers>
+                                </Style></Button.Style>
+                                <Path Data="{StaticResource Icon.Send}" Style="{StaticResource ChatToolbarIcon}"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
             <StackPanel Grid.Row="5">
                 <StackPanel ToolTip="{Binding [AI.ContextHint], Source={StaticResource Res}}" Margin="0,0,0,8">
                     <TextBlock x:Name="ContextCounter" Text="{Binding ContextSummary}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11"/>
@@ -167,10 +278,6 @@
                     </Style.Triggers></Style></TextBlock.Style>
                 </TextBlock>
                 <TextBlock Text="{Binding Status}" ToolTip="{Binding Status}" TextWrapping="Wrap" MaxHeight="80" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="{Binding [AI.Stop], Source={StaticResource Res}}" Command="{Binding Stop}" Padding="10,7"/>
-                    <Button x:Name="SendButton" Content="{Binding [AI.Send], Source={StaticResource Res}}" Command="{Binding Send}" ToolTip="{Binding SendUnavailableReason}" ToolTipService.ShowOnDisabled="True" Padding="15,7" Margin="8,0,0,0"/>
-                </StackPanel>
                 <TextBlock Text="{Binding [AI.ChatPrivacy], Source={StaticResource Res}}" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0"/>
             </StackPanel>
         </Grid>
