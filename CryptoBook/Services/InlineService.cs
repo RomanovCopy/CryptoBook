@@ -272,31 +272,34 @@ namespace CryptoBook.Services
                 position = paragraph.ContentStart;
             }
 
-            // Если стоим внутри Run — расщепим его и вставим inline между половинками
-            if(position.Parent is Run)
+            // Вложенный Run принадлежит Span/Hyperlink, а не коллекции Paragraph.
+            if(position.Parent is Run run)
             {
-                var (left, _) = SplitRunAt(position);
-                if(left != null)
+                InlineCollection siblings = GetOwningInlines(run);
+                int offset = run.ContentStart.GetOffsetToPosition(position);
+                if(offset == 0)
+                    siblings.InsertBefore(run, inline);
+                else if(offset == run.Text.Length)
+                    siblings.InsertAfter(run, inline);
+                else
                 {
-                    paragraph.Inlines.InsertAfter(left, inline);
-                    return inline;
+                    var (left, _) = SplitRunAt(position);
+                    siblings.InsertAfter(left!, inline);
                 }
+                return inline;
             }
 
-            // Если стоим в Span/Paragraph — найдём ближайший Inline-ориентир
-            var anchor = GetInlineFromPosition(position);
-            if(anchor != null)
-            {
-                // Вставляем перед/после якоря — решаем по направлению
-                if(position.CompareTo(anchor.ContentStart) == 0)
-                    paragraph.Inlines.InsertBefore(anchor, inline);
-                else
-                    paragraph.Inlines.InsertAfter(anchor, inline);
-            } else
-            {
-                // Пустой параграф
-                paragraph.Inlines.Add(inline);
-            }
+            InlineCollection inlines = position.Parent is Span span
+                ? span.Inlines
+                : paragraph.Inlines;
+            if(position.GetAdjacentElement(LogicalDirection.Forward) is Inline next &&
+               inlines.Contains(next))
+                inlines.InsertBefore(next, inline);
+            else if(position.GetAdjacentElement(LogicalDirection.Backward) is Inline previous &&
+                    inlines.Contains(previous))
+                inlines.InsertAfter(previous, inline);
+            else
+                inlines.Add(inline);
 
             return inline;
         }
@@ -476,44 +479,42 @@ namespace CryptoBook.Services
             if(offset <= 0 || offset >= text.Length)
                 return (run, null); // на границе — нечего резать
 
-            string leftText = text.Substring(0, offset);
-            string rightText = text.Substring(offset);
+            InlineCollection inlines = GetOwningInlines(run);
+            var right = new Run();
+            CopyLocalValues(run, right, Run.TextProperty);
+            right.Text = text[offset..];
+            run.Text = text[..offset];
+            inlines.InsertAfter(run, right);
 
-            var paragraph = (Paragraph)run.Parent;
+            return (run, right);
+        }
 
-            var left = new Run(leftText)
+        internal static InlineCollection GetOwningInlines(Inline inline) =>
+            inline.Parent switch
             {
-                FontFamily = run.FontFamily,
-                FontSize = run.FontSize,
-                FontWeight = run.FontWeight,
-                FontStyle = run.FontStyle,
-                FontStretch = run.FontStretch,
-                Foreground = run.Foreground,
-                Background = run.Background,
-                TextDecorations = run.TextDecorations,
-                BaselineAlignment = run.BaselineAlignment,
-                TextEffects = run.TextEffects
+                Paragraph paragraph => paragraph.Inlines,
+                Span span => span.Inlines,
+                _ => throw new InvalidOperationException(
+                    "Элемент не принадлежит коллекции строчных элементов.")
             };
 
-            var right = new Run(rightText)
+        internal static void CopyLocalValues(
+            DependencyObject source,
+            DependencyObject destination,
+            DependencyProperty? excludedProperty = null)
+        {
+            LocalValueEnumerator values = source.GetLocalValueEnumerator();
+            while(values.MoveNext())
             {
-                FontFamily = run.FontFamily,
-                FontSize = run.FontSize,
-                FontWeight = run.FontWeight,
-                FontStyle = run.FontStyle,
-                FontStretch = run.FontStretch,
-                Foreground = run.Foreground,
-                Background = run.Background,
-                TextDecorations = run.TextDecorations,
-                BaselineAlignment = run.BaselineAlignment,
-                TextEffects = run.TextEffects
-            };
+                DependencyProperty property = values.Current.Property;
+                if(property.ReadOnly || property == excludedProperty)
+                    continue;
 
-            paragraph.Inlines.InsertBefore(run, left);
-            paragraph.Inlines.InsertAfter(left, right);
-            paragraph.Inlines.Remove(run);
-
-            return (left, right);
+                object value = source.GetValue(property);
+                destination.SetValue(property, value is Freezable freezable
+                    ? freezable.CloneCurrentValue()
+                    : value);
+            }
         }
 
         public int MergeAdjacentRuns(Paragraph paragraph)
