@@ -3,7 +3,7 @@
 [English](README.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Версия](https://img.shields.io/badge/version-1.1.4.9-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.9)
+[![Версия](https://img.shields.io/badge/version-1.1.5.0-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.0)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -49,14 +49,15 @@ CryptoBook объединяет форматированный текстовы�
 Скриншоты показывают дневник путешествия с иллюстрацией и фоном страницы.
 [Описание съёмки и примеры документов](docs/screenshots/README.md).
 
-## Новое в 1.1.4.9
+## Новое в 1.1.5.0
 
-- Для каждой AI-модели можно выбрать режим: **Сбалансированный**, **Экономичный** или **Оптимальный (по замеру)**. Экономичный режим уменьшает число потоков CPU и запрашивает экономичное планирование; слои GPU и контекст сохраняются.
-- Локальный тест измеряет обработку запроса, скорость генерации и пиковое потребление памяти. Ускоренный профиль применяется только при выигрыше от 5%; доступно ограничение ускорения питанием от сети.
-- Ограничения ресурсов и контроль нехватки памяти действуют внутри отдельного процесса AI. Смена режима сохраняет переписку и черновик.
-- Добавлены отдельные шрифт и цвет текста для блоков кода, переработана компоновка AI-панели; кнопка открытия помощника перенесена в нижнюю часть окна.
+- Добавлено повторное использование совпадающего начала текстового диалога в вычислительном контексте AI. Необязательный кеш хранится в памяти и сбрасывается при очистке чата, отмене, ошибке и выгрузке модели; при несовместимом состоянии движок пересчитывает историю полностью.
+- Модель можно заранее загружать при открытии панели помощника. Загрузка асинхронная, с отменой; постоянный статус показывает состояния «Загружается», «Загружена» и «Выгружена».
+- Оба параметра сохраняются отдельно для каждой модели. Изменение ширины, анимация, прокрутка и приём файлов в AI-панели перенесены в отдельные WPF Behavior.
+- Исправлено форматирование выделенных абзацев: выделение всего документа, вложенные и пустые абзацы, границы выделения, отмена и повтор.
+- Исправлены перемещение и удаление изображений внутри форматированного текста с сохранением точной позиции, окружающего текста и отмены/повтора.
 
-Подробнее — в [описании релиза](docs/releases/v1.1.4.9.md), [руководстве по локальному AI](docs/LOCAL_AI.md) и [истории изменений](CHANGELOG.md).
+Подробнее — в [описании релиза](docs/releases/v1.1.5.0.md), [руководстве по локальному AI](docs/LOCAL_AI.md) и [истории изменений](CHANGELOG.md).
 
 ## Основные возможности
 
@@ -95,7 +96,7 @@ CryptoBook объединяет форматированный текстовы�
 ## Локальный AI-помощник
 
 Откройте **Настройки → AI-помощник → Настройки модели**, включите помощника и выберите
-локальный файл `.gguf`. Откройте панель кнопкой **AI** в заголовке, введите запрос и нажмите
+локальный файл `.gguf`. Откройте панель кнопкой **AI** внизу окна, введите запрос и нажмите
 **Ctrl+Enter**. Отдельный сервер не нужен. Модели в поставку не входят.
 
 - Прикрепляйте документы, изображения или снимок текущего документа, включая несохранённые изменения.
@@ -157,25 +158,25 @@ Argon2id и AES-256-GCM; снимки обычных документов — Wi
 
 ## Скачать и запустить
 
-Опубликован [CryptoBook 1.1.4.9](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.4.9)
-от 23 октября 2026 года.
+Опубликован [CryptoBook 1.1.5.0](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.0)
+от 26 октября 2026 года.
 
 | Файл | Назначение |
 | --- | --- |
-| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.9/CryptoBook-Setup-1.1.4.9.exe) | Установка или обновление CryptoBook |
-| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.9/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
-| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.9/SHA256SUMS.txt) | Проверка загруженных файлов |
-| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.4.9/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
+| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.0/CryptoBook-Setup-1.1.5.0.exe) | Установка или обновление CryptoBook |
+| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.0/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
+| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.0/SHA256SUMS.txt) | Проверка загруженных файлов |
+| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.0/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
 
-Установщик и приложение версии 1.1.4.9 **не подписаны цифровой подписью**. Перед запуском
+Установщик и приложение версии 1.1.5.0 **не подписаны цифровой подписью**. Перед запуском
 сравните SHA-256 загруженного файла с соответствующей записью в `SHA256SUMS.txt`, например:
 
 ```powershell
-Get-FileHash .\CryptoBook-Setup-1.1.4.9.exe -Algorithm SHA256
+Get-FileHash .\CryptoBook-Setup-1.1.5.0.exe -Algorithm SHA256
 ```
 
 В релиз также входят архив лицензий, архив происхождения FFmpeg/Flyleaf, файл зафиксированных
-зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.4.9.md) и
+зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.5.0.md) и
 [CHANGELOG.md](CHANGELOG.md). Встроенное обновление проверяет SHA-256 установщика перед запуском.
 
 ## Сборка из исходников
@@ -198,14 +199,14 @@ dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c R
 Для self-contained x64-сборки и установщика требуется Inno Setup 6:
 
 ```powershell
-./installer/Build-Installer.ps1 -Version 1.1.4.9
+./installer/Build-Installer.ps1 -Version 1.1.5.0
 ```
 
-`Run-ReleaseTests.ps1` выполняет все тесты в трёх отдельных процессах: интеграция AI,
+`Run-ReleaseTests.ps1` выполняет все тесты в четырёх отдельных процессах: интеграция AI, жизненный цикл AI,
 поиск в документе и остальные тесты. Это исключает взаимное влияние глобального состояния
-WPF-приложения. Для кандидата 1.1.4.9 пройдено **975 тестов**, без ошибок и пропусков. Подробнее — в [описании релиза](docs/releases/v1.1.4.9.md).
+WPF-приложения. Для кандидата 1.1.5.0 пройдено **1054 теста**, без ошибок и пропусков. Подробнее — в [описании релиза](docs/releases/v1.1.5.0.md).
 TRX-отчёты сохраняются в `artifacts/TestResults`, установщик — в
-`artifacts/CryptoBook-Setup-1.1.4.9.exe`.
+`artifacts/CryptoBook-Setup-1.1.5.0.exe`.
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные
 NuGet-уязвимости считаются ошибками.
@@ -240,7 +241,7 @@ GitHub Actions восстанавливает зафиксированные з�
 Публичная публикация выполняется отдельно после одобрения кандидата и успешного CI;
 одобренный локальный установщик сохраняется.
 
-Релиз 1.1.4.9 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
+Релиз 1.1.5.0 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
 происхождения FFmpeg, файл зафиксированных зависимостей, SPDX SBOM, статус подписи и список SHA-256.
 
 Подробности выпуска описаны в [docs/PRODUCTION.md](docs/PRODUCTION.md).
