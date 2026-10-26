@@ -18,7 +18,7 @@ using Xunit;
 
 namespace CryptoBook.Tests;
 
-public sealed class AiIntegrationTests
+public sealed partial class AiIntegrationTests
 {
     [WpfTheory]
     [InlineData(KeyResetState.Inactive, false, true)]
@@ -1335,6 +1335,7 @@ public sealed class AiIntegrationTests
                 Assert.False(vm.IsContextLow);
                 Assert.True(runtime.IsLoaded);
                 Assert.Equal(0, runtime.UnloadCount);
+                Assert.Equal(1, runtime.ResetContextCount);
 
                 previousUsage(new(4096, 4090, 5));
                 await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
@@ -1725,6 +1726,10 @@ public sealed class AiIntegrationTests
         public Action<AiTokenUsage>? LastUsageCallback { get; private set; }
         public bool IsLoaded { get; set; }
         public int UnloadCount { get; private set; }
+        public int ResetContextCount { get; private set; }
+        public int LoadCount { get; private set; }
+        public Task? BeforeLoad { get; set; }
+        public Exception? LoadError { get; set; }
         public AiModelSettings? LastSettings { get; private set; }
         public IReadOnlyList<AiTurn> LastConversation { get; private set; } = [];
         public bool CompleteImmediately { get; set; }
@@ -1753,6 +1758,22 @@ public sealed class AiIntegrationTests
             }
             finally { IsBusy = false; }
         }
+        public async Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken)
+        {
+            LoadCount++;
+            LastSettings = settings;
+            IsBusy = true;
+            try
+            {
+                if(BeforeLoad is not null) await BeforeLoad.WaitAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                if(LoadError is not null) throw LoadError;
+                IsLoaded = true;
+                loadProgress?.Report(1);
+            }
+            finally { IsBusy = false; }
+        }
+        public Task ResetContextAsync(CancellationToken cancellationToken = default) { ResetContextCount++; return Task.CompletedTask; }
         public Task UnloadAsync(CancellationToken cancellationToken = default) { UnloadCount++; IsLoaded = false; return Task.CompletedTask; }
         public void Dispose() { }
     }

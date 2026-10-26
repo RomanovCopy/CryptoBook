@@ -91,6 +91,14 @@
                 <Border Style="{StaticResource SectionCard}" IsEnabled="{Binding CanEdit}">
                     <StackPanel>
                         <TextBlock Text="{Binding [AI.PerformanceSection], Source={StaticResource Res}}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="ReuseContextCheckBox" Style="{StaticResource ThemedCheckBoxStyle}" IsChecked="{Binding ReuseContext, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, BindingGroupName=ImmediateSessionOptions}" Margin="0,0,0,6">
+                            <TextBlock Text="{Binding [AI.ReuseContext], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </CheckBox>
+                        <TextBlock Text="{Binding [AI.ReuseContextHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="PreloadOnPanelOpenCheckBox" Style="{StaticResource ThemedCheckBoxStyle}" IsChecked="{Binding PreloadOnPanelOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, BindingGroupName=ImmediateSessionOptions}" Margin="0,0,0,6">
+                            <TextBlock Text="{Binding [AI.PreloadOnPanelOpen], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </CheckBox>
+                        <TextBlock Text="{Binding [AI.PreloadOnPanelOpenHint], Source={StaticResource Res}}" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,16"/>
                         <Label Content="{Binding [AI.PerformanceModeLabel], Source={StaticResource Res}}" Target="{Binding ElementName=PerformanceModeBox}"/>
                         <ComboBox x:Name="PerformanceModeBox" Style="{StaticResource DropUpComboBoxStyle}" ItemsSource="{Binding PerformanceModes}" DisplayMemberPath="DisplayName" SelectedValuePath="Value"
                                   SelectedValue="{Binding PerformanceMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, BindingGroupName=ImmediatePerformanceMode}" MinHeight="34" Margin="0,0,0,8"/>

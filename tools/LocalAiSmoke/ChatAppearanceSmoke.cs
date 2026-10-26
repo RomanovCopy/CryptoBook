@@ -2,6 +2,7 @@ using Autofac;
 using CryptoBook.AI;
 using CryptoBook.Behaviors;
 using CryptoBook.Injections;
+using CryptoBook.Infrastructure;
 using CryptoBook.MyControls;
 using CryptoBook.Views;
 using Microsoft.Xaml.Behaviors;
@@ -52,6 +53,19 @@ internal static class ChatAppearanceSmoke
             Check(ReferenceEquals(assistant, panel.DataContext), "The panel must use the shared assistant from DI.");
             var host = new Window { Content = panel, Width = 420, Height = 900, ShowInTaskbar = false, ShowActivated = false };
             host.Show();
+            var modelStatus = (TextBlock)panel.FindName("ModelStatusText");
+            string ExpectedStatus(string state) => LocalizationManager.GetString("AI.ModelStatus") + ": " + LocalizationManager.GetString("AI.ModelStatus." + state);
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Loaded"));
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "model-loaded-light.png"));
+            runtime.IsLoaded = false; runtime.IsBusy = true;
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Loading"));
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "model-loading-light.png"));
+            runtime.IsBusy = false;
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Unloaded"));
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "model-unloaded-light.png"));
+            runtime.IsLoaded = true;
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Loaded"));
+            report["model_status_three_states"] = true;
             UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-default-light.png"));
             var drop = Interaction.GetBehaviors(panel).OfType<FileDropCommandBehavior>().Single();
             var resizeHandle = (Thumb)panel.FindName("ResizeHandle");
@@ -268,12 +282,14 @@ internal static class ChatAppearanceSmoke
     private sealed class IdleRuntime : IAiInferenceService
     {
         public int UnloadCount { get; private set; }
-        public bool IsLoaded => true;
-        public bool IsBusy => false;
+        public bool IsLoaded { get; set; } = true;
+        public bool IsBusy { get; set; }
         public DateTime LastUsedUtc => DateTime.UtcNow;
         public Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation, Action<string> onText,
             IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null) => throw new NotSupportedException();
         public Task UnloadAsync(CancellationToken cancellationToken = default) { UnloadCount++; return Task.CompletedTask; }
+        public Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task ResetContextAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
         public void Dispose() { }
     }
 }

@@ -1,6 +1,10 @@
 using CryptoBook.AI;
+using CryptoBook.Infrastructure;
 using System.IO;
 using System.Text;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Threading;
 using Xunit;
 
 namespace CryptoBook.Tests;
@@ -316,6 +320,134 @@ public sealed class AdaptiveAiInferenceTests : IDisposable
         await AiWorkerProtocol.WriteAsync(stream, new AiWorkerEvent("usage", Usage: expected), CancellationToken.None);
         stream.Position = 0;
         Assert.Equal(expected, (await AiWorkerProtocol.ReadAsync<AiWorkerEvent>(stream, CancellationToken.None))!.Usage);
+    }
+
+    [Fact]
+    public async Task PreloadAndReset_UseExistingWorkerWithoutSendingConversationOrGeneratingReply()
+    {
+        using var runtime = Create();
+        var settings = Settings with { ReuseContext = true, PreloadOnPanelOpen = true };
+        await runtime.LoadAsync(settings, null, CancellationToken.None);
+        Assert.True(runtime.IsLoaded);
+        Assert.Equal(new[] { "inspect", "probe", "load" }, requests.Select(request => request.Command));
+        Assert.All(requests, request => Assert.Empty(request.Turns));
+        Assert.Equal(settings, requests.Last().Settings);
+        int workersBefore = workers.Count;
+        await runtime.ResetContextAsync();
+        Assert.Equal("reset", requests.Last().Command);
+        Assert.True(runtime.IsLoaded);
+        await Generate(runtime, settings);
+        Assert.Equal(workersBefore, workers.Count);
+        Assert.Equal("generate", requests.Last().Command);
+        Assert.True(requests.Last().Settings.ReuseContext);
+        await runtime.UnloadAsync();
+        int commandsBefore = requests.Count;
+        await runtime.ResetContextAsync();
+        Assert.Equal(commandsBefore, requests.Count);
+    }
+
+    [Fact]
+    public async Task Preload_CancellationStopsWorker_AndNextRequestCanLoadAgain()
+    {
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var runtime = Create(async (request, _, token) =>
+        {
+            if(request.Command == "load") { started.SetResult(); await Task.Delay(Timeout.Infinite, token); }
+        });
+        using var cancellation = new CancellationTokenSource();
+        var loading = runtime.LoadAsync(Settings, null, cancellation.Token);
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        cancellation.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => loading);
+        Assert.False(runtime.IsLoaded);
+        Assert.All(workers, worker => Assert.False(worker.IsAlive));
+        await Generate(runtime, Settings);
+        Assert.True(runtime.IsLoaded);
+    }
+
+    [Fact]
+    public async Task Unload_CancelsPendingContextResetWithoutWaitingForWorker()
+    {
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var runtime = Create(async (request, _, token) =>
+        {
+            if(request.Command == "reset") { started.SetResult(); await Task.Delay(Timeout.Infinite, token); }
+        });
+        await Generate(runtime, Settings);
+        var reset = runtime.ResetContextAsync();
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.True(runtime.IsBusy);
+        await runtime.UnloadAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reset);
+        Assert.False(runtime.IsLoaded);
+        Assert.False(runtime.IsBusy);
+    }
+
+    [WpfFact]
+    public async Task ModelStatus_BindingFollowsLoadGenerationCancellationResetAndUnload()
+    {
+        var probeStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var allowProbe = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var generationStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var runtime = Create(async (request, _, token) =>
+        {
+            if(request.Command == "probe")
+            {
+                probeStarted.TrySetResult();
+                await allowProbe.Task.WaitAsync(token);
+            }
+            if(request.Command == "generate")
+            {
+                generationStarted.TrySetResult();
+                await Task.Delay(Timeout.Infinite, token);
+            }
+        });
+        using var monitor = new AiRuntimeMonitor(runtime);
+        var text = new TextBlock();
+        text.SetBinding(TextBlock.TextProperty, new Binding(nameof(monitor.ModelStatus)) { Source = monitor });
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Unloaded"), text.Text);
+        Task loading = runtime.LoadAsync(Settings, null, CancellationToken.None);
+        await probeStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Loading"), text.Text);
+        allowProbe.SetResult();
+        await loading;
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Loaded"), text.Text);
+        using var cancellation = new CancellationTokenSource();
+        Task generating = runtime.GenerateAsync(Settings, [new("user", "fixture")], _ => { }, null, cancellation.Token);
+        await generationStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Loaded"), text.Text);
+        cancellation.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => generating);
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Unloaded"), text.Text);
+        await runtime.LoadAsync(Settings, null, CancellationToken.None);
+        await runtime.ResetContextAsync();
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Loaded"), text.Text);
+        await runtime.UnloadAsync();
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Unloaded"), text.Text);
+    }
+
+    [WpfFact]
+    public async Task ModelStatus_IdleWorkerExitUpdatesBindingWithoutRuntimeEvent()
+    {
+        using var runtime = Create();
+        using var monitor = new AiRuntimeMonitor(runtime);
+        var text = new TextBlock();
+        text.SetBinding(TextBlock.TextProperty, new Binding(nameof(monitor.ModelStatus)) { Source = monitor });
+        await runtime.LoadAsync(Settings, null, CancellationToken.None);
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Loaded"), text.Text);
+        workers.Last().Stop();
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        while(text.Text != LocalizationManager.GetString("AI.ModelStatus.Unloaded"))
+            await Task.Delay(20, timeout.Token);
+        Assert.False(runtime.IsLoaded);
     }
 
     private sealed class FakeWorker(Func<AiWorkerRequest, Action<string>, Action<string>?, CancellationToken, Task<AiModelInspection?>> execute) : IAiWorkerSession

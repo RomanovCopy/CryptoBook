@@ -1362,4 +1362,12 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="AI.PerformanceModeHint.Optimal" xml:space="preserve"><value>Der Test vergleicht CPU-Einstellungen für dieses Modell und diesen Computer. Ab 5% gemessenem Gewinn wird das schnellere Profil verwendet, sonst ausgewogene Einstellungen. Die Netzbetrieb-Option verwendet im Akkubetrieb ausgewogene Einstellungen.</value></data>
   <data name="AI.InvalidPerformanceMode" xml:space="preserve"><value>Unbekannter KI-Leistungsmodus.</value></data>
   <data name="AI.RuntimePerformance" xml:space="preserve"><value>Leistung: {0}. Generierungs-Threads: {1}; Prompt-Threads: {2}.</value></data>
+  <data name="AI.ReuseContext" xml:space="preserve"><value>Berechnungskontext zwischen Nachrichten wiederverwenden</value></data>
+  <data name="AI.ReuseContextHint" xml:space="preserve"><value>Behält Berechnungen des Textverlaufs im Speicher, um weitere Antworten zu beschleunigen. Der Cache wird beim Leeren des Chats und Entladen des Modells gelöscht. Bildanfragen werden erneut verarbeitet; unterstützt die Engine kein Zurücksetzen des Zustands, wird auch der Verlauf neu berechnet.</value></data>
+  <data name="AI.PreloadOnPanelOpen" xml:space="preserve"><value>Modell beim Öffnen des Assistentenbereichs laden</value></data>
+  <data name="AI.PreloadOnPanelOpenHint" xml:space="preserve"><value>Startet das Laden im Voraus, ohne eine Nachricht zu senden. Belegt Speicher bis zum manuellen oder automatischen Entladen. Das Laden kann gestoppt werden. Beide Optionen werden für jedes Modell separat gespeichert und nach dem Klick auf Speichern angewendet.</value></data>
+  <data name="AI.ModelStatus" xml:space="preserve"><value>Modellstatus</value></data>
+  <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Wird geladen</value></data>
+  <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Geladen</value></data>
+  <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Entladen</value></data>
 </root>

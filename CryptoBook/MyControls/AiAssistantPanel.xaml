@@ -77,6 +77,13 @@
             </Grid>
             <StackPanel Grid.Row="1">
                 <TextBlock Text="{Binding ModelName}" TextTrimming="CharacterEllipsis" ToolTip="{Binding ModelName}" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,8"/>
+                <TextBlock x:Name="ModelStatusText" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,8"
+                           AutomationProperties.LiveSetting="Polite">
+                    <TextBlock.Text><MultiBinding StringFormat="{}{0}: {1}">
+                        <Binding Path="[AI.ModelStatus]" Source="{StaticResource Res}"/>
+                        <Binding Path="Runtime.ModelStatus"/>
+                    </MultiBinding></TextBlock.Text>
+                </TextBlock>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <Button x:Name="NewChatButton" Style="{StaticResource ChatIconButton}" Command="{Binding NewChat}"
                             AutomationProperties.Name="{Binding [AI.NewChat], Source={StaticResource Res}}">

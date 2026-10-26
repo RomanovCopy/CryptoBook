@@ -2213,4 +2213,12 @@
   <data name="AI.PerformanceModeHint.Optimal" xml:space="preserve"><value>Кнопка «Підібрати оптимальний режим» порівняє налаштування CPU на цій моделі та комп’ютері. Прискорений профіль застосовується за виміряного виграшу від 5%, інакше використовуються збалансовані налаштування. Обмеження живлення від мережі вмикає збалансовані налаштування під час роботи від батареї.</value></data>
   <data name="AI.InvalidPerformanceMode" xml:space="preserve"><value>Невідомий режим продуктивності AI.</value></data>
   <data name="AI.RuntimePerformance" xml:space="preserve"><value>Продуктивність: {0}. Потоки генерації: {1}; обробки запиту: {2}.</value></data>
+  <data name="AI.ReuseContext" xml:space="preserve"><value>Повторно використовувати обчислювальний контекст між повідомленнями</value></data>
+  <data name="AI.ReuseContextHint" xml:space="preserve"><value>Зберігає обчислення текстової історії в пам’яті, щоб прискорити наступні відповіді. Кеш скидається під час очищення чату й вивантаження моделі. Запити із зображеннями обробляються заново; якщо рушій не підтримує відкат стану, історія також обчислюється заново.</value></data>
+  <data name="AI.PreloadOnPanelOpen" xml:space="preserve"><value>Завантажувати модель під час відкриття панелі помічника</value></data>
+  <data name="AI.PreloadOnPanelOpenHint" xml:space="preserve"><value>Починає завантаження заздалегідь, без надсилання повідомлення. Використовує пам’ять до ручного або автоматичного вивантаження. Завантаження можна зупинити. Обидва параметри зберігаються окремо для кожної моделі та застосовуються після натискання «Зберегти».</value></data>
+  <data name="AI.ModelStatus" xml:space="preserve"><value>Стан моделі</value></data>
+  <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Завантажується</value></data>
+  <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Завантажена</value></data>
+  <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Вивантажена</value></data>
 </root>

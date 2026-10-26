@@ -35,6 +35,12 @@ internal static partial class AiProgram
                 var request = await AiWorkerProtocol.ReadAsync<AiWorkerRequest>(input, CancellationToken.None).ConfigureAwait(false);
                 if(request is null) return 0;
                 if(!request.Options.IsValid) return 2;
+                if(request.Command == "reset")
+                {
+                    if(engine is not null) await engine.ResetContextAsync().ConfigureAwait(false);
+                    await AiWorkerProtocol.WriteAsync(output, new AiWorkerEvent("done"), CancellationToken.None).ConfigureAwait(false);
+                    continue;
+                }
                 if(!configured)
                 {
                     NativeLibraryConfig.All.WithCuda(false).WithVulkan(request.Command != "inspect" && !request.Options.CpuBackend)
@@ -90,7 +96,7 @@ internal static partial class AiProgram
                         measurement = measurement with { PeakGpuBytes = Math.Max(peakGpu, AiMemoryPlanner.ReadGpuMemory().Used) };
                         messages.Writer.TryWrite(new("measurement", Measurement: measurement));
                     }
-                    else if(request.Command is "probe" or "generate")
+                    else if(request.Command is "probe" or "generate" or "load")
                     {
                         engine ??= new(request.Options);
                         var settings = request.Settings with { ContextLength = request.Options.ContextLength,
@@ -98,7 +104,7 @@ internal static partial class AiProgram
                         IReadOnlyList<AiTurn> turns;
                         if(request.Command == "probe")
                         {
-                            settings = settings with { MaxTokens = 8, Temperature = 0, SystemPrompt = "", UseReasoning = false };
+                            settings = settings with { MaxTokens = 8, Temperature = 0, SystemPrompt = "", UseReasoning = false, ReuseContext = false };
                             turns = [new("user", "Say OK.")];
                         }
                         else turns = request.Turns.Select(turn => turn.ToTurn()).ToArray();
@@ -109,7 +115,10 @@ internal static partial class AiProgram
                         engine.TokenUsageChanged += ReportUsage;
                         try
                         {
-                            await engine.GenerateAsync(settings, turns,
+                            if(request.Command == "load")
+                                await engine.LoadAsync(settings,
+                                    new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), CancellationToken.None).ConfigureAwait(false);
+                            else await engine.GenerateAsync(settings, turns,
                                 text => { if(request.Command == "generate") messages.Writer.TryWrite(new("text", Text: text)); },
                                 new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), CancellationToken.None,
                                 text => { if(request.Command == "generate") messages.Writer.TryWrite(new("reasoning", Text: text)); }).ConfigureAwait(false);

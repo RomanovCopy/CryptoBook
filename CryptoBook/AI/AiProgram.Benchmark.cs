@@ -9,7 +9,7 @@ internal static partial class AiProgram
     {
         var test = settings with { ContextLength = options.ContextLength, MemoryMode = AiMemoryMode.Manual,
             GpuLayers = options.GpuLayers, MaxTokens = 64, Temperature = 0, SystemPrompt = "",
-            UseReasoning = false, RepetitionProtection = false };
+            UseReasoning = false, RepetitionProtection = false, ReuseContext = false };
         // Warm up weights/kernels. No user prompt, document or attachment is used or persisted.
         await engine.GenerateAsync(test with { MaxTokens = 8 }, [new("user", "Say OK.")], _ => { }, null,
             CancellationToken.None).ConfigureAwait(false);

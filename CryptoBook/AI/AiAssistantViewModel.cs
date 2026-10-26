@@ -54,6 +54,8 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     private readonly ITextClipboardService textClipboard;
     private CancellationTokenSource? attachmentCancellation;
     private CancellationTokenSource? cancellation;
+    private Task activeOperation = Task.CompletedTask;
+    private bool isPreloading;
     private bool selectLatestResponse = true, updatingSelection;
     private bool isOpen, isBusy, isAttaching, disposed;
     private long operationVersion;
@@ -72,7 +74,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         this.textClipboard = textClipboard ?? throw new ArgumentNullException(nameof(textClipboard));
         ArgumentNullException.ThrowIfNull(uriNavigation);
         Runtime = new(inference);
-        Send = new AsyncRelayCommand((_, token) => SendAsync(token), _ =>
+        Send = new AsyncRelayCommand((_, token) => activeOperation = SendAsync(token), _ =>
             Enabled && !IsBusy && !isAttaching && (!string.IsNullOrWhiteSpace(Prompt) || HasAttachments) && !IsLocked);
         Stop = new RelayCommand(_ => cancellation?.Cancel(), _ => IsBusy);
         Toggle = new RelayCommand(_ => IsOpen = !IsOpen);
@@ -86,7 +88,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
             value => value is string[] { Length: > 0 } && CanAttach);
         AttachDocument = new RelayCommand(_ => AttachCurrentDocument(), _ => CanAttach);
         RemoveAttachment = new RelayCommand(file => { if(file is AiAttachment attachment) Attachments.Remove(attachment); }, _ => !IsBusy && !isAttaching);
-        ClearChat = new RelayCommand(_ => Clear(), _ => !IsBusy);
+        ClearChat = new AsyncRelayCommand((_, token) => activeOperation = ClearChatAsync(token), _ => !IsBusy && !inference.IsBusy);
         Insert = new RelayCommand(_ => Apply(false), _ => CanApply && editor.CanInsert);
         Replace = new RelayCommand(_ => Apply(true), _ => CanApply && editor.CanReplace);
         Copy = new RelayCommand(_ => CopyResponse(), _ => CanApply);
@@ -99,6 +101,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
             operationVersion++;
             cancellation?.Cancel();
             await inference.UnloadAsync();
+            await activeOperation;
             Status = LocalizationManager.GetString("AI.Unloaded");
             Refresh();
         });
@@ -127,7 +130,16 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         remainingTokens, contextLength, replyTokenLimit);
     public ObservableCollection<AiAttachment> Attachments { get; } = [];
     public void BindWorkspace(IPageNavigationService navigation) => editor.BindWorkspace(navigation);
-    public bool IsOpen { get => isOpen; set => SetProperty(ref isOpen, value); }
+    public bool IsOpen
+    {
+        get => isOpen;
+        set
+        {
+            if(!SetProperty(ref isOpen, value)) return;
+            if(value) StartPreload();
+            else if(isPreloading) cancellation?.Cancel();
+        }
+    }
     public bool IsBusy { get => isBusy; private set { SetProperty(ref isBusy, value); Refresh(); } }
     public bool IsModelLoaded => inference.IsLoaded;
     public bool Enabled
@@ -176,7 +188,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public AsyncRelayCommand AttachPaths { get; }
     public ICommand AttachDocument { get; }
     public ICommand RemoveAttachment { get; }
-    public ICommand ClearChat { get; }
+    public AsyncRelayCommand ClearChat { get; }
     public ICommand NewChat => ClearChat;
     public ICommand Insert { get; }
     public ICommand Replace { get; }
@@ -184,6 +196,54 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public ICommand SelectAllMessages { get; }
     public ICommand ClearMessageSelection { get; }
     public AsyncRelayCommand Unload { get; }
+
+    private void StartPreload()
+    {
+        if(disposed || !IsOpen || !Enabled || IsLocked || IsBusy || inference.IsBusy || inference.IsLoaded ||
+           !store.Current.SelectedModel.PreloadOnPanelOpen) return;
+        activeOperation = PreloadAsync();
+    }
+
+    private async Task PreloadAsync()
+    {
+        using var requestCancellation = new CancellationTokenSource();
+        cancellation = requestCancellation;
+        long version = ++operationVersion;
+        isPreloading = true;
+        IsBusy = true;
+        Status = LocalizationManager.GetString("AI.Loading");
+        try
+        {
+            var progress = new Progress<float>(value =>
+            {
+                if(!disposed && !requestCancellation.IsCancellationRequested && version == operationVersion)
+                    Status = value >= 1 ? LocalizationManager.GetString("AI.Loading")
+                        : LocalizationManager.Format("AI.LoadProgress", (int)(value * 100));
+            });
+            await inference.LoadAsync(store.Current.SelectedModel, progress, requestCancellation.Token);
+            if(!disposed && version == operationVersion) Status = LocalizationManager.GetString("AI.Ready");
+        }
+        catch(OperationCanceledException) { if(!disposed && version == operationVersion) Status = LocalizationManager.GetString("AI.Stopped"); }
+        catch(Exception error) { if(!disposed && version == operationVersion) Status = ErrorText(error); }
+        finally
+        {
+            cancellation = null;
+            isPreloading = false;
+            IsBusy = false;
+        }
+    }
+
+    private async Task ClearChatAsync(CancellationToken token)
+    {
+        Clear();
+        using var requestCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        cancellation = requestCancellation;
+        IsBusy = true;
+        try { await inference.ResetContextAsync(requestCancellation.Token); }
+        catch(OperationCanceledException) { }
+        catch(Exception error) { if(!disposed) Status = ErrorText(error); }
+        finally { cancellation = null; IsBusy = false; }
+    }
 
     private void AttachCurrentDocument()
     {
@@ -399,13 +459,15 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     private void Refresh()
     {
+        Runtime.RefreshModelStatus();
         contextDirty = true;
         OnPropertyChanged(nameof(IsModelLoaded), nameof(CanAttach), nameof(SendUnavailableReason),
             nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
         Send?.RaiseCanExecuteChanged();
         AttachFiles?.RaiseCanExecuteChanged();
         AttachPaths?.RaiseCanExecuteChanged();
-        foreach(ICommand command in new[] { Stop, AttachDocument, RemoveAttachment, ClearChat })
+        ClearChat?.RaiseCanExecuteChanged();
+        foreach(ICommand command in new[] { Stop, AttachDocument, RemoveAttachment })
             (command as RelayCommand)?.RaiseCanExecuteChanged();
         RefreshMessageSelection();
     }
@@ -431,27 +493,28 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         if(previous.Enabled == store.Current.Enabled && previous.SelectedModel == store.Current.SelectedModel)
             return;
         var currentModel = store.Current.SelectedModel;
-        if(previous.Enabled == store.Current.Enabled && (previous.SelectedModel with
+        bool preserveConversation = previous.Enabled == store.Current.Enabled && (previous.SelectedModel with
             { AllowPerformanceBoost = currentModel.AllowPerformanceBoost, PerformanceMode = currentModel.PerformanceMode,
-                BoostOnlyOnAc = currentModel.BoostOnlyOnAc }) == currentModel)
-        {
-            // Resource permission does not change the conversation or its prompt parameters.
-            cancellation?.Cancel();
-            try { await inference.UnloadAsync(); }
-            catch(Exception error) { Status = ErrorText(error); }
-            finally { Refresh(); }
-            return;
-        }
+                BoostOnlyOnAc = currentModel.BoostOnlyOnAc, ReuseContext = currentModel.ReuseContext,
+                PreloadOnPanelOpen = currentModel.PreloadOnPanelOpen }) == currentModel;
+        Task finishing = activeOperation;
         cancellation?.Cancel();
-        Clear();
+        if(preserveConversation) operationVersion++;
+        else Clear();
+        long version = operationVersion;
         OnPropertyChanged(nameof(Enabled), nameof(ModelName));
-        try { await inference.UnloadAsync(); }
+        try
+        {
+            await inference.UnloadAsync();
+            await finishing;
+        }
         catch(Exception error) { Status = ErrorText(error); }
         finally { Refresh(); }
+        if(version == operationVersion) StartPreload();
     }
     private void OnKeyStateChanged(object? sender, KeyResetStateChangedEventArgs e)
     {
-        if(e.State != KeyResetState.Resetting)
+        if(e.State != KeyResetState.Resetting && !IsLocked)
         {
             dispatcher.InvokeAsync(Refresh);
             return;
