@@ -6,6 +6,7 @@
         xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
+        xmlns:ai="clr-namespace:CryptoBook.AI"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:services="clr-namespace:CryptoBook.Services"
         xmlns:viewmodels="clr-namespace:CryptoBook.ViewModels"
@@ -117,7 +118,8 @@
             </Grid.ColumnDefinitions>
             <ContentControl x:Name="sidemenu" Content="{markup:ResolveUserControl UserControlType={x:Type control:SideMenu}}" Grid.Column="0"/>
             <ContentControl Content="{markup:ResolveUserControl UserControlType={x:Type control:MyFrame}}" Grid.Column="1"/>
-            <control:AiAssistantPanel x:Name="AiPanel" Grid.Column="2" DataContext="{Binding Ai}"/>
+            <control:AiAssistantPanel x:Name="AiPanel" Grid.Column="2"
+                                      DataContext="{markup:ResolveViewModel ViewModelType={x:Type ai:AiAssistantViewModel}}"/>
         </Grid>
     </Grid>
         <Border x:Name="SecurityLockShield" Visibility="Collapsed"

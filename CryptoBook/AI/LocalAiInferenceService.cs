@@ -17,6 +17,8 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
     internal LocalAiInferenceService(AiRuntimeOptions options) => runtimeOptions = options;
     private readonly SemaphoreSlim gate = new(1, 1);
     private LLamaWeights? weights;
+    private AiTextInferenceContext? textContext;
+    internal int LastReusedTokens => textContext?.LastReusedTokens ?? 0;
     private MtmdWeights? projector;
     private string? loadedProjectorPath;
     private string? loadedPath;
@@ -33,8 +35,16 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
     public DateTime LastUsedUtc { get; private set; } = DateTime.UtcNow;
     public event Action<AiTokenUsage>? TokenUsageChanged;
 
-    public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
+    public Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
         Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null)
+        => RunAsync(settings, conversation, onText, loadProgress, cancellationToken, onReasoning);
+
+    public Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken)
+        => RunAsync(settings, [], _ => { }, loadProgress, cancellationToken, preload: true);
+
+    private async Task RunAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
+        Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken,
+        Action<string>? onReasoning = null, bool preload = false)
     {
         settings.Validate();
         var images = conversation.SelectMany(turn => turn.Attachments ?? []).Where(file => file.IsImage).ToArray();
@@ -110,6 +120,14 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
             parameters.NoKqvOffload = parameters.GpuLayerCount == 0;
             parameters.OpOffload = parameters.GpuLayerCount != 0;
             parameters = ApplyContextCompatibility(parameters, weights.Metadata, LastMemoryPlan!.TotalLayers);
+            if(!settings.ReuseContext || images.Length > 0) ResetContextCore();
+            if(preload)
+            {
+                if(settings.ReuseContext)
+                    await Task.Run(() => textContext ??= new(weights.CreateContext(parameters)), cancellationToken).ConfigureAwait(false);
+                loadProgress?.Report(1);
+                return;
+            }
             if(projectorPath is not null && (projector is null || loadedProjectorPath != projectorPath))
             {
                 projector?.Dispose(); projector = null;
@@ -156,6 +174,7 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                 try
                 {
                     int inputTokens;
+                    LLamaToken[]? promptTokens = null;
                     if(images.Length > 0)
                     {
                         foreach(var image in images) embeds.Add(projector!.LoadMedia(image.ImageData.Span));
@@ -163,7 +182,11 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                         if(result != 0 || imageChunks is null) throw new AiException("AI.ImageLoadFailed");
                         inputTokens = checked((int)Math.Max(imageChunks.CountTokens(), (ulong)imageChunks.CountPositions()));
                     }
-                    else inputTokens = weights.Tokenize(prompt, add_bos: true, special: true, Encoding.UTF8).Length;
+                    else
+                    {
+                        promptTokens = weights.Tokenize(prompt, add_bos: true, special: true, Encoding.UTF8);
+                        inputTokens = promptTokens.Length;
+                    }
                     int generatedTokens = 0;
                     long lastUsageUpdate = Environment.TickCount64;
                     void ReportUsage() => TokenUsageChanged?.Invoke(new(settings.ContextLength, inputTokens, generatedTokens));
@@ -186,6 +209,11 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                     {
                         context = weights.CreateContext(parameters);
                         generation = InferVisionAsync(context, imageChunks!, sampling, outputTokens, cancellationToken);
+                    }
+                    else if(settings.ReuseContext)
+                    {
+                        textContext ??= new(weights.CreateContext(parameters));
+                        generation = textContext.InferAsync(promptTokens!, sampling, outputTokens, cancellationToken);
                     }
                     else
                     {
@@ -218,6 +246,11 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
                     context?.Dispose();
                 }
             }, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            ResetContextCore();
+            throw;
         }
         finally
         {
@@ -321,8 +354,21 @@ public sealed class LocalAiInferenceService : IAiInferenceService, IAiTokenUsage
         finally { gate.Release(); }
     }
 
+    public async Task ResetContextAsync(CancellationToken cancellationToken = default)
+    {
+        await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try { ResetContextCore(); }
+        finally { gate.Release(); }
+    }
+
+    private void ResetContextCore()
+    {
+        textContext?.Dispose(); textContext = null;
+    }
+
     private void UnloadCore()
     {
+        ResetContextCore();
         projector?.Dispose(); projector = null; loadedProjectorPath = null;
         weights?.Dispose();
         weights = null;

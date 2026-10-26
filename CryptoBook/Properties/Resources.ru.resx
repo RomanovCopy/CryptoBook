@@ -1362,4 +1362,12 @@
   <data name="AI.PerformanceModeHint.Optimal" xml:space="preserve"><value>Кнопка «Подобрать оптимальный режим» сравнит настройки CPU на этой модели и компьютере. Ускоренный профиль применяется при измеренном выигрыше от 5%, иначе используются сбалансированные настройки. Ограничение питания от сети включает сбалансированные настройки при работе от батареи.</value></data>
   <data name="AI.InvalidPerformanceMode" xml:space="preserve"><value>Неизвестный режим производительности AI.</value></data>
   <data name="AI.RuntimePerformance" xml:space="preserve"><value>Производительность: {0}. Потоки генерации: {1}; обработки запроса: {2}.</value></data>
+  <data name="AI.ReuseContext" xml:space="preserve"><value>Повторно использовать вычислительный контекст между сообщениями</value></data>
+  <data name="AI.ReuseContextHint" xml:space="preserve"><value>Сохраняет вычисления текстовой истории в памяти, чтобы ускорить следующие ответы. Кеш сбрасывается при очистке чата и выгрузке модели. Запросы с изображениями обрабатываются заново; если движок не поддерживает откат состояния, история также вычисляется заново.</value></data>
+  <data name="AI.PreloadOnPanelOpen" xml:space="preserve"><value>Загружать модель при открытии панели помощника</value></data>
+  <data name="AI.PreloadOnPanelOpenHint" xml:space="preserve"><value>Начинает загрузку заранее, без отправки сообщения. Использует память до ручной или автоматической выгрузки. Загрузку можно остановить. Оба параметра сохраняются отдельно для каждой модели и применяются после нажатия «Сохранить».</value></data>
+  <data name="AI.ModelStatus" xml:space="preserve"><value>Статус модели</value></data>
+  <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Загружается</value></data>
+  <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Загружена</value></data>
+  <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Выгружена</value></data>
 </root>

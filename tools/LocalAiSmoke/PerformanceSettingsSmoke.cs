@@ -26,6 +26,25 @@ internal static class PerformanceSettingsSmoke
         var mode = (ComboBox)window.FindName("PerformanceModeBox");
         var onlyAc = (CheckBox)window.FindName("BoostOnlyOnAcCheckBox");
         var test = (Button)window.FindName("PerformanceTestButton");
+        var reuse = (CheckBox)window.FindName("ReuseContextCheckBox");
+        var preload = (CheckBox)window.FindName("PreloadOnPanelOpenCheckBox");
+        Check(reuse.IsChecked == false && preload.IsChecked == false, "Session options must default to disabled.");
+        reuse.BringIntoView();
+        ((IToggleProvider)new CheckBoxAutomationPeer(reuse).GetPattern(PatternInterface.Toggle)).Toggle();
+        PumpUntil(() => viewModel.ReuseContext);
+        Check(!viewModel.PreloadOnPanelOpen && !store.Current.SelectedModel.ReuseContext, "Reuse changed another option or saved itself.");
+        ((IToggleProvider)new CheckBoxAutomationPeer(preload).GetPattern(PatternInterface.Toggle)).Toggle();
+        PumpUntil(() => viewModel.PreloadOnPanelOpen);
+        string second = Path.Combine(Path.GetFullPath(outputDirectory), "second-fixture.gguf");
+        File.WriteAllBytes(second, "GGUF"u8.ToArray());
+        viewModel.ModelPath = second;
+        PumpUntil(() => reuse.IsChecked == false && preload.IsChecked == false);
+        ((IToggleProvider)new CheckBoxAutomationPeer(preload).GetPattern(PatternInterface.Toggle)).Toggle();
+        PumpUntil(() => viewModel.PreloadOnPanelOpen && !viewModel.ReuseContext);
+        viewModel.ModelPath = model;
+        PumpUntil(() => reuse.IsChecked == true && preload.IsChecked == true);
+        ShowSessionOptions(window, reuse);
+        UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "session-options-light.png"));
         Check((AiPerformanceMode)mode.SelectedValue == AiPerformanceMode.Balanced && !test.IsEnabled, "Must default to balanced mode.");
         mode.SelectedValue = AiPerformanceMode.PowerSaving;
         PumpUntil(() => viewModel.PerformanceMode == AiPerformanceMode.PowerSaving);
@@ -42,8 +61,13 @@ internal static class PerformanceSettingsSmoke
         UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "performance-light.png"));
         app.Resources.MergedDictionaries.Add(new ResourceDictionary
             { Source = new Uri("/CryptoBook;component/Themes/DarkTheme.xaml", UriKind.Relative) });
+        ShowSessionOptions(window, reuse);
+        UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "session-options-dark.png"));
+        test.BringIntoView();
         UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "performance-dark.png"));
         window.Width = window.MinWidth; window.Height = window.MinHeight;
+        ShowSessionOptions(window, reuse);
+        UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "session-options-small.png"));
         test.BringIntoView();
         UiPreview.CaptureWindow(window, Path.Combine(outputDirectory, "performance-small.png"));
         // Cancel a second run through the same command bound to the global Stop button.
@@ -59,15 +83,26 @@ internal static class PerformanceSettingsSmoke
             "Saved mode or power constraint was lost.");
         using var reopened = new AiModelSettingsViewModel(restored, runtime);
         Check(reopened.PerformanceMode == AiPerformanceMode.Optimal, "Saved mode is not shown after reopening.");
+        Check(reopened.ReuseContext && reopened.PreloadOnPanelOpen, "Session options were not saved independently of performance mode.");
+        var secondProfile = restored.Current.Models.Single(profile => profile.ModelPath == second);
+        Check(!secondProfile.ReuseContext && secondProfile.PreloadOnPanelOpen, "Switching files lost the independent session options.");
         Check(reopened.PerformanceSummary.Contains("Обычный режим"), "Persisted result is not shown after reopening.");
         File.WriteAllText(Path.Combine(outputDirectory, "result.json"), JsonSerializer.Serialize(new
         {
             passed = true, uses_native_model = false, balanced_default = true, power_saving_controls = true,
             test_does_not_save_mode = true, cancellation_passed = true, saved_and_reopened = true,
+            session_options_ui_and_persistence = true,
             note = "Real WPF controls and commands; deterministic benchmark worker, no user settings or model required."
         }, new JsonSerializerOptions { WriteIndented = true }));
         app.Shutdown();
         Console.WriteLine("AI performance settings UI passed: " + outputDirectory);
+    }
+    private static void ShowSessionOptions(Window window, CheckBox reuse)
+    {
+        window.UpdateLayout();
+        var scroll = (ScrollViewer)window.FindName("SettingsScroll");
+        scroll.ScrollToVerticalOffset(scroll.VerticalOffset + reuse.TranslatePoint(new Point(0, 0), scroll).Y - 45);
+        window.UpdateLayout();
     }
     private static void Invoke(Button button)
     {

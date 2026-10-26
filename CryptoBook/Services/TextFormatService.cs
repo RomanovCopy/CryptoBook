@@ -58,8 +58,7 @@ namespace CryptoBook.Services
             if(alignment is not TextAlignment value)
                 return;
 
-            foreach(var paragraph in GetTargetParagraphs())
-                paragraph.TextAlignment = value;
+            ApplyToTargetParagraphs(paragraph => paragraph.TextAlignment = value);
         }
 
         public void SetParagraphIndent(double indent)
@@ -67,8 +66,7 @@ namespace CryptoBook.Services
             if(double.IsNaN(indent) || double.IsInfinity(indent) || indent < 0)
                 return;
 
-            foreach(var paragraph in GetTargetParagraphs())
-                paragraph.TextIndent = indent;
+            ApplyToTargetParagraphs(paragraph => paragraph.TextIndent = indent);
         }
 
         /// <summary>
@@ -254,11 +252,11 @@ namespace CryptoBook.Services
 
         private void SetAbsoluteLineHeight(double value)
         {
-            foreach(var paragraph in GetTargetParagraphs())
+            ApplyToTargetParagraphs(paragraph =>
             {
                 paragraph.LineStackingStrategy = LineStackingStrategy.MaxHeight;
                 paragraph.LineHeight = value;
-            }
+            });
         }
 
         private void AdjustLineHeight(double direction)
@@ -267,11 +265,11 @@ namespace CryptoBook.Services
                 lineSpacingRatio,
                 Math.Sign(direction));
 
-            foreach(var paragraph in GetTargetParagraphs())
+            ApplyToTargetParagraphs(paragraph =>
             {
                 lineSpacingService.Apply(paragraph, updatedRatio);
                 lineHeight = paragraph.LineHeight;
-            }
+            });
 
             if(updatedRatio != lineSpacingRatio)
             {
@@ -280,12 +278,32 @@ namespace CryptoBook.Services
             }
         }
 
+        private void ApplyToTargetParagraphs(Action<Paragraph> apply)
+        {
+            var paragraphs = GetTargetParagraphs();
+            if(paragraphs.Count == 0)
+                return;
+
+            service.BeginChange();
+            try
+            {
+                foreach(var paragraph in paragraphs)
+                    apply(paragraph);
+            }
+            finally
+            {
+                service.EndChange();
+            }
+        }
+
         private IReadOnlyList<Paragraph> GetTargetParagraphs()
         {
             service.RestoreSelection();
 
             if(UsesWholeDocumentFormatting)
-                return GetAllParagraphs();
+                return GetParagraphsInRange(
+                    service.Document.ContentStart,
+                    service.Document.ContentEnd);
 
             if(service.Selection.IsEmpty)
             {
@@ -293,35 +311,35 @@ namespace CryptoBook.Services
                 return current == null ? Array.Empty<Paragraph>() : [current];
             }
 
-            var start = service.Selection.Start.Paragraph;
-            var end = service.Selection.End.Paragraph;
-            if(start == null || end == null)
-                return Array.Empty<Paragraph>();
-
-            var result = new List<Paragraph>();
-            for(var paragraph = start; paragraph != null; paragraph = GetNextParagraph(paragraph))
-            {
-                result.Add(paragraph);
-                if(ReferenceEquals(paragraph, end))
-                    break;
-            }
-
-            return result;
+            return GetParagraphsInRange(service.Selection.Start, service.Selection.End);
         }
 
-        private IReadOnlyList<Paragraph> GetAllParagraphs()
+        private static IReadOnlyList<Paragraph> GetParagraphsInRange(
+            TextPointer start,
+            TextPointer end)
         {
             var result = new List<Paragraph>();
-            for(TextPointer? position = service.Document.ContentStart;
-                position != null &&
-                position.CompareTo(service.Document.ContentEnd) <= 0;
-                position = position.GetNextContextPosition(LogicalDirection.Forward))
+            TextPointer? position = start;
+            while(position != null && position.CompareTo(end) < 0)
             {
-                Paragraph? paragraph = position.Paragraph;
-                if(paragraph != null &&
-                   (result.Count == 0 || !ReferenceEquals(result[^1], paragraph)))
+                if(position.Paragraph is Paragraph paragraph)
                 {
+                    // TextSelection normalizes an endpoint to an insertion
+                    // position, which may follow opening inline tags. Ending
+                    // at the first insertion position excludes that paragraph.
+                    if(paragraph.ContentStart.GetInsertionPosition(LogicalDirection.Forward)
+                        .CompareTo(end) >= 0)
+                        break;
+
                     result.Add(paragraph);
+                    // Skip inline content: large paragraphs need only one visit.
+                    position = paragraph.ElementEnd;
+                }
+                else
+                {
+                    // Ctrl+A can place a boundary outside a Paragraph, including
+                    // at the document edges or between nested block containers.
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
                 }
             }
 
@@ -330,14 +348,6 @@ namespace CryptoBook.Services
 
         private bool UsesWholeDocumentFormatting =>
             documentSession?.Template is { PreservesTextFormatting: false };
-
-        private static Paragraph? GetNextParagraph(Paragraph paragraph)
-        {
-            var position = paragraph.ElementEnd.GetNextContextPosition(LogicalDirection.Forward);
-            while(position != null && position.Paragraph == null)
-                position = position.GetNextContextPosition(LogicalDirection.Forward);
-            return position?.Paragraph;
-        }
 
     }
 }

@@ -6,17 +6,28 @@ namespace CryptoBook.AI;
 /// <summary>Localized presentation of runtime decisions; contains no model request content.</summary>
 public sealed class AiRuntimeMonitor : ViewModelBase, IDisposable
 {
+    private readonly IAiInferenceService inference;
     private readonly IAiRuntimeStatusSource? source;
     private readonly Dispatcher dispatcher;
+    private readonly DispatcherTimer modelStatusTimer;
+    private string lastModelStatusKey;
     private bool disposed;
     public AiRuntimeMonitor(IAiInferenceService inference)
     {
+        this.inference = inference;
         source = inference as IAiRuntimeStatusSource;
         dispatcher = System.Windows.Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher;
+        lastModelStatusKey = ModelStatusKey;
+        // An idle native worker can exit without a request producing a runtime event.
+        modelStatusTimer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background,
+            (_, _) => RefreshModelStatus(), dispatcher);
         if(source is not null) source.RuntimeChanged += OnChanged;
         LocalizationManager.CultureChanged += OnChanged;
     }
     public bool HasInfo => source?.Notices.Count > 0;
+    private string ModelStatusKey => inference.IsLoaded ? "AI.ModelStatus.Loaded"
+        : inference.IsBusy ? "AI.ModelStatus.Loading" : "AI.ModelStatus.Unloaded";
+    public string ModelStatus => LocalizationManager.GetString(ModelStatusKey);
     public string ModelPath => source?.ModelPath ?? "";
     public string ModelName => System.IO.Path.GetFileNameWithoutExtension(ModelPath);
     public string Stage => source?.Notices.LastOrDefault() is { } notice ? Format(notice) : "";
@@ -69,11 +80,20 @@ public sealed class AiRuntimeMonitor : ViewModelBase, IDisposable
     }
     private void Refresh()
     {
-        if(!disposed) OnPropertyChanged(nameof(HasInfo), nameof(Stage), nameof(Summary), nameof(Details), nameof(Warnings), nameof(ModelPath), nameof(ModelName));
+        if(disposed) return;
+        lastModelStatusKey = ModelStatusKey;
+        OnPropertyChanged(nameof(ModelStatus), nameof(HasInfo), nameof(Stage), nameof(Summary), nameof(Details), nameof(Warnings), nameof(ModelPath), nameof(ModelName));
+    }
+    internal void RefreshModelStatus()
+    {
+        if(disposed || ModelStatusKey == lastModelStatusKey) return;
+        lastModelStatusKey = ModelStatusKey;
+        OnPropertyChanged(nameof(ModelStatus));
     }
     public void Dispose()
     {
         disposed = true;
+        modelStatusTimer.Stop();
         if(source is not null) source.RuntimeChanged -= OnChanged;
         LocalizationManager.CultureChanged -= OnChanged;
     }

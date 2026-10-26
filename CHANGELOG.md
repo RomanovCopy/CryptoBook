@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.1.5.0 - 2026-10-26
+
+### Added
+
+- Optional per-model reuse of native text inference context and matching token prefixes in the isolated AI worker, with full evaluation when native rollback is unavailable. Cache stays in memory and resets on chat clearing, cancellation, errors, model changes and unloading; image requests reset the text cache.
+- Optional asynchronous model loading when opening the assistant panel, with cancellation and a persistent loading/loaded/unloaded status, including detection of unexpected worker exit.
+
+### Fixed
+
+- Apply paragraph formatting consistently to selected, nested and empty paragraphs, including Select All and selection boundaries; preserve selection and group undo/redo.
+- Preserve image position and formatted text when moving or removing nested images, with undo/redo support.
+- Preserve temporary directories owned by live or inaccessible processes during orphan cleanup; avoid access-denied failures when inspecting another process.
+
+### Changed
+
+- Split assistant panel resizing, animation, scrolling and file drop handling into WPF behaviors; move attachment picking and clipboard operations behind injected services.
+- Synchronize application, manifest, installer, version test and distribution documentation for 1.1.5.0.
+
+Full comparison: [v1.1.4.9...v1.1.5.0](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.4.9...v1.1.5.0)
+
 ## 1.1.4.9 - 2026-10-23
 
 ### Fixed

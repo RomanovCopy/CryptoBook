@@ -17,6 +17,8 @@ public sealed record AiModelSettings
     public bool AutoReduceContext { get; init; } = true;
     public bool UseReasoning { get; init; }
     public bool RepetitionProtection { get; init; } = true;
+    public bool ReuseContext { get; init; }
+    public bool PreloadOnPanelOpen { get; init; }
     public bool AllowPerformanceBoost { get; init; }
     // Null preserves profiles written before performance modes were introduced.
     public AiPerformanceMode? PerformanceMode { get; init; }
@@ -82,5 +84,7 @@ public interface IAiInferenceService : IDisposable
     DateTime LastUsedUtc { get; }
     Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
         Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null);
+    Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken);
+    Task ResetContextAsync(CancellationToken cancellationToken = default);
     Task UnloadAsync(CancellationToken cancellationToken = default);
 }

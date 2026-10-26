@@ -58,6 +58,186 @@ public sealed class TextFormattingTests
     }
 
     [WpfFact]
+    public void ParagraphMenu_SelectAllFormatsEveryParagraphInLargeDocument()
+    {
+        var (richText, formatting) = CreateDocument(
+            Enumerable.Range(0, 256)
+                .Select(index => $"Paragraph {index}: " + new string('x', 1024))
+                .ToArray());
+        var menu = new TextFormatBarViewModel(richText, formatting);
+        string originalText = new TextRange(
+            richText.Document.ContentStart,
+            richText.Document.ContentEnd).Text;
+        richText.SelectAll();
+        var start = richText.Selection.Start;
+        var end = richText.Selection.End;
+
+        menu.SetTextAlignment.Execute(TextAlignment.Justify);
+        menu.SetParagraphIndent.Execute("20");
+        menu.SetLineHeight.Execute(1.0);
+
+        Assert.All(richText.Document.Blocks.OfType<Paragraph>(), paragraph =>
+        {
+            Assert.Equal(TextAlignment.Justify, paragraph.TextAlignment);
+            Assert.Equal(20, paragraph.TextIndent);
+            Assert.Equal(paragraph.FontSize * 1.3, paragraph.LineHeight, 5);
+        });
+        Assert.Equal(0, start.CompareTo(richText.Selection.Start));
+        Assert.Equal(0, end.CompareTo(richText.Selection.End));
+        Assert.Equal(originalText, richText.Selection.Text);
+
+        menu.SetLineHeight.Execute(-1.0);
+
+        Assert.All(richText.Document.Blocks.OfType<Paragraph>(), paragraph =>
+            Assert.Equal(paragraph.FontSize * 1.2, paragraph.LineHeight, 5));
+    }
+
+    [WpfFact]
+    public void ParagraphFormatting_SelectionToDocumentEndIncludesLastParagraph()
+    {
+        var (richText, formatting) = CreateDocument("first", "second", "third");
+        var paragraphs = richText.Document.Blocks.OfType<Paragraph>().ToArray();
+        richText.Selection.Select(
+            paragraphs[1].ContentStart,
+            richText.Document.ContentEnd);
+
+        formatting.SetParagraphIndent(20);
+
+        Assert.Equal(0, paragraphs[0].TextIndent);
+        Assert.Equal(20, paragraphs[1].TextIndent);
+        Assert.Equal(20, paragraphs[2].TextIndent);
+    }
+
+    [WpfFact]
+    public void ParagraphFormatting_SelectionEndingAtNextParagraphStartExcludesIt()
+    {
+        var (richText, formatting) = CreateDocument("first", "second", "third");
+        var paragraphs = richText.Document.Blocks.OfType<Paragraph>().ToArray();
+        richText.Selection.Select(
+            paragraphs[0].ContentStart,
+            paragraphs[2].ContentStart);
+
+        formatting.SetTextAlignment(TextAlignment.Center);
+
+        Assert.Equal(TextAlignment.Center, paragraphs[0].TextAlignment);
+        Assert.Equal(TextAlignment.Center, paragraphs[1].TextAlignment);
+        Assert.Equal(TextAlignment.Left, paragraphs[2].TextAlignment);
+    }
+
+    [WpfFact]
+    public void ParagraphFormatting_SelectAllIncludesEmptyAndNestedParagraphs()
+    {
+        var (richText, formatting) = CreateDocument("first");
+        var first = (Paragraph)richText.Document.Blocks.FirstBlock!;
+        var empty = new Paragraph();
+        var listParagraph = new Paragraph(new Run("list"));
+        var cellParagraph = new Paragraph(new Run("cell"));
+        var last = new Paragraph();
+        var table = new Table();
+        var group = new TableRowGroup();
+        var row = new TableRow();
+        row.Cells.Add(new TableCell(cellParagraph));
+        group.Rows.Add(row);
+        table.RowGroups.Add(group);
+        var section = new Section();
+        section.Blocks.Add(empty);
+        section.Blocks.Add(new List(new ListItem(listParagraph)));
+        section.Blocks.Add(table);
+        richText.Document.Blocks.Add(section);
+        richText.Document.Blocks.Add(last);
+        richText.SelectAll();
+
+        formatting.SetTextAlignment(TextAlignment.Right);
+        formatting.SetParagraphIndent(15);
+        formatting.SetLineHeight(30);
+
+        Assert.All(new[] { first, empty, listParagraph, cellParagraph, last }, paragraph =>
+        {
+            Assert.Equal(TextAlignment.Right, paragraph.TextAlignment);
+            Assert.Equal(15, paragraph.TextIndent);
+            Assert.Equal(30, paragraph.LineHeight);
+        });
+    }
+
+    [WpfFact]
+    public void ParagraphFormatting_RestoresSelectAllAfterToolbarCollapsesSelection()
+    {
+        var (richText, formatting) = CreateDocument("first", "second");
+        richText.SelectAll();
+        string selectedText = richText.Selection.Text;
+        richText.Service.RaiseEvent(new RoutedEventArgs(UIElement.LostFocusEvent));
+        richText.CaretPosition = richText.Document.ContentStart;
+
+        formatting.SetTextAlignment(TextAlignment.Right);
+
+        Assert.All(richText.Document.Blocks.OfType<Paragraph>(), paragraph =>
+            Assert.Equal(TextAlignment.Right, paragraph.TextAlignment));
+        Assert.Equal(selectedText, richText.Selection.Text);
+    }
+
+    [WpfTheory]
+    [InlineData("alignment")]
+    [InlineData("indent")]
+    [InlineData("spacing")]
+    public void ParagraphFormatting_MultipleParagraphsUndoAndRedoAsSingleOperation(string operation)
+    {
+        var (richText, formatting) = CreateDocument("first", "second", "third");
+        var host = new Window { Content = richText.Service };
+        host.Show();
+        try
+        {
+            richText.Focus();
+            richText.Service.IsUndoEnabled = false;
+            richText.Service.IsUndoEnabled = true;
+            richText.SelectAll();
+
+            switch(operation)
+            {
+                case "alignment":
+                    formatting.SetTextAlignment(TextAlignment.Right);
+                    break;
+                case "indent":
+                    formatting.SetParagraphIndent(20);
+                    break;
+                case "spacing":
+                    formatting.SetLineHeight(-1);
+                    break;
+            }
+
+            Assert.True(formatting.CanUndo);
+            formatting.Undo();
+
+            Assert.All(richText.Document.Blocks.OfType<Paragraph>(), paragraph =>
+            {
+                Assert.Equal(TextAlignment.Left, paragraph.TextAlignment);
+                Assert.Equal(0, paragraph.TextIndent);
+                Assert.True(double.IsNaN(paragraph.LineHeight));
+                Assert.Equal(LineStackingStrategy.MaxHeight, paragraph.LineStackingStrategy);
+            });
+            Assert.False(formatting.CanUndo);
+            Assert.True(formatting.CanRedo);
+            formatting.Redo();
+
+            Assert.All(richText.Document.Blocks.OfType<Paragraph>(), paragraph =>
+            {
+                if(operation == "alignment")
+                    Assert.Equal(TextAlignment.Right, paragraph.TextAlignment);
+                else if(operation == "indent")
+                    Assert.Equal(20, paragraph.TextIndent);
+                else
+                {
+                    Assert.Equal(paragraph.FontSize * 1.1, paragraph.LineHeight, 5);
+                    Assert.Equal(LineStackingStrategy.BlockLineHeight, paragraph.LineStackingStrategy);
+                }
+            });
+        }
+        finally
+        {
+            host.Close();
+        }
+    }
+
+    [WpfFact]
     public void OrdinaryTextDocument_ParagraphFormattingIgnoresSelection()
     {
         foreach(IFileTemplate template in new IFileTemplate[]

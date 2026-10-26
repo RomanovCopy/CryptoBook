@@ -44,7 +44,8 @@ internal static class AttachmentSmoke
         var settings = new AiModelSettings { ModelPath = model, ContextLength = 4096, MaxTokens = 256, Temperature = 0 };
         store.Save(new() { Enabled = true, SelectedModelPath = model, Models = [settings] });
         using var assistant = new AiAssistantViewModel(store, runtime, container.Resolve<AiEditorContext>(),
-            new AiSettingsWindowService(store, runtime), container.Resolve<IKeyResetService>(), Dispatcher.CurrentDispatcher, files);
+            new AiSettingsWindowService(store, runtime), container.Resolve<IKeyResetService>(), Dispatcher.CurrentDispatcher, files,
+            container.Resolve<IAiAttachmentPicker>(), container.Resolve<ITextClipboardService>(), container.Resolve<IUriNavigationService>());
         string document = Path.Combine(directory, "sample.docx");
         using(var output = File.Create(document))
         using(var archive = new ZipArchive(output, ZipArchiveMode.Create))

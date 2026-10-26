@@ -1,15 +1,20 @@
 using Autofac;
 using CryptoBook.AI;
+using CryptoBook.Behaviors;
 using CryptoBook.Injections;
+using CryptoBook.Infrastructure;
 using CryptoBook.MyControls;
 using CryptoBook.Views;
+using Microsoft.Xaml.Behaviors;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -36,10 +41,44 @@ internal static class ChatAppearanceSmoke
             assistant.Messages.Add(new("assistant", "Откройте «Оформление чата», выберите шрифт, размер и цвета сообщений."));
             assistant.Prompt = "Следующий вопрос";
             assistant.Attachments.Add(AiAttachmentService.Document("Черновик.txt", "Тестовое вложение"));
-            var panel = new AiAssistantPanel { DataContext = assistant };
+            using var scope = AmbientScope.Push(container);
+            var panel = (AiAssistantPanel)XamlReader.Parse("""
+                <controls:AiAssistantPanel xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:CryptoBook.MyControls;assembly=CryptoBook"
+                    xmlns:ai="clr-namespace:CryptoBook.AI;assembly=CryptoBook"
+                    xmlns:markup="clr-namespace:CryptoBook.Markup;assembly=CryptoBook"
+                    DataContext="{markup:ResolveViewModel ViewModelType={x:Type ai:AiAssistantViewModel}}"/>
+                """);
+            Check(ReferenceEquals(assistant, panel.DataContext), "The panel must use the shared assistant from DI.");
             var host = new Window { Content = panel, Width = 420, Height = 900, ShowInTaskbar = false, ShowActivated = false };
             host.Show();
+            var modelStatus = (TextBlock)panel.FindName("ModelStatusText");
+            string ExpectedStatus(string state) => LocalizationManager.GetString("AI.ModelStatus") + ": " + LocalizationManager.GetString("AI.ModelStatus." + state);
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Loaded"));
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "model-loaded-light.png"));
+            runtime.IsLoaded = false; runtime.IsBusy = true;
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Loading"));
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "model-loading-light.png"));
+            runtime.IsBusy = false;
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Unloaded"));
+            UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "model-unloaded-light.png"));
+            runtime.IsLoaded = true;
+            WaitUntil(() => modelStatus.Text == ExpectedStatus("Loaded"));
+            report["model_status_three_states"] = true;
             UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-default-light.png"));
+            var drop = Interaction.GetBehaviors(panel).OfType<FileDropCommandBehavior>().Single();
+            var resizeHandle = (Thumb)panel.FindName("ResizeHandle");
+            double originalWidth = panel.ActualWidth;
+            resizeHandle.RaiseEvent(new DragDeltaEventArgs(-10, 0) { RoutedEvent = Thumb.DragDeltaEvent });
+            host.UpdateLayout();
+            Check(panel.ActualWidth > originalWidth, "The marked resize handle did not resize the panel.");
+            resizeHandle.RaiseEvent(new DragDeltaEventArgs(10, 0) { RoutedEvent = Thumb.DragDeltaEvent });
+            host.UpdateLayout();
+            Check(ReferenceEquals(drop.Command, assistant.AttachPaths), "The file drop command binding is missing.");
+            report["panel_view_model_resolved_from_di"] = true;
+            report["resize_handle_works"] = true;
+            report["file_drop_command_bound"] = true;
             Check(MessageBorders(panel).All(border => border.BorderThickness == new Thickness(0)), "Default messages have frames.");
             var appearance = new AiChatAppearanceViewModel(store);
             var settings = new AiChatAppearanceWindow(appearance) { ShowInTaskbar = false, ShowActivated = false };
@@ -243,12 +282,14 @@ internal static class ChatAppearanceSmoke
     private sealed class IdleRuntime : IAiInferenceService
     {
         public int UnloadCount { get; private set; }
-        public bool IsLoaded => true;
-        public bool IsBusy => false;
+        public bool IsLoaded { get; set; } = true;
+        public bool IsBusy { get; set; }
         public DateTime LastUsedUtc => DateTime.UtcNow;
         public Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation, Action<string> onText,
             IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null) => throw new NotSupportedException();
         public Task UnloadAsync(CancellationToken cancellationToken = default) { UnloadCount++; return Task.CompletedTask; }
+        public Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task ResetContextAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
         public void Dispose() { }
     }
 }

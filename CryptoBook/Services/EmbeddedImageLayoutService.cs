@@ -56,6 +56,7 @@ namespace CryptoBook.Services
         public void SetLayout(WpfImage image, ImageLayoutMode mode)
         {
             ArgumentNullException.ThrowIfNull(image);
+            PromoteImageToParagraph(image);
 
             if(mode == ImageLayoutMode.Inline)
             {
@@ -148,6 +149,7 @@ namespace CryptoBook.Services
             // TextPointer может измениться после извлечения изображения из дерева.
             var moveAnchor = new Run(MoveAnchorText);
             inlineService.InsertInlineAt(destination, moveAnchor);
+            PromoteToParagraph(moveAnchor);
 
             if(moveAnchor.Parent is not Paragraph paragraph)
             {
@@ -167,6 +169,49 @@ namespace CryptoBook.Services
 
             SetLayout(image, mode);
             return true;
+        }
+
+        // Изображение остаётся на уровне абзаца, а текст по обе стороны сохраняет
+        // вложенное форматирование и свойства ссылок. Сам текст не пересоздаётся.
+        private static void PromoteToParagraph(Inline inline)
+        {
+            while(inline.Parent is Span span)
+            {
+                InlineCollection siblings = InlineService.GetOwningInlines(span);
+                if(inline.PreviousInline is null)
+                {
+                    span.Inlines.Remove(inline);
+                    siblings.InsertBefore(span, inline);
+                }
+                else
+                {
+                    if(inline.NextInline is not null)
+                    {
+                        var trailingSpan = (Span)Activator.CreateInstance(span.GetType())!;
+                        InlineService.CopyLocalValues(span, trailingSpan);
+                        while(inline.NextInline is { } next)
+                        {
+                            span.Inlines.Remove(next);
+                            trailingSpan.Inlines.Add(next);
+                        }
+                        siblings.InsertAfter(span, trailingSpan);
+                    }
+                    span.Inlines.Remove(inline);
+                    siblings.InsertAfter(span, inline);
+                }
+
+                if(span.Inlines.Count == 0)
+                    siblings.Remove(span);
+            }
+        }
+
+        private static void PromoteImageToParagraph(WpfImage image)
+        {
+            Inline? inline = image.Parent is InlineUIContainer container
+                ? container
+                : GetFigure(image);
+            if(inline is not null)
+                PromoteToParagraph(inline);
         }
 
         private bool MoveToAdjacentParagraph(
@@ -189,6 +234,7 @@ namespace CryptoBook.Services
         public bool Remove(WpfImage image)
         {
             ArgumentNullException.ThrowIfNull(image);
+            PromoteImageToParagraph(image);
 
             if(image.Parent is InlineUIContainer inlineContainer &&
                inlineContainer.Parent is Paragraph inlineParagraph)
@@ -420,9 +466,9 @@ namespace CryptoBook.Services
             Paragraph? sourceParagraph = image.Parent switch
             {
                 InlineUIContainer inlineContainer =>
-                    inlineContainer.Parent as Paragraph,
+                    inlineContainer.ElementStart.Paragraph,
                 BlockUIContainer { Parent: Figure figure } =>
-                    figure.Parent as Paragraph,
+                    figure.ElementStart.Paragraph,
                 _ => null
             };
             if(sourceParagraph is null)
@@ -466,6 +512,7 @@ namespace CryptoBook.Services
 
         private static void DetachForMove(WpfImage image)
         {
+            PromoteImageToParagraph(image);
             if(image.Parent is InlineUIContainer inlineContainer &&
                inlineContainer.Parent is Paragraph inlineParagraph)
             {

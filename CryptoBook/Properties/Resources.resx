@@ -1362,4 +1362,12 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="AI.PerformanceModeHint.Optimal" xml:space="preserve"><value>Find optimal mode compares CPU settings on this model and computer. A measured gain of at least 5% enables the faster profile; otherwise balanced settings are used. The AC-only option uses balanced settings on battery.</value></data>
   <data name="AI.InvalidPerformanceMode" xml:space="preserve"><value>Unknown AI performance mode.</value></data>
   <data name="AI.RuntimePerformance" xml:space="preserve"><value>Performance: {0}. Generation threads: {1}; prompt threads: {2}.</value></data>
+  <data name="AI.ReuseContext" xml:space="preserve"><value>Reuse computation context between messages</value></data>
+  <data name="AI.ReuseContextHint" xml:space="preserve"><value>Keeps text history computations in memory to speed up subsequent replies. The cache is cleared when the chat is cleared or the model is unloaded. Image requests are processed again; history is also recomputed if the engine cannot roll back its state.</value></data>
+  <data name="AI.PreloadOnPanelOpen" xml:space="preserve"><value>Load the model when opening the assistant panel</value></data>
+  <data name="AI.PreloadOnPanelOpenHint" xml:space="preserve"><value>Starts loading in advance without sending a message. Uses memory until manual or automatic unloading. Loading can be stopped. Both options are saved separately for each model and apply after clicking Save.</value></data>
+  <data name="AI.ModelStatus" xml:space="preserve"><value>Model status</value></data>
+  <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Loading</value></data>
+  <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Loaded</value></data>
+  <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Unloaded</value></data>
 </root>

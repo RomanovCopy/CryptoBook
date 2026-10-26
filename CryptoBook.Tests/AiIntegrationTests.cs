@@ -18,7 +18,7 @@ using Xunit;
 
 namespace CryptoBook.Tests;
 
-public sealed class AiIntegrationTests
+public sealed partial class AiIntegrationTests
 {
     [WpfTheory]
     [InlineData(KeyResetState.Inactive, false, true)]
@@ -321,6 +321,111 @@ public sealed class AiIntegrationTests
                 Assert.Equal(AiAssistantViewModel.ErrorText(new AiException("AI.AttachmentLimit")), vm.Status);
                 vm.RemoveAttachment.Execute(vm.Attachments[0]);
                 Assert.True(vm.CanAttach);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task AttachmentCommands_PickerAndDropReadFilesThroughTheAttachmentService()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            string first = Path.Combine(directory, "selected.txt"), second = Path.Combine(directory, "dropped.txt");
+            var picker = new AttachmentPickerStub { Paths = [first] };
+            var (vm, _, _, _) = CreateAssistant(directory, attachmentPicker: picker);
+            using(vm)
+            {
+                await File.WriteAllTextAsync(first, "selected content");
+                await File.WriteAllTextAsync(second, "dropped content");
+                Assert.False(vm.AttachPaths.CanExecute(null));
+                Assert.False(vm.AttachPaths.CanExecute(Array.Empty<string>()));
+                await vm.AttachFiles.ExecuteAsync();
+                await vm.AttachPaths.ExecuteAsync(new[] { second });
+                Assert.Equal(new[] { "selected content", "dropped content" }, vm.Attachments.Select(file => file.Text));
+                vm.Attachments.Add(AiAttachmentService.Document("third.txt", "third"));
+                vm.Attachments.Add(AiAttachmentService.Document("fourth.txt", "fourth"));
+                Assert.False(vm.AttachFiles.CanExecute(null));
+                Assert.False(vm.AttachPaths.CanExecute(new[] { first }));
+                vm.RemoveAttachment.Execute(vm.Attachments[0]);
+                Assert.True(vm.AttachFiles.CanExecute(null));
+                Assert.True(vm.AttachPaths.CanExecute(new[] { first }));
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AttachmentCommands_ClearAndDisposeCancelDroppedFileReading(bool dispose)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var reader = new BlockingAttachmentService();
+            var (vm, _, _, _) = CreateAssistant(directory, attachmentService: reader);
+            using(vm)
+            {
+                Task reading = vm.AttachPaths.ExecuteAsync(new[] { "pending.txt" });
+                Assert.True(vm.AttachPaths.IsRunning);
+                Assert.False(vm.AttachFiles.CanExecute(null));
+                Assert.False(vm.AttachDocument.CanExecute(null));
+                if(dispose) vm.Dispose();
+                else vm.ClearChat.Execute(null);
+                await reading.WaitAsync(TimeSpan.FromSeconds(10));
+                Assert.True(reader.Token.IsCancellationRequested);
+                Assert.Empty(vm.Attachments);
+                Assert.Empty(vm.Status);
+                Assert.False(vm.AttachPaths.IsRunning);
+                Assert.Equal(!dispose, vm.CanAttach);
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfFact]
+    public async Task AttachmentCommands_ClearDiscardsLatePickerResults()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var selection = new TaskCompletionSource<IReadOnlyList<string>>();
+            var picker = new AttachmentPickerStub { PendingSelection = selection.Task };
+            var (vm, _, _, _) = CreateAssistant(directory, attachmentPicker: picker);
+            using(vm)
+            {
+                Task picking = vm.AttachFiles.ExecuteAsync();
+                vm.ClearChat.Execute(null);
+                Assert.True(picker.Token.IsCancellationRequested);
+                selection.SetResult([Path.Combine(directory, "late.txt")]);
+                await picking;
+                Assert.Empty(vm.Attachments);
+                Assert.Empty(vm.Status);
+                Assert.True(vm.AttachFiles.CanExecute(null));
+            }
+        }
+        finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [WpfTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void CopyResponse_UsesInjectedClipboardAndReportsFailure(bool succeed)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var clipboard = new TextClipboardStub { Succeed = succeed };
+            var (vm, _, _, _) = CreateAssistant(directory, textClipboard: clipboard);
+            using(vm)
+            {
+                vm.Messages.Add(new("assistant", "**selected answer**") { IsSelected = true });
+                Assert.True(vm.Copy.CanExecute(null));
+                vm.Copy.Execute(null);
+                Assert.Equal("**selected answer**", clipboard.Text);
+                Assert.Equal(succeed ? string.Empty : LocalizationManager.GetString("AI.CopyFailed"), vm.Status);
             }
         }
         finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
@@ -1230,6 +1335,7 @@ public sealed class AiIntegrationTests
                 Assert.False(vm.IsContextLow);
                 Assert.True(runtime.IsLoaded);
                 Assert.Equal(0, runtime.UnloadCount);
+                Assert.Equal(1, runtime.ResetContextCount);
 
                 previousUsage(new(4096, 4090, 5));
                 await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
@@ -1556,7 +1662,9 @@ public sealed class AiIntegrationTests
 
     private static (AiAssistantViewModel, AiSettingsStore, RuntimeStub, KeyResetStub) CreateAssistant(
         string directory, string? documentText = null, IRichTextBoxService? richTextEditor = null,
-        MarkdownDocumentState? markdownState = null, IDocumentSession? documentSession = null, IPageNavigationService? navigation = null)
+        MarkdownDocumentState? markdownState = null, IDocumentSession? documentSession = null, IPageNavigationService? navigation = null,
+        IAiAttachmentPicker? attachmentPicker = null, ITextClipboardService? textClipboard = null,
+        IAiAttachmentService? attachmentService = null)
     {
         Directory.CreateDirectory(directory);
         string path = Path.Combine(directory, "model.gguf");
@@ -1576,7 +1684,38 @@ public sealed class AiIntegrationTests
         }
         var context = new AiEditorContext(editor, markdown, session, navigation ?? new Navigation());
         return (new AiAssistantViewModel(store, runtime, context, new AiSettingsWindowService(store, runtime), keyReset,
-            Dispatcher.CurrentDispatcher), store, runtime, keyReset);
+            Dispatcher.CurrentDispatcher, attachmentService ?? new AiAttachmentService([]),
+            attachmentPicker ?? new AttachmentPickerStub(), textClipboard ?? new TextClipboardStub(), new UriNavigation()), store, runtime, keyReset);
+    }
+
+    private sealed class AttachmentPickerStub : IAiAttachmentPicker
+    {
+        public IReadOnlyList<string> Paths { get; set; } = [];
+        public Task<IReadOnlyList<string>>? PendingSelection { get; set; }
+        public CancellationToken Token { get; private set; }
+        public Task<IReadOnlyList<string>> PickAttachmentsAsync(CancellationToken cancellationToken = default)
+        {
+            Token = cancellationToken;
+            return PendingSelection ?? Task.FromResult(Paths);
+        }
+    }
+
+    private sealed class TextClipboardStub : ITextClipboardService
+    {
+        public string? Text { get; private set; }
+        public bool Succeed { get; set; } = true;
+        public bool TrySetText(string text) { Text = text; return Succeed; }
+    }
+
+    private sealed class BlockingAttachmentService : IAiAttachmentService
+    {
+        public CancellationToken Token { get; private set; }
+        public async Task<AiAttachment> ReadAsync(string path, CancellationToken cancellationToken = default)
+        {
+            Token = cancellationToken;
+            await Task.Delay(Timeout.Infinite, cancellationToken);
+            throw new InvalidOperationException("The read must be cancelled.");
+        }
     }
 
     private sealed class RuntimeStub : IAiInferenceService, IAiTokenUsageSource
@@ -1587,6 +1726,10 @@ public sealed class AiIntegrationTests
         public Action<AiTokenUsage>? LastUsageCallback { get; private set; }
         public bool IsLoaded { get; set; }
         public int UnloadCount { get; private set; }
+        public int ResetContextCount { get; private set; }
+        public int LoadCount { get; private set; }
+        public Task? BeforeLoad { get; set; }
+        public Exception? LoadError { get; set; }
         public AiModelSettings? LastSettings { get; private set; }
         public IReadOnlyList<AiTurn> LastConversation { get; private set; } = [];
         public bool CompleteImmediately { get; set; }
@@ -1615,6 +1758,22 @@ public sealed class AiIntegrationTests
             }
             finally { IsBusy = false; }
         }
+        public async Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken)
+        {
+            LoadCount++;
+            LastSettings = settings;
+            IsBusy = true;
+            try
+            {
+                if(BeforeLoad is not null) await BeforeLoad.WaitAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                if(LoadError is not null) throw LoadError;
+                IsLoaded = true;
+                loadProgress?.Report(1);
+            }
+            finally { IsBusy = false; }
+        }
+        public Task ResetContextAsync(CancellationToken cancellationToken = default) { ResetContextCount++; return Task.CompletedTask; }
         public Task UnloadAsync(CancellationToken cancellationToken = default) { UnloadCount++; IsLoaded = false; return Task.CompletedTask; }
         public void Dispose() { }
     }

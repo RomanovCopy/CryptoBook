@@ -53,7 +53,8 @@ internal static class ImageProfileSmoke
             report["image"] = imagePath;
             using var assistant = new AiAssistantViewModel(store, runtime, container.Resolve<AiEditorContext>(),
                 new AiSettingsWindowService(store, runtime), container.Resolve<IKeyResetService>(), Dispatcher.CurrentDispatcher,
-                container.Resolve<AiAttachmentService>());
+                container.Resolve<IAiAttachmentService>(), container.Resolve<IAiAttachmentPicker>(),
+                container.Resolve<ITextClipboardService>(), container.Resolve<IUriNavigationService>());
             await assistant.AttachPathsAsync([imagePath]);
             if(assistant.Attachments.Count != 1) throw new Exception(assistant.Status);
             var image = assistant.Attachments[0];

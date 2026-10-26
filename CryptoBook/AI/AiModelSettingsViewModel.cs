@@ -73,7 +73,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
             modelPath = value;
             parameters = profiles.TryGetValue(value, out var profile) ? profile : new() { ModelPath = value };
             OnPropertyChanged(nameof(ModelPath), nameof(ContextLength), nameof(MaxTokens), nameof(Temperature),
-                nameof(GpuLayers), nameof(UseReasoning), nameof(RepetitionProtection), nameof(SystemPrompt), nameof(RecentModels), nameof(SelectedRecentModel),
+                nameof(GpuLayers), nameof(UseReasoning), nameof(RepetitionProtection), nameof(ReuseContext), nameof(PreloadOnPanelOpen), nameof(SystemPrompt), nameof(RecentModels), nameof(SelectedRecentModel),
                 nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(IsAutomaticMemoryMode), nameof(AutoReduceContext), nameof(MemoryDescription),
                 nameof(PerformanceMode), nameof(PerformanceDescription), nameof(IsOptimalPerformanceMode),
                 nameof(BoostOnlyOnAc), nameof(CanPerformanceTest));
@@ -135,6 +135,8 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     public string MemoryDescription => LocalizationManager.GetString("AI.MemoryHint." + MemoryMode);
     public bool UseReasoning { get => parameters.UseReasoning; set { parameters = parameters with { UseReasoning = value }; OnPropertyChanged(); } }
     public bool RepetitionProtection { get => parameters.RepetitionProtection; set { parameters = parameters with { RepetitionProtection = value }; OnPropertyChanged(); } }
+    public bool ReuseContext { get => parameters.ReuseContext; set { parameters = parameters with { ReuseContext = value }; OnPropertyChanged(); } }
+    public bool PreloadOnPanelOpen { get => parameters.PreloadOnPanelOpen; set { parameters = parameters with { PreloadOnPanelOpen = value }; OnPropertyChanged(); } }
     public string SystemPrompt { get => parameters.SystemPrompt; set { parameters = parameters with { SystemPrompt = value }; OnPropertyChanged(); } }
     public int IdleMinutes { get => idleMinutes; set => SetProperty(ref idleMinutes, value); }
     public string Status { get => status; private set => SetProperty(ref status, value); }

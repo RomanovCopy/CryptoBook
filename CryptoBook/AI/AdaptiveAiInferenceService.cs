@@ -43,8 +43,16 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
     public event Action<AiTokenUsage>? TokenUsageChanged;
     public IReadOnlyList<AiRuntimeNotice> Notices { get { lock(sync) return notices.ToArray(); } }
 
-    public async Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
+    public Task GenerateAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
         Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken, Action<string>? onReasoning = null)
+        => RunAsync(settings, conversation, onText, loadProgress, cancellationToken, onReasoning);
+
+    public Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken)
+        => RunAsync(settings, [], _ => { }, loadProgress, cancellationToken, preload: true);
+
+    private async Task RunAsync(AiModelSettings settings, IReadOnlyList<AiTurn> conversation,
+        Action<string> onText, IProgress<float>? loadProgress, CancellationToken cancellationToken,
+        Action<string>? onReasoning = null, bool preload = false)
     {
         settings.Validate();
         AiWorkerProtocol.ValidateConversation(settings, conversation);
@@ -88,8 +96,8 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
                 bool sentOutput = false;
                 try
                 {
-                    Emit("AI.AutoGenerating");
-                    var request = new AiWorkerRequest("generate", settings, RuntimeOptions!, conversation.Select(AiWorkerTurn.From).ToArray());
+                    if(!preload) Emit("AI.AutoGenerating");
+                    var request = new AiWorkerRequest(preload ? "load" : "generate", settings, RuntimeOptions!, conversation.Select(AiWorkerTurn.From).ToArray());
                     await worker!.ExecuteAsync(request, text => { sentOutput = true; onText(text); }, loadProgress, linked.Token,
                         text => { sentOutput = true; onReasoning?.Invoke(text); },
                         usage => TokenUsageChanged?.Invoke(usage)).ConfigureAwait(false);
@@ -283,6 +291,36 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try { await StopWorkerAsync().ConfigureAwait(false); Emit("AI.AutoUnloaded"); }
         finally { gate.Release(); }
+    }
+    public async Task ResetContextAsync(CancellationToken cancellationToken = default)
+    {
+        long startedEpoch;
+        lock(sync) startedEpoch = epoch;
+        await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        try
+        {
+            lock(sync)
+            {
+                if(disposed || startedEpoch != epoch || !IsLoaded) return;
+                active = linked;
+            }
+            IsBusy = true;
+            await worker!.ExecuteAsync(new("reset", new() { ModelPath = ModelPath }, RuntimeOptions!, []),
+                _ => { }, null, linked.Token).ConfigureAwait(false);
+        }
+        catch
+        {
+            await StopWorkerAsync().ConfigureAwait(false);
+            throw;
+        }
+        finally
+        {
+            lock(sync) active = null;
+            IsBusy = false;
+            gate.Release();
+            RuntimeChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
     public async Task ResetAutoProfileAsync(string modelPath, CancellationToken cancellationToken = default)
     {
