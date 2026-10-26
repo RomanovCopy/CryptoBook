@@ -49,7 +49,10 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     private int requestEstimate, contextCorrection;
     private bool contextDirty = true, contextIsEstimate = true;
     private int contextLength, remainingTokens, replyTokenLimit;
-    private readonly AiAttachmentService attachmentService;
+    private readonly IAiAttachmentService attachmentService;
+    private readonly IAiAttachmentPicker attachmentPicker;
+    private readonly ITextClipboardService textClipboard;
+    private CancellationTokenSource? attachmentCancellation;
     private CancellationTokenSource? cancellation;
     private bool selectLatestResponse = true, updatingSelection;
     private bool isOpen, isBusy, isAttaching, disposed;
@@ -58,12 +61,16 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
 
     public AiAssistantViewModel(AiSettingsStore store, IAiInferenceService inference,
         AiEditorContext editor, AiSettingsWindowService settingsWindow, IKeyResetService keyReset,
-        Dispatcher dispatcher, AiAttachmentService? attachmentService = null, IUriNavigationService? uriNavigation = null)
+        Dispatcher dispatcher, IAiAttachmentService attachmentService, IAiAttachmentPicker attachmentPicker,
+        ITextClipboardService textClipboard, IUriNavigationService uriNavigation)
     {
         this.store = store; this.inference = inference; this.editor = editor;
         previousConfiguration = store.Current;
         this.settingsWindow = settingsWindow; this.keyReset = keyReset; this.dispatcher = dispatcher;
-        this.attachmentService = attachmentService ?? new AiAttachmentService([]);
+        this.attachmentService = attachmentService ?? throw new ArgumentNullException(nameof(attachmentService));
+        this.attachmentPicker = attachmentPicker ?? throw new ArgumentNullException(nameof(attachmentPicker));
+        this.textClipboard = textClipboard ?? throw new ArgumentNullException(nameof(textClipboard));
+        ArgumentNullException.ThrowIfNull(uriNavigation);
         Runtime = new(inference);
         Send = new AsyncRelayCommand((_, token) => SendAsync(token), _ =>
             Enabled && !IsBusy && !isAttaching && (!string.IsNullOrWhiteSpace(Prompt) || HasAttachments) && !IsLocked);
@@ -72,18 +79,11 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         OpenPanel = new RelayCommand(_ => IsOpen = true);
         OpenSettings = new RelayCommand(_ => settingsWindow.Open());
         OpenAppearance = new RelayCommand(_ => settingsWindow.OpenAppearance());
-        var links = uriNavigation ?? new Services.UriNavigationService();
-        OpenHyperlink = new RelayCommand(value => links.TryOpen((Uri)value!), value => value is Uri uri && uri.IsAbsoluteUri &&
+        OpenHyperlink = new RelayCommand(value => uriNavigation.TryOpen((Uri)value!), value => value is Uri uri && uri.IsAbsoluteUri &&
             (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeMailto));
-        AttachFiles = new AsyncRelayCommand(async (_, token) =>
-        {
-            var picker = new Microsoft.Win32.OpenFileDialog
-            {
-                Title = LocalizationManager.GetString("AI.AttachFiles"),
-                Filter = LocalizationManager.GetString("AI.AttachmentFilter"), Multiselect = true, CheckFileExists = true
-            };
-            if(picker.ShowDialog() == true) await AttachPathsAsync(picker.FileNames, token);
-        }, _ => CanAttach);
+        AttachFiles = new AsyncRelayCommand((_, token) => PickAttachmentsAsync(token), _ => CanAttach);
+        AttachPaths = new AsyncRelayCommand((value, token) => AttachPathsAsync((string[])value!, token),
+            value => value is string[] { Length: > 0 } && CanAttach);
         AttachDocument = new RelayCommand(_ => AttachCurrentDocument(), _ => CanAttach);
         RemoveAttachment = new RelayCommand(file => { if(file is AiAttachment attachment) Attachments.Remove(attachment); }, _ => !IsBusy && !isAttaching);
         ClearChat = new RelayCommand(_ => Clear(), _ => !IsBusy);
@@ -111,7 +111,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         editor.Changed += OnEditorChanged;
         keyReset.StateChanged += OnKeyStateChanged;
         LocalizationManager.CultureChanged += OnCultureChanged;
-        Attachments.CollectionChanged += (_, _) => { OnPropertyChanged(nameof(HasAttachments), nameof(CanAttach)); Refresh(); };
+        Attachments.CollectionChanged += OnAttachmentsChanged;
         UpdateContextBudget();
     }
 
@@ -153,7 +153,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         : isAttaching ? LocalizationManager.GetString("AI.SendAttaching")
         : string.IsNullOrWhiteSpace(Prompt) && !HasAttachments ? LocalizationManager.GetString("AI.SendEmpty") : string.Empty;
     public bool HasAttachments => Attachments.Count > 0;
-    public bool CanAttach => !IsBusy && !isAttaching && !IsLocked && Attachments.Count < AiAttachmentService.MaxFiles;
+    public bool CanAttach => !disposed && !IsBusy && !isAttaching && !IsLocked && Attachments.Count < AiAttachmentService.MaxFiles;
     public string InsertUnavailableReason => IsBusy ? LocalizationManager.GetString("AI.SendBusy")
         : IsLocked ? LocalizationManager.GetString("AI.SendLocked")
         : !CanApply ? LocalizationManager.GetString("AI.ApplyNeedsMessages")
@@ -173,6 +173,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public ICommand OpenAppearance { get; }
     public ICommand OpenHyperlink { get; }
     public AsyncRelayCommand AttachFiles { get; }
+    public AsyncRelayCommand AttachPaths { get; }
     public ICommand AttachDocument { get; }
     public ICommand RemoveAttachment { get; }
     public ICommand ClearChat { get; }
@@ -198,17 +199,42 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         catch(Exception error) { Status = ErrorText(error); }
     }
 
+    private async Task PickAttachmentsAsync(CancellationToken cancellationToken)
+    {
+        long version = operationVersion;
+        try
+        {
+            var paths = await attachmentPicker.PickAttachmentsAsync(cancellationToken);
+            if(!disposed && version == operationVersion && !cancellationToken.IsCancellationRequested)
+                await AttachPathsAsync(paths, cancellationToken);
+        }
+        catch(OperationCanceledException) { }
+        catch(Exception)
+        {
+            if(!disposed && version == operationVersion) Status = LocalizationManager.GetString("AI.AttachmentReadFailed");
+        }
+    }
+
+    private void OnAttachmentsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(HasAttachments));
+        Refresh();
+    }
+
     public async Task AttachPathsAsync(IEnumerable<string> paths, CancellationToken cancellationToken = default)
     {
         if(!CanAttach) return;
         long version = operationVersion;
+        using var readCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        attachmentCancellation = readCancellation;
         isAttaching = true; Refresh();
         try
         {
             foreach(string path in paths)
             {
                 if(Attachments.Count >= AiAttachmentService.MaxFiles) throw new AiException("AI.AttachmentLimit");
-                var file = await attachmentService.ReadAsync(path, cancellationToken);
+                var file = await attachmentService.ReadAsync(path, readCancellation.Token);
+                readCancellation.Token.ThrowIfCancellationRequested();
                 if(disposed || IsLocked || version != operationVersion) return;
                 Attachments.Add(file);
             }
@@ -216,7 +242,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         }
         catch(OperationCanceledException) { }
         catch(Exception error) { if(version == operationVersion) Status = error is AiException ? ErrorText(error) : LocalizationManager.GetString("AI.AttachmentReadFailed"); }
-        finally { isAttaching = false; Refresh(); }
+        finally { attachmentCancellation = null; isAttaching = false; Refresh(); }
     }
 
     private async Task SendAsync(CancellationToken commandToken)
@@ -330,8 +356,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     private void CopyResponse()
     {
         if(!CanApply) return;
-        try { System.Windows.Clipboard.SetText(GetSelectedText()); }
-        catch(System.Runtime.InteropServices.ExternalException) { Status = LocalizationManager.GetString("AI.CopyFailed"); }
+        if(!textClipboard.TrySetText(GetSelectedText())) Status = LocalizationManager.GetString("AI.CopyFailed");
     }
 
     internal string GetSelectedText()
@@ -367,6 +392,8 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         tokenUsage = null; requestEstimate = 0; contextCorrection = 0;
         Messages.Clear(); selectLatestResponse = true;
         AttachFiles.Cancel();
+        AttachPaths.Cancel();
+        attachmentCancellation?.Cancel();
         Prompt = string.Empty; Attachments.Clear(); Status = string.Empty; Refresh();
         UpdateContextBudget();
     }
@@ -377,6 +404,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
             nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
         Send?.RaiseCanExecuteChanged();
         AttachFiles?.RaiseCanExecuteChanged();
+        AttachPaths?.RaiseCanExecuteChanged();
         foreach(ICommand command in new[] { Stop, AttachDocument, RemoveAttachment, ClearChat })
             (command as RelayCommand)?.RaiseCanExecuteChanged();
         RefreshMessageSelection();
@@ -522,9 +550,11 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     public void Dispose()
     {
+        if(disposed) return;
         disposed = true; cancellation?.Cancel(); idleTimer.Stop(); contextTimer.Stop();
         if(inference is IAiRuntimeStatusSource runtimeSource) runtimeSource.RuntimeChanged -= OnRuntimeChanged;
         Messages.CollectionChanged -= OnMessagesChanged;
+        Attachments.CollectionChanged -= OnAttachmentsChanged;
         foreach(var message in observedMessages) message.PropertyChanged -= OnMessageChanged;
         observedMessages.Clear();
         store.Changed -= OnSettingsChanged;

@@ -5,6 +5,7 @@ using CryptoBook.Views;
 
 using CryptoBook.Infrastructure;
 
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 
@@ -573,7 +574,7 @@ namespace CryptoBook.Services
                 .FirstOrDefault(item => item.CanHandleExtension(
                     Path.GetExtension(path)));
 
-        private static void CleanupOrphanedDirectories(string externalRoot)
+        internal static void CleanupOrphanedDirectories(string externalRoot)
         {
             if(!Directory.Exists(externalRoot))
                 return;
@@ -600,11 +601,18 @@ namespace CryptoBook.Services
             try
             {
                 using Process process = Process.GetProcessById(processId);
-                return !process.HasExited;
+                // Наличия PID достаточно: HasExited открывает дескриптор чужого
+                // процесса и может получить отказ в доступе при запуске приложения.
+                return true;
             }
             catch(ArgumentException)
             {
                 return false;
+            }
+            catch(Win32Exception)
+            {
+                // Неизвестное состояние владельца не разрешает удалять его файлы.
+                return true;
             }
         }
 

@@ -3,6 +3,7 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
 
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 
@@ -399,7 +400,7 @@ namespace CryptoBook.Services
         private static string GetDefaultTemporaryRoot() =>
             Path.Combine(Path.GetTempPath(), "CryptoBook", "Decrypt");
 
-        private static void CleanupOrphanedDirectories(string root)
+        internal static void CleanupOrphanedDirectories(string root)
         {
             if(!Directory.Exists(root))
                 return;
@@ -422,11 +423,18 @@ namespace CryptoBook.Services
             try
             {
                 using Process process = Process.GetProcessById(processId);
-                return !process.HasExited;
+                // Наличия PID достаточно: HasExited требует доступа к дескриптору
+                // процесса, который Windows может запретить для другого владельца.
+                return true;
             }
             catch(ArgumentException)
             {
                 return false;
+            }
+            catch(Win32Exception)
+            {
+                // При неопределённом состоянии сохраняем каталог владельца.
+                return true;
             }
         }
 

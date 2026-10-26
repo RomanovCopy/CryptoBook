@@ -15,7 +15,7 @@ public sealed record AiAttachment(string Name, string Text, ReadOnlyMemory<byte>
     public string Detail => $"{Path.GetExtension(Name).TrimStart('.').ToUpperInvariant()} · {Math.Max(1, (long)Math.Ceiling(Size / 1024d))} KB";
 }
 
-public sealed class AiAttachmentService(IEnumerable<IDocumentTextExtractor> extractors)
+public sealed class AiAttachmentService(IEnumerable<IDocumentTextExtractor> extractors) : IAiAttachmentService
 {
     public const int MaxFiles = 4, MaxFileBytes = 32 * 1024 * 1024, MaxTextCharacters = 500_000;
     private readonly IDocumentTextExtractor[] extractors = extractors.ToArray();

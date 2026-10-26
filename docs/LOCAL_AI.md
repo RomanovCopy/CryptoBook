@@ -79,6 +79,14 @@
 
 Проверка и реальные запросы выполняются в отдельном процессе. Его авария не завершает основной процесс CryptoBook. До первого фрагмента ответа автоматический режим может подобрать другие параметры и повторить запрос. После частичного ответа повтор не выполняется: текст остаётся в диалоге, а ошибка показана пользователю. Остановка, выгрузка, блокировка пространства и закрытие приложения завершают AI-процесс; Windows также завершает его при аварийном выходе основного процесса. Следующий запрос загружает модель заново.
 
+## Архитектура панели
+
+`AiAssistantPanel` содержит разметку и инициализацию представления. Изменение ширины, анимация появления, автопрокрутка и приём перетаскиваемых файлов разделены между `PanelResizeBehavior`, `SlideInBehavior`, `ScrollToEndBehavior` и `FileDropCommandBehavior`. Behavior работают с элементами WPF и привязанными командами без обращения к конкретной ViewModel.
+
+`AiAssistantViewModel` управляет состоянием чата и командами. Выбор файлов, чтение вложений и запись текста в буфер обмена выполняются через `IAiAttachmentPicker`, `IAiAttachmentService` и `ITextClipboardService`; реализации зарегистрированы в Autofac. Кнопка выбора файлов и команда перетаскивания используют одну операцию прикрепления. Очистка чата и освобождение ViewModel отменяют чтение и исключают добавление запоздавших вложений.
+
+В главном окне ViewModel панели получается через существующий `ResolveViewModel`: расширение использует текущий DI scope и поддерживает `INotifyPropertyChanged` без обязательных команд жизненного цикла окна. Регистрация `SingleInstance` сохраняет общий экземпляр помощника для панели и остальных команд приложения.
+
 ## English
 
 Open **Settings → AI assistant → Model settings**, enable the assistant and browse to a GGUF language model. No separate application or server is required. The **AI** title-bar button opens the right-side panel. **Attach files…** and drag-and-drop add documents or images as file cards; **Current document** attaches a snapshot of the entire open document. Documents are extracted as text; images use a matching mmproj GGUF found beside the model, with the vision encoder running in RAM on the CPU. Attachments remain in memory for follow-up questions and are cleared with the chat or workspace lock. Replies stream into the panel and can be copied, inserted at the current cursor or used to replace the current selection, with undo and document validation immediately before applying. The document and selection can be chosen after the answer arrives; applying the same answer again remains available. Markdown preview must be switched to the source editor before applying. **Unload model** cancels generation and releases the text and vision models; idle unloading defaults to 10 minutes. Settings are remembered per model file, and chat messages and attachments are not persisted.

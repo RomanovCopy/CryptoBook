@@ -40,7 +40,9 @@ namespace CryptoBook.Injections
             builder.RegisterType<AiRuntimeProfileStore>().SingleInstance();
             builder.RegisterType<AdaptiveAiInferenceService>().As<IAiInferenceService>().SingleInstance();
             builder.RegisterType<AiEditorContext>().SingleInstance();
-            builder.RegisterType<AiAttachmentService>().SingleInstance();
+            builder.RegisterType<AiAttachmentService>().As<IAiAttachmentService>().AsSelf().SingleInstance();
+            builder.RegisterType<AiAttachmentPickerService>().As<IAiAttachmentPicker>().SingleInstance();
+            builder.RegisterType<TextClipboardService>().As<ITextClipboardService>().SingleInstance();
             builder.RegisterType<AiSettingsWindowService>().SingleInstance();
             builder.RegisterType<AiAssistantViewModel>().SingleInstance();
 

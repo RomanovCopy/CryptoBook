@@ -53,7 +53,9 @@ internal static class SettingsRegression
             }
 
             using var assistant = new AiAssistantViewModel(store, runtime, container.Resolve<AiEditorContext>(),
-                new AiSettingsWindowService(store, runtime), container.Resolve<IKeyResetService>(), Dispatcher.CurrentDispatcher);
+                new AiSettingsWindowService(store, runtime), container.Resolve<IKeyResetService>(), Dispatcher.CurrentDispatcher,
+                container.Resolve<IAiAttachmentService>(), container.Resolve<IAiAttachmentPicker>(),
+                container.Resolve<ITextClipboardService>(), container.Resolve<IUriNavigationService>());
             var panel = new AiAssistantPanel { DataContext = assistant };
             Grid.SetColumn(panel, 2);
             var grid = new Grid();
