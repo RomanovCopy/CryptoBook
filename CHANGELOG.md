@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.1.5.1 - 2026-10-27
+
+### Added
+
+- Six bundled AI conversation templates, a selector in the assistant panel and template creation, renaming, editing and deletion in AI settings. Existing per-model system instructions migrate automatically.
+- Text attachments with any extension or no extension, plus explicitly limited 256-byte HEX previews for unknown binary files.
+
+### Fixed
+
+- Localize built-in conversation template names when the interface language changes, preserving renamed presets and custom names.
+- Keep the selected template name visible after creating, editing or deleting templates in AI settings.
+- Stop AI generation cooperatively, preserve received answer fragments and reuse a responsive loaded worker. Drain cancellation acknowledgements and identify requests so late cancellation and fragments cannot affect the next request; stop an unresponsive worker after a timeout.
+- Reset native conversation context on chat clearing and account for changed system instructions without clearing the conversation or unloading model weights.
+
+### Changed
+
+- Synchronize application, manifest, installer, version test and distribution documentation for 1.1.5.1.
+
+Full comparison: [v1.1.5.0...v1.1.5.1](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.5.0...v1.1.5.1)
+
 ## 1.1.5.0 - 2026-10-26
 
 ### Added

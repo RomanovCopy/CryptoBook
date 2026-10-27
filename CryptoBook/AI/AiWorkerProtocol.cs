@@ -4,16 +4,16 @@ using System.Text.Json;
 namespace CryptoBook.AI;
 
 // Pipe-only DTOs intentionally exclude WPF previews. No request data is put on the command line or disk.
-internal sealed record AiWorkerAttachment(string Name, string Text, ReadOnlyMemory<byte> Image, long Size);
+internal sealed record AiWorkerAttachment(string Name, string Text, ReadOnlyMemory<byte> Image, long Size, bool IsBinary = false);
 internal sealed record AiWorkerTurn(string Role, string Content, AiWorkerAttachment[] Attachments)
 {
     internal static AiWorkerTurn From(AiTurn turn) => new(turn.Role, turn.Content,
-        (turn.Attachments ?? []).Select(file => new AiWorkerAttachment(file.Name, file.Text, file.ImageData, file.Size)).ToArray());
+        (turn.Attachments ?? []).Select(file => new AiWorkerAttachment(file.Name, file.Text, file.ImageData, file.Size, file.IsBinary)).ToArray());
     internal AiTurn ToTurn() => new(Role, Content, Attachments.Select(file =>
-        new AiAttachment(file.Name, file.Text, file.Image, null, file.Size)).ToArray());
+        new AiAttachment(file.Name, file.Text, file.Image, null, file.Size) { IsBinary = file.IsBinary }).ToArray());
 }
 internal sealed record AiWorkerRequest(string Command, AiModelSettings Settings, AiRuntimeOptions Options, AiWorkerTurn[] Turns,
-    bool ProtectResources = false);
+    bool ProtectResources = false, long RequestId = 0);
 internal sealed record AiWorkerEvent(string Kind, string? Text = null, float Progress = 0, AiModelInspection? Inspection = null,
     AiTokenUsage? Usage = null, AiRepetitionStop? Repetition = null, AiPerformanceMeasurement? Measurement = null);
 
@@ -28,6 +28,10 @@ internal interface IAiWorkerSession : IDisposable
 }
 
 internal sealed class AiWorkerException(string reason) : Exception(reason);
+
+// The child acknowledged cancellation after releasing unfinished computations.
+// Other cancellations (including a timeout/forced stop) cannot retain the worker.
+internal sealed class AiWorkerCancelledException(CancellationToken token) : OperationCanceledException(token);
 
 internal static class AiWorkerProtocol
 {

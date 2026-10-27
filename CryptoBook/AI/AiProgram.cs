@@ -26,127 +26,135 @@ internal static partial class AiProgram
     private static async Task<int> RunWorkerAsync()
     {
         using Stream input = Console.OpenStandardInput(), output = Console.OpenStandardOutput();
+        using var inbox = new AiWorkerRequestInbox(input);
         LocalAiInferenceService? engine = null;
         bool configured = false;
         try
         {
-            while(true)
+            await foreach(var operation in inbox.ReadAllAsync().ConfigureAwait(false))
             {
-                var request = await AiWorkerProtocol.ReadAsync<AiWorkerRequest>(input, CancellationToken.None).ConfigureAwait(false);
-                if(request is null) return 0;
-                if(!request.Options.IsValid) return 2;
-                if(request.Command == "reset")
-                {
-                    if(engine is not null) await engine.ResetContextAsync().ConfigureAwait(false);
-                    await AiWorkerProtocol.WriteAsync(output, new AiWorkerEvent("done"), CancellationToken.None).ConfigureAwait(false);
-                    continue;
-                }
-                if(!configured)
-                {
-                    NativeLibraryConfig.All.WithCuda(false).WithVulkan(request.Command != "inspect" && !request.Options.CpuBackend)
-                        .WithAutoFallback(request.Command == "inspect" || request.Options.CpuBackend)
-                        .WithLogCallback((_, _) => { });
-                    configured = true;
-                }
-                var messages = Channel.CreateUnbounded<AiWorkerEvent>(new() { SingleReader = true });
-                var pump = Task.Run(async () =>
-                {
-                    await foreach(var message in messages.Reader.ReadAllAsync().ConfigureAwait(false))
-                        await AiWorkerProtocol.WriteAsync(output, message, CancellationToken.None).ConfigureAwait(false);
-                });
-                using var resourceWatchStop = new CancellationTokenSource();
-                long peakGpu = 0;
-                Task resourceWatch = Task.CompletedTask;
+                var request = operation.Request;
                 try
                 {
-                    request.Settings.Validate();
-                    if(request.Options.PerformanceBoost && !AiPerformancePolicy.IsAllowed(request.Settings, AiResourceSnapshot.Read()))
-                        throw new AiException("AI.PerformanceConsentRequired");
-                    using var execution = new AiExecutionScope(request.Options.PerformanceBoost, request.Options.PowerSaving);
-                    if(request.ProtectResources || request.Options.PerformanceBoost || request.Command == "benchmark")
-                        resourceWatch = Task.Run(async () =>
+                    if(!request.Options.IsValid) return 2;
+                    if(request.Command == "reset")
+                    {
+                        if(engine is not null) await engine.ResetContextAsync().ConfigureAwait(false);
+                        await AiWorkerProtocol.WriteAsync(output, new AiWorkerEvent("done"), CancellationToken.None).ConfigureAwait(false);
+                        continue;
+                    }
+                    if(!configured)
+                    {
+                        NativeLibraryConfig.All.WithCuda(false).WithVulkan(request.Command != "inspect" && !request.Options.CpuBackend)
+                            .WithAutoFallback(request.Command == "inspect" || request.Options.CpuBackend)
+                            .WithLogCallback((_, _) => { });
+                        configured = true;
+                    }
+                    var messages = Channel.CreateUnbounded<AiWorkerEvent>(new() { SingleReader = true });
+                    var pump = Task.Run(async () =>
+                    {
+                        await foreach(var message in messages.Reader.ReadAllAsync().ConfigureAwait(false))
+                            await AiWorkerProtocol.WriteAsync(output, message, CancellationToken.None).ConfigureAwait(false);
+                    });
+                    using var resourceWatchStop = new CancellationTokenSource();
+                    long peakGpu = 0;
+                    Task resourceWatch = Task.CompletedTask;
+                    try
+                    {
+                        request.Settings.Validate();
+                        if(request.Options.PerformanceBoost && !AiPerformancePolicy.IsAllowed(request.Settings, AiResourceSnapshot.Read()))
+                            throw new AiException("AI.PerformanceConsentRequired");
+                        using var execution = new AiExecutionScope(request.Options.PerformanceBoost, request.Options.PowerSaving);
+                        if(request.ProtectResources || request.Options.PerformanceBoost || request.Command == "benchmark")
+                            resourceWatch = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(200));
+                                    while(await timer.WaitForNextTickAsync(resourceWatchStop.Token).ConfigureAwait(false))
+                                    {
+                                        var memory = AiMemoryPlanner.ReadGpuMemory();
+                                        peakGpu = Math.Max(peakGpu, memory.Used);
+                                        if(memory.Available >= 256L * 1024 * 1024) continue;
+                                        messages.Writer.TryWrite(new("error", Text: "AI.ResourcePressure"));
+                                        return; // The owner terminates only this worker on this event.
+                                    }
+                                }
+                                catch(OperationCanceledException) when(resourceWatchStop.IsCancellationRequested) { }
+                            });
+                        if(request.Command == "inspect")
                         {
+                            using var vocabulary = await LLamaWeights.LoadFromFileAsync(new ModelParams(request.Settings.ModelPath)
+                                { VocabOnly = true, GpuLayerCount = 0, LoadMode = LLamaLoadMode.MemoryMap }).ConfigureAwait(false);
+                            var metadata = vocabulary.Metadata.Where(pair => pair.Key == "general.architecture" ||
+                                pair.Key.EndsWith(".embedding_length_per_layer_input", StringComparison.Ordinal)).ToDictionary();
+                            var plan = AiMemoryPlanner.Create(request.Settings, vocabulary.Metadata);
+                            messages.Writer.TryWrite(new("inspection", Inspection: new(plan, metadata, HardwareKey(plan.GpuName))));
+                        }
+                        else if(request.Command == "benchmark")
+                        {
+                            engine ??= new(request.Options);
+                            var measurement = await BenchmarkAsync(engine, request.Settings, request.Options).ConfigureAwait(false);
+                            measurement = measurement with { PeakGpuBytes = Math.Max(peakGpu, AiMemoryPlanner.ReadGpuMemory().Used) };
+                            messages.Writer.TryWrite(new("measurement", Measurement: measurement));
+                        }
+                        else if(request.Command is "probe" or "generate" or "load")
+                        {
+                            engine ??= new(request.Options);
+                            var settings = request.Settings with { ContextLength = request.Options.ContextLength,
+                                MemoryMode = AiMemoryMode.Manual, GpuLayers = request.Options.GpuLayers };
+                            IReadOnlyList<AiTurn> turns;
+                            if(request.Command == "probe")
+                            {
+                                settings = settings with { MaxTokens = 8, Temperature = 0, SystemPrompt = "", UseReasoning = false, ReuseContext = false };
+                                turns = [new("user", "Say OK.")];
+                            }
+                            else turns = request.Turns.Select(turn => turn.ToTurn()).ToArray();
+                            void ReportUsage(AiTokenUsage usage)
+                            {
+                                if(request.Command == "generate") messages.Writer.TryWrite(new("usage", Usage: usage));
+                            }
+                            engine.TokenUsageChanged += ReportUsage;
                             try
                             {
-                                using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(200));
-                                while(await timer.WaitForNextTickAsync(resourceWatchStop.Token).ConfigureAwait(false))
-                                {
-                                    var memory = AiMemoryPlanner.ReadGpuMemory();
-                                    peakGpu = Math.Max(peakGpu, memory.Used);
-                                    if(memory.Available >= 256L * 1024 * 1024) continue;
-                                    messages.Writer.TryWrite(new("error", Text: "AI.ResourcePressure"));
-                                    return; // The owner terminates only this worker on this event.
-                                }
+                                if(request.Command == "load")
+                                    await engine.LoadAsync(settings,
+                                        new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), operation.Token).ConfigureAwait(false);
+                                else await engine.GenerateAsync(settings, turns,
+                                    text => { if(request.Command == "generate") messages.Writer.TryWrite(new("text", Text: text)); },
+                                    new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), operation.Token,
+                                    text => { if(request.Command == "generate") messages.Writer.TryWrite(new("reasoning", Text: text)); }).ConfigureAwait(false);
                             }
-                            catch(OperationCanceledException) when(resourceWatchStop.IsCancellationRequested) { }
-                        });
-                    if(request.Command == "inspect")
-                    {
-                        using var vocabulary = await LLamaWeights.LoadFromFileAsync(new ModelParams(request.Settings.ModelPath)
-                            { VocabOnly = true, GpuLayerCount = 0, LoadMode = LLamaLoadMode.MemoryMap }).ConfigureAwait(false);
-                        var metadata = vocabulary.Metadata.Where(pair => pair.Key == "general.architecture" ||
-                            pair.Key.EndsWith(".embedding_length_per_layer_input", StringComparison.Ordinal)).ToDictionary();
-                        var plan = AiMemoryPlanner.Create(request.Settings, vocabulary.Metadata);
-                        messages.Writer.TryWrite(new("inspection", Inspection: new(plan, metadata, HardwareKey(plan.GpuName))));
-                    }
-                    else if(request.Command == "benchmark")
-                    {
-                        engine ??= new(request.Options);
-                        var measurement = await BenchmarkAsync(engine, request.Settings, request.Options).ConfigureAwait(false);
-                        measurement = measurement with { PeakGpuBytes = Math.Max(peakGpu, AiMemoryPlanner.ReadGpuMemory().Used) };
-                        messages.Writer.TryWrite(new("measurement", Measurement: measurement));
-                    }
-                    else if(request.Command is "probe" or "generate" or "load")
-                    {
-                        engine ??= new(request.Options);
-                        var settings = request.Settings with { ContextLength = request.Options.ContextLength,
-                            MemoryMode = AiMemoryMode.Manual, GpuLayers = request.Options.GpuLayers };
-                        IReadOnlyList<AiTurn> turns;
-                        if(request.Command == "probe")
-                        {
-                            settings = settings with { MaxTokens = 8, Temperature = 0, SystemPrompt = "", UseReasoning = false, ReuseContext = false };
-                            turns = [new("user", "Say OK.")];
+                            finally { engine.TokenUsageChanged -= ReportUsage; }
                         }
-                        else turns = request.Turns.Select(turn => turn.ToTurn()).ToArray();
-                        void ReportUsage(AiTokenUsage usage)
-                        {
-                            if(request.Command == "generate") messages.Writer.TryWrite(new("usage", Usage: usage));
-                        }
-                        engine.TokenUsageChanged += ReportUsage;
-                        try
-                        {
-                            if(request.Command == "load")
-                                await engine.LoadAsync(settings,
-                                    new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), CancellationToken.None).ConfigureAwait(false);
-                            else await engine.GenerateAsync(settings, turns,
-                                text => { if(request.Command == "generate") messages.Writer.TryWrite(new("text", Text: text)); },
-                                new AiInlineProgress<float>(value => messages.Writer.TryWrite(new("progress", Progress: value))), CancellationToken.None,
-                                text => { if(request.Command == "generate") messages.Writer.TryWrite(new("reasoning", Text: text)); }).ConfigureAwait(false);
-                        }
-                        finally { engine.TokenUsageChanged -= ReportUsage; }
+                        else return 2;
+                        resourceWatchStop.Cancel();
+                        await resourceWatch.ConfigureAwait(false);
+                        messages.Writer.TryWrite(new("done"));
                     }
-                    else return 2;
-                    resourceWatchStop.Cancel();
-                    await resourceWatch.ConfigureAwait(false);
-                    messages.Writer.TryWrite(new("done"));
+                    catch(AiRepetitionException error)
+                    {
+                        messages.Writer.TryWrite(new("repetition", Repetition: error.Stop));
+                    }
+                    catch(OperationCanceledException) when(operation.Token.IsCancellationRequested)
+                    {
+                        messages.Writer.TryWrite(new("cancelled"));
+                    }
+                    catch(Exception error)
+                    {
+                        messages.Writer.TryWrite(new("error", Text: error is AiException ai ? ai.ResourceKey
+                            : request.Command == "inspect" ? "AI.LoadFailed" : "AI.GenerationFailed"));
+                    }
+                    finally
+                    {
+                        resourceWatchStop.Cancel();
+                        await resourceWatch.ConfigureAwait(false);
+                        messages.Writer.TryComplete(); await pump.ConfigureAwait(false);
+                    }
                 }
-                catch(AiRepetitionException error)
-                {
-                    messages.Writer.TryWrite(new("repetition", Repetition: error.Stop));
-                }
-                catch(Exception error)
-                {
-                    messages.Writer.TryWrite(new("error", Text: error is AiException ai ? ai.ResourceKey
-                        : request.Command == "inspect" ? "AI.LoadFailed" : "AI.GenerationFailed"));
-                }
-                finally
-                {
-                    resourceWatchStop.Cancel();
-                    await resourceWatch.ConfigureAwait(false);
-                    messages.Writer.TryComplete(); await pump.ConfigureAwait(false);
-                }
-                request = null;
+                finally { inbox.Complete(operation); request = null!; }
             }
+            return 0;
         }
         finally { engine?.Dispose(); }
     }

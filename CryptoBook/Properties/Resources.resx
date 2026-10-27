@@ -1231,8 +1231,9 @@ Author: [Name]
   <data name="AI.InvalidNumber" xml:space="preserve"><value>Enter a valid number in the highlighted field.</value></data>
   <data name="AI.ReplyLimitHint" xml:space="preserve"><value>The reply limit is a ceiling. If less space remains in the context, the reply is shortened automatically.</value></data>
   <data name="AI.AttachFiles" xml:space="preserve"><value>Attach files…</value></data>
-  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Documents and images|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff</value></data>
-  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>This file format cannot be attached. Choose a text document, RTF, DOCX, XamlPackage or a supported image.</value></data>
+  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Documents and images|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|All files (*.*)|*.*</value></data>
+  <data name="AI.BinaryAttachmentHint" xml:space="preserve"><value>Binary file: only a HEX preview is available to the model.</value></data>
+  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Could not read this document or image. The file may be damaged or use an unsupported format variant.</value></data>
   <data name="AI.AttachmentTooLarge" xml:space="preserve"><value>The file is too large: up to 32 MB per file, 500000 text characters and 100 megapixels before image resizing.</value></data>
   <data name="AI.AttachmentEmpty" xml:space="preserve"><value>The document has no text to send to the model.</value></data>
   <data name="AI.AttachmentLimit" xml:space="preserve"><value>Attach up to four files per message.</value></data>
@@ -1370,4 +1371,21 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Loading</value></data>
   <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Loaded</value></data>
   <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Unloaded</value></data>
+  <data name="AI.PromptTemplates" xml:space="preserve"><value>Conversation templates</value></data>
+  <data name="AI.PromptTemplate" xml:space="preserve"><value>Conversation template</value></data>
+  <data name="AI.PromptTemplatesHint" xml:space="preserve"><value>Templates are shared by all models. Select a template to edit its name and system prompt, or create a new one. An empty prompt adds no instructions. Save applies changes; Cancel discards them. The selected template applies to subsequent replies without clearing the chat.</value></data>
+  <data name="AI.NewTemplate" xml:space="preserve"><value>New template</value></data>
+  <data name="AI.AddTemplate" xml:space="preserve"><value>Create template</value></data>
+  <data name="AI.RemoveTemplate" xml:space="preserve"><value>Delete template</value></data>
+  <data name="AI.TemplateName" xml:space="preserve"><value>Template name</value></data>
+  <data name="AI.TemplateNameRequired" xml:space="preserve"><value>Enter a name for every template.</value></data>
+  <data name="AI.TemplateNameDuplicate" xml:space="preserve"><value>Template names must be unique.</value></data>
+  <data name="AI.TemplatePreset.Default" xml:space="preserve"><value>Default</value></data>
+  <data name="AI.TemplatePreset.Concise" xml:space="preserve"><value>Concise answers</value></data>
+  <data name="AI.TemplatePreset.Explainer" xml:space="preserve"><value>Step-by-step explanations</value></data>
+  <data name="AI.TemplatePreset.Editor" xml:space="preserve"><value>Text editor</value></data>
+  <data name="AI.TemplatePreset.Analyst" xml:space="preserve"><value>Analyst</value></data>
+  <data name="AI.TemplatePreset.Developer" xml:space="preserve"><value>Programming assistant</value></data>
+  <data name="AI.Stopping" xml:space="preserve"><value>Stopping…</value></data>
+  <data name="AI.AutoStopped" xml:space="preserve"><value>Generation stopped. The model remains loaded and is ready for the next request.</value></data>
 </root>

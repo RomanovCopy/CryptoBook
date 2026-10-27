@@ -27,12 +27,12 @@ public sealed class AiSettingsStore
         {
             Current = new();
         }
-        Current = Current with { ChatAppearance = (Current.ChatAppearance ?? new()).Normalize() };
+        Current = AiPromptTemplates.Normalize(Current with { ChatAppearance = (Current.ChatAppearance ?? new()).Normalize() });
     }
 
     public void Save(AiConfiguration configuration)
     {
-        configuration = configuration with { ChatAppearance = (configuration.ChatAppearance ?? new()).Normalize() };
+        configuration = AiPromptTemplates.Normalize(configuration with { ChatAppearance = (configuration.ChatAppearance ?? new()).Normalize() });
         string directory = Path.GetDirectoryName(Path.GetFullPath(filePath))!;
         Directory.CreateDirectory(directory);
         string temporary = Path.Combine(directory, Guid.NewGuid().ToString("N") + ".tmp");

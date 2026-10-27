@@ -45,6 +45,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     private readonly DispatcherTimer contextTimer;
     private readonly HashSet<AiChatMessage> observedMessages = [];
     private AiConfiguration previousConfiguration;
+    private ObservableCollection<AiPromptTemplateViewModel>? promptTemplates;
     private AiTokenUsage? tokenUsage;
     private int requestEstimate, contextCorrection;
     private bool contextDirty = true, contextIsEstimate = true;
@@ -76,7 +77,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         Runtime = new(inference);
         Send = new AsyncRelayCommand((_, token) => activeOperation = SendAsync(token), _ =>
             Enabled && !IsBusy && !isAttaching && (!string.IsNullOrWhiteSpace(Prompt) || HasAttachments) && !IsLocked);
-        Stop = new RelayCommand(_ => cancellation?.Cancel(), _ => IsBusy);
+        Stop = new RelayCommand(_ => StopGeneration(), _ => IsBusy && cancellation is { IsCancellationRequested: false });
         Toggle = new RelayCommand(_ => IsOpen = !IsOpen);
         OpenPanel = new RelayCommand(_ => IsOpen = true);
         OpenSettings = new RelayCommand(_ => settingsWindow.Open());
@@ -121,6 +122,29 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public ObservableCollection<AiChatMessage> Messages { get; } = [];
     public AiRuntimeMonitor Runtime { get; }
     public AiChatAppearance Appearance => store.Current.ChatAppearance;
+    public IReadOnlyList<AiPromptTemplateViewModel> PromptTemplates => promptTemplates ??= new(store.Current.PromptTemplates
+        .Select(template => new AiPromptTemplateViewModel(template)));
+    public bool CanChangePromptTemplate => !IsBusy && !inference.IsBusy;
+    public AiPromptTemplateViewModel? SelectedPromptTemplate
+    {
+        get => PromptTemplates.FirstOrDefault(template => template.Id == SelectedPromptTemplateId);
+        set { if(value is not null) SelectedPromptTemplateId = value.Id; }
+    }
+    public string SelectedPromptTemplateId
+    {
+        get => store.Current.SelectedPromptTemplateId;
+        set
+        {
+            if(!CanChangePromptTemplate || value == SelectedPromptTemplateId || !PromptTemplates.Any(template => template.Id == value)) return;
+            try { store.Save(store.Current with { SelectedPromptTemplateId = value }); }
+            catch(Exception)
+            {
+                Status = LocalizationManager.GetString("AI.SaveFailed");
+                OnPropertyChanged(nameof(SelectedPromptTemplateId), nameof(SelectedPromptTemplate));
+            }
+        }
+    }
+    public string SelectedSystemPrompt => store.Current.SelectedPromptTemplate?.SystemPrompt ?? string.Empty;
     public int ContextLength => contextLength;
     public int RemainingTokens => remainingTokens;
     public int ReplyTokenLimit => replyTokenLimit;
@@ -233,6 +257,14 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private void StopGeneration()
+    {
+        if(cancellation is null || cancellation.IsCancellationRequested) return;
+        Status = LocalizationManager.GetString("AI.Stopping");
+        cancellation.Cancel();
+        (Stop as RelayCommand)?.RaiseCanExecuteChanged();
+    }
+
     private async Task ClearChatAsync(CancellationToken token)
     {
         Clear();
@@ -311,9 +343,10 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         string input = Prompt.Trim();
         if(input.Length == 0 && HasAttachments) input = LocalizationManager.GetString("AI.DefaultFilePrompt");
         var files = Attachments.ToArray();
+        var settings = store.Current.SelectedModel;
         try
         {
-            store.Current.SelectedModel.Validate();
+            settings.Validate();
             if(files.Any(file => file.IsImage) || Messages.Any(message => message.Attachments.Any(file => file.IsImage)))
                 _ = AiVisionProjector.Find(store.Current.SelectedModelPath);
         }
@@ -323,7 +356,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         var conversation = Messages.Where(m => m.Role != "assistant" || !string.IsNullOrWhiteSpace(m.Content))
             .Select(m => new AiTurn(m.Role, m.Content, m.Attachments)).ToList();
         conversation.Add(new("user", input, files));
-        requestEstimate = AiContextBudget.Estimate(store.Current.SelectedModel, conversation);
+        requestEstimate = AiContextBudget.Estimate(settings, conversation);
         tokenUsage = null;
         Messages.Add(new("user", input, files));
         var answer = new AiChatMessage("assistant", string.Empty);
@@ -347,24 +380,26 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
                         : hasImages && answer.Content.Length == 0 ? "AI.ProcessingImage" : "AI.Generating")
                         : LocalizationManager.Format("AI.LoadProgress", (int)(value * 100));
             });
-            await inference.GenerateAsync(store.Current.SelectedModel, conversation, text =>
+            await inference.GenerateAsync(settings, conversation, text =>
             {
+                if(requestCancellation.IsCancellationRequested) return;
                 dispatcher.InvokeAsync(() =>
                 {
-                    if(!requestCancellation.IsCancellationRequested && !disposed && version == operationVersion)
+                    if(!disposed && version == operationVersion)
                     {
                         answer.Content += text;
-                        Status = LocalizationManager.GetString("AI.Generating");
+                        if(!requestCancellation.IsCancellationRequested) Status = LocalizationManager.GetString("AI.Generating");
                     }
                 }, DispatcherPriority.Normal);
             }, progress, requestCancellation.Token, text =>
             {
+                if(requestCancellation.IsCancellationRequested) return;
                 dispatcher.InvokeAsync(() =>
                 {
-                    if(!requestCancellation.IsCancellationRequested && !disposed && version == operationVersion)
+                    if(!disposed && version == operationVersion)
                     {
                         answer.Reasoning += text;
-                        if(answer.Content.Length == 0) Status = LocalizationManager.GetString("AI.Thinking");
+                        if(!requestCancellation.IsCancellationRequested && answer.Content.Length == 0) Status = LocalizationManager.GetString("AI.Thinking");
                     }
                 }, DispatcherPriority.Normal);
             });
@@ -388,11 +423,21 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
                 Status = LocalizationManager.GetString("AI.RepetitionStopped");
             }
         }
-        catch(OperationCanceledException) { if(version == operationVersion) Status = LocalizationManager.GetString("AI.Stopped"); }
+        catch(OperationCanceledException)
+        {
+            // Keep fragments accepted before Stop, even if their UI callbacks were still queued.
+            if(!disposed) await dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+            if(version == operationVersion) Status = LocalizationManager.GetString("AI.Stopped");
+        }
         catch(Exception e) { if(version == operationVersion) Status = ErrorText(e); }
         finally
         {
             if(usageSource is not null) usageSource.TokenUsageChanged -= ReportUsage;
+            if(settings.SystemPrompt != store.Current.SelectedModel.SystemPrompt)
+            {
+                tokenUsage = null;
+                contextCorrection = 0;
+            }
             cancellation = null;
             if(string.IsNullOrWhiteSpace(answer.Content) && !answer.HasReasoning) Messages.Remove(answer);
             if(selectLatestResponse)
@@ -461,7 +506,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     {
         Runtime.RefreshModelStatus();
         contextDirty = true;
-        OnPropertyChanged(nameof(IsModelLoaded), nameof(CanAttach), nameof(SendUnavailableReason),
+        OnPropertyChanged(nameof(IsModelLoaded), nameof(CanAttach), nameof(CanChangePromptTemplate), nameof(SendUnavailableReason),
             nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
         Send?.RaiseCanExecuteChanged();
         AttachFiles?.RaiseCanExecuteChanged();
@@ -489,14 +534,30 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         var previous = previousConfiguration;
         previousConfiguration = store.Current;
         OnPropertyChanged(nameof(Appearance));
+        if(!previous.PromptTemplates.SequenceEqual(store.Current.PromptTemplates))
+        {
+            if(promptTemplates is not null)
+            {
+                promptTemplates.Clear();
+                foreach(var template in store.Current.PromptTemplates) promptTemplates.Add(new(template));
+            }
+        }
+        OnPropertyChanged(nameof(SelectedPromptTemplateId), nameof(SelectedPromptTemplate), nameof(SelectedSystemPrompt));
         contextDirty = true;
-        if(previous.Enabled == store.Current.Enabled && previous.SelectedModel == store.Current.SelectedModel)
-            return;
         var currentModel = store.Current.SelectedModel;
+        if(previous.SelectedModel.SystemPrompt != currentModel.SystemPrompt && !IsBusy)
+        {
+            tokenUsage = null;
+            contextCorrection = 0;
+        }
+        // Templates apply on the next request. Token-prefix comparison in the worker
+        // invalidates changed instructions without unloading weights or clearing the chat.
+        if(previous.Enabled == store.Current.Enabled && (previous.SelectedModel with { SystemPrompt = currentModel.SystemPrompt }) == currentModel)
+            return;
         bool preserveConversation = previous.Enabled == store.Current.Enabled && (previous.SelectedModel with
             { AllowPerformanceBoost = currentModel.AllowPerformanceBoost, PerformanceMode = currentModel.PerformanceMode,
                 BoostOnlyOnAc = currentModel.BoostOnlyOnAc, ReuseContext = currentModel.ReuseContext,
-                PreloadOnPanelOpen = currentModel.PreloadOnPanelOpen }) == currentModel;
+                PreloadOnPanelOpen = currentModel.PreloadOnPanelOpen, SystemPrompt = currentModel.SystemPrompt }) == currentModel;
         Task finishing = activeOperation;
         cancellation?.Cancel();
         if(preserveConversation) operationVersion++;
@@ -527,6 +588,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     private void OnCultureChanged(object? sender, EventArgs e)
     {
+        foreach(var template in PromptTemplates) template.OnPropertyChanged(nameof(AiPromptTemplateViewModel.Name));
         OnPropertyChanged(nameof(ModelName), nameof(SendUnavailableReason), nameof(ContextSummary), nameof(MessageSelectionSummary),
             nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
         foreach(var message in Messages) message.OnPropertyChanged(nameof(AiChatMessage.RoleLabel));
@@ -565,7 +627,11 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         contextDirty = true;
         if(e.PropertyName == nameof(AiChatMessage.Content)) RefreshMessageSelection();
     }
-    private void OnRuntimeChanged(object? sender, EventArgs e) => _ = dispatcher.InvokeAsync(() => contextDirty = true);
+    private void OnRuntimeChanged(object? sender, EventArgs e) => _ = dispatcher.InvokeAsync(() =>
+    {
+        contextDirty = true;
+        OnPropertyChanged(nameof(CanChangePromptTemplate));
+    });
     private void OnTokenUsage(AiTokenUsage usage, long version, CancellationToken requestToken)
     {
         _ = dispatcher.InvokeAsync(() =>

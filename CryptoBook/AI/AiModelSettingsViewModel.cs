@@ -27,6 +27,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     {
         this.store = store; this.inference = inference;
         Runtime = new(inference);
+        Templates = new(store.Current);
         foreach(var profile in store.Current.Models) profiles[profile.ModelPath] = profile;
         enabled = store.Current.Enabled; idleMinutes = store.Current.IdleMinutes;
         ModelPath = store.Current.SelectedModelPath;
@@ -73,7 +74,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
             modelPath = value;
             parameters = profiles.TryGetValue(value, out var profile) ? profile : new() { ModelPath = value };
             OnPropertyChanged(nameof(ModelPath), nameof(ContextLength), nameof(MaxTokens), nameof(Temperature),
-                nameof(GpuLayers), nameof(UseReasoning), nameof(RepetitionProtection), nameof(ReuseContext), nameof(PreloadOnPanelOpen), nameof(SystemPrompt), nameof(RecentModels), nameof(SelectedRecentModel),
+                nameof(GpuLayers), nameof(UseReasoning), nameof(RepetitionProtection), nameof(ReuseContext), nameof(PreloadOnPanelOpen), nameof(RecentModels), nameof(SelectedRecentModel),
                 nameof(MemoryMode), nameof(IsManualMemoryMode), nameof(IsAutomaticMemoryMode), nameof(AutoReduceContext), nameof(MemoryDescription),
                 nameof(PerformanceMode), nameof(PerformanceDescription), nameof(IsOptimalPerformanceMode),
                 nameof(BoostOnlyOnAc), nameof(CanPerformanceTest));
@@ -132,12 +133,12 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     public bool CanEdit => !IsBusy;
     public bool CanRetune => CanTest && IsAutomaticMemoryMode && inference is IAiRuntimeStatusSource;
     public AiRuntimeMonitor Runtime { get; }
+    public AiPromptTemplatesViewModel Templates { get; }
     public string MemoryDescription => LocalizationManager.GetString("AI.MemoryHint." + MemoryMode);
     public bool UseReasoning { get => parameters.UseReasoning; set { parameters = parameters with { UseReasoning = value }; OnPropertyChanged(); } }
     public bool RepetitionProtection { get => parameters.RepetitionProtection; set { parameters = parameters with { RepetitionProtection = value }; OnPropertyChanged(); } }
     public bool ReuseContext { get => parameters.ReuseContext; set { parameters = parameters with { ReuseContext = value }; OnPropertyChanged(); } }
     public bool PreloadOnPanelOpen { get => parameters.PreloadOnPanelOpen; set { parameters = parameters with { PreloadOnPanelOpen = value }; OnPropertyChanged(); } }
-    public string SystemPrompt { get => parameters.SystemPrompt; set { parameters = parameters with { SystemPrompt = value }; OnPropertyChanged(); } }
     public int IdleMinutes { get => idleMinutes; set => SetProperty(ref idleMinutes, value); }
     public string Status { get => status; private set => SetProperty(ref status, value); }
     public bool CanTest => !IsBusy && !inference.IsBusy && !string.IsNullOrWhiteSpace(ModelPath);
@@ -195,7 +196,7 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
                         : LocalizationManager.Format("AI.LoadProgress", (int)(value * 100));
             });
             bool hasAnswer = false, hasReasoning = false;
-            await inference.GenerateAsync(profile with { MaxTokens = 128 },
+            await inference.GenerateAsync(profile with { MaxTokens = 128, SystemPrompt = Templates.SelectedTemplate?.SystemPrompt ?? string.Empty },
                 [new("user", "Reply with one word: ready")], text => hasAnswer |= !string.IsNullOrWhiteSpace(text), progress, token,
                 text => hasReasoning |= !string.IsNullOrWhiteSpace(text));
             Status = LocalizationManager.GetString(hasAnswer ? "AI.ModelWorks" : hasReasoning ? "AI.TestReasoningOnly" : "AI.EmptyAnswer");
@@ -229,17 +230,23 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
     {
         try
         {
+            var templates = Templates.ValidatedTemplates();
             var profile = ValidatedParameters();
             if(!string.IsNullOrWhiteSpace(ModelPath)) profiles[ModelPath] = profile;
             var merged = store.Current.Models.ToDictionary(model => model.ModelPath, StringComparer.OrdinalIgnoreCase);
             foreach(var draft in profiles.Values) merged[draft.ModelPath] = draft;
-            store.Save(store.Current with { Enabled = Enabled, SelectedModelPath = ModelPath, IdleMinutes = IdleMinutes, Models = merged.Values.ToList() });
+            store.Save(store.Current with { Enabled = Enabled, SelectedModelPath = ModelPath, IdleMinutes = IdleMinutes,
+                Models = merged.Values.ToList(), PromptTemplates = templates, SelectedPromptTemplateId = Templates.SelectedTemplate!.Id });
             Saved?.Invoke(this, EventArgs.Empty);
         }
         catch(Exception e) { Status = e is AiException ? AiAssistantViewModel.ErrorText(e) : LocalizationManager.GetString("AI.SaveFailed"); }
     }
-    private void OnCultureChanged(object? sender, EventArgs e) => OnPropertyChanged(nameof(MemoryModes), nameof(MemoryDescription),
-        nameof(PerformanceModes), nameof(PerformanceDescription), nameof(PerformanceSummary));
+    private void OnCultureChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(MemoryModes), nameof(MemoryDescription),
+            nameof(PerformanceModes), nameof(PerformanceDescription), nameof(PerformanceSummary));
+        foreach(var template in Templates.Items) template.OnPropertyChanged(nameof(AiPromptTemplateViewModel.Name));
+    }
     public void Dispose()
     {
         LocalizationManager.CultureChanged -= OnCultureChanged;

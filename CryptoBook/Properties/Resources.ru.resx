@@ -1231,8 +1231,9 @@
   <data name="AI.InvalidNumber" xml:space="preserve"><value>Введите корректное число в выделенном поле.</value></data>
   <data name="AI.ReplyLimitHint" xml:space="preserve"><value>Лимит ответа — верхняя граница. Если в контексте осталось меньше места, ответ автоматически ограничивается доступным объёмом.</value></data>
   <data name="AI.AttachFiles" xml:space="preserve"><value>Прикрепить файлы…</value></data>
-  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Документы и изображения|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff</value></data>
-  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Этот формат файла не поддерживается. Выберите текстовый документ, RTF, DOCX, XamlPackage или изображение.</value></data>
+  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Документы и изображения|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Все файлы (*.*)|*.*</value></data>
+  <data name="AI.BinaryAttachmentHint" xml:space="preserve"><value>Двоичный файл: модели доступен только HEX-фрагмент.</value></data>
+  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Не удалось прочитать документ или изображение. Возможно, файл повреждён или использует неподдерживаемый вариант формата.</value></data>
   <data name="AI.AttachmentTooLarge" xml:space="preserve"><value>Файл слишком большой: не более 32 МБ, 500000 символов текста и 100 мегапикселей до уменьшения изображения.</value></data>
   <data name="AI.AttachmentEmpty" xml:space="preserve"><value>В документе нет текста для отправки модели.</value></data>
   <data name="AI.AttachmentLimit" xml:space="preserve"><value>К одному сообщению можно прикрепить до четырёх файлов.</value></data>
@@ -1370,4 +1371,21 @@
   <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Загружается</value></data>
   <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Загружена</value></data>
   <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Выгружена</value></data>
+  <data name="AI.PromptTemplates" xml:space="preserve"><value>Шаблоны общения</value></data>
+  <data name="AI.PromptTemplate" xml:space="preserve"><value>Шаблон общения</value></data>
+  <data name="AI.PromptTemplatesHint" xml:space="preserve"><value>Шаблоны общие для всех моделей. Выберите шаблон для изменения имени и системного промпта или создайте новый. Пустой промпт не добавляет инструкций. «Сохранить» применяет изменения, «Отмена» отменяет их. Выбранный шаблон действует на следующие ответы без очистки чата.</value></data>
+  <data name="AI.NewTemplate" xml:space="preserve"><value>Новый шаблон</value></data>
+  <data name="AI.AddTemplate" xml:space="preserve"><value>Создать шаблон</value></data>
+  <data name="AI.RemoveTemplate" xml:space="preserve"><value>Удалить шаблон</value></data>
+  <data name="AI.TemplateName" xml:space="preserve"><value>Имя шаблона</value></data>
+  <data name="AI.TemplateNameRequired" xml:space="preserve"><value>Укажите имя каждого шаблона.</value></data>
+  <data name="AI.TemplateNameDuplicate" xml:space="preserve"><value>Имена шаблонов не должны повторяться.</value></data>
+  <data name="AI.TemplatePreset.Default" xml:space="preserve"><value>Обычный</value></data>
+  <data name="AI.TemplatePreset.Concise" xml:space="preserve"><value>Краткие ответы</value></data>
+  <data name="AI.TemplatePreset.Explainer" xml:space="preserve"><value>Подробные объяснения</value></data>
+  <data name="AI.TemplatePreset.Editor" xml:space="preserve"><value>Редактор текста</value></data>
+  <data name="AI.TemplatePreset.Analyst" xml:space="preserve"><value>Аналитик</value></data>
+  <data name="AI.TemplatePreset.Developer" xml:space="preserve"><value>Помощник программиста</value></data>
+  <data name="AI.Stopping" xml:space="preserve"><value>Остановка…</value></data>
+  <data name="AI.AutoStopped" xml:space="preserve"><value>Генерация остановлена. Модель остаётся загруженной и готова к следующему запросу.</value></data>
 </root>

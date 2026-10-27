@@ -215,7 +215,7 @@ public sealed partial class AiIntegrationTests
     }
 
     [Fact]
-    public async Task FileAttachments_ReadDocxTextAndRejectUnsupportedOrOversizedFiles()
+    public async Task FileAttachments_ReadDocxTextAndRejectDamagedOrOversizedFiles()
     {
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -230,12 +230,77 @@ public sealed partial class AiIntegrationTests
             Assert.Equal("sample.DOCX", file.Name);
             Assert.Equal("Budget 128450\nORBIT-731", file.Text);
             Assert.False(file.IsImage);
-            var error = await Assert.ThrowsAsync<AiException>(() => service.ReadAsync(Path.Combine(directory, "unsupported.exe")));
+            string damaged = Path.Combine(directory, "damaged.docx");
+            using(ZipFile.Open(damaged, ZipArchiveMode.Create)) { }
+            var error = await Assert.ThrowsAsync<AiException>(() => service.ReadAsync(damaged));
             Assert.Equal("AI.UnsupportedAttachment", error.ResourceKey);
             string large = Path.Combine(directory, "large.txt");
             using(var stream = File.Create(large)) stream.SetLength(AiAttachmentService.MaxFileBytes + 1L);
             error = await Assert.ThrowsAsync<AiException>(() => service.ReadAsync(large));
             Assert.Equal("AI.AttachmentTooLarge", error.ResourceKey);
+        }
+        finally { Directory.Delete(directory, true); }
+    }
+
+    [Theory]
+    [InlineData("source.SQL", false)]
+    [InlineData("script.ps1", false)]
+    [InlineData("file.custom", true)]
+    [InlineData("README", true)]
+    public async Task FileAttachments_ReadTextWithAnyExtensionOrWithoutExtension(string name, bool unicode)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            const string content = "Произвольный текст\nSELECT 'ORBIT-731';\t-- пример";
+            string path = Path.Combine(directory, name);
+            await File.WriteAllTextAsync(path, content, unicode ? Encoding.Unicode : new UTF8Encoding(false));
+            var file = await new AiAttachmentService([]).ReadAsync(path);
+            Assert.Equal(name, file.Name);
+            Assert.Equal(content, file.Text);
+            Assert.Equal(new FileInfo(path).Length, file.Size);
+            Assert.False(file.IsImage);
+            Assert.False(file.IsBinary);
+            Assert.Contains(content, AiChatFormat.Content(new("user", "Analyze", [file])));
+        }
+        finally { Directory.Delete(directory, true); }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task FileAttachments_BinaryUsesBoundedHexPreviewAndKeepsOriginalFileUnchanged(bool invalidUtf8)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string path = Path.Combine(directory, "sample.bin");
+            byte[] bytes = Enumerable.Repeat((byte)0x41, AiAttachmentService.MaxBinaryPreviewBytes + 16).ToArray();
+            bytes[0] = invalidUtf8 ? (byte)0xFF : (byte)0;
+            bytes[AiAttachmentService.MaxBinaryPreviewBytes] = 0x42;
+            await File.WriteAllBytesAsync(path, bytes);
+            var file = await new AiAttachmentService([]).ReadAsync(path);
+            Assert.True(file.IsBinary);
+            Assert.False(file.IsImage);
+            Assert.Null(file.Preview);
+            Assert.Equal(bytes.Length, file.Size);
+            Assert.Contains("Binary file: sample.bin", file.Text);
+            Assert.Contains($"Size: {bytes.Length} bytes.", file.Text);
+            Assert.Contains($"Only the first {AiAttachmentService.MaxBinaryPreviewBytes} bytes", file.Text);
+            Assert.Contains("The full file content has not been extracted", file.Text);
+            Assert.Contains(invalidUtf8 ? "00000000: FF 41" : "00000000: 00 41", file.Text);
+            Assert.DoesNotContain("00000100:", file.Text);
+            Assert.DoesNotContain("42", file.Text);
+            Assert.Equal(bytes, await File.ReadAllBytesAsync(path));
+            using var pipe = new MemoryStream();
+            var turn = new AiTurn("user", "Analyze", [file]);
+            await AiWorkerProtocol.WriteAsync(pipe, AiWorkerTurn.From(turn), CancellationToken.None);
+            pipe.Position = 0;
+            var decoded = (await AiWorkerProtocol.ReadAsync<AiWorkerTurn>(pipe, CancellationToken.None))!.ToTurn();
+            Assert.True(Assert.Single(decoded.Attachments!).IsBinary);
+            Assert.Equal(AiChatFormat.Content(turn), AiChatFormat.Content(decoded));
         }
         finally { Directory.Delete(directory, true); }
     }
@@ -275,7 +340,7 @@ public sealed partial class AiIntegrationTests
             using(vm)
             {
                 runtime.CompleteImmediately = true;
-                string path = Path.Combine(directory, "source.txt");
+                string path = Path.Combine(directory, "source.sql");
                 await File.WriteAllTextAsync(path, "Original private document");
                 await vm.AttachPathsAsync([path]);
                 await File.WriteAllTextAsync(path, "Changed file on disk");
@@ -332,7 +397,7 @@ public sealed partial class AiIntegrationTests
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
         try
         {
-            string first = Path.Combine(directory, "selected.txt"), second = Path.Combine(directory, "dropped.txt");
+            string first = Path.Combine(directory, "selected.sql"), second = Path.Combine(directory, "README");
             var picker = new AttachmentPickerStub { Paths = [first] };
             var (vm, _, _, _) = CreateAssistant(directory, attachmentPicker: picker);
             using(vm)
