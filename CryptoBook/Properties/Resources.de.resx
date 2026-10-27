@@ -1225,8 +1225,9 @@ Autor: [Name]
   <data name="AI.InvalidNumber" xml:space="preserve"><value>Geben Sie eine gültige Zahl im markierten Feld ein.</value></data>
   <data name="AI.ReplyLimitHint" xml:space="preserve"><value>Das Antwortlimit ist eine Obergrenze. Bei weniger verbleibendem Kontext wird die Antwort automatisch entsprechend begrenzt.</value></data>
   <data name="AI.AttachFiles" xml:space="preserve"><value>Dateien anhängen…</value></data>
-  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Dokumente und Bilder|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff</value></data>
-  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Dieses Dateiformat wird nicht unterstützt. Wählen Sie ein Textdokument, RTF, DOCX, XamlPackage oder ein unterstütztes Bild.</value></data>
+  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Dokumente und Bilder|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Alle Dateien (*.*)|*.*</value></data>
+  <data name="AI.BinaryAttachmentHint" xml:space="preserve"><value>Binärdatei: Dem Modell steht nur eine HEX-Vorschau zur Verfügung.</value></data>
+  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Das Dokument oder Bild konnte nicht gelesen werden. Die Datei ist möglicherweise beschädigt oder verwendet eine nicht unterstützte Formatvariante.</value></data>
   <data name="AI.AttachmentTooLarge" xml:space="preserve"><value>Die Datei ist zu groß: höchstens 32 MB, 500000 Textzeichen und 100 Megapixel vor der Bildverkleinerung.</value></data>
   <data name="AI.AttachmentEmpty" xml:space="preserve"><value>Das Dokument enthält keinen Text für das Modell.</value></data>
   <data name="AI.AttachmentLimit" xml:space="preserve"><value>Pro Nachricht können bis zu vier Dateien angehängt werden.</value></data>

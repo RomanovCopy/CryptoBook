@@ -12,22 +12,20 @@ public sealed record AiAttachment(string Name, string Text, ReadOnlyMemory<byte>
     BitmapSource? Preview, long Size)
 {
     public bool IsImage => !ImageData.IsEmpty;
+    public bool IsBinary { get; init; }
     public string Detail => $"{Path.GetExtension(Name).TrimStart('.').ToUpperInvariant()} · {Math.Max(1, (long)Math.Ceiling(Size / 1024d))} KB";
 }
 
 public sealed class AiAttachmentService(IEnumerable<IDocumentTextExtractor> extractors) : IAiAttachmentService
 {
-    public const int MaxFiles = 4, MaxFileBytes = 32 * 1024 * 1024, MaxTextCharacters = 500_000;
+    public const int MaxFiles = 4, MaxFileBytes = 32 * 1024 * 1024, MaxTextCharacters = 500_000, MaxBinaryPreviewBytes = 256;
     private readonly IDocumentTextExtractor[] extractors = extractors.ToArray();
     private static readonly HashSet<string> ImageExtensions = new([".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff"], StringComparer.OrdinalIgnoreCase);
-    private static readonly HashSet<string> TextExtensions = new([".txt", ".md", ".log", ".json", ".xml", ".xaml", ".csv", ".tsv", ".yaml", ".yml", ".ini", ".config", ".cs", ".py", ".js", ".html"], StringComparer.OrdinalIgnoreCase);
 
     public async Task<AiAttachment> ReadAsync(string path, CancellationToken cancellationToken = default)
     {
         string extension = Path.GetExtension(path);
         var extractor = extractors.FirstOrDefault(item => item.CanExtract(extension));
-        if(!ImageExtensions.Contains(extension) && !TextExtensions.Contains(extension) && !extension.Equals(".docx", StringComparison.OrdinalIgnoreCase) && extractor is null)
-            throw new AiException("AI.UnsupportedAttachment");
         await using var file = File.OpenRead(path);
         byte[] bytes = await ReadBoundedAsync(file, MaxFileBytes, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
@@ -38,10 +36,39 @@ public sealed class AiAttachmentService(IEnumerable<IDocumentTextExtractor> extr
         else if(extractor is not null) text = await extractor.ExtractAsync(input, extension, cancellationToken);
         else
         {
-            using var reader = new StreamReader(input, new UTF8Encoding(false, true), detectEncodingFromByteOrderMarks: true);
-            text = await reader.ReadToEndAsync(cancellationToken);
+            try
+            {
+                using var reader = new StreamReader(input, new UTF8Encoding(false, true), detectEncodingFromByteOrderMarks: true);
+                text = await reader.ReadToEndAsync(cancellationToken);
+            }
+            catch(DecoderFallbackException)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Binary(Path.GetFileName(path), bytes);
+            }
+            if(text.Any(character => char.IsControl(character) && character is not ('\r' or '\n' or '\t')))
+                return Binary(Path.GetFileName(path), bytes);
         }
         return Document(Path.GetFileName(path), text, bytes.Length);
+    }
+
+    private static AiAttachment Binary(string name, byte[] bytes)
+    {
+        int previewLength = Math.Min(bytes.Length, MaxBinaryPreviewBytes);
+        var text = new StringBuilder();
+        text.Append("Binary file: ").AppendLine(name)
+            .Append("Size: ").Append(bytes.Length).AppendLine(" bytes.")
+            .Append("Only the first ").Append(previewLength).AppendLine(" bytes are provided as a HEX preview.")
+            .AppendLine("The full file content has not been extracted. Do not infer the unseen content.")
+            .AppendLine("HEX dump (offset: bytes):");
+        for(int offset = 0; offset < previewLength; offset += 16)
+        {
+            text.Append(offset.ToString("X8")).Append(':');
+            for(int index = offset; index < Math.Min(offset + 16, previewLength); index++)
+                text.Append(' ').Append(bytes[index].ToString("X2"));
+            text.AppendLine();
+        }
+        return new(name, text.ToString(), ReadOnlyMemory<byte>.Empty, null, bytes.Length) { IsBinary = true };
     }
 
     public static AiAttachment Document(string name, string text, long? originalSize = null)

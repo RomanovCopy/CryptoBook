@@ -43,6 +43,8 @@
                     <StackPanel Grid.Column="1" Margin="9,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
                         <TextBlock Text="{Binding Detail}" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11" Margin="0,3,0,0"/>
+                        <TextBlock Text="{Binding [AI.BinaryAttachmentHint], Source={StaticResource Res}}" Visibility="{Binding IsBinary, Converter={StaticResource BoolVisibility}}"
+                                   TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" FontSize="11" Margin="0,3,0,0"/>
                     </StackPanel>
                 </Grid>
             </Border>

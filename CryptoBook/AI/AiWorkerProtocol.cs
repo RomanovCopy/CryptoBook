@@ -4,13 +4,13 @@ using System.Text.Json;
 namespace CryptoBook.AI;
 
 // Pipe-only DTOs intentionally exclude WPF previews. No request data is put on the command line or disk.
-internal sealed record AiWorkerAttachment(string Name, string Text, ReadOnlyMemory<byte> Image, long Size);
+internal sealed record AiWorkerAttachment(string Name, string Text, ReadOnlyMemory<byte> Image, long Size, bool IsBinary = false);
 internal sealed record AiWorkerTurn(string Role, string Content, AiWorkerAttachment[] Attachments)
 {
     internal static AiWorkerTurn From(AiTurn turn) => new(turn.Role, turn.Content,
-        (turn.Attachments ?? []).Select(file => new AiWorkerAttachment(file.Name, file.Text, file.ImageData, file.Size)).ToArray());
+        (turn.Attachments ?? []).Select(file => new AiWorkerAttachment(file.Name, file.Text, file.ImageData, file.Size, file.IsBinary)).ToArray());
     internal AiTurn ToTurn() => new(Role, Content, Attachments.Select(file =>
-        new AiAttachment(file.Name, file.Text, file.Image, null, file.Size)).ToArray());
+        new AiAttachment(file.Name, file.Text, file.Image, null, file.Size) { IsBinary = file.IsBinary }).ToArray());
 }
 internal sealed record AiWorkerRequest(string Command, AiModelSettings Settings, AiRuntimeOptions Options, AiWorkerTurn[] Turns,
     bool ProtectResources = false);

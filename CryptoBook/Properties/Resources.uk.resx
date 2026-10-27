@@ -2072,8 +2072,9 @@
   <data name="AI.InvalidNumber" xml:space="preserve"><value>Введіть коректне число у виділеному полі.</value></data>
   <data name="AI.ReplyLimitHint" xml:space="preserve"><value>Ліміт відповіді — верхня межа. Якщо в контексті залишилося менше місця, відповідь автоматично обмежується доступним обсягом.</value></data>
   <data name="AI.AttachFiles" xml:space="preserve"><value>Прикріпити файли…</value></data>
-  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Документи та зображення|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff</value></data>
-  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Цей формат файлу не підтримується. Виберіть текстовий документ, RTF, DOCX, XamlPackage або зображення.</value></data>
+  <data name="AI.AttachmentFilter" xml:space="preserve"><value>Документи та зображення|*.txt;*.md;*.rtf;*.docx;*.XamlPackage;*.log;*.json;*.xml;*.xaml;*.csv;*.tsv;*.yaml;*.yml;*.ini;*.config;*.cs;*.py;*.js;*.html;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Усі файли (*.*)|*.*</value></data>
+  <data name="AI.BinaryAttachmentHint" xml:space="preserve"><value>Двійковий файл: моделі доступний лише HEX-фрагмент.</value></data>
+  <data name="AI.UnsupportedAttachment" xml:space="preserve"><value>Не вдалося прочитати документ або зображення. Можливо, файл пошкоджено або використовує непідтримуваний варіант формату.</value></data>
   <data name="AI.AttachmentTooLarge" xml:space="preserve"><value>Файл завеликий: не більше 32 МБ, 500000 символів тексту та 100 мегапікселів до зменшення зображення.</value></data>
   <data name="AI.AttachmentEmpty" xml:space="preserve"><value>У документі немає тексту для надсилання моделі.</value></data>
   <data name="AI.AttachmentLimit" xml:space="preserve"><value>До одного повідомлення можна прикріпити до чотирьох файлів.</value></data>
