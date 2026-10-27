@@ -45,7 +45,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     private readonly DispatcherTimer contextTimer;
     private readonly HashSet<AiChatMessage> observedMessages = [];
     private AiConfiguration previousConfiguration;
-    private IReadOnlyList<AiPromptTemplateViewModel>? promptTemplates;
+    private ObservableCollection<AiPromptTemplateViewModel>? promptTemplates;
     private AiTokenUsage? tokenUsage;
     private int requestEstimate, contextCorrection;
     private bool contextDirty = true, contextIsEstimate = true;
@@ -122,8 +122,8 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public ObservableCollection<AiChatMessage> Messages { get; } = [];
     public AiRuntimeMonitor Runtime { get; }
     public AiChatAppearance Appearance => store.Current.ChatAppearance;
-    public IReadOnlyList<AiPromptTemplateViewModel> PromptTemplates => promptTemplates ??= store.Current.PromptTemplates
-        .Select(template => new AiPromptTemplateViewModel(template)).ToArray();
+    public IReadOnlyList<AiPromptTemplateViewModel> PromptTemplates => promptTemplates ??= new(store.Current.PromptTemplates
+        .Select(template => new AiPromptTemplateViewModel(template)));
     public bool CanChangePromptTemplate => !IsBusy && !inference.IsBusy;
     public AiPromptTemplateViewModel? SelectedPromptTemplate
     {
@@ -536,8 +536,11 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(Appearance));
         if(!previous.PromptTemplates.SequenceEqual(store.Current.PromptTemplates))
         {
-            promptTemplates = null;
-            OnPropertyChanged(nameof(PromptTemplates));
+            if(promptTemplates is not null)
+            {
+                promptTemplates.Clear();
+                foreach(var template in store.Current.PromptTemplates) promptTemplates.Add(new(template));
+            }
         }
         OnPropertyChanged(nameof(SelectedPromptTemplateId), nameof(SelectedPromptTemplate), nameof(SelectedSystemPrompt));
         contextDirty = true;

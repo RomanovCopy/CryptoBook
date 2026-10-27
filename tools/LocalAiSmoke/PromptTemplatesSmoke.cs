@@ -56,8 +56,8 @@ internal static class PromptTemplatesSmoke
             var host = new Window { Content = panel, Width = 430, Height = 900, ShowInTaskbar = false, ShowActivated = false };
             host.Show(); Pump();
             var selector = (ComboBox)panel.FindName("PromptTemplateBox");
-            Check(selector.Items.Count == presetCount && selector.SelectedValue?.ToString() == "default", "panel_initial_binding");
-            selector.SelectedValue = "concise"; Pump();
+            Check(selector.Items.Count == presetCount && selector.SelectedItem is AiPromptTemplateViewModel { Id: "default" }, "panel_initial_binding");
+            assistant.SelectedPromptTemplateId = "concise"; Pump();
             Check(store.Current.SelectedPromptTemplateId == "concise" && assistant.Messages.Count == 2 && assistant.Prompt == "Следующий вопрос", "panel_selection_preserves_chat_and_draft");
             Check(runtime.UnloadCount == 0, "selection_keeps_weights");
 
@@ -93,7 +93,9 @@ internal static class PromptTemplatesSmoke
                 Check(!window.IsVisible && store.Current.SelectedPromptTemplateId == customId, "save_closes_and_persists_selection");
             }
             Pump();
-            Check(selector.Items.Count == presetCount + 1 && selector.SelectedValue?.ToString() == customId, "panel_refreshes_after_settings_save");
+            Check(selector.Items.Count == presetCount + 1 && (selector.SelectedItem as AiPromptTemplateViewModel)?.Id == customId, "panel_refreshes_after_settings_save");
+            Check(selector.SelectedIndex >= 0 && selector.SelectionBoxItem is AiPromptTemplateViewModel { Name: "Мой редактор документов" },
+                "saved_template_is_rendered_in_selection_box");
             assistant.Messages.Add(new("assistant", "Готов работать по вашему шаблону."));
             assistant.Prompt = "Проверь документ";
             UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "template-panel-light.png"));
@@ -163,7 +165,7 @@ internal static class PromptTemplatesSmoke
                 { Source = new Uri("/CryptoBook;component/Themes/DarkTheme.xaml", UriKind.Relative) });
             panel.Width = 280; Pump();
             host.UpdateLayout();
-            Check(selector.SelectedValue?.ToString() == customId && selector.SelectedItem is AiPromptTemplate { Name: "Редактор с пояснениями" },
+            Check(selector.SelectedItem is AiPromptTemplateViewModel { Name: "Редактор с пояснениями" } selected && selected.Id == customId,
                 "selected_template_remains_visible_after_generation");
             Check(selector.ActualWidth > 100 && selector.IsVisible && selector.IsEnabled, "narrow_dark_selector_visible");
             UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "template-panel-narrow-dark.png"));

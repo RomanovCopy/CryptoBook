@@ -350,6 +350,12 @@ public sealed partial class AiIntegrationTests
                 store.Save(store.Current with { IdleMinutes = 11 });
                 await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
                 Assert.Equal("editor", Assert.IsType<AiPromptTemplateViewModel>(selector.SelectedItem).Id);
+                var custom = new AiPromptTemplate { Name = "Custom editor", SystemPrompt = "Edit text." };
+                store.Save(store.Current with { PromptTemplates = [.. store.Current.PromptTemplates, custom], SelectedPromptTemplateId = custom.Id });
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.Equal(custom.Id, Assert.IsType<AiPromptTemplateViewModel>(selector.SelectedItem).Id);
+                Assert.True(selector.SelectedIndex >= 0);
+                Assert.Equal(custom.Id, store.Current.SelectedPromptTemplateId);
             }
         }
         finally { Directory.Delete(directory, true); }
