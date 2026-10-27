@@ -2222,4 +2222,21 @@
   <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Завантажується</value></data>
   <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Завантажена</value></data>
   <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Вивантажена</value></data>
+  <data name="AI.PromptTemplates" xml:space="preserve"><value>Шаблони спілкування</value></data>
+  <data name="AI.PromptTemplate" xml:space="preserve"><value>Шаблон спілкування</value></data>
+  <data name="AI.PromptTemplatesHint" xml:space="preserve"><value>Шаблони спільні для всіх моделей. Виберіть шаблон для зміни імені та системного промпту або створіть новий. Порожній промпт не додає інструкцій. «Зберегти» застосовує зміни, «Скасувати» скасовує їх. Вибраний шаблон діє на наступні відповіді без очищення чату.</value></data>
+  <data name="AI.NewTemplate" xml:space="preserve"><value>Новий шаблон</value></data>
+  <data name="AI.AddTemplate" xml:space="preserve"><value>Створити шаблон</value></data>
+  <data name="AI.RemoveTemplate" xml:space="preserve"><value>Видалити шаблон</value></data>
+  <data name="AI.TemplateName" xml:space="preserve"><value>Ім'я шаблону</value></data>
+  <data name="AI.TemplateNameRequired" xml:space="preserve"><value>Укажіть ім'я кожного шаблону.</value></data>
+  <data name="AI.TemplateNameDuplicate" xml:space="preserve"><value>Імена шаблонів не мають повторюватися.</value></data>
+  <data name="AI.TemplatePreset.Default" xml:space="preserve"><value>Звичайний</value></data>
+  <data name="AI.TemplatePreset.Concise" xml:space="preserve"><value>Короткі відповіді</value></data>
+  <data name="AI.TemplatePreset.Explainer" xml:space="preserve"><value>Докладні пояснення</value></data>
+  <data name="AI.TemplatePreset.Editor" xml:space="preserve"><value>Редактор тексту</value></data>
+  <data name="AI.TemplatePreset.Analyst" xml:space="preserve"><value>Аналітик</value></data>
+  <data name="AI.TemplatePreset.Developer" xml:space="preserve"><value>Помічник програміста</value></data>
+  <data name="AI.Stopping" xml:space="preserve"><value>Зупинка…</value></data>
+  <data name="AI.AutoStopped" xml:space="preserve"><value>Генерацію зупинено. Модель залишається завантаженою та готова до наступного запиту.</value></data>
 </root>

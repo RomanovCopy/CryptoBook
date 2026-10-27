@@ -68,6 +68,58 @@ public sealed class AiPerformanceTests : IDisposable
         Assert.Equal("AI.InvalidPerformanceMode", error.ResourceKey);
     }
 
+    [Theory]
+    [InlineData(AiPerformanceMode.Balanced, false, false)]
+    [InlineData(AiPerformanceMode.PowerSaving, false, false)]
+    [InlineData(AiPerformanceMode.Optimal, false, false)]
+    [InlineData(AiPerformanceMode.Optimal, true, false)]
+    [InlineData(AiPerformanceMode.Optimal, true, true)]
+    public async Task ContextReset_KeepsLoadedWorkerAndProfile_WithoutRequestingInferenceBoost(
+        AiPerformanceMode mode, bool loseAc, bool memoryPressure)
+    {
+        using var service = Create((request, _) =>
+        {
+            // Enforce the same preconditions as the real worker transport.
+            if(request.Options.PerformanceBoost)
+            {
+                if(!AiPerformancePolicy.IsAllowed(request.Settings, resources)) throw new AiException("AI.PerformanceConsentRequired");
+                if(!resources.HasHeadroom) throw new AiException("AI.ResourcePressure");
+            }
+            return Task.CompletedTask;
+        });
+        var settings = Settings with { PerformanceMode = mode, ReuseContext = true };
+        if(mode == AiPerformanceMode.Optimal) await service.TestPerformanceAsync(settings, CancellationToken.None);
+        await service.LoadAsync(settings, null, CancellationToken.None);
+        var loadedWorker = workers.Last();
+        var options = service.RuntimeOptions;
+        Assert.Equal(mode == AiPerformanceMode.Optimal, options!.PerformanceBoost);
+        int workerCount = workers.Count;
+        var originalResources = resources;
+        if(loseAc) resources = resources with { OnAc = false };
+        if(memoryPressure) resources = resources with { AvailableRam = GiB, AvailableCommit = GiB };
+        await Task.Delay(10);
+        DateTime resetStarted = DateTime.UtcNow;
+
+        await service.ResetContextAsync();
+
+        var reset = requests.Last();
+        Assert.Equal("reset", reset.Command);
+        Assert.Empty(reset.Turns);
+        Assert.False(reset.Options.PerformanceBoost);
+        Assert.True(loadedWorker.IsAlive);
+        Assert.True(service.IsLoaded);
+        Assert.False(service.IsBusy);
+        Assert.Same(options, service.RuntimeOptions);
+        Assert.True(service.LastUsedUtc >= resetStarted);
+        resources = originalResources;
+        await Generate(service, settings);
+        Assert.Equal(workerCount, workers.Count);
+        Assert.True(loadedWorker.IsAlive);
+        await service.UnloadAsync();
+        Assert.False(service.IsLoaded);
+        Assert.False(loadedWorker.IsAlive);
+    }
+
     [Fact]
     public async Task ChangingModes_ReloadsWorkerAndRestoresMeasuredProfile()
     {

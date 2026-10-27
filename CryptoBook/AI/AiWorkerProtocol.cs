@@ -13,7 +13,7 @@ internal sealed record AiWorkerTurn(string Role, string Content, AiWorkerAttachm
         new AiAttachment(file.Name, file.Text, file.Image, null, file.Size) { IsBinary = file.IsBinary }).ToArray());
 }
 internal sealed record AiWorkerRequest(string Command, AiModelSettings Settings, AiRuntimeOptions Options, AiWorkerTurn[] Turns,
-    bool ProtectResources = false);
+    bool ProtectResources = false, long RequestId = 0);
 internal sealed record AiWorkerEvent(string Kind, string? Text = null, float Progress = 0, AiModelInspection? Inspection = null,
     AiTokenUsage? Usage = null, AiRepetitionStop? Repetition = null, AiPerformanceMeasurement? Measurement = null);
 
@@ -28,6 +28,10 @@ internal interface IAiWorkerSession : IDisposable
 }
 
 internal sealed class AiWorkerException(string reason) : Exception(reason);
+
+// The child acknowledged cancellation after releasing unfinished computations.
+// Other cancellations (including a timeout/forced stop) cannot retain the worker.
+internal sealed class AiWorkerCancelledException(CancellationToken token) : OperationCanceledException(token);
 
 internal static class AiWorkerProtocol
 {

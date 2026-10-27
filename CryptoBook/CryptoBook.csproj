@@ -202,6 +202,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="AI\PromptTemplates.json" LogicalName="CryptoBook.AI.PromptTemplates.json" />
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

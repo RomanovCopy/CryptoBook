@@ -9,6 +9,29 @@ namespace CryptoBook.Tests;
 public sealed class AiWorkerSafetyTests
 {
     [Fact]
+    public async Task CompletionAndPreCancelledGeneration_KeepRealWorkerAliveUntilExplicitUnload()
+    {
+        using var worker = new AiWorkerProcess();
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var request = new AiWorkerRequest("reset", new(), new(1024, 0, CpuBackend: true), []);
+        await worker.ExecuteAsync(request, _ => { }, null, timeout.Token);
+        int? processId = worker.ProcessId;
+        Assert.True(worker.IsAlive);
+        using var stopped = new CancellationTokenSource();
+        stopped.Cancel();
+        await Assert.ThrowsAsync<AiWorkerCancelledException>(() => worker.ExecuteAsync(request with { Command = "generate" },
+            _ => { }, null, stopped.Token));
+        for(int index = 0; index < 3; index++)
+        {
+            await worker.ExecuteAsync(request, _ => { }, null, timeout.Token);
+            Assert.True(worker.IsAlive);
+            Assert.Equal(processId, worker.ProcessId);
+        }
+        await worker.StopAsync();
+        Assert.False(worker.IsAlive);
+    }
+
+    [Fact]
     public async Task ProtectedInspection_AcceptsResourceLimitsWithoutEnablingCpuBoost()
     {
         using var worker = new AiWorkerProcess(() => new(16L << 30, 12L << 30, 20L << 30, true));

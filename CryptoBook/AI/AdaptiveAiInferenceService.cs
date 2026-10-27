@@ -137,6 +137,11 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
             // worker/profile and never regenerate a partially delivered answer automatically.
             Emit("AI.RepetitionStopped"); throw;
         }
+        catch(AiWorkerCancelledException) when(!preload && IsLoaded)
+        {
+            // Only a drained, acknowledged cancellation permits reusing the loaded engine.
+            Emit("AI.AutoStopped"); throw;
+        }
         catch(OperationCanceledException)
         {
             await StopWorkerAsync().ConfigureAwait(false); Emit("AI.AutoCancelled"); throw;
@@ -287,7 +292,7 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
     }
     public async Task UnloadAsync(CancellationToken cancellationToken = default)
     {
-        lock(sync) { epoch++; active?.Cancel(); }
+        lock(sync) { epoch++; active?.Cancel(); if(active is not null) worker?.Stop(); }
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try { await StopWorkerAsync().ConfigureAwait(false); Emit("AI.AutoUnloaded"); }
         finally { gate.Release(); }
@@ -306,7 +311,10 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
                 active = linked;
             }
             IsBusy = true;
-            await worker!.ExecuteAsync(new("reset", new() { ModelPath = ModelPath }, RuntimeOptions!, []),
+            // Clearing cached computations releases memory; it must not request an
+            // inference boost or depend on power/headroom checks for generation.
+            var resetOptions = RuntimeOptions! with { PerformanceBoost = false };
+            await worker!.ExecuteAsync(new("reset", new() { ModelPath = ModelPath }, resetOptions, []),
                 _ => { }, null, linked.Token).ConfigureAwait(false);
         }
         catch
@@ -318,13 +326,14 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
         {
             lock(sync) active = null;
             IsBusy = false;
+            LastUsedUtc = DateTime.UtcNow;
             gate.Release();
             RuntimeChanged?.Invoke(this, EventArgs.Empty);
         }
     }
     public async Task ResetAutoProfileAsync(string modelPath, CancellationToken cancellationToken = default)
     {
-        lock(sync) { epoch++; active?.Cancel(); }
+        lock(sync) { epoch++; active?.Cancel(); if(active is not null) worker?.Stop(); }
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
@@ -336,7 +345,7 @@ public sealed partial class AdaptiveAiInferenceService : IAiInferenceService, IA
     }
     public void Dispose()
     {
-        lock(sync) { epoch++; active?.Cancel(); }
+        lock(sync) { epoch++; active?.Cancel(); if(active is not null) worker?.Stop(); }
         gate.Wait();
         try { disposed = true; StopWorker(); }
         finally { gate.Release(); }

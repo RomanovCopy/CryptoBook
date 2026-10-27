@@ -10,6 +10,42 @@ namespace CryptoBook.Tests;
 
 public sealed partial class AiIntegrationTests
 {
+    [WpfFact]
+    public async Task StopAndNormalCompletion_KeepPartialAnswerAndLoadedModelUntilExplicitUnload()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var (assistant, _, runtime, _) = CreateAssistant(directory);
+            using(assistant)
+            {
+                assistant.Prompt = "first question";
+                var reply = assistant.Send.ExecuteAsync();
+                // The backend has delivered a fragment, but its dispatcher callback has not run yet.
+                Assert.Empty(assistant.Messages.Last().Content);
+                assistant.Stop.Execute(null);
+                Assert.False(assistant.Stop.CanExecute(null));
+                await reply;
+                Assert.Equal(LocalizationManager.GetString("AI.Stopped"), assistant.Status);
+                Assert.True(assistant.IsModelLoaded);
+                Assert.Equal("partial answer", assistant.Messages.Last().Content);
+                Assert.Equal(0, runtime.UnloadCount);
+                runtime.CompleteImmediately = true;
+                assistant.Prompt = "follow up";
+                await assistant.Send.ExecuteAsync();
+                Assert.True(assistant.IsModelLoaded);
+                Assert.Equal(3, runtime.LastConversation.Count);
+                Assert.Equal(0, runtime.UnloadCount);
+                await assistant.ClearChat.ExecuteAsync();
+                Assert.True(assistant.IsModelLoaded);
+                await assistant.Unload.ExecuteAsync();
+                Assert.False(assistant.IsModelLoaded);
+                Assert.Equal(1, runtime.UnloadCount);
+            }
+        }
+        finally { Directory.Delete(directory, true); }
+    }
+
     [Fact]
     public void SessionOptions_OldSettingsKeepBothOptionsDisabled()
     {

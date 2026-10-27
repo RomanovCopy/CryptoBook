@@ -63,10 +63,20 @@ public sealed record AiConfiguration
     public int IdleMinutes { get; init; } = 10;
     public List<AiModelSettings> Models { get; init; } = [];
     public AiChatAppearance ChatAppearance { get; init; } = new();
+    public List<AiPromptTemplate> PromptTemplates { get; init; } = [];
+    public string SelectedPromptTemplateId { get; init; } = string.Empty;
     [JsonIgnore]
-    public AiModelSettings SelectedModel => Models.FirstOrDefault(m =>
-        string.Equals(m.ModelPath, SelectedModelPath, StringComparison.OrdinalIgnoreCase))
-        ?? new AiModelSettings { ModelPath = SelectedModelPath };
+    public AiPromptTemplate? SelectedPromptTemplate => PromptTemplates.FirstOrDefault(template => template.Id == SelectedPromptTemplateId);
+    [JsonIgnore]
+    public AiModelSettings SelectedModel
+    {
+        get
+        {
+            var model = Models.FirstOrDefault(m => string.Equals(m.ModelPath, SelectedModelPath, StringComparison.OrdinalIgnoreCase))
+                ?? new AiModelSettings { ModelPath = SelectedModelPath };
+            return SelectedPromptTemplate is { } template ? model with { SystemPrompt = template.SystemPrompt } : model;
+        }
+    }
 }
 
 public sealed record AiTurn(string Role, string Content, IReadOnlyList<AiAttachment>? Attachments = null);

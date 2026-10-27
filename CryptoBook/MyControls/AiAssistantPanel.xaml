@@ -78,6 +78,10 @@
                 <TextBlock Text="{Binding [AI.Assistant], Source={StaticResource Res}}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </Grid>
             <StackPanel Grid.Row="1">
+                <Label Content="{Binding [AI.PromptTemplate], Source={StaticResource Res}}" Target="{Binding ElementName=PromptTemplateBox}" Padding="0,0,0,4"/>
+                <ComboBox x:Name="PromptTemplateBox" Style="{StaticResource DropUpComboBoxStyle}" ItemsSource="{Binding PromptTemplates}" DisplayMemberPath="Name" SelectedValuePath="Id"
+                          SelectedItem="{Binding SelectedPromptTemplate, Mode=TwoWay}" IsEnabled="{Binding CanChangePromptTemplate}"
+                          ToolTip="{Binding SelectedSystemPrompt}" Height="32" Margin="0,0,0,10"/>
                 <TextBlock Text="{Binding ModelName}" TextTrimming="CharacterEllipsis" ToolTip="{Binding ModelName}" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,8"/>
                 <TextBlock x:Name="ModelStatusText" TextWrapping="Wrap" Foreground="{DynamicResource CurrentMutedForeground}" Margin="0,0,0,8"
                            AutomationProperties.LiveSetting="Polite">

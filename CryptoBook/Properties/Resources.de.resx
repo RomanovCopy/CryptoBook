@@ -1371,4 +1371,21 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Wird geladen</value></data>
   <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Geladen</value></data>
   <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Entladen</value></data>
+  <data name="AI.PromptTemplates" xml:space="preserve"><value>Gesprächsvorlagen</value></data>
+  <data name="AI.PromptTemplate" xml:space="preserve"><value>Gesprächsvorlage</value></data>
+  <data name="AI.PromptTemplatesHint" xml:space="preserve"><value>Vorlagen gelten für alle Modelle. Wählen Sie eine Vorlage, um Namen und Systemanweisung zu bearbeiten, oder erstellen Sie eine neue. Eine leere Anweisung fügt keine Vorgaben hinzu. Speichern übernimmt Änderungen, Abbrechen verwirft sie. Die Auswahl gilt für folgende Antworten, ohne den Chat zu löschen.</value></data>
+  <data name="AI.NewTemplate" xml:space="preserve"><value>Neue Vorlage</value></data>
+  <data name="AI.AddTemplate" xml:space="preserve"><value>Vorlage erstellen</value></data>
+  <data name="AI.RemoveTemplate" xml:space="preserve"><value>Vorlage löschen</value></data>
+  <data name="AI.TemplateName" xml:space="preserve"><value>Name der Vorlage</value></data>
+  <data name="AI.TemplateNameRequired" xml:space="preserve"><value>Geben Sie für jede Vorlage einen Namen ein.</value></data>
+  <data name="AI.TemplateNameDuplicate" xml:space="preserve"><value>Vorlagennamen müssen eindeutig sein.</value></data>
+  <data name="AI.TemplatePreset.Default" xml:space="preserve"><value>Standard</value></data>
+  <data name="AI.TemplatePreset.Concise" xml:space="preserve"><value>Kurze Antworten</value></data>
+  <data name="AI.TemplatePreset.Explainer" xml:space="preserve"><value>Ausführliche Erklärungen</value></data>
+  <data name="AI.TemplatePreset.Editor" xml:space="preserve"><value>Textredaktion</value></data>
+  <data name="AI.TemplatePreset.Analyst" xml:space="preserve"><value>Analyse</value></data>
+  <data name="AI.TemplatePreset.Developer" xml:space="preserve"><value>Programmierassistent</value></data>
+  <data name="AI.Stopping" xml:space="preserve"><value>Wird angehalten…</value></data>
+  <data name="AI.AutoStopped" xml:space="preserve"><value>Generierung gestoppt. Das Modell bleibt geladen und ist für die nächste Anfrage bereit.</value></data>
 </root>

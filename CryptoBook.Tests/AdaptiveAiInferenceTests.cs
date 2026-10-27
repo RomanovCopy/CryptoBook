@@ -322,6 +322,54 @@ public sealed class AdaptiveAiInferenceTests : IDisposable
         Assert.Equal(expected, (await AiWorkerProtocol.ReadAsync<AiWorkerEvent>(stream, CancellationToken.None))!.Usage);
     }
 
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CompletedOrCooperativelyStoppedReply_KeepsModelStatusProfileAndWorker(bool stopReply)
+    {
+        bool cancelThisReply = stopReply;
+        using var runtime = Create(async (request, text, token) =>
+        {
+            if(request.Command != "generate") return;
+            text("partial");
+            if(cancelThisReply)
+            {
+                try { await Task.Delay(Timeout.Infinite, token); }
+                catch(OperationCanceledException) { throw new AiWorkerCancelledException(token); }
+            }
+        });
+        var settings = Settings with { ReuseContext = true };
+        await runtime.LoadAsync(settings, null, CancellationToken.None);
+        using var monitor = new AiRuntimeMonitor(runtime);
+        var status = new TextBlock();
+        status.SetBinding(TextBlock.TextProperty, new Binding(nameof(monitor.ModelStatus)) { Source = monitor });
+        var loadedWorker = workers.Last();
+        int workerCount = workers.Count;
+        var options = runtime.RuntimeOptions;
+        using var cancellation = new CancellationTokenSource();
+        Task reply = Generate(runtime, settings, _ => { if(cancelThisReply) cancellation.Cancel(); }, cancellation.Token);
+        if(stopReply) await Assert.ThrowsAsync<AiWorkerCancelledException>(() => reply);
+        else await reply;
+        await Dispatcher.CurrentDispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.True(runtime.IsLoaded);
+        Assert.True(loadedWorker.IsAlive);
+        Assert.False(runtime.IsBusy);
+        Assert.Same(options, runtime.RuntimeOptions);
+        Assert.Equal(LocalizationManager.GetString("AI.ModelStatus.Loaded"), status.Text);
+        string noticeKey = stopReply ? "AI.AutoStopped" : "AI.AutoComplete";
+        Assert.Equal(noticeKey, runtime.Notices.Last().ResourceKey);
+        Assert.Equal(LocalizationManager.GetString(noticeKey), monitor.Stage);
+        cancelThisReply = false;
+        await runtime.ResetContextAsync();
+        await Generate(runtime, settings);
+        Assert.True(runtime.IsLoaded);
+        Assert.Equal(workerCount, workers.Count);
+        Assert.Same(loadedWorker, workers.Last());
+        await runtime.UnloadAsync();
+        Assert.False(runtime.IsLoaded);
+        Assert.False(loadedWorker.IsAlive);
+    }
+
     [Fact]
     public async Task PreloadAndReset_UseExistingWorkerWithoutSendingConversationOrGeneratingReply()
     {

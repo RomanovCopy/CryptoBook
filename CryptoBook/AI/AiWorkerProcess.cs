@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace CryptoBook.AI;
 
-/// <summary>One native engine, owned by this process. Cancellation destroys its entire address space.</summary>
+/// <summary>One owned native engine. Generation stops cooperatively, with a forced-stop fallback.</summary>
 internal sealed class AiWorkerProcess : IAiWorkerSession
 {
     private readonly Func<AiResourceSnapshot> readResources;
@@ -22,6 +22,8 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
         IProgress<float>? progress, CancellationToken cancellationToken, Action<string>? onReasoning = null,
         Action<AiTokenUsage>? onUsage = null, Action<AiPerformanceMeasurement>? onMeasurement = null)
     {
+        if(cancellationToken.IsCancellationRequested && request.Command == "generate" && IsAlive)
+            throw new AiWorkerCancelledException(cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
         Process current;
         lock(sync)
@@ -58,7 +60,6 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
             }
             current = process;
         }
-        using var cancel = cancellationToken.Register(Stop);
         using var watchStop = new CancellationTokenSource();
         int resourceFailure = 0;
         bool cpuLimited = false;
@@ -92,36 +93,16 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
                 }
                 watch = WatchResourcesAsync();
             }
-            await Task.Run(() => AiWorkerProtocol.WriteAsync(current.StandardInput.BaseStream, request, cancellationToken), cancellationToken).ConfigureAwait(false);
-            AiModelInspection? inspection = null;
-            while(true)
+            try
             {
-                var message = await AiWorkerProtocol.ReadAsync<AiWorkerEvent>(current.StandardOutput.BaseStream, cancellationToken).ConfigureAwait(false);
-                if(message is null)
-                {
-                    await current.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
-                    throw new AiWorkerException($"0x{unchecked((uint)current.ExitCode):X8}");
-                }
-                switch(message.Kind)
-                {
-                    case "text": onText(message.Text ?? ""); break;
-                    case "reasoning": onReasoning?.Invoke(message.Text ?? ""); break;
-                    case "usage": if(message.Usage is not null) onUsage?.Invoke(message.Usage); break;
-                    case "progress": progress?.Report(message.Progress); break;
-                    case "inspection": inspection = message.Inspection; break;
-                    case "measurement":
-                        if(message.Measurement is not { IsValid: true }) throw new AiWorkerException("Protocol");
-                        onMeasurement?.Invoke(message.Measurement); break;
-                    case "done": return inspection;
-                    case "repetition":
-                        if(message.Repetition is not { KeepCharacters: >= 0 } stop) throw new AiWorkerException("Protocol");
-                        throw new AiRepetitionException(stop);
-                    case "error":
-                        if(message.Text == "AI.ResourcePressure") Stop();
-                        throw new AiException(message.Text is not null && message.Text.StartsWith("AI.", StringComparison.Ordinal)
-                        ? message.Text : "AI.GenerationFailed");
-                    default: throw new AiWorkerException("Protocol");
-                }
+                return await AiWorkerRequestExchange.ExecuteAsync(current.StandardInput.BaseStream,
+                    current.StandardOutput.BaseStream, request, Stop, onText, progress, cancellationToken,
+                    onReasoning, onUsage, onMeasurement).ConfigureAwait(false);
+            }
+            catch(EndOfStreamException)
+            {
+                await current.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+                throw new AiWorkerException($"0x{unchecked((uint)current.ExitCode):X8}");
             }
         }
         catch(AiException error) when(error.ResourceKey is "AI.ResourcePressure" or "AI.ResourceGuardUnavailable" or "AI.PerformanceConsentRequired")
@@ -143,10 +124,10 @@ internal sealed class AiWorkerProcess : IAiWorkerSession
                 {
                     // CpuRate must be nonzero even when ControlFlags disables rate control.
                     var cpu = new CpuLimits { Rate = 10000 };
-                    if(!SetInformationJobObject(job, 15, ref cpu, Marshal.SizeOf<CpuLimits>())) Stop();
+                    if(!SetInformationJobObject(job, 15, ref cpu, Marshal.SizeOf<CpuLimits>()))
+                    { Stop(); throw new AiException("AI.ResourceGuardUnavailable"); }
                 }
             }
-            if(cancellationToken.IsCancellationRequested) Stop();
         }
 
         async Task WatchResourcesAsync()

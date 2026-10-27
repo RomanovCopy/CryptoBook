@@ -1371,4 +1371,21 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="AI.ModelStatus.Loading" xml:space="preserve"><value>Loading</value></data>
   <data name="AI.ModelStatus.Loaded" xml:space="preserve"><value>Loaded</value></data>
   <data name="AI.ModelStatus.Unloaded" xml:space="preserve"><value>Unloaded</value></data>
+  <data name="AI.PromptTemplates" xml:space="preserve"><value>Conversation templates</value></data>
+  <data name="AI.PromptTemplate" xml:space="preserve"><value>Conversation template</value></data>
+  <data name="AI.PromptTemplatesHint" xml:space="preserve"><value>Templates are shared by all models. Select a template to edit its name and system prompt, or create a new one. An empty prompt adds no instructions. Save applies changes; Cancel discards them. The selected template applies to subsequent replies without clearing the chat.</value></data>
+  <data name="AI.NewTemplate" xml:space="preserve"><value>New template</value></data>
+  <data name="AI.AddTemplate" xml:space="preserve"><value>Create template</value></data>
+  <data name="AI.RemoveTemplate" xml:space="preserve"><value>Delete template</value></data>
+  <data name="AI.TemplateName" xml:space="preserve"><value>Template name</value></data>
+  <data name="AI.TemplateNameRequired" xml:space="preserve"><value>Enter a name for every template.</value></data>
+  <data name="AI.TemplateNameDuplicate" xml:space="preserve"><value>Template names must be unique.</value></data>
+  <data name="AI.TemplatePreset.Default" xml:space="preserve"><value>Default</value></data>
+  <data name="AI.TemplatePreset.Concise" xml:space="preserve"><value>Concise answers</value></data>
+  <data name="AI.TemplatePreset.Explainer" xml:space="preserve"><value>Step-by-step explanations</value></data>
+  <data name="AI.TemplatePreset.Editor" xml:space="preserve"><value>Text editor</value></data>
+  <data name="AI.TemplatePreset.Analyst" xml:space="preserve"><value>Analyst</value></data>
+  <data name="AI.TemplatePreset.Developer" xml:space="preserve"><value>Programming assistant</value></data>
+  <data name="AI.Stopping" xml:space="preserve"><value>Stopping…</value></data>
+  <data name="AI.AutoStopped" xml:space="preserve"><value>Generation stopped. The model remains loaded and is ready for the next request.</value></data>
 </root>
