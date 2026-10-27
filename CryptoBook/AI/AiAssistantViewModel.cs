@@ -45,6 +45,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     private readonly DispatcherTimer contextTimer;
     private readonly HashSet<AiChatMessage> observedMessages = [];
     private AiConfiguration previousConfiguration;
+    private IReadOnlyList<AiPromptTemplateViewModel>? promptTemplates;
     private AiTokenUsage? tokenUsage;
     private int requestEstimate, contextCorrection;
     private bool contextDirty = true, contextIsEstimate = true;
@@ -121,11 +122,12 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public ObservableCollection<AiChatMessage> Messages { get; } = [];
     public AiRuntimeMonitor Runtime { get; }
     public AiChatAppearance Appearance => store.Current.ChatAppearance;
-    public IReadOnlyList<AiPromptTemplate> PromptTemplates => store.Current.PromptTemplates;
+    public IReadOnlyList<AiPromptTemplateViewModel> PromptTemplates => promptTemplates ??= store.Current.PromptTemplates
+        .Select(template => new AiPromptTemplateViewModel(template)).ToArray();
     public bool CanChangePromptTemplate => !IsBusy && !inference.IsBusy;
-    public AiPromptTemplate? SelectedPromptTemplate
+    public AiPromptTemplateViewModel? SelectedPromptTemplate
     {
-        get => store.Current.SelectedPromptTemplate;
+        get => PromptTemplates.FirstOrDefault(template => template.Id == SelectedPromptTemplateId);
         set { if(value is not null) SelectedPromptTemplateId = value.Id; }
     }
     public string SelectedPromptTemplateId
@@ -532,7 +534,11 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         var previous = previousConfiguration;
         previousConfiguration = store.Current;
         OnPropertyChanged(nameof(Appearance));
-        if(!previous.PromptTemplates.SequenceEqual(store.Current.PromptTemplates)) OnPropertyChanged(nameof(PromptTemplates));
+        if(!previous.PromptTemplates.SequenceEqual(store.Current.PromptTemplates))
+        {
+            promptTemplates = null;
+            OnPropertyChanged(nameof(PromptTemplates));
+        }
         OnPropertyChanged(nameof(SelectedPromptTemplateId), nameof(SelectedPromptTemplate), nameof(SelectedSystemPrompt));
         contextDirty = true;
         var currentModel = store.Current.SelectedModel;
@@ -579,6 +585,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     }
     private void OnCultureChanged(object? sender, EventArgs e)
     {
+        foreach(var template in PromptTemplates) template.OnPropertyChanged(nameof(AiPromptTemplateViewModel.Name));
         OnPropertyChanged(nameof(ModelName), nameof(SendUnavailableReason), nameof(ContextSummary), nameof(MessageSelectionSummary),
             nameof(InsertUnavailableReason), nameof(ReplaceUnavailableReason));
         foreach(var message in Messages) message.OnPropertyChanged(nameof(AiChatMessage.RoleLabel));

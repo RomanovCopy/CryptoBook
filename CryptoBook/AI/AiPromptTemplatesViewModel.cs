@@ -8,9 +8,13 @@ public sealed class AiPromptTemplateViewModel(AiPromptTemplate template) : ViewM
 {
     private string name = template.Name, systemPrompt = template.SystemPrompt;
     public string Id { get; } = template.Id;
-    public string Name { get => name; set => SetProperty(ref name, value); }
+    public string Name
+    {
+        get => AiPromptTemplates.GetDisplayName(Id, name);
+        set { if(value != Name) SetProperty(ref name, value); }
+    }
     public string SystemPrompt { get => systemPrompt; set => SetProperty(ref systemPrompt, value); }
-    internal AiPromptTemplate ToTemplate() => new() { Id = Id, Name = Name.Trim(), SystemPrompt = SystemPrompt };
+    internal AiPromptTemplate ToTemplate() => new() { Id = Id, Name = name.Trim(), SystemPrompt = SystemPrompt };
 }
 
 /// <summary>A detached settings draft: changing or removing a template never saves implicitly.</summary>

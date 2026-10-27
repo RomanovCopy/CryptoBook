@@ -1,4 +1,5 @@
 using CryptoBook.Infrastructure;
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
 
@@ -13,6 +14,26 @@ public sealed record AiPromptTemplate
 
 internal static class AiPromptTemplates
 {
+    internal static string GetDisplayName(string id, string name)
+    {
+        string? key = id switch
+        {
+            "default" => "AI.TemplatePreset.Default",
+            "concise" => "AI.TemplatePreset.Concise",
+            "explainer" => "AI.TemplatePreset.Explainer",
+            "editor" => "AI.TemplatePreset.Editor",
+            "analyst" => "AI.TemplatePreset.Analyst",
+            "developer" => "AI.TemplatePreset.Developer",
+            _ => null
+        };
+        // Recognize names saved by older versions in any supported language.
+        // A renamed preset or a user-created template keeps its own name.
+        if(key is null || !LocalizationManager.AvailableLanguages.Any(language =>
+            Properties.Resources.ResourceManager.GetString(key, CultureInfo.GetCultureInfo(language.CultureName)) == name))
+            return name;
+        return LocalizationManager.GetString(key);
+    }
+
     // Embedded in the assembly so presets travel with every build and installer.
     // Deserialize a fresh copy: edits to one settings draft cannot change future defaults.
     internal static List<AiPromptTemplate> CreateDefaults()

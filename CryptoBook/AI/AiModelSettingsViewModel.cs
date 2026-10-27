@@ -241,8 +241,12 @@ public sealed class AiModelSettingsViewModel : ViewModelBase, IDisposable
         }
         catch(Exception e) { Status = e is AiException ? AiAssistantViewModel.ErrorText(e) : LocalizationManager.GetString("AI.SaveFailed"); }
     }
-    private void OnCultureChanged(object? sender, EventArgs e) => OnPropertyChanged(nameof(MemoryModes), nameof(MemoryDescription),
-        nameof(PerformanceModes), nameof(PerformanceDescription), nameof(PerformanceSummary));
+    private void OnCultureChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(MemoryModes), nameof(MemoryDescription),
+            nameof(PerformanceModes), nameof(PerformanceDescription), nameof(PerformanceSummary));
+        foreach(var template in Templates.Items) template.OnPropertyChanged(nameof(AiPromptTemplateViewModel.Name));
+    }
     public void Dispose()
     {
         LocalizationManager.CultureChanged -= OnCultureChanged;
