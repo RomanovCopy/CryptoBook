@@ -175,6 +175,28 @@ namespace CryptoBook.Services
                 Changed?.Invoke(this, EventArgs.Empty);
         }
 
+        public async Task UpdatePathsAsync(
+            IReadOnlyDictionary<string, string> paths,
+            CancellationToken cancellationToken = default)
+        {
+            await InitializeAsync(cancellationToken);
+            var mapping = paths.ToDictionary(p => Normalize(p.Key), p => Normalize(p.Value),
+                StringComparer.OrdinalIgnoreCase);
+            var targets = mapping.Values.ToHashSet(StringComparer.OrdinalIgnoreCase);
+            await gate.WaitAsync(cancellationToken);
+            var previous = items;
+            try
+            {
+                items = items.Where(item => mapping.ContainsKey(item.Path) || !targets.Contains(item.Path))
+                    .Select(item => mapping.TryGetValue(item.Path, out string? path)
+                        ? item with { Path = path } : item).ToList();
+                await store.SaveAsync(items, cancellationToken);
+            }
+            catch { items = previous; throw; }
+            finally { gate.Release(); }
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+
         public async Task RemoveAsync(
             string path,
             CancellationToken cancellationToken = default)

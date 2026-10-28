@@ -236,6 +236,10 @@
 
     </Window.Resources>
 
+    <Window.InputBindings>
+        <KeyBinding Key="M" Modifiers="Control" Command="{Binding BatchRenameCommand}"/>
+    </Window.InputBindings>
+
     <Window.Width>
         <Binding Path="WindowWidth"  Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
     </Window.Width>
@@ -346,6 +350,14 @@
                     Command="{Binding RenameClickCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button ToolTip="{Binding [BatchRename.Action], Source={StaticResource Res}}"
+                    AutomationProperties.Name="{Binding [BatchRename.Title], Source={StaticResource Res}}"
+                    Command="{Binding BatchRenameCommand}"
+                    CommandParameter="{Binding SelectedItemsSnapshot}"
+                    FontFamily="Segoe UI"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}">
+                <Button.Content><TextBlock Text="A→B" FontSize="13"/></Button.Content>
+            </Button>
             <Button Content="&#xE74D;"
                     ToolTip="{Binding [Common.Delete], Source={StaticResource Res}}"
                     AutomationProperties.Name="Удалить"
@@ -752,6 +764,9 @@
                                                CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                      <MenuItem Header="{Binding [Common.Rename], Source={StaticResource Res}}"
                                                Command="{Binding PlacementTarget.Tag.RenameClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                               CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                     <MenuItem Header="{Binding [BatchRename.Title], Source={StaticResource Res}}" InputGestureText="Ctrl+M"
+                                               Command="{Binding PlacementTarget.Tag.BatchRenameCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                CommandParameter="{Binding PlacementTarget.Tag.SelectedItemsSnapshot, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                      <MenuItem Header="{Binding [Common.Delete], Source={StaticResource Res}}"
                                                Command="{Binding PlacementTarget.Tag.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"

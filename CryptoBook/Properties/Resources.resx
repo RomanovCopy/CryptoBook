@@ -1388,4 +1388,45 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="AI.TemplatePreset.Developer" xml:space="preserve"><value>Programming assistant</value></data>
   <data name="AI.Stopping" xml:space="preserve"><value>Stopping…</value></data>
   <data name="AI.AutoStopped" xml:space="preserve"><value>Generation stopped. The model remains loaded and is ready for the next request.</value></data>
+  <data name="BatchRename.Action" xml:space="preserve"><value>Multi-rename tool (Ctrl+M)</value></data>
+  <data name="BatchRename.Apply" xml:space="preserve"><value>Rename</value></data>
+  <data name="BatchRename.Cancelled" xml:space="preserve"><value>Cancelled. Original names preserved.</value></data>
+  <data name="BatchRename.Case" xml:space="preserve"><value>Letter case</value></data>
+  <data name="BatchRename.CaseLower" xml:space="preserve"><value>lowercase</value></data>
+  <data name="BatchRename.CaseTitle" xml:space="preserve"><value>Capitalize Each Word</value></data>
+  <data name="BatchRename.CaseUnchanged" xml:space="preserve"><value>Unchanged</value></data>
+  <data name="BatchRename.CaseUpper" xml:space="preserve"><value>UPPERCASE</value></data>
+  <data name="BatchRename.CounterDigits" xml:space="preserve"><value>Digits</value></data>
+  <data name="BatchRename.CounterInvalid" xml:space="preserve"><value>Start must be non-negative, step positive, digits from 1 to 18.</value></data>
+  <data name="BatchRename.CounterStart" xml:space="preserve"><value>Start at</value></data>
+  <data name="BatchRename.CounterStep" xml:space="preserve"><value>Step</value></data>
+  <data name="BatchRename.Done" xml:space="preserve"><value>Files renamed. You can undo this operation before closing the window.</value></data>
+  <data name="BatchRename.Duplicate" xml:space="preserve"><value>Duplicate source or resulting name.</value></data>
+  <data name="BatchRename.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="BatchRename.ExtensionMask" xml:space="preserve"><value>Extension mask (without dot)</value></data>
+  <data name="BatchRename.Failed" xml:space="preserve"><value>Rename failed.</value></data>
+  <data name="BatchRename.Hint" xml:space="preserve"><value>Selected local files, in displayed order. Use the buttons below each field to insert masks at the cursor or replace selected text. Check the preview before renaming. Undo is available until this window closes.</value></data>
+  <data name="BatchRename.MaskInvalid" xml:space="preserve"><value>Invalid mask. Supported: [N], [E], [C], [N1-5], [N3-], [E1-2], [DMY], [HMS].</value></data>
+  <data name="BatchRename.MatchCase" xml:space="preserve"><value>Match case</value></data>
+  <data name="BatchRename.NameInvalid" xml:space="preserve"><value>Invalid or reserved Windows file name.</value></data>
+  <data name="BatchRename.NameMask" xml:space="preserve"><value>Name mask</value></data>
+  <data name="BatchRename.NewName" xml:space="preserve"><value>New name</value></data>
+  <data name="BatchRename.OldName" xml:space="preserve"><value>Old name</value></data>
+  <data name="BatchRename.Previewing" xml:space="preserve"><value>Preparing preview…</value></data>
+  <data name="BatchRename.PreviewStatus" xml:space="preserve"><value>Changes: {0}. Errors: {1}.</value></data>
+  <data name="BatchRename.RecoveryRequired" xml:space="preserve"><value>Some names could not be restored. Files were preserved at these locations (original → current):</value></data>
+  <data name="BatchRename.Regex" xml:space="preserve"><value>Regular expressions</value></data>
+  <data name="BatchRename.Replacement" xml:space="preserve"><value>Replace with</value></data>
+  <data name="BatchRename.Running" xml:space="preserve"><value>Renaming… Cancel will restore the original names.</value></data>
+  <data name="BatchRename.Search" xml:space="preserve"><value>Find (in the entire resulting name)</value></data>
+  <data name="BatchRename.SourceMissing" xml:space="preserve"><value>Source local file is unavailable.</value></data>
+  <data name="BatchRename.TargetExists" xml:space="preserve"><value>A file or folder with this name already exists.</value></data>
+  <data name="BatchRename.Title" xml:space="preserve"><value>Multi-rename tool</value></data>
+  <data name="BatchRename.Undo" xml:space="preserve"><value>Undo rename</value></data>
+  <data name="BatchRename.Undone" xml:space="preserve"><value>Original names restored.</value></data>
+  <data name="BatchRename.TokenCounter" xml:space="preserve"><value>Counter with the specified start, step and digits</value></data>
+  <data name="BatchRename.TokenDate" xml:space="preserve"><value>Current date: ddMMyyyy, fixed at preview time</value></data>
+  <data name="BatchRename.TokenExtension" xml:space="preserve"><value>File extension without dot</value></data>
+  <data name="BatchRename.TokenName" xml:space="preserve"><value>File name without extension</value></data>
+  <data name="BatchRename.TokenTime" xml:space="preserve"><value>Current time: HHmmss (24-hour), fixed at preview time</value></data>
 </root>

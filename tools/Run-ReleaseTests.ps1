@@ -15,11 +15,16 @@ if ($LASTEXITCODE -ne 0) { throw 'Release test build failed.' }
 # command notification, runtime monitor and document search XAML tests in fresh
 # processes so they cannot invoke that stale dispatcher synchronously. Exclude them from
 # the remaining group to run every test once.
+# Worker cancellation tests also need a fresh process: loading cancellation can
+# hang in the combined WPF group while the isolated cancellation group passes.
+# The visible batch rename window needs its own Application dispatcher as well.
 $groups = @(
     @{ Name = 'ai-integration'; Arguments = @('-class', 'CryptoBook.Tests.AiIntegrationTests') },
     @{ Name = 'ai-runtime'; Arguments = @('-class', 'CryptoBook.Tests.AdaptiveAiInferenceTests') },
     @{ Name = 'document-search'; Arguments = @('-class', 'CryptoBook.Tests.DocumentSearchTests') },
-    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests') }
+    @{ Name = 'worker-cancellation'; Arguments = @('-class', 'CryptoBook.Tests.AiWorkerCancellationTests') },
+    @{ Name = 'batch-rename-window'; Arguments = @('-class', 'CryptoBook.Tests.BatchRenameWindowTests') },
+    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests') }
 )
 $total = 0
 foreach ($group in $groups) {

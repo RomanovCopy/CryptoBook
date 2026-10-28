@@ -202,8 +202,14 @@ namespace CryptoBook.ViewModels
             PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName);
-            if(e.PropertyName == nameof(SelectedItem))
+            if(e.PropertyName is nameof(SelectedItem) or nameof(IsCurrentDirectoryUnavailable))
                 RebuildChildrenView();
+            if(e.PropertyName == nameof(IsCurrentDirectoryUnavailable) && IsCurrentDirectoryUnavailable)
+            {
+                DeactivateFlatView();
+                _previewSelection = null;
+                Preview.Clear();
+            }
             if(e.PropertyName == nameof(IsFlatViewEnabled))
             {
                 OnPropertyChanged(nameof(CanUseFlatView));
@@ -233,6 +239,7 @@ namespace CryptoBook.ViewModels
                 OnPropertyChanged(nameof(PickerSelectionDisplayPath));
                 OnPropertyChanged(nameof(PickerPathLabel));
                 _confirmSelectionCommand?.RaiseCanExecuteChanged();
+                _batchRenameCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -241,11 +248,13 @@ namespace CryptoBook.ViewModels
             if(_childrenView is not null)
                 _childrenView.Filter = null;
 
-            object source = IsFlatViewEnabled
-                ? _flatFiles
-                : SelectedItem is IContainerSystemItem container
-                    ? container.Children
-                    : _emptyChildren;
+            object source = IsCurrentDirectoryUnavailable
+                ? _emptyChildren
+                : IsFlatViewEnabled
+                    ? _flatFiles
+                    : SelectedItem is IContainerSystemItem container
+                        ? container.Children
+                        : _emptyChildren;
             ICollectionView view = CollectionViewSource.GetDefaultView(source);
             view.Filter = item =>
                 item is ISystemItem systemItem &&
@@ -561,6 +570,38 @@ namespace CryptoBook.ViewModels
         public ICommand RenameClickCommand => _renameClickCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameClickCommand, _fileExplorerModel.CanExecute_RenameClickCommand);
         RelayCommand _renameClickCommand;
 
+        public ICommand BatchRenameCommand => _batchRenameCommand ??= new RelayCommand(
+            ExecuteBatchRename, CanBatchRename);
+        private RelayCommand? _batchRenameCommand;
+
+        private bool CanBatchRename(object? parameter)
+        {
+            var items = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot);
+            return !IsCurrentDirectoryUnavailable && items.Count >= 2 && items.All(item =>
+                item is IFileItem && item.Location.IsLocal && !item.IsEditing &&
+                (item.Capabilities == StorageProviderCapabilities.None ||
+                 item.Capabilities.HasFlag(StorageProviderCapabilities.Rename)));
+        }
+
+        private void ExecuteBatchRename(object? parameter)
+        {
+            if(!CanBatchRename(parameter)) return;
+            var selectedPaths = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot)
+                .Select(item => item.FullPath).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            // The displayed order defines the counter, independently of selection order.
+            string[] paths = ChildrenView.OfType<IFileItem>().Where(item => selectedPaths.Contains(item.FullPath))
+                .Select(item => item.FullPath).ToArray();
+            if(paths.Length < 2) return;
+            Guid dialog = _windowManager.CreateWindow<Views.BatchRenameWindow>(
+                new Dictionary<string, object?> { [BatchRenameViewModel.FilesContextKey] = paths });
+            _windowManager.ShowWindowDialog(dialog);
+            _previewSelection = null;
+            Preview.Clear();
+            SelectedListItem = null;
+            SelectedItemsSnapshot = Array.Empty<ISystemItem>();
+            ExecuteRefresh(SelectedItem);
+        }
+
 
         public ICommand RenameCommand => _renameFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameCommand, _fileExplorerModel.CanExecute_RenameCommand);
         RelayCommand _renameFileCommand;
@@ -696,6 +737,8 @@ namespace CryptoBook.ViewModels
 
         private bool CanExecuteOpen(object? parameter)
         {
+            if(IsCurrentDirectoryUnavailable)
+                return false;
             if(!IsPickerMode)
                 return _fileExplorerModel.CanExecute_OpenCommand(parameter);
 
