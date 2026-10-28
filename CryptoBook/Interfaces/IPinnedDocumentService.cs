@@ -22,6 +22,9 @@ namespace CryptoBook.Interfaces
             string oldPath,
             string newPath,
             CancellationToken cancellationToken = default);
+        Task UpdatePathsAsync(
+            IReadOnlyDictionary<string, string> paths,
+            CancellationToken cancellationToken = default);
         Task MoveAsync(
             string path,
             int offset,

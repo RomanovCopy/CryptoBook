@@ -1063,6 +1063,10 @@ namespace CryptoBook.Tests
                 CancellationToken cancellationToken = default) =>
                 Task.CompletedTask;
 
+            public Task UpdatePathsAsync(
+                IReadOnlyDictionary<string, string> paths,
+                CancellationToken cancellationToken = default) => Task.CompletedTask;
+
             public Task RemoveAsync(
                 string path,
                 CancellationToken cancellationToken = default) =>

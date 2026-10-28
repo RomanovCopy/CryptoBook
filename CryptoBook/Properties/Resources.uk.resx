@@ -2239,4 +2239,45 @@
   <data name="AI.TemplatePreset.Developer" xml:space="preserve"><value>Помічник програміста</value></data>
   <data name="AI.Stopping" xml:space="preserve"><value>Зупинка…</value></data>
   <data name="AI.AutoStopped" xml:space="preserve"><value>Генерацію зупинено. Модель залишається завантаженою та готова до наступного запиту.</value></data>
+  <data name="BatchRename.Action" xml:space="preserve"><value>Групове перейменування (Ctrl+M)</value></data>
+  <data name="BatchRename.Apply" xml:space="preserve"><value>Перейменувати</value></data>
+  <data name="BatchRename.Cancelled" xml:space="preserve"><value>Скасовано. Вихідні імена збережено.</value></data>
+  <data name="BatchRename.Case" xml:space="preserve"><value>Регістр</value></data>
+  <data name="BatchRename.CaseLower" xml:space="preserve"><value>малі літери</value></data>
+  <data name="BatchRename.CaseTitle" xml:space="preserve"><value>З Великої Літери</value></data>
+  <data name="BatchRename.CaseUnchanged" xml:space="preserve"><value>Без змін</value></data>
+  <data name="BatchRename.CaseUpper" xml:space="preserve"><value>ВЕЛИКІ ЛІТЕРИ</value></data>
+  <data name="BatchRename.CounterDigits" xml:space="preserve"><value>Розрядність</value></data>
+  <data name="BatchRename.CounterInvalid" xml:space="preserve"><value>Початок має бути невідʼємним, крок — додатним, розрядність — від 1 до 18.</value></data>
+  <data name="BatchRename.CounterStart" xml:space="preserve"><value>Початок</value></data>
+  <data name="BatchRename.CounterStep" xml:space="preserve"><value>Крок</value></data>
+  <data name="BatchRename.Done" xml:space="preserve"><value>Файли перейменовано. До закриття вікна можна скасувати операцію.</value></data>
+  <data name="BatchRename.Duplicate" xml:space="preserve"><value>Повтор вихідного або нового імені.</value></data>
+  <data name="BatchRename.Error" xml:space="preserve"><value>Помилка</value></data>
+  <data name="BatchRename.ExtensionMask" xml:space="preserve"><value>Маска розширення (без крапки)</value></data>
+  <data name="BatchRename.Failed" xml:space="preserve"><value>Не вдалося перейменувати файли.</value></data>
+  <data name="BatchRename.Hint" xml:space="preserve"><value>Вибрані локальні файли в порядку відображення. Кнопки під полями вставляють маски на місце курсора або виділеного тексту. Спочатку перевірте таблицю. Скасування доступне до закриття вікна.</value></data>
+  <data name="BatchRename.MaskInvalid" xml:space="preserve"><value>Неправильна маска. Підтримуються: [N], [E], [C], [N1-5], [N3-], [E1-2], [DMY], [HMS].</value></data>
+  <data name="BatchRename.MatchCase" xml:space="preserve"><value>Враховувати регістр</value></data>
+  <data name="BatchRename.NameInvalid" xml:space="preserve"><value>Неприпустиме або зарезервоване імʼя файлу Windows.</value></data>
+  <data name="BatchRename.NameMask" xml:space="preserve"><value>Маска імені</value></data>
+  <data name="BatchRename.NewName" xml:space="preserve"><value>Буде</value></data>
+  <data name="BatchRename.OldName" xml:space="preserve"><value>Було</value></data>
+  <data name="BatchRename.Previewing" xml:space="preserve"><value>Підготовка перегляду…</value></data>
+  <data name="BatchRename.PreviewStatus" xml:space="preserve"><value>Змін: {0}. Помилок: {1}.</value></data>
+  <data name="BatchRename.RecoveryRequired" xml:space="preserve"><value>Частину імен не вдалося відновити. Файли збережено за цими шляхами (вихідний → поточний):</value></data>
+  <data name="BatchRename.Regex" xml:space="preserve"><value>Регулярні вирази</value></data>
+  <data name="BatchRename.Replacement" xml:space="preserve"><value>Замінити на</value></data>
+  <data name="BatchRename.Running" xml:space="preserve"><value>Перейменування… Скасування відновить вихідні імена.</value></data>
+  <data name="BatchRename.Search" xml:space="preserve"><value>Знайти (у всьому новому імені)</value></data>
+  <data name="BatchRename.SourceMissing" xml:space="preserve"><value>Вихідний локальний файл недоступний.</value></data>
+  <data name="BatchRename.TargetExists" xml:space="preserve"><value>Файл або папка з таким іменем уже існує.</value></data>
+  <data name="BatchRename.Title" xml:space="preserve"><value>Групове перейменування</value></data>
+  <data name="BatchRename.Undo" xml:space="preserve"><value>Скасувати перейменування</value></data>
+  <data name="BatchRename.Undone" xml:space="preserve"><value>Вихідні імена відновлено.</value></data>
+  <data name="BatchRename.TokenCounter" xml:space="preserve"><value>Лічильник із заданими початком, кроком і розрядністю</value></data>
+  <data name="BatchRename.TokenDate" xml:space="preserve"><value>Поточна дата: ДДММРРРР, фіксується під час перегляду</value></data>
+  <data name="BatchRename.TokenExtension" xml:space="preserve"><value>Розширення файлу без крапки</value></data>
+  <data name="BatchRename.TokenName" xml:space="preserve"><value>Імʼя файлу без розширення</value></data>
+  <data name="BatchRename.TokenTime" xml:space="preserve"><value>Поточний час: ГГХХСС (24 години), фіксується під час перегляду</value></data>
 </root>

@@ -68,6 +68,7 @@ namespace CryptoBook.Interfaces
         ICommand CreateFileCommand { get; }
         ICommand CreateDirectoryCommand { get; }
         ICommand RenameClickCommand {  get; }
+        ICommand BatchRenameCommand { get; }
         ICommand RenameCommand { get; }
         ICommand MoveCommand { get; }
         ICommand DropCommand { get; }

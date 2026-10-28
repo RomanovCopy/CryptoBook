@@ -107,6 +107,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<NewFileDialogViewModel>().As<INewFileDialogViewModel>().InstancePerDependency();
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<FileDetailsViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<BatchRenameViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FavoriteDirectoriesViewModel>().As<IFavoriteDirectoriesViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<PinnedDocumentsViewModel>()
                 .As<IPinnedDocumentsViewModel>()
@@ -179,6 +180,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<NewFileDialog>().InstancePerDependency();
             builder.RegisterType<FileExplorer>().InstancePerDependency();
             builder.RegisterType<FileDetailsWindow>().InstancePerDependency();
+            builder.RegisterType<BatchRenameWindow>().InstancePerDependency();
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
             builder.RegisterType<DirectoryNameDialog>().InstancePerDependency();
@@ -332,6 +334,7 @@ namespace CryptoBook.Injections
                 .As<ITransferEngine>()
                 .SingleInstance();
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
+            builder.RegisterType<BatchRenameService>().As<IBatchRenameService>().SingleInstance();
             builder.RegisterType<FileExplorerFlatViewService>()
                 .As<IFileExplorerFlatViewService>()
                 .InstancePerLifetimeScope();

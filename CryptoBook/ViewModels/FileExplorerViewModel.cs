@@ -239,6 +239,7 @@ namespace CryptoBook.ViewModels
                 OnPropertyChanged(nameof(PickerSelectionDisplayPath));
                 OnPropertyChanged(nameof(PickerPathLabel));
                 _confirmSelectionCommand?.RaiseCanExecuteChanged();
+                _batchRenameCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -568,6 +569,38 @@ namespace CryptoBook.ViewModels
 
         public ICommand RenameClickCommand => _renameClickCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameClickCommand, _fileExplorerModel.CanExecute_RenameClickCommand);
         RelayCommand _renameClickCommand;
+
+        public ICommand BatchRenameCommand => _batchRenameCommand ??= new RelayCommand(
+            ExecuteBatchRename, CanBatchRename);
+        private RelayCommand? _batchRenameCommand;
+
+        private bool CanBatchRename(object? parameter)
+        {
+            var items = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot);
+            return !IsCurrentDirectoryUnavailable && items.Count >= 2 && items.All(item =>
+                item is IFileItem && item.Location.IsLocal && !item.IsEditing &&
+                (item.Capabilities == StorageProviderCapabilities.None ||
+                 item.Capabilities.HasFlag(StorageProviderCapabilities.Rename)));
+        }
+
+        private void ExecuteBatchRename(object? parameter)
+        {
+            if(!CanBatchRename(parameter)) return;
+            var selectedPaths = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot)
+                .Select(item => item.FullPath).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            // The displayed order defines the counter, independently of selection order.
+            string[] paths = ChildrenView.OfType<IFileItem>().Where(item => selectedPaths.Contains(item.FullPath))
+                .Select(item => item.FullPath).ToArray();
+            if(paths.Length < 2) return;
+            Guid dialog = _windowManager.CreateWindow<Views.BatchRenameWindow>(
+                new Dictionary<string, object?> { [BatchRenameViewModel.FilesContextKey] = paths });
+            _windowManager.ShowWindowDialog(dialog);
+            _previewSelection = null;
+            Preview.Clear();
+            SelectedListItem = null;
+            SelectedItemsSnapshot = Array.Empty<ISystemItem>();
+            ExecuteRefresh(SelectedItem);
+        }
 
 
         public ICommand RenameCommand => _renameFileCommand ??= new RelayCommand(_fileExplorerModel.Execute_RenameCommand, _fileExplorerModel.CanExecute_RenameCommand);

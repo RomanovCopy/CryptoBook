@@ -73,6 +73,7 @@ See the [release notes](docs/releases/v1.1.5.1.md), [local AI guide](docs/LOCAL_
   editor scaling and layout preservation in XamlPackage and protected rich-text saves;
 - zoom with Ctrl + mouse wheel and reset the editor view to 100%;
 - browse folders and files with sorting, favorites and change monitoring;
+- [batch rename local files](docs/BATCH_RENAME.md) with Ctrl+M: masks, counters, search and replace, preview and undo;
 - inspect [detailed file properties](docs/FILE_DETAILS.md), content signatures, extension mismatches,
   Windows metadata, permissions, streams, digital signatures and SHA-256/SHA-512 checksums;
 - pin frequently used documents with Quick Access;
