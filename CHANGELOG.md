@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.5.2 - 2026-10-28
+
+### Added
+- Batch rename local files with name/extension masks, counters, date/time, search and replace, regular expressions and case conversion.
+- Conflict preview, cancellation with name recovery, undo, name swaps and case-only renames; update active, pinned and recent document paths.
+
+### Fixed
+- Refresh connected drives and Android/MTP roots, handle disconnected locations and reject stale file listings.
+
+### Release
+- Synchronize application, manifest, installer, version test and distribution documentation for 1.1.5.2.
+
+Full comparison: [v1.1.5.1...v1.1.5.2](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.5.1...v1.1.5.2)
+
 ## 1.1.5.1 - 2026-10-27
 
 ### Added
