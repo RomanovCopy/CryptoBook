@@ -19,9 +19,13 @@ namespace CryptoBook.Services
         private readonly IDispatcherService _uiDispatcher;
         private readonly IStorageFacade? _storage;
         private readonly ISystemItemCreateService? _itemFactory;
-        private readonly CancellationTokenSource _portableMonitoringCancellation = new();
+        private readonly object _monitoringLock = new();
+        private CancellationTokenSource? _portableMonitoringCancellation;
         private readonly SemaphoreSlim _refreshGate = new(1, 1);
+        private readonly SemaphoreSlim _portableRefreshSignal = new(0, 1);
         private Task? _portableMonitoringTask;
+        private volatile bool _isMonitoring;
+        private volatile bool _disposed;
 
         public ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; }
 
@@ -45,26 +49,69 @@ namespace CryptoBook.Services
 
             _monitoringService.OnDriveConnected += OnDriveConnected;
             _monitoringService.OnDriveDisconnected += OnDriveDisconnected;
+            _monitoringService.OnDevicesChanged += OnDevicesChanged;
         }
 
 
         public void StartMonitoring()
         {
-            _monitoringService.StartMonitoring();
-            if(_storage is not null && _itemFactory is not null && _portableMonitoringTask is null)
+            lock(_monitoringLock)
             {
-                _portableMonitoringTask = MonitorPortableRootsAsync(
-                    _portableMonitoringCancellation.Token);
+                ObjectDisposedException.ThrowIf(_disposed, this);
+                if(_isMonitoring)
+                    return;
+                _monitoringService.StartMonitoring();
+                _isMonitoring = true;
+                if(_storage is not null && _itemFactory is not null)
+                {
+                    _portableMonitoringCancellation = new CancellationTokenSource();
+                    _portableMonitoringTask = MonitorPortableRootsAsync(
+                        _portableMonitoringCancellation.Token);
+                }
             }
         }
         public void StopMonitoring()
         {
-            _monitoringService.StopMonitoring();
-            _portableMonitoringCancellation.Cancel();
+            lock(_monitoringLock)
+            {
+                if(!_isMonitoring)
+                    return;
+                _isMonitoring = false;
+                try
+                {
+                    _monitoringService.StopMonitoring();
+                }
+                finally
+                {
+                    CancellationTokenSource? cancellation = _portableMonitoringCancellation;
+                    Task? monitoring = _portableMonitoringTask;
+                    _portableMonitoringCancellation = null;
+                    _portableMonitoringTask = null;
+                    if(cancellation is not null)
+                    {
+                        cancellation.Cancel();
+                        _ = DisposeMonitoringCancellationAsync(monitoring!, cancellation);
+                    }
+                }
+            }
+        }
+
+        private static async Task DisposeMonitoringCancellationAsync(
+            Task monitoring, CancellationTokenSource cancellation)
+        {
+            try
+            {
+                await monitoring.ConfigureAwait(false);
+            }
+            finally
+            {
+                cancellation.Dispose();
+            }
         }
 
         public async Task RefreshAsync(CancellationToken cancellationToken = default)
         {
+            ObjectDisposedException.ThrowIf(_disposed, this);
             await _refreshGate.WaitAsync(cancellationToken);
             try
             {
@@ -72,6 +119,7 @@ namespace CryptoBook.Services
                 await _uiDispatcher.InvokeAsync(() =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
+                    ObjectDisposedException.ThrowIf(_disposed, this);
                     RefreshLocalRoots(_monitoringService.GetWritableDrives());
                 });
                 try
@@ -116,7 +164,6 @@ namespace CryptoBook.Services
 
         private async Task MonitorPortableRootsAsync(CancellationToken cancellationToken)
         {
-            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
             while(!cancellationToken.IsCancellationRequested)
             {
                 try
@@ -133,13 +180,26 @@ namespace CryptoBook.Services
                 }
                 try
                 {
-                    if(!await timer.WaitForNextTickAsync(cancellationToken))
-                        return;
+                    await _portableRefreshSignal.WaitAsync(TimeSpan.FromSeconds(5), cancellationToken);
                 }
                 catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
                 {
                     return;
                 }
+            }
+        }
+
+        private void OnDevicesChanged()
+        {
+            if(!_isMonitoring || _disposed)
+                return;
+            try
+            {
+                // Coalesce bursts of Windows notifications and wake discovery immediately.
+                _portableRefreshSignal.Release();
+            }
+            catch(SemaphoreFullException)
+            {
             }
         }
 
@@ -162,11 +222,14 @@ namespace CryptoBook.Services
                 return;
 
             StorageItemMetadata[] roots = (await _storage.GetRootsAsync(cancellationToken))
-                .Where(root => !root.Location.IsLocal)
+                .Where(root => !root.Location.IsLocal &&
+                    !string.Equals(root.StatusText, "offline", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(root.StatusText, "disconnected", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
             await _uiDispatcher.InvokeAsync(new Action(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                ObjectDisposedException.ThrowIf(_disposed, this);
                 var incoming = roots.ToDictionary(
                     root => root.Location.ToString(),
                     StringComparer.OrdinalIgnoreCase);
@@ -204,51 +267,45 @@ namespace CryptoBook.Services
 
         private void OnDriveConnected(IDriveItem drive)
         {
-            InvokeOnUiThread(() =>
-            {
-                if(!_writableDrives.Any(d => string.Equals(d.RootDirectory, drive.RootDirectory, StringComparison.OrdinalIgnoreCase)))
-                {
-                    _writableDrives.Add(drive);
-                }
-
-                DriveConnected?.Invoke(drive);
-            });
+            InvokeOnUiThread(() => RefreshLocalRoots(_monitoringService.GetWritableDrives()));
         }
 
         private void OnDriveDisconnected(string driveName)
         {
-            InvokeOnUiThread(() =>
-            {
-                var driveToRemove = _writableDrives.FirstOrDefault(d => string.Equals(d.RootDirectory,
-                    driveName.TrimEnd(':', '\\') + ":\\", StringComparison.OrdinalIgnoreCase));
-
-                if(driveToRemove != null)
-                {
-                    _writableDrives.Remove(driveToRemove);
-                }
-
-                DriveDisconnected?.Invoke(driveName);
-            });
+            InvokeOnUiThread(() => RefreshLocalRoots(_monitoringService.GetWritableDrives()));
         }
 
         private void InvokeOnUiThread(Action action)
         {
+            void ApplyIfActive()
+            {
+                if(!_disposed)
+                    action();
+            }
             if(_uiDispatcher.CheckAccess())
             {
-                action();
-            } else
+                ApplyIfActive();
+            }
+            else
             {
-                _uiDispatcher.Invoke(action);
+                // WMI shutdown can wait for callbacks; never block them on the UI thread.
+                _uiDispatcher.BeginInvoke(ApplyIfActive);
             }
         }
 
 
         public void Dispose()
         {
-            _portableMonitoringCancellation.Cancel();
-            _portableMonitoringCancellation.Dispose();
-            _monitoringService.OnDriveConnected -= OnDriveConnected;
-            _monitoringService.OnDriveDisconnected -= OnDriveDisconnected;
+            lock(_monitoringLock)
+            {
+                if(_disposed)
+                    return;
+                StopMonitoring();
+                _disposed = true;
+                _monitoringService.OnDriveConnected -= OnDriveConnected;
+                _monitoringService.OnDriveDisconnected -= OnDriveDisconnected;
+                _monitoringService.OnDevicesChanged -= OnDevicesChanged;
+            }
         }
     }
 }

@@ -45,6 +45,7 @@ namespace CryptoBook.Models
         private readonly IRecentDocumentService? _recentDocumentService;
         private readonly FileExplorerNavigationHistory _navigationHistory = new();
         private INotifyCollectionChanged? _currentContainerAvailabilitySource;
+        private IDriveItem? _currentRootAvailabilitySource;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -155,6 +156,7 @@ namespace CryptoBook.Models
             CleanupOrphanedDecryptionDirectories(
                 GetDecryptionTemporaryRoot());
             GetDrives = _driveManagerService.WritableDrives;
+            ((INotifyCollectionChanged)GetDrives).CollectionChanged += Drives_CollectionChanged;
         }
 
         public async Task RefreshDrivesAsync(CancellationToken cancellationToken = default)
@@ -1329,6 +1331,15 @@ namespace CryptoBook.Models
         private void ObserveCurrentContainerAvailability(
             IContainerSystemItem container)
         {
+            if(_currentRootAvailabilitySource is not null)
+                _currentRootAvailabilitySource.PropertyChanged -= CurrentRoot_PropertyChanged;
+            ISystemItem root = container;
+            while(root.Parent is ISystemItem parentItem)
+                root = parentItem;
+            _currentRootAvailabilitySource = root as IDriveItem;
+            if(_currentRootAvailabilitySource is not null)
+                _currentRootAvailabilitySource.PropertyChanged += CurrentRoot_PropertyChanged;
+
             if(_currentContainerAvailabilitySource is not null)
             {
                 _currentContainerAvailabilitySource.CollectionChanged -=
@@ -1341,6 +1352,37 @@ namespace CryptoBook.Models
                     : (INotifyCollectionChanged)GetDrives;
             _currentContainerAvailabilitySource.CollectionChanged +=
                 CurrentContainerAvailabilitySource_CollectionChanged;
+            CheckCurrentRootAvailability();
+        }
+
+        private void Drives_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+            CheckCurrentRootAvailability();
+
+        private void CurrentRoot_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if(string.IsNullOrEmpty(e.PropertyName) ||
+               e.PropertyName is nameof(ISystemItem.Capabilities) or nameof(ISystemItem.StatusText))
+                CheckCurrentRootAvailability();
+        }
+
+        private void CheckCurrentRootAvailability()
+        {
+            if(_currentRootAvailabilitySource is not IDriveItem root ||
+               string.IsNullOrWhiteSpace(CurrentPath))
+                return;
+            if(!GetDrives.Contains(root))
+            {
+                SetNavigationFailure(FileExplorerNavigationErrorKind.DriveNotReady, true);
+            }
+            else if(!root.Location.IsLocal &&
+                    !root.Capabilities.HasFlag(StorageProviderCapabilities.Browse))
+            {
+                SetNavigationFailure(
+                    string.Equals(root.StatusText, "unauthorized", StringComparison.OrdinalIgnoreCase)
+                        ? FileExplorerNavigationErrorKind.AccessDenied
+                        : FileExplorerNavigationErrorKind.DriveNotReady,
+                    true);
+            }
         }
 
         private void CurrentContainerAvailabilitySource_CollectionChanged(
@@ -1491,6 +1533,12 @@ namespace CryptoBook.Models
         }
         public void Execute_Closed(object? obj)
         {
+            ((INotifyCollectionChanged)GetDrives).CollectionChanged -= Drives_CollectionChanged;
+            if(_currentRootAvailabilitySource is not null)
+            {
+                _currentRootAvailabilitySource.PropertyChanged -= CurrentRoot_PropertyChanged;
+                _currentRootAvailabilitySource = null;
+            }
             if(_currentContainerAvailabilitySource is not null)
             {
                 _currentContainerAvailabilitySource.CollectionChanged -=

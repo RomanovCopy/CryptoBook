@@ -15,6 +15,7 @@ namespace CryptoBook.Interfaces
 
         event Action<IDriveItem> OnDriveConnected;
         event Action<string> OnDriveDisconnected;  // Только RootDirectory, т.к. после отключения DriveInfo недоступен
+        event Action OnDevicesChanged;
 
         void StartMonitoring();
         void StopMonitoring();

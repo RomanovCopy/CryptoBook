@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Text;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CryptoBook.Services
@@ -15,14 +15,21 @@ namespace CryptoBook.Services
     {
         private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly Func<IReadOnlyList<IDriveItem>> _discoverDrives;
-        private readonly CancellationTokenSource _cancellationTokenSource = new();
-
-        private ManagementEventWatcher? _watcher;
-        private readonly object _lock = new object();
+        private readonly Func<EventArrivedEventHandler, IDisposable> _subscribeToVolumeChanges;
+        private readonly Func<string, CancellationToken, Task<IDriveItem?>> _waitForDriveReady;
+        private CancellationTokenSource _cancellationTokenSource = new();
+        private readonly object _lifecycleLock = new();
+        private readonly object _lock = new();
+        private readonly Dictionary<string, long> _driveVersions = new(StringComparer.OrdinalIgnoreCase);
+        private IDisposable? _subscription;
         private List<IDriveItem> _currentDrives = [];
+        private long _nextVersion;
+        private bool _stopped;
+        private bool _disposed;
 
         public event Action<IDriveItem> OnDriveConnected;
         public event Action<string> OnDriveDisconnected;
+        public event Action OnDevicesChanged;
 
         public DriveMonitoringService(ISystemItemCreateService systemItemCreateService)
             : this(systemItemCreateService, null)
@@ -31,10 +38,15 @@ namespace CryptoBook.Services
 
         internal DriveMonitoringService(
             ISystemItemCreateService systemItemCreateService,
-            Func<IReadOnlyList<IDriveItem>>? discoverDrives)
+            Func<IReadOnlyList<IDriveItem>>? discoverDrives,
+            Func<EventArrivedEventHandler, IDisposable>? subscribeToVolumeChanges = null,
+            Func<string, CancellationToken, Task<IDriveItem?>>? waitForDriveReady = null)
         {
             _systemItemCreateService = systemItemCreateService ?? throw new ArgumentNullException(nameof(systemItemCreateService));
             _discoverDrives = discoverDrives ?? DiscoverWritableDrives;
+            _subscribeToVolumeChanges = subscribeToVolumeChanges ??
+                (handler => new VolumeChangeSubscription(handler, OnDeviceChangeEvent));
+            _waitForDriveReady = waitForDriveReady ?? ((root, token) => WaitForDriveReadyAsync(root, token));
             RefreshCurrentDrives();
         }
 
@@ -48,30 +60,83 @@ namespace CryptoBook.Services
 
         public void StartMonitoring()
         {
-            var query = new WqlEventQuery(
-            "SELECT * FROM Win32_VolumeChangeEvent");
-
-            _watcher = new ManagementEventWatcher(query);
-            _watcher.EventArrived += OnVolumeChangeEvent;
-            _watcher.Start();
+            lock(_lifecycleLock)
+            {
+                lock(_lock)
+                {
+                    ObjectDisposedException.ThrowIf(_disposed, this);
+                    if(_subscription is not null)
+                        return;
+                    if(_cancellationTokenSource.IsCancellationRequested)
+                    {
+                        _cancellationTokenSource.Dispose();
+                        _cancellationTokenSource = new CancellationTokenSource();
+                    }
+                    _stopped = false;
+                }
+                _subscription = _subscribeToVolumeChanges(OnVolumeChangeEvent);
+            }
         }
 
 
         public void StopMonitoring()
         {
-            _cancellationTokenSource?.Cancel();
+            lock(_lifecycleLock)
+            {
+                lock(_lock)
+                {
+                    if(_disposed || _stopped)
+                        return;
+                    _stopped = true;
+                    _driveVersions.Clear();
+                }
+                _cancellationTokenSource.Cancel();
+                IDisposable? subscription = _subscription;
+                _subscription = null;
+                subscription?.Dispose();
+            }
         }
 
         private async void OnVolumeChangeEvent(object sender, EventArrivedEventArgs e)
         {
-            ushort eventType = (ushort)e.NewEvent["EventType"];
             try
             {
-                await HandleVolumeChangeAsync(eventType, e.NewEvent["DriveName"]?.ToString());
+                await HandleVolumeChangeAsync(
+                    Convert.ToUInt16(e.NewEvent["EventType"]),
+                    e.NewEvent["DriveName"]?.ToString());
             }
-            catch(OperationCanceledException) when(_cancellationTokenSource.IsCancellationRequested)
+            catch(OperationCanceledException)
             {
             }
+            catch(Exception exception)
+            {
+                // A device/driver failure must not escape an async event handler.
+                Trace.TraceWarning("Volume monitoring failed: {0}", exception.GetType().Name);
+            }
+        }
+
+        private void OnDeviceChangeEvent(object sender, EventArrivedEventArgs e)
+        {
+            try
+            {
+                HandleDeviceChange(Convert.ToUInt16(e.NewEvent["EventType"]));
+            }
+            catch(Exception exception)
+            {
+                Trace.TraceWarning("Device monitoring failed: {0}", exception.GetType().Name);
+            }
+        }
+
+        internal void HandleDeviceChange(ushort eventType)
+        {
+            if(eventType is not (2 or 3))
+                return;
+            lock(_lock)
+            {
+                if(_disposed || _stopped)
+                    return;
+            }
+            OnDevicesChanged?.Invoke();
         }
 
         internal async Task HandleVolumeChangeAsync(ushort eventType, string? driveName)
@@ -79,39 +144,52 @@ namespace CryptoBook.Services
             if(eventType != 2 && eventType != 3)
                 return;
 
-            if(string.IsNullOrEmpty(driveName))
+            if(string.IsNullOrWhiteSpace(driveName))
                 return;
 
-            string root = driveName.TrimEnd(':', '\\') + ":\\";
+            string letter = driveName.Trim().TrimEnd(':', '\\');
+            if(letter.Length != 1 || !char.IsAsciiLetter(letter[0]))
+                return;
+            string root = letter + ":\\";
+            long version;
+            CancellationToken token;
+            lock(_lock)
+            {
+                if(_disposed || _stopped)
+                    return;
+                version = ++_nextVersion;
+                _driveVersions[root] = version;
+                token = _cancellationTokenSource.Token;
+                if(eventType == 3)
+                    _currentDrives.RemoveAll(d => string.Equals(d.RootDirectory, root, StringComparison.OrdinalIgnoreCase));
+            }
 
             if(eventType == 2)  // Подключение
             {
-                var driveEx = await WaitForDriveReadyAsync(root, _cancellationTokenSource.Token);
+                IDriveItem? driveEx;
+                try
+                {
+                    driveEx = await _waitForDriveReady(root, token).ConfigureAwait(false);
+                }
+                catch(OperationCanceledException) when(token.IsCancellationRequested)
+                {
+                    return;
+                }
 
                 if(driveEx != null)
                 {
                     lock(_lock)
                     {
-                        if(!_currentDrives.Any(d => string.Equals(d.RootDirectory, driveEx.RootDirectory, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            _currentDrives.Add(driveEx);
-                        }
+                        if(_disposed || _stopped || token.IsCancellationRequested ||
+                           !_driveVersions.TryGetValue(root, out long currentVersion) || currentVersion != version ||
+                           _currentDrives.Any(d => string.Equals(d.RootDirectory, root, StringComparison.OrdinalIgnoreCase)))
+                            return;
+                        _currentDrives.Add(driveEx);
                     }
                     OnDriveConnected?.Invoke(driveEx);
                 }
             } else if(eventType == 3)  // Отключение
             {
-                lock(_lock)
-                {
-                    var removed = _currentDrives.FirstOrDefault(d =>
-                        string.Equals(d.RootDirectory, root, StringComparison.OrdinalIgnoreCase));
-
-                    if(removed != null)
-                    {
-                        _currentDrives.Remove(removed);
-                    }
-                }
-
                 OnDriveDisconnected?.Invoke(root);
             }
         }
@@ -157,19 +235,9 @@ namespace CryptoBook.Services
                 if(ct.IsCancellationRequested)
                     return null;
 
-                DriveInfo drive;
-                try
-                {
-                    drive = new DriveInfo(root);
-                } catch
-                {
-                    drive = null;
-                }
-
-                if(drive?.IsReady == true)
-                {
-                    return GetDriveIfWritable(drive.Name);  // или напрямую создаём DriveInfoEx
-                }
+                IDriveItem? drive = GetDriveIfWritable(root);
+                if(drive is not null)
+                    return drive;
 
                 await Task.Delay(delayMs, ct);
             }
@@ -180,13 +248,65 @@ namespace CryptoBook.Services
 
         public void Dispose()
         {
-            _cancellationTokenSource?.Dispose();
-          if(_watcher != null)
+            lock(_lifecycleLock)
             {
-                _watcher.EventArrived -= OnVolumeChangeEvent;
-                _watcher.Stop();
-                _watcher.Dispose();
-                _watcher = null;
+                StopMonitoring();
+                lock(_lock)
+                {
+                    if(_disposed)
+                        return;
+                    _disposed = true;
+                    _cancellationTokenSource.Dispose();
+                }
+            }
+        }
+
+        private sealed class VolumeChangeSubscription: IDisposable
+        {
+            private readonly List<(ManagementEventWatcher Watcher, EventArrivedEventHandler Handler)> _watchers = [];
+
+            public VolumeChangeSubscription(
+                EventArrivedEventHandler volumeHandler, EventArrivedEventHandler deviceHandler)
+            {
+                try
+                {
+                    Subscribe("SELECT * FROM Win32_VolumeChangeEvent", volumeHandler);
+                    Subscribe("SELECT * FROM Win32_DeviceChangeEvent", deviceHandler);
+                }
+                catch
+                {
+                    Dispose();
+                    throw;
+                }
+            }
+
+            private void Subscribe(string query, EventArrivedEventHandler handler)
+            {
+                var watcher = new ManagementEventWatcher(new WqlEventQuery(query));
+                _watchers.Add((watcher, handler));
+                watcher.EventArrived += handler;
+                watcher.Start();
+            }
+
+            public void Dispose()
+            {
+                foreach((ManagementEventWatcher watcher, EventArrivedEventHandler handler) in _watchers)
+                {
+                    watcher.EventArrived -= handler;
+                    try
+                    {
+                        watcher.Stop();
+                    }
+                    catch(ManagementException exception)
+                    {
+                        Trace.TraceWarning("Device subscription stop failed: {0}", exception.GetType().Name);
+                    }
+                    finally
+                    {
+                        watcher.Dispose();
+                    }
+                }
+                _watchers.Clear();
             }
         }
     }

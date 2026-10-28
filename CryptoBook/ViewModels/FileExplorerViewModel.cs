@@ -202,8 +202,14 @@ namespace CryptoBook.ViewModels
             PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName);
-            if(e.PropertyName == nameof(SelectedItem))
+            if(e.PropertyName is nameof(SelectedItem) or nameof(IsCurrentDirectoryUnavailable))
                 RebuildChildrenView();
+            if(e.PropertyName == nameof(IsCurrentDirectoryUnavailable) && IsCurrentDirectoryUnavailable)
+            {
+                DeactivateFlatView();
+                _previewSelection = null;
+                Preview.Clear();
+            }
             if(e.PropertyName == nameof(IsFlatViewEnabled))
             {
                 OnPropertyChanged(nameof(CanUseFlatView));
@@ -241,11 +247,13 @@ namespace CryptoBook.ViewModels
             if(_childrenView is not null)
                 _childrenView.Filter = null;
 
-            object source = IsFlatViewEnabled
-                ? _flatFiles
-                : SelectedItem is IContainerSystemItem container
-                    ? container.Children
-                    : _emptyChildren;
+            object source = IsCurrentDirectoryUnavailable
+                ? _emptyChildren
+                : IsFlatViewEnabled
+                    ? _flatFiles
+                    : SelectedItem is IContainerSystemItem container
+                        ? container.Children
+                        : _emptyChildren;
             ICollectionView view = CollectionViewSource.GetDefaultView(source);
             view.Filter = item =>
                 item is ISystemItem systemItem &&
@@ -696,6 +704,8 @@ namespace CryptoBook.ViewModels
 
         private bool CanExecuteOpen(object? parameter)
         {
+            if(IsCurrentDirectoryUnavailable)
+                return false;
             if(!IsPickerMode)
                 return _fileExplorerModel.CanExecute_OpenCommand(parameter);
 
