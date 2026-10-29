@@ -228,7 +228,15 @@ namespace CryptoBook.Models
                 LocalizationManager.GetString("SideMenu.Media.Description"),
                 CommandKey.menuContent_MediaPlayer));
 
-            return [workspace, file, content];
+            var help = new MenuItem(commandService)
+            {
+                Name = LocalizationManager.GetString("Help.Title"),
+                Glyph = "\uE897",
+                Description = "F1",
+                IsEnabled = true,
+                Command = new RelayCommand(_ => scope.Resolve<IHelpWindowService>().Open())
+            };
+            return [workspace, file, content, help];
         }
 
         private MenuItem CreateNavigationItem(

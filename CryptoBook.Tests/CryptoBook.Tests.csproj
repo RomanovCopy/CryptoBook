@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\tools\HelpValidation\MemorySettingsProvider.cs" Link="HelpValidation\MemorySettingsProvider.cs"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageReference Include="xunit.v3" Version="4.0.0" />
     <PackageReference Include="Xunit.StaFact" Version="4.0.23" />

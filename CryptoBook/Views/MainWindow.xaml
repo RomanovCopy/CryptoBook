@@ -6,6 +6,7 @@
         xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:CryptoBook.Behaviors"
+        xmlns:help="clr-namespace:CryptoBook.Help"
         xmlns:ai="clr-namespace:CryptoBook.AI"
         xmlns:interfaces="clr-namespace:CryptoBook.Interfaces"
         xmlns:services="clr-namespace:CryptoBook.Services"
@@ -146,6 +147,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <i:Interaction.Behaviors>
+        <help:HelpShortcutBehavior/>
         <behaviors:WindowBehavior
             CloseCoordinator="{markup:ResolveService ServiceType={x:Type services:DocumentCloseCoordinator}}"
             KeyResetService="{markup:ResolveService ServiceType={x:Type interfaces:IKeyResetService}}"

@@ -2280,4 +2280,17 @@
   <data name="BatchRename.TokenExtension" xml:space="preserve"><value>Розширення файлу без крапки</value></data>
   <data name="BatchRename.TokenName" xml:space="preserve"><value>Імʼя файлу без розширення</value></data>
   <data name="BatchRename.TokenTime" xml:space="preserve"><value>Поточний час: ГГХХСС (24 години), фіксується під час перегляду</value></data>
+  <data name="Help.Title" xml:space="preserve"><value>Довідка</value></data>
+  <data name="Help.Back" xml:space="preserve"><value>Назад</value></data>
+  <data name="Help.Forward" xml:space="preserve"><value>Уперед</value></data>
+  <data name="Help.Contents" xml:space="preserve"><value>Зміст</value></data>
+  <data name="Help.Search" xml:space="preserve"><value>Пошук у довідці</value></data>
+  <data name="Help.ClearSearch" xml:space="preserve"><value>Очистити пошук</value></data>
+  <data name="Help.NoResults" xml:space="preserve"><value>Статей не знайдено.</value></data>
+  <data name="Help.Planned" xml:space="preserve"><value>Стаття ще готується.</value></data>
+  <data name="Help.LoadError" xml:space="preserve"><value>Не вдалося завантажити статтю.</value></data>
+  <data name="Help.ImageError" xml:space="preserve"><value>Зображення недоступне.</value></data>
+  <data name="Help.CloseImage" xml:space="preserve"><value>Закрити зображення</value></data>
+  <data name="Help.Results" xml:space="preserve"><value>Результати пошуку</value></data>
+  <data name="Help.Article" xml:space="preserve"><value>Стаття довідки</value></data>
 </root>

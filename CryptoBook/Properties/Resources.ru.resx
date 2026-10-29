@@ -1429,4 +1429,17 @@
   <data name="BatchRename.TokenExtension" xml:space="preserve"><value>Расширение файла без точки</value></data>
   <data name="BatchRename.TokenName" xml:space="preserve"><value>Имя файла без расширения</value></data>
   <data name="BatchRename.TokenTime" xml:space="preserve"><value>Текущее время: ЧЧММСС (24 часа), фиксируется в предпросмотре</value></data>
+  <data name="Help.Title" xml:space="preserve"><value>Справка</value></data>
+  <data name="Help.Back" xml:space="preserve"><value>Назад</value></data>
+  <data name="Help.Forward" xml:space="preserve"><value>Вперёд</value></data>
+  <data name="Help.Contents" xml:space="preserve"><value>Оглавление</value></data>
+  <data name="Help.Search" xml:space="preserve"><value>Поиск по справке</value></data>
+  <data name="Help.ClearSearch" xml:space="preserve"><value>Очистить поиск</value></data>
+  <data name="Help.NoResults" xml:space="preserve"><value>Статьи не найдены.</value></data>
+  <data name="Help.Planned" xml:space="preserve"><value>Статья ещё готовится.</value></data>
+  <data name="Help.LoadError" xml:space="preserve"><value>Не удалось загрузить статью.</value></data>
+  <data name="Help.ImageError" xml:space="preserve"><value>Изображение недоступно.</value></data>
+  <data name="Help.CloseImage" xml:space="preserve"><value>Закрыть изображение</value></data>
+  <data name="Help.Results" xml:space="preserve"><value>Результаты поиска</value></data>
+  <data name="Help.Article" xml:space="preserve"><value>Статья справки</value></data>
 </root>

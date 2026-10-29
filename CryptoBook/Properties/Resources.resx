@@ -1429,4 +1429,17 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="BatchRename.TokenExtension" xml:space="preserve"><value>File extension without dot</value></data>
   <data name="BatchRename.TokenName" xml:space="preserve"><value>File name without extension</value></data>
   <data name="BatchRename.TokenTime" xml:space="preserve"><value>Current time: HHmmss (24-hour), fixed at preview time</value></data>
+  <data name="Help.Title" xml:space="preserve"><value>Help</value></data>
+  <data name="Help.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Help.Forward" xml:space="preserve"><value>Forward</value></data>
+  <data name="Help.Contents" xml:space="preserve"><value>Contents</value></data>
+  <data name="Help.Search" xml:space="preserve"><value>Search help</value></data>
+  <data name="Help.ClearSearch" xml:space="preserve"><value>Clear search</value></data>
+  <data name="Help.NoResults" xml:space="preserve"><value>No articles found.</value></data>
+  <data name="Help.Planned" xml:space="preserve"><value>This article is being prepared.</value></data>
+  <data name="Help.LoadError" xml:space="preserve"><value>This article could not be loaded.</value></data>
+  <data name="Help.ImageError" xml:space="preserve"><value>This image is unavailable.</value></data>
+  <data name="Help.CloseImage" xml:space="preserve"><value>Close image</value></data>
+  <data name="Help.Results" xml:space="preserve"><value>Search results</value></data>
+  <data name="Help.Article" xml:space="preserve"><value>Help article</value></data>
 </root>

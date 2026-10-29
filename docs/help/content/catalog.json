@@ -1,0 +1,483 @@
+{
+  "schemaVersion": 1,
+  "cultures": [
+    "en-US",
+    "ru-RU",
+    "uk-UA",
+    "de-DE"
+  ],
+  "sections": [
+    "start",
+    "doc",
+    "edit",
+    "content",
+    "md",
+    "files",
+    "search",
+    "devices",
+    "view",
+    "security",
+    "recovery",
+    "ai",
+    "settings",
+    "help"
+  ],
+  "topics": [
+    {
+      "id": "start.install",
+      "section": "start",
+      "status": "planned"
+    },
+    {
+      "id": "start.interface",
+      "section": "start",
+      "status": "sample",
+      "featureIds": [
+        "F002",
+        "F003",
+        "F013",
+        "F118"
+      ],
+      "illustrationIds": [
+        "S02-a",
+        "S02-b",
+        "S02-c"
+      ]
+    },
+    {
+      "id": "start.workspace",
+      "section": "start",
+      "status": "planned"
+    },
+    {
+      "id": "doc.create",
+      "section": "doc",
+      "status": "sample",
+      "featureIds": [
+        "F005",
+        "F006",
+        "F007",
+        "F008",
+        "F010",
+        "F011",
+        "F012"
+      ],
+      "illustrationIds": [
+        "S04-a",
+        "S04-b",
+        "S06-a",
+        "S06-b"
+      ]
+    },
+    {
+      "id": "doc.templates",
+      "section": "doc",
+      "status": "planned"
+    },
+    {
+      "id": "doc.open",
+      "section": "doc",
+      "status": "planned"
+    },
+    {
+      "id": "doc.save",
+      "section": "doc",
+      "status": "planned"
+    },
+    {
+      "id": "doc.formats",
+      "section": "doc",
+      "status": "planned"
+    },
+    {
+      "id": "doc.switch",
+      "section": "doc",
+      "status": "planned"
+    },
+    {
+      "id": "edit.basic",
+      "section": "edit",
+      "status": "planned"
+    },
+    {
+      "id": "edit.font",
+      "section": "edit",
+      "status": "planned"
+    },
+    {
+      "id": "edit.palette",
+      "section": "edit",
+      "status": "planned"
+    },
+    {
+      "id": "edit.paragraph",
+      "section": "edit",
+      "status": "planned"
+    },
+    {
+      "id": "edit.links",
+      "section": "edit",
+      "status": "planned"
+    },
+    {
+      "id": "edit.page",
+      "section": "edit",
+      "status": "planned"
+    },
+    {
+      "id": "edit.view",
+      "section": "edit",
+      "status": "planned"
+    },
+    {
+      "id": "content.images",
+      "section": "content",
+      "status": "planned"
+    },
+    {
+      "id": "content.background",
+      "section": "content",
+      "status": "planned"
+    },
+    {
+      "id": "content.tables",
+      "section": "content",
+      "status": "planned"
+    },
+    {
+      "id": "content.bookmarks",
+      "section": "content",
+      "status": "planned"
+    },
+    {
+      "id": "content.structure",
+      "section": "content",
+      "status": "planned"
+    },
+    {
+      "id": "md.edit",
+      "section": "md",
+      "status": "planned"
+    },
+    {
+      "id": "md.syntax",
+      "section": "md",
+      "status": "planned"
+    },
+    {
+      "id": "md.preview",
+      "section": "md",
+      "status": "planned"
+    },
+    {
+      "id": "md.save",
+      "section": "md",
+      "status": "planned"
+    },
+    {
+      "id": "files.navigate",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.views",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.create",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.transfer",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.conflicts",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.manage",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.favorites",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.pinned",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.recent",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.batch",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "files.properties",
+      "section": "files",
+      "status": "planned"
+    },
+    {
+      "id": "search.name",
+      "section": "search",
+      "status": "planned"
+    },
+    {
+      "id": "search.workspace",
+      "section": "search",
+      "status": "planned"
+    },
+    {
+      "id": "search.document",
+      "section": "search",
+      "status": "planned"
+    },
+    {
+      "id": "devices.android",
+      "section": "devices",
+      "status": "planned"
+    },
+    {
+      "id": "devices.transfers",
+      "section": "devices",
+      "status": "planned"
+    },
+    {
+      "id": "devices.limits",
+      "section": "devices",
+      "status": "planned"
+    },
+    {
+      "id": "view.preview",
+      "section": "view",
+      "status": "planned"
+    },
+    {
+      "id": "view.images",
+      "section": "view",
+      "status": "planned"
+    },
+    {
+      "id": "view.video",
+      "section": "view",
+      "status": "planned"
+    },
+    {
+      "id": "view.pdf",
+      "section": "view",
+      "status": "planned"
+    },
+    {
+      "id": "view.print",
+      "section": "view",
+      "status": "planned"
+    },
+    {
+      "id": "security.password",
+      "section": "security",
+      "status": "planned"
+    },
+    {
+      "id": "security.protect",
+      "section": "security",
+      "status": "planned"
+    },
+    {
+      "id": "security.decrypt",
+      "section": "security",
+      "status": "planned"
+    },
+    {
+      "id": "security.lock",
+      "section": "security",
+      "status": "planned"
+    },
+    {
+      "id": "security.compatibility",
+      "section": "security",
+      "status": "planned"
+    },
+    {
+      "id": "recovery.backup",
+      "section": "recovery",
+      "status": "planned"
+    },
+    {
+      "id": "recovery.crash",
+      "section": "recovery",
+      "status": "planned"
+    },
+    {
+      "id": "recovery.lock",
+      "section": "recovery",
+      "status": "planned"
+    },
+    {
+      "id": "recovery.write",
+      "section": "recovery",
+      "status": "planned"
+    },
+    {
+      "id": "ai.start",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.models",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.lifecycle",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.chat",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.templates",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.attachments",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.apply",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.context",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.memory",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.performance",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.appearance",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "ai.troubleshoot",
+      "section": "ai",
+      "status": "planned"
+    },
+    {
+      "id": "settings.appearance",
+      "section": "settings",
+      "status": "planned"
+    },
+    {
+      "id": "settings.language",
+      "section": "settings",
+      "status": "planned"
+    },
+    {
+      "id": "settings.about",
+      "section": "settings",
+      "status": "planned"
+    },
+    {
+      "id": "settings.updates",
+      "section": "settings",
+      "status": "planned"
+    },
+    {
+      "id": "settings.data",
+      "section": "settings",
+      "status": "planned"
+    },
+    {
+      "id": "settings.hotkeys",
+      "section": "settings",
+      "status": "planned"
+    },
+    {
+      "id": "settings.troubleshoot",
+      "section": "settings",
+      "status": "planned"
+    },
+    {
+      "id": "help.use",
+      "section": "help",
+      "status": "planned",
+      "featureIds": [
+        "F155",
+        "F156",
+        "F157",
+        "F158"
+      ]
+    }
+  ],
+  "illustrations": [
+    {
+      "id": "S02-a",
+      "scenarioId": "S02",
+      "status": "ready",
+      "file": "images/S02-a.png"
+    },
+    {
+      "id": "S02-b",
+      "scenarioId": "S02",
+      "status": "ready",
+      "file": "images/S02-b.png"
+    },
+    {
+      "id": "S02-c",
+      "scenarioId": "S02",
+      "status": "ready",
+      "file": "images/S02-c.png"
+    },
+    {
+      "id": "S04-a",
+      "scenarioId": "S04",
+      "status": "ready",
+      "file": "images/S04-a.png"
+    },
+    {
+      "id": "S04-b",
+      "scenarioId": "S04",
+      "status": "ready",
+      "file": "images/S04-b.png"
+    },
+    {
+      "id": "S06-a",
+      "scenarioId": "S06",
+      "status": "ready",
+      "file": "images/S06-a.png"
+    },
+    {
+      "id": "S06-b",
+      "scenarioId": "S06",
+      "status": "ready",
+      "file": "images/S06-b.png"
+    }
+  ]
+}

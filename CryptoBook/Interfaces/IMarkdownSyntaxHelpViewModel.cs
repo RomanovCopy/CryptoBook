@@ -8,5 +8,6 @@ namespace CryptoBook.Interfaces
     {
         IReadOnlyList<MarkdownSyntaxHelpGroup> Groups { get; }
         ICommand BackToEditor { get; }
+        ICommand OpenHelp { get; }
     }
 }

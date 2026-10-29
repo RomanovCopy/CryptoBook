@@ -14,6 +14,7 @@ namespace CryptoBook.ViewModels
     {
         private readonly IMainWindowModel mainWindowModel;
         private readonly IKeyResetService? keyResetService;
+        private readonly IHelpWindowService? help;
 
         public Guid WindowId => mainWindowModel.WindowId;
 
@@ -42,8 +43,10 @@ namespace CryptoBook.ViewModels
             IUpdateNotificationViewModel updateNotification,
             IKeyResetService? keyResetService = null,
             AiAssistantViewModel? ai = null,
-            IPageNavigationService? navigation = null)
+            IPageNavigationService? navigation = null,
+            IHelpWindowService? help = null)
         {
+            this.help = help;
             this.mainWindowModel = mainWindowModel ?? throw new ArgumentNullException(nameof(mainWindowModel));
             UpdateNotification = updateNotification ??
                 throw new ArgumentNullException(nameof(updateNotification));
@@ -71,6 +74,9 @@ namespace CryptoBook.ViewModels
                     await keyResetService.ResetAsync(token);
             });
         private AsyncRelayCommand? resetEncryptionKey;
+
+        public ICommand OpenHelp => openHelp ??= new RelayCommand(_ => help?.Open());
+        private RelayCommand? openHelp;
 
 
         public ICommand Loaded => loaded ??= new AsyncRelayCommand(

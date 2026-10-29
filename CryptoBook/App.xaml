@@ -1,4 +1,4 @@
-﻿<Application x:Class="CryptoBook.App"
+<Application x:Class="CryptoBook.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:infra="clr-namespace:CryptoBook.Infrastructure"
@@ -6,17 +6,17 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Styles/WindowStyles.xaml"/>
-                <ResourceDictionary Source="/Styles/ControlStyles.xaml"/>
-                <ResourceDictionary Source="/Styles/ImageStyles.xaml"/>
-                <ResourceDictionary Source="/Themes/SystemTheme.xaml"/>
-                <ResourceDictionary Source="/Styles/ListStyles.xaml"/>
-                <ResourceDictionary Source="/Styles/ImageStyles.xaml"/>
-                <ResourceDictionary Source="/Styles/ButtonStyles.xaml"/>
-                <ResourceDictionary Source="/Styles/EditorToolbarIcons.xaml"/>
-                <ResourceDictionary Source="/Styles/TreeViewStyles.xaml"/>
-                <ResourceDictionary Source="/Styles/ComboBoxStyles.xaml"/>
-                <ResourceDictionary Source="/Styles/ThemedControls.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/WindowStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/ControlStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/ImageStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Themes/SystemTheme.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/ListStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/ImageStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/ButtonStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/EditorToolbarIcons.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/TreeViewStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/ComboBoxStyles.xaml"/>
+                <ResourceDictionary Source="/CryptoBook;component/Styles/ThemedControls.xaml"/>
 
             </ResourceDictionary.MergedDictionaries>
             <Thickness x:Key="CurrentMargin">10,2,10,2</Thickness>

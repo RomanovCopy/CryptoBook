@@ -1,0 +1,24 @@
+{
+  "culture": "ru-RU",
+  "commit": "8617d991080b2d3b2b0f920b5a2c7bc741a555a7",
+  "dirtyWorkingTree": true,
+  "checks": 41,
+  "bindingErrors": [],
+  "settingsSaveCount": 13,
+  "storageRoot": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6",
+  "stores": [
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\ai-settings.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\ai-profiles.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\favorites.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\pinned.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\recent.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\updates.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\search-index",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\Recovery\\current.recovery",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\help-offline-check\\artifacts\\hv\\ru-RU\\310b36b6\\Lock\\last.lock.cbook"
+  ],
+  "appStartup": "App.OnStartup with explicit isolated services",
+  "captureMethod": "RenderTargetBitmap of visible production WPF windows",
+  "interaction": "production ICommand/ViewModel and storage services, plus routed keyboard events",
+  "limitations": "Folder picker supplies only the demonstration folder; no physical keyboard/mouse or installed-user migration test."
+}

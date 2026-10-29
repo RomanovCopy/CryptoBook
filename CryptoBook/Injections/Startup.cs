@@ -7,6 +7,7 @@ using CryptoBook.Converters;
 using CryptoBook.DTO;
 using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
+using CryptoBook.Help;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 using CryptoBook.MyControls;
@@ -36,6 +37,12 @@ namespace CryptoBook.Injections
             // Приложение.
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
             builder.RegisterInstance(dispatcher);
+            builder.RegisterType<ResourceHelpContentSource>().As<IHelpContentSource>().SingleInstance();
+            builder.RegisterType<HelpContentService>().SingleInstance();
+            builder.RegisterType<HelpPreferences>().As<IHelpPreferences>().SingleInstance();
+            builder.RegisterType<HelpWindowService>().As<IHelpWindowService>().SingleInstance();
+            builder.RegisterType<HelpWindowViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<HelpWindow>().InstancePerDependency();
             builder.RegisterType<AiSettingsStore>().SingleInstance();
             builder.RegisterType<AiRuntimeProfileStore>().SingleInstance();
             builder.RegisterType<AdaptiveAiInferenceService>().As<IAiInferenceService>().SingleInstance();

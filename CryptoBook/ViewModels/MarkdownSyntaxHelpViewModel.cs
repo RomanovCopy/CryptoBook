@@ -11,11 +11,13 @@ namespace CryptoBook.ViewModels
         IMarkdownSyntaxHelpViewModel
     {
         private readonly IPageNavigationService navigationService;
+        private readonly IHelpWindowService? help;
         private IReadOnlyList<MarkdownSyntaxHelpGroup> groups;
 
         public MarkdownSyntaxHelpViewModel(
-            IPageNavigationService navigationService)
+            IPageNavigationService navigationService, IHelpWindowService? help = null)
         {
+            this.help = help;
             this.navigationService = navigationService ??
                 throw new ArgumentNullException(nameof(navigationService));
             groups = CreateGroups();
@@ -27,6 +29,9 @@ namespace CryptoBook.ViewModels
         public ICommand BackToEditor => backToEditor ??=
             new RelayCommand(_ => navigationService.Navigate("MarkdownEditor"));
         private RelayCommand? backToEditor;
+
+        public ICommand OpenHelp => openHelp ??= new RelayCommand(_ => help?.Open("start.interface"));
+        private RelayCommand? openHelp;
 
         public ICommand PageLoaded => noOperation ??=
             new RelayCommand(_ => { });

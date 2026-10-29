@@ -1,0 +1,31 @@
+{
+  "culture": "de-DE",
+  "sections": {
+    "start": "Erste Schritte",
+    "doc": "Dokumente",
+    "edit": "Textbearbeitung",
+    "content": "Dokumentinhalt",
+    "md": "Markdown",
+    "files": "Dateien und Ordner",
+    "search": "Suche",
+    "devices": "Verbundene Geräte",
+    "view": "Anzeigen und Drucken",
+    "security": "Datenschutz",
+    "recovery": "Speichern und Wiederherstellen",
+    "ai": "Lokaler KI-Assistent",
+    "settings": "Einstellungen und Problembehebung",
+    "help": "Hilfe verwenden"
+  },
+  "topics": [
+    {
+      "id": "start.interface",
+      "file": "start.interface.md",
+      "keywords": ["Fenster", "Oberfläche", "Startbildschirm", "Seitenmenü", "Einstellungen", "KI-Assistent", "Zoom"]
+    },
+    {
+      "id": "doc.create",
+      "file": "doc.create.md",
+      "keywords": ["neues Dokument", "erstellen", "speichern", "RTF", "Dateiname", "leeres Dokument", "Reiseplan"]
+    }
+  ]
+}

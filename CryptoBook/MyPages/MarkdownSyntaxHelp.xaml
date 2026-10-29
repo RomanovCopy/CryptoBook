@@ -29,6 +29,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel>
+                <Button Content="{Binding [Help.Title], Source={StaticResource Res}}" Command="{Binding OpenHelp}"
+                        HorizontalAlignment="Left" Margin="0,0,0,10" Padding="12,6"/>
                 <TextBlock Text="{Binding [MarkdownHelp.Title], Source={StaticResource Res}}"
                            Foreground="{DynamicResource CurrentWindowForeground}"
                            FontSize="26"

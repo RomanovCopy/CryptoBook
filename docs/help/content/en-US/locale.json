@@ -1,0 +1,31 @@
+{
+  "culture": "en-US",
+  "sections": {
+    "start": "Getting started",
+    "doc": "Documents",
+    "edit": "Text editing",
+    "content": "Document content",
+    "md": "Markdown",
+    "files": "Files and folders",
+    "search": "Search",
+    "devices": "Connected devices",
+    "view": "Viewing and printing",
+    "security": "Data protection",
+    "recovery": "Saving and recovery",
+    "ai": "Local AI assistant",
+    "settings": "Settings and troubleshooting",
+    "help": "Using help"
+  },
+  "topics": [
+    {
+      "id": "start.interface",
+      "file": "start.interface.md",
+      "keywords": ["window", "interface", "start screen", "side menu", "settings", "AI assistant", "zoom"]
+    },
+    {
+      "id": "doc.create",
+      "file": "doc.create.md",
+      "keywords": ["new document", "create", "save", "RTF", "file name", "empty document", "trip plan"]
+    }
+  ]
+}

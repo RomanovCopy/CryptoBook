@@ -1,0 +1,22 @@
+{
+  "shotId": "S02-c",
+  "culture": "de-DE",
+  "rawFile": "docs/help/screenshots/raw/de-DE/S02-c.png",
+  "crop": {
+    "x": 430,
+    "y": 890,
+    "width": 1000,
+    "height": 70
+  },
+  "marks": [
+    {
+      "number": 5,
+      "shape": "rectangle",
+      "x": 0.7595466666666666,
+      "y": 0.5,
+      "width": 0.05355333333333334,
+      "height": 0.4,
+      "badge": null
+    }
+  ]
+}

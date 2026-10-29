@@ -1,0 +1,22 @@
+{
+  "shotId": "S02-c",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S02-c.png",
+  "crop": {
+    "x": 430,
+    "y": 890,
+    "width": 1000,
+    "height": 70
+  },
+  "marks": [
+    {
+      "number": 5,
+      "shape": "rectangle",
+      "x": 0.7407833333333333,
+      "y": 0.5,
+      "width": 0.05355333333333334,
+      "height": 0.4,
+      "badge": null
+    }
+  ]
+}

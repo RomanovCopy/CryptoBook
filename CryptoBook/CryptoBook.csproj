@@ -21,6 +21,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Resource Include="..\docs\help\content\**\*.json;..\docs\help\content\**\*.md;..\docs\help\content\**\*.png">
+      <Link>Help\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Infrastrucrure\**" />
     <EmbeddedResource Remove="Infrastrucrure\**" />
     <None Remove="Infrastrucrure\**" />

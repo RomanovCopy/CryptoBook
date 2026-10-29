@@ -22,20 +22,28 @@ namespace CryptoBook
         private IDriveManagerService? _driveManagerService;
         private IApplicationActivationService? _activationService;
         IContainer? _container;
+        private readonly bool productionStartup;
+        internal Exception? StartupFailure { get; private set; }
 
-        public App()
+        public App() : this(null) { }
+
+        // Validation hosts install an in-memory settings provider before construction and
+        // explicitly replace persistent services. Normal startup keeps its existing path.
+        internal App(Action<ContainerBuilder>? configureOverrides)
         {
-            MigrateUserSettings();
+            productionStartup = configureOverrides is null;
+            if(productionStartup) MigrateUserSettings();
             LocalizationManager.InitializeFromSettings();
 
-            DispatcherUnhandledException += OnDispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException +=
-                OnUnhandledException;
-            TaskScheduler.UnobservedTaskException +=
-                OnUnobservedTaskException;
+            if(productionStartup)
+            {
+                DispatcherUnhandledException += OnDispatcherUnhandledException;
+                AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+                TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+            }
 
             var startup = new Startup();
-            _container = startup.ConfigureServices(this);
+            _container = startup.ConfigureServices(this, configureOverrides);
         }
 
         private static void MigrateUserSettings()
@@ -82,12 +90,16 @@ namespace CryptoBook
 
             } catch(Exception exception)
             {
-                WriteCrashLog(exception, "Startup");
-                WpfMessageBox.Show(
-                    LocalizationManager.GetString("App.StartupFailureMessage"),
-                    LocalizationManager.GetString("App.StartupFailureTitle"),
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                StartupFailure = exception;
+                if(productionStartup)
+                {
+                    WriteCrashLog(exception, "Startup");
+                    WpfMessageBox.Show(
+                        LocalizationManager.GetString("App.StartupFailureMessage"),
+                        LocalizationManager.GetString("App.StartupFailureTitle"),
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
                 Shutdown(-1);
             }
         }

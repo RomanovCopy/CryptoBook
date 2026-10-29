@@ -50,6 +50,13 @@ namespace CryptoBook.Services
 
         internal FlowDocument Render(string markdown, string? markdownFilePath,
             WpfFontFamily? codeFontFamily, WpfBrush? codeForeground)
+            => RenderCore(markdown, markdownFilePath, codeFontFamily, codeForeground, null);
+
+        internal FlowDocument RenderHelp(string markdown, MarkdownContentPolicy policy)
+            => RenderCore(markdown, null, null, null, policy);
+
+        private static FlowDocument RenderCore(string markdown, string? markdownFilePath,
+            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground, MarkdownContentPolicy? policy)
         {
             var document = new FlowDocument();
             DocumentPageLayout.Apply(document);
@@ -67,7 +74,7 @@ namespace CryptoBook.Services
                 markdown ?? string.Empty,
                 Pipeline);
             var context = new RenderContext(GetSourceDirectory(
-                markdownFilePath), codeFontFamily, codeForeground);
+                markdownFilePath), codeFontFamily, codeForeground, policy);
             foreach(MdBlock block in parsed)
             {
                 foreach(WpfBlock rendered in RenderBlock(block, context))
@@ -378,7 +385,10 @@ namespace CryptoBook.Services
                     return;
 
                 case AutolinkInline autoLink:
-                    AppendAutoLink(target, autoLink);
+                    if(context.Policy is null)
+                        AppendAutoLink(target, autoLink);
+                    else
+                        target.Add(new Run(autoLink.Url));
                     return;
 
                 case EmphasisInline emphasis:
@@ -429,6 +439,18 @@ namespace CryptoBook.Services
             RenderContext context)
         {
             string url = source.Url ?? string.Empty;
+            if(context.Policy is not null)
+            {
+                Span? localLink = context.Policy.CreateLink(url);
+                if(localLink is null)
+                    AppendChildren(target, source, context);
+                else
+                {
+                    AppendChildren(localLink.Inlines, source, context);
+                    target.Add(localLink);
+                }
+                return;
+            }
             if(!TryCreateSafeExternalUri(url, out Uri uri))
             {
                 AppendChildren(target, source, context);
@@ -480,6 +502,12 @@ namespace CryptoBook.Services
             RenderContext context)
         {
             string alternateText = ExtractPlainText(source);
+            if(context.Policy is not null)
+            {
+                target.Add(new InlineUIContainer(context.Policy.CreateImage(
+                    source.Url ?? string.Empty, alternateText, source.Title ?? string.Empty)));
+                return;
+            }
             WpfImage? image = TryLoadLocalImage(
                 source.Url,
                 alternateText,
@@ -634,6 +662,11 @@ namespace CryptoBook.Services
             }
         }
 
-        private sealed record RenderContext(string? SourceDirectory, WpfFontFamily? CodeFontFamily, WpfBrush? CodeForeground);
+        internal sealed record MarkdownContentPolicy(
+            Func<string, Span?> CreateLink,
+            Func<string, string, string, FrameworkElement> CreateImage);
+
+        private sealed record RenderContext(string? SourceDirectory, WpfFontFamily? CodeFontFamily,
+            WpfBrush? CodeForeground, MarkdownContentPolicy? Policy);
     }
 }
