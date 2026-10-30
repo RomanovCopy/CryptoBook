@@ -1,0 +1,22 @@
+{
+  "shotId": "S12-c",
+  "culture": "en-US",
+  "rawFile": "docs/help/screenshots/raw/en-US/S12-c.png",
+  "crop": {
+    "x": 0,
+    "y": 0,
+    "width": 1440,
+    "height": 650
+  },
+  "marks": [
+    {
+      "number": 2,
+      "shape": "rectangle",
+      "x": 0.08245243794884717,
+      "y": 0.3218370358883903,
+      "width": 0.3112007055562555,
+      "height": 0.40216706564193017,
+      "badge": null
+    }
+  ]
+}

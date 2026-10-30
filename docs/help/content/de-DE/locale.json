@@ -105,6 +105,170 @@
         "schließen",
         "unabhängige Editoren"
       ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "Auswahl",
+        "Zwischenablage",
+        "Rückgängig",
+        "Wiederholen",
+        "Leeren"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "Schrift",
+        "Größe",
+        "Fett",
+        "Kursiv",
+        "Farbe"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "Tinte",
+        "Palette",
+        "Farbfeld",
+        "Farbe"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "Absatz",
+        "Ausrichtung",
+        "Einzug",
+        "Zeilenabstand",
+        "Liste"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "Link",
+        "Adresse",
+        "Hyperlink"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "Seite",
+        "Papier",
+        "Format",
+        "Ausrichtung"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "Lesen",
+        "Vorschau",
+        "Zoom",
+        "Einpassen"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "Bild",
+        "Einfügen",
+        "Größe",
+        "Textumfluss"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "Hintergrund",
+        "Bild",
+        "Ausschnitt"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "Tabelle",
+        "Zelle",
+        "Zeile",
+        "Spalte"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "Lesezeichen",
+        "Notiz",
+        "Navigation",
+        "Index"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "Struktur",
+        "Baum",
+        "Absatz",
+        "Reihenfolge"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "Markdown",
+        "Quelltext",
+        "Editor",
+        "Vorschau"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "Markdown",
+        "Syntax",
+        "Auszeichnung",
+        "Code",
+        "Tabellen"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "Markdown",
+        "Vorschau",
+        "Bild",
+        "Link",
+        "HTML"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "Markdown",
+        "Speichern",
+        "Kodierung",
+        "BOM",
+        "Zeilenende"
+      ]
     }
   ]
 }

@@ -1,0 +1,5 @@
+{
+  "imageUndoRestoredBitmap": false,
+  "operation": "FloatRight image moved up/down then removed via production layout service inside editor change block, followed by Undo",
+  "limitation": "Do not promise recovery of an embedded bitmap through Undo; keep the original image or a saved document copy."
+}

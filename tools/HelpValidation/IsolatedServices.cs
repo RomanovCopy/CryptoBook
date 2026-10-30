@@ -18,6 +18,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     public List<string> Paths { get; } = [];
     public ValidationSavePicker SavePicker { get; } = new();
     public ValidationDocumentDialogs DocumentDialogs { get; } = new();
+    public ValidationImagePicker ImagePicker { get; } = new();
     public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
         .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
     private string Store(string name)
@@ -51,6 +52,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         {
             builder.RegisterInstance<IDocumentSaveTargetPicker>(SavePicker);
             builder.RegisterInstance<IDocumentDialogService>(DocumentDialogs);
+            builder.RegisterInstance<IImageFilePicker>(ImagePicker);
             builder.RegisterInstance<IDirectoryMonitoringService>(new NoDirectoryMonitoring());
         }
         builder.RegisterInstance<IApplicationUpdateService>(new NoUpdates());
@@ -106,6 +108,13 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         public void StopMonitoring() { }
         public void Dispose() { }
     }
+}
+
+public sealed class ValidationImagePicker : IImageFilePicker
+{
+    public Queue<string?> Paths { get; } = new();
+    public Task<string?> PickImageAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(Paths.Count > 0 ? Paths.Dequeue() : throw new InvalidOperationException("Unexpected image picker."));
 }
 
 // Only native modal decisions are supplied; the production save/open/close pipelines still execute.

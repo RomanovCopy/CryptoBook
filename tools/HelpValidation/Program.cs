@@ -37,6 +37,7 @@ internal static partial class Program
         repo = Path.GetFullPath(args[0]); culture = args[1]; commit = args[2];
         bool verify = args.Length > 3 && args[3] == "verify";
         bool stage4 = args.Length > 3 && args[3].StartsWith("stage4", StringComparison.Ordinal);
+        bool stage5 = args.Length > 3 && args[3].StartsWith("stage5", StringComparison.Ordinal);
         captureFilter = args.Length > 4 ? args[4] : null;
         if (!new[] { "en-US", "ru-RU", "uk-UA", "de-DE" }.Contains(culture)) return 2;
         string runRoot = Path.Combine(repo, "artifacts", "hv", culture, Guid.NewGuid().ToString("N")[..8]);
@@ -44,7 +45,7 @@ internal static partial class Program
         Properties.Settings.Default.CultureInfo = culture;
         Properties.Settings.Default.FileOverviewFirstStart = true;
         Properties.Settings.Default.WindowState = "Normal";
-        var isolated = new IsolatedServices(runRoot, stage4);
+        var isolated = new IsolatedServices(runRoot, stage4 || stage5);
         var app = new App(isolated.Configure) { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.InitializeComponent();
         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingListener(bindingErrors));
@@ -54,17 +55,20 @@ internal static partial class Program
         {
             try
             {
-                if (stage4) await ValidateStage4(isolated, args[3] == "stage4-verify");
+                if (stage5) await ValidateStage5(isolated, args[3] == "stage5-verify");
+                else if (stage4) await ValidateStage4(isolated, args[3] == "stage4-verify");
                 else await Validate(isolated, verify);
                 Check(settings.SaveCount > 0, "In-memory settings Save was exercised.");
                 Check(bindingErrors.Count == 0, "No WPF binding errors.");
                 File.WriteAllText(Path.Combine(runRoot, "result.json"), JsonSerializer.Serialize(new
                 {
-                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
+                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
                     storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
                     captureMethod = "RenderTargetBitmap of visible production WPF windows",
-                    interaction = stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
-                    limitations = "No physical keyboard/mouse or installed-user migration test. Folder-picker shortcut supplies the demo folder; stage4 also exercises the real WPF folder picker."
+                    interaction = stage5 ? "visible production control DataContexts and commands; real link/crop dialogs; production image/layout/crop services; image paths and unsaved decisions supplied by queues; disposable clipboard roundtrip with prior data object restored in memory"
+                        : stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
+                    limitations = stage5 ? "No physical keyboard/mouse, drag gesture, installed-user migration or Windows scaling test. Image resize/layout/crop services and routed image selection are exercised; the native image picker is replaced by a disposable path queue. See image-undo.json and bookmark-roundtrip.json for observed product limitations."
+                        : "No physical keyboard/mouse or installed-user migration test. Folder-picker shortcut supplies the demo folder; stage4 also exercises the real WPF folder picker."
                 }, Json));
                 result = 0;
                 Console.WriteLine($"HELP_VALIDATION PASS culture={culture} checks={checks} mode={(args.Length > 3 ? args[3] : "capture")} report={Path.Combine(runRoot, "result.json")}");
@@ -194,7 +198,7 @@ internal static partial class Program
         help.WindowState = WindowState.Minimized; service.Open(); Check(help.WindowState == WindowState.Normal, "Repeated opening restores a minimized window.");
         helpVm.OpenTopic("doc.create"); helpVm.Back.Execute(null); Check(helpVm.CurrentTopicId == "start.interface", "Back works.");
         helpVm.Forward.Execute(null); Check(helpVm.CurrentTopicId == "doc.create", "Forward works.");
-        Check(!helpVm.OpenTopic("edit.font") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
+        Check(!helpVm.OpenTopic("files.navigate") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
         helpVm.Query = "09:00"; helpVm.RunSearch(); Check(helpVm.Results.Single().Id == "doc.create", "Search includes visible article text.");
         helpVm.Query = "zzzz-no-such-help-topic"; helpVm.RunSearch(); Check(helpVm.HasNoResults, "No-result state.");
         helpVm.Query = "  "; Check(!helpVm.IsSearching, "Whitespace query returns the contents tree.");
@@ -215,14 +219,11 @@ internal static partial class Program
         helpMenuButton.Command.Execute(null); await Settle(help);
         Check(System.Windows.Application.Current.Windows.OfType<HelpWindow>().Count() == 1, "Menu reuses the existing Help window.");
         mainModel.IsMenuOpen = false;
-        navigation.Navigate("MarkdownSyntaxHelp"); await Settle(main);
-        var syntaxHelp = (IMarkdownSyntaxHelpViewModel)navigation.CurrentPage!.DataContext;
-        Check(syntaxHelp.Groups.Count > 0, "Existing Markdown syntax examples remain available.");
-        syntaxHelp.OpenHelp.Execute(null); await Settle(help);
-        Check(helpVm.CurrentTopicId == "start.interface" && navigation.CurrentKey == "MarkdownSyntaxHelp", "Markdown help opens general help without replacing the main page.");
+        navigation.Navigate("MarkdownEditor"); await Settle(main);
+        var markdownEditor = (IMarkdownEditorViewModel)navigation.CurrentPage!.DataContext;
+        markdownEditor.OpenSyntaxHelp.Execute(null); await Settle(help);
+        Check(helpVm.CurrentTopicId == "md.syntax" && navigation.CurrentKey == "MarkdownEditor", "Markdown syntax opens separate help without replacing the main page.");
         helpVm.OpenTopic("doc.create");
-        syntaxHelp.BackToEditor.Execute(null); await Settle(main);
-        Check(navigation.CurrentKey == "MarkdownEditor", "Existing Markdown Back command remains available.");
         navigation.Navigate("Home"); await Settle(main);
         service.Open(); await Settle(help);
         var searchBox = (TextBox)help.FindName("HelpSearch");
@@ -263,12 +264,12 @@ internal static partial class Program
     }
 
     private sealed record Mark(int Number, Rect Bounds, Point? Badge = null);
-    private static void Shot(Window window, string id, string topic, string step, Mark[] marks, Rect? crop = null)
+    private static void Shot(Window window, string id, string topic, string step, Mark[] marks, Rect? crop = null, FrameworkElement? surface = null)
     {
-        if (captureFilter is not null && captureFilter != id) return;
+        if (captureFilter is not null && !captureFilter.Split(',').Contains(id, StringComparer.Ordinal)) return;
         string raw = $"docs/help/screenshots/raw/{culture}/{id}.png", annotation = $"docs/help/screenshots/annotations/{culture}/{id}.json";
         string output = $"docs/help/content/{culture}/images/{id}.png", passport = $"docs/help/screenshots/passports/{culture}/{id}.json";
-        var bitmap = Capture(window, 96);
+        var bitmap = surface is null ? Capture(window, 96) : CaptureSurface(surface);
         WriteBitmap(bitmap, raw);
         Rect region = crop ?? new Rect(0, 0, bitmap.PixelWidth, bitmap.PixelHeight);
         region.Intersect(new Rect(0, 0, bitmap.PixelWidth, bitmap.PixelHeight));
@@ -301,7 +302,7 @@ internal static partial class Program
                 badge = m.Badge is Point point ? new { x = (point.X-region.X)/region.Width, y = (point.Y-region.Y)/region.Height } : null }) });
         WriteJson(passport, new { shotId = id, topicId = topic, articleStepOrArea = step, culture, osCulture = CultureInfo.InstalledUICulture.Name,
             version = typeof(App).Assembly.GetName().Version?.ToString(), commit, dirtyWorkingTree = true, capturedAt = DateTimeOffset.UtcNow,
-            captureMethod = "RenderTargetBitmap; visible production WPF; isolated App.OnStartup", theme = "Light", windowDip = new { width = window.ActualWidth, height = window.ActualHeight },
+            captureMethod = surface is null ? "RenderTargetBitmap; visible production WPF; isolated App.OnStartup" : "RenderTargetBitmap of visible production WPF popup child; isolated App.OnStartup", theme = "Light", windowDip = new { width = window.ActualWidth, height = window.ActualHeight },
             rawPixels = new { width = bitmap.PixelWidth, height = bitmap.PixelHeight }, outputPixels = new { width = annotated.PixelWidth, height = annotated.PixelHeight }, dpi = 96,
             rawFile = raw, annotationFile = annotation, outputFile = output, actionCheck = "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
             demoFile = demonstrationFile,
@@ -309,6 +310,12 @@ internal static partial class Program
         Console.WriteLine($"SHOT {culture}/{id} {annotated.PixelWidth}x{annotated.PixelHeight}");
     }
     private static object RectData(Rect r) => new { x = r.X, y = r.Y, width = r.Width, height = r.Height };
+    private static BitmapSource CaptureSurface(FrameworkElement surface)
+    {
+        surface.UpdateLayout();
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(surface.ActualWidth), (int)Math.Ceiling(surface.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(surface); return bitmap;
+    }
     private static void WriteJson(string path, object value)
     { string full = Path.Combine(repo, path); Directory.CreateDirectory(Path.GetDirectoryName(full)!); File.WriteAllText(full, JsonSerializer.Serialize(value, Json)); }
     private static void WriteBitmap(BitmapSource source, string relative)
@@ -322,7 +329,7 @@ internal static partial class Program
         bitmap.Render(window); return bitmap;
     }
     private static void SaveWindow(Window window, string path, double dpi = 96) => WriteBitmap(Capture(window, dpi), path);
-    private static Rect Bounds(Window window, FrameworkElement element) => new(element.TranslatePoint(new Point(), window), element.RenderSize);
+    private static Rect Bounds(Window window, FrameworkElement element) => element.TransformToAncestor(window).TransformBounds(new Rect(element.RenderSize));
     private static IEnumerable<T> Visuals<T>(DependencyObject root) where T : DependencyObject
     { for (int i=0; i<VisualTreeHelper.GetChildrenCount(root); i++) { var child=VisualTreeHelper.GetChild(root,i); if(child is T match) yield return match; foreach(var nested in Visuals<T>(child)) yield return nested; } }
     private static T Named<T>(Window window, string name) where T : FrameworkElement => Visuals<T>(window).First(e => e.Name == name);

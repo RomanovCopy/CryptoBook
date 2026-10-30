@@ -270,14 +270,14 @@ public sealed class MarkdownTests
             path);
         var session = new DocumentSession(CreateEditor(), state);
         session.Open(path, new MarkdownFileTemplate());
-        var navigation = new NavigationServiceStub("MarkdownEditor");
+        var help = new RecordingHelp();
         var viewModel = new MarkdownEditorViewModel(
             state,
             new MarkdownFlowDocumentRenderer(),
             new TestUriNavigationService(),
             new StubMenuFileViewModel(),
             session,
-            navigation);
+            help);
 
         viewModel.ToggleView.Execute(null);
         FlowDocument firstPreview = viewModel.PreviewDocument!;
@@ -300,9 +300,16 @@ public sealed class MarkdownTests
                 viewModel.PreviewDocument!.ContentStart,
                 viewModel.PreviewDocument.ContentEnd).Text);
 
+        string beforeHelp = viewModel.MarkdownText;
+        FlowDocument previewBeforeHelp = viewModel.PreviewDocument!;
+        bool dirtyBeforeHelp = session.IsDirty;
         viewModel.OpenSyntaxHelp.Execute(null);
 
-        Assert.Equal("MarkdownSyntaxHelp", navigation.CurrentKey);
+        Assert.Equal("md.syntax", help.Topic);
+        Assert.Equal(beforeHelp, viewModel.MarkdownText);
+        Assert.Same(previewBeforeHelp, viewModel.PreviewDocument);
+        Assert.True(viewModel.IsPreviewMode);
+        Assert.Equal(dirtyBeforeHelp, session.IsDirty);
     }
 
     [WpfFact]
@@ -397,31 +404,10 @@ public sealed class MarkdownTests
             registry.Resolve("MarkdownEditor"));
     }
 
-    [Fact]
-    public void MarkdownSyntaxHelp_IsRegisteredAndReturnsToEditor()
+    private sealed class RecordingHelp : IHelpWindowService
     {
-        var registry = new CryptoBook.Injections.PageRegistry();
-        var navigation = new NavigationServiceStub("MarkdownSyntaxHelp");
-        var viewModel = new MarkdownSyntaxHelpViewModel(navigation);
-
-        Assert.Equal(
-            typeof(CryptoBook.MyPages.MarkdownSyntaxHelp),
-            registry.Resolve("MarkdownSyntaxHelp"));
-        Assert.Equal(9, viewModel.Groups.Count);
-        Assert.Equal(
-            40,
-            viewModel.Groups.Sum(group => group.Entries.Count));
-        Assert.Contains(
-            viewModel.Groups.SelectMany(group => group.Entries),
-            entry => entry.Syntax == "```csharp\ncode\n```");
-        Assert.Contains(
-            viewModel.Groups.SelectMany(group => group.Entries),
-            entry => entry.Syntax == "![alt](image.png)");
-
-        viewModel.BackToEditor.Execute(null);
-
-        Assert.Equal("MarkdownEditor", navigation.CurrentKey);
-        viewModel.Closed.Execute(null);
+        public string? Topic { get; private set; }
+        public void Open(string? topicId = null) => Topic = topicId;
     }
 
     [WpfFact]

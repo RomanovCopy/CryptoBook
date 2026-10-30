@@ -104,6 +104,171 @@
         "закрити",
         "незалежні редактори"
       ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "виділення",
+        "буфер",
+        "скасування",
+        "повтор",
+        "очистити"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "шрифт",
+        "розмір",
+        "жирний",
+        "курсив",
+        "колір"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "палітра",
+        "чорнило",
+        "комірка",
+        "колір"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "абзац",
+        "вирівнювання",
+        "відступ",
+        "інтервал",
+        "список"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "посилання",
+        "адреса",
+        "гіперпосилання"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "сторінка",
+        "папір",
+        "формат",
+        "орієнтація"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "читання",
+        "перегляд",
+        "масштаб",
+        "вписати"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "зображення",
+        "вставлення",
+        "розмір",
+        "обтікання"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "тло",
+        "фон",
+        "зображення",
+        "кадрування"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "таблиця",
+        "комірка",
+        "рядок",
+        "стовпець"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "закладка",
+        "нотатка",
+        "перехід",
+        "індекс"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "структура",
+        "дерево",
+        "абзац",
+        "порядок"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "markdown",
+        "джерело",
+        "редактор",
+        "перегляд"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "markdown",
+        "синтаксис",
+        "розмітка",
+        "код",
+        "таблиці"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "markdown",
+        "перегляд",
+        "зображення",
+        "посилання",
+        "html"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "markdown",
+        "збереження",
+        "кодування",
+        "bom",
+        "рядки"
+      ]
     }
   ]
 }

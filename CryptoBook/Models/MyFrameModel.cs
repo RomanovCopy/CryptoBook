@@ -92,7 +92,6 @@ namespace CryptoBook.Models
                 if(!workspaceDocuments.HasMarkdownDocument)
                 {
                     pageNavigationService.Remove("MarkdownEditor");
-                    pageNavigationService.Remove("MarkdownSyntaxHelp");
                 }
                 if(!workspaceDocuments.HasHomeDocument && workspaceDocuments.HasMarkdownDocument)
                     pageNavigationService.Remove("Home");

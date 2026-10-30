@@ -105,6 +105,171 @@
         "close",
         "independent editors"
       ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "selection",
+        "clipboard",
+        "undo",
+        "redo",
+        "clear"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "font",
+        "size",
+        "bold",
+        "italic",
+        "colour",
+        "highlight"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "ink",
+        "palette",
+        "slot",
+        "colour"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "paragraph",
+        "alignment",
+        "indent",
+        "spacing",
+        "list"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "link",
+        "address",
+        "hyperlink"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "page",
+        "paper",
+        "size",
+        "orientation"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "reading",
+        "preview",
+        "zoom",
+        "fit"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "image",
+        "insert",
+        "resize",
+        "wrapping"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "background",
+        "image",
+        "crop"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "table",
+        "cell",
+        "row",
+        "column"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "bookmark",
+        "note",
+        "navigation",
+        "index"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "structure",
+        "tree",
+        "paragraph",
+        "order"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "markdown",
+        "source",
+        "editing",
+        "preview"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "markdown",
+        "syntax",
+        "markup",
+        "code",
+        "tables"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "markdown",
+        "preview",
+        "image",
+        "link",
+        "html"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "markdown",
+        "save",
+        "encoding",
+        "bom",
+        "line endings"
+      ]
     }
   ]
 }

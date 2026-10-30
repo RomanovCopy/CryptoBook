@@ -104,6 +104,170 @@
         "закрыть",
         "независимые редакторы"
       ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "выделение",
+        "буфер",
+        "отмена",
+        "повтор",
+        "очистить"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "шрифт",
+        "размер",
+        "полужирный",
+        "курсив",
+        "цвет"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "палитра",
+        "чернила",
+        "слот",
+        "цвет"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "абзац",
+        "выравнивание",
+        "отступ",
+        "интервал",
+        "списки"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "ссылка",
+        "адрес",
+        "гиперссылка"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "страница",
+        "формат",
+        "ориентация",
+        "бумага"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "чтение",
+        "просмотр",
+        "масштаб",
+        "вписать"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "изображение",
+        "вставка",
+        "размер",
+        "обтекание"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "фон",
+        "изображение",
+        "кадрирование"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "таблица",
+        "ячейка",
+        "строка",
+        "столбец"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "закладка",
+        "заметка",
+        "переход",
+        "индекс"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "структура",
+        "дерево",
+        "абзац",
+        "порядок"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "markdown",
+        "исходник",
+        "редактор",
+        "просмотр"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "markdown",
+        "синтаксис",
+        "разметка",
+        "код",
+        "таблицы"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "markdown",
+        "просмотр",
+        "изображение",
+        "ссылка",
+        "html"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "markdown",
+        "сохранение",
+        "кодировка",
+        "bom",
+        "перевод строк"
+      ]
     }
   ]
 }

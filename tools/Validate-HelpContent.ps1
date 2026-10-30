@@ -7,6 +7,17 @@ $catalog = Get-Content -LiteralPath (Join-Path $root 'content/catalog.json') -Ra
 $errors = [Collections.Generic.List[string]]::new()
 function Assert-Help([bool]$condition, [string]$message) { if (-not $condition) { $errors.Add($message) } }
 function Same-Set($left, $right) { return (@(Compare-Object @($left | Sort-Object -Unique) @($right | Sort-Object -Unique)).Count -eq 0) }
+function Remove-CodeFences([string]$body) {
+    $fence = 0; $result = [Collections.Generic.List[string]]::new()
+    foreach ($line in ($body -split '\r?\n')) {
+        if ($line -match '^(`{3,})') {
+            $length = $Matches[1].Length
+            if ($fence -eq 0) { $fence = $length }
+            elseif ($length -ge $fence) { $fence = 0 }
+        } elseif ($fence -eq 0) { $result.Add($line) }
+    }
+    return $result -join "`n"
+}
 $ids = @($catalog.topics.id)
 $plannedIds = @(Get-Content -LiteralPath (Join-Path $root 'TOPICS.md') | ForEach-Object {
     if ($_ -match '^\| \x60([a-z]+\.[a-z]+)\x60 \|') { $Matches[1] }
@@ -35,7 +46,19 @@ foreach ($culture in $catalog.cultures) {
         $articleCount++
         Assert-Help ($entry.file -ceq ($entry.id + '.md')) ('Unsafe article path: ' + $entry.file)
         $body = Get-Content -LiteralPath (Join-Path $localeRoot $entry.file) -Raw
-        Assert-Help ([regex]::Matches($body, '(?m)^# ').Count -eq 1) ('Article must have one H1: ' + $entry.file)
+        if ($entry.id -eq 'md.syntax') {
+            $legacy = Get-Content -LiteralPath (Join-Path $root 'screenshots/validation/stage5/markdown-legacy.json') -Raw | ConvertFrom-Json
+            $examples = @([regex]::Matches(($body -replace '\r\n',"`n"), '(?ms)^`{4}text\n(.*?)\n`{4}$'))
+            Assert-Help ($examples.Count -eq 40 -and $legacy.entries.Count -eq 40) ('Markdown example count: '+$culture)
+            for ($i=0; $i -lt [Math]::Min($examples.Count, $legacy.entries.Count); $i++) {
+                $old = $legacy.entries[$i]
+                if ($old.key -in @('MarkdownHelp.Editor.Help.Result','MarkdownHelp.Editor.Toggle.Result')) { continue }
+                $expected = $old.syntax.Replace("  `n", '  ⏎'+"`n")
+                Assert-Help ($examples[$i].Groups[1].Value -ceq $expected) ('Lost Markdown syntax: '+$culture+'/'+$old.key)
+                Assert-Help ($body.Contains($legacy.resources.$culture.($old.key))) ('Lost Markdown explanation: '+$culture+'/'+$old.key)
+            }
+        }
+        Assert-Help ([regex]::Matches((Remove-CodeFences $body), '(?m)^# ').Count -eq 1) ('Article must have one H1: ' + $entry.file)
         Assert-Help ($body.Length -gt 500 -and $entry.keywords.Count -gt 0) ('Incomplete article: ' + $culture + '/' + $entry.id)
         $targets = @([regex]::Matches($body, '\]\(help:([a-z]+\.[a-z]+)\)') | ForEach-Object { $_.Groups[1].Value })
         if ($topicLinks.ContainsKey($entry.id)) {
@@ -79,7 +102,7 @@ foreach ($culture in $catalog.cultures) {
 }
 foreach ($file in (Get-ChildItem -LiteralPath $root -Recurse -File -Filter '*.md')) {
     $body = [IO.File]::ReadAllText($file.FullName)
-    $plain = [regex]::Replace($body, '(?ms)^\x60\x60\x60.*?^\x60\x60\x60[^\r\n]*', '')
+    $plain = Remove-CodeFences $body
     foreach ($link in [regex]::Matches($plain, '(?<!!)\[[^\]]+\]\(([^\s)]+)(?: "[^"]*")?\)')) {
         $target = $link.Groups[1].Value
         if ($target -match '^[a-zA-Z]+:' -or $target.StartsWith('#')) { continue }

@@ -8,4 +8,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../../CryptoBook/CryptoBook.csproj"/></ItemGroup>
+  <!-- Root-relative legacy icon URIs resolve against the hosting executable. Link the same source assets. -->
+  <ItemGroup>
+    <Resource Include="../../CryptoBook/Resources/Images/*.png">
+      <Link>Resources/Images/%(Filename)%(Extension)</Link>
+    </Resource>
+  </ItemGroup>
 </Project>

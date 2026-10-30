@@ -1,6 +1,8 @@
 # Реестр пользовательских функций CryptoBook
 
-Дополнение этапа 4, 30 октября 2026 года: восемь тем начала работы и документов готовы в четырёх культурах. **Л4** — пользовательские тексты, термины, связи, изображения и основные локальные сценарии проверены в изолированном WPF; точные проверки и ограничения (включая подстановку решений нативных диалогов, внешние приложения и защищённые форматы) — [VALIDATION_STAGE4.md](VALIDATION_STAGE4.md). Это не подтверждение всех сочетаний источников/оборудования. Исходные `К/Л0` и число ключей ниже относятся к инвентаризации; актуально по 1150 UI-ключей.
+Текущее дополнение этапа 5: 24 готовые темы, 1092 UI-ключа. Метки Л5 у редактора/содержимого/Markdown означают готовность четырёх текстов и конкретные проверки [VALIDATION_STAGE5.md](VALIDATION_STAGE5.md). Найдены и описаны Q12 (отмена изображения) и Q13 (сохранение якорей закладок); исправления этих механизмов не вносились. Следующий этап — 6.
+
+Дополнение этапа 4, 30 октября 2026 года: восемь тем начала работы и документов готовы в четырёх культурах. **Л4** — пользовательские тексты, термины, связи, изображения и основные локальные сценарии проверены в изолированном WPF; точные проверки и ограничения (включая подстановку решений нативных диалогов, внешние приложения и защищённые форматы) — [VALIDATION_STAGE4.md](VALIDATION_STAGE4.md). Это не подтверждение всех сочетаний источников/оборудования. Исходные `К/Л0` и число ключей ниже относятся к инвентаризации; на конец этапа 4 было по 1150 UI-ключей.
 
 Уточнения F005/F012: при конфликте создание подбирает свободное имя; `.xaml` обрабатывается как простой текст, `.XamlPackage` — как оформленный документ. Обычный текстовый экспорт — UTF-8 без BOM; новый Markdown — UTF-8 без BOM, открытый Markdown сохраняет распознанную кодировку/BOM/переводы строк. Отдельного гарантированного предупреждения о потере оформления нет. При повторном открытии уже активного пути приложение может только вернуть существующую сессию; проверка записи требует закрытия или открытия другого документа.
 
@@ -39,7 +41,7 @@
 | R09 | `CryptoBook/Behaviors/DocumentBackgroundImageBehavior.cs`, `MyControls/FontFormatBar.xaml`, сервисы фона и сохранения |
 | R10 | `CryptoBook/MyControls/BookmarksBar.xaml`, `Views/BookmarksEditor.xaml`, `ViewModels/BookmarksViewModel.cs`, `BookmarksEditorViewModel.cs` |
 | R11 | `CryptoBook/MyPages/Home.xaml`, `ViewModels/DocumentStructureViewModel.cs`, `Behaviors/DocumentStructureDragDropBehavior.cs` |
-| R12 | `CryptoBook/MyPages/MarkdownEditor.xaml`, `MarkdownSyntaxHelp.xaml`, соответствующие ViewModel, `Services/MarkdownDocumentState.cs`, `MarkdownFlowDocumentRenderer.cs`, `docs/MARKDOWN.md` |
+| R12 | `CryptoBook/MyPages/MarkdownEditor.xaml`, `ViewModels/MarkdownEditorViewModel.cs`, `Services/MarkdownDocumentState.cs`, `MarkdownFlowDocumentRenderer.cs`, `Help/HelpContentService.cs`, `docs/help/content/*/md.*.md`, `docs/MARKDOWN.md` |
 | R13 | `CryptoBook/Views/FileExplorer.xaml`, `ViewModels/FileExplorerViewModel.cs`, `Models/FileExplorerModel.cs`, `Behaviors/FileExplorerDragDropBehavior.cs`, `ListViewSortedBehavior.cs` |
 | R14 | `CryptoBook/Views/FileConflictDialog.xaml`, `ProgressWindow.xaml`, `DirectoryNameDialog.xaml`, `TextInputDialog.xaml`, соответствующие ViewModel/обработчики |
 | R15 | `CryptoBook/ViewModels/FavoriteDirectoriesViewModel.cs`, `PinnedDocumentsViewModel.cs`, `RecentDocumentsViewModel.cs`, `MyControls/SideMenu.xaml`, `MyPages/Home.xaml` |
@@ -82,45 +84,45 @@
 
 | ID | Пользовательское действие | Точный вход / источник | Условия, форматы и источники | Тема | Снимки | Проверка; языки |
 | --- | --- | --- | --- | --- | --- | --- |
-| F016 | Отменить/повторить | Контекстное меню → Отменить/Повторить; ApplicationCommands.Undo/Redo; Ctrl+Z/Y; R05 | Доступность по истории изменений; не обещать откат файловых операций через редактор | `edit.basic` | S08 | К; Л0 |
-| F017 | Выделить всё, вырезать/копировать/вставить | Контекстное меню/стандартные клавиши; ApplicationCommands.SelectAll/Cut/Copy/Paste; R05 | Фокус редактора, выделение, буфер обмена и режим редактирования | `edit.basic` | S08 | К; Л0 |
-| F018 | Вставить перенос строки или абзац | Контекстное меню, Enter/Control+Enter; EditingCommands.EnterLineBreak/EnterParagraphBreak; R05 | Обычный редактор: Enter — перенос; Ctrl+Enter — абзац. Это не команда отправки AI | `edit.basic` | S08 | К; Л0 |
-| F019 | Очистить документ / удалить пустые абзацы | Контекстное меню → соответствующие пункты; ClearDocument/RemoveEmptyParagraphs; R05 | Редактируемый обычный документ; важность отмены и выделения проверить на примере | `edit.basic` | S08 | К; Л0 |
-| F020 | Изменить шрифт | Панель «Шрифт»: SetFontFamilyCommand, SetFontStyleCommand, SetFontWeightCommand, SetTextDecorationCommand, SetFontStretchCommand, SetFontSizeCommand; R04 | Гарнитура/стиль/начертание/декор/ширина/размер; выделение либо ввод с каретки | `edit.font` | S08 | К; Л0 |
-| F021 | Изменить цвет и выделение текста | «Шрифт» → Цвет/Выделение; SetFontColorCommand/SetFontBackgroundCommand; R04 | Для сохранения оформления нужен соответствующий формат | `edit.font` | S08 | К; Л0 |
-| F022 | Быстрое жирное/курсив/подчёркивание, очистка оформления | Контекстное меню → Форматирование; FontFormatting и ClearFormattingCommand; Ctrl+B/I/U | Наличие сочетаний заявлено UI; маршрутизацию с реальным фокусом проверить на этапе 5 | `edit.font` | S08 | К; Л0 |
-| F023 | Применить и настроить палитру чернил | Палитра над документом: ApplyCommand левой кнопкой, Choices/ChooseCommand правой; R07 | Цвет слота сохраняется отдельно; смена темы не перекрашивает содержимое документа | `edit.palette` | S09 | К; Л0 |
-| F024 | Выровнять абзац | «Абзац» либо контекст → Выравнивание; SetTextAlignment Left/Center/Right/Justify; R04/R05 | По левому краю/центру/правому/ширине | `edit.paragraph` | S09 | К; Л0 |
-| F025 | Задать отступ первой строки | «Абзац» → «Отступ первой строки», SetParagraphIndent; R04 | Относится к абзацу обычного документа | `edit.paragraph` | S09 | К; Л0 |
-| F026 | Изменить межстрочный интервал | «Абзац» → увеличить/уменьшить, SetLineHeight; R04 | Кнопки используют один обработчик, параметры/результат проверить живым действием | `edit.paragraph` | S09 | К; Л0 |
-| F027 | Маркированный/нумерованный/убрать список | Панель «Списки» и контекст → Списки; ToggleBulleted/ToggleNumbered/ClearLists; R04/R05 | Обычный редактор, актуальный абзац/выделение | `edit.paragraph` | S09 | К; Л0 |
-| F028 | Вставить/открыть гиперссылку | «Абзац» → InsertHyperlink → HyperlinkDialog (InsertButton_Click/CancelButton_Click); OpenHyperlink; R04/R06 | URL и отображаемый текст; допустимость перехода зависит от рендерера, ссылки на закладки отдельно | `edit.links` | S10 | К; Л0 |
-| F029 | Изменить цвет бумаги | «Шрифт» → «Бумага», SetDocumentBackgroundCommand; R04 | Цвет документа, не тема интерфейса | `edit.page` | S08,S13 | К; Л0 |
-| F030 | Масштабировать и сбросить 100% | Нижняя строка редактора, ResetZoomCommand; Ctrl+колесо; R06 | Обычный редактор; просмотр имеет свои масштаб/вписывание | `edit.view` | S11 | К; Л0 |
-| F031 | Читать документ по страницам | Переключатель режима над документом → ToggleView; ToggleFitToWindow в просмотре; R06 | Редактирование выключено; клавиши страниц применяются к viewer | `edit.view` | S11 | К; Л0 |
-| F032 | Вставить изображение | Меню → Содержимое → «Вставить изображение»; контекст → Изображение; InsertImage; R02/R05/R08 | Обычный документ; прямой вход отключён при активном Markdown | `content.images` | S12 | К; Л0 |
-| F033 | Выделить и изменить размеры изображения | Щелчок по встроенному изображению, маркеры ImageResizeAdorner; R08 | Доступно в редактировании; точный набор маркеров/пропорций проверить визуально | `content.images` | S12 | К; Л0 |
-| F034 | Переместить изображение | Перетаскивание, кнопки/контекст «выше/ниже»; MoveImageUpCommand/MoveImageDownCommand, Alt+↑/↓; R08 | Выбрано изображение, оно ещё принадлежит документу | `content.images` | S12 | К; Л0 |
-| F035 | Выбрать размещение изображения | Контекст → Изображение → SetImageLayoutCommand: Inline/CenteredBlock/FloatLeft/FloatRight; R05/R08 | В строке, блок по центру, обтекание слева/справа; ограничения контейнера проверять | `content.images` | S12 | К; Л0 |
-| F036 | Удалить выбранное изображение / снять выбор | Delete / Esc обработчика DocumentImageResizeBehavior; R08 | Не путать с удалением файла на диске; отмена редактора | `content.images` | S12 | К; Л0 |
-| F037 | Выбрать/удалить/переместить фон | «Шрифт» → ChooseDocumentBackgroundImageCommand/ClearDocumentBackgroundImageCommand; Ctrl+ЛКМ и перетаскивание; Esc отменяет; R09 | Обычный документ в редактировании, кадрирование фона | `content.background` | S13 | К; Л0 |
-| F038 | Подтвердить фиксацию фона при сохранении | Запрос пути сохранения документа с редактируемым фоном; R09 | Отдельно от выбора фона; проверить точный диалог и поддержку формата | `content.background` | S13,S06 | К; Л0 |
-| F039 | Добавить/удалить строку или столбец | Контекст → Таблица → EditTable: InsertRowAbove/Below, InsertColumnLeft/Right, DeleteRow/Column; R05 | Прямоугольная таблица без объединений, одна ячейка, редактирование; последняя строка/столбец удаляет таблицу; Undo/Redo | `content.tables` | S14 | К; Л0 |
-| F040 | Создать закладку | Панель «Закладки» → имя → AddAtCaret; R10 | Позиция каретки обычного документа | `content.bookmarks` | S15 | К; Л0 |
-| F041 | Выбрать/открыть соседнюю закладку | Панель → список, NavigateTo, PreviousBookmark/NextBookmark; R10 | Нужен существующий якорь | `content.bookmarks` | S15 | К; Л0 |
-| F042 | Переименовать/удалить закладку | Панель либо диспетчер: RenameTo/Rename/Remove; R10 | Выбрана закладка; не удаляет файл | `content.bookmarks` | S15 | К; Л0 |
-| F043 | Вставить ссылку на закладку | Панель/диспетчер → LinkText/InsertHyperlinkTo; R10 | Можно заранее выделить текст; результат — внутренняя ссылка | `content.bookmarks` | S10,S15 | К; Л0 |
-| F044 | Открыть диспетчер и изменить заметку | Меню → Содержимое → Закладки; панель OpenManager → SelectedBookmark.Note; R02/R10 | Выбор, двойной щелчок/переход, свойства и Close | `content.bookmarks` | S15 | К; Л0 |
-| F045 | Перестроить индекс закладок | Панель/диспетчер → «Обновить», RebuildIndexFromDocument; R10 | Сверка с текущим документом | `content.bookmarks` | S15 | К; Л0 |
-| F046 | Показать/обновить дерево структуры | Над документом → «Структура», ToggleCommand/RefreshCommand, IncludeTextElements; R11 | Показывать/скрывать Run/Span; чтение ограничивает действия | `content.structure` | S16 | К; Л0 |
-| F047 | Перейти к элементу структуры | Выбор дерева / контекст → NavigateCommand; R11 | Навигация и изменение отключены в режиме просмотра | `content.structure` | S16 | К; Л0 |
-| F048 | Добавить абзац через структуру | Кнопка + / Ctrl+Enter, контекст → AddParagraphCommand/AddParagraphBeforeCommand/AddParagraphInsideCommand/AddParagraphAfterCommand; R11 | Допустимый родитель и выбранный узел | `content.structure` | S16 | К; Л0 |
-| F049 | Переставить/удалить элемент структуры | Контекст → MoveUpCommand/MoveDownCommand/DeleteCommand; Alt+↑/↓; drag-and-drop → MoveCommand; R11 | Проверять допустимость вложенности/переноса; не обещать произвольное изменение дерева | `content.structure` | S16 | К; Л0 |
-| F050 | Редактировать и просматривать Markdown | Отдельная страница MarkdownEditor, MarkdownText, ToggleView; R12 | .md и защищённый Markdown; просмотр не конвертируется обратно в исходник | `md.edit` | S17 | К; Л0 |
-| F051 | Открыть существующую справку Markdown | Кнопка с подсказкой «Открыть справку по синтаксису Markdown» → OpenSyntaxHelp; BackToEditor/Esc; R12 | Пока страница в основном frame; будущий переход в окно определить на этапе 2 | `md.edit` | S17 | К; Л0 |
-| F052 | Использовать поддерживаемый синтаксис | Markdown-источник и MarkdownSyntaxHelp.Groups; R12 | ATX/Setext, списки, цитаты, разделители, bold/italic/strike, ссылки, inline/indented/fenced code, pipe/grid-таблицы | `md.syntax` | S17 | К; Л0 |
-| F053 | Вставлять безопасные ссылки/изображения Markdown | Исходная разметка → просмотр; R12 | Активны http/https/mailto; изображения только локальные относительные, до 25 МиБ, декодирование до 1600 px; HTML неактивен | `md.preview` | S17 | К; Л0 |
-| F054 | Сохранить Markdown без потери исходника | Кнопки SaveDocument/SaveDocumentAs, Ctrl+S/Shift+Ctrl+S; R12 | Строка/BOM/кодировка/переводы строк сохраняются; экспорт обычного FlowDocument в .md недоступен | `md.save` | S06,S17 | К; Л0 |
+| F016 | Отменить/повторить | Контекстное меню → Отменить/Повторить; ApplicationCommands.Undo/Redo; Ctrl+Z/Y; R05 | Доступность по истории изменений; не обещать откат файловых операций через редактор | `edit.basic` | S08 | К; Л5 |
+| F017 | Выделить всё, вырезать/копировать/вставить | Контекстное меню/стандартные клавиши; ApplicationCommands.SelectAll/Cut/Copy/Paste; R05 | Фокус редактора, выделение, буфер обмена и режим редактирования | `edit.basic` | S08 | К; Л5 |
+| F018 | Вставить перенос строки или абзац | Контекстное меню, Enter/Control+Enter; EditingCommands.EnterLineBreak/EnterParagraphBreak; R05 | Обычный редактор: Enter — перенос; Ctrl+Enter — абзац. Это не команда отправки AI | `edit.basic` | S08 | К; Л5 |
+| F019 | Очистить документ / удалить пустые абзацы | Контекстное меню → соответствующие пункты; ClearDocument/RemoveEmptyParagraphs; R05 | Редактируемый обычный документ; важность отмены и выделения проверить на примере | `edit.basic` | S08 | К; Л5 |
+| F020 | Изменить шрифт | Панель «Шрифт»: SetFontFamilyCommand, SetFontStyleCommand, SetFontWeightCommand, SetTextDecorationCommand, SetFontStretchCommand, SetFontSizeCommand; R04 | Гарнитура/стиль/начертание/декор/ширина/размер; выделение либо ввод с каретки | `edit.font` | S08 | К; Л5 |
+| F021 | Изменить цвет и выделение текста | «Шрифт» → Цвет/Выделение; SetFontColorCommand/SetFontBackgroundCommand; R04 | Для сохранения оформления нужен соответствующий формат | `edit.font` | S08 | К; Л5 |
+| F022 | Быстрое жирное/курсив/подчёркивание, очистка оформления | Контекстное меню → Форматирование; FontFormatting и ClearFormattingCommand; Ctrl+B/I/U | Наличие сочетаний заявлено UI; маршрутизацию с реальным фокусом проверить на этапе 5 | `edit.font` | S08 | К; Л5 |
+| F023 | Применить и настроить палитру чернил | Палитра над документом: ApplyCommand левой кнопкой, Choices/ChooseCommand правой; R07 | Цвет слота сохраняется отдельно; смена темы не перекрашивает содержимое документа | `edit.palette` | S09 | К; Л5 |
+| F024 | Выровнять абзац | «Абзац» либо контекст → Выравнивание; SetTextAlignment Left/Center/Right/Justify; R04/R05 | По левому краю/центру/правому/ширине | `edit.paragraph` | S09 | К; Л5 |
+| F025 | Задать отступ первой строки | «Абзац» → «Отступ первой строки», SetParagraphIndent; R04 | Относится к абзацу обычного документа | `edit.paragraph` | S09 | К; Л5 |
+| F026 | Изменить межстрочный интервал | «Абзац» → увеличить/уменьшить, SetLineHeight; R04 | Кнопки используют один обработчик, параметры/результат проверить живым действием | `edit.paragraph` | S09 | К; Л5 |
+| F027 | Маркированный/нумерованный/убрать список | Панель «Списки» и контекст → Списки; ToggleBulleted/ToggleNumbered/ClearLists; R04/R05 | Обычный редактор, актуальный абзац/выделение | `edit.paragraph` | S09 | К; Л5 |
+| F028 | Вставить/открыть гиперссылку | «Абзац» → InsertHyperlink → HyperlinkDialog (InsertButton_Click/CancelButton_Click); OpenHyperlink; R04/R06 | URL и отображаемый текст; допустимость перехода зависит от рендерера, ссылки на закладки отдельно | `edit.links` | S10 | К; Л5 |
+| F029 | Изменить цвет бумаги | «Шрифт» → «Бумага», SetDocumentBackgroundCommand; R04 | Цвет документа, не тема интерфейса | `edit.page` | S08,S13 | К; Л5 |
+| F030 | Масштабировать и сбросить 100% | Нижняя строка редактора, ResetZoomCommand; Ctrl+колесо; R06 | Обычный редактор; просмотр имеет свои масштаб/вписывание | `edit.view` | S11 | К; Л5 |
+| F031 | Читать документ по страницам | Переключатель режима над документом → ToggleView; ToggleFitToWindow в просмотре; R06 | Редактирование выключено; клавиши страниц применяются к viewer | `edit.view` | S11 | К; Л5 |
+| F032 | Вставить изображение | Меню → Содержимое → «Вставить изображение»; контекст → Изображение; InsertImage; R02/R05/R08 | Обычный документ; прямой вход отключён при активном Markdown | `content.images` | S12 | К; Л5 |
+| F033 | Выделить и изменить размеры изображения | Щелчок по встроенному изображению, маркеры ImageResizeAdorner; R08 | Доступно в редактировании; точный набор маркеров/пропорций проверить визуально | `content.images` | S12 | К; Л5 |
+| F034 | Переместить изображение | Перетаскивание, кнопки/контекст «выше/ниже»; MoveImageUpCommand/MoveImageDownCommand, Alt+↑/↓; R08 | Выбрано изображение, оно ещё принадлежит документу | `content.images` | S12 | К; Л5 |
+| F035 | Выбрать размещение изображения | Контекст → Изображение → SetImageLayoutCommand: Inline/CenteredBlock/FloatLeft/FloatRight; R05/R08 | В строке, блок по центру, обтекание слева/справа; ограничения контейнера проверять | `content.images` | S12 | К; Л5 |
+| F036 | Удалить выбранное изображение / снять выбор | Delete / Esc обработчика DocumentImageResizeBehavior; R08 | Не путать с удалением файла на диске; отмена редактора | `content.images` | S12 | К; Л5 |
+| F037 | Выбрать/удалить/переместить фон | «Шрифт» → ChooseDocumentBackgroundImageCommand/ClearDocumentBackgroundImageCommand; Ctrl+ЛКМ и перетаскивание; Esc отменяет; R09 | Обычный документ в редактировании, кадрирование фона | `content.background` | S13 | К; Л5 |
+| F038 | Подтвердить фиксацию фона при сохранении | Запрос пути сохранения документа с редактируемым фоном; R09 | Отдельно от выбора фона; проверить точный диалог и поддержку формата | `content.background` | S13,S06 | К; Л5 |
+| F039 | Добавить/удалить строку или столбец | Контекст → Таблица → EditTable: InsertRowAbove/Below, InsertColumnLeft/Right, DeleteRow/Column; R05 | Прямоугольная таблица без объединений, одна ячейка, редактирование; последняя строка/столбец удаляет таблицу; Undo/Redo | `content.tables` | S14 | К; Л5 |
+| F040 | Создать закладку | Панель «Закладки» → имя → AddAtCaret; R10 | Позиция каретки обычного документа | `content.bookmarks` | S15 | К; Л5 |
+| F041 | Выбрать/открыть соседнюю закладку | Панель → список, NavigateTo, PreviousBookmark/NextBookmark; R10 | Нужен существующий якорь | `content.bookmarks` | S15 | К; Л5 |
+| F042 | Переименовать/удалить закладку | Панель либо диспетчер: RenameTo/Rename/Remove; R10 | Выбрана закладка; не удаляет файл | `content.bookmarks` | S15 | К; Л5 |
+| F043 | Вставить ссылку на закладку | Панель/диспетчер → LinkText/InsertHyperlinkTo; R10 | Можно заранее выделить текст; результат — внутренняя ссылка | `content.bookmarks` | S10,S15 | К; Л5 |
+| F044 | Открыть диспетчер и изменить заметку | Меню → Содержимое → Закладки; панель OpenManager → SelectedBookmark.Note; R02/R10 | Выбор, двойной щелчок/переход, свойства и Close | `content.bookmarks` | S15 | К; Л5 |
+| F045 | Перестроить индекс закладок | Панель/диспетчер → «Обновить», RebuildIndexFromDocument; R10 | Сверка с текущим документом | `content.bookmarks` | S15 | К; Л5 |
+| F046 | Показать/обновить дерево структуры | Над документом → «Структура», ToggleCommand/RefreshCommand, IncludeTextElements; R11 | Показывать/скрывать Run/Span; чтение ограничивает действия | `content.structure` | S16 | К; Л5 |
+| F047 | Перейти к элементу структуры | Выбор дерева / контекст → NavigateCommand; R11 | Навигация и изменение отключены в режиме просмотра | `content.structure` | S16 | К; Л5 |
+| F048 | Добавить абзац через структуру | Кнопка + / Ctrl+Enter, контекст → AddParagraphCommand/AddParagraphBeforeCommand/AddParagraphInsideCommand/AddParagraphAfterCommand; R11 | Допустимый родитель и выбранный узел | `content.structure` | S16 | К; Л5 |
+| F049 | Переставить/удалить элемент структуры | Контекст → MoveUpCommand/MoveDownCommand/DeleteCommand; Alt+↑/↓; drag-and-drop → MoveCommand; R11 | Проверять допустимость вложенности/переноса; не обещать произвольное изменение дерева | `content.structure` | S16 | К; Л5 |
+| F050 | Редактировать и просматривать Markdown | Отдельная страница MarkdownEditor, MarkdownText, ToggleView; R12 | .md и защищённый Markdown; просмотр не конвертируется обратно в исходник | `md.edit` | S17 | К; Л5 |
+| F051 | Открыть справку Markdown | Кнопка с MarkdownHelp.OpenHint → OpenSyntaxHelp → IHelpWindowService.Open(md.syntax); R12/R27 | Отдельное немодальное окно, основная страница/оба документа/preview остаются; закрытие Alt+F4 при фокусе справки, Esc обслуживает изображение/поиск | `md.edit` | S17 | К; Л5 |
+| F052 | Использовать поддерживаемый синтаксис | Markdown-источник и md.syntax (40 сохранённых примеров); R12 | ATX/Setext, списки, цитаты, разделители, bold/italic/strike, ссылки, inline/indented/fenced code, pipe/grid-таблицы | `md.syntax` | S17 | К; Л5 |
+| F053 | Вставлять безопасные ссылки/изображения Markdown | Исходная разметка → просмотр; R12 | Активны http/https/mailto; изображения только локальные относительные, до 25 МиБ, декодирование до 1600 px; HTML неактивен | `md.preview` | S17 | К; Л5 |
+| F054 | Сохранить Markdown без потери исходника | Кнопки SaveDocument/SaveDocumentAs, Ctrl+S/Shift+Ctrl+S; R12 | Строка/BOM/кодировка/переводы строк сохраняются; экспорт обычного FlowDocument в .md недоступен | `md.save` | S06,S17 | К; Л5 |
 
 ## Файловый менеджер и дополнительные операции
 
@@ -303,7 +305,7 @@ Markdown .md — отдельный редактор; RTF, XAML, XamlPackage и 
 | ←/PageUp, →/PageDown, Home/End | Навигация страниц в режиме чтения | F031 |
 | ←/→, ↑/↓, Delete | В просмотре изображения: соседнее/поворот/удалить файл | F098 |
 | ←/→, Alt+←/→ | В видео: перемотка / соседнее видео | F099 |
-| Esc | Вернуться из справки Markdown; закрыть batch-окно с учётом отмены операции | F051,F085 |
+| Esc | В окне справки закрыть увеличение/очистить поиск по фокусу; в batch-окне учесть отмену операции. Markdown-справка закрывается Alt+F4 | F051,F085,F156 |
 | Ctrl при drag-and-drop файлов | Копировать; обычное перетаскивание выбирает перемещение | F073 |
 
 ## Сверка точек входа и неучитываемые заготовки
@@ -357,3 +359,11 @@ Markdown .md — отдельный редактор; RTF, XAML, XamlPackage и 
 Для `help.use` теперь существуют команды F155–F158; сама подробная статья о справке запланирована на этап 10 и пока скрыта как `planned`.
 
 Для повторной сверки изменяемых полей XAML: F005 — TargetDirectory/SelectedTemplate/DefaultExtension/FileName; F006 — SelectedDocumentTemplate/SelectedDefaultDocumentTemplate; F007 — PaperSize/IsLandscape; F008 — IsReadOnly/IsHidden; F028 — Url/DisplayText; F031/F050 — IsPreviewMode; F040 — NewBookmarkName; F090 — WorkspaceDirectory; F100 — IsSynchronizationEnabled; F106 — SelectedMode. SelectedSectionIndex — выбор раздела настроек; IsExpanded/IsDropDownOpen — стандартное раскрытие элемента; DisplayPath отчёта доступен только для чтения. Value в TextInputDialog — ввод имени F014, с AcceptCommand/CancelCommand. Эти свойства не добавляют самостоятельных функций сверх указанных строк.
+
+
+Дополнение этапа 5: **Л5** — четыре текста, термины, связи и снимки соответствующей темы готовы; выполнены конкретные изолированные сценарии и целевые тесты из [VALIDATION_STAGE5.md](VALIDATION_STAGE5.md). Физический ввод/жесты не объявляются проверенными. Актуально 1092 UI-ключа после удаления 58 ключей старой Markdown-страницы. Enter/Ctrl+Enter обычного редактора и ограничения таблиц описаны по действующим обработчикам. Готовность текста не означает исправление ограничений продукта:
+
+| Вопрос | Подтверждение этапа 5 | Следующее действие |
+| --- | --- | --- |
+| Q12 | FloatRight bitmap после перемещения/удаления и Undo в проверенном сценарии не восстановился; осталась пустая Figure. Отчёт image-undo-<culture>.json | В content.images убрана гарантия возврата картинки; сохранить исходник/копию и вставить повторно. Для исправления нужен отдельный регрессионный сценарий всех размещений и WPF Undo; механизм не менялся |
+| Q13 | XamlPackage roundtrip одной закладки с заметкой теряет якорь; проверены варианты без фона и с его фиксацией, после индексации 0 вместо 1. Name/Tag отсутствуют в сохранённом TextRange-пакете | В content.bookmarks предупреждение до действий. Нужны отдельные совместимое сохранение метаданных и регрессионные тесты; сериализация в этом этапе не менялась |

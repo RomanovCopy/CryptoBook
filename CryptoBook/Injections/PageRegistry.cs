@@ -18,7 +18,6 @@ namespace CryptoBook.Injections
             {
                 ["Home"] = typeof(MyPages.Home),
                 ["MarkdownEditor"] = typeof(MyPages.MarkdownEditor),
-                ["MarkdownSyntaxHelp"] = typeof(MyPages.MarkdownSyntaxHelp),
                 ["WorkspaceSearch"] = typeof(MyPages.WorkspaceSearch),
             };
         }

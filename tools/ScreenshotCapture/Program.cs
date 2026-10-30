@@ -164,7 +164,10 @@ internal static class Program
         Save(window, Path.Combine(output, "markdown-preview.png"));
         markdownVm.OpenSyntaxHelp.Execute(null);
         await Settle(window);
-        Save(window, Path.Combine(output, "markdown-help.png"));
+        var syntaxHelp = Application.Current.Windows.OfType<HelpWindow>().Single();
+        await Settle(syntaxHelp);
+        Save(syntaxHelp, Path.Combine(output, "markdown-help.png"));
+        syntaxHelp.Close();
         theme.ApplyTheme(ApplicationTheme.Light);
         var dialogId = manager.CreateWindow<NewFileDialog>();
         var dialogHost = manager.FindHostWindow(dialogId)!;

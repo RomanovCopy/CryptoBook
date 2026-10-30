@@ -1,0 +1,32 @@
+{
+  "shotId": "S10-a",
+  "topicId": "edit.links",
+  "articleStepOrArea": "address and display text",
+  "culture": "en-US",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "690ab58c5e789234feaa7450f9bfa03ba2db9ac7",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T14:59:29.0745234+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 460,
+    "height": 245
+  },
+  "rawPixels": {
+    "width": 444,
+    "height": 206
+  },
+  "outputPixels": {
+    "width": 444,
+    "height": 206
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/en-US/S10-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/en-US/S10-a.json",
+  "outputFile": "docs/help/content/en-US/images/S10-a.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": "D:\\VisualStudio\\Проекты\\CryptoBook\\artifacts\\hv\\en-US\\bbf6be20\\Demo\\Editor.XamlPackage",
+  "visualCheck": "Reviewed 2026-10-30: all four culture contact sheets, full-size dialogs/manager/tree and corrected scaled image bounds; visible production WPF, no clipped essential commands."
+}

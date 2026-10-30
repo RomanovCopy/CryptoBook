@@ -98,9 +98,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<MarkdownEditorViewModel>()
                 .As<IMarkdownEditorViewModel>()
                 .InstancePerLifetimeScope();
-            builder.RegisterType<MarkdownSyntaxHelpViewModel>()
-                .As<IMarkdownSyntaxHelpViewModel>()
-                .InstancePerLifetimeScope();
             builder.RegisterType<RichTextContextMenuViewModel>().As<IRichTextContextMenuViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<InkPaletteViewModel>()
@@ -541,7 +538,6 @@ namespace CryptoBook.Injections
             // Страницы.
             builder.RegisterType<Home>().InstancePerLifetimeScope();
             builder.RegisterType<MarkdownEditor>().InstancePerLifetimeScope();
-            builder.RegisterType<MarkdownSyntaxHelp>().InstancePerLifetimeScope();
             builder.RegisterType<WorkspaceSearch>().InstancePerLifetimeScope();
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 
