@@ -1,0 +1,32 @@
+{
+  "shotId": "S07-c",
+  "topicId": "doc.switch",
+  "articleStepOrArea": "rename",
+  "culture": "de-DE",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "be4ad777ad117edb04babca017dce52021eb9990",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T07:54:26.7160303+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 420,
+    "height": 175
+  },
+  "rawPixels": {
+    "width": 404,
+    "height": 136
+  },
+  "outputPixels": {
+    "width": 404,
+    "height": 136
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/de-DE/S07-c.png",
+  "annotationFile": "docs/help/screenshots/annotations/de-DE/S07-c.json",
+  "outputFile": "docs/help/content/de-DE/images/S07-c.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": "D:\\VisualStudio\\Проекты\\CryptoBook\\artifacts\\hv\\de-DE\\5ebaae1a\\Demo\\Besprechung.rtf",
+  "visualCheck": "Reviewed 2026-10-30: localized UI, demonstration names, step numbers, readable controls and no personal data; per-culture contact sheets and original error/rename crops. WPF RenderTargetBitmap, not physical input."
+}

@@ -22,6 +22,15 @@ Auf dem Startbildschirm können Sie ein Dokument erstellen oder öffnen. Sobald 
 
 Öffnen und schließen Sie das Seitenmenü. Öffnen Sie anschließend die **Einstellungen** über das Zahnrad. Schließen Sie das Einstellungsfenster, um zum Dokument zurückzukehren. Wenn noch der Startbildschirm angezeigt wird, erstellen Sie ein Beispieldokument, um die Bedienelemente des Editors zu sehen.
 
+## Erste Schritte und Hilfe
+
+Beginnen Sie mit **Neues Dokument** oder **Datei öffnen**. Abhängig von der Starteinstellung erscheint statt des Startbildschirms direkt der Editor. Ein Arbeitsverzeichnis dient der Suche und ist für ein einzelnes Dokument optional.
+
+Drücken Sie im Hauptfenster **F1** oder wählen Sie im Seitenmenü **Hilfe**. Das Handbuch öffnet sich in einem eigenen Fenster, sodass Sie beim Lesen im Editor weiterarbeiten können. Die Artikelauswahl schließt oder speichert kein Dokument. Schließen Sie die Hilfe oder aktivieren Sie das Hauptfenster, um zur Arbeit zurückzukehren.
+
 ## Verwandte Themen
 
 - [Ein Dokument erstellen und speichern](help:doc.create)
+- [Arbeitsverzeichnis auswählen](help:start.workspace)
+- [Zwei Editoren, Umbenennen und Schließen](help:doc.switch)
+- [Mit KI beginnen](help:ai.start)

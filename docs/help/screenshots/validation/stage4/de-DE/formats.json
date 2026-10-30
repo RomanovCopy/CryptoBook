@@ -1,0 +1,26 @@
+[
+  {
+    "format": "rtf",
+    "extension": ".rtf",
+    "bold": true,
+    "bytePrefix": "7B5C727466315C616E73695C"
+  },
+  {
+    "format": "Xaml",
+    "extension": ".xaml",
+    "bold": false,
+    "bytePrefix": "466F726D617420D09620D084"
+  },
+  {
+    "format": "XamlPackage",
+    "extension": ".XamlPackage",
+    "bold": true,
+    "bytePrefix": "504B03041400000008000C40"
+  },
+  {
+    "format": "Text",
+    "extension": ".txt",
+    "bold": false,
+    "bytePrefix": "466F726D617420D09620D084"
+  }
+]

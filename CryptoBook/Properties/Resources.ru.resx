@@ -1442,4 +1442,7 @@
   <data name="Help.CloseImage" xml:space="preserve"><value>Закрыть изображение</value></data>
   <data name="Help.Results" xml:space="preserve"><value>Результаты поиска</value></data>
   <data name="Help.Article" xml:space="preserve"><value>Статья справки</value></data>
+  <data name="File.OpenWriteFailed" xml:space="preserve"><value>Не удалось открыть «{0}» для записи: {1}</value></data>
+  <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Не удалось открыть файл для записи: {0}</value></data>
+  <data name="Document.FileInUse" xml:space="preserve"><value>Файл используется и недоступен для записи. Освободите файл и повторите сохранение.</value></data>
 </root>

@@ -40,7 +40,23 @@ Before selecting **Create**, use **Cancel** to leave the dialog. After creation,
 
 If **Create** is unavailable, check that a folder, file type and name are selected and that the folder is writable. If an error appears, read it and correct the name or choose another folder. If you see **The file was created, but could not be opened.**, check the folder before trying again: the file may already exist. **Save** may be unavailable when there are no new changes or the ordinary document is in reading mode.
 
+## Other types, templates and attributes
+
+This example uses an empty RTF. Choose another **Document template** for prepared text. For Markdown, choose its file type: a separate editor opens and paper settings are hidden. Text types, including XAML, do not retain formatting.
+
+**Read-only** and **Hidden** set attributes on the new local file. They do not encrypt or password-protect it. Leave them unchecked for ordinary work. Other storage sources may have different capabilities.
+
+If a name is taken, the application chooses a free name, which can differ from what you entered. Enter only a file name and select the folder separately. After creation, always check the name at the top and the actual file in the folder.
+
+If the selected folder becomes unavailable, the dialog may remain open with an error. Choose an accessible folder and retry. Check whether a file from the previous attempt already exists first. **Cancel** does not delete a file that was already written.
+
+![Lower part of the creation dialog reporting a write error in an unavailable folder](images/S04-d.png "Creation error. Check the folder and any already created file before retrying.")
+
+To verify saving, close the saved disposable file before reopening it: selecting an already active file may merely return to its editor.
+
 ## Related topics
 
 - [Main areas of the window](help:start.interface)
 - [Save and Save as](help:doc.save)
+- [Choose a document template](help:doc.templates)
+- [Formats and encodings](help:doc.formats)

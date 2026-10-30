@@ -10,12 +10,16 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Validation;
 
-public sealed class IsolatedServices(string root)
+public sealed class IsolatedServices(string root, bool documentValidation = false)
 {
     public ILifetimeScope Container { get; private set; } = null!;
     public string Root { get; } = Path.GetFullPath(root);
     public string DemoDirectory => Path.Combine(Root, "Demo");
     public List<string> Paths { get; } = [];
+    public ValidationSavePicker SavePicker { get; } = new();
+    public ValidationDocumentDialogs DocumentDialogs { get; } = new();
+    public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
+        .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
     private string Store(string name)
     {
         string path = Path.GetFullPath(Path.Combine(Root, name));
@@ -43,6 +47,12 @@ public sealed class IsolatedServices(string root)
             c.Resolve<IFlowDocumentLoadService>(), snapshot, c.Resolve<IFileTemplateRegistry>(),
             c.Resolve<IMarkdownDocumentState>(), c.Resolve<IKeyProvider>())).As<ILockSnapshotService>().SingleInstance();
         builder.RegisterInstance<IFolderPickerService>(new DemoFolderPicker(DemoDirectory));
+        if (documentValidation)
+        {
+            builder.RegisterInstance<IDocumentSaveTargetPicker>(SavePicker);
+            builder.RegisterInstance<IDocumentDialogService>(DocumentDialogs);
+            builder.RegisterInstance<IDirectoryMonitoringService>(new NoDirectoryMonitoring());
+        }
         builder.RegisterInstance<IApplicationUpdateService>(new NoUpdates());
         builder.RegisterInstance<IApplicationActivationService>(new NoActivation());
         builder.RegisterInstance<IDriveManagerService>(new NoDriveMonitoring());
@@ -53,6 +63,17 @@ public sealed class IsolatedServices(string root)
     { public Task<string?> PickFolderAsync(string? initialDirectory, CancellationToken ct) => Task.FromResult<string?>(path); }
     private sealed class NoUpdates : IApplicationUpdateService
     { public Task<ApplicationRelease?> CheckAsync(CancellationToken cancellationToken = default) => Task.FromResult<ApplicationRelease?>(null); }
+    private sealed class NoDirectoryMonitoring : IDirectoryMonitoringService
+    {
+        public bool StartMonitoring(string directoryPath, Action<FileSystemEventArgs>? onCreated = null,
+            Action<FileSystemEventArgs>? onDeleted = null, Action<RenamedEventArgs>? onRenamed = null,
+            Action<FileSystemEventArgs>? onChanged = null, Action<Exception?>? onOverflowOrError = null,
+            bool includeSubdirectories = false,
+            NotifyFilters notifyFilters = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite,
+            int internalBufferSize = 64 * 1024) => true;
+        public bool StopMonitoring(string directoryPath) => true;
+        public void Dispose() { }
+    }
     private sealed class NoActivation : IApplicationActivationService
     {
         public Task<bool> StartAsync(IReadOnlyList<string> args, CancellationToken cancellationToken = default) => Task.FromResult(true);
@@ -61,7 +82,23 @@ public sealed class IsolatedServices(string root)
     }
     private sealed class NoDriveMonitoring : IDriveManagerService
     {
-        public ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; } = new(new ObservableCollection<IDriveItem>());
+        private readonly ObservableCollection<IDriveItem> roots = [];
+        public ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; }
+        public NoDriveMonitoring() => WritableDrives = new(roots);
+        public async Task PrepareAsync(ISystemItemCreateService factory, string demoDirectory)
+        {
+            string drivePath = Path.GetPathRoot(demoDirectory)!;
+            var root = factory.CreateRoot(drivePath); roots.Add(root);
+            IContainerSystemItem current = root;
+            foreach (string part in Path.GetRelativePath(drivePath, demoDirectory).Split(Path.DirectorySeparatorChar))
+            {
+                string nextPath = Path.Combine(current.FullPath.Replace("local://", ""), part);
+                var next = factory.CreateDirectory(nextPath, current);
+                await current.ClearChildrenAsync();
+                await current.AddChildAsync([next], item => item.FullPath); current.IsLoaded = true;
+                current = next;
+            }
+        }
         public event Action<IDriveItem> DriveConnected { add { } remove { } }
         public event Action<string> DriveDisconnected { add { } remove { } }
         public Task RefreshAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
@@ -69,4 +106,22 @@ public sealed class IsolatedServices(string root)
         public void StopMonitoring() { }
         public void Dispose() { }
     }
+}
+
+// Only native modal decisions are supplied; the production save/open/close pipelines still execute.
+public sealed class ValidationSavePicker : IDocumentSaveTargetPicker
+{
+    public Queue<DocumentSaveTarget?> Targets { get; } = new();
+    public DocumentSaveTarget? Pick(string? currentFilePath, IFileTemplate? currentTemplate)
+        => Targets.Count > 0 ? Targets.Dequeue() : throw new InvalidOperationException("Unexpected Save As dialog.");
+}
+
+public sealed class ValidationDocumentDialogs : IDocumentDialogService
+{
+    public Queue<UnsavedChangesChoice> Choices { get; } = new();
+    public bool ConfirmRecovery() => false;
+    public UnsavedChangesChoice ConfirmCloseWithUnsavedChanges() => Choices.Count > 0
+        ? Choices.Dequeue() : throw new InvalidOperationException("Unexpected unsaved-changes prompt.");
+    public void ShowRecoveryError(Exception exception) => throw new InvalidOperationException("Recovery failed.", exception);
+    public void ShowRecoveryCleanupError(Exception exception) => throw new InvalidOperationException("Recovery cleanup failed.", exception);
 }

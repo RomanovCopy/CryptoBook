@@ -10,7 +10,13 @@ dotnet build tools/HelpValidation/HelpValidation.csproj -c Release --no-restore
 dotnet tools/HelpValidation/bin/Release/net10.0-windows10.0.17763.0/win-x64/HelpValidation.dll <absolute-repository> ru-RU <git-head>
 ```
 
-Use `en-US`, `ru-RU`, `uk-UA`, `de-DE`. A capture run writes only its new `artifacts/hv/<culture>/<id>/` sandbox and the seven explicitly named help screenshot/annotation/passport/output files. It never uses the older `tools/ScreenshotCapture` output. Rerunning intentionally refreshes these help captures; review them before accepting them.
+Use `en-US`, `ru-RU`, `uk-UA`, `de-DE`. The original capture mode writes its new `artifacts/hv/<culture>/<id>/` sandbox and seven explicitly named screenshot sets. It never uses the older `tools/ScreenshotCapture` output. Rerunning intentionally refreshes the selected mode's captures; review them before accepting them.
+
+For the document lifecycle stage append `stage4`. This captures twelve additional states (S03-a/b, S04-c/d, S05-a/b, S06-c/d/e, S07-a/b/c), leaving the original seven untouched. Append `stage4-verify` after rebuilding to verify all eight embedded articles and images without replacing article screenshots. Each report includes the mode and individual successful checks; `formats.json` records the observed bold-format retention and actual file byte prefixes.
+
+An optional fifth argument, such as `S06-d`, restricts screenshot output to that state while still executing every scenario check. Use this to refresh a changed view without replacing unrelated captures.
+
+Stage 4 executes the production create/open/save/rename/close commands and real disk operations. It supplies native Save As destinations and unsaved-changes decisions through explicit queues; these are not screenshots or physical tests of Windows dialogs. The actual WPF folder picker is exercised for confirmation and cancellation. The home/new-file folder-picker shortcut still supplies only the demo directory. A static ancestor chain exposes the demo directory in FileExplorer without enumerating sibling folders; drive and directory monitoring are disabled. Template and settings stores still use the memory provider. A sharing lock and an unavailable disposable directory exercise real write errors. No security or recovery behaviour is bypassed.
 
 After all captures, rebuild to embed the images and append `verify` to run the window checks without changing the article images. Reports and Light/Dark/System/Sepia, narrow-window and 144-DPI render evidence remain in the run's sandbox. The current directory is changed to that sandbox before application startup; the help loader reads embedded resources only. `tools/Validate-HelpContent.ps1` checks the editorial catalog and capture set.
 

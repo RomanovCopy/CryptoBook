@@ -20,12 +20,91 @@
     {
       "id": "start.interface",
       "file": "start.interface.md",
-      "keywords": ["window", "interface", "start screen", "side menu", "settings", "AI assistant", "zoom"]
+      "keywords": [
+        "window",
+        "interface",
+        "start screen",
+        "side menu",
+        "settings",
+        "AI assistant",
+        "zoom"
+      ]
     },
     {
       "id": "doc.create",
       "file": "doc.create.md",
-      "keywords": ["new document", "create", "save", "RTF", "file name", "empty document", "trip plan"]
+      "keywords": [
+        "new document",
+        "create",
+        "save",
+        "RTF",
+        "file name",
+        "empty document",
+        "trip plan"
+      ]
+    },
+    {
+      "id": "start.workspace",
+      "file": "start.workspace.md",
+      "keywords": [
+        "workspace",
+        "folder",
+        "directory",
+        "search"
+      ]
+    },
+    {
+      "id": "doc.templates",
+      "file": "doc.templates.md",
+      "keywords": [
+        "template",
+        "notes",
+        "meeting",
+        "default"
+      ]
+    },
+    {
+      "id": "doc.open",
+      "file": "doc.open.md",
+      "keywords": [
+        "open",
+        "file",
+        "document",
+        "association"
+      ]
+    },
+    {
+      "id": "doc.save",
+      "file": "doc.save.md",
+      "keywords": [
+        "save",
+        "save as",
+        "cancel",
+        "unsaved",
+        "error"
+      ]
+    },
+    {
+      "id": "doc.formats",
+      "file": "doc.formats.md",
+      "keywords": [
+        "format",
+        "encoding",
+        "BOM",
+        "UTF-8",
+        "RTF",
+        "XAML"
+      ]
+    },
+    {
+      "id": "doc.switch",
+      "file": "doc.switch.md",
+      "keywords": [
+        "switch",
+        "rename",
+        "close",
+        "independent editors"
+      ]
     }
   ]
 }

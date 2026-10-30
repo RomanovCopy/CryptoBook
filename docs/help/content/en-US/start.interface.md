@@ -22,6 +22,15 @@ Use the start screen to create or open a document. Once a document is open, the 
 
 Open and close the side menu, then open **Settings** with the gear. Close the settings window to return to your document. If you still see the start screen, create a demonstration document to see the editor controls.
 
+## First steps and help
+
+Start with **New document** or **Open file**. The startup preference can show the editor directly instead of the start screen. A workspace directory is used for search and is optional for an individual document.
+
+Press **F1** in the main window or select **Help** in the side menu. The guide opens in a separate window, so you can read while working in the editor. Choosing an article does not close or save a document. Close Help or activate the main window to return to work.
+
 ## Related topics
 
 - [Create and save a document](help:doc.create)
+- [Choose a workspace directory](help:start.workspace)
+- [Two editors, renaming and closing](help:doc.switch)
+- [Get started with AI](help:ai.start)

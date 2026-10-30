@@ -1442,4 +1442,7 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="Help.CloseImage" xml:space="preserve"><value>Bild schließen</value></data>
   <data name="Help.Results" xml:space="preserve"><value>Suchergebnisse</value></data>
   <data name="Help.Article" xml:space="preserve"><value>Hilfeartikel</value></data>
+  <data name="File.OpenWriteFailed" xml:space="preserve"><value>„{0}“ konnte nicht zum Schreiben geöffnet werden: {1}</value></data>
+  <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Datei kann nicht zum Schreiben geöffnet werden: {0}</value></data>
+  <data name="Document.FileInUse" xml:space="preserve"><value>Die Datei wird verwendet und kann nicht beschrieben werden. Geben Sie die Datei frei und speichern Sie erneut.</value></data>
 </root>

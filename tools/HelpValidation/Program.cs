@@ -22,10 +22,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Properties = CryptoBook.Properties;
 
-internal static class Program
+internal static partial class Program
 {
     private static string repo = "", culture = "", commit = "";
     private static string? demonstrationFile;
+    private static string? captureFilter;
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
     private static int checks;
     private static readonly List<string> bindingErrors = [];
@@ -35,13 +36,15 @@ internal static class Program
         if (args.Length < 3) { Console.Error.WriteLine("HelpValidation <repository> <culture> <commit> [verify]"); return 2; }
         repo = Path.GetFullPath(args[0]); culture = args[1]; commit = args[2];
         bool verify = args.Length > 3 && args[3] == "verify";
+        bool stage4 = args.Length > 3 && args[3].StartsWith("stage4", StringComparison.Ordinal);
+        captureFilter = args.Length > 4 ? args[4] : null;
         if (!new[] { "en-US", "ru-RU", "uk-UA", "de-DE" }.Contains(culture)) return 2;
         string runRoot = Path.Combine(repo, "artifacts", "hv", culture, Guid.NewGuid().ToString("N")[..8]);
         var settings = MemorySettingsProvider.Install();
         Properties.Settings.Default.CultureInfo = culture;
         Properties.Settings.Default.FileOverviewFirstStart = true;
         Properties.Settings.Default.WindowState = "Normal";
-        var isolated = new IsolatedServices(runRoot);
+        var isolated = new IsolatedServices(runRoot, stage4);
         var app = new App(isolated.Configure) { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.InitializeComponent();
         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingListener(bindingErrors));
@@ -51,19 +54,20 @@ internal static class Program
         {
             try
             {
-                await Validate(isolated, verify);
+                if (stage4) await ValidateStage4(isolated, args[3] == "stage4-verify");
+                else await Validate(isolated, verify);
                 Check(settings.SaveCount > 0, "In-memory settings Save was exercised.");
                 Check(bindingErrors.Count == 0, "No WPF binding errors.");
                 File.WriteAllText(Path.Combine(runRoot, "result.json"), JsonSerializer.Serialize(new
                 {
-                    culture, commit, dirtyWorkingTree = true, checks, bindingErrors, settingsSaveCount = settings.SaveCount,
+                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
                     storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
                     captureMethod = "RenderTargetBitmap of visible production WPF windows",
-                    interaction = "production ICommand/ViewModel and storage services, plus routed keyboard events",
-                    limitations = "Folder picker supplies only the demonstration folder; no physical keyboard/mouse or installed-user migration test."
+                    interaction = stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
+                    limitations = "No physical keyboard/mouse or installed-user migration test. Folder-picker shortcut supplies the demo folder; stage4 also exercises the real WPF folder picker."
                 }, Json));
                 result = 0;
-                Console.WriteLine($"HELP_VALIDATION PASS culture={culture} checks={checks} verify={verify} report={Path.Combine(runRoot, "result.json")}");
+                Console.WriteLine($"HELP_VALIDATION PASS culture={culture} checks={checks} mode={(args.Length > 3 ? args[3] : "capture")} report={Path.Combine(runRoot, "result.json")}");
             }
             catch (Exception e) { Console.Error.WriteLine(e); }
             finally { Cleanup(isolated); app.Shutdown(result); }
@@ -149,7 +153,9 @@ internal static class Program
         await ((AsyncRelayCommand)menu.SaveFile).ExecuteAsync();
         Check(!session.IsDirty, "Save clears dirty state after writing.");
         mainModel.IsMenuOpen = false;
-        var open = await c.Resolve<IWorkspaceFileOpenService>().OpenAsync(session.FilePath!);
+        string savedPath = session.FilePath!;
+        await ((AsyncRelayCommand)menu.CloseFile).ExecuteAsync();
+        var open = await c.Resolve<IWorkspaceFileOpenService>().OpenAsync(savedPath);
         Check(open.Success && new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text.Contains(line), "Reopening the saved file retains the entered text.");
         await Settle(main);
         if (!verify) Shot(main, "S06-b", "doc.create", "result after reopening", []);
@@ -188,7 +194,7 @@ internal static class Program
         help.WindowState = WindowState.Minimized; service.Open(); Check(help.WindowState == WindowState.Normal, "Repeated opening restores a minimized window.");
         helpVm.OpenTopic("doc.create"); helpVm.Back.Execute(null); Check(helpVm.CurrentTopicId == "start.interface", "Back works.");
         helpVm.Forward.Execute(null); Check(helpVm.CurrentTopicId == "doc.create", "Forward works.");
-        Check(!helpVm.OpenTopic("doc.save") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
+        Check(!helpVm.OpenTopic("edit.font") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
         helpVm.Query = "09:00"; helpVm.RunSearch(); Check(helpVm.Results.Single().Id == "doc.create", "Search includes visible article text.");
         helpVm.Query = "zzzz-no-such-help-topic"; helpVm.RunSearch(); Check(helpVm.HasNoResults, "No-result state.");
         helpVm.Query = "  "; Check(!helpVm.IsSearching, "Whitespace query returns the contents tree.");
@@ -259,6 +265,7 @@ internal static class Program
     private sealed record Mark(int Number, Rect Bounds, Point? Badge = null);
     private static void Shot(Window window, string id, string topic, string step, Mark[] marks, Rect? crop = null)
     {
+        if (captureFilter is not null && captureFilter != id) return;
         string raw = $"docs/help/screenshots/raw/{culture}/{id}.png", annotation = $"docs/help/screenshots/annotations/{culture}/{id}.json";
         string output = $"docs/help/content/{culture}/images/{id}.png", passport = $"docs/help/screenshots/passports/{culture}/{id}.json";
         var bitmap = Capture(window, 96);
@@ -321,7 +328,8 @@ internal static class Program
     private static T Named<T>(Window window, string name) where T : FrameworkElement => Visuals<T>(window).First(e => e.Name == name);
     private static IEnumerable<Button> Buttons(Window window) => Visuals<Button>(window).Where(b => b.IsVisible);
     private static async Task Settle(Window window) { window.UpdateLayout(); await Task.Delay(220); await window.Dispatcher.InvokeAsync(window.UpdateLayout, DispatcherPriority.ApplicationIdle); }
-    private static void Check(bool condition, string message) { checks++; if(!condition) throw new InvalidOperationException(message); }
+    private static readonly List<string> checkMessages = [];
+    private static void Check(bool condition, string message) { checks++; if(!condition) throw new InvalidOperationException(message); checkMessages.Add(message); }
     private static void RoutedKey(Window window, Key key) => window.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
         PresentationSource.FromVisual(window), Environment.TickCount, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
     private sealed class BindingListener(List<string> errors) : TraceListener

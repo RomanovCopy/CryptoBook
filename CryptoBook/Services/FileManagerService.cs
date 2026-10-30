@@ -1,5 +1,6 @@
 ﻿using CryptoBook.DTO;
 using CryptoBook.Interfaces;
+using CryptoBook.Infrastructure;
 
 using System;
 using System.Collections.Generic;
@@ -322,7 +323,7 @@ namespace CryptoBook.Services
             }
             catch(Exception ex)
             {
-                throw new IOException($"OpenWrite failed for path '{path}': {ex.Message}", ex);
+                throw new IOException(LocalizationManager.Format("File.OpenWriteFailed", path, ex.Message), ex);
             }
         }
 

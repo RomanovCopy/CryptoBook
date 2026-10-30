@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-30",
+  "configuration": "Release",
+  "sdk": "10.0.403",
+  "runtime": "10.0.14",
+  "isolatedProcessTemp": "artifacts/help-stage4-temp",
+  "total": 137,
+  "groups": [
+    {
+      "group": "help",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "group": "templates",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "group": "formats",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "group": "lifecycle",
+      "total": 67,
+      "passed": 67,
+      "failed": 0,
+      "notExecuted": 0
+    }
+  ]
+}

@@ -20,12 +20,91 @@
     {
       "id": "start.interface",
       "file": "start.interface.md",
-      "keywords": ["Fenster", "Oberfläche", "Startbildschirm", "Seitenmenü", "Einstellungen", "KI-Assistent", "Zoom"]
+      "keywords": [
+        "Fenster",
+        "Oberfläche",
+        "Startbildschirm",
+        "Seitenmenü",
+        "Einstellungen",
+        "KI-Assistent",
+        "Zoom"
+      ]
     },
     {
       "id": "doc.create",
       "file": "doc.create.md",
-      "keywords": ["neues Dokument", "erstellen", "speichern", "RTF", "Dateiname", "leeres Dokument", "Reiseplan"]
+      "keywords": [
+        "neues Dokument",
+        "erstellen",
+        "speichern",
+        "RTF",
+        "Dateiname",
+        "leeres Dokument",
+        "Reiseplan"
+      ]
+    },
+    {
+      "id": "start.workspace",
+      "file": "start.workspace.md",
+      "keywords": [
+        "Arbeitsverzeichnis",
+        "Ordner",
+        "Arbeitsbereich",
+        "Suche"
+      ]
+    },
+    {
+      "id": "doc.templates",
+      "file": "doc.templates.md",
+      "keywords": [
+        "Vorlage",
+        "Notizen",
+        "Besprechung",
+        "Standard"
+      ]
+    },
+    {
+      "id": "doc.open",
+      "file": "doc.open.md",
+      "keywords": [
+        "öffnen",
+        "Datei",
+        "Dokument",
+        "Dateizuordnung"
+      ]
+    },
+    {
+      "id": "doc.save",
+      "file": "doc.save.md",
+      "keywords": [
+        "speichern",
+        "speichern unter",
+        "abbrechen",
+        "ungespeichert",
+        "Fehler"
+      ]
+    },
+    {
+      "id": "doc.formats",
+      "file": "doc.formats.md",
+      "keywords": [
+        "Format",
+        "Kodierung",
+        "BOM",
+        "UTF-8",
+        "RTF",
+        "XAML"
+      ]
+    },
+    {
+      "id": "doc.switch",
+      "file": "doc.switch.md",
+      "keywords": [
+        "wechseln",
+        "umbenennen",
+        "schließen",
+        "unabhängige Editoren"
+      ]
     }
   ]
 }

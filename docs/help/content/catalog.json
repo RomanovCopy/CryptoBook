@@ -31,12 +31,13 @@
     {
       "id": "start.interface",
       "section": "start",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F002",
         "F003",
         "F013",
-        "F118"
+        "F118",
+        "F155"
       ],
       "illustrationIds": [
         "S02-a",
@@ -47,12 +48,20 @@
     {
       "id": "start.workspace",
       "section": "start",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F004"
+      ],
+      "illustrationIds": [
+        "S03-a",
+        "S05-b",
+        "S03-b"
+      ]
     },
     {
       "id": "doc.create",
       "section": "doc",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F005",
         "F006",
@@ -66,33 +75,73 @@
         "S04-a",
         "S04-b",
         "S06-a",
-        "S06-b"
+        "S06-b",
+        "S04-d"
       ]
     },
     {
       "id": "doc.templates",
       "section": "doc",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F006"
+      ],
+      "illustrationIds": [
+        "S04-c"
+      ]
     },
     {
       "id": "doc.open",
       "section": "doc",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F009"
+      ],
+      "illustrationIds": [
+        "S05-a"
+      ]
     },
     {
       "id": "doc.save",
       "section": "doc",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F010",
+        "F011",
+        "F015"
+      ],
+      "illustrationIds": [
+        "S06-e",
+        "S06-c",
+        "S06-d"
+      ]
     },
     {
       "id": "doc.formats",
       "section": "doc",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F012",
+        "F054"
+      ],
+      "illustrationIds": [
+        "S06-c"
+      ]
     },
     {
       "id": "doc.switch",
       "section": "doc",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F013",
+        "F014",
+        "F015"
+      ],
+      "illustrationIds": [
+        "S07-a",
+        "S07-b",
+        "S07-c"
+      ]
     },
     {
       "id": "edit.basic",
@@ -478,6 +527,78 @@
       "scenarioId": "S06",
       "status": "ready",
       "file": "images/S06-b.png"
+    },
+    {
+      "id": "S03-a",
+      "scenarioId": "S03",
+      "status": "ready",
+      "file": "images/S03-a.png"
+    },
+    {
+      "id": "S03-b",
+      "scenarioId": "S03",
+      "status": "ready",
+      "file": "images/S03-b.png"
+    },
+    {
+      "id": "S04-c",
+      "scenarioId": "S04",
+      "status": "ready",
+      "file": "images/S04-c.png"
+    },
+    {
+      "id": "S04-d",
+      "scenarioId": "S04",
+      "status": "ready",
+      "file": "images/S04-d.png"
+    },
+    {
+      "id": "S05-a",
+      "scenarioId": "S05",
+      "status": "ready",
+      "file": "images/S05-a.png"
+    },
+    {
+      "id": "S05-b",
+      "scenarioId": "S05",
+      "status": "ready",
+      "file": "images/S05-b.png"
+    },
+    {
+      "id": "S06-c",
+      "scenarioId": "S06",
+      "status": "ready",
+      "file": "images/S06-c.png"
+    },
+    {
+      "id": "S06-d",
+      "scenarioId": "S06",
+      "status": "ready",
+      "file": "images/S06-d.png"
+    },
+    {
+      "id": "S06-e",
+      "scenarioId": "S06",
+      "status": "ready",
+      "file": "images/S06-e.png"
+    },
+    {
+      "id": "S07-a",
+      "scenarioId": "S07",
+      "status": "ready",
+      "file": "images/S07-a.png"
+    },
+    {
+      "id": "S07-b",
+      "scenarioId": "S07",
+      "status": "ready",
+      "file": "images/S07-b.png"
+    },
+    {
+      "id": "S07-c",
+      "scenarioId": "S07",
+      "status": "ready",
+      "file": "images/S07-c.png"
     }
   ]
 }

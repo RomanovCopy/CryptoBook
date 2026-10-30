@@ -40,7 +40,23 @@ Bevor Sie **Erstellen** wählen, können Sie den Dialog mit **Abbrechen** verlas
 
 Wenn **Erstellen** nicht verfügbar ist, prüfen Sie die Auswahl von Ordner, Dateityp und Namen sowie die Schreibberechtigung für den Ordner. Lesen Sie eine Fehlermeldung und korrigieren Sie den Namen oder wählen Sie einen anderen Ordner. Bei **Die Datei wurde erstellt, konnte aber nicht geöffnet werden.** prüfen Sie zuerst den Ordner: Die Datei kann bereits vorhanden sein. **Speichern** kann deaktiviert sein, wenn es keine neuen Änderungen gibt oder das gewöhnliche Dokument im Lesemodus geöffnet ist.
 
+## Andere Typen, Vorlagen und Attribute
+
+Dieses Beispiel verwendet eine leere RTF-Datei. Wählen Sie für vorbereiteten Text eine andere **Dokumentvorlage**. Wählen Sie für Markdown dessen Dateityp: Ein eigener Editor öffnet sich, die Papiereinstellungen sind ausgeblendet. Texttypen einschließlich XAML behalten keine Formatierung bei.
+
+**Schreibgeschützt** und **Versteckt** setzen Attribute der neuen lokalen Datei. Sie verschlüsseln sie nicht und schützen sie nicht durch ein Passwort. Lassen Sie beide für normale Arbeit deaktiviert. Andere Speicherquellen können abweichende Möglichkeiten haben.
+
+Ist ein Name belegt, wählt die Anwendung einen freien Namen, der von Ihrer Eingabe abweichen kann. Geben Sie nur den Dateinamen ein und wählen Sie den Ordner gesondert. Prüfen Sie nach der Erstellung immer den Namen oben und die tatsächliche Datei im Ordner.
+
+Wird der ausgewählte Ordner nicht mehr verfügbar, kann der Dialog mit einer Fehlermeldung geöffnet bleiben. Wählen Sie einen verfügbaren Ordner und wiederholen Sie die Erstellung. Prüfen Sie vorher, ob eine Datei aus dem letzten Versuch bereits vorhanden ist. **Abbrechen** löscht keine bereits geschriebene Datei.
+
+![Unterer Bereich des Erstellungsdialogs mit Schreibfehler in einem nicht verfügbaren Ordner](images/S04-d.png "Erstellungsfehler. Prüfen Sie vor einem erneuten Versuch Ordner und bereits erstellte Dateien.")
+
+Schließen Sie zum Prüfen der Speicherung zuerst die gespeicherte Beispieldatei und öffnen Sie sie erneut: Die erneute Auswahl einer bereits aktiven Datei kann lediglich zu ihrem Editor zurückkehren.
+
 ## Verwandte Themen
 
 - [Die wichtigsten Bereiche des Fensters](help:start.interface)
 - [Speichern und Speichern unter](help:doc.save)
+- [Dokumentvorlage auswählen](help:doc.templates)
+- [Formate und Kodierungen](help:doc.formats)

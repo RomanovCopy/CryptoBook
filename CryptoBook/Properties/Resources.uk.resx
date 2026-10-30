@@ -2293,4 +2293,7 @@
   <data name="Help.CloseImage" xml:space="preserve"><value>Закрити зображення</value></data>
   <data name="Help.Results" xml:space="preserve"><value>Результати пошуку</value></data>
   <data name="Help.Article" xml:space="preserve"><value>Стаття довідки</value></data>
+  <data name="File.OpenWriteFailed" xml:space="preserve"><value>Не вдалося відкрити «{0}» для запису: {1}</value></data>
+  <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Не вдалося відкрити файл для запису: {0}</value></data>
+  <data name="Document.FileInUse" xml:space="preserve"><value>Файл використовується та недоступний для запису. Звільніть файл і повторіть збереження.</value></data>
 </root>
