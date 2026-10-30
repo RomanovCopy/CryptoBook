@@ -35,7 +35,7 @@ Wählen Sie **Umbenennen** erst nach der Prüfung. Namenstausch und reine Änder
 
 ## Abbruch und Fehler
 
-Vor dem Anwenden schließen Sie das Fenster ohne Änderungen. Während der Arbeit fordert **Abbrechen** oder Schließen den Abbruch an und wartet auf die ursprünglichen Namen. Bei externen Sperren oder belegten Namen bleiben Daten und Protokoll erhalten; der Status nennt aktuelle Pfade. Nach Beseitigung der Ursache oder einem Prozessabbruch öffnen Sie den Ordner der ersten Quelldatei im Dateimanager und wählen **Dateien wiederherstellen**. Das Protokoll im versteckten .cryptobook-operation-*-Ordner erlaubt erneute Wiederherstellung nach einem Neustart und überschreibt keine vorhandenen Objekte. Bewahren Sie Ordner mit unvollständiger Wiederherstellung auf.
+Vor dem Anwenden schließen Sie das Fenster ohne Änderungen. Während der Arbeit fordert **Abbrechen** oder Schließen den Abbruch an und wartet auf die ursprünglichen Namen. Bei externen Sperren oder belegten Namen bleiben Daten und Protokoll erhalten; der Status nennt aktuelle Pfade. Nach Beseitigung der Ursache oder einem Prozessabbruch öffnen Sie den Ordner der ersten Quelldatei im Dateimanager und wählen **Vorgänge wiederherstellen**. Das Protokoll im versteckten .cryptobook-operation-*-Ordner erlaubt erneute Wiederherstellung nach einem Neustart und überschreibt keine vorhandenen Objekte. Bewahren Sie Ordner mit unvollständiger Wiederherstellung auf.
 
 ## Verwandte Themen
 

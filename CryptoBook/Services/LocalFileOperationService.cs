@@ -10,10 +10,17 @@ using TransferPlanSet = CryptoBook.Services.FileOperationCoordinator.TransferPla
 namespace CryptoBook.Services;
 
 /// <summary>Owns native local paths; the coordinator only routes provider locations.</summary>
-internal sealed class LocalFileOperationService(IFileManagerService fileManager, IStorageFacade storage)
+internal sealed class LocalFileOperationService(IFileManagerService fileManager, IStorageFacade storage,
+    IRecycleBinService recycleBin)
 {
     private readonly IFileManagerService _fileManager = fileManager;
     private readonly IStorageFacade _storage = storage;
+    internal Task<bool> HasRecoveryAsync(string directory, CancellationToken token) => Task.Run(() =>
+    {
+        token.ThrowIfCancellationRequested();
+        StorageLocation location = _storage.Resolve(directory);
+        return location.IsLocal && LocalOperationJournal.HasRecovery(location.OpaqueId);
+    }, token);
     public Task<FileOperationBatchResult> RestoreAsync(string directory,
         CancellationToken cancellationToken = default) => Task.Run(() =>
     {
@@ -87,35 +94,29 @@ internal sealed class LocalFileOperationService(IFileManagerService fileManager,
         }
     }
 
-    internal FileOperationBatchResult Delete(string[] sources, IProgressReporter progress,
+    internal async Task<FileOperationBatchResult> DeleteAsync(string[] sources, IProgressReporter progress,
         CancellationToken token)
     {
-        string first = _storage.Resolve(sources[0]).OpaqueId;
-        using var journal = LocalOperationJournal.Create(Path.GetDirectoryName(first)!);
         int count = 0;
+        var results = new List<FileOperationResult>();
         try
         {
             foreach(string path in sources)
             {
                 token.ThrowIfCancellationRequested();
                 string source = _storage.Resolve(path).OpaqueId;
-                journal.Move(source, journal.Allocate(source));
+                FileOperationResult result = await recycleBin.RecycleAsync(source, token);
+                results.Add(result);
+                if(!result.Success) return new(results, count, 0, false, count > 0);
                 progress.Report((double)++count / sources.Length, path);
             }
-            token.ThrowIfCancellationRequested();
-            journal.Complete(retainForRestore: true);
-            return new(sources.Select(_ => FileOperationResult.Ok()).ToArray(), count, 0, false, count > 0);
+            return new(results, count, 0, token.IsCancellationRequested, count > 0);
         }
+        catch(OperationCanceledException) { return new(results, count, 0, true, count > 0); }
         catch(Exception e)
         {
-            string? recoveryError = journal.Rollback();
-            var failures = new List<FileOperationResult>();
-            if(e is not OperationCanceledException || recoveryError is not null)
-                failures.Add(FileOperationResult.Fail(string.Join(Environment.NewLine,
-                    new[] { e is OperationCanceledException ? null : e.Message, recoveryError }
-                    .Where(s => !string.IsNullOrEmpty(s)))));
-            return new(failures, recoveryError is null ? 0 : count, 0,
-                e is OperationCanceledException, recoveryError is not null);
+            results.Add(FileOperationResult.Fail(e.Message));
+            return new(results, count, 0, false, count > 0);
         }
     }
 

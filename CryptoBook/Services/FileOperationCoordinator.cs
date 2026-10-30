@@ -16,13 +16,14 @@ namespace CryptoBook.Services
             IFileManagerService fileManager,
             IProgressDialogService progressDialog,
             IFileConflictResolver conflictResolver,
-            IStorageFacade? storageFacade = null)
+            IStorageFacade? storageFacade = null,
+            IRecycleBinService? recycleBin = null)
         {
             _fileManager = fileManager ?? throw new ArgumentNullException(nameof(fileManager));
             _progressDialog = progressDialog ?? throw new ArgumentNullException(nameof(progressDialog));
             _conflictResolver = conflictResolver ?? throw new ArgumentNullException(nameof(conflictResolver));
             _storage = storageFacade ?? new StorageFacade([new LocalStorageProvider()]);
-            _localOperations = new LocalFileOperationService(_fileManager, _storage);
+            _localOperations = new LocalFileOperationService(_fileManager, _storage, recycleBin ?? new WindowsRecycleBinService());
         }
 
         public async Task<FileOperationBatchResult> TransferAsync(
@@ -189,11 +190,11 @@ namespace CryptoBook.Services
                                 null,
                                 LocalizationManager.GetString("Explorer.CalculatingSize"));
                             if(sources.All(p => _storage.Resolve(p).IsLocal))
-                                return await Task.Run(() => _localOperations.Delete(sources, progress, token), token);
+                                return await _localOperations.DeleteAsync(sources, progress, token);
                             string[] localSources = sources.Where(p => _storage.Resolve(p).IsLocal).ToArray();
                             if(localSources.Length > 0)
                             {
-                                FileOperationBatchResult local = await Task.Run(() => _localOperations.Delete(localSources, progress, token), token);
+                                FileOperationBatchResult local = await _localOperations.DeleteAsync(localSources, progress, token);
                                 if(!local.Success) return local;
                                 results.AddRange(local.Results);
                                 completed += local.CompletedCount;
@@ -259,6 +260,8 @@ namespace CryptoBook.Services
 
         public Task<FileOperationBatchResult> RestoreAsync(string directory,
             CancellationToken cancellationToken = default) => _localOperations.RestoreAsync(directory, cancellationToken);
+        public Task<bool> HasRecoveryAsync(string directory, CancellationToken cancellationToken = default) =>
+            _localOperations.HasRecoveryAsync(directory, cancellationToken);
 
         private async Task<TransferPlanSet> CreateTransferPlansAsync(
             IReadOnlyList<string> sources,

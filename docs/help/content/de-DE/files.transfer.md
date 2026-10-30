@@ -19,7 +19,7 @@ Aktualisieren Sie das Ziel und öffnen Sie eine kopierte Beispieldatei. Prüfen 
 
 ## Abbruch und Fehler
 
-Abbruch oder Fehler setzt den gesamten lokalen Stapel zurück, einschließlich abgeschlossener Elemente und vorheriger Zielobjekte. Beim Verschieben zwischen Volumes wird die Kopie vor dem Entfernen der gesicherten Quelle geprüft. Blockieren belegte Namen oder externe Sperren die Wiederherstellung, bleiben Daten und Protokoll erhalten; die Meldung nennt den Protokollordner. Beseitigen Sie die Ursache, öffnen Sie diesen Ordner und wählen Sie **Dateien wiederherstellen**. Nach einem Prozessabbruch verwenden Sie denselben Befehl im Zielordner. Eine erfolgreich abgeschlossene Übertragung behält kein separates Rückgängigmachen. Geräteübertragungen besitzen eigene Regeln.
+Abbruch oder Fehler setzt den gesamten lokalen Stapel zurück, einschließlich abgeschlossener Elemente und vorheriger Zielobjekte. Beim Verschieben zwischen Volumes wird die Kopie vor dem Entfernen der gesicherten Quelle geprüft. Blockieren belegte Namen oder externe Sperren die Wiederherstellung, bleiben Daten und Protokoll erhalten; die Meldung nennt den Protokollordner. Beseitigen Sie die Ursache, öffnen Sie diesen Ordner und wählen Sie **Vorgänge wiederherstellen**. Nach einem Prozessabbruch verwenden Sie denselben Befehl im Zielordner. Eine erfolgreich abgeschlossene Übertragung behält kein separates Rückgängigmachen. Geräteübertragungen besitzen eigene Regeln.
 
 ## Verwandte Themen
 

@@ -44,6 +44,8 @@ namespace CryptoBook.Models
         private readonly IPinnedDocumentService _pinnedDocumentService;
         private readonly IRecentDocumentService? _recentDocumentService;
         private readonly FileExplorerNavigationHistory _navigationHistory = new();
+        private bool _hasPendingRecovery;
+        private bool _isRestoringFiles;
         private INotifyCollectionChanged? _currentContainerAvailabilitySource;
         private IDriveItem? _currentRootAvailabilitySource;
 
@@ -588,7 +590,8 @@ namespace CryptoBook.Models
                 {
                     await _messageService.ShowMessage(
                         LocalizationManager.GetString("Explorer.DeleteCanceledTitle"),
-                        LocalizationManager.GetString("Explorer.DeleteCanceledPartial"));
+                        LocalizationManager.GetString(items.All(item => item.Location.IsLocal)
+                            ? "Explorer.RecycleCanceledPartial" : "Explorer.DeleteCanceledPartial"));
                 }
 
             }
@@ -603,12 +606,15 @@ namespace CryptoBook.Models
             }
         }
         public bool CanExecute_RestoreFilesCommand(object? obj) =>
-            !IsCurrentDirectoryUnavailable && !string.IsNullOrWhiteSpace(CurrentPath) &&
+            _hasPendingRecovery && !_isRestoringFiles && !IsCurrentDirectoryUnavailable && !string.IsNullOrWhiteSpace(CurrentPath) &&
             _storage.Resolve(CurrentPath).IsLocal;
 
         public async void Execute_RestoreFilesCommand(object? obj)
         {
+            if(!CanExecute_RestoreFilesCommand(obj)) return;
             string directory = CurrentPath;
+            _isRestoringFiles = true;
+            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
             try
             {
                 Guid id = await _messageService.ShowMessage(
@@ -629,6 +635,28 @@ namespace CryptoBook.Models
             {
                 await _messageService.ShowMessage(LocalizationManager.GetString("Explorer.RestoreFiles"), e.Message);
             }
+            finally
+            {
+                _isRestoringFiles = false;
+                await RefreshRecoveryAvailabilityAsync(CancellationToken.None);
+            }
+        }
+
+        private async Task RefreshRecoveryAvailabilityAsync(CancellationToken token)
+        {
+            string directory = CurrentPath;
+            bool available = false;
+            try
+            {
+                if(!string.IsNullOrWhiteSpace(directory) && !IsCurrentDirectoryUnavailable &&
+                    _storage.Resolve(directory).IsLocal)
+                    available = await _fileOperationCoordinator.HasRecoveryAsync(directory, token);
+            }
+            catch(OperationCanceledException) { return; }
+            catch(Exception e) { Debug.WriteLine(e); }
+            if(!PathsEqual(directory, CurrentPath)) return;
+            _hasPendingRecovery = available;
+            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
         }
         public async void Execute_SortedCommand(object? obj)
         {
@@ -1145,6 +1173,7 @@ namespace CryptoBook.Models
                 SelectedListItem = null;
                 SelectedItemsSnapshot = Array.Empty<ISystemItem>();
                 CurrentPath = targetPath;
+                _hasPendingRecovery = false;
                 AddressText = GetDisplayPath(targetPath);
                 ClearNavigationFailure();
                 container.IsSelected = true;
@@ -1152,6 +1181,7 @@ namespace CryptoBook.Models
                 container.IsLoaded = true;
                 ObserveCurrentContainerAvailability(container);
                 Properties.Settings.Default.LastDirectory_FileExplorer = targetPath;
+                await RefreshRecoveryAvailabilityAsync(token);
                 System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 return true;
             }
@@ -2429,6 +2459,8 @@ namespace CryptoBook.Models
 
             container.IsLoaded = true;
             await WaitForFileExplorerRenderAsync(token);
+            if(PathsEqual(container.FullPath, CurrentPath))
+                await RefreshRecoveryAvailabilityAsync(token);
         }
 
         private async Task WaitForFileExplorerRenderAsync(CancellationToken token)

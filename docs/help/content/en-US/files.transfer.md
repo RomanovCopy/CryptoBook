@@ -19,7 +19,7 @@ Refresh the destination and open a copied sample. After moving, check both the d
 
 ## Cancellation and errors
 
-Cancellation or failure rolls back the whole local batch, including completed items and previous destinations. A move between volumes verifies the copy before removing the preserved source. If an occupied name or external lock blocks rollback, data and the journal are retained; the message identifies the journal folder. Remove the obstruction, open that folder and choose **Restore files**. After an interrupted process, use the same command in the destination folder. A successfully completed transfer keeps no separate Undo. Device transfers have their own rules.
+Cancellation or failure rolls back the whole local batch, including completed items and previous destinations. A move between volumes verifies the copy before removing the preserved source. If an occupied name or external lock blocks rollback, data and the journal are retained; the message identifies the journal folder. Remove the obstruction, open that folder and choose **Restore operations**. After an interrupted process, use the same command in the destination folder. A successfully completed transfer keeps no separate Undo. Device transfers have their own rules.
 
 ## Related topics
 

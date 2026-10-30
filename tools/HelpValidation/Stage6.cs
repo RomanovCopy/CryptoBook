@@ -209,7 +209,8 @@ internal static partial class Program
             vm.RenameClickCommand.Execute(new[] { renameItem }); await Until(() => renameItem.IsEditing); renameItem.Name = "Renamed.txt"; await Settle(explorer);
             if (!verify) Shot(explorer, "S21-a", "files.manage", "step 2", [new(2, Bounds(explorer, listView))]);
             vm.RenameCommand.Execute(renameItem); string renamed = Path.Combine(source, "Renamed.txt");
-            await Until(() => File.Exists(renamed) && session.FilePath == renamed);
+            await Until(() => File.Exists(renamed) && session.FilePath == renamed &&
+                pinned.Items.Any(i => i.Path == renamed) && recent.Items.Any(i => i.Path == renamed));
             Check(pinned.Items.Any(i => i.Path == renamed) && recent.Items.Any(i => i.Path == renamed), "Single rename updates current, pinned and recent paths.");
 
             // Favorites use their actual view-model commands and a real name dialog.
@@ -289,13 +290,30 @@ internal static partial class Program
             using (var confirmDelete = OnVisible<MessageWindow>(w => { ((IMessageWindowViewModel)w.DataContext).OkCommand.Execute(null); return Task.CompletedTask; }))
                 vm.DeleteCommand.Execute(vm.SelectedItemsSnapshot);
             await Until(() => !File.Exists(png) && !Application.Current.Windows.OfType<ProgressWindow>().Any());
-            Check(Directory.GetDirectories(source, LocalOperationJournal.Prefix + "*").Length > 0, "Confirmed local deletion retains a persistent recovery folder.");
+            Check(isolated.RecycleBin.LastRecycledPath is { } recycled && File.Exists(recycled) &&
+                Directory.GetDirectories(source, LocalOperationJournal.Prefix + "*").Length == 0,
+                "Confirmed local deletion enters the actual Windows Recycle Bin without a sibling recovery folder.");
+            Check(!vm.RestoreFilesCommand.CanExecute(null), "Recovery button stays disabled after ordinary recycling.");
+            await RecycleBinValidation.RestoreAsync(isolated.RecycleBin.LastRecycledPath!, png);
+            Check(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(png))) == detailsVm.Rows.Single(r => r.Key == "SHA256").Value,
+                "Windows Recycle Bin restores the deleted bytes at the original path.");
+            string recoverySample = Path.Combine(source, "RecoverySample.txt");
+            File.WriteAllText(recoverySample, "Disposable interrupted operation");
+            using(var journal = LocalOperationJournal.Create(source)) journal.Move(recoverySample, journal.Allocate(recoverySample));
+            vm.RefreshCommand.Execute(vm.SelectedItem);
+            await Until(() => vm.RestoreFilesCommand.CanExecute(null));
+            Check(vm.RestoreFilesCommand.CanExecute(null), "Recovery button enables for a stopped local journal.");
+            await Go(target);
+            Check(!vm.RestoreFilesCommand.CanExecute(null), "Navigating to a folder without journals disables recovery.");
+            await Go(source);
+            Check(vm.RestoreFilesCommand.CanExecute(null), "Returning to a folder with a pending journal enables recovery.");
             using (var restoreMessages = OnVisible<MessageWindow>(w => { ((IMessageWindowViewModel)w.DataContext).OkCommand.Execute(null); return Task.CompletedTask; }))
             {
                 vm.RestoreFilesCommand.Execute(null);
-                await Until(() => File.Exists(png)); await Settle(explorer);
+                await Until(() => File.Exists(recoverySample) && !vm.RestoreFilesCommand.CanExecute(null)); await Settle(explorer);
             }
-            Check(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(png))) == detailsVm.Rows.Single(r => r.Key == "SHA256").Value, "Restore files returns the deleted bytes through the actual explorer command.");
+            Check(File.ReadAllText(recoverySample) == "Disposable interrupted operation" && !vm.RestoreFilesCommand.CanExecute(null),
+                "Recovery restores interrupted operations and disables its button after journals are removed.");
             explorer.Close();
             var model = scope.Resolve<IMainWindowModel>(); model.IsMenuOpen = true; await Settle(main);
             Check(pinned.Items.Single().Path == renamed, "Pinned path remains correct after undo.");

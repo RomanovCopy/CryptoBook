@@ -20,7 +20,7 @@ Ein Konflikt erscheint, wenn Kopieren oder Verschieben einen belegten Zielnamen 
 
 Warten Sie auf das Ende, aktualisieren Sie die Ansicht und vergleichen Sie Ziel und Quelle. Beim Überspringen einer Verschiebung bleibt die Quelle bestehen. Eine Kopie im eigenen Ordner erhält einen freien Namen; eine Verschiebung an den bereits belegten eigenen Speicherort wird übersprungen.
 
-Ein Abbruch im Fortschrittsfenster setzt bereits ausgeführte Aktionen des lokalen Stapels zurück. Das vorherige Ziel bleibt bis zum Abschluss der Übertragung erhalten. Bei blockierenden Sperren oder belegten Namen wählen Sie **Dateien wiederherstellen** im Ordner mit dem in der Meldung genannten Protokoll. Nach einem Prozessabbruch öffnen Sie den Zielordner und verwenden diesen Befehl.
+Ein Abbruch im Fortschrittsfenster setzt bereits ausgeführte Aktionen des lokalen Stapels zurück. Das vorherige Ziel bleibt bis zum Abschluss der Übertragung erhalten. Bei blockierenden Sperren oder belegten Namen wählen Sie **Vorgänge wiederherstellen** im Ordner mit dem in der Meldung genannten Protokoll. Nach einem Prozessabbruch öffnen Sie den Zielordner und verwenden diesen Befehl.
 
 ## Verwandte Themen
 

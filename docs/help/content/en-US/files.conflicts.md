@@ -20,7 +20,7 @@ A conflict appears when copying or moving would use an occupied destination name
 
 Wait for the operation to finish, refresh and compare the destination with the source. Skipping a move keeps that source in place. Copying an object into its own folder chooses a free copy name; moving it to its existing location is skipped.
 
-Cancellation in the progress window rolls back completed actions in the local batch. The previous destination is retained until transfer completes. If a lock or occupied name prevents recovery, use **Restore files** in the folder containing the journal identified by the message. After an interrupted process, open the destination folder and use that command.
+Cancellation in the progress window rolls back completed actions in the local batch. The previous destination is retained until transfer completes. If a lock or occupied name prevents recovery, use **Restore operations** in the folder containing the journal identified by the message. After an interrupted process, open the destination folder and use that command.
 
 ## Related topics
 

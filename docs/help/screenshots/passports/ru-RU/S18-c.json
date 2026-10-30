@@ -5,9 +5,9 @@
   "culture": "ru-RU",
   "osCulture": "ru-RU",
   "version": "1.1.5.2",
-  "commit": "341efe28bafe25f66644f26fbeeee257fd15ed0f",
+  "commit": "f8dc9aec451dc0461642c7404af72f00fc0d8228",
   "dirtyWorkingTree": true,
-  "capturedAt": "2026-10-30T21:11:25.183052+03:00",
+  "capturedAt": "2026-10-30T21:41:59.8207954+03:00",
   "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
   "theme": "Light",
   "windowDip": {
@@ -27,6 +27,6 @@
   "annotationFile": "docs/help/screenshots/annotations/ru-RU/S18-c.json",
   "outputFile": "docs/help/content/ru-RU/images/S18-c.png",
   "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
-  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\69326d23\\Demo\\Source\\Alpha.txt",
-  "visualCheck": "Reviewed 2026-10-30 by agent: refreshed four-language contact sheets; toolbar, labels, list and annotations fit without overlap; recovery command present. No physical input or independent native-language review."
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\9ad5fec0\\Demo\\Source\\Alpha.txt",
+  "visualCheck": "Reviewed 2026-10-30 by agent: four-language contact sheets show disabled recovery button without journals, readable toolbar/list and non-overlapping annotations. No physical-input or independent native-language review."
 }

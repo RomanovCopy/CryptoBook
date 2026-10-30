@@ -35,7 +35,7 @@ Choose **Rename** only after checking the preview. Name swaps and case-only chan
 
 ## Cancel or recover from an error
 
-Before applying, close the window without changes. During execution, **Cancel** or closing requests cancellation and waits for original names to be restored. External locks or occupied names leave data and a journal preserved; the status lists current paths. After removing the obstruction or restarting an interrupted process, open the first source file's folder in the file manager and choose **Restore files**. The journal in the hidden .cryptobook-operation-* folder supports retry after restart and never overwrites existing objects. Keep folders containing unfinished recovery.
+Before applying, close the window without changes. During execution, **Cancel** or closing requests cancellation and waits for original names to be restored. External locks or occupied names leave data and a journal preserved; the status lists current paths. After removing the obstruction or restarting an interrupted process, open the first source file's folder in the file manager and choose **Restore operations**. The journal in the hidden .cryptobook-operation-* folder supports retry after restart and never overwrites existing objects. Keep folders containing unfinished recovery.
 
 ## Related topics
 

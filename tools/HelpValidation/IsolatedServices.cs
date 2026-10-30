@@ -20,6 +20,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     public ValidationDocumentDialogs DocumentDialogs { get; } = new();
     public ValidationImagePicker ImagePicker { get; } = new();
     public ValidationFolderPicker FolderPicker { get; } = new(Path.Combine(Path.GetFullPath(root), "Demo"));
+    public ValidationRecycleBin RecycleBin { get; } = new(Path.GetFullPath(root));
     public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
         .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
     private string Store(string name)
@@ -49,6 +50,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
             c.Resolve<IFlowDocumentLoadService>(), snapshot, c.Resolve<IFileTemplateRegistry>(),
             c.Resolve<IMarkdownDocumentState>(), c.Resolve<IKeyProvider>())).As<ILockSnapshotService>().SingleInstance();
         builder.RegisterInstance<IFolderPickerService>(FolderPicker);
+        builder.RegisterInstance<IRecycleBinService>(RecycleBin);
         if (documentValidation)
         {
             builder.RegisterInstance<IDocumentSaveTargetPicker>(SavePicker);

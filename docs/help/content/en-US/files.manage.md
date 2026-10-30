@@ -1,6 +1,6 @@
 # Open, rename and delete
 
-The selected row determines which object a command uses. Keep a separate copy before changing important files. Local deletion asks for confirmation and retains objects for recovery in CryptoBook.
+The selected row determines which object a command uses. Keep a separate copy before changing important files. Local deletion asks for confirmation and moves files and folders to the Windows Recycle Bin.
 
 ## Open or copy a path
 
@@ -21,11 +21,17 @@ After success, refresh and check the full path. Single renaming updates the matc
 
 ## Delete
 
-Select the local objects, choose **Delete** and confirm the selection. **Cancel** in the confirmation leaves files in place. Canceling the operation restores the local batch; if recovery is blocked, the message identifies the preserved data.
+Select local objects, choose **Delete** and confirm the selection. **Cancel** in the confirmation leaves files in place. Objects enter the Windows Recycle Bin with their original names; no sibling folders are created to store deleted files. If recycling is unavailable, an error is shown; the app does not substitute permanent deletion.
 
-To undo a completed deletion, open the original folder and choose **Restore files** on the toolbar. For selections from several folders, the log is beside the first source object. Recovery also works after restarting, returns complete files and folders, and never overwrites an occupied name. Close programs using the files or free the original name, then retry.
+To return them, open the Windows **Recycle Bin**, select the objects and choose **Restore**. They return to their original folders. Canceling a running multi-item deletion or encountering an error may leave some objects in the bin and others in place. Return completed items using the Recycle Bin. Emptying the bin or permanently deleting items from it removes this normal recovery option.
 
-Objects remain in hidden .cryptobook-operation-* folders beside the originals and use disk space until restored or until you explicitly remove those folders. Removing them in Windows File Explorer makes deletion permanent. This uses CryptoBook recovery, separate from the Windows Recycle Bin and editor history. Android and other remote sources retain their separate permanent-deletion warning.
+Android and other remote sources retain a separate permanent-deletion warning. In a mixed selection, local objects enter the bin while remote objects follow device rules.
+
+## Recover interrupted operations
+
+The **Restore operations** toolbar button is available only when the open folder contains a pending recovery journal. It is disabled while restoring and after successful completion. Journals are checked when navigating, refreshing the list and completing a file operation. For an interrupted transfer, open the destination folder; for multi-rename, open the first source file's folder. This button does not return objects from the Windows Recycle Bin.
+
+Objects retained in a sibling recovery folder by a previous build can still be returned with this button from the folder containing their old journal.
 
 ## Related topics
 

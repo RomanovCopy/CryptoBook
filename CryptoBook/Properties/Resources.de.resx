@@ -1388,10 +1388,12 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Datei kann nicht zum Schreiben geöffnet werden: {0}</value></data>
   <data name="Document.FileInUse" xml:space="preserve"><value>Die Datei wird verwendet und kann nicht beschrieben werden. Geben Sie die Datei frei und speichern Sie erneut.</value></data>
   <data name="File.InvalidName" xml:space="preserve"><value>Geben Sie einen gültigen Dateinamen ohne Pfadtrennzeichen, reservierte Namen oder abschließende Punkte bzw. Leerzeichen ein.</value></data>
-  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Ausgewählte Objekte löschen? Lokale Objekte bleiben in einem versteckten Wiederherstellungsordner neben den Originalen erhalten. Mit „Dateien wiederherstellen“ in diesem Ordner holen Sie sie zurück. Die Kopien belegen Speicherplatz, bis sie wiederhergestellt oder ausdrücklich entfernt werden.</value></data>
-  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Dateien wiederherstellen</value></data>
-  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Gelöschte Objekte und unterbrochene lokale Vorgänge aus diesem Ordner wiederherstellen? Vorhandene Namen werden nicht überschrieben. Schließen Sie zuvor Programme, die diese Dateien verwenden.</value></data>
+  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Ausgewählte Objekte löschen? Lokale Dateien und Ordner werden in den Windows-Papierkorb verschoben. Stellen Sie sie dort wieder her. Ist dies nicht möglich, wird der Vorgang mit einem Fehler beendet, ohne die Objekte endgültig zu löschen.</value></data>
+  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Vorgänge wiederherstellen</value></data>
+  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Unterbrochene lokale Übertragungen und Umbenennungen anhand der Protokolle in diesem Ordner wiederherstellen? Belegte Namen werden nicht überschrieben. Kürzlich gelöschte Dateien stellen Sie im Windows-Papierkorb wieder her.</value></data>
   <data name="Explorer.RestoreFilesDone" xml:space="preserve"><value>Wiederherstellung abgeschlossen. Vorhandene Dateien wurden nicht überschrieben.</value></data>
   <data name="Explorer.RecoveryRequired" xml:space="preserve"><value>Einige Dateien konnten nicht wiederhergestellt werden. Schließen Sie Programme, die sie verwenden, oder geben Sie die ursprünglichen Namen frei. Wählen Sie dann „Dateien wiederherstellen“ im Ordner mit diesem Protokoll:</value></data>
   <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>Die Kopie konnte nicht überprüft werden; das Original bleibt erhalten.</value></data>
+  <data name="Explorer.RecycleBinFailed" xml:space="preserve"><value>Das Objekt konnte nicht in den Windows-Papierkorb verschoben werden. Es wurde nicht endgültig gelöscht.</value></data>
+  <data name="Explorer.RecycleCanceledPartial" xml:space="preserve"><value>Einige Objekte wurden vor dem Abbruch bereits in den Windows-Papierkorb verschoben. Stellen Sie sie dort wieder her.</value></data>
 </root>

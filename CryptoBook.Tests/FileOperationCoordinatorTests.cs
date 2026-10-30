@@ -176,7 +176,7 @@ public sealed class FileOperationCoordinatorTests
     }
 
     [Fact]
-    public async Task DeleteAsync_CancellationRestoresEveryLocalItem()
+    public async Task DeleteAsync_CancellationKeepsCompletedItemsInRecycleBin()
     {
         using var temp = new TempDirectory();
         string first = Path.Combine(temp.Path, "first.bin");
@@ -187,10 +187,11 @@ public sealed class FileOperationCoordinatorTests
         var progress = new ProgressDialogStub();
         progress.OnReport = value => { if(value == 0.5) progress.Cancel(); };
         var manager = new FileManagerStub();
+        using var bin = new RecycleBinStub();
         var coordinator = new FileOperationCoordinator(
             manager,
             progress,
-            new ConflictResolverStub(FileConflictAction.Skip));
+            new ConflictResolverStub(FileConflictAction.Skip), recycleBin: bin);
 
         int synchronizationCount = 0;
         FileOperationBatchResult result = await coordinator.DeleteAsync(
@@ -202,17 +203,18 @@ public sealed class FileOperationCoordinatorTests
             });
 
         Assert.True(result.Canceled);
-        Assert.False(result.HasPartialChanges);
-        Assert.Equal(0, result.CompletedCount);
+        Assert.True(result.HasPartialChanges);
+        Assert.Equal(1, result.CompletedCount);
         Assert.Empty(manager.DeletedPaths);
-        Assert.Equal(10, new FileInfo(first).Length);
+        Assert.False(File.Exists(first));
+        Assert.Equal(10, new FileInfo(bin.Items[first]).Length);
         Assert.Equal(20, new FileInfo(second).Length);
         Assert.Empty(Directory.GetDirectories(temp.Path));
         Assert.Equal(1, synchronizationCount);
     }
 
     [Fact]
-    public async Task DeleteAsync_KeepsWholeTreeAndRestoresAfterServiceRestart()
+    public async Task DeleteAsync_RecyclesWholeTreeWithoutSiblingJournal()
     {
         using var temp = new TempDirectory();
         string root = Directory.CreateDirectory(Path.Combine(temp.Path, "root")).FullName;
@@ -220,20 +222,37 @@ public sealed class FileOperationCoordinatorTests
         string file = Path.Combine(child, "data.bin");
         File.WriteAllBytes(file, new byte[16]);
         var manager = new FileManagerStub();
+        using var bin = new RecycleBinStub();
         var coordinator = new FileOperationCoordinator(
             manager,
             new ProgressDialogStub(),
-            new ConflictResolverStub(FileConflictAction.Skip));
+            new ConflictResolverStub(FileConflictAction.Skip), recycleBin: bin);
 
         FileOperationBatchResult result = await coordinator.DeleteAsync([root]);
 
         Assert.True(result.Success);
         Assert.Empty(manager.DeletedPaths);
         Assert.False(Directory.Exists(root));
-        var restarted = new FileOperationCoordinator(manager, new ProgressDialogStub(), new ConflictResolverStub(FileConflictAction.Skip));
-        Assert.True((await restarted.RestoreAsync(temp.Path)).Success);
-        Assert.Equal(16, new FileInfo(file).Length);
-        Assert.Equal([root], Directory.GetDirectories(temp.Path));
+        Assert.Equal(16, new FileInfo(Path.Combine(bin.Items[root], "child", "data.bin")).Length);
+        Assert.False(await coordinator.HasRecoveryAsync(temp.Path));
+        Assert.Empty(Directory.GetDirectories(temp.Path));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_UnavailableRecycleBinDoesNotPermanentlyDeleteSource()
+    {
+        using var temp = new TempDirectory();
+        string file = Path.Combine(temp.Path, "original.txt"); File.WriteAllText(file, "original");
+        using var bin = new RecycleBinStub { Fail = true };
+        var manager = new FileManagerStub();
+        var coordinator = new FileOperationCoordinator(manager, new ProgressDialogStub(),
+            new ConflictResolverStub(FileConflictAction.Skip), recycleBin: bin);
+        var result = await coordinator.DeleteAsync([file]);
+        Assert.False(result.Success);
+        Assert.Equal(0, result.CompletedCount);
+        Assert.Equal("original", File.ReadAllText(file));
+        Assert.Empty(manager.DeletedPaths);
+        Assert.Empty(Directory.GetDirectories(temp.Path));
     }
 
     [Fact]
@@ -249,6 +268,24 @@ public sealed class FileOperationCoordinatorTests
         Assert.Throws<InvalidOperationException>(() =>
             FileOperationCoordinator.ValidateDestination(source, descendant, true));
         FileOperationCoordinator.ValidateDestination(source, sibling, true);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_FailureAfterFirstRecyclePreservesRemainingSourceAndReportsPartialResult()
+    {
+        using var temp = new TempDirectory();
+        string first = Path.Combine(temp.Path, "first.txt"), second = Path.Combine(temp.Path, "second.txt");
+        File.WriteAllText(first, "first"); File.WriteAllText(second, "second");
+        using var bin = new RecycleBinStub { FailAt = 2 };
+        var coordinator = new FileOperationCoordinator(new FileManagerStub(), new ProgressDialogStub(),
+            new ConflictResolverStub(FileConflictAction.Skip), recycleBin: bin);
+        var result = await coordinator.DeleteAsync([first, second]);
+        Assert.False(result.Success);
+        Assert.True(result.HasPartialChanges);
+        Assert.Equal(1, result.CompletedCount);
+        Assert.Equal("first", File.ReadAllText(bin.Items[first]));
+        Assert.Equal("second", File.ReadAllText(second));
+        Assert.False(await coordinator.HasRecoveryAsync(temp.Path));
     }
 
     [Theory]
@@ -483,6 +520,24 @@ public sealed class FileOperationCoordinatorTests
             CancellationToken ct = default) => throw new NotSupportedException();
 
         public string NormalizePath(string rawPath) => rawPath;
+    }
+
+    private sealed class RecycleBinStub : IRecycleBinService, IDisposable
+    {
+        private readonly TempDirectory bin = new();
+        public Dictionary<string, string> Items { get; } = [];
+        public bool Fail { get; init; }
+        public int FailAt { get; init; }
+        public Task<FileOperationResult> RecycleAsync(string path, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if(Fail || FailAt == Items.Count + 1) return Task.FromResult(FileOperationResult.Fail("Recycle Bin unavailable"));
+            string target = Path.Combine(bin.Path, Guid.NewGuid().ToString("N"));
+            if(Directory.Exists(path)) Directory.Move(path, target); else File.Move(path, target);
+            Items.Add(path, target);
+            return Task.FromResult(FileOperationResult.Ok(target));
+        }
+        public void Dispose() => bin.Dispose();
     }
 
     private sealed class TempDirectory: IDisposable

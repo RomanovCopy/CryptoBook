@@ -1388,10 +1388,12 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Cannot open file for writing: {0}</value></data>
   <data name="Document.FileInUse" xml:space="preserve"><value>The file is in use and cannot be written. Release the file and try saving again.</value></data>
   <data name="File.InvalidName" xml:space="preserve"><value>Enter a valid file name without path separators, reserved names, or a trailing dot or space.</value></data>
-  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Delete the selected items? Local items will be kept in a hidden recovery folder beside the originals. Use Restore files in this folder to return them. Recovery copies use disk space until restored or explicitly removed.</value></data>
-  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Restore files</value></data>
-  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Restore deleted items and interrupted local operations recorded in this folder? Existing names will never be overwritten. Close programs using these files before restoring.</value></data>
+  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Delete the selected items? Local files and folders will be moved to the Windows Recycle Bin. Restore them from the Recycle Bin. If recycling is unavailable, the operation fails instead of permanently deleting them.</value></data>
+  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Restore operations</value></data>
+  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Restore interrupted local transfers and renames recorded in this folder? Existing names will not be overwritten. Restore newly deleted files from the Windows Recycle Bin.</value></data>
   <data name="Explorer.RestoreFilesDone" xml:space="preserve"><value>Recovery finished. Existing files were not overwritten.</value></data>
   <data name="Explorer.RecoveryRequired" xml:space="preserve"><value>Some files could not be restored. Close programs using them or free the original names, then use Restore files in the folder containing this recovery log:</value></data>
   <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>The copied item could not be verified; the original has been preserved.</value></data>
+  <data name="Explorer.RecycleBinFailed" xml:space="preserve"><value>Could not move the item to the Windows Recycle Bin. It was not permanently deleted.</value></data>
+  <data name="Explorer.RecycleCanceledPartial" xml:space="preserve"><value>Some items were already moved to the Windows Recycle Bin before cancellation. Restore them from the Recycle Bin.</value></data>
 </root>

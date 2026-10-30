@@ -148,6 +148,32 @@ internal sealed class LocalOperationJournal : IDisposable
         return errors;
     }
 
+    internal static bool HasRecovery(string parent)
+    {
+        try
+        {
+            foreach(string folder in Directory.EnumerateDirectories(parent, Prefix + "*"))
+            {
+                if((File.GetAttributes(folder) & FileAttributes.ReparsePoint) != 0 ||
+                   !File.Exists(Path.Combine(folder, "journal.json"))) continue;
+                try
+                {
+                    using var lease = new FileStream(Path.Combine(folder, "active.lock"), FileMode.OpenOrCreate,
+                        FileAccess.ReadWrite, FileShare.None);
+                    State? state = JsonSerializer.Deserialize<State>(File.ReadAllBytes(Path.Combine(folder, "journal.json")));
+                    if(state is not null)
+                    {
+                        Validate(folder, state);
+                        if(state.Moves.Count > 0) return true;
+                    }
+                }
+                catch(Exception e) when(e is IOException or JsonException or UnauthorizedAccessException) { }
+            }
+        }
+        catch(Exception e) when(e is IOException or UnauthorizedAccessException) { }
+        return false;
+    }
+
     private static void Validate(string folder, State state)
     {
         if(!Guid.TryParseExact(state.Id, "N", out _) ||

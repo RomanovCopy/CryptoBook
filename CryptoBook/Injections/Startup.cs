@@ -404,6 +404,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
             builder.RegisterType<FileConflictResolver>().As<IFileConflictResolver>().SingleInstance();
             builder.RegisterType<FileOperationCoordinator>().As<IFileOperationCoordinator>().SingleInstance();
+            builder.RegisterType<WindowsRecycleBinService>().As<IRecycleBinService>().SingleInstance();
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
