@@ -83,6 +83,8 @@ namespace CryptoBook.Interfaces
         void Execute_CopyCommand(object? obj);
         void Execute_PasteCommand(object? obj);
         void Execute_DeleteCommand(object? obj);  
+        void Execute_RestoreFilesCommand(object? obj) { }
+        bool CanExecute_RestoreFilesCommand(object? obj) => false;
         void Execute_SortedCommand(object? obj);
         void Execute_EncryptingKeyCommand(object? obj);
         void Execute_CreateProtectedCopyCommand(object? obj);

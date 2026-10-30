@@ -10,6 +10,7 @@ namespace CryptoBook.Services
         private readonly IProgressDialogService _progressDialog;
         private readonly IFileConflictResolver _conflictResolver;
         private readonly IStorageFacade _storage;
+        private readonly LocalFileOperationService _localOperations;
 
         public FileOperationCoordinator(
             IFileManagerService fileManager,
@@ -21,6 +22,7 @@ namespace CryptoBook.Services
             _progressDialog = progressDialog ?? throw new ArgumentNullException(nameof(progressDialog));
             _conflictResolver = conflictResolver ?? throw new ArgumentNullException(nameof(conflictResolver));
             _storage = storageFacade ?? new StorageFacade([new LocalStorageProvider()]);
+            _localOperations = new LocalFileOperationService(_fileManager, _storage);
         }
 
         public async Task<FileOperationBatchResult> TransferAsync(
@@ -77,6 +79,10 @@ namespace CryptoBook.Services
                                     token)));
                             long totalBytes = itemSizes.Sum();
                             long completedBytes = 0;
+
+                            if(plans.Items.All(p => _storage.Resolve(p.SourcePath).IsLocal &&
+                                _storage.Resolve(p.DestinationPath).IsLocal))
+                                return await Task.Run(() => _localOperations.TransferAsync(plans, operation, itemSizes, totalBytes, progress, token), token);
 
                             for(int index = 0; index < plans.Items.Count; index++)
                             {
@@ -182,8 +188,18 @@ namespace CryptoBook.Services
                             progress.Report(
                                 null,
                                 LocalizationManager.GetString("Explorer.CalculatingSize"));
+                            if(sources.All(p => _storage.Resolve(p).IsLocal))
+                                return await Task.Run(() => _localOperations.Delete(sources, progress, token), token);
+                            string[] localSources = sources.Where(p => _storage.Resolve(p).IsLocal).ToArray();
+                            if(localSources.Length > 0)
+                            {
+                                FileOperationBatchResult local = await Task.Run(() => _localOperations.Delete(localSources, progress, token), token);
+                                if(!local.Success) return local;
+                                results.AddRange(local.Results);
+                                completed += local.CompletedCount;
+                            }
                             IReadOnlyList<StorageDeletionEntry> entries =
-                                await BuildDeletionPlanAsync(sources, token);
+                                await BuildDeletionPlanAsync(sources.Where(p => !_storage.Resolve(p).IsLocal), token);
                             long totalBytes = entries.Sum(entry => entry.Size);
                             long completedBytes = 0;
 
@@ -241,6 +257,9 @@ namespace CryptoBook.Services
             await synchronizeViewAsync();
         }
 
+        public Task<FileOperationBatchResult> RestoreAsync(string directory,
+            CancellationToken cancellationToken = default) => _localOperations.RestoreAsync(directory, cancellationToken);
+
         private async Task<TransferPlanSet> CreateTransferPlansAsync(
             IReadOnlyList<string> sources,
             string destinationDirectory,
@@ -281,9 +300,12 @@ namespace CryptoBook.Services
                 }
 
                 bool replace = false;
+                string? destinationIdentity = null;
                 if(await _storage.GetMetadataAsync(destinationLocation, token) is not null &&
                    !_storage.AreEquivalent(sourceLocation, destinationLocation))
                 {
+                    if(destinationLocation.IsLocal)
+                        destinationIdentity = LocalOperationJournal.Identity(destinationLocation.OpaqueId);
                     string destination = _storage.Format(destinationLocation);
                     FileConflictDecision decision = applyToAll ?? await _conflictResolver.ResolveAsync(
                         source,
@@ -315,7 +337,8 @@ namespace CryptoBook.Services
                 plans.Add(new TransferPlan(
                     source,
                     _storage.Format(destinationLocation),
-                    replace));
+                    replace,
+                    destinationIdentity));
             }
 
             return new TransferPlanSet(plans, skipped, false);
@@ -398,7 +421,7 @@ namespace CryptoBook.Services
             }
         }
 
-        private static double CalculateOverall(
+        internal static double CalculateOverall(
             long completedBytes,
             long totalBytes,
             int completedItems,
@@ -409,17 +432,18 @@ namespace CryptoBook.Services
 
         private static FileOperationBatchResult EmptyResult() => new([], 0, 0, false, false);
 
-        private sealed record TransferPlan(
+        internal sealed record TransferPlan(
             string SourcePath,
             string DestinationPath,
-            bool ReplaceExisting);
+            bool ReplaceExisting,
+            string? DestinationIdentity);
 
-        private sealed record TransferPlanSet(
+        internal sealed record TransferPlanSet(
             IReadOnlyList<TransferPlan> Items,
             int SkippedCount,
             bool Canceled);
 
-        private sealed class AggregateProgressReporter: IProgressReporter
+        internal sealed class AggregateProgressReporter: IProgressReporter
         {
             private readonly IProgressReporter _outer;
             private readonly long _completedBytes;

@@ -64,7 +64,7 @@ internal static partial class Program
         vm.FileName = name; await Settle(dialog);
         if (!verify) Shot(dialog, "S04-c", "doc.templates", "steps 2-3", [new(2, Bounds(dialog, Named<FrameworkElement>(dialog, "DocumentTemplateSelector"))), new(3, Bounds(dialog, Buttons(dialog).Single(b => b.Command == vm.Create)))]);
         // A once writable directory can disappear while the dialog is open.
-        // Do not assume invalid names are rejected: AutoRename can substitute a generic free name.
+        // Valid names still need a real destination write check.
         string unavailable = Path.Combine(isolated.DemoDirectory, "Unavailable");
         Directory.CreateDirectory(unavailable);
         vm.TargetDirectory = unavailable;
@@ -295,9 +295,9 @@ internal static partial class Program
     private static async Task Until(Func<bool> ready)
     { for (int n = 0; n < 200 && !ready(); n++) await Task.Delay(25); Check(ready(), "Asynchronous UI operation completed."); }
     private sealed class DialogWatch(DispatcherTimer timer) : IDisposable { public void Dispose() => timer.Stop(); }
-    private static IDisposable OnVisible<T>(Func<T, Task> action) where T : Window
+    private static IDisposable OnVisible<T>(Func<T, Task> action, int intervalMs = 150) where T : Window
     {
-        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(intervalMs) };
         timer.Tick += async (_, _) =>
         {
             var window = Application.Current.Windows.OfType<T>().FirstOrDefault(w => w.IsVisible);

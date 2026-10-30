@@ -269,6 +269,147 @@
         "BOM",
         "Zeilenende"
       ]
+    },
+    {
+      "id": "files.navigate",
+      "file": "files.navigate.md",
+      "keywords": [
+        "Adresse",
+        "zurück",
+        "vorwärts",
+        "nicht",
+        "verfügbar",
+        "wiederholen"
+      ]
+    },
+    {
+      "id": "files.views",
+      "file": "files.views.md",
+      "keywords": [
+        "alle",
+        "Dateien",
+        "Unterordner",
+        "Filter",
+        "Auswahl",
+        "Sortierung"
+      ]
+    },
+    {
+      "id": "files.create",
+      "file": "files.create.md",
+      "keywords": [
+        "neuer",
+        "Ordner",
+        "Datei",
+        "erstellen",
+        "ungültiger",
+        "Name",
+        "Auswahl"
+      ]
+    },
+    {
+      "id": "files.transfer",
+      "file": "files.transfer.md",
+      "keywords": [
+        "kopieren",
+        "ausschneiden",
+        "einfügen",
+        "verschieben",
+        "ziehen",
+        "Fortschritt",
+        "abbrechen"
+      ]
+    },
+    {
+      "id": "files.conflicts",
+      "file": "files.conflicts.md",
+      "keywords": [
+        "ersetzen",
+        "überspringen",
+        "beide",
+        "beibehalten",
+        "alle",
+        "Konflikt",
+        "abbrechen"
+      ]
+    },
+    {
+      "id": "files.manage",
+      "file": "files.manage.md",
+      "keywords": [
+        "öffnen",
+        "mit",
+        "Pfad",
+        "umbenennen",
+        "Erweiterung",
+        "löschen",
+        "dauerhaft"
+      ]
+    },
+    {
+      "id": "files.favorites",
+      "file": "files.favorites.md",
+      "keywords": [
+        "Favorit",
+        "Stern",
+        "Ordner",
+        "Anzeigename",
+        "entfernen",
+        "Verweis"
+      ]
+    },
+    {
+      "id": "files.pinned",
+      "file": "files.pinned.md",
+      "keywords": [
+        "anheften",
+        "Dokument",
+        "fehlt",
+        "Speicherort",
+        "Reihenfolge",
+        "lösen"
+      ]
+    },
+    {
+      "id": "files.recent",
+      "file": "files.recent.md",
+      "keywords": [
+        "zuletzt",
+        "Verlauf",
+        "Speicherort",
+        "entfernen",
+        "geöffnet",
+        "gespeichert"
+      ]
+    },
+    {
+      "id": "files.batch",
+      "file": "files.batch.md",
+      "keywords": [
+        "mehrfach",
+        "umbenennen",
+        "Maske",
+        "Bereich",
+        "Zähler",
+        "Regex",
+        "Vorschau",
+        "rückgängig",
+        "Konflikt"
+      ]
+    },
+    {
+      "id": "files.properties",
+      "file": "files.properties.md",
+      "keywords": [
+        "Eigenschaften",
+        "Prüfsummen",
+        "SHA256",
+        "SHA512",
+        "Signatur",
+        "Metadaten",
+        "Filter",
+        "Bericht"
+      ]
     }
   ]
 }

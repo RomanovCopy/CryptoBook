@@ -1,0 +1,20 @@
+{
+  "files": {
+    "total": 154,
+    "passed": 154,
+    "failed": 0,
+    "source": "artifacts/stage6/files-tests.trx"
+  },
+  "batchWindow": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "source": "artifacts/stage6/batch-window-tests.trx"
+  },
+  "help": {
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "source": "artifacts/stage6/help-tests.trx"
+  }
+}

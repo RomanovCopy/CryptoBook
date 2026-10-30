@@ -2238,4 +2238,11 @@
   <data name="File.OpenWriteFailed" xml:space="preserve"><value>Не вдалося відкрити «{0}» для запису: {1}</value></data>
   <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Не вдалося відкрити файл для запису: {0}</value></data>
   <data name="Document.FileInUse" xml:space="preserve"><value>Файл використовується та недоступний для запису. Звільніть файл і повторіть збереження.</value></data>
+  <data name="File.InvalidName" xml:space="preserve"><value>Введіть допустиме ім’я файлу без роздільників шляху, зарезервованих імен, крапки або пробілу в кінці.</value></data>
+  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Видалити вибрані об’єкти? Локальні об’єкти збережуться в прихованій папці відновлення поряд з оригіналами. Для повернення натисніть «Відновити файли» в цій папці. Копії займають місце до відновлення або явного видалення.</value></data>
+  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Відновити файли</value></data>
+  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Повернути видалені об’єкти та перервані локальні операції, записані в цій папці? Зайняті імена не буде перезаписано. Перед відновленням закрийте програми, що використовують ці файли.</value></data>
+  <data name="Explorer.RestoreFilesDone" xml:space="preserve"><value>Відновлення завершено. Наявні файли не перезаписувалися.</value></data>
+  <data name="Explorer.RecoveryRequired" xml:space="preserve"><value>Деякі файли не вдалося повернути. Закрийте програми, що їх використовують, або звільніть початкові імена, а потім натисніть «Відновити файли» в папці з цим журналом:</value></data>
+  <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>Не вдалося перевірити копію; початковий об’єкт збережено.</value></data>
 </root>

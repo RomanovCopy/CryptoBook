@@ -270,6 +270,149 @@
         "bom",
         "line endings"
       ]
+    },
+    {
+      "id": "files.navigate",
+      "file": "files.navigate.md",
+      "keywords": [
+        "address",
+        "back",
+        "forward",
+        "unavailable",
+        "retry"
+      ]
+    },
+    {
+      "id": "files.views",
+      "file": "files.views.md",
+      "keywords": [
+        "all",
+        "files",
+        "recursive",
+        "folder",
+        "filter",
+        "selection",
+        "sorting"
+      ]
+    },
+    {
+      "id": "files.create",
+      "file": "files.create.md",
+      "keywords": [
+        "new",
+        "folder",
+        "create",
+        "file",
+        "invalid",
+        "name",
+        "picker"
+      ]
+    },
+    {
+      "id": "files.transfer",
+      "file": "files.transfer.md",
+      "keywords": [
+        "copy",
+        "cut",
+        "paste",
+        "move",
+        "drag",
+        "progress",
+        "cancellation"
+      ]
+    },
+    {
+      "id": "files.conflicts",
+      "file": "files.conflicts.md",
+      "keywords": [
+        "replace",
+        "skip",
+        "keep",
+        "both",
+        "apply",
+        "all",
+        "conflict",
+        "cancel"
+      ]
+    },
+    {
+      "id": "files.manage",
+      "file": "files.manage.md",
+      "keywords": [
+        "open",
+        "with",
+        "path",
+        "rename",
+        "extension",
+        "delete",
+        "permanent"
+      ]
+    },
+    {
+      "id": "files.favorites",
+      "file": "files.favorites.md",
+      "keywords": [
+        "favorite",
+        "star",
+        "folder",
+        "display",
+        "name",
+        "remove",
+        "shortcut"
+      ]
+    },
+    {
+      "id": "files.pinned",
+      "file": "files.pinned.md",
+      "keywords": [
+        "pin",
+        "document",
+        "missing",
+        "relocate",
+        "order",
+        "unpin"
+      ]
+    },
+    {
+      "id": "files.recent",
+      "file": "files.recent.md",
+      "keywords": [
+        "recent",
+        "history",
+        "locate",
+        "remove",
+        "opened",
+        "saved"
+      ]
+    },
+    {
+      "id": "files.batch",
+      "file": "files.batch.md",
+      "keywords": [
+        "multi",
+        "rename",
+        "mask",
+        "range",
+        "counter",
+        "regex",
+        "preview",
+        "rollback",
+        "conflict"
+      ]
+    },
+    {
+      "id": "files.properties",
+      "file": "files.properties.md",
+      "keywords": [
+        "properties",
+        "checksum",
+        "SHA256",
+        "SHA512",
+        "signature",
+        "metadata",
+        "filter",
+        "report"
+      ]
     }
   ]
 }

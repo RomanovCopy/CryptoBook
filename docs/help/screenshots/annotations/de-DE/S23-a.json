@@ -1,0 +1,12 @@
+{
+  "shotId": "S23-a",
+  "culture": "de-DE",
+  "rawFile": "docs/help/screenshots/raw/de-DE/S23-a.png",
+  "crop": {
+    "x": 0,
+    "y": 32,
+    "width": 740,
+    "height": 780
+  },
+  "marks": []
+}

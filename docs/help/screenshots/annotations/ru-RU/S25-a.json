@@ -1,0 +1,20 @@
+{
+  "shotId": "S25-a",
+  "culture": "ru-RU",
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S25-a.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.8759933574879226,
+      "y": 0.20502080443828016,
+      "width": 0.1095138888888889,
+      "height": 0.040624133148405,
+      "badge": {
+        "x": 0.9329710144927537,
+        "y": 0.1650485436893204
+      }
+    }
+  ]
+}

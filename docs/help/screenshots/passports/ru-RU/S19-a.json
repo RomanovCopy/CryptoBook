@@ -1,0 +1,32 @@
+{
+  "shotId": "S19-a",
+  "topicId": "files.transfer",
+  "articleStepOrArea": "step 1",
+  "culture": "ru-RU",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "341efe28bafe25f66644f26fbeeee257fd15ed0f",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T21:11:28.6267598+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1360,
+    "height": 860
+  },
+  "rawPixels": {
+    "width": 1344,
+    "height": 821
+  },
+  "outputPixels": {
+    "width": 1344,
+    "height": 821
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S19-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/ru-RU/S19-a.json",
+  "outputFile": "docs/help/content/ru-RU/images/S19-a.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\69326d23\\Demo\\Source\\Alpha.txt",
+  "visualCheck": "Reviewed 2026-10-30 by agent: refreshed four-language contact sheets; toolbar, labels, list and annotations fit without overlap; recovery command present. No physical input or independent native-language review."
+}

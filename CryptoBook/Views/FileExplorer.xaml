@@ -364,6 +364,11 @@
                     Command="{Binding DeleteCommand, UpdateSourceTrigger=PropertyChanged}"
                     CommandParameter="{Binding SelectedItemsSnapshot}"
                     Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
+            <Button Content="&#xE7A7;"
+                    ToolTip="{Binding [Explorer.RestoreFiles], Source={StaticResource Res}}"
+                    AutomationProperties.Name="{Binding [Explorer.RestoreFiles], Source={StaticResource Res}}"
+                    Command="{Binding RestoreFilesCommand}"
+                    Style="{StaticResource FileExplorerToolBarButtonStyle}"/>
             <Separator/>
 
             <Button Content="&#xE8D7;"

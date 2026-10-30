@@ -116,8 +116,7 @@ public sealed class FileOperationCoordinatorTests
 
         Assert.True(result.Success);
         Assert.Equal(
-            Path.Combine(destinationDirectory, "same - Copy.txt"),
-            Assert.Single(manager.CopyDestinations));
+            "new", File.ReadAllText(Path.Combine(destinationDirectory, "same - Copy.txt")));
         Assert.Empty(manager.DeletedPaths);
     }
 
@@ -141,13 +140,12 @@ public sealed class FileOperationCoordinatorTests
 
         Assert.True(result.Success);
         Assert.Equal(
-            Path.Combine(temp.Path, "same - Copy.txt"),
-            Assert.Single(manager.CopyDestinations));
+            "content", File.ReadAllText(Path.Combine(temp.Path, "same - Copy.txt")));
         Assert.Equal(0, conflicts.CallCount);
     }
 
     [Fact]
-    public async Task TransferAsync_Replace_DeletesConflictBeforeCopy()
+    public async Task TransferAsync_Replace_PublishesOnlyAfterCopyAndKeepsOriginalUntilThen()
     {
         using var temp = new TempDirectory();
         string sourceDirectory = Directory.CreateDirectory(
@@ -159,7 +157,7 @@ public sealed class FileOperationCoordinatorTests
         File.WriteAllText(source, "new");
         File.WriteAllText(destination, "old");
 
-        var manager = new FileManagerStub();
+        var manager = new FileManagerStub { BeforeCopy = (_, _) => Assert.Equal("old", File.ReadAllText(destination)) };
         var coordinator = new FileOperationCoordinator(
             manager,
             new ProgressDialogStub(),
@@ -171,13 +169,14 @@ public sealed class FileOperationCoordinatorTests
             FileTransferKind.Copy);
 
         Assert.True(result.Success);
-        Assert.Equal(destination, Assert.Single(manager.DeletedPaths));
-        Assert.Equal(destination, Assert.Single(manager.CopyDestinations));
-        Assert.Equal(["delete", "copy"], manager.OperationOrder);
+        Assert.Empty(manager.DeletedPaths);
+        Assert.Equal("new", File.ReadAllText(destination));
+        Assert.Equal(["copy"], manager.OperationOrder);
+        Assert.Empty(Directory.GetDirectories(destinationDirectory));
     }
 
     [Fact]
-    public async Task DeleteAsync_CancellationReportsPartialNonTransactionalResult()
+    public async Task DeleteAsync_CancellationRestoresEveryLocalItem()
     {
         using var temp = new TempDirectory();
         string first = Path.Combine(temp.Path, "first.bin");
@@ -186,10 +185,8 @@ public sealed class FileOperationCoordinatorTests
         File.WriteAllBytes(second, new byte[20]);
 
         var progress = new ProgressDialogStub();
-        var manager = new FileManagerStub
-        {
-            AfterDelete = _ => progress.Cancel()
-        };
+        progress.OnReport = value => { if(value == 0.5) progress.Cancel(); };
+        var manager = new FileManagerStub();
         var coordinator = new FileOperationCoordinator(
             manager,
             progress,
@@ -205,14 +202,17 @@ public sealed class FileOperationCoordinatorTests
             });
 
         Assert.True(result.Canceled);
-        Assert.True(result.HasPartialChanges);
-        Assert.Equal(1, result.CompletedCount);
-        Assert.Single(manager.DeletedPaths);
+        Assert.False(result.HasPartialChanges);
+        Assert.Equal(0, result.CompletedCount);
+        Assert.Empty(manager.DeletedPaths);
+        Assert.Equal(10, new FileInfo(first).Length);
+        Assert.Equal(20, new FileInfo(second).Length);
+        Assert.Empty(Directory.GetDirectories(temp.Path));
         Assert.Equal(1, synchronizationCount);
     }
 
     [Fact]
-    public async Task DeleteAsync_DeletesChildrenBeforeParentDirectory()
+    public async Task DeleteAsync_KeepsWholeTreeAndRestoresAfterServiceRestart()
     {
         using var temp = new TempDirectory();
         string root = Directory.CreateDirectory(Path.Combine(temp.Path, "root")).FullName;
@@ -228,7 +228,12 @@ public sealed class FileOperationCoordinatorTests
         FileOperationBatchResult result = await coordinator.DeleteAsync([root]);
 
         Assert.True(result.Success);
-        Assert.Equal([file, child, root], manager.DeletedPaths);
+        Assert.Empty(manager.DeletedPaths);
+        Assert.False(Directory.Exists(root));
+        var restarted = new FileOperationCoordinator(manager, new ProgressDialogStub(), new ConflictResolverStub(FileConflictAction.Skip));
+        Assert.True((await restarted.RestoreAsync(temp.Path)).Success);
+        Assert.Equal(16, new FileInfo(file).Length);
+        Assert.Equal([root], Directory.GetDirectories(temp.Path));
     }
 
     [Fact]
@@ -244,6 +249,75 @@ public sealed class FileOperationCoordinatorTests
         Assert.Throws<InvalidOperationException>(() =>
             FileOperationCoordinator.ValidateDestination(source, descendant, true));
         FileOperationCoordinator.ValidateDestination(source, sibling, true);
+    }
+
+    [Theory]
+    [InlineData(FileTransferKind.Copy)]
+    [InlineData(FileTransferKind.Move)]
+    public async Task TransferAsync_CancelAfterFirstItemRollsBackWholeLocalBatch(FileTransferKind kind)
+    {
+        using var temp = new TempDirectory();
+        string source = Directory.CreateDirectory(Path.Combine(temp.Path, "source")).FullName;
+        string target = Directory.CreateDirectory(Path.Combine(temp.Path, "target")).FullName;
+        string a = Path.Combine(source, "a.txt"), b = Path.Combine(source, "b.txt");
+        File.WriteAllText(a, "A"); File.WriteAllText(b, "B");
+        File.WriteAllText(Path.Combine(target, "a.txt"), "old A");
+        var progress = new ProgressDialogStub();
+        progress.OnReport = value => { if(value == 0.5) progress.Cancel(); };
+        var service = new FileOperationCoordinator(new FileManagerStub(), progress,
+            new ConflictResolverStub(FileConflictAction.Replace));
+        var result = await service.TransferAsync([a, b], target, kind);
+        Assert.True(result.Canceled);
+        Assert.False(result.HasPartialChanges);
+        Assert.Equal(0, result.CompletedCount);
+        Assert.Equal("A", File.ReadAllText(a)); Assert.Equal("B", File.ReadAllText(b));
+        Assert.Equal("old A", File.ReadAllText(Path.Combine(target, "a.txt")));
+        Assert.False(File.Exists(Path.Combine(target, "b.txt")));
+        Assert.Empty(Directory.GetDirectories(source)); Assert.Empty(Directory.GetDirectories(target));
+    }
+
+    [Fact]
+    public async Task TransferAsync_FailureOnSecondItemRestoresPreviouslyReplacedTarget()
+    {
+        using var temp = new TempDirectory();
+        string source = Directory.CreateDirectory(Path.Combine(temp.Path, "source")).FullName;
+        string target = Directory.CreateDirectory(Path.Combine(temp.Path, "target")).FullName;
+        string a = Path.Combine(source, "a.txt"), b = Path.Combine(source, "b.txt");
+        File.WriteAllText(a, "A"); File.WriteAllText(b, "B");
+        File.WriteAllText(Path.Combine(target, "a.txt"), "old A");
+        var manager = new FileManagerStub { BeforeCopy = (path, _) =>
+        {
+            if(path == b) throw new IOException("injected copy failure");
+        } };
+        var service = new FileOperationCoordinator(manager, new ProgressDialogStub(),
+            new ConflictResolverStub(FileConflictAction.Replace));
+        var result = await service.TransferAsync([a, b], target, FileTransferKind.Copy);
+        Assert.False(result.Success);
+        Assert.False(result.HasPartialChanges);
+        Assert.Equal("old A", File.ReadAllText(Path.Combine(target, "a.txt")));
+        Assert.Equal("A", File.ReadAllText(a)); Assert.Equal("B", File.ReadAllText(b));
+        Assert.False(File.Exists(Path.Combine(target, "b.txt")));
+        Assert.Empty(Directory.GetDirectories(target));
+    }
+
+    [Fact]
+    public async Task TransferAsync_TargetChangedAfterConfirmationIsNotOverwritten()
+    {
+        using var temp = new TempDirectory();
+        string source = Directory.CreateDirectory(Path.Combine(temp.Path, "source")).FullName;
+        string target = Directory.CreateDirectory(Path.Combine(temp.Path, "target")).FullName;
+        string a = Path.Combine(source, "a.txt"), destination = Path.Combine(target, "a.txt");
+        File.WriteAllText(a, "A"); File.WriteAllText(destination, "old A");
+        var manager = new FileManagerStub { BeforeCopy = (_, _) =>
+        {
+            File.Move(destination, Path.Combine(target, "external-backup.txt"));
+            File.WriteAllText(destination, "external");
+        } };
+        var service = new FileOperationCoordinator(manager, new ProgressDialogStub(),
+            new ConflictResolverStub(FileConflictAction.Replace));
+        Assert.False((await service.TransferAsync([a], target, FileTransferKind.Copy)).Success);
+        Assert.Equal("external", File.ReadAllText(destination));
+        Assert.Equal("A", File.ReadAllText(a));
     }
 
     private sealed class ConflictResolverStub: IFileConflictResolver
@@ -273,6 +347,7 @@ public sealed class FileOperationCoordinatorTests
         private readonly CancellationTokenSource _cancellation = new();
         public List<double> Values { get; } = [];
         public bool IsOperationActive { get; private set; }
+        public Action<double?>? OnReport { get; set; }
 
         public void Cancel() => _cancellation.Cancel();
 
@@ -284,7 +359,7 @@ public sealed class FileOperationCoordinatorTests
             try
             {
                 return await operation(
-                    new ProgressReporter(Values),
+                    new ProgressReporter(Values, value => OnReport?.Invoke(value)),
                     _cancellation.Token);
             }
             finally
@@ -296,16 +371,19 @@ public sealed class FileOperationCoordinatorTests
         private sealed class ProgressReporter: IProgressReporter
         {
             private readonly ICollection<double> _values;
+            private readonly Action<double?> callback;
 
-            public ProgressReporter(ICollection<double> values)
+            public ProgressReporter(ICollection<double> values, Action<double?> callback)
             {
                 _values = values;
+                this.callback = callback;
             }
 
             public void Report(double? value, string? currentInfo = null)
             {
                 if(value is not null)
                     _values.Add(value.Value);
+                callback(value);
             }
         }
     }
@@ -316,6 +394,7 @@ public sealed class FileOperationCoordinatorTests
         public List<string> DeletedPaths { get; } = [];
         public List<string> OperationOrder { get; } = [];
         public Action<string>? AfterDelete { get; init; }
+        public Action<string, string>? BeforeCopy { get; init; }
 
         public Task<FileOperationResult> CopyAsync(
             string sourcePath,
@@ -326,6 +405,8 @@ public sealed class FileOperationCoordinatorTests
             cancellationToken.ThrowIfCancellationRequested();
             OperationOrder.Add("copy");
             CopyDestinations.Add(destinationPath);
+            BeforeCopy?.Invoke(sourcePath, destinationPath);
+            File.Copy(sourcePath, destinationPath);
             progress?.Report(0.5, sourcePath);
             return Task.FromResult(FileOperationResult.Ok());
         }

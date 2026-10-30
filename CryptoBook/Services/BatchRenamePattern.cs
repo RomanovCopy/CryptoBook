@@ -100,15 +100,7 @@ public static class BatchRenamePattern
 
     public static string? ValidateName(string name)
     {
-        if(string.IsNullOrWhiteSpace(name) || name.Length > 255 || name is "." or ".." ||
-           name.EndsWith('.') || name.EndsWith(' ') ||
-           name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-            return Text("NameInvalid");
-        string stem = name.Split('.')[0].TrimEnd(' ');
-        if(Regex.IsMatch(stem, @"^(CON|PRN|AUX|NUL|COM[1-9¹²³]|LPT[1-9¹²³])$",
-            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
-            return Text("NameInvalid");
-        return null;
+        return FileNameValidation.Validate(name) is null ? null : Text("NameInvalid");
     }
 
     internal static string Text(string key) => LocalizationManager.GetString("BatchRename." + key);

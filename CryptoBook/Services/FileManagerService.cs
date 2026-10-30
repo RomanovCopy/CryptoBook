@@ -203,6 +203,8 @@ namespace CryptoBook.Services
 
         public async Task<FileOperationResult> RenameAsync(string path, string newName, CancellationToken cancellationToken)
         {
+            if(FileNameValidation.Validate(newName) is { } error)
+                return FileOperationResult.Fail(error);
             var desc = ParsePath(path);
             var provider = ResolveProvider(desc.Scheme);
             try

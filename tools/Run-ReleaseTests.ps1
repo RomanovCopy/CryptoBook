@@ -19,6 +19,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Release test build failed.' }
 # hang in the combined WPF group while the isolated cancellation group passes.
 # The visible batch rename window needs its own Application dispatcher as well.
 # Help tests also own an Application and an in-memory settings provider; isolate them.
+# Image layout templates must not inherit Application resources from another STA thread.
 $groups = @(
     @{ Name = 'ai-integration'; Arguments = @('-class', 'CryptoBook.Tests.AiIntegrationTests') },
     @{ Name = 'ai-runtime'; Arguments = @('-class', 'CryptoBook.Tests.AdaptiveAiInferenceTests') },
@@ -26,7 +27,8 @@ $groups = @(
     @{ Name = 'worker-cancellation'; Arguments = @('-class', 'CryptoBook.Tests.AiWorkerCancellationTests') },
     @{ Name = 'batch-rename-window'; Arguments = @('-class', 'CryptoBook.Tests.BatchRenameWindowTests') },
     @{ Name = 'help'; Arguments = @('-class', 'CryptoBook.Tests.HelpTests') },
-    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.HelpTests') }
+    @{ Name = 'image-layout'; Arguments = @('-class', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests') },
+    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.HelpTests', '-class-', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests') }
 )
 $total = 0
 foreach ($group in $groups) {

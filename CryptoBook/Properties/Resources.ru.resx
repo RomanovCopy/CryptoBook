@@ -1387,4 +1387,11 @@
   <data name="File.OpenWriteFailed" xml:space="preserve"><value>Не удалось открыть «{0}» для записи: {1}</value></data>
   <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Не удалось открыть файл для записи: {0}</value></data>
   <data name="Document.FileInUse" xml:space="preserve"><value>Файл используется и недоступен для записи. Освободите файл и повторите сохранение.</value></data>
+  <data name="File.InvalidName" xml:space="preserve"><value>Введите допустимое имя файла без разделителей пути, зарезервированных имён, точки или пробела в конце.</value></data>
+  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Удалить выбранные объекты? Локальные объекты сохранятся в скрытой папке восстановления рядом с исходными. Для возврата используйте «Восстановить файлы» в этой папке. Копии занимают место до восстановления или явного удаления.</value></data>
+  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Восстановить файлы</value></data>
+  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Вернуть удалённые объекты и прерванные локальные операции, записанные в этой папке? Занятые имена не будут перезаписаны. Перед восстановлением закройте программы, использующие эти файлы.</value></data>
+  <data name="Explorer.RestoreFilesDone" xml:space="preserve"><value>Восстановление завершено. Существующие файлы не перезаписывались.</value></data>
+  <data name="Explorer.RecoveryRequired" xml:space="preserve"><value>Некоторые файлы не удалось вернуть. Закройте использующие их программы или освободите исходные имена, затем нажмите «Восстановить файлы» в папке с этим журналом:</value></data>
+  <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>Не удалось проверить копию; исходный объект сохранён.</value></data>
 </root>

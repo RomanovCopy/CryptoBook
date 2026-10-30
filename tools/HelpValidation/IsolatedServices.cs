@@ -19,6 +19,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     public ValidationSavePicker SavePicker { get; } = new();
     public ValidationDocumentDialogs DocumentDialogs { get; } = new();
     public ValidationImagePicker ImagePicker { get; } = new();
+    public ValidationFolderPicker FolderPicker { get; } = new(Path.Combine(Path.GetFullPath(root), "Demo"));
     public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
         .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
     private string Store(string name)
@@ -47,7 +48,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         builder.Register(c => new LockSnapshotService(c.Resolve<ISecureFileProcessor>(), c.Resolve<IFlowDocumentSaveService>(),
             c.Resolve<IFlowDocumentLoadService>(), snapshot, c.Resolve<IFileTemplateRegistry>(),
             c.Resolve<IMarkdownDocumentState>(), c.Resolve<IKeyProvider>())).As<ILockSnapshotService>().SingleInstance();
-        builder.RegisterInstance<IFolderPickerService>(new DemoFolderPicker(DemoDirectory));
+        builder.RegisterInstance<IFolderPickerService>(FolderPicker);
         if (documentValidation)
         {
             builder.RegisterInstance<IDocumentSaveTargetPicker>(SavePicker);
@@ -61,8 +62,6 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         // Theme, ink palette, geometry and help state use the installed memory provider.
         builder.RegisterBuildCallback(c => Container = c);
     }
-    private sealed class DemoFolderPicker(string path) : IFolderPickerService
-    { public Task<string?> PickFolderAsync(string? initialDirectory, CancellationToken ct) => Task.FromResult<string?>(path); }
     private sealed class NoUpdates : IApplicationUpdateService
     { public Task<ApplicationRelease?> CheckAsync(CancellationToken cancellationToken = default) => Task.FromResult<ApplicationRelease?>(null); }
     private sealed class NoDirectoryMonitoring : IDirectoryMonitoringService
@@ -107,6 +106,20 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         public void StartMonitoring() { }
         public void StopMonitoring() { }
         public void Dispose() { }
+    }
+}
+
+public sealed class ValidationFolderPicker(string defaultPath) : IFolderPickerService
+{
+    public Queue<string?> Paths { get; } = new();
+    public Task<string?> PickFolderAsync(string? initialDirectory, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        string? path = Paths.Count > 0 ? Paths.Dequeue() : defaultPath;
+        string root = Path.GetDirectoryName(defaultPath)! + Path.DirectorySeparatorChar;
+        if (path is not null && !Path.GetFullPath(path).StartsWith(root, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Validation folder picker escaped its disposable root.");
+        return Task.FromResult(path);
     }
 }
 

@@ -1,0 +1,32 @@
+{
+  "shotId": "S22-a",
+  "topicId": "files.favorites",
+  "articleStepOrArea": "step 1",
+  "culture": "en-US",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "341efe28bafe25f66644f26fbeeee257fd15ed0f",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T21:11:14.7624029+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1360,
+    "height": 860
+  },
+  "rawPixels": {
+    "width": 1344,
+    "height": 821
+  },
+  "outputPixels": {
+    "width": 1344,
+    "height": 119
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/en-US/S22-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/en-US/S22-a.json",
+  "outputFile": "docs/help/content/en-US/images/S22-a.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\en-US\\d80f5506\\Demo\\Source\\Alpha.txt",
+  "visualCheck": "Reviewed 2026-10-30 by agent: refreshed four-language contact sheets; toolbar, labels, list and annotations fit without overlap; recovery command present. No physical input or independent native-language review."
+}

@@ -1,0 +1,20 @@
+{
+  "shotId": "S18-d",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S18-d.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 2,
+      "shape": "rectangle",
+      "x": 0.04455445544554455,
+      "y": 0.35083969465648857,
+      "width": 0.9108910891089109,
+      "height": 0.21374045801526717,
+      "badge": {
+        "x": 0.9257425742574258,
+        "y": 0.19083969465648856
+      }
+    }
+  ]
+}
