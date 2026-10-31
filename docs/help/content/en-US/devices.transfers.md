@@ -15,6 +15,10 @@ Check free space and permissions at both ends. Transfers between devices can als
 3. For duplicate names, review Replace, Skip, Keep both or Cancel carefully. Keeping both is a safer first step for important data.
 4. Wait for the progress result. To stop, choose **Cancel** and wait for cancellation to finish.
 
+![Name conflict while copying to a device folder.](images/S29-a.png "Name conflict while copying to a device folder.")
+
+![Cancelling a transfer in the actual progress window.](images/S29-b.png "Cancelling a transfer in the actual progress window.")
+
 ## Check the result
 
 After copying, inspect the destination and open a sample file. Cross-source/device moves delete the source after verification, including folder composition and SHA-256 of accessible streams. This is not a promise of whole-batch rollback for remote operations.

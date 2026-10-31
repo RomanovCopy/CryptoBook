@@ -21,6 +21,10 @@ Befehle hängen von Quelle, Objekt und Rechten ab. Android bietet zusätzlichen 
 3. Wählen Sie unter **Dokument entschlüsseln** ein verfügbares Format und **Geschützte Quelldatei durch die entschlüsselte Datei ersetzen** für die Ausgabe auf dem Gerät. Schreib- und Löschrechte sind nötig; lesen Sie die Warnung vor der Bestätigung.
 4. Um das geschützte Original zu behalten, wählen Sie eine entschlüsselte Kopie und prüfen deren Ziel ausdrücklich.
 
+![Bildvorschau aus dem Testordner des Geräts.](images/S28-b.png "Bildvorschau aus dem Testordner des Geräts.")
+
+![Protected.txt nach dem Entschlüsseln auf dem Gerät.](images/S29-c.png "Protected.txt nach dem Entschlüsseln auf dem Gerät.")
+
 ## Ergebnis prüfen
 
 Nach erfolgreichem Ersetzen liegt das Ergebnis im Geräteordner. Name und Erweiterung können abweichen. Das Entschlüsseln lesbarer entfernter Dateien benötigt keine gesonderte Verschlüsselungsfähigkeit.

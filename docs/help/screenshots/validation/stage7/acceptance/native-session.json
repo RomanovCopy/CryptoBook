@@ -1,0 +1,91 @@
+{
+  "culture": "ru-RU",
+  "commit": "967a8367d5722bb9ce8c4c07b7fff80c1b70bca3",
+  "mode": "stage7-acceptance",
+  "status": "requires independent human observations",
+  "root": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\ce8f5411",
+  "events": [
+    {
+      "at": "2026-10-31T14:32:13.6803628+00:00",
+      "action": "session-started",
+      "detail": {
+        "nativePrinting": true
+      }
+    },
+    {
+      "at": "2026-10-31T14:32:13.8496196+00:00",
+      "action": "device-inventory",
+      "detail": {
+        "discovered": 3,
+        "available": 3,
+        "states": [
+          {
+            "state": "online",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-31T14:32:41.1300983+00:00",
+      "action": "pdf-shell-dispatch",
+      "detail": {
+        "Success": true,
+        "OpenedInternally": false,
+        "currentDocumentPreserved": true
+      }
+    },
+    {
+      "at": "2026-10-31T14:33:03.2390601+00:00",
+      "action": "native-print-requested",
+      "detail": {
+        "fixture": "Stage7-ordinary.rtf"
+      }
+    },
+    {
+      "at": "2026-10-31T14:34:04.0984561+00:00",
+      "action": "native-print-returned",
+      "detail": {
+        "fixture": "Stage7-ordinary.rtf",
+        "outcome": "requires human observation or output inspection"
+      }
+    },
+    {
+      "at": "2026-10-31T14:34:20.5334428+00:00",
+      "action": "native-print-requested",
+      "detail": {
+        "fixture": "Stage7-ordinary.rtf"
+      }
+    },
+    {
+      "at": "2026-10-31T14:35:56.2893935+00:00",
+      "action": "native-print-returned",
+      "detail": {
+        "fixture": "Stage7-ordinary.rtf",
+        "outcome": "requires human observation or output inspection"
+      }
+    },
+    {
+      "at": "2026-10-31T14:36:05.6129758+00:00",
+      "action": "native-print-requested",
+      "detail": {
+        "fixture": "Stage7-markdown.md"
+      }
+    },
+    {
+      "at": "2026-10-31T14:36:29.9956812+00:00",
+      "action": "native-print-returned",
+      "detail": {
+        "fixture": "Stage7-markdown.md",
+        "outcome": "requires human observation or output inspection"
+      }
+    },
+    {
+      "at": "2026-10-31T14:39:42.6692278+00:00",
+      "action": "session-closed",
+      "detail": null
+    }
+  ],
+  "bindingErrors": [],
+  "scope": "User-operated production windows, native dialogs and device monitoring; settings and stores isolated. No personal file names or device IDs logged automatically. No inferred physical printing or audible sound."
+}

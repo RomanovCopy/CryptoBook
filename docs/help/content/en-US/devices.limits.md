@@ -21,6 +21,10 @@ Commands depend on the selected source, object and permissions. Android provides
 3. In **Decrypt document**, choose an available output format and **Replace the protected source with the decrypted file** for output on the device. Write and delete permissions are required; review the warning before confirming.
 4. To retain the protected original, choose a decrypted copy and explicitly check its destination.
 
+![Image preview from the disposable device folder.](images/S28-b.png "Image preview from the disposable device folder.")
+
+![Protected.txt after decryption on the device.](images/S29-c.png "Protected.txt after decryption on the device.")
+
 ## Check the result
 
 After successful replacement the output is in the device folder. Its name and extension can differ from the protected file. Decrypting a readable remote file does not require a separate encryption capability.

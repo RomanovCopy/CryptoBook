@@ -543,29 +543,37 @@
     {
       "id": "devices.android",
       "section": "devices",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F094"
       ],
-      "illustrationIds": []
+      "illustrationIds": [
+        "S28-a"
+      ]
     },
     {
       "id": "devices.transfers",
       "section": "devices",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F095"
       ],
-      "illustrationIds": []
+      "illustrationIds": [
+        "S29-a",
+        "S29-b"
+      ]
     },
     {
       "id": "devices.limits",
       "section": "devices",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F096"
       ],
-      "illustrationIds": []
+      "illustrationIds": [
+        "S28-b",
+        "S29-c"
+      ]
     },
     {
       "id": "view.preview",
@@ -593,7 +601,7 @@
     {
       "id": "view.video",
       "section": "view",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F099",
         "F100"
@@ -605,7 +613,7 @@
     {
       "id": "view.pdf",
       "section": "view",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F101"
       ],
@@ -616,7 +624,7 @@
     {
       "id": "view.print",
       "section": "view",
-      "status": "sample",
+      "status": "ready",
       "featureIds": [
         "F102"
       ],
@@ -1190,6 +1198,36 @@
       "scenarioId": "S32",
       "status": "ready",
       "file": "images/S32-a.png"
+    },
+    {
+      "id": "S28-a",
+      "scenarioId": "S28",
+      "status": "ready",
+      "file": "images/S28-a.png"
+    },
+    {
+      "id": "S28-b",
+      "scenarioId": "S28",
+      "status": "ready",
+      "file": "images/S28-b.png"
+    },
+    {
+      "id": "S29-a",
+      "scenarioId": "S29",
+      "status": "ready",
+      "file": "images/S29-a.png"
+    },
+    {
+      "id": "S29-b",
+      "scenarioId": "S29",
+      "status": "ready",
+      "file": "images/S29-b.png"
+    },
+    {
+      "id": "S29-c",
+      "scenarioId": "S29",
+      "status": "ready",
+      "file": "images/S29-c.png"
     }
   ]
 }

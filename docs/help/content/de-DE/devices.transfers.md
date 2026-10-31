@@ -15,6 +15,10 @@ Prüfen Sie freien Speicher und Rechte auf beiden Seiten. Zwischen Geräten kann
 3. Prüfen Sie bei gleichen Namen Ersetzen, Überspringen, Beide behalten oder Abbrechen sorgfältig. Für wichtige Daten ist es zunächst sicherer, beide Dateien zu behalten.
 4. Warten Sie auf das Ergebnis im Fortschrittsfenster. Zum Stoppen wählen Sie **Abbrechen** und warten auf den Abschluss.
 
+![Namenskonflikt beim Kopieren in einen Geräteordner.](images/S29-a.png "Namenskonflikt beim Kopieren in einen Geräteordner.")
+
+![Abbrechen einer Übertragung im tatsächlichen Fortschrittsfenster.](images/S29-b.png "Abbrechen einer Übertragung im tatsächlichen Fortschrittsfenster.")
+
 ## Ergebnis prüfen
 
 Prüfen Sie nach dem Kopieren das Ziel und öffnen Sie eine Beispieldatei. Beim Verschieben zwischen Quellen/Geräten wird die Quelle erst nach Prüfung der Kopie gelöscht, einschließlich Ordnerinhalt und SHA-256 erreichbarer Datenströme. Dies garantiert keine Rücknahme des gesamten entfernten Stapels.

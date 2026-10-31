@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-31",
+  "observations": [
+    {
+      "reply": "Все в порядке.",
+      "scope": "Video frame, tone, native controls, keys, two players, external PDF",
+      "evidenceLimit": "First panel session recorded no action buttons. Observation retained separately; not used as proof of fixture file creation."
+    },
+    {
+      "reply": "все в порядке",
+      "scope": "Native print cancel and two virtual outputs",
+      "evidenceLimit": "Expected files were absent after reply. Later created and verified through actual native UI Automation."
+    }
+  ],
+  "acceptedExclusions": [
+    {
+      "scope": "Physical EPSON",
+      "reply": "Принтер проверять не стоит, он в другой сети и подключиться к нему нет возможности."
+    },
+    {
+      "scope": "Two Android devices",
+      "reply": "Принять ограничение: второго устройства нет."
+    },
+    {
+      "reply": "Да, принять это ограничение этапа 7.",
+      "scope": "Cable loss during an active write",
+      "questionScope": "Separate explicit question distinguished actual progress cancellation and idle disconnect/reconnect from cable interruption during writing."
+    }
+  ],
+  "physicalConnection": {
+    "idleOnly": true,
+    "disconnectReply": "отключено",
+    "reconnectReply": "подключено"
+  }
+}

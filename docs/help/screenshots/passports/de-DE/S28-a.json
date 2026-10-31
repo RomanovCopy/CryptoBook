@@ -1,0 +1,32 @@
+{
+  "shotId": "S28-a",
+  "topicId": "devices.android",
+  "articleStepOrArea": "actual disposable MTP folder and text preview",
+  "culture": "de-DE",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "967a8367d5722bb9ce8c4c07b7fff80c1b70bca3",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-31T17:23:38.7266156+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1360,
+    "height": 860
+  },
+  "rawPixels": {
+    "width": 1344,
+    "height": 821
+  },
+  "outputPixels": {
+    "width": 1344,
+    "height": 821
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/de-DE/S28-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/de-DE/S28-a.json",
+  "outputFile": "docs/help/content/de-DE/images/S28-a.png",
+  "actionCheck": "Actual connected Galaxy Tab S7+ via production WPD/MTP and transfer/security services; newly created disposable folder only. Progress cancellation at startup, not mid-transfer. No physical keyboard/mouse claimed.",
+  "demoFile": null,
+  "visualCheck": "Reviewed 31 October 2026: contact sheet and localized production controls, no clipping. Storage-volume names come from the device/Windows and retain their original language."
+}

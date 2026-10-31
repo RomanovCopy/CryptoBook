@@ -10,7 +10,7 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Validation;
 
-public sealed class IsolatedServices(string root, bool documentValidation = false, bool stage7 = false)
+public sealed class IsolatedServices(string root, bool documentValidation = false, bool stage7 = false, bool hardwareAcceptance = false)
 {
     public ILifetimeScope Container { get; private set; } = null!;
     public string Root { get; } = Path.GetFullPath(root);
@@ -24,6 +24,16 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     public ValidationPrintSink PrintSink { get; } = new();
     public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
         .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
+    public async Task PreparePortableDemoAsync(StorageItemMetadata device, StorageItemMetadata volume, StorageItemMetadata folder)
+    {
+        var factory = Container.Resolve<ISystemItemCreateService>();
+        var root = factory.CreateRoot(device);
+        var storage = factory.CreateDirectory(volume, root);
+        var demo = factory.CreateDirectory(folder, storage);
+        await root.AddChildAsync([storage], item => item.FullPath); root.IsLoaded = true;
+        await storage.AddChildAsync([demo], item => item.FullPath); storage.IsLoaded = true;
+        ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>()).Add(root);
+    }
     private string Store(string name)
     {
         string path = Path.GetFullPath(Path.Combine(Root, name));
@@ -50,7 +60,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         builder.Register(c => new LockSnapshotService(c.Resolve<ISecureFileProcessor>(), c.Resolve<IFlowDocumentSaveService>(),
             c.Resolve<IFlowDocumentLoadService>(), snapshot, c.Resolve<IFileTemplateRegistry>(),
             c.Resolve<IMarkdownDocumentState>(), c.Resolve<IKeyProvider>())).As<ILockSnapshotService>().SingleInstance();
-        builder.RegisterInstance<IFolderPickerService>(FolderPicker);
+        if (!hardwareAcceptance) builder.RegisterInstance<IFolderPickerService>(FolderPicker);
         builder.RegisterInstance<IRecycleBinService>(RecycleBin);
         if (stage7) builder.RegisterInstance<IDocumentPrintService>(PrintSink);
         if (documentValidation)
@@ -62,7 +72,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         }
         builder.RegisterInstance<IApplicationUpdateService>(new NoUpdates());
         builder.RegisterInstance<IApplicationActivationService>(new NoActivation());
-        builder.RegisterInstance<IDriveManagerService>(new NoDriveMonitoring());
+        if (!hardwareAcceptance) builder.RegisterInstance<IDriveManagerService>(new NoDriveMonitoring());
         // Theme, ink palette, geometry and help state use the installed memory provider.
         builder.RegisterBuildCallback(c => Container = c);
     }
@@ -90,6 +100,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         private readonly ObservableCollection<IDriveItem> roots = [];
         public ReadOnlyObservableCollection<IDriveItem> WritableDrives { get; }
         public NoDriveMonitoring() => WritableDrives = new(roots);
+        public void Add(IDriveItem root) => roots.Add(root);
         public async Task PrepareAsync(ISystemItemCreateService factory, string demoDirectory)
         {
             string drivePath = Path.GetPathRoot(demoDirectory)!;

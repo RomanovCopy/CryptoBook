@@ -13,6 +13,8 @@ Use a data-capable cable, unlock the device and allow shared-storage access. Fol
 3. Check the list and enabled commands using one disposable test file. Start by copying and keep the original.
 4. When operations finish, end access to the device and disconnect it. After reconnecting, select the source and folder again.
 
+![Disposable folder on a connected MTP device and text preview.](images/S28-a.png "Disposable folder on a connected MTP device and text preview.")
+
 ## Check the result
 
 The device source and its accessible folders appear in the tree. It is a file source, not a local search workspace. Some local-disk commands are unavailable on devices.

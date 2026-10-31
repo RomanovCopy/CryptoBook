@@ -13,6 +13,8 @@ Sie benötigen ein Datenkabel, ein entsperrtes Gerät und Zugriff auf den gemein
 3. Prüfen Sie Liste und verfügbare Befehle mit einer entbehrlichen Testdatei. Beginnen Sie mit Kopieren und behalten Sie das Original.
 4. Beenden Sie nach Abschluss der Vorgänge den Zugriff und trennen Sie das Gerät. Wählen Sie nach erneutem Verbinden Quelle und Ordner neu.
 
+![Testordner auf einem angeschlossenen MTP-Gerät mit Textvorschau.](images/S28-a.png "Testordner auf einem angeschlossenen MTP-Gerät mit Textvorschau.")
+
 ## Ergebnis prüfen
 
 Gerätequelle und erreichbare Ordner erscheinen im Baum. Dies ist eine Dateiquelle, kein lokaler Such-Arbeitsordner. Nicht alle Befehle lokaler Datenträger stehen zur Verfügung.
