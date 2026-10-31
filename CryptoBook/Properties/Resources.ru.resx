@@ -576,9 +576,9 @@
   <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Открыть изображение или видео</value></data>
   <data name="Media.Loading" xml:space="preserve"><value>Загрузка: {0}</value></data>
   <data name="Media.DeleteTitle" xml:space="preserve"><value>Удаление изображения</value></data>
-  <data name="Media.DeletePrompt" xml:space="preserve"><value>Удалить «{0}»?</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>Переместить файл «{0}» в корзину Windows? Его можно будет восстановить из корзины.</value></data>
   <data name="Media.DeleteError" xml:space="preserve"><value>Ошибка удаления</value></data>
-  <data name="Media.DeleteFailed" xml:space="preserve"><value>Не удалось удалить изображение.</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Не удалось переместить файл в корзину Windows. Безвозвратное удаление не выполнялось.</value></data>
   <data name="Media.NoMoreImages" xml:space="preserve"><value>В папке больше нет изображений.</value></data>
   <data name="Media.DecodeFailed" xml:space="preserve"><value>Не удалось декодировать изображение.</value></data>
   <data name="Media.Filter" xml:space="preserve"><value>Медиафайлы|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Изображения|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Видео|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Файлы CryptoBook|*.cbook;*.cbox|Все файлы|*.*</value></data>

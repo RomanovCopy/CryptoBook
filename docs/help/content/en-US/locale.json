@@ -413,6 +413,139 @@
         "filter",
         "report"
       ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "name",
+        "file",
+        "search",
+        "workspace",
+        "subfolders"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "contents",
+        "text",
+        "search",
+        "protected",
+        "cancel",
+        "delete"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "find",
+        "Ctrl+F",
+        "F3",
+        "case",
+        "match",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "preview",
+        "text",
+        "image",
+        "PDF",
+        "panel",
+        "size"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "image",
+        "zoom",
+        "rotate",
+        "fit",
+        "delete",
+        "recycle bin",
+        "restore",
+        "media",
+        "player"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "device",
+        "connect",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "transfer",
+        "copy",
+        "move",
+        "cancel",
+        "disconnect"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "limits",
+        "decrypt",
+        "permissions",
+        "recycle",
+        "search",
+        "properties"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "video",
+        "player",
+        "pause",
+        "seek",
+        "synchronization",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "external",
+        "viewer",
+        "association",
+        "application"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "print",
+        "printer",
+        "Markdown",
+        "pages",
+        "cancel"
+      ]
     }
   ]
 }

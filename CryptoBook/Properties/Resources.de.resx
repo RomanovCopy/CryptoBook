@@ -576,9 +576,9 @@
   <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Bild oder Video öffnen</value></data>
   <data name="Media.Loading" xml:space="preserve"><value>Wird geladen: {0}</value></data>
   <data name="Media.DeleteTitle" xml:space="preserve"><value>Bild löschen</value></data>
-  <data name="Media.DeletePrompt" xml:space="preserve"><value>„{0}“ löschen?</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>Die Datei „{0}“ in den Windows-Papierkorb verschieben? Sie können sie aus dem Papierkorb wiederherstellen.</value></data>
   <data name="Media.DeleteError" xml:space="preserve"><value>Fehler beim Löschen</value></data>
-  <data name="Media.DeleteFailed" xml:space="preserve"><value>Das Bild konnte nicht gelöscht werden.</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Die Datei konnte nicht in den Windows-Papierkorb verschoben werden. Sie wurde nicht endgültig gelöscht.</value></data>
   <data name="Media.NoMoreImages" xml:space="preserve"><value>Es gibt keine Bilder mehr im Ordner.</value></data>
   <data name="Media.DecodeFailed" xml:space="preserve"><value>Das Bild konnte nicht dekodiert werden.</value></data>
   <data name="Media.Filter" xml:space="preserve"><value>Mediendateien|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Bilder|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Video|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|CryptoBook-Dateien|*.cbook;*.cbox|Alle Dateien|*.*</value></data>

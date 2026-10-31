@@ -1,0 +1,80 @@
+{
+  "configuration": "Release",
+  "scope": "targeted stage7 regression; not full Run-ReleaseTests",
+  "processes": 9,
+  "groups": [
+    {
+      "group": "help",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/help.trx"
+    },
+    {
+      "group": "document-search",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/document-search.trx"
+    },
+    {
+      "group": "workspace",
+      "total": 38,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/workspace.trx"
+    },
+    {
+      "group": "preview",
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/preview.trx"
+    },
+    {
+      "group": "media",
+      "total": 28,
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/media.trx"
+    },
+    {
+      "group": "storage",
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/storage.trx"
+    },
+    {
+      "group": "explorer-architecture",
+      "total": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/explorer-architecture.trx"
+    },
+    {
+      "group": "print-markdown",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/print-markdown.trx"
+    },
+    {
+      "group": "print-text",
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tests/print-text.trx"
+    }
+  ],
+  "total": 204.0
+}

@@ -413,6 +413,138 @@
         "фільтр",
         "звіт"
       ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "назва",
+        "файл",
+        "пошук",
+        "робоча",
+        "папка",
+        "підпапки"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "вміст",
+        "текст",
+        "пошук",
+        "захищений",
+        "скасувати",
+        "видалити"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "знайти",
+        "Ctrl+F",
+        "F3",
+        "регістр",
+        "збіг",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "перегляд",
+        "текст",
+        "зображення",
+        "PDF",
+        "панель",
+        "розмір"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "зображення",
+        "масштаб",
+        "поворот",
+        "вписати",
+        "видалити",
+        "кошик",
+        "відновити",
+        "медіаплеєр"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "пристрій",
+        "підключення",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "передавання",
+        "копіювання",
+        "переміщення",
+        "скасування"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "обмеження",
+        "розшифрувати",
+        "права",
+        "кошик",
+        "пошук",
+        "властивості"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "відео",
+        "плеєр",
+        "пауза",
+        "перемотування",
+        "синхронізація",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "зовнішній",
+        "перегляд",
+        "асоціація",
+        "програма"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "друк",
+        "принтер",
+        "Markdown",
+        "сторінки",
+        "скасування"
+      ]
     }
   ]
 }

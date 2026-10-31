@@ -39,6 +39,7 @@ internal static partial class Program
         bool stage4 = args.Length > 3 && args[3].StartsWith("stage4", StringComparison.Ordinal);
         bool stage5 = args.Length > 3 && args[3].StartsWith("stage5", StringComparison.Ordinal);
         bool stage6 = args.Length > 3 && args[3].StartsWith("stage6", StringComparison.Ordinal);
+        bool stage7 = args.Length > 3 && args[3].StartsWith("stage7", StringComparison.Ordinal);
         captureFilter = args.Length > 4 ? args[4] : null;
         if (!new[] { "en-US", "ru-RU", "uk-UA", "de-DE" }.Contains(culture)) return 2;
         string runRoot = Path.Combine(repo, "artifacts", "hv", culture, Guid.NewGuid().ToString("N")[..8]);
@@ -46,7 +47,7 @@ internal static partial class Program
         Properties.Settings.Default.CultureInfo = culture;
         Properties.Settings.Default.FileOverviewFirstStart = true;
         Properties.Settings.Default.WindowState = "Normal";
-        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6);
+        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7, stage7);
         var app = new App(isolated.Configure) { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.InitializeComponent();
         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingListener(bindingErrors));
@@ -56,7 +57,8 @@ internal static partial class Program
         {
             try
             {
-                if (stage6) await ValidateStage6(isolated, args[3] == "stage6-verify");
+                if (stage7) await ValidateStage7(isolated, args[3] == "stage7-verify");
+                else if (stage6) await ValidateStage6(isolated, args[3] == "stage6-verify");
                 else if (stage5) await ValidateStage5(isolated, args[3] == "stage5-verify");
                 else if (stage4) await ValidateStage4(isolated, args[3] == "stage4-verify");
                 else await Validate(isolated, verify);
@@ -64,13 +66,15 @@ internal static partial class Program
                 Check(bindingErrors.Count == 0, "No WPF binding errors.");
                 File.WriteAllText(Path.Combine(runRoot, "result.json"), JsonSerializer.Serialize(new
                 {
-                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
+                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
                     storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
                     captureMethod = "RenderTargetBitmap of visible production WPF windows",
-                    interaction = stage6 ? "production file-manager commands, local disk pipelines, WPF folder/name/conflict/batch/details dialogs; isolated stores and disposable clipboard with prior data restored in memory"
+                    interaction = stage7 ? "production local name/content/document searches, routed search keys, previews, image player and actual silent AVI playback; print command preparation recorded by an isolated sink"
+                        : stage6 ? "production file-manager commands, local disk pipelines, WPF folder/name/conflict/batch/details dialogs; isolated stores and disposable clipboard with prior data restored in memory"
                         : stage5 ? "visible production control DataContexts and commands; real link/crop dialogs; production image/layout/crop services; image paths and unsaved decisions supplied by queues; disposable clipboard roundtrip with prior data object restored in memory"
                         : stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
-                    limitations = stage6 ? "Local disposable files only. No physical gestures, shell Open With/Explorer/Windows properties launch, Android/MTP or installed-user migration. DropCommand is exercised; external file/folder pickers use the isolated demo destination. Cancellation at progress startup is live; mid-operation rollback/fault injection is covered by targeted tests."
+                    limitations = stage7 ? "No Android/MTP write or transfer, physical keyboard/mouse, external PDF application, native print-dialog interaction or physical print. D3D video pixels are not captured by RenderTargetBitmap; video playback is checked through real player state/position. Print sink verifies preparation only."
+                        : stage6 ? "Local disposable files only. No physical gestures, shell Open With/Explorer/Windows properties launch, Android/MTP or installed-user migration. DropCommand is exercised; external file/folder pickers use the isolated demo destination. Cancellation at progress startup is live; mid-operation rollback/fault injection is covered by targeted tests."
                         : stage5 ? "No physical keyboard/mouse, drag gesture, installed-user migration or Windows scaling test. Image resize/layout/crop services and routed image selection are exercised; the native image picker is replaced by a disposable path queue. See image-undo.json and bookmark-roundtrip.json for observed product limitations."
                         : "No physical keyboard/mouse or installed-user migration test. Folder-picker shortcut supplies the demo folder; stage4 also exercises the real WPF folder picker."
                 }, Json));
@@ -202,7 +206,7 @@ internal static partial class Program
         help.WindowState = WindowState.Minimized; service.Open(); Check(help.WindowState == WindowState.Normal, "Repeated opening restores a minimized window.");
         helpVm.OpenTopic("doc.create"); helpVm.Back.Execute(null); Check(helpVm.CurrentTopicId == "start.interface", "Back works.");
         helpVm.Forward.Execute(null); Check(helpVm.CurrentTopicId == "doc.create", "Forward works.");
-        Check(!helpVm.OpenTopic("search.name") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
+        Check(!helpVm.OpenTopic("security.password") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
         helpVm.Query = "09:00"; helpVm.RunSearch(); Check(helpVm.Results.Single().Id == "doc.create", "Search includes visible article text.");
         helpVm.Query = "zzzz-no-such-help-topic"; helpVm.RunSearch(); Check(helpVm.HasNoResults, "No-result state.");
         helpVm.Query = "  "; Check(!helpVm.IsSearching, "Whitespace query returns the contents tree.");

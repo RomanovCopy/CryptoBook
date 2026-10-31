@@ -1,0 +1,17 @@
+{
+  "shotId": "S32-a",
+  "culture": "en-US",
+  "rawFile": "docs/help/screenshots/raw/en-US/S32-a.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.009027777777777777,
+      "y": 0.634,
+      "width": 0.16597222222222222,
+      "height": 0.05546875,
+      "badge": null
+    }
+  ]
+}

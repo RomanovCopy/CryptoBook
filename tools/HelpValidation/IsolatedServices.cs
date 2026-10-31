@@ -10,7 +10,7 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Validation;
 
-public sealed class IsolatedServices(string root, bool documentValidation = false)
+public sealed class IsolatedServices(string root, bool documentValidation = false, bool stage7 = false)
 {
     public ILifetimeScope Container { get; private set; } = null!;
     public string Root { get; } = Path.GetFullPath(root);
@@ -21,6 +21,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     public ValidationImagePicker ImagePicker { get; } = new();
     public ValidationFolderPicker FolderPicker { get; } = new(Path.Combine(Path.GetFullPath(root), "Demo"));
     public ValidationRecycleBin RecycleBin { get; } = new(Path.GetFullPath(root));
+    public ValidationPrintSink PrintSink { get; } = new();
     public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
         .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
     private string Store(string name)
@@ -51,6 +52,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
             c.Resolve<IMarkdownDocumentState>(), c.Resolve<IKeyProvider>())).As<ILockSnapshotService>().SingleInstance();
         builder.RegisterInstance<IFolderPickerService>(FolderPicker);
         builder.RegisterInstance<IRecycleBinService>(RecycleBin);
+        if (stage7) builder.RegisterInstance<IDocumentPrintService>(PrintSink);
         if (documentValidation)
         {
             builder.RegisterInstance<IDocumentSaveTargetPicker>(SavePicker);
@@ -109,6 +111,14 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         public void StopMonitoring() { }
         public void Dispose() { }
     }
+}
+
+// Deliberately records prepared content without opening a print dialog or sending a job.
+public sealed class ValidationPrintSink : IDocumentPrintService
+{
+    public List<string> Texts { get; } = [];
+    public void Print(System.Windows.Documents.FlowDocument document, string documentName) =>
+        Texts.Add(new System.Windows.Documents.TextRange(document.ContentStart, document.ContentEnd).Text);
 }
 
 public sealed class ValidationFolderPicker(string defaultPath) : IFolderPickerService

@@ -31,7 +31,7 @@ namespace CryptoBook.Models
             };
 
         private CancellationTokenSource? _openCancellation;
-        private readonly IFileManagerService _fileManagerService;
+        private readonly IRecycleBinService _recycleBinService;
         private readonly IMessageService _messageService;
         private readonly IMediaSourcePreparationService _mediaSourcePreparationService;
         private readonly IFileExplorerService _fileExplorerService;
@@ -62,7 +62,7 @@ namespace CryptoBook.Models
             IMediaPlayerService videoService,
             IImageService imageService,
             IWindowContext windowContext,
-            IFileManagerService fileManagerService,
+            IRecycleBinService recycleBinService,
             IMessageService messageService,
             IMediaSourcePreparationService mediaSourcePreparationService,
             IFileExplorerService fileExplorerService,
@@ -71,8 +71,8 @@ namespace CryptoBook.Models
         {
             VideoService = videoService ?? throw new ArgumentNullException(nameof(videoService));
             ImageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
-            _fileManagerService = fileManagerService ??
-                throw new ArgumentNullException(nameof(fileManagerService));
+            _recycleBinService = recycleBinService ??
+                throw new ArgumentNullException(nameof(recycleBinService));
             _messageService = messageService ??
                 throw new ArgumentNullException(nameof(messageService));
             _mediaSourcePreparationService = mediaSourcePreparationService ??
@@ -480,7 +480,7 @@ namespace CryptoBook.Models
             if(!_messageService.ShowConfirmation(dialogId) || _disposed || _isClosing)
                 return;
 
-            var result = await _fileManagerService.DeleteAsync(path);
+            var result = await _recycleBinService.RecycleAsync(path);
             if(_disposed || _isClosing)
                 return;
 

@@ -410,6 +410,138 @@
         "Filter",
         "Bericht"
       ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "Name",
+        "Datei",
+        "Suche",
+        "Arbeitsordner",
+        "Unterordner"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "Inhalt",
+        "Text",
+        "Suche",
+        "geschützt",
+        "abbrechen",
+        "löschen"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "Suchen",
+        "Ctrl+F",
+        "F3",
+        "Großschreibung",
+        "Treffer",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "Vorschau",
+        "Text",
+        "Bild",
+        "PDF",
+        "Bereich",
+        "Größe"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "Bild",
+        "Zoom",
+        "drehen",
+        "einpassen",
+        "löschen",
+        "Papierkorb",
+        "wiederherstellen",
+        "Mediaplayer"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "Gerät",
+        "verbinden",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "Übertragung",
+        "kopieren",
+        "verschieben",
+        "abbrechen",
+        "trennen"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "Grenzen",
+        "entschlüsseln",
+        "Rechte",
+        "Papierkorb",
+        "Suche",
+        "Eigenschaften"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "Video",
+        "Player",
+        "Pause",
+        "spulen",
+        "Synchronisierung",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "externe",
+        "Anzeige",
+        "Zuordnung",
+        "Anwendung"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "Drucken",
+        "Drucker",
+        "Markdown",
+        "Seiten",
+        "abbrechen"
+      ]
     }
   ]
 }

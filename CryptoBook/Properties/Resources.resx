@@ -576,9 +576,9 @@
   <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Open an image or video</value></data>
   <data name="Media.Loading" xml:space="preserve"><value>Loading: {0}</value></data>
   <data name="Media.DeleteTitle" xml:space="preserve"><value>Delete image</value></data>
-  <data name="Media.DeletePrompt" xml:space="preserve"><value>Delete “{0}”?</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>Move the file “{0}” to the Windows Recycle Bin? You can restore it from the Recycle Bin.</value></data>
   <data name="Media.DeleteError" xml:space="preserve"><value>Delete error</value></data>
-  <data name="Media.DeleteFailed" xml:space="preserve"><value>Could not delete the image.</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Could not move the file to the Windows Recycle Bin. It was not permanently deleted.</value></data>
   <data name="Media.NoMoreImages" xml:space="preserve"><value>There are no more images in the folder.</value></data>
   <data name="Media.DecodeFailed" xml:space="preserve"><value>Could not decode the image.</value></data>
   <data name="Media.Filter" xml:space="preserve"><value>Media files|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Images|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Video|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|CryptoBook files|*.cbook;*.cbox|All files|*.*</value></data>

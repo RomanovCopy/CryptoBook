@@ -412,6 +412,139 @@
         "фильтр",
         "отчёт"
       ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "имя",
+        "файл",
+        "поиск",
+        "рабочая",
+        "папка",
+        "подпапки"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "содержимое",
+        "поиск",
+        "текст",
+        "защищённый",
+        "отмена",
+        "удалить"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "найти",
+        "Ctrl+F",
+        "F3",
+        "регистр",
+        "совпадение",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "предпросмотр",
+        "текст",
+        "изображение",
+        "PDF",
+        "панель",
+        "размер"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "изображение",
+        "масштаб",
+        "поворот",
+        "вписать",
+        "удалить",
+        "корзина",
+        "восстановить",
+        "медиаплеер"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "устройство",
+        "подключение",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "передача",
+        "копирование",
+        "перемещение",
+        "отмена",
+        "отключение"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "ограничения",
+        "расшифровать",
+        "права",
+        "корзина",
+        "поиск",
+        "свойства"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "видео",
+        "плеер",
+        "пауза",
+        "перемотка",
+        "синхронизация",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "внешний",
+        "просмотр",
+        "ассоциация",
+        "приложение"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "печать",
+        "принтер",
+        "Markdown",
+        "страницы",
+        "отмена"
+      ]
     }
   ]
 }

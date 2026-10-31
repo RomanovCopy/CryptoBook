@@ -504,57 +504,125 @@
     {
       "id": "search.name",
       "section": "search",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F090"
+      ],
+      "illustrationIds": [
+        "S03-c"
+      ]
     },
     {
       "id": "search.workspace",
       "section": "search",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F091",
+        "F092"
+      ],
+      "illustrationIds": [
+        "S26-a",
+        "S26-b"
+      ]
     },
     {
       "id": "search.document",
       "section": "search",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F093"
+      ],
+      "illustrationIds": [
+        "S27-a",
+        "S27-b",
+        "S27-c",
+        "S27-d",
+        "S27-e"
+      ]
     },
     {
       "id": "devices.android",
       "section": "devices",
-      "status": "planned"
+      "status": "sample",
+      "featureIds": [
+        "F094"
+      ],
+      "illustrationIds": []
     },
     {
       "id": "devices.transfers",
       "section": "devices",
-      "status": "planned"
+      "status": "sample",
+      "featureIds": [
+        "F095"
+      ],
+      "illustrationIds": []
     },
     {
       "id": "devices.limits",
       "section": "devices",
-      "status": "planned"
+      "status": "sample",
+      "featureIds": [
+        "F096"
+      ],
+      "illustrationIds": []
     },
     {
       "id": "view.preview",
       "section": "view",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F097"
+      ],
+      "illustrationIds": [
+        "S30-a",
+        "S30-b"
+      ]
     },
     {
       "id": "view.images",
       "section": "view",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F098"
+      ],
+      "illustrationIds": [
+        "S30-c"
+      ]
     },
     {
       "id": "view.video",
       "section": "view",
-      "status": "planned"
+      "status": "sample",
+      "featureIds": [
+        "F099",
+        "F100"
+      ],
+      "illustrationIds": [
+        "S31-a"
+      ]
     },
     {
       "id": "view.pdf",
       "section": "view",
-      "status": "planned"
+      "status": "sample",
+      "featureIds": [
+        "F101"
+      ],
+      "illustrationIds": [
+        "S32-b"
+      ]
     },
     {
       "id": "view.print",
       "section": "view",
-      "status": "planned"
+      "status": "sample",
+      "featureIds": [
+        "F102"
+      ],
+      "illustrationIds": [
+        "S32-a"
+      ]
     },
     {
       "id": "security.password",
@@ -1038,6 +1106,90 @@
       "scenarioId": "S25",
       "status": "ready",
       "file": "images/S25-b.png"
+    },
+    {
+      "id": "S03-c",
+      "scenarioId": "S03",
+      "status": "ready",
+      "file": "images/S03-c.png"
+    },
+    {
+      "id": "S26-a",
+      "scenarioId": "S26",
+      "status": "ready",
+      "file": "images/S26-a.png"
+    },
+    {
+      "id": "S26-b",
+      "scenarioId": "S26",
+      "status": "ready",
+      "file": "images/S26-b.png"
+    },
+    {
+      "id": "S27-a",
+      "scenarioId": "S27",
+      "status": "ready",
+      "file": "images/S27-a.png"
+    },
+    {
+      "id": "S27-b",
+      "scenarioId": "S27",
+      "status": "ready",
+      "file": "images/S27-b.png"
+    },
+    {
+      "id": "S27-c",
+      "scenarioId": "S27",
+      "status": "ready",
+      "file": "images/S27-c.png"
+    },
+    {
+      "id": "S27-d",
+      "scenarioId": "S27",
+      "status": "ready",
+      "file": "images/S27-d.png"
+    },
+    {
+      "id": "S27-e",
+      "scenarioId": "S27",
+      "status": "ready",
+      "file": "images/S27-e.png"
+    },
+    {
+      "id": "S30-a",
+      "scenarioId": "S30",
+      "status": "ready",
+      "file": "images/S30-a.png"
+    },
+    {
+      "id": "S30-b",
+      "scenarioId": "S30",
+      "status": "ready",
+      "file": "images/S30-b.png"
+    },
+    {
+      "id": "S30-c",
+      "scenarioId": "S30",
+      "status": "ready",
+      "file": "images/S30-c.png"
+    },
+    {
+      "id": "S31-a",
+      "scenarioId": "S31",
+      "status": "ready",
+      "file": "images/S31-a.png"
+    },
+    {
+      "id": "S32-b",
+      "scenarioId": "S32",
+      "status": "ready",
+      "file": "images/S32-b.png"
+    },
+    {
+      "id": "S32-a",
+      "scenarioId": "S32",
+      "status": "ready",
+      "file": "images/S32-a.png"
     }
   ]
 }
