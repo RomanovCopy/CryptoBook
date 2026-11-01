@@ -1,0 +1,33 @@
+{
+  "shotId": "S44-c",
+  "topicId": "ai.memory",
+  "articleStepOrArea": "actual CPU-only runtime profile, not a substituted GPU count",
+  "culture": "ru-RU",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "c76b769",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T16:11:37.5734379+00:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 570,
+    "height": 930
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S44-c.png",
+  "annotationFile": "docs/help/screenshots/annotations/ru-RU/S44-c.json",
+  "outputFile": "docs/help/content/ru-RU/images/S44-c.png",
+  "actionCheck": "Production settings/commands and real native inference; isolated per-model profiles and memory-only Copy. See the settings, performance or focused reasoning scenario/check reports. No physical input, native color-picker gesture or power transition.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\ca88828d\\Demo\\Settings-demo.txt",
+  "visualCheck": "Reviewed final localized PNG at native capture size and on the six culture contact sheets: labels, status, relevant controls, crop, colors and synthetic content checked. No native color-picker or physical input claim.",
+  "reviewedAt": "2026-11-01T16:31:00.616Z"
+}

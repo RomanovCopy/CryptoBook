@@ -727,6 +727,55 @@
         "Markdown",
         "undo"
       ]
+    },
+    {
+      "id": "ai.context",
+      "file": "ai.context.md",
+      "keywords": [
+        "context",
+        "tokens",
+        "limit",
+        "estimate",
+        "reuse",
+        "preload"
+      ]
+    },
+    {
+      "id": "ai.memory",
+      "file": "ai.memory.md",
+      "keywords": [
+        "memory",
+        "CPU",
+        "GPU",
+        "layers",
+        "reasoning",
+        "repetition"
+      ]
+    },
+    {
+      "id": "ai.performance",
+      "file": "ai.performance.md",
+      "keywords": [
+        "performance",
+        "balanced",
+        "power saving",
+        "optimal",
+        "measurement",
+        "stop"
+      ]
+    },
+    {
+      "id": "ai.appearance",
+      "file": "ai.appearance.md",
+      "keywords": [
+        "appearance",
+        "font",
+        "color",
+        "code",
+        "borders",
+        "Markdown",
+        "reset"
+      ]
     }
   ]
 }

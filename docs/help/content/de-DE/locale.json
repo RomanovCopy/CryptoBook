@@ -722,6 +722,55 @@
         "Markdown",
         "rückgängig"
       ]
+    },
+    {
+      "id": "ai.context",
+      "file": "ai.context.md",
+      "keywords": [
+        "Kontext",
+        "Token",
+        "Grenze",
+        "Schätzung",
+        "Wiederverwendung",
+        "Vorladen"
+      ]
+    },
+    {
+      "id": "ai.memory",
+      "file": "ai.memory.md",
+      "keywords": [
+        "Speicher",
+        "CPU",
+        "GPU",
+        "Schichten",
+        "Nachdenken",
+        "Wiederholungen"
+      ]
+    },
+    {
+      "id": "ai.performance",
+      "file": "ai.performance.md",
+      "keywords": [
+        "Leistung",
+        "ausgewogen",
+        "energiesparend",
+        "optimal",
+        "Messung",
+        "Stoppen"
+      ]
+    },
+    {
+      "id": "ai.appearance",
+      "file": "ai.appearance.md",
+      "keywords": [
+        "Darstellung",
+        "Schriftart",
+        "Farbe",
+        "Code",
+        "Rahmen",
+        "Markdown",
+        "Zurücksetzen"
+      ]
     }
   ]
 }

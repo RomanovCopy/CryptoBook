@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "native_model": true,
+  "isolated_load_reset_generate_unload": true,
+  "prefix_reused_tokens": 25,
+  "cached_and_uncached_answers_equal": true,
+  "edited_history": true,
+  "opt_out": true,
+  "chat_reset": true,
+  "cancellation": true,
+  "unload": true,
+  "runs": [
+    {
+      "name": "first",
+      "reused_tokens": 0,
+      "elapsed_ms": 3600,
+      "timing": {
+        "InputTokens": 24,
+        "OutputTokens": 1,
+        "PromptSeconds": 3.1426611,
+        "GenerationSeconds": 0
+      },
+      "answer": "OK"
+    },
+    {
+      "name": "followup_cached",
+      "reused_tokens": 25,
+      "elapsed_ms": 1163,
+      "timing": {
+        "InputTokens": 50,
+        "OutputTokens": 6,
+        "PromptSeconds": 0.6172821,
+        "GenerationSeconds": 0.4536978
+      },
+      "answer": "ORBIT-731"
+    },
+    {
+      "name": "followup_uncached",
+      "reused_tokens": 0,
+      "elapsed_ms": 3719,
+      "timing": {
+        "InputTokens": 50,
+        "OutputTokens": 6,
+        "PromptSeconds": 2.9744182,
+        "GenerationSeconds": 0.4389616
+      },
+      "answer": "ORBIT-731"
+    },
+    {
+      "name": "seed_again",
+      "reused_tokens": 0,
+      "elapsed_ms": 980,
+      "timing": {
+        "InputTokens": 24,
+        "OutputTokens": 1,
+        "PromptSeconds": 0.7181875,
+        "GenerationSeconds": 0
+      },
+      "answer": "OK"
+    },
+    {
+      "name": "edited_history",
+      "reused_tokens": 7,
+      "elapsed_ms": 1138,
+      "timing": {
+        "InputTokens": 50,
+        "OutputTokens": 6,
+        "PromptSeconds": 0.5574512,
+        "GenerationSeconds": 0.4823073
+      },
+      "answer": "DELTA-942"
+    },
+    {
+      "name": "new_chat",
+      "reused_tokens": 0,
+      "elapsed_ms": 630,
+      "timing": {
+        "InputTokens": 14,
+        "OutputTokens": 1,
+        "PromptSeconds": 0.3710247,
+        "GenerationSeconds": 0
+      },
+      "answer": "ready"
+    },
+    {
+      "name": "after_cancel",
+      "reused_tokens": 0,
+      "elapsed_ms": 586,
+      "timing": {
+        "InputTokens": 14,
+        "OutputTokens": 1,
+        "PromptSeconds": 0.3612201,
+        "GenerationSeconds": 0
+      },
+      "answer": "ready"
+    }
+  ]
+}

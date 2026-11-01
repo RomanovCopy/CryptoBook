@@ -1,0 +1,768 @@
+{
+  "reviewed": true,
+  "shots": 76,
+  "contactSheets": 24,
+  "method": "Actual generated PNGs viewed by author; independent language/DPI/physical acceptance remains stage 11",
+  "items": [
+    {
+      "culture": "en-US",
+      "id": "S38-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/en-US/images/S38-e.png",
+      "sha256": "682262357e8416ef95f2a779c3f7919ad476613eb184b22aac49eeaf87cc4577",
+      "raw": "docs/help/screenshots/raw/en-US/S38-e.png",
+      "rawSha256": "06d5a674e21d07edfc25bb499ea00b61dfcbb24599850c2c59f4800b4ca3bf54",
+      "passport": "docs/help/screenshots/passports/en-US/S38-e.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S38-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/en-US/images/S38-f.png",
+      "sha256": "8d804a8087f37675fc200ef8d36f58b36cbc0e6649eb1069525c448c66ee02ce",
+      "raw": "docs/help/screenshots/raw/en-US/S38-f.png",
+      "rawSha256": "e550f656e570f5e50fde65c884f18598bfea87c37458c1695f48d96debad8cb4",
+      "passport": "docs/help/screenshots/passports/en-US/S38-f.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S38-g",
+      "topic": "ai.context",
+      "output": "docs/help/content/en-US/images/S38-g.png",
+      "sha256": "dd5d7d764578149f75b2aa8eba65bfad25454057f5d4978078b04482afb162eb",
+      "raw": "docs/help/screenshots/raw/en-US/S38-g.png",
+      "rawSha256": "7a17c2ada997070264082c45700fff4eb8c448710e47b1bf348007142220e1d2",
+      "passport": "docs/help/screenshots/passports/en-US/S38-g.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S40-d",
+      "topic": "ai.context",
+      "output": "docs/help/content/en-US/images/S40-d.png",
+      "sha256": "d7ff35c5900f99425bce394418fc4a7ba30a4a11be0343402181b3ac71d06773",
+      "raw": "docs/help/screenshots/raw/en-US/S40-d.png",
+      "rawSha256": "1e3ad1450db43344c985138eb8614b51284e8e7e2ed375aacb9a7dcdf826580d",
+      "passport": "docs/help/screenshots/passports/en-US/S40-d.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S40-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/en-US/images/S40-e.png",
+      "sha256": "1635409283ae445b637fd32c9e9f3c1faa0a2b12203ae59a31c5589d1b123719",
+      "raw": "docs/help/screenshots/raw/en-US/S40-e.png",
+      "rawSha256": "e82f4620db2fac76331583feee4931839ba2a5cdd27794b5167d77f7512f7026",
+      "passport": "docs/help/screenshots/passports/en-US/S40-e.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S40-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/en-US/images/S40-f.png",
+      "sha256": "c66feba415510d45fa8736e81f1100aa9295e8c3274647d5f3cc52114b856cbc",
+      "raw": "docs/help/screenshots/raw/en-US/S40-f.png",
+      "rawSha256": "2f8ea886155d190ba71e8145425551e0bd57d5d6be653be0ac15f9c10db2f574",
+      "passport": "docs/help/screenshots/passports/en-US/S40-f.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-a",
+      "topic": "ai.memory",
+      "output": "docs/help/content/en-US/images/S44-a.png",
+      "sha256": "63054f92e76e523467e1c1d12ff3be0e3bff03d2338333d220975d305c07cae3",
+      "raw": "docs/help/screenshots/raw/en-US/S44-a.png",
+      "rawSha256": "5ddcadcfd42e412b1f9950768384fa3841069cad8d1add709f97ab5c28844ed8",
+      "passport": "docs/help/screenshots/passports/en-US/S44-a.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-b",
+      "topic": "ai.memory",
+      "output": "docs/help/content/en-US/images/S44-b.png",
+      "sha256": "c8bae9eb00b71ca1ba00b71b3a5dfae9eb1b437d2d833af16def72cdaf99bbfe",
+      "raw": "docs/help/screenshots/raw/en-US/S44-b.png",
+      "rawSha256": "95e320da78f2d452c854aba332caa3adf36157a1c75c7c3b1e3a293dccc4fb3c",
+      "passport": "docs/help/screenshots/passports/en-US/S44-b.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-c",
+      "topic": "ai.memory",
+      "output": "docs/help/content/en-US/images/S44-c.png",
+      "sha256": "a7391eaa2bc2c03270a0acf8bce599729caafcf17ff2952cfce2d43f09924afe",
+      "raw": "docs/help/screenshots/raw/en-US/S44-c.png",
+      "rawSha256": "dd018c2808fa11fa57eedf9da940c41544feae4e05a83bf7213c013b363905f7",
+      "passport": "docs/help/screenshots/passports/en-US/S44-c.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-d",
+      "topic": "ai.memory",
+      "output": "docs/help/content/en-US/images/S44-d.png",
+      "sha256": "a5ff2710afac997c02378dedb9b7b10782c8c84e993c8366419d8ad56b327ac6",
+      "raw": "docs/help/screenshots/raw/en-US/S44-d.png",
+      "rawSha256": "d99ca85e9310101de651dcd228ff86c2d1e1036d39fa808fd3dbfd07b69a8319",
+      "passport": "docs/help/screenshots/passports/en-US/S44-d.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-e",
+      "topic": "ai.memory",
+      "output": "docs/help/content/en-US/images/S44-e.png",
+      "sha256": "4870847a38fc579356e572697dc2e45e094d8d50c1107f9ab1e8ec8409a176a7",
+      "raw": "docs/help/screenshots/raw/en-US/S44-e.png",
+      "rawSha256": "e12878aeedcd48ba0479a84c2c352bcedb40182a1c1963840539edf5939da356",
+      "passport": "docs/help/screenshots/passports/en-US/S44-e.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-f",
+      "topic": "ai.performance",
+      "output": "docs/help/content/en-US/images/S44-f.png",
+      "sha256": "c8254294b9bf04ad87ab2b40e3aee29a2c8a37904e2cb3f3aefdad456538ee8a",
+      "raw": "docs/help/screenshots/raw/en-US/S44-f.png",
+      "rawSha256": "adf5a48eb7917feaaa5cac6dafbe12731405df58784f416d3a81918cfe5fc07d",
+      "passport": "docs/help/screenshots/passports/en-US/S44-f.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-g",
+      "topic": "ai.performance",
+      "output": "docs/help/content/en-US/images/S44-g.png",
+      "sha256": "735025eee8d488af9b70426d548a5564933b74a856a9473fc1df7c2c6d4b70e6",
+      "raw": "docs/help/screenshots/raw/en-US/S44-g.png",
+      "rawSha256": "44a7c3dd544f377cbad70b73948ad43276c0e9f61f53bc148b7099f155d11372",
+      "passport": "docs/help/screenshots/passports/en-US/S44-g.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-h",
+      "topic": "ai.performance",
+      "output": "docs/help/content/en-US/images/S44-h.png",
+      "sha256": "16a66a846f631683bc73c12a4cc2b9bc815e84e3cff588f06fbbcfdf8d9c72d9",
+      "raw": "docs/help/screenshots/raw/en-US/S44-h.png",
+      "rawSha256": "16a66a846f631683bc73c12a4cc2b9bc815e84e3cff588f06fbbcfdf8d9c72d9",
+      "passport": "docs/help/screenshots/passports/en-US/S44-h.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S44-i",
+      "topic": "ai.performance",
+      "output": "docs/help/content/en-US/images/S44-i.png",
+      "sha256": "880c485c48df19dc5719a06a7bb3e9386506bfbff92037f814a9b5274fd7ce25",
+      "raw": "docs/help/screenshots/raw/en-US/S44-i.png",
+      "rawSha256": "880c485c48df19dc5719a06a7bb3e9386506bfbff92037f814a9b5274fd7ce25",
+      "passport": "docs/help/screenshots/passports/en-US/S44-i.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S45-a",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/en-US/images/S45-a.png",
+      "sha256": "76fbb353f2482ba1779ee8bc6c8eb10489ae1c3da94fe3fef9b6ae70a12dee47",
+      "raw": "docs/help/screenshots/raw/en-US/S45-a.png",
+      "rawSha256": "76fbb353f2482ba1779ee8bc6c8eb10489ae1c3da94fe3fef9b6ae70a12dee47",
+      "passport": "docs/help/screenshots/passports/en-US/S45-a.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S45-b",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/en-US/images/S45-b.png",
+      "sha256": "618f7a7d8ff8da3a2a83ab05821b869048cdcc6482c8d3a94a3c14994462a570",
+      "raw": "docs/help/screenshots/raw/en-US/S45-b.png",
+      "rawSha256": "8100f39b0376c9a26b7a16823eab14361f1c2a1cca337377a5957dee549cdc69",
+      "passport": "docs/help/screenshots/passports/en-US/S45-b.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S45-c",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/en-US/images/S45-c.png",
+      "sha256": "4e2dfa232a4ce5c502148cd925cddb4324bf3036c1caff1cc5150c284e215b43",
+      "raw": "docs/help/screenshots/raw/en-US/S45-c.png",
+      "rawSha256": "855889eb3bc8b3a6d0aab6a341cc00a6f44b48e87643d169bcba7dcc57c569a5",
+      "passport": "docs/help/screenshots/passports/en-US/S45-c.json"
+    },
+    {
+      "culture": "en-US",
+      "id": "S45-d",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/en-US/images/S45-d.png",
+      "sha256": "5c842222aa0673758e46103ee71809e90e18393ef56afba5cf892523a93ab43e",
+      "raw": "docs/help/screenshots/raw/en-US/S45-d.png",
+      "rawSha256": "5c842222aa0673758e46103ee71809e90e18393ef56afba5cf892523a93ab43e",
+      "passport": "docs/help/screenshots/passports/en-US/S45-d.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S38-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/ru-RU/images/S38-e.png",
+      "sha256": "5fbd3f31c4cea021f85599200ce07c9be327b8a6830e913ca79b3633ae4d1558",
+      "raw": "docs/help/screenshots/raw/ru-RU/S38-e.png",
+      "rawSha256": "5dce4a00eadd5414272d99f10bfe3d2758230e3e0134b73b78c09d8578bf9f0c",
+      "passport": "docs/help/screenshots/passports/ru-RU/S38-e.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S38-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/ru-RU/images/S38-f.png",
+      "sha256": "ddb789b5e2ac428c7d23dc75a5987c99069380e756fe6b2f0f69b05349dbb71b",
+      "raw": "docs/help/screenshots/raw/ru-RU/S38-f.png",
+      "rawSha256": "eeafd2a75a712b5d43f4a423e0654e5afac24611fa6164ec329ce5a7c09aeab7",
+      "passport": "docs/help/screenshots/passports/ru-RU/S38-f.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S38-g",
+      "topic": "ai.context",
+      "output": "docs/help/content/ru-RU/images/S38-g.png",
+      "sha256": "1cf2e2932640bc0040036230da1cf46b7364a02d3168bb2a702efbb1182c0cf6",
+      "raw": "docs/help/screenshots/raw/ru-RU/S38-g.png",
+      "rawSha256": "7b2f2d01f0626f93b5cc7974dfbb5b3840b1a4a53842bce06bdc1b9cba1087d1",
+      "passport": "docs/help/screenshots/passports/ru-RU/S38-g.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S40-d",
+      "topic": "ai.context",
+      "output": "docs/help/content/ru-RU/images/S40-d.png",
+      "sha256": "3fa5d48ad04142a73bcc8ed57787ac997786a6053b3aa3412e38a6895074a804",
+      "raw": "docs/help/screenshots/raw/ru-RU/S40-d.png",
+      "rawSha256": "4776de9e161a11e0b0efe8c18a4287b4900a4b5b33e35effb75d635a3d51808c",
+      "passport": "docs/help/screenshots/passports/ru-RU/S40-d.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S40-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/ru-RU/images/S40-e.png",
+      "sha256": "17dacbfd01f39a3bc272920d4056393303eadef75f14820c2f504e60c6081414",
+      "raw": "docs/help/screenshots/raw/ru-RU/S40-e.png",
+      "rawSha256": "99c3b2862e90253821d1964520c9da2042dca473f192455c929f5c6ce832653a",
+      "passport": "docs/help/screenshots/passports/ru-RU/S40-e.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S40-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/ru-RU/images/S40-f.png",
+      "sha256": "b786f065c1e9a2afb6b69029e97027b4716cfc0a50242083c46274810d65538f",
+      "raw": "docs/help/screenshots/raw/ru-RU/S40-f.png",
+      "rawSha256": "c6e1aab270cb10fd4af91ab5eb53d936fa4181954d98e03881ab4870f654dcf3",
+      "passport": "docs/help/screenshots/passports/ru-RU/S40-f.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-a",
+      "topic": "ai.memory",
+      "output": "docs/help/content/ru-RU/images/S44-a.png",
+      "sha256": "2930a072fa6de68198f5f7da0ac97d369c69b19491b020149bb681a7573175c5",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-a.png",
+      "rawSha256": "dfb1b876d22ce0d027901fd354047cacba381806910c88cf79570c26cbc4c883",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-a.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-b",
+      "topic": "ai.memory",
+      "output": "docs/help/content/ru-RU/images/S44-b.png",
+      "sha256": "7cb2373fa8a791fcda5ac6ceded0ebb69583e59000bf1fc2f54c8fb2db818227",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-b.png",
+      "rawSha256": "b31677a6f86e5e3a3f20a7d2bc494897fe9384fccc95aee613abee1246baa295",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-b.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-c",
+      "topic": "ai.memory",
+      "output": "docs/help/content/ru-RU/images/S44-c.png",
+      "sha256": "76a7fcdeecf60ff5ea78f069aedf1d30f23eba32ea6772067cca7a0af5a1e394",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-c.png",
+      "rawSha256": "06a3258388893b6a0b2ce2b020b44a1462cc530bef272574fbcb2ac3518e9314",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-c.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-d",
+      "topic": "ai.memory",
+      "output": "docs/help/content/ru-RU/images/S44-d.png",
+      "sha256": "2dece3e4153df67e63d2ad3a38ed43f659fe3833b9a5d1950f215cb9d385b18e",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-d.png",
+      "rawSha256": "9e1b532a3879494c5bf130931ecde35f8081001263fc866bca131a1f4051db88",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-d.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-e",
+      "topic": "ai.memory",
+      "output": "docs/help/content/ru-RU/images/S44-e.png",
+      "sha256": "28bcbd7539bbb73378b3ba905920628e746fa3e0041c2dfdf0c8dbf80b55e39a",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-e.png",
+      "rawSha256": "954ba4dbd120a4aac8c6e8a25a5c7c538209000a0da6147f19e2e98e07742301",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-e.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-f",
+      "topic": "ai.performance",
+      "output": "docs/help/content/ru-RU/images/S44-f.png",
+      "sha256": "352f8b44ce59ef66484d09ebc37f0cdc146c1b1de515d0394364d5b7fea43512",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-f.png",
+      "rawSha256": "9ba1c0cda7b61f3bebc1458e0dd765a01cd5c0befea6162c5755096bc1b0355a",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-f.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-g",
+      "topic": "ai.performance",
+      "output": "docs/help/content/ru-RU/images/S44-g.png",
+      "sha256": "9d6ae1394d9e795a81752c7deabbd227bd26e2a380e3991987514dc2f570f599",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-g.png",
+      "rawSha256": "1db5e6cb97c0da91e48660694c3fab0c427f68b0477a13bdd8e97793192537b5",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-g.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-h",
+      "topic": "ai.performance",
+      "output": "docs/help/content/ru-RU/images/S44-h.png",
+      "sha256": "0f94aec558b44f870fedf4ca14dc368b55e23bf459babf873ff0a18b0bba5450",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-h.png",
+      "rawSha256": "0f94aec558b44f870fedf4ca14dc368b55e23bf459babf873ff0a18b0bba5450",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-h.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S44-i",
+      "topic": "ai.performance",
+      "output": "docs/help/content/ru-RU/images/S44-i.png",
+      "sha256": "cef76e09fc7f5ec5f8435b18c965cce06b08343db95338579bb96b6c6b4967b7",
+      "raw": "docs/help/screenshots/raw/ru-RU/S44-i.png",
+      "rawSha256": "cef76e09fc7f5ec5f8435b18c965cce06b08343db95338579bb96b6c6b4967b7",
+      "passport": "docs/help/screenshots/passports/ru-RU/S44-i.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S45-a",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/ru-RU/images/S45-a.png",
+      "sha256": "ee9c855f9f3f58d4dc070d3ea09e4ac6d3e6ba13d0c74fd06e4259b0da69d25a",
+      "raw": "docs/help/screenshots/raw/ru-RU/S45-a.png",
+      "rawSha256": "ee9c855f9f3f58d4dc070d3ea09e4ac6d3e6ba13d0c74fd06e4259b0da69d25a",
+      "passport": "docs/help/screenshots/passports/ru-RU/S45-a.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S45-b",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/ru-RU/images/S45-b.png",
+      "sha256": "2f19eb9a64c9c50a8e03f35fb999f0ef13685885629977db3816ca5a2c956f19",
+      "raw": "docs/help/screenshots/raw/ru-RU/S45-b.png",
+      "rawSha256": "e21e659fe64395f714c2acb52507c7082281251bfc1501c24affe6205889b1ea",
+      "passport": "docs/help/screenshots/passports/ru-RU/S45-b.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S45-c",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/ru-RU/images/S45-c.png",
+      "sha256": "d79e92c653734229ff999f01a698dfa1c84f2c2848fd87ee99307db9171814e6",
+      "raw": "docs/help/screenshots/raw/ru-RU/S45-c.png",
+      "rawSha256": "b9eea7a79e7332dd7cacc5fc6446ffbef0bfa64904b4c04eb8b763bf53f14b4f",
+      "passport": "docs/help/screenshots/passports/ru-RU/S45-c.json"
+    },
+    {
+      "culture": "ru-RU",
+      "id": "S45-d",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/ru-RU/images/S45-d.png",
+      "sha256": "af370f2173b1deabcd1450a4f330b1d692db1eeb6e412a831c8942dbd2b6a9a9",
+      "raw": "docs/help/screenshots/raw/ru-RU/S45-d.png",
+      "rawSha256": "af370f2173b1deabcd1450a4f330b1d692db1eeb6e412a831c8942dbd2b6a9a9",
+      "passport": "docs/help/screenshots/passports/ru-RU/S45-d.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S38-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/uk-UA/images/S38-e.png",
+      "sha256": "06dc34a841a874edd27fbfc3844a80011de0107906596a07405b0acba244c9ab",
+      "raw": "docs/help/screenshots/raw/uk-UA/S38-e.png",
+      "rawSha256": "e9efb67e4abd998cd7dfae7692cdc73ff2e90bf13ca030725563d143ee02f31c",
+      "passport": "docs/help/screenshots/passports/uk-UA/S38-e.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S38-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/uk-UA/images/S38-f.png",
+      "sha256": "791fa3958fa9f380ffa0db366675a76f86b94933c6812c8f28959d7c3c7b9773",
+      "raw": "docs/help/screenshots/raw/uk-UA/S38-f.png",
+      "rawSha256": "0f350be80376b4d7165599cc6623c7aee9ea9e5750eb2333a0c8a967f753aee9",
+      "passport": "docs/help/screenshots/passports/uk-UA/S38-f.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S38-g",
+      "topic": "ai.context",
+      "output": "docs/help/content/uk-UA/images/S38-g.png",
+      "sha256": "452eeab51c8d709000e51f65bf5592cde8318855a2d33860360ab0b571f60423",
+      "raw": "docs/help/screenshots/raw/uk-UA/S38-g.png",
+      "rawSha256": "ec76b920518d0108fbf8eb5bdb2c2b94bb3684f003a89e4df8e837de15a1bbb7",
+      "passport": "docs/help/screenshots/passports/uk-UA/S38-g.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S40-d",
+      "topic": "ai.context",
+      "output": "docs/help/content/uk-UA/images/S40-d.png",
+      "sha256": "c1573526e5339b0a118449f4d2dccf8fb046c9d9fff98b56fe3d8236b43b8dfd",
+      "raw": "docs/help/screenshots/raw/uk-UA/S40-d.png",
+      "rawSha256": "2734ca142f2a4a7f44dece714211e8d8cf0070728a9a047cb6250d8358a5a980",
+      "passport": "docs/help/screenshots/passports/uk-UA/S40-d.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S40-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/uk-UA/images/S40-e.png",
+      "sha256": "8bed8d756f9871cae8228fa79d46a939d6300f162ac12c664434e85c5528b9f3",
+      "raw": "docs/help/screenshots/raw/uk-UA/S40-e.png",
+      "rawSha256": "ffcecaa42f4bcfb3c61a06bb8555cd98c98a14d74f35f532d319e48d8aab0f07",
+      "passport": "docs/help/screenshots/passports/uk-UA/S40-e.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S40-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/uk-UA/images/S40-f.png",
+      "sha256": "6e596464c97b172421538f108d557a5c899540778d63f2be96f2e76648439bae",
+      "raw": "docs/help/screenshots/raw/uk-UA/S40-f.png",
+      "rawSha256": "f8171c38f231554512ae182e9efa11aaa229107ea2a7b75e84cdbe23e6601f2a",
+      "passport": "docs/help/screenshots/passports/uk-UA/S40-f.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-a",
+      "topic": "ai.memory",
+      "output": "docs/help/content/uk-UA/images/S44-a.png",
+      "sha256": "0b0e1b6e44e939d00155eee6f4a616d9cdec9f169314c1c3253c5288adcc4d13",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-a.png",
+      "rawSha256": "bb9e7ad1f6c71f7319698ce4d6eeab90c8e4360d17e1c3b94e636bd900f7416e",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-a.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-b",
+      "topic": "ai.memory",
+      "output": "docs/help/content/uk-UA/images/S44-b.png",
+      "sha256": "876ca78788f2289a0d9e7301602d55a845179f07bc420ea38516760fb02e620f",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-b.png",
+      "rawSha256": "f0a6d9620055ec0ccf16c9358ac30174d6fb63b17f621bd23918f835d8520cc6",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-b.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-c",
+      "topic": "ai.memory",
+      "output": "docs/help/content/uk-UA/images/S44-c.png",
+      "sha256": "f8fc538f839740590dc8ef4e3727fd18125a640166deaf2020baf1ce14475e77",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-c.png",
+      "rawSha256": "4f9e9ad32e6b94d270debfdcec0873f6783c02c1f35cfacfea6ac9bdc9bf1b65",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-c.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-d",
+      "topic": "ai.memory",
+      "output": "docs/help/content/uk-UA/images/S44-d.png",
+      "sha256": "b9adac965e0c400c6d649381555e68a6a07485a7594027dc8213133c6d888889",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-d.png",
+      "rawSha256": "8a541dfea2f1fcad282f3dfa66fc4dacd3cbfd9f9f74e2f6355e8afecc13586d",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-d.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-e",
+      "topic": "ai.memory",
+      "output": "docs/help/content/uk-UA/images/S44-e.png",
+      "sha256": "17738fcbf7d27359aa53e43c09c58680e9e129fa7d4d456a2d87155a9b7b0515",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-e.png",
+      "rawSha256": "8081f1c6c52b0927e1601d8b16a5c41690f96d394aacd730946f0dd51f71d31a",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-e.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-f",
+      "topic": "ai.performance",
+      "output": "docs/help/content/uk-UA/images/S44-f.png",
+      "sha256": "515e15dda9963c482014454545cbf8a9a6f45b870dfe3e6a2cd73c2e2977dd6d",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-f.png",
+      "rawSha256": "5ce1d9bf0b3681ae53b8a800029dbcebe88ac260e795bd50e1268e27100ef718",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-f.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-g",
+      "topic": "ai.performance",
+      "output": "docs/help/content/uk-UA/images/S44-g.png",
+      "sha256": "85413152810b7c63ea9cf150c1fa04628d76a11eb122f9b657669a2fad5218e4",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-g.png",
+      "rawSha256": "a7693297e150b37dd19032647e85e519f7b87dff75b82731fc59eedd6ee28941",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-g.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-h",
+      "topic": "ai.performance",
+      "output": "docs/help/content/uk-UA/images/S44-h.png",
+      "sha256": "f2434bcef43c754d87fec5189b35c11424e5f34fe583e419d2783021a37605c7",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-h.png",
+      "rawSha256": "f2434bcef43c754d87fec5189b35c11424e5f34fe583e419d2783021a37605c7",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-h.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S44-i",
+      "topic": "ai.performance",
+      "output": "docs/help/content/uk-UA/images/S44-i.png",
+      "sha256": "a687c277f8410dfa89dc908572e5e0a4992f1da8a1e3c443673160b2bf417300",
+      "raw": "docs/help/screenshots/raw/uk-UA/S44-i.png",
+      "rawSha256": "a687c277f8410dfa89dc908572e5e0a4992f1da8a1e3c443673160b2bf417300",
+      "passport": "docs/help/screenshots/passports/uk-UA/S44-i.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S45-a",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/uk-UA/images/S45-a.png",
+      "sha256": "da3fea977f9f4b391910bd205ea08ab667c7a4c6f792cc6c479e75aedf63e29f",
+      "raw": "docs/help/screenshots/raw/uk-UA/S45-a.png",
+      "rawSha256": "da3fea977f9f4b391910bd205ea08ab667c7a4c6f792cc6c479e75aedf63e29f",
+      "passport": "docs/help/screenshots/passports/uk-UA/S45-a.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S45-b",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/uk-UA/images/S45-b.png",
+      "sha256": "04554fd21cff253a6097773d56054bacda9b5b70b29d9a8fe762cb3a146e4f25",
+      "raw": "docs/help/screenshots/raw/uk-UA/S45-b.png",
+      "rawSha256": "da204357a12be0e4d0f836d0c67c0081ac1ca128a8c47809c7a62340238ef7b6",
+      "passport": "docs/help/screenshots/passports/uk-UA/S45-b.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S45-c",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/uk-UA/images/S45-c.png",
+      "sha256": "7cd35e439dc1bef0ba1161b3dc13d5abd7eba8f10c95c7c679ded73768458008",
+      "raw": "docs/help/screenshots/raw/uk-UA/S45-c.png",
+      "rawSha256": "3a0b42337806d8a6d3fa79bcb0ee4f7a599a95b0ae627af2da1d52992d0446cb",
+      "passport": "docs/help/screenshots/passports/uk-UA/S45-c.json"
+    },
+    {
+      "culture": "uk-UA",
+      "id": "S45-d",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/uk-UA/images/S45-d.png",
+      "sha256": "9e52d6cf0d74a296223a07c08d41b51659ba908117c80a2e222be726b8cbc317",
+      "raw": "docs/help/screenshots/raw/uk-UA/S45-d.png",
+      "rawSha256": "9e52d6cf0d74a296223a07c08d41b51659ba908117c80a2e222be726b8cbc317",
+      "passport": "docs/help/screenshots/passports/uk-UA/S45-d.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S38-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/de-DE/images/S38-e.png",
+      "sha256": "6f5ee99964f19a6bc7a920c45b66921e4da4442fbe20d4fe50568c958fe93ce1",
+      "raw": "docs/help/screenshots/raw/de-DE/S38-e.png",
+      "rawSha256": "8305f57dfa5f5896a7d01706ef97ae09d49e7466951d3988307de6652284b203",
+      "passport": "docs/help/screenshots/passports/de-DE/S38-e.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S38-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/de-DE/images/S38-f.png",
+      "sha256": "8e049ba9548c1cf9ff3040701e14657bdc698bc43e9011526caac0f6edce44a2",
+      "raw": "docs/help/screenshots/raw/de-DE/S38-f.png",
+      "rawSha256": "a832d5f2e01d864e226277a527e151546e1e81c9df6e10e4ffd0dc91f7903d55",
+      "passport": "docs/help/screenshots/passports/de-DE/S38-f.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S38-g",
+      "topic": "ai.context",
+      "output": "docs/help/content/de-DE/images/S38-g.png",
+      "sha256": "8a78d24d5ece2fcb298a03dcac84548634a36403bf5a767e17b6391111c630d9",
+      "raw": "docs/help/screenshots/raw/de-DE/S38-g.png",
+      "rawSha256": "6e4610fa2c69e11749bdc074c79bbd85ae29dac25cd01873f152e0a494725767",
+      "passport": "docs/help/screenshots/passports/de-DE/S38-g.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S40-d",
+      "topic": "ai.context",
+      "output": "docs/help/content/de-DE/images/S40-d.png",
+      "sha256": "b2f09a687f79c548256b9afac0031c3efa2e9f15a81b41d9abb0a78aa1f3c758",
+      "raw": "docs/help/screenshots/raw/de-DE/S40-d.png",
+      "rawSha256": "57fcc795cd916be567dc9eafbc6b8a9134536bfda414604da6fd1b9bb4351485",
+      "passport": "docs/help/screenshots/passports/de-DE/S40-d.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S40-e",
+      "topic": "ai.context",
+      "output": "docs/help/content/de-DE/images/S40-e.png",
+      "sha256": "4aa86873a1f7da6b856149abb2fbe19abd92b63e9995a49d60d00f1c8f10ecd1",
+      "raw": "docs/help/screenshots/raw/de-DE/S40-e.png",
+      "rawSha256": "762bcb6c45ff843ab0644505247ecb62348b07566209f4f1c49e7b2a2016e602",
+      "passport": "docs/help/screenshots/passports/de-DE/S40-e.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S40-f",
+      "topic": "ai.context",
+      "output": "docs/help/content/de-DE/images/S40-f.png",
+      "sha256": "8f833341b2901f25d7b50210f1a9ca10f4a75740fc03b2c6ae72f517f80a662f",
+      "raw": "docs/help/screenshots/raw/de-DE/S40-f.png",
+      "rawSha256": "62e6596fe0a7efb8a6179517536b36f4eaf49e2352252575515f9535ae456c6f",
+      "passport": "docs/help/screenshots/passports/de-DE/S40-f.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-a",
+      "topic": "ai.memory",
+      "output": "docs/help/content/de-DE/images/S44-a.png",
+      "sha256": "f0f71717ecaa552fb1f2cba26f97d5e3787478c024c22664097fc6a9b0235839",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-a.png",
+      "rawSha256": "aa0696e52de7b1602fa7a66f20ec87dd847c5240ff0e10f38c344c1078ee38d3",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-a.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-b",
+      "topic": "ai.memory",
+      "output": "docs/help/content/de-DE/images/S44-b.png",
+      "sha256": "87b04249acc01626f3b8e8736959d90f32a994a46b64d8c6f5c99257c2c93b9f",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-b.png",
+      "rawSha256": "bf8632033c0f37f87711cecae0ccfa9ad1bbe3228e8d806b8d44753be2edef67",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-b.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-c",
+      "topic": "ai.memory",
+      "output": "docs/help/content/de-DE/images/S44-c.png",
+      "sha256": "ccf15e84758efdfda97a994408ee67a634f1a663c8ff34adf5c1bf330cdb6310",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-c.png",
+      "rawSha256": "05a87cdd21a9c7b00d1c3f81f50d63978702ffabba6bd1ac6c3012887536f636",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-c.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-d",
+      "topic": "ai.memory",
+      "output": "docs/help/content/de-DE/images/S44-d.png",
+      "sha256": "eac2dbeaa7afb17a193e0a8a16b5e1a590e104987cb804c94d8f1dde0815e655",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-d.png",
+      "rawSha256": "797ab1624b7bd68bb744d0091038e4ae1820b77fe18a2a4b48ef753bad0308e0",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-d.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-e",
+      "topic": "ai.memory",
+      "output": "docs/help/content/de-DE/images/S44-e.png",
+      "sha256": "5a404c48e96c62008b6088add9cff7908972669b1611f55038106b6898678f93",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-e.png",
+      "rawSha256": "04b6ed77367b9ef891c0d0e850f8fa1a0fd826a877135db44ac2c86b35dfa09e",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-e.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-f",
+      "topic": "ai.performance",
+      "output": "docs/help/content/de-DE/images/S44-f.png",
+      "sha256": "86be3965bcfcdc1101f0a4da2b8681f5f217cf48e2c48a94cdc11e2a448aaf5a",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-f.png",
+      "rawSha256": "dfbece9320443dad1b589c3cd6ff530e97a7fd0ac788636a2e3bc36dbd01890f",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-f.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-g",
+      "topic": "ai.performance",
+      "output": "docs/help/content/de-DE/images/S44-g.png",
+      "sha256": "1cc6713bf446e3ba0ee02fb28fc3485d6a405c5664b4af4d6ebf1097d84a6bae",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-g.png",
+      "rawSha256": "9dd9127ca47fa3cb36aa2cd75e8e6084c23243cdfcd1327055a56d30d2fb0063",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-g.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-h",
+      "topic": "ai.performance",
+      "output": "docs/help/content/de-DE/images/S44-h.png",
+      "sha256": "84dacaad1d9678f00a7e22877ad66e50b31a39b0d64fa948c06dc290f41783f4",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-h.png",
+      "rawSha256": "84dacaad1d9678f00a7e22877ad66e50b31a39b0d64fa948c06dc290f41783f4",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-h.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S44-i",
+      "topic": "ai.performance",
+      "output": "docs/help/content/de-DE/images/S44-i.png",
+      "sha256": "17f6d77f7219ba9ad8b46e3a2794a21aeba523ac2d75cb186551c6a955100532",
+      "raw": "docs/help/screenshots/raw/de-DE/S44-i.png",
+      "rawSha256": "17f6d77f7219ba9ad8b46e3a2794a21aeba523ac2d75cb186551c6a955100532",
+      "passport": "docs/help/screenshots/passports/de-DE/S44-i.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S45-a",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/de-DE/images/S45-a.png",
+      "sha256": "e158fb1f86721061d92128839a05af98beab5d9020c0b4b307ca943467d0d948",
+      "raw": "docs/help/screenshots/raw/de-DE/S45-a.png",
+      "rawSha256": "e158fb1f86721061d92128839a05af98beab5d9020c0b4b307ca943467d0d948",
+      "passport": "docs/help/screenshots/passports/de-DE/S45-a.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S45-b",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/de-DE/images/S45-b.png",
+      "sha256": "e42cb5b4e5f826dd845ea53fd7ccc233620946ab647fff4eeb24cfb28e80e1e3",
+      "raw": "docs/help/screenshots/raw/de-DE/S45-b.png",
+      "rawSha256": "43318ab954d258bd575066d77e60372ef60e7a0a247d0d4c225e265ca4acff49",
+      "passport": "docs/help/screenshots/passports/de-DE/S45-b.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S45-c",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/de-DE/images/S45-c.png",
+      "sha256": "fa98465f45f883f579f68dc09c7ffbd4a8ba12a58d33201b79ea79f288c35028",
+      "raw": "docs/help/screenshots/raw/de-DE/S45-c.png",
+      "rawSha256": "80255b45f58fd2e10bebf4cbab69cc6d94307f6d42151c1d2cc2c46f0033c430",
+      "passport": "docs/help/screenshots/passports/de-DE/S45-c.json"
+    },
+    {
+      "culture": "de-DE",
+      "id": "S45-d",
+      "topic": "ai.appearance",
+      "output": "docs/help/content/de-DE/images/S45-d.png",
+      "sha256": "634684c1bed57c4f7fa22d84aeb4583f4303b418451cf1c3c578eefa6b94bc5a",
+      "raw": "docs/help/screenshots/raw/de-DE/S45-d.png",
+      "rawSha256": "634684c1bed57c4f7fa22d84aeb4583f4303b418451cf1c3c578eefa6b94bc5a",
+      "passport": "docs/help/screenshots/passports/de-DE/S45-d.json"
+    }
+  ]
+}

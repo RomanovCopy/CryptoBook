@@ -112,7 +112,7 @@ public sealed class HelpTests
         Assert.Equal(LocalizationManager.AvailableLanguages.Select(l => l.CultureName).Order(), content.Cultures.Order());
         foreach (string culture in content.Cultures)
         {
-            Assert.Equal(63, content.GetLocale(culture).Topics.Count);
+            Assert.Equal(67, content.GetLocale(culture).Topics.Count);
             Assert.Single(content.Search(culture, "09:00"));
             var topic = content.Find(culture, "doc.create")!;
             Assert.Null(content.LoadImage(culture, topic, "../images/S04-a.png"));
@@ -126,7 +126,7 @@ public sealed class HelpTests
         Assert.True(model.OpenTopic("doc.create"));
         model.Back.Execute(null); Assert.Equal(140, model.ScrollOffset);
         model.Forward.Execute(null); Assert.Equal("doc.create", model.CurrentTopicId);
-        Assert.False(model.OpenTopic("ai.context"));
+        Assert.False(model.OpenTopic("settings.data"));
         Assert.True(content.IsAvailable("security.password"));
         Assert.True(content.IsAvailable("doc.save"));
         model.Query = "09:00"; model.RunSearch(); Assert.Equal("doc.create", Assert.Single(model.Results).Id);
