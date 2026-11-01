@@ -1396,4 +1396,28 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>Die Kopie konnte nicht überprüft werden; das Original bleibt erhalten.</value></data>
   <data name="Explorer.RecycleBinFailed" xml:space="preserve"><value>Das Objekt konnte nicht in den Windows-Papierkorb verschoben werden. Es wurde nicht endgültig gelöscht.</value></data>
   <data name="Explorer.RecycleCanceledPartial" xml:space="preserve"><value>Einige Objekte wurden vor dem Abbruch bereits in den Windows-Papierkorb verschoben. Stellen Sie sie dort wieder her.</value></data>
+  <data name="Security.UnlockTitle" xml:space="preserve"><value>Zugriff auf geschütztes Dokument</value></data>
+  <data name="Security.KeyLabel" xml:space="preserve"><value>Verschlüsselungsschlüssel</value></data>
+  <data name="Security.EnterKey" xml:space="preserve"><value>Geben Sie den Schlüssel ein.</value></data>
+  <data name="Security.WrongUnlockKey" xml:space="preserve"><value>Falscher Schlüssel. Versuchen Sie es in einigen Sekunden erneut.</value></data>
+  <data name="Security.KeyCheckFailed" xml:space="preserve"><value>Der Schlüssel konnte nicht geprüft werden.</value></data>
+  <data name="Security.RestoreTitle" xml:space="preserve"><value>Dokument wiederherstellen</value></data>
+  <data name="Security.OpenLastFile" xml:space="preserve"><value>Letzte Datei „{0}“ öffnen?</value></data>
+  <data name="Security.SourceUnavailableRestore" xml:space="preserve"><value>Die Originaldatei „{0}“ ist nicht verfügbar. Momentaufnahme wiederherstellen?</value></data>
+  <data name="Security.DocumentLabel" xml:space="preserve"><value>Dokument</value></data>
+  <data name="Security.RestoreSnapshot" xml:space="preserve"><value>Momentaufnahme wiederherstellen</value></data>
+  <data name="Security.ResetTitle" xml:space="preserve"><value>Schlüssel zurücksetzen</value></data>
+  <data name="Security.RestoreFailed" xml:space="preserve"><value>Das Dokument konnte nicht wiederhergestellt werden.</value></data>
+  <data name="Security.ResetInterval.1" xml:space="preserve"><value>1 Minute</value></data>
+  <data name="Security.ResetInterval.5" xml:space="preserve"><value>5 Minuten</value></data>
+  <data name="Security.ResetInterval.10" xml:space="preserve"><value>10 Minuten</value></data>
+  <data name="Security.ResetInterval.15" xml:space="preserve"><value>15 Minuten</value></data>
+  <data name="Security.ResetInterval.30" xml:space="preserve"><value>30 Minuten</value></data>
+  <data name="Security.ResetInterval.0" xml:space="preserve"><value>Nie</value></data>
+  <data name="Recovery.CrashAvailable" xml:space="preserve"><value>Ungespeicherte Arbeit aus einer früheren Sitzung ist verfügbar. Sie können die neueste aufbewahrte Notfallkopie wiederherstellen oder diesen Hinweis schließen.</value></data>
+  <data name="Recovery.RestoreCrash" xml:space="preserve"><value>Ungespeicherte Arbeit wiederherstellen</value></data>
+  <data name="Recovery.CrashRestoreFailed" xml:space="preserve"><value>Die Wiederherstellung ist fehlgeschlagen. Prüfen Sie den ursprünglichen Schlüssel und den Zugriff auf die Kopie und versuchen Sie es erneut. Die aufbewahrte Kopie wurde nicht gelöscht.</value></data>
+  <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Eine gespeicherte Notfallkopie ungespeicherter Arbeit öffnen</value></data>
+  <data name="Recovery.RestoreLock" xml:space="preserve"><value>Momentaufnahme nach Schlüsselreset wiederherstellen</value></data>
+  <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Geschützte Arbeit mit dem ursprünglichen Schlüssel wiederherstellen</value></data>
 </root>

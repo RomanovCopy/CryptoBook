@@ -542,6 +542,98 @@
         "Seiten",
         "abbrechen"
       ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "Schlüssel",
+        "Kennwort",
+        "Wiederholung",
+        "Verschlüsselung"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "Schutz",
+        "Kopie",
+        "verschlüsseln",
+        "ersetzen",
+        "Ordner",
+        "Stapel"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "entschlüsseln",
+        "Format",
+        "Quelle",
+        "Text"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "zurücksetzen",
+        "Sperre",
+        "Inaktivität",
+        "Timer"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "Kompatibilität",
+        "Container",
+        "Altformat"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "vorherige",
+        "Version",
+        "Sicherung",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "Notfallkopie",
+        "ungespeichert",
+        "Sitzung",
+        "Momentaufnahme"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "Sperrkopie",
+        "entsperren",
+        "wiederherstellen",
+        "Kennwort"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "Fehler",
+        "schreiben",
+        "Zugriff",
+        "belegt",
+        "Speicherplatz"
+      ]
     }
   ]
 }

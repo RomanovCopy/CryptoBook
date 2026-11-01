@@ -17,6 +17,122 @@ namespace CryptoBook.Tests
     public sealed class DocumentRecoveryTests
     {
         [WpfFact]
+        public async Task DeferredRecovery_UsesNewestCopy_AndPreservesOlderCopyUntilItIsChosen()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var editor = CreateEditor(); var session = new DocumentSession(editor);
+                var template = new XamlPackageFileTemplate();
+                using var recovery = new DocumentRecoveryService(session, editor, new TestSaveService(),
+                    new TestLoadService(), new FileTemplateRegistry([template]), Dispatcher.CurrentDispatcher,
+                    Path.Combine(directory, "current.recovery"));
+                foreach(string text in new[] { "older work", "newer work" })
+                {
+                    session.Open(Path.Combine(directory, "document.XamlPackage"), template,
+                        new FlowDocument(new Paragraph(new Run(text)))); session.MarkDirty();
+                    await recovery.SaveSnapshotNowAsync(); await recovery.DeferSnapshotAsync();
+                    string latest = Directory.GetFiles(directory, "*.deferred").OrderByDescending(File.GetLastWriteTimeUtc).First();
+                    File.SetLastWriteTimeUtc(latest, text == "older work" ? DateTime.UtcNow.AddDays(-2) : DateTime.UtcNow.AddDays(-1));
+                }
+                session.Close();
+                Assert.NotNull(recovery.DeferredSnapshotTime);
+                Assert.True(await recovery.RestoreDeferredSnapshotAsync());
+                Assert.Contains("newer work", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+                Assert.True(session.IsDirty); Assert.True(recovery.HasSnapshot);
+                Assert.Single(Directory.GetFiles(directory, "*.deferred"));
+                await recovery.StopAsync();
+                Assert.True(await recovery.RestoreDeferredSnapshotAsync());
+                Assert.Contains("older work", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+                Assert.Null(recovery.DeferredSnapshotTime);
+                await recovery.StopAsync();
+            }
+            finally { Directory.Delete(directory, true); }
+        }
+
+        [WpfFact]
+        public async Task DeferredRecovery_WrongOrMissingKey_PreservesCopyAndCurrentEditor()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var editor = CreateEditor(); var session = new DocumentSession(editor);
+                var plain = new XamlPackageFileTemplate(); var secure = new SecureFileTemplate();
+                using var key = new MemoryKeyProvider(new Argon2idKeyDeriver()); key.SetKey("original demo key!9");
+                using var recovery = new DocumentRecoveryService(session, editor, new TestSaveService(), new TestLoadService(),
+                    new FileTemplateRegistry([plain, secure]), Dispatcher.CurrentDispatcher, Path.Combine(directory, "current.recovery"), keyProvider: key);
+                session.Open(Path.Combine(directory, "protected.cbook"), secure, new FlowDocument(new Paragraph(new Run("protected unsaved work")))); session.MarkDirty();
+                await recovery.SaveSnapshotNowAsync(); await recovery.DeferSnapshotAsync();
+                string archived = Directory.GetFiles(directory, "*.deferred").Single(); byte[] bytes = File.ReadAllBytes(archived);
+                string currentPath = Path.Combine(directory, "current.XamlPackage");
+                session.Open(currentPath, plain, new FlowDocument(new Paragraph(new Run("keep current work")))); session.MarkDirty();
+                key.Clear(); Assert.False(await recovery.RestoreDeferredSnapshotAsync());
+                key.SetKey("wrong demo key!8");
+                await Assert.ThrowsAnyAsync<CryptographicException>(() => recovery.RestoreDeferredSnapshotAsync());
+                Assert.False(key.HasKey); Assert.Equal(currentPath, session.FilePath);
+                Assert.Contains("keep current work", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+                Assert.Equal(bytes, File.ReadAllBytes(archived));
+                await recovery.StopAsync();
+            }
+            finally { Directory.Delete(directory, true); }
+        }
+
+        [WpfFact]
+        public async Task DeferredRecovery_FailedReplacementCrashCopy_PreservesArchivedCopy()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var editor = CreateEditor(); var session = new DocumentSession(editor); var template = new XamlPackageFileTemplate();
+                string path = Path.Combine(directory, "current.recovery");
+                using var recovery = new DocumentRecoveryService(session, editor, new TestSaveService(), new TestLoadService(),
+                    new FileTemplateRegistry([template]), Dispatcher.CurrentDispatcher, path);
+                session.Open(Path.Combine(directory, "document.XamlPackage"), template,
+                    new FlowDocument(new Paragraph(new Run("durable previous work")))); session.MarkDirty();
+                await recovery.SaveSnapshotNowAsync(); await recovery.DeferSnapshotAsync();
+                string archived = Directory.GetFiles(directory, "*.deferred").Single(); byte[] bytes = File.ReadAllBytes(archived);
+                session.Close(); Directory.CreateDirectory(path);
+                await Assert.ThrowsAsync<UnauthorizedAccessException>(() => recovery.RestoreDeferredSnapshotAsync());
+                Assert.Equal(bytes, File.ReadAllBytes(archived));
+                Assert.Contains("durable previous work", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+                await recovery.StopAsync();
+            }
+            finally { Directory.Delete(directory, true); }
+        }
+
+        [WpfFact]
+        public async Task DeferredRecovery_ConcurrentSnapshotCleanup_DoesNotConsumeArchivedCopy()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var editor = CreateEditor(); var session = new DocumentSession(editor); var template = new XamlPackageFileTemplate();
+                var save = new GatedSaveService();
+                using var recovery = new DocumentRecoveryService(session, editor, save, new TestLoadService(),
+                    new FileTemplateRegistry([template]), Dispatcher.CurrentDispatcher, Path.Combine(directory, "current.recovery"));
+                session.Open(Path.Combine(directory, "document.XamlPackage"), template,
+                    new FlowDocument(new Paragraph(new Run("retain until committed")))); session.MarkDirty();
+                await recovery.SaveSnapshotNowAsync(); await recovery.DeferSnapshotAsync();
+                string archived = Directory.GetFiles(directory, "*.deferred").Single(); byte[] original = File.ReadAllBytes(archived);
+                session.Close(); save.Block = true;
+                Task<bool> restore = recovery.RestoreDeferredSnapshotAsync();
+                await save.Started.Task;
+                Task cleanup = recovery.DeleteSnapshotAsync();
+                save.Continue.TrySetResult();
+                await Assert.ThrowsAsync<IOException>(() => restore);
+                await cleanup;
+                Assert.Equal(original, File.ReadAllBytes(archived));
+                Assert.Contains("retain until committed", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+                await recovery.StopAsync();
+            }
+            finally { Directory.Delete(directory, true); }
+        }
+
+        [WpfFact]
         public async Task PlainRecovery_DoesNotDependOnCachedEncryptionPassword_AndCanBeDeferred()
         {
             string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
@@ -428,6 +544,23 @@ namespace CryptoBook.Tests
                 new TestParagraphFactory(),
                 new TestUriNavigationService(),
                 new DocumentAppearanceDefaults());
+
+        private sealed class GatedSaveService : IFlowDocumentSaveService
+        {
+            public bool Block { get; set; }
+            public TaskCompletionSource Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            public TaskCompletionSource Continue { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            public Task SaveToFileAsync(IRichTextBoxService editor, string path, IFileTemplate template,
+                CancellationToken cancellationToken = default, IProgressReporter? progress = null,
+                FlowDocument? documentSnapshot = null) => throw new NotSupportedException();
+            public async Task SaveToStreamAsync(IRichTextBoxService editor, Stream destination, IFileTemplate template,
+                CancellationToken cancellationToken = default, IProgressReporter? progress = null,
+                FlowDocument? documentSnapshot = null)
+            {
+                if(Block) { Started.TrySetResult(); await Continue.Task.WaitAsync(cancellationToken); }
+                await new TestSaveService().SaveToStreamAsync(editor, destination, template, cancellationToken, progress, documentSnapshot);
+            }
+        }
 
         private sealed class TestSaveService: IFlowDocumentSaveService
         {

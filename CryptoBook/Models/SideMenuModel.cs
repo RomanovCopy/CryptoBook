@@ -194,6 +194,22 @@ namespace CryptoBook.Models
             });
             file.Children.Add(new MenuItem(commandService)
             {
+                Name = LocalizationManager.GetString("Recovery.RestoreCrash"),
+                Glyph = "\uE777",
+                Description = LocalizationManager.GetString("Recovery.RestoreCrash.Description"),
+                IsEnabled = true,
+                Command = RecoveryCommands.RestoreCrashSnapshot
+            });
+            file.Children.Add(new MenuItem(commandService)
+            {
+                Name = LocalizationManager.GetString("Recovery.RestoreLock"),
+                Glyph = "\uE72E",
+                Description = LocalizationManager.GetString("Recovery.RestoreLock.Description"),
+                IsEnabled = true,
+                Command = RecoveryCommands.RestoreLockSnapshot
+            });
+            file.Children.Add(new MenuItem(commandService)
+            {
                 Name = LocalizationManager.GetString("SideMenu.RenameBook"),
                 Glyph = "\uE8AC",
                 Description = LocalizationManager.GetString("SideMenu.RenameBook.Description"),

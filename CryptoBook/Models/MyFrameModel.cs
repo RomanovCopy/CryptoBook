@@ -85,9 +85,9 @@ namespace CryptoBook.Models
             {
                 // Register both occupied surfaces, then focus the active document.
                 if(workspaceDocuments.HasHomeDocument)
-                    pageNavigationService.Navigate("Home");
+                    pageNavigationService.EnsurePage("Home");
                 if(workspaceDocuments.HasMarkdownDocument)
-                    pageNavigationService.Navigate("MarkdownEditor");
+                    pageNavigationService.EnsurePage("MarkdownEditor");
                 pageNavigationService.Navigate(workspaceDocuments.ActivePageKey);
                 if(!workspaceDocuments.HasMarkdownDocument)
                 {

@@ -1,4 +1,5 @@
 using System.Windows;
+using CryptoBook.Infrastructure;
 using System.Windows.Controls;
 using WpfButton = System.Windows.Controls.Button;
 using WpfOrientation = System.Windows.Controls.Orientation;
@@ -23,9 +24,9 @@ public sealed class LockRecoveryChoiceWindow : Window
         string? originalPath,
         bool originalAvailable)
     {
-        Title = "Восстановление документа";
-        Width = 470;
-        Height = originalAvailable ? 250 : 235;
+        Title = LocalizationManager.GetString("Security.RestoreTitle");
+        Width = 640;
+        SizeToContent = SizeToContent.Height;
         ResizeMode = ResizeMode.NoResize;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         SetResourceReference(BackgroundProperty, "CurrentWindowBackground");
@@ -35,8 +36,8 @@ public sealed class LockRecoveryChoiceWindow : Window
         root.Children.Add(new TextBlock
         {
             Text = originalAvailable
-                ? $"Открыть последний файл «{documentName}»?"
-                : $"Исходный файл «{documentName}» недоступен. Восстановить снимок?",
+                ? LocalizationManager.Format("Security.OpenLastFile", documentName)
+                : LocalizationManager.Format("Security.SourceUnavailableRestore", documentName),
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 12)
         });
@@ -52,7 +53,7 @@ public sealed class LockRecoveryChoiceWindow : Window
         fileCard.SetResourceReference(Border.BorderBrushProperty, "CurrentBorderColor");
 
         var fileInfo = new StackPanel();
-        var nameLabel = new TextBlock { Text = "Документ", FontSize = 11 };
+        var nameLabel = new TextBlock { Text = LocalizationManager.GetString("Security.DocumentLabel"), FontSize = 11 };
         nameLabel.SetResourceReference(TextBlock.ForegroundProperty, "CurrentMutedForeground");
         fileInfo.Children.Add(nameLabel);
         fileInfo.Children.Add(new TextBlock
@@ -67,7 +68,7 @@ public sealed class LockRecoveryChoiceWindow : Window
         var pathLabel = new TextBlock
         {
             Text = string.IsNullOrWhiteSpace(originalPath)
-                ? "Исходный путь не сохранён"
+                ? LocalizationManager.GetString("Security.RecoveryUnsavedPath")
                 : originalPath,
             TextWrapping = TextWrapping.Wrap,
             MaxHeight = 36,
@@ -85,9 +86,9 @@ public sealed class LockRecoveryChoiceWindow : Window
             HorizontalAlignment = WpfHorizontalAlignment.Right
         };
         if(originalAvailable)
-            buttons.Children.Add(CreateButton("Открыть", LockRecoveryChoice.Open));
-        buttons.Children.Add(CreateButton("Восстановить снимок", LockRecoveryChoice.Restore));
-        buttons.Children.Add(CreateButton("Отмена", LockRecoveryChoice.Cancel));
+            buttons.Children.Add(CreateButton(LocalizationManager.GetString("Common.Open"), LockRecoveryChoice.Open));
+        buttons.Children.Add(CreateButton(LocalizationManager.GetString("Security.RestoreSnapshot"), LockRecoveryChoice.Restore));
+        buttons.Children.Add(CreateButton(LocalizationManager.GetString("Common.Cancel"), LockRecoveryChoice.Cancel));
         root.Children.Add(buttons);
         Content = root;
     }

@@ -1,0 +1,33 @@
+{
+  "shotId": "S36-b",
+  "topicId": "recovery.lock",
+  "articleStepOrArea": "manual lock-snapshot menu command",
+  "culture": "uk-UA",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "8daa2d5ff29c7f9645eea81775e771a402be2001",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T13:34:24.6908366+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S36-b.png",
+  "annotationFile": "docs/help/screenshots/annotations/uk-UA/S36-b.json",
+  "outputFile": "docs/help/content/uk-UA/images/S36-b.png",
+  "actionCheck": "90 passing stage8 checks per culture, including no automatic recovery banners and actual routed File-menu commands.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\uk-UA\\65b7eb08\\Demo\\План подорожі.cbook",
+  "visualCheck": "Reviewed 2026-11-01 after removing automatic recovery notices: real File menu, correct localized recovery command, preserved fictional files, complete highlighted entry.",
+  "validationReport": "docs/help/screenshots/validation/stage8/manual-recovery/capture-uk-UA.json"
+}

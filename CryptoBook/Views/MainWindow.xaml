@@ -152,6 +152,7 @@
             CloseCoordinator="{markup:ResolveService ServiceType={x:Type services:DocumentCloseCoordinator}}"
             KeyResetService="{markup:ResolveService ServiceType={x:Type interfaces:IKeyResetService}}"
             SnapshotService="{markup:ResolveService ServiceType={x:Type interfaces:ILockSnapshotService}}"
+            CrashRecovery="{markup:ResolveViewModel ViewModelType={x:Type viewmodels:CrashRecoveryViewModel}}"
             RichTextBoxService="{markup:ResolveService ServiceType={x:Type interfaces:IRichTextBoxService}}"
             ActivationService="{markup:ResolveService ServiceType={x:Type interfaces:IApplicationActivationService}}"
             SidePanel="{Binding ElementName=sidemenu,UpdateSourceTrigger=PropertyChanged}"

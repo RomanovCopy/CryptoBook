@@ -127,6 +127,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionMode_ViewModel>().As<IEncryptionMode_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<DecryptionOptionsViewModel>().AsSelf().InstancePerDependency();
+            builder.RegisterType<CrashRecoveryViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MediaPlayerViewModel>().As<IMediaPlayerViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<WorkspaceSearchViewModel>()

@@ -545,6 +545,101 @@
         "страницы",
         "отмена"
       ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "ключ",
+        "пароль",
+        "повтор",
+        "шифрование"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "защита",
+        "копия",
+        "шифровать",
+        "заменить",
+        "папка",
+        "пакет"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "расшифровать",
+        "формат",
+        "исходник",
+        "текст"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "сброс",
+        "блокировка",
+        "бездействие",
+        "таймер"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "совместимость",
+        "контейнер",
+        "старый",
+        "формат"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "предыдущая",
+        "версия",
+        "резервная",
+        "копия",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "аварийная",
+        "копия",
+        "незавершённый",
+        "сеанс",
+        "снимок"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "снимок",
+        "разблокировка",
+        "восстановление",
+        "пароль"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "ошибка",
+        "запись",
+        "доступ",
+        "занят",
+        "место"
+      ]
     }
   ]
 }

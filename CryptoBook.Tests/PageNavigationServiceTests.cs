@@ -12,6 +12,28 @@ namespace CryptoBook.Tests
     public sealed class PageNavigationServiceTests
     {
         [StaFact]
+        public void EnsurePage_RegistersInactiveEditorWithoutNavigatingCurrentPage()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterType<TestPage>();
+            builder.RegisterInstance(new Registry()).As<IPageRegistry>();
+            using IContainer container = builder.Build();
+            using var service = new PageNavigationService(container);
+            service.Navigate("Home");
+            Page? current = service.CurrentPage;
+            var events = new List<string?>();
+            service.PropertyChanged += (_, args) => events.Add(args.PropertyName);
+            service.EnsurePage("MarkdownEditor");
+            service.EnsurePage("MarkdownEditor");
+            Assert.Same(current, service.CurrentPage);
+            Assert.Equal("Home", service.CurrentKey);
+            Assert.Equal(new[] { "Home", "MarkdownEditor" }, service.Keys);
+            Assert.DoesNotContain(nameof(service.CurrentPage), events);
+            service.Navigate("MarkdownEditor");
+            Assert.Equal("MarkdownEditor", service.CurrentKey);
+        }
+
+        [StaFact]
         public void Navigate_ToExistingKey_ReactivatesPageWithoutDuplicate()
         {
             var builder = new ContainerBuilder();

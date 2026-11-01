@@ -39,6 +39,7 @@ internal static partial class Program
         bool stage4 = args.Length > 3 && args[3].StartsWith("stage4", StringComparison.Ordinal);
         bool stage5 = args.Length > 3 && args[3].StartsWith("stage5", StringComparison.Ordinal);
         bool stage6 = args.Length > 3 && args[3].StartsWith("stage6", StringComparison.Ordinal);
+        bool stage8 = args.Length > 3 && args[3].StartsWith("stage8", StringComparison.Ordinal);
         bool acceptance7 = args.Length > 3 && args[3] == "stage7-acceptance";
         bool connection7 = args.Length > 3 && args[3] == "stage7-connection";
         bool device7 = args.Length > 3 && (args[3] == "stage7-device" || connection7);
@@ -52,7 +53,7 @@ internal static partial class Program
         Properties.Settings.Default.CultureInfo = culture;
         Properties.Settings.Default.FileOverviewFirstStart = true;
         Properties.Settings.Default.WindowState = "Normal";
-        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7, stage7, acceptance7);
+        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7 || stage8, stage7, acceptance7);
         var app = new App(isolated.Configure) { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.InitializeComponent();
         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingListener(bindingErrors));
@@ -69,7 +70,8 @@ internal static partial class Program
                     Console.WriteLine($"HELP_ACCEPTANCE SESSION CLOSED report={Path.Combine(runRoot, "acceptance.json")}");
                     return;
                 }
-                if (media7) await ValidateStage7Media(isolated);
+                if (stage8) await ValidateStage8(isolated, args[3] == "stage8-verify");
+                else if (media7) await ValidateStage7Media(isolated);
                 else if (resources7) await ValidateStage7Resources(isolated);
                 else if (device7) await ValidateStage7Device(isolated, connection7);
                 else if (stage7) await ValidateStage7(isolated, args[3] == "stage7-verify");
@@ -81,10 +83,11 @@ internal static partial class Program
                 Check(bindingErrors.Count == 0, "No WPF binding errors.");
                 File.WriteAllText(Path.Combine(runRoot, "result.json"), JsonSerializer.Serialize(new
                 {
-                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
-                    storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
+                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, stage8, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
+                    captureFilter, storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
                     captureMethod = media7 ? "Flyleaf TakeSnapshotToBitmapSource of the actual decoded video frame; not a window screenshot" : "RenderTargetBitmap of visible production WPF windows",
-                    interaction = connection7 ? "Live MTP connection acceptance; individual checks identify the executed path. A resumed session only reads the original disposable probe after physical reconnection."
+                    interaction = stage8 ? "Production protection/export/save/backup/lock/recovery services and visible WPF dialogs, isolated disposable files; see stage8.json for distinct recovery outcomes"
+                        : connection7 ? "Live MTP connection acceptance; individual checks identify the executed path. A resumed session only reads the original disposable probe after physical reconnection."
                         : media7 ? "Real AVI with PCM audio, two Flyleaf windows, decoded frame snapshots, active-window play/pause/seek synchronization and independent playback"
                         : resources7 ? "Embedded stage7 articles and images in the visible production help window, separate CWD, without device operations or capture replacement"
                         : device7 ? "Actual connected MTP device, disposable uniquely created folder, production transfers/conflicts/cancellation/preview/decryption and visible WPF explorer"
@@ -92,7 +95,8 @@ internal static partial class Program
                         : stage6 ? "production file-manager commands, local disk pipelines, WPF folder/name/conflict/batch/details dialogs; isolated stores and disposable clipboard with prior data restored in memory"
                         : stage5 ? "visible production control DataContexts and commands; real link/crop dialogs; production image/layout/crop services; image paths and unsaved decisions supplied by queues; disposable clipboard roundtrip with prior data object restored in memory"
                         : stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
-                    limitations = connection7 ? "Disconnect occurs while idle, not during a transfer. One device only; no cross-device or ADB test. Device IDs are not retained."
+                    limitations = stage8 ? "Native save/backup decisions supplied by queues. No physical input, Windows sleep/lock or disk-full test. Crash recovery uses a re-created service/coordinator and the explicit recovery command; no process is killed. No passwords retained."
+                        : connection7 ? "Disconnect occurs while idle, not during a transfer. One device only; no cross-device or ADB test. Device IDs are not retained."
                         : media7 ? "No physical key or native-control gestures or audibility claim from automation; recorded separately from user observations. Frames are decoder output, not a desktop screenshot. Synchronization checks do not promise frame-accurate timing."
                         : resources7 ? "Resource verification only; no hardware scenario or screenshot capture."
                         : device7 ? "One MTP device only. Cancellation is at progress-window startup. No mid-transfer physical disconnection, second-device transfer, ADB, native PDF or printing in this mode. Device identifiers and personal listings are not retained."
@@ -229,7 +233,7 @@ internal static partial class Program
         help.WindowState = WindowState.Minimized; service.Open(); Check(help.WindowState == WindowState.Normal, "Repeated opening restores a minimized window.");
         helpVm.OpenTopic("doc.create"); helpVm.Back.Execute(null); Check(helpVm.CurrentTopicId == "start.interface", "Back works.");
         helpVm.Forward.Execute(null); Check(helpVm.CurrentTopicId == "doc.create", "Forward works.");
-        Check(!helpVm.OpenTopic("security.password") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
+        Check(!helpVm.OpenTopic("ai.start") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
         helpVm.Query = "09:00"; helpVm.RunSearch(); Check(helpVm.Results.Single().Id == "doc.create", "Search includes visible article text.");
         helpVm.Query = "zzzz-no-such-help-topic"; helpVm.RunSearch(); Check(helpVm.HasNoResults, "No-result state.");
         helpVm.Query = "  "; Check(!helpVm.IsSearching, "Whitespace query returns the contents tree.");

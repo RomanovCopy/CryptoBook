@@ -2247,4 +2247,28 @@
   <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>Не вдалося перевірити копію; початковий об’єкт збережено.</value></data>
   <data name="Explorer.RecycleBinFailed" xml:space="preserve"><value>Не вдалося перемістити об’єкт до кошика Windows. Незворотне видалення не виконувалося.</value></data>
   <data name="Explorer.RecycleCanceledPartial" xml:space="preserve"><value>Частину об’єктів уже переміщено до кошика Windows до скасування. Для їх повернення використовуйте кошик.</value></data>
+  <data name="Security.UnlockTitle" xml:space="preserve"><value>Доступ до зашифрованого документа</value></data>
+  <data name="Security.KeyLabel" xml:space="preserve"><value>Ключ шифрування</value></data>
+  <data name="Security.EnterKey" xml:space="preserve"><value>Введіть ключ.</value></data>
+  <data name="Security.WrongUnlockKey" xml:space="preserve"><value>Неправильний ключ. Повторіть спробу за кілька секунд.</value></data>
+  <data name="Security.KeyCheckFailed" xml:space="preserve"><value>Не вдалося перевірити ключ.</value></data>
+  <data name="Security.RestoreTitle" xml:space="preserve"><value>Відновлення документа</value></data>
+  <data name="Security.OpenLastFile" xml:space="preserve"><value>Відкрити останній файл «{0}»?</value></data>
+  <data name="Security.SourceUnavailableRestore" xml:space="preserve"><value>Початковий файл «{0}» недоступний. Відновити знімок?</value></data>
+  <data name="Security.DocumentLabel" xml:space="preserve"><value>Документ</value></data>
+  <data name="Security.RestoreSnapshot" xml:space="preserve"><value>Відновити знімок</value></data>
+  <data name="Security.ResetTitle" xml:space="preserve"><value>Скидання ключа</value></data>
+  <data name="Security.RestoreFailed" xml:space="preserve"><value>Не вдалося відновити документ.</value></data>
+  <data name="Security.ResetInterval.1" xml:space="preserve"><value>1 хвилина</value></data>
+  <data name="Security.ResetInterval.5" xml:space="preserve"><value>5 хвилин</value></data>
+  <data name="Security.ResetInterval.10" xml:space="preserve"><value>10 хвилин</value></data>
+  <data name="Security.ResetInterval.15" xml:space="preserve"><value>15 хвилин</value></data>
+  <data name="Security.ResetInterval.30" xml:space="preserve"><value>30 хвилин</value></data>
+  <data name="Security.ResetInterval.0" xml:space="preserve"><value>Ніколи</value></data>
+  <data name="Recovery.CrashAvailable" xml:space="preserve"><value>Знайдено незбережені зміни попереднього сеансу. Можна відновити останній збережений аварійний знімок або закрити сповіщення.</value></data>
+  <data name="Recovery.RestoreCrash" xml:space="preserve"><value>Відновити незбережені зміни</value></data>
+  <data name="Recovery.CrashRestoreFailed" xml:space="preserve"><value>Відновлення не виконано. Перевірте початковий ключ шифрування та доступ до знімка й повторіть спробу. Збережену копію не видалено.</value></data>
+  <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Відкрити збережену аварійну копію незбереженої роботи</value></data>
+  <data name="Recovery.RestoreLock" xml:space="preserve"><value>Відновити знімок після скидання ключа</value></data>
+  <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Повернути захищену роботу з попереднім ключем</value></data>
 </root>

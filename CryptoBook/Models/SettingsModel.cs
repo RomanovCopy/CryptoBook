@@ -104,6 +104,8 @@ namespace CryptoBook.Models
                 NormalizeNavigationPaneWidth(
                     Properties.Settings.Default.SettingsNavigationPaneWidth));
             int storedMinutes = Properties.Settings.Default.KeyResetTimeoutMinutes;
+            foreach(KeyResetIntervalOption interval in KeyResetIntervals)
+                interval.RefreshLocalization();
             selectedKeyResetInterval = KeyResetIntervals.FirstOrDefault(
                 option => option.Minutes == storedMinutes)
                 ?? KeyResetIntervals.First(option => option.Minutes == 15);
@@ -148,6 +150,8 @@ namespace CryptoBook.Models
                     screen.RefreshLocalization();
                 foreach(DocumentTemplate template in DocumentTemplates)
                     template.RefreshLocalization();
+                foreach(KeyResetIntervalOption interval in KeyResetIntervals)
+                    interval.RefreshLocalization();
                 OnPropertyChanged(nameof(SelectedCultureName));
                 RefreshEncryptionKeyStatus();
             }

@@ -1396,4 +1396,28 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>The copied item could not be verified; the original has been preserved.</value></data>
   <data name="Explorer.RecycleBinFailed" xml:space="preserve"><value>Could not move the item to the Windows Recycle Bin. It was not permanently deleted.</value></data>
   <data name="Explorer.RecycleCanceledPartial" xml:space="preserve"><value>Some items were already moved to the Windows Recycle Bin before cancellation. Restore them from the Recycle Bin.</value></data>
+  <data name="Security.UnlockTitle" xml:space="preserve"><value>Access to protected document</value></data>
+  <data name="Security.KeyLabel" xml:space="preserve"><value>Encryption key</value></data>
+  <data name="Security.EnterKey" xml:space="preserve"><value>Enter the key.</value></data>
+  <data name="Security.WrongUnlockKey" xml:space="preserve"><value>Incorrect key. Try again in a few seconds.</value></data>
+  <data name="Security.KeyCheckFailed" xml:space="preserve"><value>The key could not be verified.</value></data>
+  <data name="Security.RestoreTitle" xml:space="preserve"><value>Document recovery</value></data>
+  <data name="Security.OpenLastFile" xml:space="preserve"><value>Open the last file “{0}”?</value></data>
+  <data name="Security.SourceUnavailableRestore" xml:space="preserve"><value>The original file “{0}” is unavailable. Restore the snapshot?</value></data>
+  <data name="Security.DocumentLabel" xml:space="preserve"><value>Document</value></data>
+  <data name="Security.RestoreSnapshot" xml:space="preserve"><value>Restore snapshot</value></data>
+  <data name="Security.ResetTitle" xml:space="preserve"><value>Reset encryption key</value></data>
+  <data name="Security.RestoreFailed" xml:space="preserve"><value>The document could not be restored.</value></data>
+  <data name="Security.ResetInterval.1" xml:space="preserve"><value>1 minute</value></data>
+  <data name="Security.ResetInterval.5" xml:space="preserve"><value>5 minutes</value></data>
+  <data name="Security.ResetInterval.10" xml:space="preserve"><value>10 minutes</value></data>
+  <data name="Security.ResetInterval.15" xml:space="preserve"><value>15 minutes</value></data>
+  <data name="Security.ResetInterval.30" xml:space="preserve"><value>30 minutes</value></data>
+  <data name="Security.ResetInterval.0" xml:space="preserve"><value>Never</value></data>
+  <data name="Recovery.CrashAvailable" xml:space="preserve"><value>Unsaved work from an earlier session is available. You can restore the most recent retained crash snapshot or dismiss this notice.</value></data>
+  <data name="Recovery.RestoreCrash" xml:space="preserve"><value>Restore unsaved work</value></data>
+  <data name="Recovery.CrashRestoreFailed" xml:space="preserve"><value>Recovery failed. Check the original encryption key and access to the snapshot, then retry. The retained copy was not deleted.</value></data>
+  <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Open a saved crash copy of unsaved work</value></data>
+  <data name="Recovery.RestoreLock" xml:space="preserve"><value>Restore snapshot after key reset</value></data>
+  <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Restore protected work using its original key</value></data>
 </root>

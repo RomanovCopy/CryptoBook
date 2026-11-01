@@ -55,7 +55,8 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         builder.Register(c => new DocumentRecoveryService(c.Resolve<IDocumentSession>(), c.Resolve<IRichTextBoxService>(),
             c.Resolve<IFlowDocumentSaveService>(), c.Resolve<IFlowDocumentLoadService>(), c.Resolve<IFileTemplateRegistry>(),
             c.Resolve<Dispatcher>(), recovery, autosaveFailureLogger: e => throw new InvalidOperationException("Recovery failed in validation.", e),
-            markdownDocument: c.Resolve<IMarkdownDocumentState>(), keyProvider: c.Resolve<IKeyProvider>()))
+            markdownDocument: c.Resolve<IMarkdownDocumentState>(), keyProvider: c.Resolve<IKeyProvider>(),
+            keyRequestService: c.Resolve<IEncryptionKeyRequestService>()))
             .As<IDocumentRecoveryService>().SingleInstance();
         builder.Register(c => new LockSnapshotService(c.Resolve<ISecureFileProcessor>(), c.Resolve<IFlowDocumentSaveService>(),
             c.Resolve<IFlowDocumentLoadService>(), snapshot, c.Resolve<IFileTemplateRegistry>(),
@@ -164,6 +165,9 @@ public sealed class ValidationSavePicker : IDocumentSaveTargetPicker
 public sealed class ValidationDocumentDialogs : IDocumentDialogService
 {
     public Queue<UnsavedChangesChoice> Choices { get; } = new();
+    public Queue<bool> BackupChoices { get; } = new();
+    public bool ConfirmBackupRecovery(string backupPath) => BackupChoices.Count > 0
+        ? BackupChoices.Dequeue() : throw new InvalidOperationException("Unexpected backup confirmation.");
     public bool ConfirmRecovery() => false;
     public UnsavedChangesChoice ConfirmCloseWithUnsavedChanges() => Choices.Count > 0
         ? Choices.Dequeue() : throw new InvalidOperationException("Unexpected unsaved-changes prompt.");

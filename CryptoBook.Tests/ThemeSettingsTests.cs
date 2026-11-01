@@ -7,6 +7,7 @@ using CryptoBook.Interfaces;
 using CryptoBook.Models;
 using CryptoBook.Services;
 using CryptoBook.Views;
+using CryptoBook.Validation;
 
 using System.IO;
 using System.Windows;
@@ -20,8 +21,33 @@ using Xunit;
 
 namespace CryptoBook.Tests;
 
+[Collection("Settings UI")]
 public sealed class ThemeSettingsTests
 {
+    public ThemeSettingsTests() => MemorySettingsProvider.Install();
+
+    [WpfFact]
+    public void KeyResetInterval_ChangesLanguageWithoutReplacingSelectedOption()
+    {
+        string originalCulture = LocalizationManager.CurrentCultureName;
+        var model = new SettingsModel(new ThemeManagerStub(ApplicationTheme.Light), new WindowManagerStub());
+        try
+        {
+            var selected = model.KeyResetIntervals.Single(option => option.Minutes == 5);
+            model.SelectedKeyResetInterval = selected;
+            int labelChanges = 0;
+            selected.PropertyChanged += (_, args) => { if(args.PropertyName == nameof(selected.DisplayName)) labelChanges++; };
+            foreach(string culture in new[] { "ru-RU", "en-US", "uk-UA", "de-DE" })
+            {
+                model.SelectedCultureName = culture;
+                Assert.Same(selected, model.SelectedKeyResetInterval);
+                Assert.Equal(LocalizationManager.GetString("Security.ResetInterval.5"), selected.DisplayName);
+            }
+            Assert.True(labelChanges >= 3);
+        }
+        finally { model.Dispose(); LocalizationManager.SelectCulture(originalCulture); }
+    }
+
     [WpfTheory]
     [InlineData("LightTheme", "AppIcon.ico")]
     [InlineData("DarkTheme", "AppIcon.ico")]

@@ -1,0 +1,18 @@
+{
+  "culture": "uk-UA",
+  "protectedSave": true,
+  "protectedCopy": true,
+  "fileCopyAndReplacement": true,
+  "recursiveFolder": true,
+  "batch": true,
+  "formats": [
+    "Original",
+    "RTF",
+    "TXT"
+  ],
+  "cancellation": "Live progress-window startup before writing",
+  "backup": "Previous version loaded dirty without replacing disk file",
+  "crash": "Service restore, deferred snapshot re-creation, explicit previous-session recovery command, wrong-key retention and durable crash-copy replacement",
+  "locking": "Both protected editors roundtrip; an ordinary-only document remains editable after key reset",
+  "secretsRetained": false
+}

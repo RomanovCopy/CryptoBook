@@ -635,47 +635,116 @@
     {
       "id": "security.password",
       "section": "security",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F103",
+        "F104"
+      ],
+      "illustrationIds": [
+        "S33-a",
+        "S33-b"
+      ]
     },
     {
       "id": "security.protect",
       "section": "security",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F105",
+        "F106",
+        "F107"
+      ],
+      "illustrationIds": [
+        "S34-a",
+        "S34-b"
+      ]
     },
     {
       "id": "security.decrypt",
       "section": "security",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F108",
+        "F096"
+      ],
+      "illustrationIds": [
+        "S35-a",
+        "S35-b"
+      ]
     },
     {
       "id": "security.lock",
       "section": "security",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F109",
+        "F110",
+        "F111"
+      ],
+      "illustrationIds": [
+        "S36-a",
+        "S36-e"
+      ]
     },
     {
       "id": "security.compatibility",
       "section": "security",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F112"
+      ],
+      "illustrationIds": [
+        "S34-b"
+      ]
     },
     {
       "id": "recovery.backup",
       "section": "recovery",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F113"
+      ],
+      "illustrationIds": [
+        "S37-a",
+        "S37-b"
+      ]
     },
     {
       "id": "recovery.crash",
       "section": "recovery",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F114"
+      ],
+      "illustrationIds": [
+        "S37-d",
+        "S37-e"
+      ]
     },
     {
       "id": "recovery.lock",
       "section": "recovery",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F111",
+        "F115"
+      ],
+      "illustrationIds": [
+        "S36-b",
+        "S36-c",
+        "S36-d"
+      ]
     },
     {
       "id": "recovery.write",
       "section": "recovery",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F116"
+      ],
+      "illustrationIds": [
+        "S37-c"
+      ]
     },
     {
       "id": "ai.start",
@@ -1228,6 +1297,102 @@
       "scenarioId": "S29",
       "status": "ready",
       "file": "images/S29-c.png"
+    },
+    {
+      "id": "S33-a",
+      "scenarioId": "S33",
+      "status": "ready",
+      "file": "images/S33-a.png"
+    },
+    {
+      "id": "S33-b",
+      "scenarioId": "S33",
+      "status": "ready",
+      "file": "images/S33-b.png"
+    },
+    {
+      "id": "S34-b",
+      "scenarioId": "S34",
+      "status": "ready",
+      "file": "images/S34-b.png"
+    },
+    {
+      "id": "S36-a",
+      "scenarioId": "S36",
+      "status": "ready",
+      "file": "images/S36-a.png"
+    },
+    {
+      "id": "S36-e",
+      "scenarioId": "S36",
+      "status": "ready",
+      "file": "images/S36-e.png"
+    },
+    {
+      "id": "S35-a",
+      "scenarioId": "S35",
+      "status": "ready",
+      "file": "images/S35-a.png"
+    },
+    {
+      "id": "S35-b",
+      "scenarioId": "S35",
+      "status": "ready",
+      "file": "images/S35-b.png"
+    },
+    {
+      "id": "S37-c",
+      "scenarioId": "S37",
+      "status": "ready",
+      "file": "images/S37-c.png"
+    },
+    {
+      "id": "S37-a",
+      "scenarioId": "S37",
+      "status": "ready",
+      "file": "images/S37-a.png"
+    },
+    {
+      "id": "S37-b",
+      "scenarioId": "S37",
+      "status": "ready",
+      "file": "images/S37-b.png"
+    },
+    {
+      "id": "S36-b",
+      "scenarioId": "S36",
+      "status": "ready",
+      "file": "images/S36-b.png"
+    },
+    {
+      "id": "S36-c",
+      "scenarioId": "S36",
+      "status": "ready",
+      "file": "images/S36-c.png"
+    },
+    {
+      "id": "S36-d",
+      "scenarioId": "S36",
+      "status": "ready",
+      "file": "images/S36-d.png"
+    },
+    {
+      "id": "S37-d",
+      "scenarioId": "S37",
+      "status": "ready",
+      "file": "images/S37-d.png"
+    },
+    {
+      "id": "S37-e",
+      "scenarioId": "S37",
+      "status": "ready",
+      "file": "images/S37-e.png"
+    },
+    {
+      "id": "S34-a",
+      "scenarioId": "S34",
+      "status": "ready",
+      "file": "images/S34-a.png"
     }
   ]
 }

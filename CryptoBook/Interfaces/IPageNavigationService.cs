@@ -20,6 +20,7 @@ namespace CryptoBook.Interfaces
 
 
         void Navigate(string key, object? args = null);
+        void EnsurePage(string key) => Navigate(key);
         void GoBack();
         void GoForward();
         void Remove(string key);

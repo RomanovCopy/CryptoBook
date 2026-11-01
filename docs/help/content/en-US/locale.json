@@ -546,6 +546,99 @@
         "pages",
         "cancel"
       ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "key",
+        "password",
+        "repeat",
+        "encryption"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "protect",
+        "copy",
+        "encrypt",
+        "replace",
+        "folder",
+        "batch"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "decrypt",
+        "format",
+        "source",
+        "text"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "reset",
+        "lock",
+        "inactivity",
+        "timer"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "compatibility",
+        "container",
+        "legacy",
+        "format"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "previous",
+        "version",
+        "backup",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "crash",
+        "unsaved",
+        "session",
+        "snapshot"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "snapshot",
+        "unlock",
+        "restore",
+        "password"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "error",
+        "write",
+        "access",
+        "busy",
+        "space"
+      ]
     }
   ]
 }

@@ -1,0 +1,146 @@
+[
+  {
+    "path": "docs/help/content/de-DE/recovery.backup.md",
+    "sha256": "2062842314B1B199932BA626952DF519B9FAB1ACA5851628443709ABAEBF8AE5"
+  },
+  {
+    "path": "docs/help/content/de-DE/recovery.crash.md",
+    "sha256": "F4BFC7033BFE9F9E39E26A5972DF94CFB349D832BF8A7BF379244C67F26989A2"
+  },
+  {
+    "path": "docs/help/content/de-DE/recovery.lock.md",
+    "sha256": "7244D0AD680D1D8C4C7EF1F802645BB6849631BF97BD2BA818078E15A2D976EE"
+  },
+  {
+    "path": "docs/help/content/de-DE/recovery.write.md",
+    "sha256": "570006E3C68753A00DBA2D35E74F0E5DB599097D358ABA9AF1460D333B02E949"
+  },
+  {
+    "path": "docs/help/content/de-DE/security.compatibility.md",
+    "sha256": "A3166E02FFB569C96D47A6B22C0D37DDD26F7626325C7311D5F51A8F34BD4443"
+  },
+  {
+    "path": "docs/help/content/de-DE/security.decrypt.md",
+    "sha256": "2482607A0BD9421249BEE49343AE8C2FC9ECF387A03CDD07F65F58228C0BFB02"
+  },
+  {
+    "path": "docs/help/content/de-DE/security.lock.md",
+    "sha256": "092247A93BFFEDB9FFD94DDB487390C778F24235BBC2A1F0EB66BDC1F8725B72"
+  },
+  {
+    "path": "docs/help/content/de-DE/security.password.md",
+    "sha256": "1AA870BE076706BCE7B0ACC7C33B8EF8653FCB0E0570BCC6C53A3065AB2571B0"
+  },
+  {
+    "path": "docs/help/content/de-DE/security.protect.md",
+    "sha256": "FAEFD0140CD52ACC5080089F8F536B0698EE1C24CB03D81405C115799B35B261"
+  },
+  {
+    "path": "docs/help/content/en-US/recovery.backup.md",
+    "sha256": "C2B0122A88FA2F2164FE02CE453400D718161A1C77D7717E4410A39AC4CDFEBC"
+  },
+  {
+    "path": "docs/help/content/en-US/recovery.crash.md",
+    "sha256": "88CCC492877A41E0FD46680B10C99E30ED5771011C3D9812150EEAF443EC291E"
+  },
+  {
+    "path": "docs/help/content/en-US/recovery.lock.md",
+    "sha256": "F3F0A9433C5F4D313C923F3E9DF93A07FFA6E535D7DFA20ACC2D9463D51EA351"
+  },
+  {
+    "path": "docs/help/content/en-US/recovery.write.md",
+    "sha256": "BFE921F930E275DFEC02C85B7FFC5F842FC6DA58ADD95DE63FD0762C94294656"
+  },
+  {
+    "path": "docs/help/content/en-US/security.compatibility.md",
+    "sha256": "C5941FAC8A794C6415D2D0FD3C0FFE47293BD0482D6DE46FD8D8DDAD9DE25D68"
+  },
+  {
+    "path": "docs/help/content/en-US/security.decrypt.md",
+    "sha256": "3EAD7B5BC9E43BB4635B7EFD7A8F7123AE1AA974F1338B9592BA902ACF1C7018"
+  },
+  {
+    "path": "docs/help/content/en-US/security.lock.md",
+    "sha256": "35FA7A64BDD2B0C1D92774C43C57A1AFE1AA270A1822B768199F0FAE378E329E"
+  },
+  {
+    "path": "docs/help/content/en-US/security.password.md",
+    "sha256": "96E911CF93DC2E4BD02CFCE1CF441775ED317D74BBD2CD26988A3CFAC4B8B7DB"
+  },
+  {
+    "path": "docs/help/content/en-US/security.protect.md",
+    "sha256": "FC1AE4D92E64B5563187F809043DCF7A5E0E7966831CBB605BA166B0C522AF56"
+  },
+  {
+    "path": "docs/help/content/ru-RU/recovery.backup.md",
+    "sha256": "07B22FBA285A84A62AA9F0A47C243BCBAAD98E0B2C1FA5405BB37494BEFB0794"
+  },
+  {
+    "path": "docs/help/content/ru-RU/recovery.crash.md",
+    "sha256": "11DF12154307C1136526310F44AB3316508B88CA907EFFF57E0E8F271AE5D789"
+  },
+  {
+    "path": "docs/help/content/ru-RU/recovery.lock.md",
+    "sha256": "D089C423C125F15547BA4075829835ACA1763255337324735DB03CAA8B8B5BBF"
+  },
+  {
+    "path": "docs/help/content/ru-RU/recovery.write.md",
+    "sha256": "16B187006F6784D1C06E7EFC307140B9C7F289BFEA81FDE25FBF2B8656C17008"
+  },
+  {
+    "path": "docs/help/content/ru-RU/security.compatibility.md",
+    "sha256": "7C4A4283BC09F449FA08EBBCA0B5E9100711E4EC7C1759ECA4ADAC8487628810"
+  },
+  {
+    "path": "docs/help/content/ru-RU/security.decrypt.md",
+    "sha256": "92EBB3308C727F4FE3CFB44F79B2886C44E28FADDB103E9FD987E67311737E11"
+  },
+  {
+    "path": "docs/help/content/ru-RU/security.lock.md",
+    "sha256": "CA0646A20EA6EE87EA538A5D9527C88E46BF1E8B9FDA3B74903CB2B5C6F760AE"
+  },
+  {
+    "path": "docs/help/content/ru-RU/security.password.md",
+    "sha256": "601CA2C5F032CB7360DF06B1CFC207CC56675AFCF2104192E11E3AE39A8EAF58"
+  },
+  {
+    "path": "docs/help/content/ru-RU/security.protect.md",
+    "sha256": "D2200EF34F736D7055DBBBCD433D3ED5CE29BAF6B840C4C16451A610850D03C5"
+  },
+  {
+    "path": "docs/help/content/uk-UA/recovery.backup.md",
+    "sha256": "B706FD5AEEFC4F08C9B325B5683CCF6DB0642206E1745D1D9C4806A4CEB25E9F"
+  },
+  {
+    "path": "docs/help/content/uk-UA/recovery.crash.md",
+    "sha256": "0899F3921C886C490361EE0DBCA58374EE38B1C624D6198FF2FBDD08EFE4A2A5"
+  },
+  {
+    "path": "docs/help/content/uk-UA/recovery.lock.md",
+    "sha256": "7EA22FB82D7E8736E67899A83F09862C207D07B0F471E319DF758B59F61A5A27"
+  },
+  {
+    "path": "docs/help/content/uk-UA/recovery.write.md",
+    "sha256": "8C695F23B6AADB63049C99ABE4D36B7689C4D3714D67A083C83E6724765A232E"
+  },
+  {
+    "path": "docs/help/content/uk-UA/security.compatibility.md",
+    "sha256": "3948EC432A5D30B8C5A7457AE98DB719204175A9B8765EA63CD0DD276796C30C"
+  },
+  {
+    "path": "docs/help/content/uk-UA/security.decrypt.md",
+    "sha256": "F7EBFBC9897A6D00C3CF8157EFA2F11A674F667823D55AF5F48A16BCCC1D7535"
+  },
+  {
+    "path": "docs/help/content/uk-UA/security.lock.md",
+    "sha256": "877A2477AF875DBD21916A97C39E28DE41F9D18DAE7EFBB41AD03725A4BB7A56"
+  },
+  {
+    "path": "docs/help/content/uk-UA/security.password.md",
+    "sha256": "7A6278DA23218EDEAE45214D0399ABA260A0BF5E122C05E482FC2E638F153B79"
+  },
+  {
+    "path": "docs/help/content/uk-UA/security.protect.md",
+    "sha256": "468EE93921EF9FE7161048F7E4C1859F3E50874AA92A55B85674FDA2E2A2EC37"
+  }
+]

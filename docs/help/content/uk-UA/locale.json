@@ -545,6 +545,101 @@
         "сторінки",
         "скасування"
       ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "ключ",
+        "пароль",
+        "повтор",
+        "шифрування"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "захист",
+        "копія",
+        "шифрувати",
+        "замінити",
+        "папка",
+        "пакет"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "розшифрувати",
+        "формат",
+        "джерело",
+        "текст"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "скидання",
+        "блокування",
+        "бездіяльність",
+        "таймер"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "сумісність",
+        "контейнер",
+        "старий",
+        "формат"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "попередня",
+        "версія",
+        "резервна",
+        "копія",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "аварійна",
+        "копія",
+        "незбережений",
+        "сеанс",
+        "знімок"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "знімок",
+        "розблокування",
+        "відновлення",
+        "пароль"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "помилка",
+        "запис",
+        "доступ",
+        "зайнято",
+        "місце"
+      ]
     }
   ]
 }

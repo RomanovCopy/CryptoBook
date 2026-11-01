@@ -1,0 +1,22 @@
+{
+  "shotId": "S37-a",
+  "culture": "de-DE",
+  "rawFile": "docs/help/screenshots/raw/de-DE/S37-a.png",
+  "crop": {
+    "x": 0,
+    "y": 40,
+    "width": 950,
+    "height": 850
+  },
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.01368421052631579,
+      "y": 0.7488470588235294,
+      "width": 0.25157894736842107,
+      "height": 0.06264705882352942,
+      "badge": null
+    }
+  ]
+}
