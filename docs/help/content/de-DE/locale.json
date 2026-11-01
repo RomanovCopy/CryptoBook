@@ -634,6 +634,94 @@
         "belegt",
         "Speicherplatz"
       ]
+    },
+    {
+      "id": "ai.start",
+      "file": "ai.start.md",
+      "keywords": [
+        "Assistent",
+        "lokal",
+        "aktivieren",
+        "Seitenleiste"
+      ]
+    },
+    {
+      "id": "ai.models",
+      "file": "ai.models.md",
+      "keywords": [
+        "Modell",
+        "GGUF",
+        "Projektor",
+        "mmproj",
+        "testen"
+      ]
+    },
+    {
+      "id": "ai.lifecycle",
+      "file": "ai.lifecycle.md",
+      "keywords": [
+        "laden",
+        "stoppen",
+        "entladen",
+        "Inaktivität"
+      ]
+    },
+    {
+      "id": "ai.troubleshoot",
+      "file": "ai.troubleshoot.md",
+      "keywords": [
+        "Fehler",
+        "Speicher",
+        "Prozess",
+        "Fehlerbehebung"
+      ]
+    },
+    {
+      "id": "ai.chat",
+      "file": "ai.chat.md",
+      "keywords": [
+        "Chat",
+        "Frage",
+        "Nachricht",
+        "kopieren",
+        "Auswahl",
+        "leeren"
+      ]
+    },
+    {
+      "id": "ai.templates",
+      "file": "ai.templates.md",
+      "keywords": [
+        "Vorlage",
+        "Anweisungen",
+        "erstellen",
+        "löschen",
+        "abbrechen"
+      ]
+    },
+    {
+      "id": "ai.attachments",
+      "file": "ai.attachments.md",
+      "keywords": [
+        "Anhang",
+        "Dokument",
+        "Bild",
+        "HEX",
+        "ziehen",
+        "Schnappschuss"
+      ]
+    },
+    {
+      "id": "ai.apply",
+      "file": "ai.apply.md",
+      "keywords": [
+        "einfügen",
+        "ersetzen",
+        "Auswahl",
+        "Tabelle",
+        "Markdown",
+        "rückgängig"
+      ]
     }
   ]
 }

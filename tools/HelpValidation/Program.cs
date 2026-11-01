@@ -40,6 +40,8 @@ internal static partial class Program
         bool stage5 = args.Length > 3 && args[3].StartsWith("stage5", StringComparison.Ordinal);
         bool stage6 = args.Length > 3 && args[3].StartsWith("stage6", StringComparison.Ordinal);
         bool stage8 = args.Length > 3 && args[3].StartsWith("stage8", StringComparison.Ordinal);
+        bool stage9 = args.Length > 3 && args[3].StartsWith("stage9", StringComparison.Ordinal);
+        bool stage92 = args.Length > 3 && args[3].StartsWith("stage9-chat", StringComparison.Ordinal);
         bool acceptance7 = args.Length > 3 && args[3] == "stage7-acceptance";
         bool connection7 = args.Length > 3 && args[3] == "stage7-connection";
         bool device7 = args.Length > 3 && (args[3] == "stage7-device" || connection7);
@@ -53,7 +55,7 @@ internal static partial class Program
         Properties.Settings.Default.CultureInfo = culture;
         Properties.Settings.Default.FileOverviewFirstStart = true;
         Properties.Settings.Default.WindowState = "Normal";
-        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7 || stage8, stage7, acceptance7);
+        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7 || stage8 || stage9, stage7, acceptance7, stage92);
         var app = new App(isolated.Configure) { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.InitializeComponent();
         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingListener(bindingErrors));
@@ -70,7 +72,9 @@ internal static partial class Program
                     Console.WriteLine($"HELP_ACCEPTANCE SESSION CLOSED report={Path.Combine(runRoot, "acceptance.json")}");
                     return;
                 }
-                if (stage8) await ValidateStage8(isolated, args[3] == "stage8-verify");
+                if (stage92) await ValidateStage92(isolated, args[3] == "stage9-chat-verify", args[3] == "stage9-chat-templates");
+                else if (stage9) await ValidateStage9(isolated, args[3] == "stage9-verify");
+                else if (stage8) await ValidateStage8(isolated, args[3] == "stage8-verify");
                 else if (media7) await ValidateStage7Media(isolated);
                 else if (resources7) await ValidateStage7Resources(isolated);
                 else if (device7) await ValidateStage7Device(isolated, connection7);
@@ -83,10 +87,12 @@ internal static partial class Program
                 Check(bindingErrors.Count == 0, "No WPF binding errors.");
                 File.WriteAllText(Path.Combine(runRoot, "result.json"), JsonSerializer.Serialize(new
                 {
-                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, stage8, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
+                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, stage8, stage9, stage92, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
                     captureFilter, storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
                     captureMethod = media7 ? "Flyleaf TakeSnapshotToBitmapSource of the actual decoded video frame; not a window screenshot" : "RenderTargetBitmap of visible production WPF windows",
-                    interaction = stage8 ? "Production protection/export/save/backup/lock/recovery services and visible WPF dialogs, isolated disposable files; see stage8.json for distinct recovery outcomes"
+                    interaction = stage92 ? "Production chat/templates/attachment readers/drop behavior and both visible editors; real GGUF/vision, selected-message Copy to an isolated memory sink, native picker decisions queued. See stage9-chat.json. Verify mode reads embedded resources only."
+                        : stage9 ? "Production AI panel/settings and adaptive worker with a read-only local GGUF and projector; synthetic requests only; see stage9.json. Verify mode reads embedded resources only."
+                        : stage8 ? "Production protection/export/save/backup/lock/recovery services and visible WPF dialogs, isolated disposable files; see stage8.json for distinct recovery outcomes"
                         : connection7 ? "Live MTP connection acceptance; individual checks identify the executed path. A resumed session only reads the original disposable probe after physical reconnection."
                         : media7 ? "Real AVI with PCM audio, two Flyleaf windows, decoded frame snapshots, active-window play/pause/seek synchronization and independent playback"
                         : resources7 ? "Embedded stage7 articles and images in the visible production help window, separate CWD, without device operations or capture replacement"
@@ -95,7 +101,9 @@ internal static partial class Program
                         : stage6 ? "production file-manager commands, local disk pipelines, WPF folder/name/conflict/batch/details dialogs; isolated stores and disposable clipboard with prior data restored in memory"
                         : stage5 ? "visible production control DataContexts and commands; real link/crop dialogs; production image/layout/crop services; image paths and unsaved decisions supplied by queues; disposable clipboard roundtrip with prior data object restored in memory"
                         : stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
-                    limitations = stage8 ? "Native save/backup decisions supplied by queues. No physical input, Windows sleep/lock or disk-full test. Crash recovery uses a re-created service/coordinator and the explicit recovery command; no process is killed. No passwords retained."
+                    limitations = stage92 ? "No personal data, system clipboard, native file-picker gesture, physical input or performance benchmark. Ctrl+Enter binding is inspected; production Send command is executed. Routed Drop uses disposable paths. Model output is real, never substituted."
+                        : stage9 ? "Native model path entered through the real text binding; native Browse gesture not tested. No download, personal files, clipboard, device, performance benchmark or physical input. Idle time is advanced through the production check. Only the isolated owned idle worker is terminated for exit detection."
+                        : stage8 ? "Native save/backup decisions supplied by queues. No physical input, Windows sleep/lock or disk-full test. Crash recovery uses a re-created service/coordinator and the explicit recovery command; no process is killed. No passwords retained."
                         : connection7 ? "Disconnect occurs while idle, not during a transfer. One device only; no cross-device or ADB test. Device IDs are not retained."
                         : media7 ? "No physical key or native-control gestures or audibility claim from automation; recorded separately from user observations. Frames are decoder output, not a desktop screenshot. Synchronization checks do not promise frame-accurate timing."
                         : resources7 ? "Resource verification only; no hardware scenario or screenshot capture."
@@ -233,7 +241,7 @@ internal static partial class Program
         help.WindowState = WindowState.Minimized; service.Open(); Check(help.WindowState == WindowState.Normal, "Repeated opening restores a minimized window.");
         helpVm.OpenTopic("doc.create"); helpVm.Back.Execute(null); Check(helpVm.CurrentTopicId == "start.interface", "Back works.");
         helpVm.Forward.Execute(null); Check(helpVm.CurrentTopicId == "doc.create", "Forward works.");
-        Check(!helpVm.OpenTopic("ai.start") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
+        Check(!helpVm.OpenTopic("settings.data") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
         helpVm.Query = "09:00"; helpVm.RunSearch(); Check(helpVm.Results.Single().Id == "doc.create", "Search includes visible article text.");
         helpVm.Query = "zzzz-no-such-help-topic"; helpVm.RunSearch(); Check(helpVm.HasNoResults, "No-result state.");
         helpVm.Query = "  "; Check(!helpVm.IsSearching, "Whitespace query returns the contents tree.");

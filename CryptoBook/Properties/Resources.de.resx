@@ -1138,7 +1138,7 @@ Autor: [Name]
   <data name="AI.DisabledHint" xml:space="preserve"><value>Assistent aktivieren und in den Modelleinstellungen ein Modell auswählen.</value></data>
   <data name="AI.Insert" xml:space="preserve"><value>Auswahl einfügen</value></data>
   <data name="AI.Replace" xml:space="preserve"><value>Auswahl ersetzen</value></data>
-  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Angehängten Text entfernen</value></data>
+  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Anhang entfernen</value></data>
   <data name="AI.AttachDocument" xml:space="preserve"><value>Aktuelles Dokument</value></data>
   <data name="AI.Prompt" xml:space="preserve"><value>Nachricht an das Modell; Strg+Eingabe zum Senden</value></data>
   <data name="AI.Send" xml:space="preserve"><value>Senden</value></data>

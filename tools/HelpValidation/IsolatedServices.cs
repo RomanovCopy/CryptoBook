@@ -10,7 +10,7 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Validation;
 
-public sealed class IsolatedServices(string root, bool documentValidation = false, bool stage7 = false, bool hardwareAcceptance = false)
+public sealed class IsolatedServices(string root, bool documentValidation = false, bool stage7 = false, bool hardwareAcceptance = false, bool chatValidation = false)
 {
     public ILifetimeScope Container { get; private set; } = null!;
     public string Root { get; } = Path.GetFullPath(root);
@@ -22,6 +22,8 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     public ValidationFolderPicker FolderPicker { get; } = new(Path.Combine(Path.GetFullPath(root), "Demo"));
     public ValidationRecycleBin RecycleBin { get; } = new(Path.GetFullPath(root));
     public ValidationPrintSink PrintSink { get; } = new();
+    public ValidationAiPicker AiPicker { get; } = new(Path.GetFullPath(root));
+    public ValidationTextClipboard TextClipboard { get; } = new();
     public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
         .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
     public async Task PreparePortableDemoAsync(StorageItemMetadata device, StorageItemMetadata volume, StorageItemMetadata folder)
@@ -46,6 +48,11 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         Directory.CreateDirectory(DemoDirectory);
         builder.RegisterInstance(new AiSettingsStore(Store("ai-settings.json")));
         builder.RegisterInstance(new AiRuntimeProfileStore(Store("ai-profiles.json")));
+        if (chatValidation)
+        {
+            builder.RegisterInstance<IAiAttachmentPicker>(AiPicker);
+            builder.RegisterInstance<ITextClipboardService>(TextClipboard);
+        }
         builder.RegisterInstance<IFavoriteDirectoryStore>(new JsonFavoriteDirectoryStore(Store("favorites.json")));
         builder.RegisterInstance<IPinnedDocumentStore>(new JsonPinnedDocumentStore(Store("pinned.json")));
         builder.RegisterInstance<IRecentDocumentStore>(new JsonRecentDocumentStore(Store("recent.json")));
@@ -122,6 +129,26 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         public void StartMonitoring() { }
         public void StopMonitoring() { }
         public void Dispose() { }
+    }
+}
+
+public sealed class ValidationTextClipboard : ITextClipboardService
+{
+    public string? Text { get; private set; }
+    public bool Fail { get; set; }
+    public bool TrySetText(string text) { if (Fail) return false; Text = text; return true; }
+}
+
+public sealed class ValidationAiPicker(string root) : IAiAttachmentPicker
+{
+    public Queue<IReadOnlyList<string>> Selections { get; } = new();
+    public Task<IReadOnlyList<string>> PickAttachmentsAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var paths = Selections.Count > 0 ? Selections.Dequeue() : throw new InvalidOperationException("Unexpected AI attachment picker.");
+        if (paths.Any(path => !Path.GetFullPath(path).StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidOperationException("AI attachment picker escaped disposable root.");
+        return Task.FromResult(paths);
     }
 }
 

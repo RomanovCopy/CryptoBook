@@ -27,6 +27,7 @@ $features = @(Get-Content -LiteralPath (Join-Path $root 'FEATURES.md') | ForEach
 })
 Assert-Help ($catalog.schemaVersion -eq 1) 'Unsupported schema.'
 Assert-Help (($ids | Sort-Object -Unique).Count -eq $ids.Count) 'Duplicate topic IDs.'
+Assert-Help (($features | Sort-Object -Unique).Count -eq $features.Count) 'Duplicate feature IDs.'
 Assert-Help (Same-Set $ids $plannedIds) 'Catalog and editorial topic IDs differ.'
 $available = @($catalog.topics | Where-Object status -ne 'planned')
 $articleCount = 0; $imageCount = 0; $pendingLinks = 0; $relativeLinks = 0

@@ -749,37 +749,107 @@
     {
       "id": "ai.start",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F117",
+        "F118"
+      ],
+      "illustrationIds": [
+        "S38-a"
+      ]
     },
     {
       "id": "ai.models",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F119",
+        "F120",
+        "F121"
+      ],
+      "illustrationIds": [
+        "S38-b",
+        "S38-c",
+        "S38-d"
+      ]
     },
     {
       "id": "ai.lifecycle",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F122",
+        "F123",
+        "F124"
+      ],
+      "illustrationIds": [
+        "S39-a",
+        "S39-b",
+        "S39-c",
+        "S39-d",
+        "S39-e"
+      ]
     },
     {
       "id": "ai.chat",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F125",
+        "F126",
+        "F127"
+      ],
+      "illustrationIds": [
+        "S40-a",
+        "S40-b",
+        "S40-c"
+      ]
     },
     {
       "id": "ai.templates",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F128",
+        "F129"
+      ],
+      "illustrationIds": [
+        "S41-a",
+        "S41-b",
+        "S41-c",
+        "S41-d"
+      ]
     },
     {
       "id": "ai.attachments",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F130",
+        "F131",
+        "F132",
+        "F133"
+      ],
+      "illustrationIds": [
+        "S42-a",
+        "S42-b",
+        "S42-c",
+        "S42-d"
+      ]
     },
     {
       "id": "ai.apply",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F134"
+      ],
+      "illustrationIds": [
+        "S43-a",
+        "S43-b",
+        "S43-c",
+        "S43-d"
+      ]
     },
     {
       "id": "ai.context",
@@ -804,7 +874,13 @@
     {
       "id": "ai.troubleshoot",
       "section": "ai",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F146"
+      ],
+      "illustrationIds": [
+        "S39-f"
+      ]
     },
     {
       "id": "settings.appearance",
@@ -1393,6 +1469,156 @@
       "scenarioId": "S34",
       "status": "ready",
       "file": "images/S34-a.png"
+    },
+    {
+      "id": "S38-a",
+      "scenarioId": "S38",
+      "status": "ready",
+      "file": "images/S38-a.png"
+    },
+    {
+      "id": "S38-b",
+      "scenarioId": "S38",
+      "status": "ready",
+      "file": "images/S38-b.png"
+    },
+    {
+      "id": "S38-c",
+      "scenarioId": "S38",
+      "status": "ready",
+      "file": "images/S38-c.png"
+    },
+    {
+      "id": "S38-d",
+      "scenarioId": "S38",
+      "status": "ready",
+      "file": "images/S38-d.png"
+    },
+    {
+      "id": "S39-a",
+      "scenarioId": "S39",
+      "status": "ready",
+      "file": "images/S39-a.png"
+    },
+    {
+      "id": "S39-b",
+      "scenarioId": "S39",
+      "status": "ready",
+      "file": "images/S39-b.png"
+    },
+    {
+      "id": "S39-c",
+      "scenarioId": "S39",
+      "status": "ready",
+      "file": "images/S39-c.png"
+    },
+    {
+      "id": "S39-d",
+      "scenarioId": "S39",
+      "status": "ready",
+      "file": "images/S39-d.png"
+    },
+    {
+      "id": "S39-e",
+      "scenarioId": "S39",
+      "status": "ready",
+      "file": "images/S39-e.png"
+    },
+    {
+      "id": "S39-f",
+      "scenarioId": "S39",
+      "status": "ready",
+      "file": "images/S39-f.png"
+    },
+    {
+      "id": "S40-a",
+      "scenarioId": "S40",
+      "status": "ready",
+      "file": "images/S40-a.png"
+    },
+    {
+      "id": "S40-b",
+      "scenarioId": "S40",
+      "status": "ready",
+      "file": "images/S40-b.png"
+    },
+    {
+      "id": "S40-c",
+      "scenarioId": "S40",
+      "status": "ready",
+      "file": "images/S40-c.png"
+    },
+    {
+      "id": "S41-a",
+      "scenarioId": "S41",
+      "status": "ready",
+      "file": "images/S41-a.png"
+    },
+    {
+      "id": "S41-b",
+      "scenarioId": "S41",
+      "status": "ready",
+      "file": "images/S41-b.png"
+    },
+    {
+      "id": "S41-c",
+      "scenarioId": "S41",
+      "status": "ready",
+      "file": "images/S41-c.png"
+    },
+    {
+      "id": "S41-d",
+      "scenarioId": "S41",
+      "status": "ready",
+      "file": "images/S41-d.png"
+    },
+    {
+      "id": "S42-a",
+      "scenarioId": "S42",
+      "status": "ready",
+      "file": "images/S42-a.png"
+    },
+    {
+      "id": "S42-b",
+      "scenarioId": "S42",
+      "status": "ready",
+      "file": "images/S42-b.png"
+    },
+    {
+      "id": "S42-c",
+      "scenarioId": "S42",
+      "status": "ready",
+      "file": "images/S42-c.png"
+    },
+    {
+      "id": "S42-d",
+      "scenarioId": "S42",
+      "status": "ready",
+      "file": "images/S42-d.png"
+    },
+    {
+      "id": "S43-a",
+      "scenarioId": "S43",
+      "status": "ready",
+      "file": "images/S43-a.png"
+    },
+    {
+      "id": "S43-b",
+      "scenarioId": "S43",
+      "status": "ready",
+      "file": "images/S43-b.png"
+    },
+    {
+      "id": "S43-c",
+      "scenarioId": "S43",
+      "status": "ready",
+      "file": "images/S43-c.png"
+    },
+    {
+      "id": "S43-d",
+      "scenarioId": "S43",
+      "status": "ready",
+      "file": "images/S43-d.png"
     }
   ]
 }

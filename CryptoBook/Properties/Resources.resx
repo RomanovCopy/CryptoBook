@@ -1144,7 +1144,7 @@ Author: [Name]
   <data name="AI.DisabledHint" xml:space="preserve"><value>Enable the assistant and choose a model in model settings.</value></data>
   <data name="AI.Insert" xml:space="preserve"><value>Insert selected</value></data>
   <data name="AI.Replace" xml:space="preserve"><value>Replace selection</value></data>
-  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Remove attached text</value></data>
+  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Remove attachment</value></data>
   <data name="AI.AttachDocument" xml:space="preserve"><value>Current document</value></data>
   <data name="AI.Prompt" xml:space="preserve"><value>Message to the model; Ctrl+Enter to send</value></data>
   <data name="AI.Send" xml:space="preserve"><value>Send</value></data>

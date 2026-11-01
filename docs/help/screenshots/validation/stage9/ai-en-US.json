@@ -1,0 +1,29 @@
+{
+  "culture": "en-US",
+  "model": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-Q4_K_S.gguf",
+  "projector": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-mmproj-BF16.gguf",
+  "modelBytes": 5939488512,
+  "projectorBytes": 921705248,
+  "completed": "ready",
+  "partial": "1. **The Cloud-Piercing Ascent**: A journey to the highest peak of",
+  "vision": "The square is red and the circle is blue.",
+  "runtime": {
+    "ContextLength": 4096,
+    "GpuLayers": 27,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": false,
+    "Threads": 0,
+    "BatchThreads": 0,
+    "PerformanceBoost": false,
+    "PowerSaving": false
+  },
+  "realGeneration": true,
+  "cooperativeStopRetainedWeights": true,
+  "explicitUnload": true,
+  "idleClockAdvancedMinutes": 11,
+  "unexpectedExit": "Only this isolated service\u0027s owned idle worker terminated, detected and recovered",
+  "nativePicker": "not exercised",
+  "fixture": "Generated red square and blue circle on white, 256x256; no personal content"
+}

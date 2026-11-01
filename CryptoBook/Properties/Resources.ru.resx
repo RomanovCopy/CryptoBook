@@ -1144,7 +1144,7 @@
   <data name="AI.DisabledHint" xml:space="preserve"><value>Включите помощника и выберите модель в её настройках.</value></data>
   <data name="AI.Insert" xml:space="preserve"><value>Вставить выбранное</value></data>
   <data name="AI.Replace" xml:space="preserve"><value>Заменить выделение</value></data>
-  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Убрать приложенный текст</value></data>
+  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Убрать вложение</value></data>
   <data name="AI.AttachDocument" xml:space="preserve"><value>Текущий документ</value></data>
   <data name="AI.Prompt" xml:space="preserve"><value>Сообщение модели; Ctrl+Enter — отправить</value></data>
   <data name="AI.Send" xml:space="preserve"><value>Отправить</value></data>

@@ -640,6 +640,94 @@
         "занят",
         "место"
       ]
+    },
+    {
+      "id": "ai.start",
+      "file": "ai.start.md",
+      "keywords": [
+        "помощник",
+        "локально",
+        "включить",
+        "панель"
+      ]
+    },
+    {
+      "id": "ai.models",
+      "file": "ai.models.md",
+      "keywords": [
+        "модель",
+        "GGUF",
+        "проектор",
+        "mmproj",
+        "проверка"
+      ]
+    },
+    {
+      "id": "ai.lifecycle",
+      "file": "ai.lifecycle.md",
+      "keywords": [
+        "загрузка",
+        "остановить",
+        "выгрузить",
+        "простой"
+      ]
+    },
+    {
+      "id": "ai.troubleshoot",
+      "file": "ai.troubleshoot.md",
+      "keywords": [
+        "ошибка",
+        "память",
+        "процесс",
+        "диагностика"
+      ]
+    },
+    {
+      "id": "ai.chat",
+      "file": "ai.chat.md",
+      "keywords": [
+        "чат",
+        "вопрос",
+        "сообщение",
+        "копировать",
+        "выбор",
+        "очистить"
+      ]
+    },
+    {
+      "id": "ai.templates",
+      "file": "ai.templates.md",
+      "keywords": [
+        "шаблон",
+        "инструкция",
+        "создать",
+        "удалить",
+        "отменить"
+      ]
+    },
+    {
+      "id": "ai.attachments",
+      "file": "ai.attachments.md",
+      "keywords": [
+        "вложение",
+        "документ",
+        "изображение",
+        "HEX",
+        "перетащить",
+        "снимок"
+      ]
+    },
+    {
+      "id": "ai.apply",
+      "file": "ai.apply.md",
+      "keywords": [
+        "вставить",
+        "заменить",
+        "выделение",
+        "таблица",
+        "Markdown",
+        "отмена"
+      ]
     }
   ]
 }

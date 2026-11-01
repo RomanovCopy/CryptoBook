@@ -1,0 +1,29 @@
+{
+  "culture": "de-DE",
+  "model": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-Q4_K_S.gguf",
+  "projector": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-mmproj-BF16.gguf",
+  "modelBytes": 5939488512,
+  "projectorBytes": 921705248,
+  "completed": "bereit",
+  "partial": "Hier sind 100 verschiedene Ideen f\u00FCr fiktive Reisen, nummeriert und ausf\u00FChr",
+  "vision": "Die linke Form ist rot und die rechte Form ist blau.",
+  "runtime": {
+    "ContextLength": 4096,
+    "GpuLayers": 27,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": false,
+    "Threads": 0,
+    "BatchThreads": 0,
+    "PerformanceBoost": false,
+    "PowerSaving": false
+  },
+  "realGeneration": true,
+  "cooperativeStopRetainedWeights": true,
+  "explicitUnload": true,
+  "idleClockAdvancedMinutes": 11,
+  "unexpectedExit": "Only this isolated service\u0027s owned idle worker terminated, detected and recovered",
+  "nativePicker": "not exercised",
+  "fixture": "Generated red square and blue circle on white, 256x256; no personal content"
+}

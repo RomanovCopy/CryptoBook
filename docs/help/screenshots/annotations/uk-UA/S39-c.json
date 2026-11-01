@@ -1,0 +1,22 @@
+{
+  "shotId": "S39-c",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S39-c.png",
+  "crop": {
+    "x": 949,
+    "y": 28.28,
+    "width": 490,
+    "height": 930.72
+  },
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.8183673469387756,
+      "y": 0.8257478081485301,
+      "width": 0.0653061224489796,
+      "height": 0.034381983840467596,
+      "badge": null
+    }
+  ]
+}

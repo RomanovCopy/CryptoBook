@@ -639,6 +639,94 @@
         "busy",
         "space"
       ]
+    },
+    {
+      "id": "ai.start",
+      "file": "ai.start.md",
+      "keywords": [
+        "assistant",
+        "local",
+        "enable",
+        "panel"
+      ]
+    },
+    {
+      "id": "ai.models",
+      "file": "ai.models.md",
+      "keywords": [
+        "model",
+        "GGUF",
+        "projector",
+        "mmproj",
+        "test"
+      ]
+    },
+    {
+      "id": "ai.lifecycle",
+      "file": "ai.lifecycle.md",
+      "keywords": [
+        "loading",
+        "stop",
+        "unload",
+        "idle"
+      ]
+    },
+    {
+      "id": "ai.troubleshoot",
+      "file": "ai.troubleshoot.md",
+      "keywords": [
+        "error",
+        "memory",
+        "process",
+        "troubleshooting"
+      ]
+    },
+    {
+      "id": "ai.chat",
+      "file": "ai.chat.md",
+      "keywords": [
+        "chat",
+        "question",
+        "message",
+        "copy",
+        "selection",
+        "clear"
+      ]
+    },
+    {
+      "id": "ai.templates",
+      "file": "ai.templates.md",
+      "keywords": [
+        "template",
+        "instructions",
+        "create",
+        "delete",
+        "cancel"
+      ]
+    },
+    {
+      "id": "ai.attachments",
+      "file": "ai.attachments.md",
+      "keywords": [
+        "attachment",
+        "document",
+        "image",
+        "HEX",
+        "drag",
+        "snapshot"
+      ]
+    },
+    {
+      "id": "ai.apply",
+      "file": "ai.apply.md",
+      "keywords": [
+        "insert",
+        "replace",
+        "selection",
+        "table",
+        "Markdown",
+        "undo"
+      ]
     }
   ]
 }
