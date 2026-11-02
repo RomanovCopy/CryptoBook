@@ -1,0 +1,839 @@
+{
+  "culture": "de-DE",
+  "sections": {
+    "start": "Erste Schritte",
+    "doc": "Dokumente",
+    "edit": "Textbearbeitung",
+    "content": "Dokumentinhalt",
+    "md": "Markdown",
+    "files": "Dateien und Ordner",
+    "search": "Suche",
+    "devices": "Verbundene Geräte",
+    "view": "Anzeigen und Drucken",
+    "security": "Datenschutz",
+    "recovery": "Speichern und Wiederherstellen",
+    "ai": "Lokaler KI-Assistent",
+    "settings": "Einstellungen und Problembehebung",
+    "help": "Hilfe verwenden"
+  },
+  "topics": [
+    {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Installation und portabler Start"
+      ]
+    },
+    {
+      "id": "start.interface",
+      "file": "start.interface.md",
+      "keywords": [
+        "Fenster",
+        "Oberfläche",
+        "Startbildschirm",
+        "Seitenmenü",
+        "Einstellungen",
+        "KI-Assistent",
+        "Zoom"
+      ]
+    },
+    {
+      "id": "doc.create",
+      "file": "doc.create.md",
+      "keywords": [
+        "neues Dokument",
+        "erstellen",
+        "speichern",
+        "RTF",
+        "Dateiname",
+        "leeres Dokument",
+        "Reiseplan"
+      ]
+    },
+    {
+      "id": "start.workspace",
+      "file": "start.workspace.md",
+      "keywords": [
+        "Arbeitsverzeichnis",
+        "Ordner",
+        "Arbeitsbereich",
+        "Suche"
+      ]
+    },
+    {
+      "id": "doc.templates",
+      "file": "doc.templates.md",
+      "keywords": [
+        "Vorlage",
+        "Notizen",
+        "Besprechung",
+        "Standard"
+      ]
+    },
+    {
+      "id": "doc.open",
+      "file": "doc.open.md",
+      "keywords": [
+        "öffnen",
+        "Datei",
+        "Dokument",
+        "Dateizuordnung"
+      ]
+    },
+    {
+      "id": "doc.save",
+      "file": "doc.save.md",
+      "keywords": [
+        "speichern",
+        "speichern unter",
+        "abbrechen",
+        "ungespeichert",
+        "Fehler"
+      ]
+    },
+    {
+      "id": "doc.formats",
+      "file": "doc.formats.md",
+      "keywords": [
+        "Format",
+        "Kodierung",
+        "BOM",
+        "UTF-8",
+        "RTF",
+        "XAML"
+      ]
+    },
+    {
+      "id": "doc.switch",
+      "file": "doc.switch.md",
+      "keywords": [
+        "wechseln",
+        "umbenennen",
+        "schließen",
+        "unabhängige Editoren"
+      ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "Auswahl",
+        "Zwischenablage",
+        "Rückgängig",
+        "Wiederholen",
+        "Leeren"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "Schrift",
+        "Größe",
+        "Fett",
+        "Kursiv",
+        "Farbe"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "Tinte",
+        "Palette",
+        "Farbfeld",
+        "Farbe"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "Absatz",
+        "Ausrichtung",
+        "Einzug",
+        "Zeilenabstand",
+        "Liste"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "Link",
+        "Adresse",
+        "Hyperlink"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "Seite",
+        "Papier",
+        "Format",
+        "Ausrichtung"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "Lesen",
+        "Vorschau",
+        "Zoom",
+        "Einpassen"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "Bild",
+        "Einfügen",
+        "Größe",
+        "Textumfluss"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "Hintergrund",
+        "Bild",
+        "Ausschnitt"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "Tabelle",
+        "Zelle",
+        "Zeile",
+        "Spalte"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "Lesezeichen",
+        "Notiz",
+        "Navigation",
+        "Index"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "Struktur",
+        "Baum",
+        "Absatz",
+        "Reihenfolge"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "Markdown",
+        "Quelltext",
+        "Editor",
+        "Vorschau"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "Markdown",
+        "Syntax",
+        "Auszeichnung",
+        "Code",
+        "Tabellen"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "Markdown",
+        "Vorschau",
+        "Bild",
+        "Link",
+        "HTML"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "Markdown",
+        "Speichern",
+        "Kodierung",
+        "BOM",
+        "Zeilenende"
+      ]
+    },
+    {
+      "id": "files.navigate",
+      "file": "files.navigate.md",
+      "keywords": [
+        "Adresse",
+        "zurück",
+        "vorwärts",
+        "nicht",
+        "verfügbar",
+        "wiederholen"
+      ]
+    },
+    {
+      "id": "files.views",
+      "file": "files.views.md",
+      "keywords": [
+        "alle",
+        "Dateien",
+        "Unterordner",
+        "Filter",
+        "Auswahl",
+        "Sortierung"
+      ]
+    },
+    {
+      "id": "files.create",
+      "file": "files.create.md",
+      "keywords": [
+        "neuer",
+        "Ordner",
+        "Datei",
+        "erstellen",
+        "ungültiger",
+        "Name",
+        "Auswahl"
+      ]
+    },
+    {
+      "id": "files.transfer",
+      "file": "files.transfer.md",
+      "keywords": [
+        "kopieren",
+        "ausschneiden",
+        "einfügen",
+        "verschieben",
+        "ziehen",
+        "Fortschritt",
+        "abbrechen"
+      ]
+    },
+    {
+      "id": "files.conflicts",
+      "file": "files.conflicts.md",
+      "keywords": [
+        "ersetzen",
+        "überspringen",
+        "beide",
+        "beibehalten",
+        "alle",
+        "Konflikt",
+        "abbrechen"
+      ]
+    },
+    {
+      "id": "files.manage",
+      "file": "files.manage.md",
+      "keywords": [
+        "öffnen",
+        "mit",
+        "Pfad",
+        "umbenennen",
+        "Erweiterung",
+        "löschen",
+        "dauerhaft"
+      ]
+    },
+    {
+      "id": "files.favorites",
+      "file": "files.favorites.md",
+      "keywords": [
+        "Favorit",
+        "Stern",
+        "Ordner",
+        "Anzeigename",
+        "entfernen",
+        "Verweis"
+      ]
+    },
+    {
+      "id": "files.pinned",
+      "file": "files.pinned.md",
+      "keywords": [
+        "anheften",
+        "Dokument",
+        "fehlt",
+        "Speicherort",
+        "Reihenfolge",
+        "lösen"
+      ]
+    },
+    {
+      "id": "files.recent",
+      "file": "files.recent.md",
+      "keywords": [
+        "zuletzt",
+        "Verlauf",
+        "Speicherort",
+        "entfernen",
+        "geöffnet",
+        "gespeichert"
+      ]
+    },
+    {
+      "id": "files.batch",
+      "file": "files.batch.md",
+      "keywords": [
+        "mehrfach",
+        "umbenennen",
+        "Maske",
+        "Bereich",
+        "Zähler",
+        "Regex",
+        "Vorschau",
+        "rückgängig",
+        "Konflikt"
+      ]
+    },
+    {
+      "id": "files.properties",
+      "file": "files.properties.md",
+      "keywords": [
+        "Eigenschaften",
+        "Prüfsummen",
+        "SHA256",
+        "SHA512",
+        "Signatur",
+        "Metadaten",
+        "Filter",
+        "Bericht"
+      ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "Name",
+        "Datei",
+        "Suche",
+        "Arbeitsordner",
+        "Unterordner"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "Inhalt",
+        "Text",
+        "Suche",
+        "geschützt",
+        "abbrechen",
+        "löschen"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "Suchen",
+        "Ctrl+F",
+        "F3",
+        "Großschreibung",
+        "Treffer",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "Vorschau",
+        "Text",
+        "Bild",
+        "PDF",
+        "Bereich",
+        "Größe"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "Bild",
+        "Zoom",
+        "drehen",
+        "einpassen",
+        "löschen",
+        "Papierkorb",
+        "wiederherstellen",
+        "Mediaplayer"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "Gerät",
+        "verbinden",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "Übertragung",
+        "kopieren",
+        "verschieben",
+        "abbrechen",
+        "trennen"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "Grenzen",
+        "entschlüsseln",
+        "Rechte",
+        "Papierkorb",
+        "Suche",
+        "Eigenschaften"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "Video",
+        "Player",
+        "Pause",
+        "spulen",
+        "Synchronisierung",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "externe",
+        "Anzeige",
+        "Zuordnung",
+        "Anwendung"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "Drucken",
+        "Drucker",
+        "Markdown",
+        "Seiten",
+        "abbrechen"
+      ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "Schlüssel",
+        "Kennwort",
+        "Wiederholung",
+        "Verschlüsselung"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "Schutz",
+        "Kopie",
+        "verschlüsseln",
+        "ersetzen",
+        "Ordner",
+        "Stapel"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "entschlüsseln",
+        "Format",
+        "Quelle",
+        "Text"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "zurücksetzen",
+        "Sperre",
+        "Inaktivität",
+        "Timer"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "Kompatibilität",
+        "Container",
+        "Altformat"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "vorherige",
+        "Version",
+        "Sicherung",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "Notfallkopie",
+        "ungespeichert",
+        "Sitzung",
+        "Momentaufnahme"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "Sperrkopie",
+        "entsperren",
+        "wiederherstellen",
+        "Kennwort"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "Fehler",
+        "schreiben",
+        "Zugriff",
+        "belegt",
+        "Speicherplatz"
+      ]
+    },
+    {
+      "id": "ai.start",
+      "file": "ai.start.md",
+      "keywords": [
+        "Assistent",
+        "lokal",
+        "aktivieren",
+        "Seitenleiste"
+      ]
+    },
+    {
+      "id": "ai.models",
+      "file": "ai.models.md",
+      "keywords": [
+        "Modell",
+        "GGUF",
+        "Projektor",
+        "mmproj",
+        "testen"
+      ]
+    },
+    {
+      "id": "ai.lifecycle",
+      "file": "ai.lifecycle.md",
+      "keywords": [
+        "laden",
+        "stoppen",
+        "entladen",
+        "Inaktivität"
+      ]
+    },
+    {
+      "id": "ai.troubleshoot",
+      "file": "ai.troubleshoot.md",
+      "keywords": [
+        "Fehler",
+        "Speicher",
+        "Prozess",
+        "Fehlerbehebung"
+      ]
+    },
+    {
+      "id": "ai.chat",
+      "file": "ai.chat.md",
+      "keywords": [
+        "Chat",
+        "Frage",
+        "Nachricht",
+        "kopieren",
+        "Auswahl",
+        "leeren"
+      ]
+    },
+    {
+      "id": "ai.templates",
+      "file": "ai.templates.md",
+      "keywords": [
+        "Vorlage",
+        "Anweisungen",
+        "erstellen",
+        "löschen",
+        "abbrechen"
+      ]
+    },
+    {
+      "id": "ai.attachments",
+      "file": "ai.attachments.md",
+      "keywords": [
+        "Anhang",
+        "Dokument",
+        "Bild",
+        "HEX",
+        "ziehen",
+        "Schnappschuss"
+      ]
+    },
+    {
+      "id": "ai.apply",
+      "file": "ai.apply.md",
+      "keywords": [
+        "einfügen",
+        "ersetzen",
+        "Auswahl",
+        "Tabelle",
+        "Markdown",
+        "rückgängig"
+      ]
+    },
+    {
+      "id": "ai.context",
+      "file": "ai.context.md",
+      "keywords": [
+        "Kontext",
+        "Token",
+        "Grenze",
+        "Schätzung",
+        "Wiederverwendung",
+        "Vorladen"
+      ]
+    },
+    {
+      "id": "ai.memory",
+      "file": "ai.memory.md",
+      "keywords": [
+        "Speicher",
+        "CPU",
+        "GPU",
+        "Schichten",
+        "Nachdenken",
+        "Wiederholungen"
+      ]
+    },
+    {
+      "id": "ai.performance",
+      "file": "ai.performance.md",
+      "keywords": [
+        "Leistung",
+        "ausgewogen",
+        "energiesparend",
+        "optimal",
+        "Messung",
+        "Stoppen"
+      ]
+    },
+    {
+      "id": "ai.appearance",
+      "file": "ai.appearance.md",
+      "keywords": [
+        "Darstellung",
+        "Schriftart",
+        "Farbe",
+        "Code",
+        "Rahmen",
+        "Markdown",
+        "Zurücksetzen"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Inhaltsverzeichnis, Suche und Hilfebilder"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Version und Programminformationen"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Design, Startbildschirm und Standardvorlage"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Speicherorte für Daten und Einstellungen"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Tastenkürzel und Fokus"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Sprache der Anwendung und Hilfe"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Häufige Probleme und sichere Schritte"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Updates prüfen und installieren"
+      ]
+    }
+  ]
+}

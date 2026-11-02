@@ -161,7 +161,7 @@ namespace CryptoBook.Services
                 return Task.FromResult(stream);
             } catch(OperationCanceledException) { throw; } catch(Exception ex)
             {
-                throw new IOException($"Cannot open file for writing: {path}", ex);
+                throw new IOException(LocalizationManager.Format("File.CannotOpenForWriting", path), ex);
             }
         }
 

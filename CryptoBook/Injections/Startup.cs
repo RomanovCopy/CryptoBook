@@ -7,6 +7,7 @@ using CryptoBook.Converters;
 using CryptoBook.DTO;
 using CryptoBook.FileTemplates;
 using CryptoBook.Infrastructure;
+using CryptoBook.Help;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
 using CryptoBook.MyControls;
@@ -36,6 +37,12 @@ namespace CryptoBook.Injections
             // Приложение.
             builder.RegisterInstance(app).As<System.Windows.Application>().SingleInstance();
             builder.RegisterInstance(dispatcher);
+            builder.RegisterType<ResourceHelpContentSource>().As<IHelpContentSource>().SingleInstance();
+            builder.RegisterType<HelpContentService>().SingleInstance();
+            builder.RegisterType<HelpPreferences>().As<IHelpPreferences>().SingleInstance();
+            builder.RegisterType<HelpWindowService>().As<IHelpWindowService>().SingleInstance();
+            builder.RegisterType<HelpWindowViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<HelpWindow>().InstancePerDependency();
             builder.RegisterType<AiSettingsStore>().SingleInstance();
             builder.RegisterType<AiRuntimeProfileStore>().SingleInstance();
             builder.RegisterType<AdaptiveAiInferenceService>().As<IAiInferenceService>().SingleInstance();
@@ -91,9 +98,6 @@ namespace CryptoBook.Injections
             builder.RegisterType<MarkdownEditorViewModel>()
                 .As<IMarkdownEditorViewModel>()
                 .InstancePerLifetimeScope();
-            builder.RegisterType<MarkdownSyntaxHelpViewModel>()
-                .As<IMarkdownSyntaxHelpViewModel>()
-                .InstancePerLifetimeScope();
             builder.RegisterType<RichTextContextMenuViewModel>().As<IRichTextContextMenuViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FontFormatBar_ViewModel>().As<IFontFormatBar_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<InkPaletteViewModel>()
@@ -123,6 +127,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<KeyInputViewModel>().As<IKeyInputViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<EncryptionMode_ViewModel>().As<IEncryptionMode_ViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<DecryptionOptionsViewModel>().AsSelf().InstancePerDependency();
+            builder.RegisterType<CrashRecoveryViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<MediaPlayerViewModel>().As<IMediaPlayerViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<WorkspaceSearchViewModel>()
@@ -400,6 +405,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<ProgressDialogService>().As<IProgressDialogService>().SingleInstance();
             builder.RegisterType<FileConflictResolver>().As<IFileConflictResolver>().SingleInstance();
             builder.RegisterType<FileOperationCoordinator>().As<IFileOperationCoordinator>().SingleInstance();
+            builder.RegisterType<WindowsRecycleBinService>().As<IRecycleBinService>().SingleInstance();
             builder.RegisterType<SystemItemSortService>().As<ISystemItemSortService>().SingleInstance();
             builder.RegisterType<FlowDocumentContentService>().As<IFlowDocumentContentService>().InstancePerDependency();
             builder.RegisterType<FlowDocumentLoadService>().As<IFlowDocumentLoadService>().InstancePerDependency();
@@ -534,7 +540,6 @@ namespace CryptoBook.Injections
             // Страницы.
             builder.RegisterType<Home>().InstancePerLifetimeScope();
             builder.RegisterType<MarkdownEditor>().InstancePerLifetimeScope();
-            builder.RegisterType<MarkdownSyntaxHelp>().InstancePerLifetimeScope();
             builder.RegisterType<WorkspaceSearch>().InstancePerLifetimeScope();
             builder.RegisterType<PageRegistry>().As<IPageRegistry>().SingleInstance();
 

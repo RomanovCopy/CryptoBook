@@ -12,13 +12,19 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\Icons\AppIcon.ico</ApplicationIcon>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <VersionPrefix>1.1.5.2</VersionPrefix>
+    <VersionPrefix>1.1.5.3</VersionPrefix>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <PublishTrimmed>false</PublishTrimmed>
 
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="..\docs\help\content\**\*.json;..\docs\help\content\**\*.md;..\docs\help\content\**\*.png">
+      <Link>Help\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Resource>
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Infrastrucrure\**" />

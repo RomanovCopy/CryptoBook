@@ -1,0 +1,42 @@
+[
+  {
+    "group": "help",
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9\\help.trx",
+    "sha256": "993ACBD07B2B9E02560E0A39E6EAA22A71C1A62C8522CBA4E924383059E16F63"
+  },
+  {
+    "group": "ai-integration",
+    "total": 150,
+    "passed": 150,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9\\ai-integration.trx",
+    "sha256": "2C759FD2E051D5945296B0EB68C5A7E731A9E43F60370B185996896D9821C3F1"
+  },
+  {
+    "group": "worker-cancellation",
+    "total": 9,
+    "passed": 9,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9\\worker-cancellation.trx",
+    "sha256": "B2731AB0C2F516FB7EE126089492131E074C4CF898010B6A90F3E99BCA28D2EE"
+  },
+  {
+    "group": "lifecycle-safety",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9\\lifecycle-safety.trx",
+    "sha256": "B969480D3296109816C5FB15FCA5346CCE8BCD9CB224950C655C1D4E9FB70DAE"
+  },
+  {
+    "group": "ai-runtime",
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9\\ai-runtime.trx",
+    "sha256": "487856880E6259A8CB17B9FC384994BE0933CB72DD1690AF0469C376DD90CA27"
+  }
+]

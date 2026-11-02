@@ -27,6 +27,7 @@ namespace CryptoBook.Interfaces
         /// </summary>
         public ICommand SideMenuClose { get; }
         public ICommand ResetEncryptionKey { get; }
+        ICommand OpenHelp { get; }
 
     }
 }

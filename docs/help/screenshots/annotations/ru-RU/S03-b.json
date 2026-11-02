@@ -1,0 +1,17 @@
+{
+  "shotId": "S03-b",
+  "culture": "ru-RU",
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S03-b.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 3,
+      "shape": "rectangle",
+      "x": 0.8795289855072463,
+      "y": 0.16239863422962017,
+      "width": 0.09510869565217392,
+      "height": 0.04353393085787452,
+      "badge": null
+    }
+  ]
+}

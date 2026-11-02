@@ -1,0 +1,35 @@
+{
+  "shotId": "S38-a",
+  "culture": "de-DE",
+  "rawFile": "docs/help/screenshots/raw/de-DE/S38-a.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.5552407407407407,
+      "y": 0.9635416666666666,
+      "width": 0.03718981481481482,
+      "height": 0.029166666666666667,
+      "badge": null
+    },
+    {
+      "number": 2,
+      "shape": "rectangle",
+      "x": 0.7715277777777778,
+      "y": 0.2085,
+      "width": 0.022222222222222223,
+      "height": 0.03333333333333333,
+      "badge": null
+    },
+    {
+      "number": 3,
+      "shape": "rectangle",
+      "x": 0.7284722222222222,
+      "y": 0.029458333333333333,
+      "width": 0.004166666666666667,
+      "height": 0.9695,
+      "badge": null
+    }
+  ]
+}

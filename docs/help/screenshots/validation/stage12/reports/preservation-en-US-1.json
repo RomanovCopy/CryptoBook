@@ -1,0 +1,12 @@
+{
+  "ordinaryText": true,
+  "inactiveContent": true,
+  "inactiveRevision": 1,
+  "inactiveRevisionAfter": 1,
+  "selection": true,
+  "prompt": true,
+  "chat": true,
+  "dirty": true,
+  "page": "Home",
+  "pageAfter": "Home"
+}

@@ -10,6 +10,8 @@ namespace CryptoBook.Interfaces
     {
 
         Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null) where T : Window;
+        Guid CreateOwnedWindow<T>(Window? owner, IReadOnlyDictionary<string, object?>? args = null)
+            where T : Window => CreateWindow<T>(args);
         Guid CreateSiblingWindow<T>(
             IReadOnlyDictionary<string, object?>? args = null)
             where T: Window => CreateWindow<T>(args);

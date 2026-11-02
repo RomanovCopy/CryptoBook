@@ -39,6 +39,15 @@ namespace CryptoBook.Services
         }
 
 
+        public void EnsurePage(string key)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(key);
+            if(_list.Any(entry => string.Equals(entry.Key, key, StringComparison.Ordinal))) return;
+            _list.Add(CreateEntry(key, null));
+            // Register an inactive editor without briefly navigating the WPF Frame to it.
+            OnPropertyChanged(nameof(Keys), nameof(CanGoBack), nameof(CanGoForward));
+        }
+
         public void Navigate(string key, object? args = null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(key);

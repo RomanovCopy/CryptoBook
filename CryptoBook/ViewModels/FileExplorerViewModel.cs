@@ -556,6 +556,9 @@ namespace CryptoBook.ViewModels
         RelayCommand _pasteCommand;
 
         public ICommand DeleteCommand => _deleteCommand ??= new RelayCommand(_fileExplorerModel.Execute_DeleteCommand, _fileExplorerModel.CanExecute_DeleteCommand);
+        public ICommand RestoreFilesCommand => _restoreFilesCommand ??= new RelayCommand(
+            _fileExplorerModel.Execute_RestoreFilesCommand, _fileExplorerModel.CanExecute_RestoreFilesCommand);
+        private RelayCommand? _restoreFilesCommand;
         RelayCommand _deleteCommand;
 
         public ICommand SortedCommand => _sortedCommand ??= new RelayCommand(_fileExplorerModel.Execute_SortedCommand, _fileExplorerModel.CanExecute_SortedCommand);

@@ -1,0 +1,6 @@
+{
+  "transport": "production WindowsPortableDeviceBridge / StorageDevice selector",
+  "discoveredCount": 2,
+  "availableCount": 0,
+  "deviceOperations": "none; no device identifiers or personal directory listings retained"
+}

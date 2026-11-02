@@ -1,0 +1,452 @@
+{
+  "sourceCommit": "690ab58c5e789234feaa7450f9bfa03ba2db9ac7",
+  "source": "CryptoBook/ViewModels/MarkdownSyntaxHelpViewModel.cs",
+  "entries": [
+    {
+      "group": "Editor",
+      "syntax": "Ctrl+S",
+      "key": "MarkdownHelp.Editor.Save.Result"
+    },
+    {
+      "group": "Editor",
+      "syntax": "Ctrl+Shift+S",
+      "key": "MarkdownHelp.Editor.SaveAs.Result"
+    },
+    {
+      "group": "Editor",
+      "syntax": "Preview / Editor",
+      "key": "MarkdownHelp.Editor.Toggle.Result"
+    },
+    {
+      "group": "Editor",
+      "syntax": "Tab",
+      "key": "MarkdownHelp.Editor.Tab.Result"
+    },
+    {
+      "group": "Editor",
+      "syntax": "? / Esc",
+      "key": "MarkdownHelp.Editor.Help.Result"
+    },
+    {
+      "group": "Structure",
+      "syntax": "# H1\n## H2\n…\n###### H6",
+      "key": "MarkdownHelp.Headings.Result"
+    },
+    {
+      "group": "Structure",
+      "syntax": "Heading 1\n=========",
+      "key": "MarkdownHelp.SetextH1.Result"
+    },
+    {
+      "group": "Structure",
+      "syntax": "Heading 2\n---------",
+      "key": "MarkdownHelp.SetextH2.Result"
+    },
+    {
+      "group": "Structure",
+      "syntax": "---\n***\n___",
+      "key": "MarkdownHelp.Rule.Result"
+    },
+    {
+      "group": "Lists",
+      "syntax": "> quote\n>> nested",
+      "key": "MarkdownHelp.Quote.Result"
+    },
+    {
+      "group": "Lists",
+      "syntax": "- item\n+ item\n* item",
+      "key": "MarkdownHelp.BulletedList.Result"
+    },
+    {
+      "group": "Lists",
+      "syntax": "1. item\n2) item",
+      "key": "MarkdownHelp.NumberedList.Result"
+    },
+    {
+      "group": "Lists",
+      "syntax": "- parent\n    - child",
+      "key": "MarkdownHelp.NestedList.Result"
+    },
+    {
+      "group": "Inline",
+      "syntax": "*italic*\n_italic_",
+      "key": "MarkdownHelp.Italic.Result"
+    },
+    {
+      "group": "Inline",
+      "syntax": "**bold**\n__bold__",
+      "key": "MarkdownHelp.Bold.Result"
+    },
+    {
+      "group": "Inline",
+      "syntax": "***bold italic***",
+      "key": "MarkdownHelp.BoldItalic.Result"
+    },
+    {
+      "group": "Inline",
+      "syntax": "~~strike~~",
+      "key": "MarkdownHelp.Strikethrough.Result"
+    },
+    {
+      "group": "Inline",
+      "syntax": "`code`\n``code with ` inside``",
+      "key": "MarkdownHelp.InlineCode.Result"
+    },
+    {
+      "group": "Inline",
+      "syntax": "\\*literal asterisks\\*",
+      "key": "MarkdownHelp.Escape.Result"
+    },
+    {
+      "group": "Inline",
+      "syntax": "&copy;\n&#169;",
+      "key": "MarkdownHelp.Entity.Result"
+    },
+    {
+      "group": "Spacing",
+      "syntax": "text\n\ntext",
+      "key": "MarkdownHelp.Paragraph.Result"
+    },
+    {
+      "group": "Spacing",
+      "syntax": "text\ntext",
+      "key": "MarkdownHelp.SoftBreak.Result"
+    },
+    {
+      "group": "Spacing",
+      "syntax": "text  \ntext",
+      "key": "MarkdownHelp.LineBreak.Result"
+    },
+    {
+      "group": "Spacing",
+      "syntax": "text\\\ntext",
+      "key": "MarkdownHelp.BackslashBreak.Result"
+    },
+    {
+      "group": "Links",
+      "syntax": "[text](https://example.com)",
+      "key": "MarkdownHelp.Link.Result"
+    },
+    {
+      "group": "Links",
+      "syntax": "[text][ref]\n\n[ref]: https://example.com",
+      "key": "MarkdownHelp.ReferenceLink.Result"
+    },
+    {
+      "group": "Links",
+      "syntax": "<https://example.com>",
+      "key": "MarkdownHelp.AutoLink.Result"
+    },
+    {
+      "group": "Links",
+      "syntax": "<name@example.com>",
+      "key": "MarkdownHelp.AutoEmail.Result"
+    },
+    {
+      "group": "Links",
+      "syntax": "https://example.com",
+      "key": "MarkdownHelp.BareLink.Result"
+    },
+    {
+      "group": "Links",
+      "syntax": "![alt](image.png)",
+      "key": "MarkdownHelp.Image.Result"
+    },
+    {
+      "group": "Links",
+      "syntax": "![alt][image]\n\n[image]: images/picture.png",
+      "key": "MarkdownHelp.ReferenceImage.Result"
+    },
+    {
+      "group": "Code",
+      "syntax": "```csharp\ncode\n```",
+      "key": "MarkdownHelp.CodeBlock.Result"
+    },
+    {
+      "group": "Code",
+      "syntax": "~~~text\ncode\n~~~",
+      "key": "MarkdownHelp.TildeCode.Result"
+    },
+    {
+      "group": "Code",
+      "syntax": "    indented code",
+      "key": "MarkdownHelp.IndentedCode.Result"
+    },
+    {
+      "group": "Tables",
+      "syntax": "| A | B |\n|---|---|\n| 1 | 2 |",
+      "key": "MarkdownHelp.Table.Result"
+    },
+    {
+      "group": "Tables",
+      "syntax": "+---+---+\n| A | B |\n+===+===+\n| 1 | 2 |\n+---+---+",
+      "key": "MarkdownHelp.GridTable.Result"
+    },
+    {
+      "group": "Limitations",
+      "syntax": "<b>HTML</b>",
+      "key": "MarkdownHelp.Html.Result"
+    },
+    {
+      "group": "Limitations",
+      "syntax": "[file](file:///…)\n[ftp](ftp://…)\n[relative](relative.md)",
+      "key": "MarkdownHelp.UnsafeLinks.Result"
+    },
+    {
+      "group": "Limitations",
+      "syntax": "![alt](https://example.com/image.png)",
+      "key": "MarkdownHelp.RemoteImage.Result"
+    },
+    {
+      "group": "Limitations",
+      "syntax": "- [x] task\n[^1] footnote\n$math$",
+      "key": "MarkdownHelp.UnsupportedExtensions.Result"
+    }
+  ],
+  "resources": {
+    "en-US": {
+      "MarkdownHelp.Title": "Markdown syntax",
+      "MarkdownHelp.Description": "A complete reference to the Markdown syntax and editor commands supported by the current CryptoBook preview.",
+      "MarkdownHelp.OpenHint": "Open Markdown syntax help",
+      "MarkdownHelp.Back": "Back to editor",
+      "MarkdownHelp.BackHint": "Return to the Markdown editor (Esc)",
+      "MarkdownHelp.Group.Blocks": "Block elements",
+      "MarkdownHelp.Group.Inline": "Inline formatting",
+      "MarkdownHelp.Group.Spacing": "Paragraphs and line breaks",
+      "MarkdownHelp.Group.Editor": "Editor commands",
+      "MarkdownHelp.Group.Structure": "Headings and separators",
+      "MarkdownHelp.Group.Lists": "Lists and quotes",
+      "MarkdownHelp.Group.Links": "Links and images",
+      "MarkdownHelp.Group.Code": "Code blocks",
+      "MarkdownHelp.Group.Tables": "Tables",
+      "MarkdownHelp.Group.Limitations": "Preview limitations",
+      "MarkdownHelp.Syntax": "SYNTAX",
+      "MarkdownHelp.Result": "RESULT",
+      "MarkdownHelp.Editor.Save.Result": "Save changes to the current file.",
+      "MarkdownHelp.Editor.SaveAs.Result": "Save the current document to a different file.",
+      "MarkdownHelp.Editor.Toggle.Result": "Switch between editing the source and viewing the rendered document.",
+      "MarkdownHelp.Editor.Tab.Result": "Insert a tab character in the source editor.",
+      "MarkdownHelp.Editor.Help.Result": "The ? button opens this reference; Esc returns from it to the editor.",
+      "MarkdownHelp.Headings.Result": "ATX headings of levels 1–6. An optional matching run of # characters may close the heading.",
+      "MarkdownHelp.SetextH1.Result": "A level-one Setext heading.",
+      "MarkdownHelp.SetextH2.Result": "A level-two Setext heading.",
+      "MarkdownHelp.Quote.Result": "A quoted block. Additional > characters create nested quotes.",
+      "MarkdownHelp.BulletedList.Result": "A bulleted list; -, +, and * are accepted as markers.",
+      "MarkdownHelp.NumberedList.Result": "A numbered list using . or ) after the number. The first number sets the starting value.",
+      "MarkdownHelp.NestedList.Result": "Indent an item to create a nested list. Lists may contain paragraphs, quotes, code, and other lists.",
+      "MarkdownHelp.Rule.Result": "A horizontal separator made from at least three -, *, or _ characters.",
+      "MarkdownHelp.CodeBlock.Result": "A fenced code block. Text after the opening fence is shown as a language label; syntax highlighting is not applied.",
+      "MarkdownHelp.TildeCode.Result": "A fenced code block using three or more tildes instead of backticks.",
+      "MarkdownHelp.IndentedCode.Result": "A code block created by indenting every line by four spaces or one tab.",
+      "MarkdownHelp.Table.Result": "A pipe table. The separator row creates the header; outer pipes are optional.",
+      "MarkdownHelp.GridTable.Result": "A grid table. = marks the header boundary; grid tables may span rows and columns.",
+      "MarkdownHelp.Bold.Result": "Bold text.",
+      "MarkdownHelp.Italic.Result": "Italic text.",
+      "MarkdownHelp.BoldItalic.Result": "Bold italic text. Three underscores may be used instead of asterisks.",
+      "MarkdownHelp.Strikethrough.Result": "Strikethrough text.",
+      "MarkdownHelp.InlineCode.Result": "A monospaced code fragment. Use a longer backtick delimiter when the fragment contains a backtick.",
+      "MarkdownHelp.Escape.Result": "A backslash displays Markdown punctuation literally instead of interpreting it as markup.",
+      "MarkdownHelp.Entity.Result": "A named or numeric HTML entity, converted to its Unicode character.",
+      "MarkdownHelp.Link.Result": "A clickable HTTP, HTTPS, or email link.",
+      "MarkdownHelp.ReferenceLink.Result": "A link whose URL is declared elsewhere. Collapsed [text][] and shortcut [ref] forms are also supported.",
+      "MarkdownHelp.AutoLink.Result": "A web address displayed as a clickable link without a custom caption.",
+      "MarkdownHelp.AutoEmail.Result": "An email address converted to a clickable mailto link.",
+      "MarkdownHelp.BareLink.Result": "A bare HTTP or HTTPS address is recognized automatically.",
+      "MarkdownHelp.Image.Result": "An image stored next to the Markdown file or in a relative subfolder.",
+      "MarkdownHelp.ReferenceImage.Result": "A local image whose relative path is declared in a reference definition.",
+      "MarkdownHelp.Paragraph.Result": "A blank line starts a new paragraph.",
+      "MarkdownHelp.SoftBreak.Result": "A normal source line ending is displayed as a space within the same paragraph.",
+      "MarkdownHelp.LineBreak.Result": "Two spaces at the end of a line insert a line break without starting a new paragraph.",
+      "MarkdownHelp.BackslashBreak.Result": "A backslash at the end of a line also inserts a hard line break.",
+      "MarkdownHelp.Html.Result": "Raw HTML is shown as inert source text and is never executed.",
+      "MarkdownHelp.UnsafeLinks.Result": "FTP, file, relative, javascript, and other non-HTTP schemes are displayed as text, not active links.",
+      "MarkdownHelp.RemoteImage.Result": "Remote and absolute-path images are not loaded; their alternative text is shown instead.",
+      "MarkdownHelp.UnsupportedExtensions.Result": "All specially rendered syntax is listed above. Other Markdig extensions—including task checkboxes, footnotes, formulas, diagrams, definition lists, alerts, custom containers, media, abbreviations, inserted/marked text, subscript, and superscript—have no corresponding presentation.",
+      "MarkdownHelp.Safety.Title": "Safe preview",
+      "MarkdownHelp.Safety.Description": "Raw HTML is displayed as inert text. Remote and absolute-path images are not loaded; only relative local images up to 25 MB are shown."
+    },
+    "ru-RU": {
+      "MarkdownHelp.Title": "Синтаксис Markdown",
+      "MarkdownHelp.Description": "Полный справочник по синтаксису Markdown и командам, которые поддерживает текущий редактор CryptoBook.",
+      "MarkdownHelp.OpenHint": "Открыть справку по синтаксису Markdown",
+      "MarkdownHelp.Back": "Вернуться в редактор",
+      "MarkdownHelp.BackHint": "Вернуться в редактор Markdown (Esc)",
+      "MarkdownHelp.Group.Blocks": "Блочные элементы",
+      "MarkdownHelp.Group.Inline": "Форматирование внутри строки",
+      "MarkdownHelp.Group.Spacing": "Абзацы и переносы строк",
+      "MarkdownHelp.Group.Editor": "Команды редактора",
+      "MarkdownHelp.Group.Structure": "Заголовки и разделители",
+      "MarkdownHelp.Group.Lists": "Списки и цитаты",
+      "MarkdownHelp.Group.Links": "Ссылки и изображения",
+      "MarkdownHelp.Group.Code": "Блоки кода",
+      "MarkdownHelp.Group.Tables": "Таблицы",
+      "MarkdownHelp.Group.Limitations": "Ограничения предпросмотра",
+      "MarkdownHelp.Syntax": "СИНТАКСИС",
+      "MarkdownHelp.Result": "РЕЗУЛЬТАТ",
+      "MarkdownHelp.Editor.Save.Result": "Сохранить изменения в текущем файле.",
+      "MarkdownHelp.Editor.SaveAs.Result": "Сохранить текущий документ в другой файл.",
+      "MarkdownHelp.Editor.Toggle.Result": "Переключиться между редактированием исходного текста и просмотром готового документа.",
+      "MarkdownHelp.Editor.Tab.Result": "Вставить символ табуляции в исходный текст.",
+      "MarkdownHelp.Editor.Help.Result": "Кнопка ? открывает эту справку, клавиша Esc возвращает из неё в редактор.",
+      "MarkdownHelp.Headings.Result": "ATX-заголовки уровней 1–6. В конце можно добавить такое же количество символов #.",
+      "MarkdownHelp.SetextH1.Result": "Setext-заголовок первого уровня.",
+      "MarkdownHelp.SetextH2.Result": "Setext-заголовок второго уровня.",
+      "MarkdownHelp.Quote.Result": "Блок цитаты. Дополнительные символы > создают вложенные цитаты.",
+      "MarkdownHelp.BulletedList.Result": "Маркированный список; маркером может быть -, + или *.",
+      "MarkdownHelp.NumberedList.Result": "Нумерованный список с . или ) после числа. Первое число задаёт начало нумерации.",
+      "MarkdownHelp.NestedList.Result": "Отступ создаёт вложенный список. В пункты можно вкладывать абзацы, цитаты, код и другие списки.",
+      "MarkdownHelp.Rule.Result": "Горизонтальный разделитель из трёх или более символов -, * или _.",
+      "MarkdownHelp.CodeBlock.Result": "Ограждённый блок кода. Текст после открывающей ограды показывается как имя языка; подсветки синтаксиса нет.",
+      "MarkdownHelp.TildeCode.Result": "Ограждённый блок кода из трёх или более тильд вместо обратных кавычек.",
+      "MarkdownHelp.IndentedCode.Result": "Блок кода, созданный отступом каждой строки на четыре пробела или одну табуляцию.",
+      "MarkdownHelp.Table.Result": "Таблица с вертикальными чертами. Строка-разделитель создаёт заголовок; крайние черты необязательны.",
+      "MarkdownHelp.GridTable.Result": "Сеточная таблица. Символ = отмечает границу заголовка; поддерживается объединение строк и столбцов.",
+      "MarkdownHelp.Bold.Result": "Полужирный текст.",
+      "MarkdownHelp.Italic.Result": "Курсивный текст.",
+      "MarkdownHelp.BoldItalic.Result": "Полужирный курсив. Вместо трёх звёздочек можно использовать три подчёркивания.",
+      "MarkdownHelp.Strikethrough.Result": "Зачёркнутый текст.",
+      "MarkdownHelp.InlineCode.Result": "Фрагмент кода моноширинным шрифтом. Если внутри есть обратная кавычка, используйте более длинный ограничитель.",
+      "MarkdownHelp.Escape.Result": "Обратная косая черта показывает служебный символ буквально, не применяя разметку.",
+      "MarkdownHelp.Entity.Result": "Именованная или числовая HTML-сущность, преобразуемая в символ Unicode.",
+      "MarkdownHelp.Link.Result": "Активная HTTP-, HTTPS- или почтовая ссылка.",
+      "MarkdownHelp.ReferenceLink.Result": "Ссылка, URL которой объявлен отдельно. Также поддерживаются сокращённые формы [text][] и [ref].",
+      "MarkdownHelp.AutoLink.Result": "Веб-адрес без отдельной подписи, отображаемый как активная ссылка.",
+      "MarkdownHelp.AutoEmail.Result": "Адрес электронной почты, преобразуемый в активную ссылку mailto.",
+      "MarkdownHelp.BareLink.Result": "Обычный HTTP- или HTTPS-адрес распознаётся автоматически.",
+      "MarkdownHelp.Image.Result": "Изображение рядом с Markdown-файлом или в относительной вложенной папке.",
+      "MarkdownHelp.ReferenceImage.Result": "Локальное изображение, относительный путь к которому объявлен в определении ссылки.",
+      "MarkdownHelp.Paragraph.Result": "Пустая строка начинает новый абзац.",
+      "MarkdownHelp.SoftBreak.Result": "Обычный перевод строки в исходном тексте отображается как пробел внутри того же абзаца.",
+      "MarkdownHelp.LineBreak.Result": "Два пробела в конце строки вставляют перенос без создания нового абзаца.",
+      "MarkdownHelp.BackslashBreak.Result": "Обратная косая черта в конце строки также вставляет принудительный перенос.",
+      "MarkdownHelp.Html.Result": "HTML-код показывается как неактивный исходный текст и никогда не исполняется.",
+      "MarkdownHelp.UnsafeLinks.Result": "FTP, file, относительные, javascript- и прочие ссылки вне HTTP отображаются как текст, а не как активные ссылки.",
+      "MarkdownHelp.RemoteImage.Result": "Удалённые изображения и изображения по абсолютному пути не загружаются; вместо них показывается альтернативный текст.",
+      "MarkdownHelp.UnsupportedExtensions.Result": "Вся специально отображаемая разметка перечислена выше. Остальные расширения Markdig — флажки задач, сноски, формулы, диаграммы, списки определений, предупреждения, контейнеры, медиавставки, сокращения, вставленный и выделенный текст, нижние и верхние индексы — не имеют соответствующего оформления.",
+      "MarkdownHelp.Safety.Title": "Безопасный предпросмотр",
+      "MarkdownHelp.Safety.Description": "HTML-код отображается как неактивный текст. Удалённые изображения и изображения по абсолютному пути не загружаются; показываются только локальные файлы по относительному пути размером до 25 МБ."
+    },
+    "uk-UA": {
+      "MarkdownHelp.Title": "Синтаксис Markdown",
+      "MarkdownHelp.Description": "Повний довідник із синтаксису Markdown і команд, які підтримує поточний редактор CryptoBook.",
+      "MarkdownHelp.OpenHint": "Відкрити довідку із синтаксису Markdown",
+      "MarkdownHelp.Back": "Повернутися до редактора",
+      "MarkdownHelp.BackHint": "Повернутися до редактора Markdown (Esc)",
+      "MarkdownHelp.Group.Blocks": "Блокові елементи",
+      "MarkdownHelp.Group.Inline": "Форматування всередині рядка",
+      "MarkdownHelp.Group.Spacing": "Абзаци та перенесення рядків",
+      "MarkdownHelp.Group.Editor": "Команди редактора",
+      "MarkdownHelp.Group.Structure": "Заголовки та роздільники",
+      "MarkdownHelp.Group.Lists": "Списки та цитати",
+      "MarkdownHelp.Group.Links": "Посилання та зображення",
+      "MarkdownHelp.Group.Code": "Блоки коду",
+      "MarkdownHelp.Group.Tables": "Таблиці",
+      "MarkdownHelp.Group.Limitations": "Обмеження попереднього перегляду",
+      "MarkdownHelp.Syntax": "СИНТАКСИС",
+      "MarkdownHelp.Result": "РЕЗУЛЬТАТ",
+      "MarkdownHelp.Editor.Save.Result": "Зберегти зміни в поточному файлі.",
+      "MarkdownHelp.Editor.SaveAs.Result": "Зберегти поточний документ в інший файл.",
+      "MarkdownHelp.Editor.Toggle.Result": "Перемкнутися між редагуванням вихідного тексту та переглядом готового документа.",
+      "MarkdownHelp.Editor.Tab.Result": "Вставити символ табуляції у вихідний текст.",
+      "MarkdownHelp.Editor.Help.Result": "Кнопка ? відкриває цю довідку, клавіша Esc повертає з неї до редактора.",
+      "MarkdownHelp.Headings.Result": "ATX-заголовки рівнів 1–6. Наприкінці можна додати таку саму кількість символів #.",
+      "MarkdownHelp.SetextH1.Result": "Setext-заголовок першого рівня.",
+      "MarkdownHelp.SetextH2.Result": "Setext-заголовок другого рівня.",
+      "MarkdownHelp.Quote.Result": "Блок цитати. Додаткові символи > створюють вкладені цитати.",
+      "MarkdownHelp.BulletedList.Result": "Маркований список; маркером може бути -, + або *.",
+      "MarkdownHelp.NumberedList.Result": "Нумерований список із . або ) після числа. Перше число задає початок нумерації.",
+      "MarkdownHelp.NestedList.Result": "Відступ створює вкладений список. У пункти можна вкладати абзаци, цитати, код та інші списки.",
+      "MarkdownHelp.Rule.Result": "Горизонтальний роздільник із трьох або більше символів -, * чи _.",
+      "MarkdownHelp.CodeBlock.Result": "Огороджений блок коду. Текст після початкової огорожі показується як назва мови; підсвічування синтаксису немає.",
+      "MarkdownHelp.TildeCode.Result": "Огороджений блок коду з трьох або більше тильд замість зворотних лапок.",
+      "MarkdownHelp.IndentedCode.Result": "Блок коду, створений відступом кожного рядка на чотири пробіли або одну табуляцію.",
+      "MarkdownHelp.Table.Result": "Таблиця з вертикальними рисками. Рядок-роздільник створює заголовок; крайні риски необов’язкові.",
+      "MarkdownHelp.GridTable.Result": "Сіткова таблиця. Символ = позначає межу заголовка; підтримується об’єднання рядків і стовпців.",
+      "MarkdownHelp.Bold.Result": "Напівжирний текст.",
+      "MarkdownHelp.Italic.Result": "Курсивний текст.",
+      "MarkdownHelp.BoldItalic.Result": "Напівжирний курсив. Замість трьох зірочок можна використати три підкреслення.",
+      "MarkdownHelp.Strikethrough.Result": "Закреслений текст.",
+      "MarkdownHelp.InlineCode.Result": "Фрагмент коду моноширинним шрифтом. Якщо всередині є зворотна лапка, використовуйте довший обмежувач.",
+      "MarkdownHelp.Escape.Result": "Зворотна коса риска показує службовий символ буквально, не застосовуючи розмітку.",
+      "MarkdownHelp.Entity.Result": "Іменована або числова HTML-сутність, що перетворюється на символ Unicode.",
+      "MarkdownHelp.Link.Result": "Активне HTTP-, HTTPS- або поштове посилання.",
+      "MarkdownHelp.ReferenceLink.Result": "Посилання, URL якого оголошено окремо. Також підтримуються скорочені форми [text][] і [ref].",
+      "MarkdownHelp.AutoLink.Result": "Вебадреса без окремого підпису, що відображається як активне посилання.",
+      "MarkdownHelp.AutoEmail.Result": "Адреса електронної пошти, що перетворюється на активне посилання mailto.",
+      "MarkdownHelp.BareLink.Result": "Звичайна HTTP- або HTTPS-адреса розпізнається автоматично.",
+      "MarkdownHelp.Image.Result": "Зображення поруч із Markdown-файлом або у відносній вкладеній папці.",
+      "MarkdownHelp.ReferenceImage.Result": "Локальне зображення, відносний шлях до якого оголошено у визначенні посилання.",
+      "MarkdownHelp.Paragraph.Result": "Порожній рядок починає новий абзац.",
+      "MarkdownHelp.SoftBreak.Result": "Звичайне переведення рядка у вихідному тексті відображається як пробіл у тому самому абзаці.",
+      "MarkdownHelp.LineBreak.Result": "Два пробіли в кінці рядка вставляють перенесення без створення нового абзацу.",
+      "MarkdownHelp.BackslashBreak.Result": "Зворотна коса риска в кінці рядка також вставляє примусове перенесення.",
+      "MarkdownHelp.Html.Result": "HTML-код показується як неактивний вихідний текст і ніколи не виконується.",
+      "MarkdownHelp.UnsafeLinks.Result": "FTP, file, відносні, javascript- та інші посилання поза HTTP відображаються як текст, а не як активні посилання.",
+      "MarkdownHelp.RemoteImage.Result": "Віддалені зображення та зображення за абсолютним шляхом не завантажуються; замість них показується альтернативний текст.",
+      "MarkdownHelp.UnsupportedExtensions.Result": "Усю розмітку зі спеціальним відображенням перелічено вище. Інші розширення Markdig — прапорці завдань, виноски, формули, діаграми, списки визначень, попередження, контейнери, медіавставки, скорочення, вставлений і виділений текст, нижні й верхні індекси — не мають відповідного оформлення.",
+      "MarkdownHelp.Safety.Title": "Безпечний попередній перегляд",
+      "MarkdownHelp.Safety.Description": "HTML-код відображається як неактивний текст. Віддалені зображення та зображення за абсолютним шляхом не завантажуються; показуються лише локальні файли за відносним шляхом розміром до 25 МБ."
+    },
+    "de-DE": {
+      "MarkdownHelp.Title": "Markdown-Syntax",
+      "MarkdownHelp.Description": "Vollständige Übersicht der Markdown-Syntax und Editorbefehle, die von der aktuellen CryptoBook-Vorschau unterstützt werden.",
+      "MarkdownHelp.OpenHint": "Hilfe zur Markdown-Syntax öffnen",
+      "MarkdownHelp.Back": "Zurück zum Editor",
+      "MarkdownHelp.BackHint": "Zum Markdown-Editor zurückkehren (Esc)",
+      "MarkdownHelp.Group.Blocks": "Blockelemente",
+      "MarkdownHelp.Group.Inline": "Formatierung innerhalb einer Zeile",
+      "MarkdownHelp.Group.Spacing": "Absätze und Zeilenumbrüche",
+      "MarkdownHelp.Group.Editor": "Editorbefehle",
+      "MarkdownHelp.Group.Structure": "Überschriften und Trennlinien",
+      "MarkdownHelp.Group.Lists": "Listen und Zitate",
+      "MarkdownHelp.Group.Links": "Links und Bilder",
+      "MarkdownHelp.Group.Code": "Codeblöcke",
+      "MarkdownHelp.Group.Tables": "Tabellen",
+      "MarkdownHelp.Group.Limitations": "Einschränkungen der Vorschau",
+      "MarkdownHelp.Syntax": "SYNTAX",
+      "MarkdownHelp.Result": "ERGEBNIS",
+      "MarkdownHelp.Editor.Save.Result": "Änderungen in der aktuellen Datei speichern.",
+      "MarkdownHelp.Editor.SaveAs.Result": "Das aktuelle Dokument in einer anderen Datei speichern.",
+      "MarkdownHelp.Editor.Toggle.Result": "Zwischen Quelltextbearbeitung und gerenderter Dokumentansicht wechseln.",
+      "MarkdownHelp.Editor.Tab.Result": "Ein Tabulatorzeichen in den Quelltext einfügen.",
+      "MarkdownHelp.Editor.Help.Result": "Die Schaltfläche ? öffnet diese Hilfe; Esc kehrt zum Editor zurück.",
+      "MarkdownHelp.Headings.Result": "ATX-Überschriften der Ebenen 1–6. Am Ende kann optional dieselbe Anzahl #-Zeichen stehen.",
+      "MarkdownHelp.SetextH1.Result": "Eine Setext-Überschrift der ersten Ebene.",
+      "MarkdownHelp.SetextH2.Result": "Eine Setext-Überschrift der zweiten Ebene.",
+      "MarkdownHelp.Quote.Result": "Ein Zitatblock. Zusätzliche >-Zeichen erzeugen verschachtelte Zitate.",
+      "MarkdownHelp.BulletedList.Result": "Eine Aufzählungsliste; -, + und * sind als Marker zulässig.",
+      "MarkdownHelp.NumberedList.Result": "Eine nummerierte Liste mit . oder ) nach der Zahl. Die erste Zahl bestimmt den Startwert.",
+      "MarkdownHelp.NestedList.Result": "Ein eingerückter Eintrag erzeugt eine verschachtelte Liste. Einträge können Absätze, Zitate, Code und weitere Listen enthalten.",
+      "MarkdownHelp.Rule.Result": "Eine horizontale Trennlinie aus mindestens drei -, * oder _.",
+      "MarkdownHelp.CodeBlock.Result": "Ein umschlossener Codeblock. Text nach dem öffnenden Zaun wird als Sprachname angezeigt; Syntaxhervorhebung wird nicht angewendet.",
+      "MarkdownHelp.TildeCode.Result": "Ein Codeblock mit drei oder mehr Tilden statt Backticks.",
+      "MarkdownHelp.IndentedCode.Result": "Ein Codeblock, bei dem jede Zeile um vier Leerzeichen oder einen Tabulator eingerückt ist.",
+      "MarkdownHelp.Table.Result": "Eine Pipe-Tabelle. Die Trennzeile erzeugt den Kopf; äußere Pipes sind optional.",
+      "MarkdownHelp.GridTable.Result": "Eine Gittertabelle. = kennzeichnet die Kopfgrenze; Zeilen und Spalten können verbunden werden.",
+      "MarkdownHelp.Bold.Result": "Fett formatierter Text.",
+      "MarkdownHelp.Italic.Result": "Kursiver Text.",
+      "MarkdownHelp.BoldItalic.Result": "Fett-kursiver Text. Drei Unterstriche können statt Sternchen verwendet werden.",
+      "MarkdownHelp.Strikethrough.Result": "Durchgestrichener Text.",
+      "MarkdownHelp.InlineCode.Result": "Ein Codefragment in Festbreitenschrift. Enthält es einen Backtick, verwenden Sie einen längeren Begrenzer.",
+      "MarkdownHelp.Escape.Result": "Ein umgekehrter Schrägstrich zeigt Markdown-Satzzeichen wörtlich an, ohne sie als Markup auszuwerten.",
+      "MarkdownHelp.Entity.Result": "Eine benannte oder numerische HTML-Entität, die in ihr Unicode-Zeichen umgewandelt wird.",
+      "MarkdownHelp.Link.Result": "Ein anklickbarer HTTP-, HTTPS- oder E-Mail-Link.",
+      "MarkdownHelp.ReferenceLink.Result": "Ein Link, dessen URL separat definiert ist. Auch die Kurzformen [text][] und [ref] werden unterstützt.",
+      "MarkdownHelp.AutoLink.Result": "Eine Webadresse ohne eigene Beschriftung, die als anklickbarer Link angezeigt wird.",
+      "MarkdownHelp.AutoEmail.Result": "Eine E-Mail-Adresse, die in einen anklickbaren mailto-Link umgewandelt wird.",
+      "MarkdownHelp.BareLink.Result": "Eine einfache HTTP- oder HTTPS-Adresse wird automatisch erkannt.",
+      "MarkdownHelp.Image.Result": "Ein Bild neben der Markdown-Datei oder in einem relativen Unterordner.",
+      "MarkdownHelp.ReferenceImage.Result": "Ein lokales Bild, dessen relativer Pfad in einer Referenzdefinition angegeben ist.",
+      "MarkdownHelp.Paragraph.Result": "Eine Leerzeile beginnt einen neuen Absatz.",
+      "MarkdownHelp.SoftBreak.Result": "Ein normaler Zeilenumbruch im Quelltext wird als Leerzeichen im selben Absatz angezeigt.",
+      "MarkdownHelp.LineBreak.Result": "Zwei Leerzeichen am Zeilenende fügen einen Umbruch ohne neuen Absatz ein.",
+      "MarkdownHelp.BackslashBreak.Result": "Ein umgekehrter Schrägstrich am Zeilenende fügt ebenfalls einen harten Zeilenumbruch ein.",
+      "MarkdownHelp.Html.Result": "HTML-Code wird als inaktiver Quelltext angezeigt und niemals ausgeführt.",
+      "MarkdownHelp.UnsafeLinks.Result": "FTP-, Datei-, relative, JavaScript- und andere Nicht-HTTP-Links werden als Text statt als aktive Links angezeigt.",
+      "MarkdownHelp.RemoteImage.Result": "Entfernte Bilder und Bilder mit absolutem Pfad werden nicht geladen; stattdessen erscheint der Alternativtext.",
+      "MarkdownHelp.UnsupportedExtensions.Result": "Alle speziell dargestellten Konstrukte sind oben aufgeführt. Andere Markdig-Erweiterungen – darunter Aufgaben-Kontrollkästchen, Fußnoten, Formeln, Diagramme, Definitionslisten, Hinweise, Container, Medien, Abkürzungen, eingefügter/markierter Text sowie Tief- und Hochstellung – haben keine entsprechende Darstellung.",
+      "MarkdownHelp.Safety.Title": "Sichere Vorschau",
+      "MarkdownHelp.Safety.Description": "HTML-Code wird als inaktiver Text angezeigt. Entfernte Bilder und Bilder mit absoluten Pfaden werden nicht geladen; angezeigt werden nur lokale relative Bilder bis 25 MB."
+    }
+  }
+}

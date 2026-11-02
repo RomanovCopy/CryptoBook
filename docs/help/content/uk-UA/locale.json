@@ -1,0 +1,845 @@
+{
+  "culture": "uk-UA",
+  "sections": {
+    "start": "Початок роботи",
+    "doc": "Документи",
+    "edit": "Редагування тексту",
+    "content": "Вміст документа",
+    "md": "Markdown",
+    "files": "Файли та папки",
+    "search": "Пошук",
+    "devices": "Підключені пристрої",
+    "view": "Перегляд і друк",
+    "security": "Захист даних",
+    "recovery": "Збереження та відновлення",
+    "ai": "Локальний AI-помічник",
+    "settings": "Налаштування та вирішення проблем",
+    "help": "Робота з довідкою"
+  },
+  "topics": [
+    {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Установлення та запуск portable"
+      ]
+    },
+    {
+      "id": "start.interface",
+      "file": "start.interface.md",
+      "keywords": [
+        "вікно",
+        "інтерфейс",
+        "початковий екран",
+        "бічне меню",
+        "налаштування",
+        "AI-помічник",
+        "масштаб"
+      ]
+    },
+    {
+      "id": "doc.create",
+      "file": "doc.create.md",
+      "keywords": [
+        "новий документ",
+        "створити",
+        "зберегти",
+        "RTF",
+        "ім’я файлу",
+        "порожній документ",
+        "план подорожі"
+      ]
+    },
+    {
+      "id": "start.workspace",
+      "file": "start.workspace.md",
+      "keywords": [
+        "робоча директорія",
+        "папка",
+        "пошук"
+      ]
+    },
+    {
+      "id": "doc.templates",
+      "file": "doc.templates.md",
+      "keywords": [
+        "шаблон",
+        "нотатки",
+        "зустріч",
+        "за замовчуванням"
+      ]
+    },
+    {
+      "id": "doc.open",
+      "file": "doc.open.md",
+      "keywords": [
+        "відкрити",
+        "файл",
+        "документ",
+        "асоціація"
+      ]
+    },
+    {
+      "id": "doc.save",
+      "file": "doc.save.md",
+      "keywords": [
+        "зберегти",
+        "зберегти як",
+        "скасування",
+        "незбережені",
+        "помилка"
+      ]
+    },
+    {
+      "id": "doc.formats",
+      "file": "doc.formats.md",
+      "keywords": [
+        "формат",
+        "кодування",
+        "BOM",
+        "UTF-8",
+        "RTF",
+        "XAML"
+      ]
+    },
+    {
+      "id": "doc.switch",
+      "file": "doc.switch.md",
+      "keywords": [
+        "перемкнути",
+        "перейменувати",
+        "закрити",
+        "незалежні редактори"
+      ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "виділення",
+        "буфер",
+        "скасування",
+        "повтор",
+        "очистити"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "шрифт",
+        "розмір",
+        "жирний",
+        "курсив",
+        "колір"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "палітра",
+        "чорнило",
+        "комірка",
+        "колір"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "абзац",
+        "вирівнювання",
+        "відступ",
+        "інтервал",
+        "список"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "посилання",
+        "адреса",
+        "гіперпосилання"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "сторінка",
+        "папір",
+        "формат",
+        "орієнтація"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "читання",
+        "перегляд",
+        "масштаб",
+        "вписати"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "зображення",
+        "вставлення",
+        "розмір",
+        "обтікання"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "тло",
+        "фон",
+        "зображення",
+        "кадрування"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "таблиця",
+        "комірка",
+        "рядок",
+        "стовпець"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "закладка",
+        "нотатка",
+        "перехід",
+        "індекс"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "структура",
+        "дерево",
+        "абзац",
+        "порядок"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "markdown",
+        "джерело",
+        "редактор",
+        "перегляд"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "markdown",
+        "синтаксис",
+        "розмітка",
+        "код",
+        "таблиці"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "markdown",
+        "перегляд",
+        "зображення",
+        "посилання",
+        "html"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "markdown",
+        "збереження",
+        "кодування",
+        "bom",
+        "рядки"
+      ]
+    },
+    {
+      "id": "files.navigate",
+      "file": "files.navigate.md",
+      "keywords": [
+        "адреса",
+        "назад",
+        "уперед",
+        "недоступно",
+        "повторити"
+      ]
+    },
+    {
+      "id": "files.views",
+      "file": "files.views.md",
+      "keywords": [
+        "усі",
+        "файли",
+        "вкладені",
+        "папки",
+        "фільтр",
+        "виділення",
+        "сортування"
+      ]
+    },
+    {
+      "id": "files.create",
+      "file": "files.create.md",
+      "keywords": [
+        "нова",
+        "папка",
+        "створити",
+        "файл",
+        "неприпустиме",
+        "ім’я",
+        "вибір"
+      ]
+    },
+    {
+      "id": "files.transfer",
+      "file": "files.transfer.md",
+      "keywords": [
+        "копіювати",
+        "вирізати",
+        "вставити",
+        "перемістити",
+        "перетягнути",
+        "поступ",
+        "скасування"
+      ]
+    },
+    {
+      "id": "files.conflicts",
+      "file": "files.conflicts.md",
+      "keywords": [
+        "замінити",
+        "пропустити",
+        "зберегти",
+        "обидва",
+        "до",
+        "всіх",
+        "конфлікт",
+        "скасування"
+      ]
+    },
+    {
+      "id": "files.manage",
+      "file": "files.manage.md",
+      "keywords": [
+        "відкрити",
+        "допомогою",
+        "шлях",
+        "перейменувати",
+        "розширення",
+        "видалити",
+        "назавжди"
+      ]
+    },
+    {
+      "id": "files.favorites",
+      "file": "files.favorites.md",
+      "keywords": [
+        "вибране",
+        "зірка",
+        "папка",
+        "назва",
+        "видалити",
+        "посилання"
+      ]
+    },
+    {
+      "id": "files.pinned",
+      "file": "files.pinned.md",
+      "keywords": [
+        "закріпити",
+        "документ",
+        "недоступний",
+        "знайти",
+        "порядок",
+        "відкріпити"
+      ]
+    },
+    {
+      "id": "files.recent",
+      "file": "files.recent.md",
+      "keywords": [
+        "недавні",
+        "останні",
+        "історія",
+        "знайти",
+        "видалити",
+        "відкриття",
+        "збереження"
+      ]
+    },
+    {
+      "id": "files.batch",
+      "file": "files.batch.md",
+      "keywords": [
+        "групове",
+        "перейменування",
+        "маска",
+        "діапазон",
+        "лічильник",
+        "regex",
+        "перегляд",
+        "відкат",
+        "конфлікт"
+      ]
+    },
+    {
+      "id": "files.properties",
+      "file": "files.properties.md",
+      "keywords": [
+        "властивості",
+        "контрольні",
+        "суми",
+        "SHA256",
+        "SHA512",
+        "підпис",
+        "метадані",
+        "фільтр",
+        "звіт"
+      ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "назва",
+        "файл",
+        "пошук",
+        "робоча",
+        "папка",
+        "підпапки"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "вміст",
+        "текст",
+        "пошук",
+        "захищений",
+        "скасувати",
+        "видалити"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "знайти",
+        "Ctrl+F",
+        "F3",
+        "регістр",
+        "збіг",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "перегляд",
+        "текст",
+        "зображення",
+        "PDF",
+        "панель",
+        "розмір"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "зображення",
+        "масштаб",
+        "поворот",
+        "вписати",
+        "видалити",
+        "кошик",
+        "відновити",
+        "медіаплеєр"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "пристрій",
+        "підключення",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "передавання",
+        "копіювання",
+        "переміщення",
+        "скасування"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "обмеження",
+        "розшифрувати",
+        "права",
+        "кошик",
+        "пошук",
+        "властивості"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "відео",
+        "плеєр",
+        "пауза",
+        "перемотування",
+        "синхронізація",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "зовнішній",
+        "перегляд",
+        "асоціація",
+        "програма"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "друк",
+        "принтер",
+        "Markdown",
+        "сторінки",
+        "скасування"
+      ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "ключ",
+        "пароль",
+        "повтор",
+        "шифрування"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "захист",
+        "копія",
+        "шифрувати",
+        "замінити",
+        "папка",
+        "пакет"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "розшифрувати",
+        "формат",
+        "джерело",
+        "текст"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "скидання",
+        "блокування",
+        "бездіяльність",
+        "таймер"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "сумісність",
+        "контейнер",
+        "старий",
+        "формат"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "попередня",
+        "версія",
+        "резервна",
+        "копія",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "аварійна",
+        "копія",
+        "незбережений",
+        "сеанс",
+        "знімок"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "знімок",
+        "розблокування",
+        "відновлення",
+        "пароль"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "помилка",
+        "запис",
+        "доступ",
+        "зайнято",
+        "місце"
+      ]
+    },
+    {
+      "id": "ai.start",
+      "file": "ai.start.md",
+      "keywords": [
+        "помічник",
+        "локально",
+        "увімкнути",
+        "панель"
+      ]
+    },
+    {
+      "id": "ai.models",
+      "file": "ai.models.md",
+      "keywords": [
+        "модель",
+        "GGUF",
+        "проєктор",
+        "mmproj",
+        "перевірка"
+      ]
+    },
+    {
+      "id": "ai.lifecycle",
+      "file": "ai.lifecycle.md",
+      "keywords": [
+        "завантаження",
+        "зупинити",
+        "вивантажити",
+        "простій"
+      ]
+    },
+    {
+      "id": "ai.troubleshoot",
+      "file": "ai.troubleshoot.md",
+      "keywords": [
+        "помилка",
+        "пам’ять",
+        "процес",
+        "діагностика"
+      ]
+    },
+    {
+      "id": "ai.chat",
+      "file": "ai.chat.md",
+      "keywords": [
+        "чат",
+        "запитання",
+        "повідомлення",
+        "копіювати",
+        "вибір",
+        "очистити"
+      ]
+    },
+    {
+      "id": "ai.templates",
+      "file": "ai.templates.md",
+      "keywords": [
+        "шаблон",
+        "інструкція",
+        "створити",
+        "видалити",
+        "скасувати"
+      ]
+    },
+    {
+      "id": "ai.attachments",
+      "file": "ai.attachments.md",
+      "keywords": [
+        "вкладення",
+        "документ",
+        "зображення",
+        "HEX",
+        "перетягнути",
+        "знімок"
+      ]
+    },
+    {
+      "id": "ai.apply",
+      "file": "ai.apply.md",
+      "keywords": [
+        "вставити",
+        "замінити",
+        "виділення",
+        "таблиця",
+        "Markdown",
+        "скасування"
+      ]
+    },
+    {
+      "id": "ai.context",
+      "file": "ai.context.md",
+      "keywords": [
+        "контекст",
+        "токени",
+        "межа",
+        "оцінка",
+        "кеш",
+        "завантаження"
+      ]
+    },
+    {
+      "id": "ai.memory",
+      "file": "ai.memory.md",
+      "keywords": [
+        "пам’ять",
+        "процесор",
+        "відеокарта",
+        "шари",
+        "міркування",
+        "повтори"
+      ]
+    },
+    {
+      "id": "ai.performance",
+      "file": "ai.performance.md",
+      "keywords": [
+        "продуктивність",
+        "збалансований",
+        "економний",
+        "оптимальний",
+        "замір",
+        "зупинка"
+      ]
+    },
+    {
+      "id": "ai.appearance",
+      "file": "ai.appearance.md",
+      "keywords": [
+        "оформлення",
+        "шрифт",
+        "колір",
+        "код",
+        "рамки",
+        "Markdown",
+        "скидання"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Зміст, пошук та ілюстрації довідки"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Версія та відомості про програму"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Тема, початковий екран і шаблон"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Де зберігаються дані й налаштування"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Гарячі клавіші та область фокуса"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Мова програми та довідки"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Типові проблеми та безпечні дії"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Перевірка та встановлення оновлення"
+      ]
+    }
+  ]
+}

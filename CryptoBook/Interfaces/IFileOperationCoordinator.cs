@@ -4,6 +4,9 @@ namespace CryptoBook.Interfaces
 {
     public interface IFileOperationCoordinator: IService
     {
+        Task<bool> HasRecoveryAsync(string directory, CancellationToken cancellationToken = default) => Task.FromResult(false);
+        Task<FileOperationBatchResult> RestoreAsync(string directory,
+            CancellationToken cancellationToken = default) => throw new NotSupportedException();
         Task<FileOperationBatchResult> TransferAsync(
             IEnumerable<string> sourcePaths,
             string destinationDirectory,

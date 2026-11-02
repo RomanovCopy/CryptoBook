@@ -1,0 +1,315 @@
+{
+  "culture": "de-DE",
+  "editorExamples": 5,
+  "renderedExamples": [
+    {
+      "source": "# H1\n## H2\n\u2026\n###### H6",
+      "visibleText": "H1\r\nH2\r\n\u2026\r\nH6\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "Heading 1\n=========",
+      "visibleText": "Heading 1\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "Heading 2\n---------",
+      "visibleText": "Heading 2\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "---\n***\n___",
+      "visibleText": "\r\n\r\n\r\n",
+      "elementTypes": [
+        "Paragraph"
+      ]
+    },
+    {
+      "source": "\u003E quote\n\u003E\u003E nested",
+      "visibleText": "quote\r\nnested\r\n",
+      "elementTypes": [
+        "Section",
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "- item\n\u002B item\n* item",
+      "visibleText": "\u2022\titem\r\n\u2022\titem\r\n\u2022\titem\r\n",
+      "elementTypes": [
+        "List",
+        "ListItem",
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "1. item\n2) item",
+      "visibleText": "1.\titem\r\n2.\titem\r\n",
+      "elementTypes": [
+        "List",
+        "ListItem",
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "- parent\n    - child",
+      "visibleText": "\u2022\tparent\r\n\u2022\tchild\r\n",
+      "elementTypes": [
+        "List",
+        "ListItem",
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "*italic*\n_italic_",
+      "visibleText": "italic italic\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Span",
+        "Run"
+      ]
+    },
+    {
+      "source": "**bold**\n__bold__",
+      "visibleText": "bold bold\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Span",
+        "Run"
+      ]
+    },
+    {
+      "source": "***bold italic***",
+      "visibleText": "bold italic\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Span",
+        "Run"
+      ]
+    },
+    {
+      "source": "~~strike~~",
+      "visibleText": "strike\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Span",
+        "Run"
+      ]
+    },
+    {
+      "source": "\u0060code\u0060\n\u0060\u0060code with \u0060 inside\u0060\u0060",
+      "visibleText": "code code with \u0060 inside\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "\\*literal asterisks\\*",
+      "visibleText": "*literal asterisks*\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "\u0026copy;\n\u0026#169;",
+      "visibleText": "\u00A9 \u00A9\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "text\n\ntext",
+      "visibleText": "text\r\ntext\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "text\ntext",
+      "visibleText": "text text\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "text  \ntext",
+      "visibleText": "text\r\ntext\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run",
+        "LineBreak"
+      ]
+    },
+    {
+      "source": "text\\\ntext",
+      "visibleText": "text\r\ntext\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run",
+        "LineBreak"
+      ]
+    },
+    {
+      "source": "[text](https://example.com)",
+      "visibleText": "text\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Hyperlink",
+        "Run"
+      ]
+    },
+    {
+      "source": "[text][ref]\n\n[ref]: https://example.com",
+      "visibleText": "text\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Hyperlink",
+        "Run"
+      ]
+    },
+    {
+      "source": "\u003Chttps://example.com\u003E",
+      "visibleText": "https://example.com\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Hyperlink",
+        "Run"
+      ]
+    },
+    {
+      "source": "\u003Cname@example.com\u003E",
+      "visibleText": "name@example.com\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Hyperlink",
+        "Run"
+      ]
+    },
+    {
+      "source": "https://example.com",
+      "visibleText": "https://example.com\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Hyperlink",
+        "Run"
+      ]
+    },
+    {
+      "source": "![alt](image.png)",
+      "visibleText": " \r\n",
+      "elementTypes": [
+        "Paragraph",
+        "InlineUIContainer"
+      ]
+    },
+    {
+      "source": "![alt][image]\n\n[image]: images/picture.png",
+      "visibleText": " \r\n",
+      "elementTypes": [
+        "Paragraph",
+        "InlineUIContainer"
+      ]
+    },
+    {
+      "source": "\u0060\u0060\u0060csharp\ncode\n\u0060\u0060\u0060",
+      "visibleText": "csharp\r\ncode\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run",
+        "LineBreak"
+      ]
+    },
+    {
+      "source": "~~~text\ncode\n~~~",
+      "visibleText": "text\r\ncode\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run",
+        "LineBreak"
+      ]
+    },
+    {
+      "source": "    indented code",
+      "visibleText": "indented code\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "| A | B |\n|---|---|\n| 1 | 2 |",
+      "visibleText": "A\tB\r\n1\t2\r\n",
+      "elementTypes": [
+        "Table",
+        "TableRowGroup",
+        "TableRow",
+        "TableCell",
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "\u002B---\u002B---\u002B\n| A | B |\n\u002B===\u002B===\u002B\n| 1 | 2 |\n\u002B---\u002B---\u002B",
+      "visibleText": "A\tB\r\n1\t2\r\n",
+      "elementTypes": [
+        "Table",
+        "TableRowGroup",
+        "TableRow",
+        "TableCell",
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "\u003Cb\u003EHTML\u003C/b\u003E",
+      "visibleText": "\u003Cb\u003EHTML\u003C/b\u003E\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "[file](file:///\u2026)\n[ftp](ftp://\u2026)\n[relative](relative.md)",
+      "visibleText": "file ftp relative\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "![alt](https://example.com/image.png)",
+      "visibleText": "alt\r\n",
+      "elementTypes": [
+        "Paragraph",
+        "Run"
+      ]
+    },
+    {
+      "source": "- [x] task\n[^1] footnote\n$math$",
+      "visibleText": "\u2022\t task [^1] footnote \r\n",
+      "elementTypes": [
+        "List",
+        "ListItem",
+        "Paragraph",
+        "Run"
+      ]
+    }
+  ]
+}

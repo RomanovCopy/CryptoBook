@@ -576,9 +576,9 @@
   <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Открыть изображение или видео</value></data>
   <data name="Media.Loading" xml:space="preserve"><value>Загрузка: {0}</value></data>
   <data name="Media.DeleteTitle" xml:space="preserve"><value>Удаление изображения</value></data>
-  <data name="Media.DeletePrompt" xml:space="preserve"><value>Удалить «{0}»?</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>Переместить файл «{0}» в корзину Windows? Его можно будет восстановить из корзины.</value></data>
   <data name="Media.DeleteError" xml:space="preserve"><value>Ошибка удаления</value></data>
-  <data name="Media.DeleteFailed" xml:space="preserve"><value>Не удалось удалить изображение.</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Не удалось переместить файл в корзину Windows. Безвозвратное удаление не выполнялось.</value></data>
   <data name="Media.NoMoreImages" xml:space="preserve"><value>В папке больше нет изображений.</value></data>
   <data name="Media.DecodeFailed" xml:space="preserve"><value>Не удалось декодировать изображение.</value></data>
   <data name="Media.Filter" xml:space="preserve"><value>Медиафайлы|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Изображения|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Видео|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Файлы CryptoBook|*.cbook;*.cbox|Все файлы|*.*</value></data>
@@ -830,65 +830,7 @@
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Не удалось преобразовать и опубликовать расшифрованный документ: {0}</value></data>
   <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Необратимое удаление</value></data>
   <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Удаление через Android обычно необратимо и не использует Корзину. Навсегда удалить выбранные элементы?</value></data>
-  <data name="MarkdownHelp.Title" xml:space="preserve"><value>Синтаксис Markdown</value></data>
-  <data name="MarkdownHelp.Description" xml:space="preserve"><value>Полный справочник по синтаксису Markdown и командам, которые поддерживает текущий редактор CryptoBook.</value></data>
   <data name="MarkdownHelp.OpenHint" xml:space="preserve"><value>Открыть справку по синтаксису Markdown</value></data>
-  <data name="MarkdownHelp.Back" xml:space="preserve"><value>Вернуться в редактор</value></data>
-  <data name="MarkdownHelp.BackHint" xml:space="preserve"><value>Вернуться в редактор Markdown (Esc)</value></data>
-  <data name="MarkdownHelp.Group.Blocks" xml:space="preserve"><value>Блочные элементы</value></data>
-  <data name="MarkdownHelp.Group.Inline" xml:space="preserve"><value>Форматирование внутри строки</value></data>
-  <data name="MarkdownHelp.Group.Spacing" xml:space="preserve"><value>Абзацы и переносы строк</value></data>
-  <data name="MarkdownHelp.Group.Editor" xml:space="preserve"><value>Команды редактора</value></data>
-  <data name="MarkdownHelp.Group.Structure" xml:space="preserve"><value>Заголовки и разделители</value></data>
-  <data name="MarkdownHelp.Group.Lists" xml:space="preserve"><value>Списки и цитаты</value></data>
-  <data name="MarkdownHelp.Group.Links" xml:space="preserve"><value>Ссылки и изображения</value></data>
-  <data name="MarkdownHelp.Group.Code" xml:space="preserve"><value>Блоки кода</value></data>
-  <data name="MarkdownHelp.Group.Tables" xml:space="preserve"><value>Таблицы</value></data>
-  <data name="MarkdownHelp.Group.Limitations" xml:space="preserve"><value>Ограничения предпросмотра</value></data>
-  <data name="MarkdownHelp.Syntax" xml:space="preserve"><value>СИНТАКСИС</value></data>
-  <data name="MarkdownHelp.Result" xml:space="preserve"><value>РЕЗУЛЬТАТ</value></data>
-  <data name="MarkdownHelp.Editor.Save.Result" xml:space="preserve"><value>Сохранить изменения в текущем файле.</value></data>
-  <data name="MarkdownHelp.Editor.SaveAs.Result" xml:space="preserve"><value>Сохранить текущий документ в другой файл.</value></data>
-  <data name="MarkdownHelp.Editor.Toggle.Result" xml:space="preserve"><value>Переключиться между редактированием исходного текста и просмотром готового документа.</value></data>
-  <data name="MarkdownHelp.Editor.Tab.Result" xml:space="preserve"><value>Вставить символ табуляции в исходный текст.</value></data>
-  <data name="MarkdownHelp.Editor.Help.Result" xml:space="preserve"><value>Кнопка ? открывает эту справку, клавиша Esc возвращает из неё в редактор.</value></data>
-  <data name="MarkdownHelp.Headings.Result" xml:space="preserve"><value>ATX-заголовки уровней 1–6. В конце можно добавить такое же количество символов #.</value></data>
-  <data name="MarkdownHelp.SetextH1.Result" xml:space="preserve"><value>Setext-заголовок первого уровня.</value></data>
-  <data name="MarkdownHelp.SetextH2.Result" xml:space="preserve"><value>Setext-заголовок второго уровня.</value></data>
-  <data name="MarkdownHelp.Quote.Result" xml:space="preserve"><value>Блок цитаты. Дополнительные символы &gt; создают вложенные цитаты.</value></data>
-  <data name="MarkdownHelp.BulletedList.Result" xml:space="preserve"><value>Маркированный список; маркером может быть -, + или *.</value></data>
-  <data name="MarkdownHelp.NumberedList.Result" xml:space="preserve"><value>Нумерованный список с . или ) после числа. Первое число задаёт начало нумерации.</value></data>
-  <data name="MarkdownHelp.NestedList.Result" xml:space="preserve"><value>Отступ создаёт вложенный список. В пункты можно вкладывать абзацы, цитаты, код и другие списки.</value></data>
-  <data name="MarkdownHelp.Rule.Result" xml:space="preserve"><value>Горизонтальный разделитель из трёх или более символов -, * или _.</value></data>
-  <data name="MarkdownHelp.CodeBlock.Result" xml:space="preserve"><value>Ограждённый блок кода. Текст после открывающей ограды показывается как имя языка; подсветки синтаксиса нет.</value></data>
-  <data name="MarkdownHelp.TildeCode.Result" xml:space="preserve"><value>Ограждённый блок кода из трёх или более тильд вместо обратных кавычек.</value></data>
-  <data name="MarkdownHelp.IndentedCode.Result" xml:space="preserve"><value>Блок кода, созданный отступом каждой строки на четыре пробела или одну табуляцию.</value></data>
-  <data name="MarkdownHelp.Table.Result" xml:space="preserve"><value>Таблица с вертикальными чертами. Строка-разделитель создаёт заголовок; крайние черты необязательны.</value></data>
-  <data name="MarkdownHelp.GridTable.Result" xml:space="preserve"><value>Сеточная таблица. Символ = отмечает границу заголовка; поддерживается объединение строк и столбцов.</value></data>
-  <data name="MarkdownHelp.Bold.Result" xml:space="preserve"><value>Полужирный текст.</value></data>
-  <data name="MarkdownHelp.Italic.Result" xml:space="preserve"><value>Курсивный текст.</value></data>
-  <data name="MarkdownHelp.BoldItalic.Result" xml:space="preserve"><value>Полужирный курсив. Вместо трёх звёздочек можно использовать три подчёркивания.</value></data>
-  <data name="MarkdownHelp.Strikethrough.Result" xml:space="preserve"><value>Зачёркнутый текст.</value></data>
-  <data name="MarkdownHelp.InlineCode.Result" xml:space="preserve"><value>Фрагмент кода моноширинным шрифтом. Если внутри есть обратная кавычка, используйте более длинный ограничитель.</value></data>
-  <data name="MarkdownHelp.Escape.Result" xml:space="preserve"><value>Обратная косая черта показывает служебный символ буквально, не применяя разметку.</value></data>
-  <data name="MarkdownHelp.Entity.Result" xml:space="preserve"><value>Именованная или числовая HTML-сущность, преобразуемая в символ Unicode.</value></data>
-  <data name="MarkdownHelp.Link.Result" xml:space="preserve"><value>Активная HTTP-, HTTPS- или почтовая ссылка.</value></data>
-  <data name="MarkdownHelp.ReferenceLink.Result" xml:space="preserve"><value>Ссылка, URL которой объявлен отдельно. Также поддерживаются сокращённые формы [text][] и [ref].</value></data>
-  <data name="MarkdownHelp.AutoLink.Result" xml:space="preserve"><value>Веб-адрес без отдельной подписи, отображаемый как активная ссылка.</value></data>
-  <data name="MarkdownHelp.AutoEmail.Result" xml:space="preserve"><value>Адрес электронной почты, преобразуемый в активную ссылку mailto.</value></data>
-  <data name="MarkdownHelp.BareLink.Result" xml:space="preserve"><value>Обычный HTTP- или HTTPS-адрес распознаётся автоматически.</value></data>
-  <data name="MarkdownHelp.Image.Result" xml:space="preserve"><value>Изображение рядом с Markdown-файлом или в относительной вложенной папке.</value></data>
-  <data name="MarkdownHelp.ReferenceImage.Result" xml:space="preserve"><value>Локальное изображение, относительный путь к которому объявлен в определении ссылки.</value></data>
-  <data name="MarkdownHelp.Paragraph.Result" xml:space="preserve"><value>Пустая строка начинает новый абзац.</value></data>
-  <data name="MarkdownHelp.SoftBreak.Result" xml:space="preserve"><value>Обычный перевод строки в исходном тексте отображается как пробел внутри того же абзаца.</value></data>
-  <data name="MarkdownHelp.LineBreak.Result" xml:space="preserve"><value>Два пробела в конце строки вставляют перенос без создания нового абзаца.</value></data>
-  <data name="MarkdownHelp.BackslashBreak.Result" xml:space="preserve"><value>Обратная косая черта в конце строки также вставляет принудительный перенос.</value></data>
-  <data name="MarkdownHelp.Html.Result" xml:space="preserve"><value>HTML-код показывается как неактивный исходный текст и никогда не исполняется.</value></data>
-  <data name="MarkdownHelp.UnsafeLinks.Result" xml:space="preserve"><value>FTP, file, относительные, javascript- и прочие ссылки вне HTTP отображаются как текст, а не как активные ссылки.</value></data>
-  <data name="MarkdownHelp.RemoteImage.Result" xml:space="preserve"><value>Удалённые изображения и изображения по абсолютному пути не загружаются; вместо них показывается альтернативный текст.</value></data>
-  <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>Вся специально отображаемая разметка перечислена выше. Остальные расширения Markdig — флажки задач, сноски, формулы, диаграммы, списки определений, предупреждения, контейнеры, медиавставки, сокращения, вставленный и выделенный текст, нижние и верхние индексы — не имеют соответствующего оформления.</value></data>
-  <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Безопасный предпросмотр</value></data>
-  <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>HTML-код отображается как неактивный текст. Удалённые изображения и изображения по абсолютному пути не загружаются; показываются только локальные файлы по относительному пути размером до 25 МБ.</value></data>
   <data name="File.PaperSize" xml:space="preserve"><value>Формат листа</value></data>
   <data name="File.Orientation" xml:space="preserve"><value>Ориентация</value></data>
   <data name="File.Portrait" xml:space="preserve"><value>Книжная</value></data>
@@ -1202,7 +1144,7 @@
   <data name="AI.DisabledHint" xml:space="preserve"><value>Включите помощника и выберите модель в её настройках.</value></data>
   <data name="AI.Insert" xml:space="preserve"><value>Вставить выбранное</value></data>
   <data name="AI.Replace" xml:space="preserve"><value>Заменить выделение</value></data>
-  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Убрать приложенный текст</value></data>
+  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Убрать вложение</value></data>
   <data name="AI.AttachDocument" xml:space="preserve"><value>Текущий документ</value></data>
   <data name="AI.Prompt" xml:space="preserve"><value>Сообщение модели; Ctrl+Enter — отправить</value></data>
   <data name="AI.Send" xml:space="preserve"><value>Отправить</value></data>
@@ -1429,4 +1371,53 @@
   <data name="BatchRename.TokenExtension" xml:space="preserve"><value>Расширение файла без точки</value></data>
   <data name="BatchRename.TokenName" xml:space="preserve"><value>Имя файла без расширения</value></data>
   <data name="BatchRename.TokenTime" xml:space="preserve"><value>Текущее время: ЧЧММСС (24 часа), фиксируется в предпросмотре</value></data>
+  <data name="Help.Title" xml:space="preserve"><value>Справка</value></data>
+  <data name="Help.Back" xml:space="preserve"><value>Назад</value></data>
+  <data name="Help.Forward" xml:space="preserve"><value>Вперёд</value></data>
+  <data name="Help.Contents" xml:space="preserve"><value>Оглавление</value></data>
+  <data name="Help.Search" xml:space="preserve"><value>Поиск по справке</value></data>
+  <data name="Help.ClearSearch" xml:space="preserve"><value>Очистить поиск</value></data>
+  <data name="Help.NoResults" xml:space="preserve"><value>Статьи не найдены.</value></data>
+  <data name="Help.Planned" xml:space="preserve"><value>Статья ещё готовится.</value></data>
+  <data name="Help.LoadError" xml:space="preserve"><value>Не удалось загрузить статью.</value></data>
+  <data name="Help.ImageError" xml:space="preserve"><value>Изображение недоступно.</value></data>
+  <data name="Help.CloseImage" xml:space="preserve"><value>Закрыть изображение</value></data>
+  <data name="Help.Results" xml:space="preserve"><value>Результаты поиска</value></data>
+  <data name="Help.Article" xml:space="preserve"><value>Статья справки</value></data>
+  <data name="File.OpenWriteFailed" xml:space="preserve"><value>Не удалось открыть «{0}» для записи: {1}</value></data>
+  <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Не удалось открыть файл для записи: {0}</value></data>
+  <data name="Document.FileInUse" xml:space="preserve"><value>Файл используется и недоступен для записи. Освободите файл и повторите сохранение.</value></data>
+  <data name="File.InvalidName" xml:space="preserve"><value>Введите допустимое имя файла без разделителей пути, зарезервированных имён, точки или пробела в конце.</value></data>
+  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Удалить выбранные объекты? Локальные файлы и папки будут перемещены в корзину Windows. Для возврата используйте корзину. Если перемещение в корзину недоступно, операция завершится ошибкой без безвозвратного удаления.</value></data>
+  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Восстановить операции</value></data>
+  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Восстановить прерванные локальные передачи и переименования по журналам в этой папке? Занятые имена не перезаписываются. Недавно удалённые файлы возвращаются через корзину Windows.</value></data>
+  <data name="Explorer.RestoreFilesDone" xml:space="preserve"><value>Восстановление завершено. Существующие файлы не перезаписывались.</value></data>
+  <data name="Explorer.RecoveryRequired" xml:space="preserve"><value>Некоторые файлы не удалось вернуть. Закройте использующие их программы или освободите исходные имена, затем нажмите «Восстановить файлы» в папке с этим журналом:</value></data>
+  <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>Не удалось проверить копию; исходный объект сохранён.</value></data>
+  <data name="Explorer.RecycleBinFailed" xml:space="preserve"><value>Не удалось переместить объект в корзину Windows. Безвозвратное удаление не выполнялось.</value></data>
+  <data name="Explorer.RecycleCanceledPartial" xml:space="preserve"><value>Часть объектов уже перемещена в корзину Windows до отмены. Для их возврата используйте корзину.</value></data>
+  <data name="Security.UnlockTitle" xml:space="preserve"><value>Доступ к зашифрованному документу</value></data>
+  <data name="Security.KeyLabel" xml:space="preserve"><value>Ключ шифрования</value></data>
+  <data name="Security.EnterKey" xml:space="preserve"><value>Введите ключ.</value></data>
+  <data name="Security.WrongUnlockKey" xml:space="preserve"><value>Неверный ключ. Повторите попытку через несколько секунд.</value></data>
+  <data name="Security.KeyCheckFailed" xml:space="preserve"><value>Не удалось проверить ключ.</value></data>
+  <data name="Security.RestoreTitle" xml:space="preserve"><value>Восстановление документа</value></data>
+  <data name="Security.OpenLastFile" xml:space="preserve"><value>Открыть последний файл «{0}»?</value></data>
+  <data name="Security.SourceUnavailableRestore" xml:space="preserve"><value>Исходный файл «{0}» недоступен. Восстановить снимок?</value></data>
+  <data name="Security.DocumentLabel" xml:space="preserve"><value>Документ</value></data>
+  <data name="Security.RestoreSnapshot" xml:space="preserve"><value>Восстановить снимок</value></data>
+  <data name="Security.ResetTitle" xml:space="preserve"><value>Сброс ключа</value></data>
+  <data name="Security.RestoreFailed" xml:space="preserve"><value>Не удалось восстановить документ.</value></data>
+  <data name="Security.ResetInterval.1" xml:space="preserve"><value>1 минута</value></data>
+  <data name="Security.ResetInterval.5" xml:space="preserve"><value>5 минут</value></data>
+  <data name="Security.ResetInterval.10" xml:space="preserve"><value>10 минут</value></data>
+  <data name="Security.ResetInterval.15" xml:space="preserve"><value>15 минут</value></data>
+  <data name="Security.ResetInterval.30" xml:space="preserve"><value>30 минут</value></data>
+  <data name="Security.ResetInterval.0" xml:space="preserve"><value>Никогда</value></data>
+  <data name="Recovery.CrashAvailable" xml:space="preserve"><value>Найдены несохранённые изменения предыдущего сеанса. Можно восстановить последний сохранённый аварийный снимок или закрыть уведомление.</value></data>
+  <data name="Recovery.RestoreCrash" xml:space="preserve"><value>Восстановить несохранённые изменения</value></data>
+  <data name="Recovery.CrashRestoreFailed" xml:space="preserve"><value>Восстановление не выполнено. Проверьте исходный ключ шифрования и доступ к снимку, затем повторите попытку. Сохранённая копия не удалена.</value></data>
+  <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Открыть сохранённую аварийную копию несохранённой работы</value></data>
+  <data name="Recovery.RestoreLock" xml:space="preserve"><value>Восстановить снимок после сброса ключа</value></data>
+  <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Вернуть защищённую работу с прежним ключом</value></data>
 </root>

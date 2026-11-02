@@ -1,0 +1,32 @@
+{
+  "shotId": "S19-a",
+  "topicId": "files.transfer",
+  "articleStepOrArea": "step 1",
+  "culture": "ru-RU",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "f8dc9aec451dc0461642c7404af72f00fc0d8228",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T21:42:03.2512239+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1360,
+    "height": 860
+  },
+  "rawPixels": {
+    "width": 1344,
+    "height": 821
+  },
+  "outputPixels": {
+    "width": 1344,
+    "height": 821
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S19-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/ru-RU/S19-a.json",
+  "outputFile": "docs/help/content/ru-RU/images/S19-a.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\9ad5fec0\\Demo\\Source\\Alpha.txt",
+  "visualCheck": "Reviewed 2026-10-30 by agent: four-language contact sheets show disabled recovery button without journals, readable toolbar/list and non-overlapping annotations. No physical-input or independent native-language review."
+}

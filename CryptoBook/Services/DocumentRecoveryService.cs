@@ -47,6 +47,7 @@ namespace CryptoBook.Services
         private readonly Func<DateTimeOffset> getUtcNow;
         private readonly XamlPackageFileTemplate recoveryTemplate = new();
         private readonly SemaphoreSlim recoveryFileGate = new(1, 1);
+        private readonly SemaphoreSlim deferredRestoreGate = new(1, 1);
         private readonly object saveTaskSync = new();
         private Task activeSaveTask = Task.CompletedTask;
         private bool started;
@@ -130,6 +131,37 @@ namespace CryptoBook.Services
         }
 
         public bool HasSnapshot => File.Exists(recoveryFilePath);
+        private string? LatestDeferredSnapshot => Directory.Exists(Path.GetDirectoryName(recoveryFilePath))
+            ? Directory.EnumerateFiles(Path.GetDirectoryName(recoveryFilePath)!, Path.GetFileName(recoveryFilePath) + ".*.deferred")
+                .OrderByDescending(File.GetLastWriteTimeUtc).ThenBy(path => path, StringComparer.Ordinal).FirstOrDefault()
+            : null;
+        public DateTimeOffset? DeferredSnapshotTime => LatestDeferredSnapshot is string path
+            ? new DateTimeOffset(File.GetLastWriteTimeUtc(path)) : null;
+
+        public async Task<bool> RestoreDeferredSnapshotAsync(CancellationToken cancellationToken = default)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            await deferredRestoreGate.WaitAsync(cancellationToken);
+            try
+            {
+                string? path = LatestDeferredSnapshot;
+                if(path is null) return false;
+                await StopAsync();
+                try
+                {
+                    if(!await RestoreSnapshotCoreAsync(path, cancellationToken)) return false;
+                    // Retain the old copy until the recovered dirty workspace is durable again.
+                    long restoredRevision = documentSession.Revision;
+                    await SaveSnapshotNowAsync();
+                    if(!HasSnapshot || lastSnapshotRevision != restoredRevision)
+                        throw new IOException("The replacement recovery snapshot was not committed.");
+                    File.Delete(path);
+                    return true;
+                }
+                finally { if(!disposed) Start(); }
+            }
+            finally { deferredRestoreGate.Release(); }
+        }
         private bool HasWorkspaceChanges => documentSession.IsDirty ||
             (documentSession as IWorkspaceDocumentSession)?.HasInactiveChanges == true;
 
@@ -159,15 +191,18 @@ namespace CryptoBook.Services
             await WaitForActiveSaveAsync();
         }
 
-        public async Task<bool> RestoreSnapshotAsync(
-            CancellationToken cancellationToken = default)
+        public Task<bool> RestoreSnapshotAsync(CancellationToken cancellationToken = default) =>
+            RestoreSnapshotCoreAsync(recoveryFilePath, cancellationToken);
+
+        private async Task<bool> RestoreSnapshotCoreAsync(string snapshotPath,
+            CancellationToken cancellationToken)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
-            if(!HasSnapshot)
+            if(!File.Exists(snapshotPath))
                 return false;
 
             byte[] encrypted = await File.ReadAllBytesAsync(
-                recoveryFilePath,
+                snapshotPath,
                 cancellationToken);
             byte[] plaintext;
             if(PasswordProtectedBuffer.HasHeader(encrypted))

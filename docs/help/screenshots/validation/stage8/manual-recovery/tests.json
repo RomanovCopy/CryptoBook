@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-01",
+  "total": 105.0,
+  "groups": [
+    {
+      "class": "DocumentRecoveryTests",
+      "passed": 14,
+      "total": 14,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "class": "DocumentCloseCoordinatorTests",
+      "passed": 9,
+      "total": 9,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "class": "AutoKeyResetSecurityTests",
+      "passed": 12,
+      "total": 12,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "class": "PageNavigationServiceTests",
+      "passed": 4,
+      "total": 4,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "class": "WorkspaceLockPresentationTests",
+      "passed": 2,
+      "total": 2,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "class": "ThemeSettingsTests",
+      "passed": 40,
+      "total": 40,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "class": "HelpTests",
+      "passed": 23,
+      "total": 23,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "class": "TitleBarNavigationTests",
+      "passed": 1,
+      "total": 1,
+      "failed": 0,
+      "notExecuted": 0
+    }
+  ]
+}

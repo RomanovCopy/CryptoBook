@@ -390,12 +390,21 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Margin="0,0,0,14">
-                                        <TextBlock Margin="9,0,9,5"
+                                        <TextBlock x:Name="SectionHeader" Margin="9,0,9,5"
                                                    Text="{Binding Name}"
                                                    Foreground="{DynamicResource CurrentWindowForeground}"
                                                    FontSize="11"
                                                    FontWeight="SemiBold"
                                                    Opacity="0.58"/>
+                                        <Button x:Name="StandaloneMenuItem" Visibility="Collapsed"
+                                                Style="{StaticResource NavigationButtonStyle}"
+                                                Command="{Binding Command}" IsEnabled="{Binding IsEnabled}"
+                                                ToolTip="{Binding Description}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" Width="28" FontSize="17"/>
+                                                <TextBlock Text="{Binding Name}" FontSize="14"/>
+                                            </StackPanel>
+                                        </Button>
                                         <ItemsControl ItemsSource="{Binding Children}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
@@ -427,6 +436,12 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding HasChildren}" Value="False">
+                                            <Setter TargetName="SectionHeader" Property="Visibility" Value="Collapsed"/>
+                                            <Setter TargetName="StandaloneMenuItem" Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

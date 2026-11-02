@@ -44,6 +44,8 @@ namespace CryptoBook.Models
         private readonly IPinnedDocumentService _pinnedDocumentService;
         private readonly IRecentDocumentService? _recentDocumentService;
         private readonly FileExplorerNavigationHistory _navigationHistory = new();
+        private bool _hasPendingRecovery;
+        private bool _isRestoringFiles;
         private INotifyCollectionChanged? _currentContainerAvailabilitySource;
         private IDriveItem? _currentRootAvailabilitySource;
 
@@ -560,11 +562,11 @@ namespace CryptoBook.Models
             if(items.Count == 0)
                 return;
 
-            if(items.Any(item => !item.Location.IsLocal))
             {
+                bool local = items.All(item => item.Location.IsLocal);
                 Guid confirmationId = await _messageService.ShowMessage(
-                    LocalizationManager.GetString("Explorer.PermanentDeleteTitle"),
-                    LocalizationManager.GetString("Explorer.PermanentDeleteAndroidWarning"),
+                    LocalizationManager.GetString(local ? "Common.Delete" : "Explorer.PermanentDeleteTitle"),
+                    LocalizationManager.GetString(local ? "Explorer.RecoverableDeleteWarning" : "Explorer.PermanentDeleteAndroidWarning"),
                     true);
                 if(!_messageService.ShowConfirmation(confirmationId))
                     return;
@@ -588,7 +590,8 @@ namespace CryptoBook.Models
                 {
                     await _messageService.ShowMessage(
                         LocalizationManager.GetString("Explorer.DeleteCanceledTitle"),
-                        LocalizationManager.GetString("Explorer.DeleteCanceledPartial"));
+                        LocalizationManager.GetString(items.All(item => item.Location.IsLocal)
+                            ? "Explorer.RecycleCanceledPartial" : "Explorer.DeleteCanceledPartial"));
                 }
 
             }
@@ -601,6 +604,59 @@ namespace CryptoBook.Models
                     LocalizationManager.GetString("Explorer.DeleteError"),
                     ex.Message);
             }
+        }
+        public bool CanExecute_RestoreFilesCommand(object? obj) =>
+            _hasPendingRecovery && !_isRestoringFiles && !IsCurrentDirectoryUnavailable && !string.IsNullOrWhiteSpace(CurrentPath) &&
+            _storage.Resolve(CurrentPath).IsLocal;
+
+        public async void Execute_RestoreFilesCommand(object? obj)
+        {
+            if(!CanExecute_RestoreFilesCommand(obj)) return;
+            string directory = CurrentPath;
+            _isRestoringFiles = true;
+            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+            try
+            {
+                Guid id = await _messageService.ShowMessage(
+                    LocalizationManager.GetString("Explorer.RestoreFiles"),
+                    LocalizationManager.GetString("Explorer.RestoreFilesConfirmation"), true);
+                if(!_messageService.ShowConfirmation(id)) return;
+                FileOperationBatchResult result = await _fileOperationCoordinator.RestoreAsync(directory);
+                if(_documentSession.FilePath is { } current && result.RestoredPaths.TryGetValue(current, out string? target))
+                    _documentSession.Rename(target);
+                await _pinnedDocumentService.UpdatePathsAsync(result.RestoredPaths);
+                if(_recentDocumentService is not null)
+                    await _recentDocumentService.UpdatePathsAsync(result.RestoredPaths);
+                await RefreshOperationContainersAsync([directory], directory, CancellationToken.None);
+                await _messageService.ShowMessage(LocalizationManager.GetString("Explorer.RestoreFiles"),
+                    result.Failure?.ErrorMessage ?? LocalizationManager.GetString("Explorer.RestoreFilesDone"));
+            }
+            catch(Exception e)
+            {
+                await _messageService.ShowMessage(LocalizationManager.GetString("Explorer.RestoreFiles"), e.Message);
+            }
+            finally
+            {
+                _isRestoringFiles = false;
+                await RefreshRecoveryAvailabilityAsync(CancellationToken.None);
+            }
+        }
+
+        private async Task RefreshRecoveryAvailabilityAsync(CancellationToken token)
+        {
+            string directory = CurrentPath;
+            bool available = false;
+            try
+            {
+                if(!string.IsNullOrWhiteSpace(directory) && !IsCurrentDirectoryUnavailable &&
+                    _storage.Resolve(directory).IsLocal)
+                    available = await _fileOperationCoordinator.HasRecoveryAsync(directory, token);
+            }
+            catch(OperationCanceledException) { return; }
+            catch(Exception e) { Debug.WriteLine(e); }
+            if(!PathsEqual(directory, CurrentPath)) return;
+            _hasPendingRecovery = available;
+            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
         }
         public async void Execute_SortedCommand(object? obj)
         {
@@ -823,18 +879,32 @@ namespace CryptoBook.Models
                 }
                 //выполняем переименование
                 string oldPath = systemItem.FullPath;
+                string newName = systemItem is IFileItem fileToRename
+                    ? FileNameValidation.RenameFile(systemItem.Name, fileToRename.Extension)
+                    : systemItem.Name;
+                if(FileNameValidation.Validate(newName) is { } nameError)
+                {
+                    await _messageService.ShowMessage(LocalizationManager.GetString("Explorer.RenameError"), nameError);
+                    systemItem.Name = _lastItemName;
+                    return;
+                }
                 StorageLocation? directory = _storage.GetParent(
                     _storage.Resolve(oldPath));
                 string? newPath = directory is null
                     ? null
                     : _storage.Format(_storage.GetChild(
                         directory.Value,
-                        systemItem.Name));
-                var res = await _fileManagerService.RenameAsync(oldPath, systemItem.Name, CancellationToken.None);
+                        newName));
+                var res = await _fileManagerService.RenameAsync(oldPath, newName, CancellationToken.None);
                 if(res.Success)
                 {
                     if(!string.IsNullOrWhiteSpace(newPath))
                         systemItem.FullPath = newPath;
+                    if(systemItem is IFileItem renamedFile)
+                    {
+                        renamedFile.Name = _localFiles.GetNameWithoutExtension(newName);
+                        renamedFile.Extension = _localFiles.GetExtension(newName);
+                    }
 
                     if(res.Success && !string.IsNullOrWhiteSpace(newPath))
                         await SynchronizeRenamedDocumentAsync(oldPath, newPath);
@@ -1103,6 +1173,7 @@ namespace CryptoBook.Models
                 SelectedListItem = null;
                 SelectedItemsSnapshot = Array.Empty<ISystemItem>();
                 CurrentPath = targetPath;
+                _hasPendingRecovery = false;
                 AddressText = GetDisplayPath(targetPath);
                 ClearNavigationFailure();
                 container.IsSelected = true;
@@ -1110,6 +1181,7 @@ namespace CryptoBook.Models
                 container.IsLoaded = true;
                 ObserveCurrentContainerAvailability(container);
                 Properties.Settings.Default.LastDirectory_FileExplorer = targetPath;
+                await RefreshRecoveryAvailabilityAsync(token);
                 System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 return true;
             }
@@ -2387,6 +2459,8 @@ namespace CryptoBook.Models
 
             container.IsLoaded = true;
             await WaitForFileExplorerRenderAsync(token);
+            if(PathsEqual(container.FullPath, CurrentPath))
+                await RefreshRecoveryAvailabilityAsync(token);
         }
 
         private async Task WaitForFileExplorerRenderAsync(CancellationToken token)

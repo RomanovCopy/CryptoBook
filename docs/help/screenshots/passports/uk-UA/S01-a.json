@@ -1,0 +1,32 @@
+{
+  "shotId": "S01-a",
+  "topicId": "start.install",
+  "articleStepOrArea": "application start screen; not an installer wizard",
+  "culture": "uk-UA",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "8cdf2d6",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-02T08:14:55.1961633+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S01-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/uk-UA/S01-a.json",
+  "outputFile": "docs/help/content/uk-UA/images/S01-a.png",
+  "actionCheck": "Production settings/help commands and update coordinator with an isolated fictional release source. No network, installer execution, personal profile, clipboard or physical input.",
+  "demoFile": null,
+  "visualCheck": "Reviewed 2026-11-02: actual localized WPF, readable labels and full cropped controls; no personal data. Contact sheets reviewed. Physical input/DPI acceptance remains stage11."
+}

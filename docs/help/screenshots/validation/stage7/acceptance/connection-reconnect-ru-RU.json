@@ -1,0 +1,42 @@
+{
+  "culture": "ru-RU",
+  "commit": "967a8367d5722bb9ce8c4c07b7fff80c1b70bca3",
+  "dirtyWorkingTree": true,
+  "checks": 7,
+  "checkMessages": [
+    "Exactly one available non-drive MTP device selected; no ambiguous device choice.",
+    "Original disposable connection folder is accessible after physical reconnect.",
+    "Original Reconnect.txt retains exact pre-disconnection bytes after physical reconnect.",
+    "Asynchronous UI operation completed.",
+    "Production explorer opens the retained disposable folder and lists its probe after physical reconnect.",
+    "In-memory settings Save was exercised.",
+    "No WPF binding errors."
+  ],
+  "stage4": false,
+  "stage5": false,
+  "stage6": false,
+  "stage7": true,
+  "device7": true,
+  "connection7": true,
+  "resources7": false,
+  "media7": false,
+  "mode": "stage7-connection",
+  "bindingErrors": [],
+  "settingsSaveCount": 4,
+  "storageRoot": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058",
+  "stores": [
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\ai-settings.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\ai-profiles.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\favorites.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\pinned.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\recent.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\updates.json",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\search-index",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\Recovery\\current.recovery",
+    "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\a05d5058\\Lock\\last.lock.cbook"
+  ],
+  "appStartup": "App.OnStartup with explicit isolated services",
+  "captureMethod": "RenderTargetBitmap of visible production WPF windows",
+  "interaction": "Live MTP connection acceptance; individual checks identify the executed path. A resumed session only reads the original disposable probe after physical reconnection.",
+  "limitations": "Disconnect occurs while idle, not during a transfer. One device only; no cross-device or ADB test. Device IDs are not retained."
+}

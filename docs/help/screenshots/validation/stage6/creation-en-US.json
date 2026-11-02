@@ -1,0 +1,6 @@
+{
+  "requested": "bad|name.txt",
+  "rejectedWithoutCreation": true,
+  "corrected": "Created.txt",
+  "existingAlphaUnchanged": true
+}

@@ -1,0 +1,33 @@
+{
+  "shotId": "S33-b",
+  "topicId": "security.password",
+  "articleStepOrArea": "repeat mismatch",
+  "culture": "en-US",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "8daa2d5ff29c7f9645eea81775e771a402be2001",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T12:48:13.9884347+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 500,
+    "height": 330
+  },
+  "rawPixels": {
+    "width": 484,
+    "height": 291
+  },
+  "outputPixels": {
+    "width": 484,
+    "height": 291
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/en-US/S33-b.png",
+  "annotationFile": "docs/help/screenshots/annotations/en-US/S33-b.json",
+  "outputFile": "docs/help/content/en-US/images/S33-b.png",
+  "actionCheck": "Stage8 production save/export/backup/key/reset/recovery commands and real disposable file operations; 87 passing checks per culture. Native Save As and .bak confirmation decisions supplied by queues; no physical input.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\en-US\\cc91e50a\\Demo\\Journey plan.cbook",
+  "visualCheck": "Reviewed 2026-11-01: visible production WPF, matching UI language, complete controls/warnings, fictional fixtures, hidden password fields; contact sheet and individual dialog/restore checks.",
+  "validationReport": "docs/help/screenshots/validation/stage8/capture-en-US.json"
+}

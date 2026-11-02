@@ -1,0 +1,22 @@
+{
+  "shotId": "S39-e",
+  "culture": "en-US",
+  "rawFile": "docs/help/screenshots/raw/en-US/S39-e.png",
+  "crop": {
+    "x": 949,
+    "y": 28.28,
+    "width": 490,
+    "height": 930.72
+  },
+  "marks": [
+    {
+      "number": 2,
+      "shape": "rectangle",
+      "x": 0.27346938775510204,
+      "y": 0.18467423070311156,
+      "width": 0.0653061224489796,
+      "height": 0.034381983840467596,
+      "badge": null
+    }
+  ]
+}

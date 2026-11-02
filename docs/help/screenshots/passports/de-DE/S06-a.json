@@ -1,0 +1,32 @@
+{
+  "shotId": "S06-a",
+  "topicId": "doc.create",
+  "articleStepOrArea": "step 9",
+  "culture": "de-DE",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "8617d991080b2d3b2b0f920b5a2c7bc741a555a7",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-29T20:39:37.1400608+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 900,
+    "height": 850
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/de-DE/S06-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/de-DE/S06-a.json",
+  "outputFile": "docs/help/content/de-DE/images/S06-a.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "visualCheck": "Reviewed 2026-10-29: localized UI and demo text, readable controls, matching step/area numbers, separate raw and annotations; no personal data. RenderTargetBitmap does not include native window chrome.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\de-DE\\8f99f602\\Demo\\Reiseplan.rtf"
+}

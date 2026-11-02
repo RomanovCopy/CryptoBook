@@ -1,0 +1,4872 @@
+{
+  "culture": "uk-UA",
+  "commit": "eaee765",
+  "rows": [
+    {
+      "Id": "start.install",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1330.3933333333334
+    },
+    {
+      "Id": "start.interface",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2198.1833333333334
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2643.24
+    },
+    {
+      "Id": "doc.create",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4433.166666666667
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1924.8166666666666
+    },
+    {
+      "Id": "doc.open",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.4033333333334
+    },
+    {
+      "Id": "doc.save",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3186.2733333333335
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2231.52
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.443333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1094.3966666666668
+    },
+    {
+      "Id": "edit.font",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 794,
+      "height": 629.6766666666666
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 766.85
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 794.0433333333333
+    },
+    {
+      "Id": "edit.links",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 830.3433333333334
+    },
+    {
+      "Id": "edit.page",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1513.5066666666667
+    },
+    {
+      "Id": "edit.view",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2145.4533333333334
+    },
+    {
+      "Id": "content.background",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 939.8233333333334
+    },
+    {
+      "Id": "content.tables",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 819.2
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1439.1433333333334
+    },
+    {
+      "Id": "content.structure",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "md.edit",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1158.4766666666667
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 6335.54
+    },
+    {
+      "Id": "md.preview",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1130.5266666666666
+    },
+    {
+      "Id": "md.save",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1138.5266666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1713.6533333333334
+    },
+    {
+      "Id": "files.views",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1224.6033333333332
+    },
+    {
+      "Id": "files.create",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 962.8466666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1541.7933333333333
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1230.13
+    },
+    {
+      "Id": "files.manage",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1816.67
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 761.2333333333333
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1520.2933333333333
+    },
+    {
+      "Id": "files.recent",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1146.7933333333333
+    },
+    {
+      "Id": "files.batch",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3081.3166666666666
+    },
+    {
+      "Id": "files.properties",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2031.7866666666666
+    },
+    {
+      "Id": "search.name",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1386.85
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2085.45
+    },
+    {
+      "Id": "search.document",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3254.0633333333335
+    },
+    {
+      "Id": "devices.android",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1396.3533333333332
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1467.2033333333334
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.6033333333335
+    },
+    {
+      "Id": "view.preview",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1856.4533333333334
+    },
+    {
+      "Id": "view.images",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1595.0033333333333
+    },
+    {
+      "Id": "view.video",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1424.18
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1308.5533333333333
+    },
+    {
+      "Id": "view.print",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1369.1266666666668
+    },
+    {
+      "Id": "security.password",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1364.2733333333333
+    },
+    {
+      "Id": "security.protect",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1644.1133333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2064.916666666667
+    },
+    {
+      "Id": "security.lock",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1884.4233333333334
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1176.4533333333334
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1930.3033333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1872.0166666666667
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1819.63
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 972.2166666666667
+    },
+    {
+      "Id": "ai.start",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1358.3433333333332
+    },
+    {
+      "Id": "ai.models",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3595.2566666666667
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5816.373333333333
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3996.0666666666666
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4880.7
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4935.15
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3226.3966666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5957.12
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3795.22
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4359.283333333334
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4829.983333333334
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2010.8933333333334
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1702.1833333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1200.2
+    },
+    {
+      "Id": "settings.about",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.13
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1380.6333333333334
+    },
+    {
+      "Id": "settings.data",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1939.6333333333334
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2461.37
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1641.3266666666666
+    },
+    {
+      "Id": "help.use",
+      "theme": "System",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2528.5033333333336
+    },
+    {
+      "Id": "start.install",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1654.2533333333333
+    },
+    {
+      "Id": "start.interface",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2329.7833333333333
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2293.153333333333
+    },
+    {
+      "Id": "doc.create",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3916.01
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2197.13
+    },
+    {
+      "Id": "doc.open",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2211.8433333333332
+    },
+    {
+      "Id": "doc.save",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3246.8166666666666
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2851.4766666666665
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2671.0333333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1408.2833333333333
+    },
+    {
+      "Id": "edit.font",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 919.2033333333334
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1020.8833333333333
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1068.03
+    },
+    {
+      "Id": "edit.links",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1091.31
+    },
+    {
+      "Id": "edit.page",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1385.07
+    },
+    {
+      "Id": "edit.view",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1157.7966666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1777.0233333333333
+    },
+    {
+      "Id": "content.background",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1261.61
+    },
+    {
+      "Id": "content.tables",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1133.0866666666666
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1634.9866666666667
+    },
+    {
+      "Id": "content.structure",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1197.6966666666667
+    },
+    {
+      "Id": "md.edit",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1205.6933333333334
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 6970.8133333333335
+    },
+    {
+      "Id": "md.preview",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1274.84
+    },
+    {
+      "Id": "md.save",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1203.0366666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1584.06
+    },
+    {
+      "Id": "files.views",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1399.21
+    },
+    {
+      "Id": "files.create",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1397.6866666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1910.1433333333334
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1721.71
+    },
+    {
+      "Id": "files.manage",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2633.68
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1059.65
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1497.6733333333334
+    },
+    {
+      "Id": "files.recent",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1253.86
+    },
+    {
+      "Id": "files.batch",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3408.58
+    },
+    {
+      "Id": "files.properties",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2267.423333333333
+    },
+    {
+      "Id": "search.name",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1462.9833333333333
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2050.87
+    },
+    {
+      "Id": "search.document",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2520.2433333333333
+    },
+    {
+      "Id": "devices.android",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1508.4466666666667
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1830.67
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2696.8633333333332
+    },
+    {
+      "Id": "view.preview",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1726.8633333333332
+    },
+    {
+      "Id": "view.images",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1903.2166666666667
+    },
+    {
+      "Id": "view.video",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1622.71
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1420.6466666666668
+    },
+    {
+      "Id": "view.print",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1421.6633333333334
+    },
+    {
+      "Id": "security.password",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1612.6
+    },
+    {
+      "Id": "security.protect",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1827.6233333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1999.91
+    },
+    {
+      "Id": "security.lock",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1793.64
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1356.0533333333333
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1704.7433333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1949.16
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1778.39
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1383.53
+    },
+    {
+      "Id": "ai.start",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1627.67
+    },
+    {
+      "Id": "ai.models",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3211.2733333333335
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5377.99
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3510.1
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3564.346666666667
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4228.676666666666
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2927.1466666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5010.87
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3634.0266666666666
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3708.72
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3738.37
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2510.1266666666666
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1605.6333333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1123.2766666666666
+    },
+    {
+      "Id": "settings.about",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1372.7133333333334
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1934.78
+    },
+    {
+      "Id": "settings.data",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2502.16
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4177.073333333334
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2890.1033333333335
+    },
+    {
+      "Id": "help.use",
+      "theme": "System",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2262.6866666666665
+    },
+    {
+      "Id": "start.install",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1330.3933333333334
+    },
+    {
+      "Id": "start.interface",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2198.1833333333334
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2643.24
+    },
+    {
+      "Id": "doc.create",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4433.166666666667
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1924.8166666666666
+    },
+    {
+      "Id": "doc.open",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.4033333333334
+    },
+    {
+      "Id": "doc.save",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3186.2733333333335
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2231.52
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.443333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1094.3966666666668
+    },
+    {
+      "Id": "edit.font",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 794,
+      "height": 629.6766666666666
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 766.85
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 794.0433333333333
+    },
+    {
+      "Id": "edit.links",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 830.3433333333334
+    },
+    {
+      "Id": "edit.page",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1513.5066666666667
+    },
+    {
+      "Id": "edit.view",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2145.4533333333334
+    },
+    {
+      "Id": "content.background",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 939.8233333333334
+    },
+    {
+      "Id": "content.tables",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 819.2
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1439.1433333333334
+    },
+    {
+      "Id": "content.structure",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "md.edit",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1158.4766666666667
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 6335.54
+    },
+    {
+      "Id": "md.preview",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1130.5266666666666
+    },
+    {
+      "Id": "md.save",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1138.5266666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1713.6533333333334
+    },
+    {
+      "Id": "files.views",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1224.6033333333332
+    },
+    {
+      "Id": "files.create",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 962.8466666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1541.7933333333333
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1230.13
+    },
+    {
+      "Id": "files.manage",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1816.67
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 761.2333333333333
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1520.2933333333333
+    },
+    {
+      "Id": "files.recent",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1146.7933333333333
+    },
+    {
+      "Id": "files.batch",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3081.3166666666666
+    },
+    {
+      "Id": "files.properties",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2031.7866666666666
+    },
+    {
+      "Id": "search.name",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1386.85
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2085.45
+    },
+    {
+      "Id": "search.document",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3254.0633333333335
+    },
+    {
+      "Id": "devices.android",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1396.3533333333332
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1467.2033333333334
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.6033333333335
+    },
+    {
+      "Id": "view.preview",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1856.4533333333334
+    },
+    {
+      "Id": "view.images",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1595.0033333333333
+    },
+    {
+      "Id": "view.video",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1424.18
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1308.5533333333333
+    },
+    {
+      "Id": "view.print",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1369.1266666666668
+    },
+    {
+      "Id": "security.password",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1364.2733333333333
+    },
+    {
+      "Id": "security.protect",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1644.1133333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2064.916666666667
+    },
+    {
+      "Id": "security.lock",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1884.4233333333334
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1176.4533333333334
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1930.3033333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1872.0166666666667
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1819.63
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 972.2166666666667
+    },
+    {
+      "Id": "ai.start",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1358.3433333333332
+    },
+    {
+      "Id": "ai.models",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3595.2566666666667
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5816.373333333333
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3996.0666666666666
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4880.7
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4935.15
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3226.3966666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5957.12
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3795.22
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4359.283333333334
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4829.983333333334
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2010.8933333333334
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1702.1833333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1200.2
+    },
+    {
+      "Id": "settings.about",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.13
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1380.6333333333334
+    },
+    {
+      "Id": "settings.data",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1939.6333333333334
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2461.37
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1641.3266666666666
+    },
+    {
+      "Id": "help.use",
+      "theme": "Light",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2528.5033333333336
+    },
+    {
+      "Id": "start.install",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1654.2533333333333
+    },
+    {
+      "Id": "start.interface",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2329.7833333333333
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2293.153333333333
+    },
+    {
+      "Id": "doc.create",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3916.01
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2197.13
+    },
+    {
+      "Id": "doc.open",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2211.8433333333332
+    },
+    {
+      "Id": "doc.save",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3246.8166666666666
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2851.4766666666665
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2671.0333333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1408.2833333333333
+    },
+    {
+      "Id": "edit.font",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 919.2033333333334
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1020.8833333333333
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1068.03
+    },
+    {
+      "Id": "edit.links",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1091.31
+    },
+    {
+      "Id": "edit.page",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1385.07
+    },
+    {
+      "Id": "edit.view",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1157.7966666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1777.0233333333333
+    },
+    {
+      "Id": "content.background",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1261.61
+    },
+    {
+      "Id": "content.tables",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1133.0866666666666
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1634.9866666666667
+    },
+    {
+      "Id": "content.structure",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1197.6966666666667
+    },
+    {
+      "Id": "md.edit",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1205.6933333333334
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 6970.8133333333335
+    },
+    {
+      "Id": "md.preview",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1274.84
+    },
+    {
+      "Id": "md.save",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1203.0366666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1584.06
+    },
+    {
+      "Id": "files.views",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1399.21
+    },
+    {
+      "Id": "files.create",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1397.6866666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1910.1433333333334
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1721.71
+    },
+    {
+      "Id": "files.manage",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2633.68
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1059.65
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1497.6733333333334
+    },
+    {
+      "Id": "files.recent",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1253.86
+    },
+    {
+      "Id": "files.batch",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3408.58
+    },
+    {
+      "Id": "files.properties",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2267.423333333333
+    },
+    {
+      "Id": "search.name",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1462.9833333333333
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2050.87
+    },
+    {
+      "Id": "search.document",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2520.2433333333333
+    },
+    {
+      "Id": "devices.android",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1508.4466666666667
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1830.67
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2696.8633333333332
+    },
+    {
+      "Id": "view.preview",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1726.8633333333332
+    },
+    {
+      "Id": "view.images",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1903.2166666666667
+    },
+    {
+      "Id": "view.video",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1622.71
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1420.6466666666668
+    },
+    {
+      "Id": "view.print",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1421.6633333333334
+    },
+    {
+      "Id": "security.password",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1612.6
+    },
+    {
+      "Id": "security.protect",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1827.6233333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1999.91
+    },
+    {
+      "Id": "security.lock",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1793.64
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1356.0533333333333
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1704.7433333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1949.16
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1778.39
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1383.53
+    },
+    {
+      "Id": "ai.start",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1627.67
+    },
+    {
+      "Id": "ai.models",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3211.2733333333335
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5377.99
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3510.1
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3564.346666666667
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4228.676666666666
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2927.1466666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5010.87
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3634.0266666666666
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3708.72
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3738.37
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2510.1266666666666
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1605.6333333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1123.2766666666666
+    },
+    {
+      "Id": "settings.about",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1372.7133333333334
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1934.78
+    },
+    {
+      "Id": "settings.data",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2502.16
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4177.073333333334
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2890.1033333333335
+    },
+    {
+      "Id": "help.use",
+      "theme": "Light",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2262.6866666666665
+    },
+    {
+      "Id": "start.install",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1330.3933333333334
+    },
+    {
+      "Id": "start.interface",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2198.1833333333334
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2643.24
+    },
+    {
+      "Id": "doc.create",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4433.166666666667
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1924.8166666666666
+    },
+    {
+      "Id": "doc.open",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.4033333333334
+    },
+    {
+      "Id": "doc.save",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3186.2733333333335
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2231.52
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.443333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1094.3966666666668
+    },
+    {
+      "Id": "edit.font",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 794,
+      "height": 629.6766666666666
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 766.85
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 794.0433333333333
+    },
+    {
+      "Id": "edit.links",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 830.3433333333334
+    },
+    {
+      "Id": "edit.page",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1513.5066666666667
+    },
+    {
+      "Id": "edit.view",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2145.4533333333334
+    },
+    {
+      "Id": "content.background",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 939.8233333333334
+    },
+    {
+      "Id": "content.tables",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 819.2
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1439.1433333333334
+    },
+    {
+      "Id": "content.structure",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "md.edit",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1158.4766666666667
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 6335.54
+    },
+    {
+      "Id": "md.preview",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1130.5266666666666
+    },
+    {
+      "Id": "md.save",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1138.5266666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1713.6533333333334
+    },
+    {
+      "Id": "files.views",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1224.6033333333332
+    },
+    {
+      "Id": "files.create",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 962.8466666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1541.7933333333333
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1230.13
+    },
+    {
+      "Id": "files.manage",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1816.67
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 761.2333333333333
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1520.2933333333333
+    },
+    {
+      "Id": "files.recent",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1146.7933333333333
+    },
+    {
+      "Id": "files.batch",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3081.3166666666666
+    },
+    {
+      "Id": "files.properties",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2031.7866666666666
+    },
+    {
+      "Id": "search.name",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1386.85
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2085.45
+    },
+    {
+      "Id": "search.document",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3254.0633333333335
+    },
+    {
+      "Id": "devices.android",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1396.3533333333332
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1467.2033333333334
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.6033333333335
+    },
+    {
+      "Id": "view.preview",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1856.4533333333334
+    },
+    {
+      "Id": "view.images",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1595.0033333333333
+    },
+    {
+      "Id": "view.video",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1424.18
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1308.5533333333333
+    },
+    {
+      "Id": "view.print",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1369.1266666666668
+    },
+    {
+      "Id": "security.password",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1364.2733333333333
+    },
+    {
+      "Id": "security.protect",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1644.1133333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2064.916666666667
+    },
+    {
+      "Id": "security.lock",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1884.4233333333334
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1176.4533333333334
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1930.3033333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1872.0166666666667
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1819.63
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 972.2166666666667
+    },
+    {
+      "Id": "ai.start",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1358.3433333333332
+    },
+    {
+      "Id": "ai.models",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3595.2566666666667
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5816.373333333333
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3996.0666666666666
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4880.7
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4935.15
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3226.3966666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5957.12
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3795.22
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4359.283333333334
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4829.983333333334
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2010.8933333333334
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1702.1833333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1200.2
+    },
+    {
+      "Id": "settings.about",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.13
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1380.6333333333334
+    },
+    {
+      "Id": "settings.data",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1939.6333333333334
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2461.37
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1641.3266666666666
+    },
+    {
+      "Id": "help.use",
+      "theme": "Dark",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2528.5033333333336
+    },
+    {
+      "Id": "start.install",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1654.2533333333333
+    },
+    {
+      "Id": "start.interface",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2329.7833333333333
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2293.153333333333
+    },
+    {
+      "Id": "doc.create",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3916.01
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2197.13
+    },
+    {
+      "Id": "doc.open",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2211.8433333333332
+    },
+    {
+      "Id": "doc.save",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3246.8166666666666
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2851.4766666666665
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2671.0333333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1408.2833333333333
+    },
+    {
+      "Id": "edit.font",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 919.2033333333334
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1020.8833333333333
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1068.03
+    },
+    {
+      "Id": "edit.links",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1091.31
+    },
+    {
+      "Id": "edit.page",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1385.07
+    },
+    {
+      "Id": "edit.view",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1157.7966666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1777.0233333333333
+    },
+    {
+      "Id": "content.background",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1261.61
+    },
+    {
+      "Id": "content.tables",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1133.0866666666666
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1634.9866666666667
+    },
+    {
+      "Id": "content.structure",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1197.6966666666667
+    },
+    {
+      "Id": "md.edit",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1205.6933333333334
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 6970.8133333333335
+    },
+    {
+      "Id": "md.preview",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1274.84
+    },
+    {
+      "Id": "md.save",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1203.0366666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1584.06
+    },
+    {
+      "Id": "files.views",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1399.21
+    },
+    {
+      "Id": "files.create",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1397.6866666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1910.1433333333334
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1721.71
+    },
+    {
+      "Id": "files.manage",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2633.68
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1059.65
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1497.6733333333334
+    },
+    {
+      "Id": "files.recent",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1253.86
+    },
+    {
+      "Id": "files.batch",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3408.58
+    },
+    {
+      "Id": "files.properties",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2267.423333333333
+    },
+    {
+      "Id": "search.name",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1462.9833333333333
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2050.87
+    },
+    {
+      "Id": "search.document",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2520.2433333333333
+    },
+    {
+      "Id": "devices.android",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1508.4466666666667
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1830.67
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2696.8633333333332
+    },
+    {
+      "Id": "view.preview",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1726.8633333333332
+    },
+    {
+      "Id": "view.images",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1903.2166666666667
+    },
+    {
+      "Id": "view.video",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1622.71
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1420.6466666666668
+    },
+    {
+      "Id": "view.print",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1421.6633333333334
+    },
+    {
+      "Id": "security.password",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1612.6
+    },
+    {
+      "Id": "security.protect",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1827.6233333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1999.91
+    },
+    {
+      "Id": "security.lock",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1793.64
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1356.0533333333333
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1704.7433333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1949.16
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1778.39
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1383.53
+    },
+    {
+      "Id": "ai.start",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1627.67
+    },
+    {
+      "Id": "ai.models",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3211.2733333333335
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5377.99
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3510.1
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3564.346666666667
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4228.676666666666
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2927.1466666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5010.87
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3634.0266666666666
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3708.72
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3738.37
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2510.1266666666666
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1605.6333333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1123.2766666666666
+    },
+    {
+      "Id": "settings.about",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1372.7133333333334
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1934.78
+    },
+    {
+      "Id": "settings.data",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2502.16
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4177.073333333334
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2890.1033333333335
+    },
+    {
+      "Id": "help.use",
+      "theme": "Dark",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2262.6866666666665
+    },
+    {
+      "Id": "start.install",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1330.3933333333334
+    },
+    {
+      "Id": "start.interface",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2198.1833333333334
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2643.24
+    },
+    {
+      "Id": "doc.create",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4433.166666666667
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1924.8166666666666
+    },
+    {
+      "Id": "doc.open",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.4033333333334
+    },
+    {
+      "Id": "doc.save",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3186.2733333333335
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2231.52
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.443333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1094.3966666666668
+    },
+    {
+      "Id": "edit.font",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 794,
+      "height": 629.6766666666666
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 766.85
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 794.0433333333333
+    },
+    {
+      "Id": "edit.links",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 830.3433333333334
+    },
+    {
+      "Id": "edit.page",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1513.5066666666667
+    },
+    {
+      "Id": "edit.view",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2145.4533333333334
+    },
+    {
+      "Id": "content.background",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 939.8233333333334
+    },
+    {
+      "Id": "content.tables",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 819.2
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1439.1433333333334
+    },
+    {
+      "Id": "content.structure",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1110.5766666666666
+    },
+    {
+      "Id": "md.edit",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1158.4766666666667
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 6335.54
+    },
+    {
+      "Id": "md.preview",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1130.5266666666666
+    },
+    {
+      "Id": "md.save",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1138.5266666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1713.6533333333334
+    },
+    {
+      "Id": "files.views",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1224.6033333333332
+    },
+    {
+      "Id": "files.create",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 962.8466666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1541.7933333333333
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1230.13
+    },
+    {
+      "Id": "files.manage",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1816.67
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 761.2333333333333
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1520.2933333333333
+    },
+    {
+      "Id": "files.recent",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1146.7933333333333
+    },
+    {
+      "Id": "files.batch",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3081.3166666666666
+    },
+    {
+      "Id": "files.properties",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2031.7866666666666
+    },
+    {
+      "Id": "search.name",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1386.85
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2085.45
+    },
+    {
+      "Id": "search.document",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3254.0633333333335
+    },
+    {
+      "Id": "devices.android",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1396.3533333333332
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1467.2033333333334
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2367.6033333333335
+    },
+    {
+      "Id": "view.preview",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1856.4533333333334
+    },
+    {
+      "Id": "view.images",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1595.0033333333333
+    },
+    {
+      "Id": "view.video",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1424.18
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1308.5533333333333
+    },
+    {
+      "Id": "view.print",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1369.1266666666668
+    },
+    {
+      "Id": "security.password",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1364.2733333333333
+    },
+    {
+      "Id": "security.protect",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1644.1133333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2064.916666666667
+    },
+    {
+      "Id": "security.lock",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1884.4233333333334
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1176.4533333333334
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1930.3033333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1872.0166666666667
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1819.63
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 972.2166666666667
+    },
+    {
+      "Id": "ai.start",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1358.3433333333332
+    },
+    {
+      "Id": "ai.models",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3595.2566666666667
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5816.373333333333
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3996.0666666666666
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4880.7
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4935.15
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3226.3966666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 5957.12
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 3795.22
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4359.283333333334
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 4829.983333333334
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2010.8933333333334
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1702.1833333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1200.2
+    },
+    {
+      "Id": "settings.about",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1835.13
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1380.6333333333334
+    },
+    {
+      "Id": "settings.data",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1939.6333333333334
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2461.37
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 1641.3266666666666
+    },
+    {
+      "Id": "help.use",
+      "theme": "Sepia",
+      "narrow": false,
+      "overflow": 0,
+      "viewport": 777,
+      "height": 2528.5033333333336
+    },
+    {
+      "Id": "start.install",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1654.2533333333333
+    },
+    {
+      "Id": "start.interface",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2329.7833333333333
+    },
+    {
+      "Id": "start.workspace",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2293.153333333333
+    },
+    {
+      "Id": "doc.create",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3916.01
+    },
+    {
+      "Id": "doc.templates",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2197.13
+    },
+    {
+      "Id": "doc.open",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2211.8433333333332
+    },
+    {
+      "Id": "doc.save",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3246.8166666666666
+    },
+    {
+      "Id": "doc.formats",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2851.4766666666665
+    },
+    {
+      "Id": "doc.switch",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2671.0333333333333
+    },
+    {
+      "Id": "edit.basic",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1408.2833333333333
+    },
+    {
+      "Id": "edit.font",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 919.2033333333334
+    },
+    {
+      "Id": "edit.palette",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1020.8833333333333
+    },
+    {
+      "Id": "edit.paragraph",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1068.03
+    },
+    {
+      "Id": "edit.links",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1091.31
+    },
+    {
+      "Id": "edit.page",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1385.07
+    },
+    {
+      "Id": "edit.view",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1157.7966666666666
+    },
+    {
+      "Id": "content.images",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1777.0233333333333
+    },
+    {
+      "Id": "content.background",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1261.61
+    },
+    {
+      "Id": "content.tables",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1133.0866666666666
+    },
+    {
+      "Id": "content.bookmarks",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1634.9866666666667
+    },
+    {
+      "Id": "content.structure",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1197.6966666666667
+    },
+    {
+      "Id": "md.edit",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1205.6933333333334
+    },
+    {
+      "Id": "md.syntax",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 6970.8133333333335
+    },
+    {
+      "Id": "md.preview",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1274.84
+    },
+    {
+      "Id": "md.save",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1203.0366666666666
+    },
+    {
+      "Id": "files.navigate",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1584.06
+    },
+    {
+      "Id": "files.views",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1399.21
+    },
+    {
+      "Id": "files.create",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1397.6866666666667
+    },
+    {
+      "Id": "files.transfer",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1910.1433333333334
+    },
+    {
+      "Id": "files.conflicts",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1721.71
+    },
+    {
+      "Id": "files.manage",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2633.68
+    },
+    {
+      "Id": "files.favorites",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1059.65
+    },
+    {
+      "Id": "files.pinned",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1497.6733333333334
+    },
+    {
+      "Id": "files.recent",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1253.86
+    },
+    {
+      "Id": "files.batch",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3408.58
+    },
+    {
+      "Id": "files.properties",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2267.423333333333
+    },
+    {
+      "Id": "search.name",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1462.9833333333333
+    },
+    {
+      "Id": "search.workspace",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2050.87
+    },
+    {
+      "Id": "search.document",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2520.2433333333333
+    },
+    {
+      "Id": "devices.android",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1508.4466666666667
+    },
+    {
+      "Id": "devices.transfers",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1830.67
+    },
+    {
+      "Id": "devices.limits",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2696.8633333333332
+    },
+    {
+      "Id": "view.preview",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1726.8633333333332
+    },
+    {
+      "Id": "view.images",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1903.2166666666667
+    },
+    {
+      "Id": "view.video",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1622.71
+    },
+    {
+      "Id": "view.pdf",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1420.6466666666668
+    },
+    {
+      "Id": "view.print",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1421.6633333333334
+    },
+    {
+      "Id": "security.password",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1612.6
+    },
+    {
+      "Id": "security.protect",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1827.6233333333332
+    },
+    {
+      "Id": "security.decrypt",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1999.91
+    },
+    {
+      "Id": "security.lock",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1793.64
+    },
+    {
+      "Id": "security.compatibility",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1356.0533333333333
+    },
+    {
+      "Id": "recovery.backup",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1704.7433333333333
+    },
+    {
+      "Id": "recovery.crash",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1949.16
+    },
+    {
+      "Id": "recovery.lock",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1778.39
+    },
+    {
+      "Id": "recovery.write",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1383.53
+    },
+    {
+      "Id": "ai.start",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1627.67
+    },
+    {
+      "Id": "ai.models",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3211.2733333333335
+    },
+    {
+      "Id": "ai.lifecycle",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5377.99
+    },
+    {
+      "Id": "ai.chat",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3510.1
+    },
+    {
+      "Id": "ai.templates",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3564.346666666667
+    },
+    {
+      "Id": "ai.attachments",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4228.676666666666
+    },
+    {
+      "Id": "ai.apply",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2927.1466666666665
+    },
+    {
+      "Id": "ai.context",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 5010.87
+    },
+    {
+      "Id": "ai.memory",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3634.0266666666666
+    },
+    {
+      "Id": "ai.performance",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3708.72
+    },
+    {
+      "Id": "ai.appearance",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 3738.37
+    },
+    {
+      "Id": "ai.troubleshoot",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2510.1266666666666
+    },
+    {
+      "Id": "settings.appearance",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1605.6333333333334
+    },
+    {
+      "Id": "settings.language",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1123.2766666666666
+    },
+    {
+      "Id": "settings.about",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1372.7133333333334
+    },
+    {
+      "Id": "settings.updates",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 1934.78
+    },
+    {
+      "Id": "settings.data",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2502.16
+    },
+    {
+      "Id": "settings.hotkeys",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 4177.073333333334
+    },
+    {
+      "Id": "settings.troubleshoot",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2890.1033333333335
+    },
+    {
+      "Id": "help.use",
+      "theme": "Sepia",
+      "narrow": true,
+      "overflow": 0,
+      "viewport": 377,
+      "height": 2262.6866666666665
+    }
+  ],
+  "bindingErrors": [],
+  "checks": 1983
+}

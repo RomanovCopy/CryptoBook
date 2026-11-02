@@ -1,0 +1,17 @@
+{
+  "shotId": "S21-a",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S21-a.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 2,
+      "shape": "rectangle",
+      "x": 0.20461309523809523,
+      "y": 0.14494518879415347,
+      "width": 0.5907738095238095,
+      "height": 0.7414859926918392,
+      "badge": null
+    }
+  ]
+}

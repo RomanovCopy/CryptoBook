@@ -1,0 +1,53 @@
+xUnit.net v3 In-Process Runner v4.0.0+8bf043c053 (64-bit .NET 10.0.14)
+  Discovering: CryptoBook.Tests (method display = ClassAndMethod, method display options = None)
+  Discovered:  CryptoBook.Tests (10 test cases to be run)
+  Starting:    CryptoBook.Tests (parallel mode = collections [16 threads], stop on fail = off, explicit = off, seed = 1831846775)
+    CryptoBook.Tests.HelpTests.PlannedTopics_AreRegisteredButNotLoadedOrSearched [STARTING]
+    CryptoBook.Tests.HelpTests.PlannedTopics_AreRegisteredButNotLoadedOrSearched [FINISHED] Time: 0,299s
+    CryptoBook.Tests.HelpTests.Placement_RecoversInvalidOrDisconnectedMonitorBounds(left: -10000, top: -10000, width: 0, height: 0) [STARTING]
+    CryptoBook.Tests.HelpTests.Placement_RecoversInvalidOrDisconnectedMonitorBounds(left: -10000, top: -10000, width: 0, height: 0) [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.Placement_RecoversInvalidOrDisconnectedMonitorBounds(left: 10000, top: 10000, width: 1120, height: 780) [STARTING]
+    CryptoBook.Tests.HelpTests.Placement_RecoversInvalidOrDisconnectedMonitorBounds(left: 10000, top: 10000, width: 1120, height: 780) [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.Placement_RecoversInvalidOrDisconnectedMonitorBounds(left: не число, top: не число, width: не число, height: не число) [STARTING]
+    CryptoBook.Tests.HelpTests.Placement_RecoversInvalidOrDisconnectedMonitorBounds(left: не число, top: не число, width: не число, height: не число) [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "../secret.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "../secret.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/../../secret.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/../../secret.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/%2e%2e/secret.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/%2e%2e/secret.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images%2fsecret.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images%2fsecret.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "C:/secret.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "C:/secret.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "\\server\\share.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "\\server\\share.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "https://example.com/image.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "https://example.com/image.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "pack://application:,,,/Other;component/image.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "pack://application:,,,/Other;component/image.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/a.png?query") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/a.png?query") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/a.png\n") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_RejectsAnythingOutsideThePackagedNamespace(path: "images/a.png\n") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.PackagedTranslations_History_Search_CultureAndRendererPolicies_WorkTogether [STARTING]
+    CryptoBook.Tests.HelpTests.PackagedTranslations_History_Search_CultureAndRendererPolicies_WorkTogether [FINISHED] Time: 1.881s
+    CryptoBook.Tests.HelpTests.Search_NormalizesUnicode_AndToleratesIncompletePastedSurrogates [STARTING]
+    CryptoBook.Tests.HelpTests.Search_NormalizesUnicode_AndToleratesIncompletePastedSurrogates [FINISHED] Time: 0.001s
+    CryptoBook.Tests.HelpTests.Metadata_CannotSelectAnArbitraryFile [STARTING]
+    CryptoBook.Tests.HelpTests.Metadata_CannotSelectAnArbitraryFile [FINISHED] Time: 0.001s
+    CryptoBook.Tests.HelpTests.MissingTranslation_FailsRatherThanSubstitutingAnotherLanguage [STARTING]
+    CryptoBook.Tests.HelpTests.MissingTranslation_FailsRatherThanSubstitutingAnotherLanguage [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.UnknownInternalLink_FailsCatalogValidation [STARTING]
+    CryptoBook.Tests.HelpTests.UnknownInternalLink_FailsCatalogValidation [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_AcceptsCanonicalPackagePaths(path: "catalog.json") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_AcceptsCanonicalPackagePaths(path: "catalog.json") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_AcceptsCanonicalPackagePaths(path: "ru-RU/doc.create.md") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_AcceptsCanonicalPackagePaths(path: "ru-RU/doc.create.md") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.ResourcePath_AcceptsCanonicalPackagePaths(path: "de-DE/images/S04-a.png") [STARTING]
+    CryptoBook.Tests.HelpTests.ResourcePath_AcceptsCanonicalPackagePaths(path: "de-DE/images/S04-a.png") [FINISHED] Time: 0s
+    CryptoBook.Tests.HelpTests.Search_UsesVisibleTextAndKeywords_AndRequiresEveryWord [STARTING]
+    CryptoBook.Tests.HelpTests.Search_UsesVisibleTextAndKeywords_AndRequiresEveryWord [FINISHED] Time: 0s
+  Finished:    CryptoBook.Tests (ID = '83aee4de38f3a4b78c204aa9e0fc89d1e4d897060563c194127a7a353733119e')
+=== TEST EXECUTION SUMMARY ===
+   CryptoBook.Tests  Total: 23, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 2.342s

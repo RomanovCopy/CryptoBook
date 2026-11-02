@@ -1,4 +1,5 @@
 using CryptoBook.Services;
+using CryptoBook.Validation;
 
 using System.IO;
 
@@ -13,6 +14,7 @@ public sealed class WorkspaceSearchTests: IDisposable
 
     public WorkspaceSearchTests()
     {
+        MemorySettingsProvider.Install();
         originalWorkspaceDirectory =
             Properties.Settings.Default.WorkspaceDirectory;
         testDirectory = Path.Combine(

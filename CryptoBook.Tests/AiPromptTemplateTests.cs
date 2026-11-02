@@ -74,6 +74,8 @@ public sealed partial class AiIntegrationTests
     [WpfFact]
     public async Task Templates_LanguageChangeRefreshesPanelAndEditor_PreservingSelectionAndSavedData()
     {
+        // SelectCulture saves settings; this UI test must never write the Windows user profile.
+        CryptoBook.Validation.MemorySettingsProvider.Install();
         CultureInfo previous = CultureInfo.CurrentCulture, previousUi = CultureInfo.CurrentUICulture;
         CultureInfo? previousDefault = CultureInfo.DefaultThreadCurrentCulture, previousDefaultUi = CultureInfo.DefaultThreadCurrentUICulture;
         string previousSetting = CryptoBook.Properties.Settings.Default.CultureInfo;

@@ -1,0 +1,32 @@
+{
+  "shotId": "S40-b",
+  "topicId": "ai.chat",
+  "articleStepOrArea": "selected messages and transfer toolbar",
+  "culture": "de-DE",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "11c4261",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T18:32:45.1011542+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 550,
+    "height": 930
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/de-DE/S40-b.png",
+  "annotationFile": "docs/help/screenshots/annotations/de-DE/S40-b.json",
+  "outputFile": "docs/help/content/de-DE/images/S40-b.png",
+  "actionCheck": "Production AI chat/templates/readers/drop behavior and both real editors; real GGUF/vision output, one-step Undo/Redo. Native attachment-picker decisions queued; Copy uses a memory sink; no physical input or system clipboard.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\de-DE\\645bfcf0\\Demo\\Practice.txt",
+  "visualCheck": "Reviewed 2026-11-01: all localized states, editor contents, commands, error/selection state and annotations checked in PNGs and locale contact sheets. Corrected control badges above icons; full template fields and Save/Cancel visible."
+}

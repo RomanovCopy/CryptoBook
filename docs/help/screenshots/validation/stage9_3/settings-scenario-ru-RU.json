@@ -1,0 +1,110 @@
+{
+  "culture": "ru-RU",
+  "model": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-Q4_K_S.gguf",
+  "requestedContext": 1024,
+  "requestedReplyCeiling": 2048,
+  "measuredUsage": [
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 0,
+      "RemainingTokens": 965
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 1,
+      "RemainingTokens": 964
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 4,
+      "RemainingTokens": 961
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 5,
+      "RemainingTokens": 960
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 8,
+      "RemainingTokens": 957
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 11,
+      "RemainingTokens": 954
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 14,
+      "RemainingTokens": 951
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 17,
+      "RemainingTokens": 948
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 20,
+      "RemainingTokens": 945
+    },
+    {
+      "ContextLength": 1024,
+      "InputTokens": 58,
+      "OutputTokens": 23,
+      "RemainingTokens": 942
+    }
+  ],
+  "manualOptions": {
+    "ContextLength": 1024,
+    "GpuLayers": 2,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": false,
+    "Threads": 0,
+    "BatchThreads": 0,
+    "PerformanceBoost": false,
+    "PowerSaving": false
+  },
+  "cpuOptions": {
+    "ContextLength": 1024,
+    "GpuLayers": 0,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": true,
+    "Threads": 0,
+    "BatchThreads": 0,
+    "PerformanceBoost": false,
+    "PowerSaving": false
+  },
+  "automaticOptions": {
+    "ContextLength": 2048,
+    "GpuLayers": 28,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": false,
+    "Threads": 0,
+    "BatchThreads": 0,
+    "PerformanceBoost": false,
+    "PowerSaving": false
+  },
+  "nativeReasoningProvided": true,
+  "reasoning": "\n1.  **Identify the task:** The user wants me to compute 17 \u002B 25 and then provide a short answer with the number.\n2.  **Perform the calculation:** 17 \u002B 25 = 42.\n3.  **Formulate the response:** The user asked for a \u0022short answer with the number.\u0022 I should output just the number 42, as that directly answers the request.\n4.  **Review:** Is 42 the correct sum? Yes. Is the response short? Yes. Does it include the number? Yes.\n",
+  "reasoningAnswer": "\n\n42",
+  "appearanceAnswer": "# \u041F\u043B\u0430\u043D\n## \u041C\u0430\u0440\u0448\u0440\u0443\u0442\n\u0060\u0060\u0060text\nORBIT-731\n\u0060\u0060\u0060",
+  "clipboard": "Memory sink only",
+  "forceSystemMemoryPressure": false
+}

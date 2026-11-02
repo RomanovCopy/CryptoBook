@@ -88,8 +88,12 @@ namespace CryptoBook.Services
             ct.ThrowIfCancellationRequested();
 
             // 1) Нормализуем имя и расширение
+            if(FileNameValidation.Validate(fileNameWithOrWithoutExt) is { } nameError)
+                return FileOperationResult.Fail(nameError);
             string ext = template.DefaultExtension;
             string fileName = EnsureExtension(fileNameWithOrWithoutExt, ext);
+            if(FileNameValidation.Validate(fileName) is { } fullNameError)
+                return FileOperationResult.Fail(fullNameError);
 
             // 2) Сформируем полный путь
             string fullPath = Combine(targetDirectory, fileName);

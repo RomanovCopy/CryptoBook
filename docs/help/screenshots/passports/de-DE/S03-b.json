@@ -1,0 +1,32 @@
+{
+  "shotId": "S03-b",
+  "topicId": "start.workspace",
+  "articleStepOrArea": "step 3",
+  "culture": "de-DE",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "be4ad777ad117edb04babca017dce52021eb9990",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T07:54:02.9552815+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1120,
+    "height": 820
+  },
+  "rawPixels": {
+    "width": 1104,
+    "height": 781
+  },
+  "outputPixels": {
+    "width": 1104,
+    "height": 781
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/de-DE/S03-b.png",
+  "annotationFile": "docs/help/screenshots/annotations/de-DE/S03-b.json",
+  "outputFile": "docs/help/content/de-DE/images/S03-b.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": null,
+  "visualCheck": "Reviewed 2026-10-30: localized UI, demonstration names, step numbers, readable controls and no personal data; per-culture contact sheets and original error/rename crops. WPF RenderTargetBitmap, not physical input."
+}

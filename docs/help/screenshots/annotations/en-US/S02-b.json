@@ -1,0 +1,29 @@
+{
+  "shotId": "S02-b",
+  "culture": "en-US",
+  "rawFile": "docs/help/screenshots/raw/en-US/S02-b.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 3,
+      "shape": "rectangle",
+      "x": 0.004166666666666667,
+      "y": 0.052083333333333336,
+      "width": 0.1875,
+      "height": 0.8541666666666666,
+      "badge": {
+        "x": 0.20833333333333334,
+        "y": 0.078125
+      }
+    },
+    {
+      "number": 4,
+      "shape": "rectangle",
+      "x": 0.5277777777777778,
+      "y": 0.2708333333333333,
+      "width": 0.4027777777777778,
+      "height": 0.5,
+      "badge": null
+    }
+  ]
+}

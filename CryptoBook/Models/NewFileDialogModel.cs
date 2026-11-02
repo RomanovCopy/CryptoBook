@@ -321,6 +321,11 @@ namespace CryptoBook.Models
             ErrorMessage = null;
             try
             {
+                if(FileNameValidation.Validate(FileName) is { } nameError)
+                {
+                    ErrorMessage = nameError;
+                    return;
+                }
                 if(SelectedTemplate is SecureFileTemplate)
                 {
                     if(!_keyRequestService.EnsureEncryptionKeyAvailable())

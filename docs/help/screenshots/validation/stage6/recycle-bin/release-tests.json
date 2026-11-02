@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-30",
+  "configuration": "Release",
+  "total": 1194,
+  "passed": 1194,
+  "failed": 0,
+  "skipped": 0,
+  "isolatedProcesses": 8,
+  "groups": [
+    {
+      "name": "ai-integration",
+      "total": 150,
+      "passed": 150,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/ai-integration.trx"
+    },
+    {
+      "name": "ai-runtime",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/ai-runtime.trx"
+    },
+    {
+      "name": "batch-rename-window",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/batch-rename-window.trx"
+    },
+    {
+      "name": "document-search",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/document-search.trx"
+    },
+    {
+      "name": "help",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/help.trx"
+    },
+    {
+      "name": "image-layout",
+      "total": 19,
+      "passed": 19,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/image-layout.trx"
+    },
+    {
+      "name": "remaining",
+      "total": 954,
+      "passed": 954,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/remaining.trx"
+    },
+    {
+      "name": "worker-cancellation",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "source": "artifacts/recycle-bin/TestResults/worker-cancellation.trx"
+    }
+  ],
+  "notes": "Real Windows Recycle Bin tested with disposable file and nested folder; only exact returned test items restored. Recovery button checked separately for absent/live/empty/pending journals. No global bin clear or restore."
+}

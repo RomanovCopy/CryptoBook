@@ -1,0 +1,32 @@
+{
+  "shotId": "S19-b",
+  "topicId": "files.transfer",
+  "articleStepOrArea": "step 3",
+  "culture": "ru-RU",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "341efe2",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T20:12:56.4254299+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 360,
+    "height": 180
+  },
+  "rawPixels": {
+    "width": 344,
+    "height": 141
+  },
+  "outputPixels": {
+    "width": 344,
+    "height": 141
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S19-b.png",
+  "annotationFile": "docs/help/screenshots/annotations/ru-RU/S19-b.json",
+  "outputFile": "docs/help/content/ru-RU/images/S19-b.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\5f63138a\\Demo\\Source\\Alpha.txt",
+  "visualCheck": "Reviewed 2026-10-30 by agent: four-language contact sheets and full-size checks of dialogs, masks, properties and pinned view; annotations avoid control text."
+}

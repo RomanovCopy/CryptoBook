@@ -416,8 +416,9 @@ public sealed class FileExplorerArchitectureTests
             "Models",
             "FileExplorerModel.cs"));
 
-        Assert.Contains("item => !item.Location.IsLocal", modelSource);
+        Assert.Contains("items.All(item => item.Location.IsLocal)", modelSource);
         Assert.Contains("Explorer.PermanentDeleteAndroidWarning", modelSource);
+        Assert.Contains("Explorer.RecoverableDeleteWarning", modelSource);
         Assert.Contains("ShowConfirmation(confirmationId)", modelSource);
     }
 

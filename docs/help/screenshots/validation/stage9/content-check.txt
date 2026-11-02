@@ -1,0 +1,1 @@
+HELP_CONTENT_CHECK topics=76 cultures=4 articles=236 image_references=424 image_files=400 planned_links=36 ui_keys=1125 relative_links=337 errors=0

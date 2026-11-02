@@ -1,0 +1,206 @@
+{
+  "culture": "ru-RU",
+  "observations": [
+    {
+      "key": "F",
+      "modifiers": "Control",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "TextBox",
+      "focusName": "HelpSearch",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "LeftCtrl",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "TextBox",
+      "focusName": "HelpSearch",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "V",
+      "modifiers": "Control",
+      "topic": "doc.create",
+      "Query": "09:00",
+      "IsImageOpen": false,
+      "focus": "TextBox",
+      "focusName": "HelpSearch",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "LeftCtrl",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "09:00",
+      "IsImageOpen": false,
+      "focus": "TextBox",
+      "focusName": "HelpSearch",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Return",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "09:00",
+      "IsImageOpen": false,
+      "focus": "TextBox",
+      "focusName": "HelpSearch",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Escape",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "TextBox",
+      "focusName": "HelpSearch",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Escape",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "FlowDocumentScrollViewer",
+      "focusName": "ArticleViewer",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Left",
+      "modifiers": "Alt",
+      "topic": "start.interface",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "FlowDocumentScrollViewer",
+      "focusName": "ArticleViewer",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "LeftAlt",
+      "modifiers": "None",
+      "topic": "start.interface",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "FlowDocumentScrollViewer",
+      "focusName": "ArticleViewer",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Right",
+      "modifiers": "Alt",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "FlowDocumentScrollViewer",
+      "focusName": "ArticleViewer",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "LeftAlt",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "FlowDocumentScrollViewer",
+      "focusName": "ArticleViewer",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "F",
+      "modifiers": "Control",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": true,
+      "focus": "Button",
+      "focusName": "CloseImageButton",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "LeftCtrl",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": true,
+      "focus": "Button",
+      "focusName": "CloseImageButton",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Left",
+      "modifiers": "Alt",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": true,
+      "focus": "Button",
+      "focusName": "CloseImageButton",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "LeftAlt",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": true,
+      "focus": "Button",
+      "focusName": "CloseImageButton",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Tab",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": true,
+      "focus": "Button",
+      "focusName": "CloseImageButton",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Tab",
+      "modifiers": "Shift",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": true,
+      "focus": "Button",
+      "focusName": "CloseImageButton",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "LeftShift",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": true,
+      "focus": "Button",
+      "focusName": "CloseImageButton",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "Escape",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "Button",
+      "focusName": "",
+      "focusWindow": "HelpWindow"
+    },
+    {
+      "key": "F1",
+      "modifiers": "None",
+      "topic": "doc.create",
+      "Query": "",
+      "IsImageOpen": false,
+      "focus": "Button",
+      "focusName": "",
+      "focusWindow": "HelpWindow"
+    }
+  ],
+  "method": "External OS input via Computer Use; no routed keys generated by this mode."
+}

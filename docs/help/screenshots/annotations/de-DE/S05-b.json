@@ -1,0 +1,17 @@
+{
+  "shotId": "S05-b",
+  "culture": "de-DE",
+  "rawFile": "docs/help/screenshots/raw/de-DE/S05-b.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 2,
+      "shape": "rectangle",
+      "x": 0.818554852320675,
+      "y": 0.9494944512946979,
+      "width": 0.09521097046413504,
+      "height": 0.036942046855733664,
+      "badge": null
+    }
+  ]
+}

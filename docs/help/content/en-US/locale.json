@@ -1,0 +1,844 @@
+{
+  "culture": "en-US",
+  "sections": {
+    "start": "Getting started",
+    "doc": "Documents",
+    "edit": "Text editing",
+    "content": "Document content",
+    "md": "Markdown",
+    "files": "Files and folders",
+    "search": "Search",
+    "devices": "Connected devices",
+    "view": "Viewing and printing",
+    "security": "Data protection",
+    "recovery": "Saving and recovery",
+    "ai": "Local AI assistant",
+    "settings": "Settings and troubleshooting",
+    "help": "Using help"
+  },
+  "topics": [
+    {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Installation and portable startup"
+      ]
+    },
+    {
+      "id": "start.interface",
+      "file": "start.interface.md",
+      "keywords": [
+        "window",
+        "interface",
+        "start screen",
+        "side menu",
+        "settings",
+        "AI assistant",
+        "zoom"
+      ]
+    },
+    {
+      "id": "doc.create",
+      "file": "doc.create.md",
+      "keywords": [
+        "new document",
+        "create",
+        "save",
+        "RTF",
+        "file name",
+        "empty document",
+        "trip plan"
+      ]
+    },
+    {
+      "id": "start.workspace",
+      "file": "start.workspace.md",
+      "keywords": [
+        "workspace",
+        "folder",
+        "directory",
+        "search"
+      ]
+    },
+    {
+      "id": "doc.templates",
+      "file": "doc.templates.md",
+      "keywords": [
+        "template",
+        "notes",
+        "meeting",
+        "default"
+      ]
+    },
+    {
+      "id": "doc.open",
+      "file": "doc.open.md",
+      "keywords": [
+        "open",
+        "file",
+        "document",
+        "association"
+      ]
+    },
+    {
+      "id": "doc.save",
+      "file": "doc.save.md",
+      "keywords": [
+        "save",
+        "save as",
+        "cancel",
+        "unsaved",
+        "error"
+      ]
+    },
+    {
+      "id": "doc.formats",
+      "file": "doc.formats.md",
+      "keywords": [
+        "format",
+        "encoding",
+        "BOM",
+        "UTF-8",
+        "RTF",
+        "XAML"
+      ]
+    },
+    {
+      "id": "doc.switch",
+      "file": "doc.switch.md",
+      "keywords": [
+        "switch",
+        "rename",
+        "close",
+        "independent editors"
+      ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "selection",
+        "clipboard",
+        "undo",
+        "redo",
+        "clear"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "font",
+        "size",
+        "bold",
+        "italic",
+        "colour",
+        "highlight"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "ink",
+        "palette",
+        "slot",
+        "colour"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "paragraph",
+        "alignment",
+        "indent",
+        "spacing",
+        "list"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "link",
+        "address",
+        "hyperlink"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "page",
+        "paper",
+        "size",
+        "orientation"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "reading",
+        "preview",
+        "zoom",
+        "fit"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "image",
+        "insert",
+        "resize",
+        "wrapping"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "background",
+        "image",
+        "crop"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "table",
+        "cell",
+        "row",
+        "column"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "bookmark",
+        "note",
+        "navigation",
+        "index"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "structure",
+        "tree",
+        "paragraph",
+        "order"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "markdown",
+        "source",
+        "editing",
+        "preview"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "markdown",
+        "syntax",
+        "markup",
+        "code",
+        "tables"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "markdown",
+        "preview",
+        "image",
+        "link",
+        "html"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "markdown",
+        "save",
+        "encoding",
+        "bom",
+        "line endings"
+      ]
+    },
+    {
+      "id": "files.navigate",
+      "file": "files.navigate.md",
+      "keywords": [
+        "address",
+        "back",
+        "forward",
+        "unavailable",
+        "retry"
+      ]
+    },
+    {
+      "id": "files.views",
+      "file": "files.views.md",
+      "keywords": [
+        "all",
+        "files",
+        "recursive",
+        "folder",
+        "filter",
+        "selection",
+        "sorting"
+      ]
+    },
+    {
+      "id": "files.create",
+      "file": "files.create.md",
+      "keywords": [
+        "new",
+        "folder",
+        "create",
+        "file",
+        "invalid",
+        "name",
+        "picker"
+      ]
+    },
+    {
+      "id": "files.transfer",
+      "file": "files.transfer.md",
+      "keywords": [
+        "copy",
+        "cut",
+        "paste",
+        "move",
+        "drag",
+        "progress",
+        "cancellation"
+      ]
+    },
+    {
+      "id": "files.conflicts",
+      "file": "files.conflicts.md",
+      "keywords": [
+        "replace",
+        "skip",
+        "keep",
+        "both",
+        "apply",
+        "all",
+        "conflict",
+        "cancel"
+      ]
+    },
+    {
+      "id": "files.manage",
+      "file": "files.manage.md",
+      "keywords": [
+        "open",
+        "with",
+        "path",
+        "rename",
+        "extension",
+        "delete",
+        "permanent"
+      ]
+    },
+    {
+      "id": "files.favorites",
+      "file": "files.favorites.md",
+      "keywords": [
+        "favorite",
+        "star",
+        "folder",
+        "display",
+        "name",
+        "remove",
+        "shortcut"
+      ]
+    },
+    {
+      "id": "files.pinned",
+      "file": "files.pinned.md",
+      "keywords": [
+        "pin",
+        "document",
+        "missing",
+        "relocate",
+        "order",
+        "unpin"
+      ]
+    },
+    {
+      "id": "files.recent",
+      "file": "files.recent.md",
+      "keywords": [
+        "recent",
+        "history",
+        "locate",
+        "remove",
+        "opened",
+        "saved"
+      ]
+    },
+    {
+      "id": "files.batch",
+      "file": "files.batch.md",
+      "keywords": [
+        "multi",
+        "rename",
+        "mask",
+        "range",
+        "counter",
+        "regex",
+        "preview",
+        "rollback",
+        "conflict"
+      ]
+    },
+    {
+      "id": "files.properties",
+      "file": "files.properties.md",
+      "keywords": [
+        "properties",
+        "checksum",
+        "SHA256",
+        "SHA512",
+        "signature",
+        "metadata",
+        "filter",
+        "report"
+      ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "name",
+        "file",
+        "search",
+        "workspace",
+        "subfolders"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "contents",
+        "text",
+        "search",
+        "protected",
+        "cancel",
+        "delete"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "find",
+        "Ctrl+F",
+        "F3",
+        "case",
+        "match",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "preview",
+        "text",
+        "image",
+        "PDF",
+        "panel",
+        "size"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "image",
+        "zoom",
+        "rotate",
+        "fit",
+        "delete",
+        "recycle bin",
+        "restore",
+        "media",
+        "player"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "device",
+        "connect",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "transfer",
+        "copy",
+        "move",
+        "cancel",
+        "disconnect"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "limits",
+        "decrypt",
+        "permissions",
+        "recycle",
+        "search",
+        "properties"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "video",
+        "player",
+        "pause",
+        "seek",
+        "synchronization",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "external",
+        "viewer",
+        "association",
+        "application"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "print",
+        "printer",
+        "Markdown",
+        "pages",
+        "cancel"
+      ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "key",
+        "password",
+        "repeat",
+        "encryption"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "protect",
+        "copy",
+        "encrypt",
+        "replace",
+        "folder",
+        "batch"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "decrypt",
+        "format",
+        "source",
+        "text"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "reset",
+        "lock",
+        "inactivity",
+        "timer"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "compatibility",
+        "container",
+        "legacy",
+        "format"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "previous",
+        "version",
+        "backup",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "crash",
+        "unsaved",
+        "session",
+        "snapshot"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "snapshot",
+        "unlock",
+        "restore",
+        "password"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "error",
+        "write",
+        "access",
+        "busy",
+        "space"
+      ]
+    },
+    {
+      "id": "ai.start",
+      "file": "ai.start.md",
+      "keywords": [
+        "assistant",
+        "local",
+        "enable",
+        "panel"
+      ]
+    },
+    {
+      "id": "ai.models",
+      "file": "ai.models.md",
+      "keywords": [
+        "model",
+        "GGUF",
+        "projector",
+        "mmproj",
+        "test"
+      ]
+    },
+    {
+      "id": "ai.lifecycle",
+      "file": "ai.lifecycle.md",
+      "keywords": [
+        "loading",
+        "stop",
+        "unload",
+        "idle"
+      ]
+    },
+    {
+      "id": "ai.troubleshoot",
+      "file": "ai.troubleshoot.md",
+      "keywords": [
+        "error",
+        "memory",
+        "process",
+        "troubleshooting"
+      ]
+    },
+    {
+      "id": "ai.chat",
+      "file": "ai.chat.md",
+      "keywords": [
+        "chat",
+        "question",
+        "message",
+        "copy",
+        "selection",
+        "clear"
+      ]
+    },
+    {
+      "id": "ai.templates",
+      "file": "ai.templates.md",
+      "keywords": [
+        "template",
+        "instructions",
+        "create",
+        "delete",
+        "cancel"
+      ]
+    },
+    {
+      "id": "ai.attachments",
+      "file": "ai.attachments.md",
+      "keywords": [
+        "attachment",
+        "document",
+        "image",
+        "HEX",
+        "drag",
+        "snapshot"
+      ]
+    },
+    {
+      "id": "ai.apply",
+      "file": "ai.apply.md",
+      "keywords": [
+        "insert",
+        "replace",
+        "selection",
+        "table",
+        "Markdown",
+        "undo"
+      ]
+    },
+    {
+      "id": "ai.context",
+      "file": "ai.context.md",
+      "keywords": [
+        "context",
+        "tokens",
+        "limit",
+        "estimate",
+        "reuse",
+        "preload"
+      ]
+    },
+    {
+      "id": "ai.memory",
+      "file": "ai.memory.md",
+      "keywords": [
+        "memory",
+        "CPU",
+        "GPU",
+        "layers",
+        "reasoning",
+        "repetition"
+      ]
+    },
+    {
+      "id": "ai.performance",
+      "file": "ai.performance.md",
+      "keywords": [
+        "performance",
+        "balanced",
+        "power saving",
+        "optimal",
+        "measurement",
+        "stop"
+      ]
+    },
+    {
+      "id": "ai.appearance",
+      "file": "ai.appearance.md",
+      "keywords": [
+        "appearance",
+        "font",
+        "color",
+        "code",
+        "borders",
+        "Markdown",
+        "reset"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Help contents, search and illustrations"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Version and application information"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Theme, startup screen and default template"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Where data and preferences are stored"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Keyboard shortcuts and focus"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Application and help language"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Common problems and safe next steps"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Checking for and installing updates"
+      ]
+    }
+  ]
+}

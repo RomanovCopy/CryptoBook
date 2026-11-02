@@ -1,0 +1,32 @@
+{
+  "shotId": "S38-b",
+  "topicId": "ai.models",
+  "articleStepOrArea": "steps 2-4: enable, language GGUF and Save",
+  "culture": "de-DE",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "11c4261",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T17:42:23.3417387+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 740,
+    "height": 820
+  },
+  "rawPixels": {
+    "width": 724,
+    "height": 781
+  },
+  "outputPixels": {
+    "width": 724,
+    "height": 781
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/de-DE/S38-b.png",
+  "annotationFile": "docs/help/screenshots/annotations/de-DE/S38-b.json",
+  "outputFile": "docs/help/content/de-DE/images/S38-b.png",
+  "actionCheck": "Production AI settings/panel and adaptive worker exercised using synthetic text and image requests; native Browse and physical input not exercised.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\de-DE\\7bf1c5dc\\Demo\\Demo.txt",
+  "visualCheck": "Reviewed 2026-11-01: full-size PNGs and locale contact sheets; localized commands, state, synthetic content and annotations checked; no command clipping. Long paths/model names use production textbox scrolling or ellipsis."
+}

@@ -21,6 +21,7 @@ namespace CryptoBook.DTO
         public int SkippedCount { get; }
         public bool Canceled { get; }
         public bool HasPartialChanges { get; }
+        public IReadOnlyDictionary<string, string> RestoredPaths { get; init; } = new Dictionary<string, string>();
         public bool Success => !Canceled && Results.All(result => result.Success);
         public FileOperationResult? Failure => Results.FirstOrDefault(result => !result.Success);
     }

@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-30",
+  "configuration": "Release",
+  "sdk": "10.0.403",
+  "runtime": "10.0.14",
+  "total": 1187,
+  "passed": 1187,
+  "failed": 0,
+  "skipped": 0,
+  "isolatedProcesses": 8,
+  "groups": [
+    {
+      "group": "ai-integration",
+      "total": 150,
+      "passed": 150,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/ai-integration.trx"
+    },
+    {
+      "group": "ai-runtime",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/ai-runtime.trx"
+    },
+    {
+      "group": "batch-rename-window",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/batch-rename-window.trx"
+    },
+    {
+      "group": "document-search",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/document-search.trx"
+    },
+    {
+      "group": "help",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/help.trx"
+    },
+    {
+      "group": "image-layout",
+      "total": 19,
+      "passed": 19,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/image-layout.trx"
+    },
+    {
+      "group": "remaining",
+      "total": 947,
+      "passed": 947,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/remaining.trx"
+    },
+    {
+      "group": "worker-cancellation",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "source": "artifacts/stage6-fixes/TestResults/worker-cancellation.trx"
+    }
+  ],
+  "command": "tools/Run-ReleaseTests.ps1 -ResultsDirectory artifacts/stage6-fixes/TestResults",
+  "notes": "EmbeddedImageLayoutServiceTests now run in a separate process to avoid Application resources owned by another STA Dispatcher. Recovery restart is simulated using persisted logs and new service instances, without killing the process during writes."
+}

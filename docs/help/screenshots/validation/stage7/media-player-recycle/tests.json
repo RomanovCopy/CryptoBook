@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-31",
+  "configuration": "Release",
+  "purpose": "Media player warning, Windows Recycle Bin, cancellation, failure, encrypted originals, navigation and packaged help",
+  "total": 58,
+  "passed": 58,
+  "failed": 0,
+  "groups": [
+    {
+      "report": "artifacts/TestResults/media-player-deletion-verified.trx",
+      "total": 35,
+      "passed": 35,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "report": "artifacts/TestResults/media-player-help.trx",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "shellIntegration": "Executed outside the sandbox; only disposable fixtures were recycled and restored."
+}

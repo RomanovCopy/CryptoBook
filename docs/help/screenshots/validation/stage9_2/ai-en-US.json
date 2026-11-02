@@ -1,0 +1,12 @@
+{
+  "culture": "en-US",
+  "model": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-Q4_K_S.gguf",
+  "answer": "| Route | Minutes |\n|---|---|\n| North | 73 |\n| South | 24 |",
+  "followup": "73",
+  "vision": "The red square and blue circle are the shapes in the image, and the MOON code is 73.",
+  "templates": "Create/edit/empty/duplicate/last/Cancel/select/delete",
+  "clipboard": "Memory sink only, original source/order and failure checked",
+  "editors": "Ordinary formatted table, Markdown source, insert/replace/multiple, one-step Undo/Redo, preview/read-only refusal",
+  "attachments": "Text/limited HEX, queued picker, routed Drop, entire-document immutable snapshot, real mixed vision, follow-up, limits",
+  "personalData": false
+}

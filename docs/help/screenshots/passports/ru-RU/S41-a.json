@@ -1,0 +1,32 @@
+{
+  "shotId": "S41-a",
+  "topicId": "ai.templates",
+  "articleStepOrArea": "steps 1-4: create/edit name and instruction, Save",
+  "culture": "ru-RU",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "11c4261",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T18:25:01.1339093+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 740,
+    "height": 1000
+  },
+  "rawPixels": {
+    "width": 724,
+    "height": 961
+  },
+  "outputPixels": {
+    "width": 724,
+    "height": 961
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S41-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/ru-RU/S41-a.json",
+  "outputFile": "docs/help/content/ru-RU/images/S41-a.png",
+  "actionCheck": "Production AI chat/templates/readers/drop behavior and both real editors; real GGUF/vision output, one-step Undo/Redo. Native attachment-picker decisions queued; Copy uses a memory sink; no physical input or system clipboard.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\7e96c03d\\Demo\\Practice.txt",
+  "visualCheck": "Reviewed 2026-11-01: all localized states, editor contents, commands, error/selection state and annotations checked in PNGs and locale contact sheets. Corrected control badges above icons; full template fields and Save/Cancel visible."
+}

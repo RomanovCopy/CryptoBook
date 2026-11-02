@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-31",
+  "sourceHead": "967a8367d5722bb9ce8c4c07b7fff80c1b70bca3",
+  "configuration": "Release",
+  "helpTests": {
+    "runner": "dotnet run, project xUnit v3 runner; isolated HelpTests class",
+    "skipped": 0,
+    "report": "tests/help.trx",
+    "passed": 23,
+    "failed": 0,
+    "total": 23
+  },
+  "mtp": {
+    "total": 120,
+    "cultures": 4,
+    "checksPerCulture": 30,
+    "bindingErrors": 0
+  },
+  "media": {
+    "checks": 16,
+    "culture": "ru-RU",
+    "bindingErrors": 0
+  },
+  "resumedReconnect": {
+    "checks": 7,
+    "culture": "ru-RU",
+    "bindingErrors": 0
+  },
+  "embeddedResources": {
+    "total": 128,
+    "cultures": 4,
+    "checksPerCulture": 32,
+    "bindingErrors": 0
+  },
+  "releaseBuild": {
+    "helpHost": "build-help.txt",
+    "solution": "build-solution.txt",
+    "errors": 0,
+    "warnings": 0
+  },
+  "limitations": "Targeted stage7 acceptance and help regression only. No full release test run, installation, publication, physical print, second-device transfer or cable loss during writing."
+}

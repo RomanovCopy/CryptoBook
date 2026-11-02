@@ -77,6 +77,16 @@ namespace CryptoBook.Behaviors
         private bool serviceEventsAttached;
         private bool systemEventsAttached;
         private readonly List<Window> securityHiddenWindows = new();
+        private CommandBinding? restoreCrashBinding;
+        private CommandBinding? restoreLockBinding;
+
+        public static readonly DependencyProperty CrashRecoveryProperty = DependencyProperty.Register(
+            nameof(CrashRecovery), typeof(CryptoBook.ViewModels.CrashRecoveryViewModel), typeof(WindowBehavior));
+        public CryptoBook.ViewModels.CrashRecoveryViewModel? CrashRecovery
+        {
+            get => (CryptoBook.ViewModels.CrashRecoveryViewModel?)GetValue(CrashRecoveryProperty);
+            set => SetValue(CrashRecoveryProperty, value);
+        }
 
         public ICommand? CloseSidePanelCommand
         {
@@ -156,10 +166,18 @@ namespace CryptoBook.Behaviors
                 unlockButton.Click += OnUnlockClick;
             if(AssociatedObject.FindName("SecurityCloseButton") is Button closeButton)
                 closeButton.Click += OnSecurityCloseClick;
+            restoreCrashBinding = new CommandBinding(RecoveryCommands.RestoreCrashSnapshot,
+                (_, args) => { CrashRecovery?.Restore.Execute(null); args.Handled = true; },
+                (_, args) => { args.CanExecute = !IsWorkspaceLocked && !unlockDialogOpen && CrashRecovery?.Restore.CanExecute(null) == true; args.Handled = true; });
+            restoreLockBinding = new CommandBinding(RecoveryCommands.RestoreLockSnapshot,
+                (_, args) => { ShowUnlockDialog(); args.Handled = true; },
+                (_, args) => { args.CanExecute = !unlockDialogOpen && SnapshotService?.Exists == true &&
+                    KeyResetService?.State is not (KeyResetState.Resetting or KeyResetState.Unlocking or KeyResetState.Restoring); args.Handled = true; });
+            AssociatedObject.CommandBindings.Add(restoreCrashBinding);
+            AssociatedObject.CommandBindings.Add(restoreLockBinding);
 
             if(CloseCoordinator is not null)
                 await CloseCoordinator.InitializeAsync();
-
             KeyResetService?.Start();
             AttachSystemEvents();
 
@@ -198,6 +216,7 @@ namespace CryptoBook.Behaviors
             KeyResetService?.HasRetainedDocument == true);
 
         private void OnUnlockClick(object sender, RoutedEventArgs args) => ShowUnlockDialog();
+
         private void OnSecurityCloseClick(object sender, RoutedEventArgs args) => AssociatedObject.Close();
 
         private void OnDocumentTextChanged(object sender, TextChangedEventArgs args) =>
@@ -275,6 +294,7 @@ namespace CryptoBook.Behaviors
                     securityHiddenWindows.Clear();
                 }
             }
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private void OnSnapshotFailed(object? sender, Exception exception)
@@ -285,7 +305,7 @@ namespace CryptoBook.Behaviors
                 WpfMessageBox.Show(
                     AssociatedObject,
                     LocalizationManager.GetString("Security.SnapshotFailedLocked"),
-                    "Сброс ключа",
+                    LocalizationManager.GetString("Security.ResetTitle"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }));
@@ -350,14 +370,15 @@ namespace CryptoBook.Behaviors
             {
                 WpfMessageBox.Show(
                     AssociatedObject,
-                    "Не удалось восстановить документ.",
-                    "Восстановление документа",
+                    LocalizationManager.GetString("Security.RestoreFailed"),
+                    LocalizationManager.GetString("Security.RestoreTitle"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
             finally
             {
                 unlockDialogOpen = false;
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
@@ -387,6 +408,8 @@ namespace CryptoBook.Behaviors
                 button.Click -= OnUnlockClick;
             if(AssociatedObject.FindName("SecurityCloseButton") is Button closeButton)
                 closeButton.Click -= OnSecurityCloseClick;
+            if(restoreCrashBinding is not null) AssociatedObject.CommandBindings.Remove(restoreCrashBinding);
+            if(restoreLockBinding is not null) AssociatedObject.CommandBindings.Remove(restoreLockBinding);
             securityHiddenWindows.Clear();
             Cleanup();
         }
@@ -423,6 +446,8 @@ namespace CryptoBook.Behaviors
 
         private void Cleanup()
         {
+            if(restoreCrashBinding is not null) AssociatedObject.CommandBindings.Remove(restoreCrashBinding);
+            if(restoreLockBinding is not null) AssociatedObject.CommandBindings.Remove(restoreLockBinding);
             KeyResetService?.Stop();
             InputManager.Current.PreProcessInput -= OnApplicationInput;
 

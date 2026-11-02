@@ -1,0 +1,13 @@
+{
+  "culture": "ru-RU",
+  "commit": "967a8367d5722bb9ce8c4c07b7fff80c1b70bca3",
+  "frameSource": "Flyleaf TakeSnapshotToBitmapSource, actual decoder output, no compositing",
+  "duration": 30,
+  "audioStreamIndex": 1,
+  "synchronizationDriftSeconds": 0,
+  "frameFiles": [
+    "flyleaf-frame-1.png",
+    "flyleaf-frame-2.png"
+  ],
+  "limitations": "Audio stream loading does not prove audible sound. Physical native controls and audibility require human observations. Synchronization is experimental and not guaranteed frame-accurate."
+}

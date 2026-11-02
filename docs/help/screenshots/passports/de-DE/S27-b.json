@@ -1,0 +1,32 @@
+{
+  "shotId": "S27-b",
+  "topicId": "search.document",
+  "articleStepOrArea": "no matches and Aa",
+  "culture": "de-DE",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "b00e6d713bc8248da74c06fa1a0347a191fa5fb5",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-31T09:22:53.5760976+00:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 1438,
+    "height": 300
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/de-DE/S27-b.png",
+  "annotationFile": "docs/help/screenshots/annotations/de-DE/S27-b.json",
+  "outputFile": "docs/help/content/de-DE/images/S27-b.png",
+  "actionCheck": "Production commands and services exercised on disposable files; see stage7 capture and verify reports. No physical keyboard/mouse input.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\de-DE\\0a7bb816\\Demo\\Plan.txt",
+  "visualCheck": "Reviewed 2026-10-31: actual language, readable command/state, no fabricated controls; contact-de-DE-1/2/3.png. S27-b reviewed after recapture."
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "group": "help",
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9_2\\help.trx",
+    "sha256": "D800BCD5EF6D1D01B803912511F6ADBA950330E8E3BBB295B45B792CFBDAA907"
+  },
+  {
+    "group": "ai-integration",
+    "total": 150,
+    "passed": 150,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9_2\\ai-integration.trx",
+    "sha256": "3624E2775CC4D9E9CAC98BCBE1BAEE0A34F445FFE3DE8CC77FC2DBAF28C7236A"
+  },
+  {
+    "group": "ai-editors-chat",
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "source": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\stage9_2\\ai-editors-chat.trx",
+    "sha256": "07C5FAF83488D24E059B25CB70E6B3CBAE715509ABF67E57267E9831FCA50B0A"
+  }
+]

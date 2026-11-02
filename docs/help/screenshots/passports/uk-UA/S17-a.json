@@ -1,0 +1,32 @@
+{
+  "shotId": "S17-a",
+  "topicId": "md.edit",
+  "articleStepOrArea": "Markdown source and save commands",
+  "culture": "uk-UA",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "690ab58c5e789234feaa7450f9bfa03ba2db9ac7",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-10-30T15:00:07.9279694+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S17-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/uk-UA/S17-a.json",
+  "outputFile": "docs/help/content/uk-UA/images/S17-a.png",
+  "actionCheck": "Production commands exercised separately in this run; folder picker supplies the demo folder; no physical mouse/keyboard.",
+  "demoFile": "D:\\VisualStudio\\Проекты\\CryptoBook\\artifacts\\hv\\uk-UA\\8bd435c7\\Demo\\Examples.md",
+  "visualCheck": "Reviewed 2026-10-30: all four culture contact sheets, full-size dialogs/manager/tree and corrected scaled image bounds; visible production WPF, no clipped essential commands."
+}

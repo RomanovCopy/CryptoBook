@@ -1,0 +1,7 @@
+{
+  "original": "Second.txt",
+  "typed": "WithoutExtension",
+  "actual": "WithoutExtension.txt",
+  "restored": true,
+  "bytesPreserved": true
+}

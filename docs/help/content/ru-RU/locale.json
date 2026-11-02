@@ -1,0 +1,845 @@
+{
+  "culture": "ru-RU",
+  "sections": {
+    "start": "Начало работы",
+    "doc": "Документы",
+    "edit": "Редактирование текста",
+    "content": "Содержимое документа",
+    "md": "Markdown",
+    "files": "Файлы и папки",
+    "search": "Поиск",
+    "devices": "Подключённые устройства",
+    "view": "Просмотр и печать",
+    "security": "Защита данных",
+    "recovery": "Сохранение и восстановление",
+    "ai": "Локальный AI-помощник",
+    "settings": "Настройки и решение проблем",
+    "help": "Работа со справкой"
+  },
+  "topics": [
+    {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Установка и запуск portable"
+      ]
+    },
+    {
+      "id": "start.interface",
+      "file": "start.interface.md",
+      "keywords": [
+        "окно",
+        "интерфейс",
+        "начальный экран",
+        "боковое меню",
+        "настройки",
+        "AI-помощник",
+        "масштаб"
+      ]
+    },
+    {
+      "id": "doc.create",
+      "file": "doc.create.md",
+      "keywords": [
+        "новый документ",
+        "создать",
+        "сохранить",
+        "RTF",
+        "имя файла",
+        "пустой документ",
+        "план поездки"
+      ]
+    },
+    {
+      "id": "start.workspace",
+      "file": "start.workspace.md",
+      "keywords": [
+        "рабочая директория",
+        "папка",
+        "поиск"
+      ]
+    },
+    {
+      "id": "doc.templates",
+      "file": "doc.templates.md",
+      "keywords": [
+        "шаблон",
+        "заметки",
+        "встреча",
+        "по умолчанию"
+      ]
+    },
+    {
+      "id": "doc.open",
+      "file": "doc.open.md",
+      "keywords": [
+        "открыть",
+        "файл",
+        "документ",
+        "ассоциация"
+      ]
+    },
+    {
+      "id": "doc.save",
+      "file": "doc.save.md",
+      "keywords": [
+        "сохранить",
+        "сохранить как",
+        "отмена",
+        "несохранённые",
+        "ошибка"
+      ]
+    },
+    {
+      "id": "doc.formats",
+      "file": "doc.formats.md",
+      "keywords": [
+        "формат",
+        "кодировка",
+        "BOM",
+        "UTF-8",
+        "RTF",
+        "XAML"
+      ]
+    },
+    {
+      "id": "doc.switch",
+      "file": "doc.switch.md",
+      "keywords": [
+        "переключить",
+        "переименовать",
+        "закрыть",
+        "независимые редакторы"
+      ]
+    },
+    {
+      "id": "edit.basic",
+      "file": "edit.basic.md",
+      "keywords": [
+        "выделение",
+        "буфер",
+        "отмена",
+        "повтор",
+        "очистить"
+      ]
+    },
+    {
+      "id": "edit.font",
+      "file": "edit.font.md",
+      "keywords": [
+        "шрифт",
+        "размер",
+        "полужирный",
+        "курсив",
+        "цвет"
+      ]
+    },
+    {
+      "id": "edit.palette",
+      "file": "edit.palette.md",
+      "keywords": [
+        "палитра",
+        "чернила",
+        "слот",
+        "цвет"
+      ]
+    },
+    {
+      "id": "edit.paragraph",
+      "file": "edit.paragraph.md",
+      "keywords": [
+        "абзац",
+        "выравнивание",
+        "отступ",
+        "интервал",
+        "списки"
+      ]
+    },
+    {
+      "id": "edit.links",
+      "file": "edit.links.md",
+      "keywords": [
+        "ссылка",
+        "адрес",
+        "гиперссылка"
+      ]
+    },
+    {
+      "id": "edit.page",
+      "file": "edit.page.md",
+      "keywords": [
+        "страница",
+        "формат",
+        "ориентация",
+        "бумага"
+      ]
+    },
+    {
+      "id": "edit.view",
+      "file": "edit.view.md",
+      "keywords": [
+        "чтение",
+        "просмотр",
+        "масштаб",
+        "вписать"
+      ]
+    },
+    {
+      "id": "content.images",
+      "file": "content.images.md",
+      "keywords": [
+        "изображение",
+        "вставка",
+        "размер",
+        "обтекание"
+      ]
+    },
+    {
+      "id": "content.background",
+      "file": "content.background.md",
+      "keywords": [
+        "фон",
+        "изображение",
+        "кадрирование"
+      ]
+    },
+    {
+      "id": "content.tables",
+      "file": "content.tables.md",
+      "keywords": [
+        "таблица",
+        "ячейка",
+        "строка",
+        "столбец"
+      ]
+    },
+    {
+      "id": "content.bookmarks",
+      "file": "content.bookmarks.md",
+      "keywords": [
+        "закладка",
+        "заметка",
+        "переход",
+        "индекс"
+      ]
+    },
+    {
+      "id": "content.structure",
+      "file": "content.structure.md",
+      "keywords": [
+        "структура",
+        "дерево",
+        "абзац",
+        "порядок"
+      ]
+    },
+    {
+      "id": "md.edit",
+      "file": "md.edit.md",
+      "keywords": [
+        "markdown",
+        "исходник",
+        "редактор",
+        "просмотр"
+      ]
+    },
+    {
+      "id": "md.syntax",
+      "file": "md.syntax.md",
+      "keywords": [
+        "markdown",
+        "синтаксис",
+        "разметка",
+        "код",
+        "таблицы"
+      ]
+    },
+    {
+      "id": "md.preview",
+      "file": "md.preview.md",
+      "keywords": [
+        "markdown",
+        "просмотр",
+        "изображение",
+        "ссылка",
+        "html"
+      ]
+    },
+    {
+      "id": "md.save",
+      "file": "md.save.md",
+      "keywords": [
+        "markdown",
+        "сохранение",
+        "кодировка",
+        "bom",
+        "перевод строк"
+      ]
+    },
+    {
+      "id": "files.navigate",
+      "file": "files.navigate.md",
+      "keywords": [
+        "адрес",
+        "назад",
+        "вперёд",
+        "недоступно",
+        "повторить"
+      ]
+    },
+    {
+      "id": "files.views",
+      "file": "files.views.md",
+      "keywords": [
+        "все",
+        "файлы",
+        "вложенные",
+        "папки",
+        "фильтр",
+        "выделение",
+        "сортировка"
+      ]
+    },
+    {
+      "id": "files.create",
+      "file": "files.create.md",
+      "keywords": [
+        "новая",
+        "папка",
+        "создать",
+        "файл",
+        "недопустимое",
+        "имя",
+        "выбор"
+      ]
+    },
+    {
+      "id": "files.transfer",
+      "file": "files.transfer.md",
+      "keywords": [
+        "копировать",
+        "вырезать",
+        "вставить",
+        "переместить",
+        "перетащить",
+        "прогресс",
+        "отмена"
+      ]
+    },
+    {
+      "id": "files.conflicts",
+      "file": "files.conflicts.md",
+      "keywords": [
+        "заменить",
+        "пропустить",
+        "сохранить",
+        "оба",
+        "ко",
+        "всем",
+        "конфликт",
+        "отмена"
+      ]
+    },
+    {
+      "id": "files.manage",
+      "file": "files.manage.md",
+      "keywords": [
+        "открыть",
+        "помощью",
+        "путь",
+        "переименовать",
+        "расширение",
+        "удалить",
+        "безвозвратно"
+      ]
+    },
+    {
+      "id": "files.favorites",
+      "file": "files.favorites.md",
+      "keywords": [
+        "избранное",
+        "звезда",
+        "папка",
+        "имя",
+        "удалить",
+        "ссылка"
+      ]
+    },
+    {
+      "id": "files.pinned",
+      "file": "files.pinned.md",
+      "keywords": [
+        "закрепить",
+        "документ",
+        "недоступный",
+        "найти",
+        "порядок",
+        "открепить"
+      ]
+    },
+    {
+      "id": "files.recent",
+      "file": "files.recent.md",
+      "keywords": [
+        "недавние",
+        "последние",
+        "история",
+        "найти",
+        "удалить",
+        "открытие",
+        "сохранение"
+      ]
+    },
+    {
+      "id": "files.batch",
+      "file": "files.batch.md",
+      "keywords": [
+        "групповое",
+        "переименование",
+        "маска",
+        "диапазон",
+        "счётчик",
+        "regex",
+        "предпросмотр",
+        "откат",
+        "конфликт"
+      ]
+    },
+    {
+      "id": "files.properties",
+      "file": "files.properties.md",
+      "keywords": [
+        "свойства",
+        "контрольные",
+        "суммы",
+        "SHA256",
+        "SHA512",
+        "подпись",
+        "метаданные",
+        "фильтр",
+        "отчёт"
+      ]
+    },
+    {
+      "id": "search.name",
+      "file": "search.name.md",
+      "keywords": [
+        "имя",
+        "файл",
+        "поиск",
+        "рабочая",
+        "папка",
+        "подпапки"
+      ]
+    },
+    {
+      "id": "search.workspace",
+      "file": "search.workspace.md",
+      "keywords": [
+        "содержимое",
+        "поиск",
+        "текст",
+        "защищённый",
+        "отмена",
+        "удалить"
+      ]
+    },
+    {
+      "id": "search.document",
+      "file": "search.document.md",
+      "keywords": [
+        "найти",
+        "Ctrl+F",
+        "F3",
+        "регистр",
+        "совпадение",
+        "Markdown"
+      ]
+    },
+    {
+      "id": "view.preview",
+      "file": "view.preview.md",
+      "keywords": [
+        "предпросмотр",
+        "текст",
+        "изображение",
+        "PDF",
+        "панель",
+        "размер"
+      ]
+    },
+    {
+      "id": "view.images",
+      "file": "view.images.md",
+      "keywords": [
+        "изображение",
+        "масштаб",
+        "поворот",
+        "вписать",
+        "удалить",
+        "корзина",
+        "восстановить",
+        "медиаплеер"
+      ]
+    },
+    {
+      "id": "devices.android",
+      "file": "devices.android.md",
+      "keywords": [
+        "Android",
+        "MTP",
+        "USB",
+        "устройство",
+        "подключение",
+        "ADB"
+      ]
+    },
+    {
+      "id": "devices.transfers",
+      "file": "devices.transfers.md",
+      "keywords": [
+        "Android",
+        "передача",
+        "копирование",
+        "перемещение",
+        "отмена",
+        "отключение"
+      ]
+    },
+    {
+      "id": "devices.limits",
+      "file": "devices.limits.md",
+      "keywords": [
+        "Android",
+        "ограничения",
+        "расшифровать",
+        "права",
+        "корзина",
+        "поиск",
+        "свойства"
+      ]
+    },
+    {
+      "id": "view.video",
+      "file": "view.video.md",
+      "keywords": [
+        "видео",
+        "плеер",
+        "пауза",
+        "перемотка",
+        "синхронизация",
+        "Flyleaf"
+      ]
+    },
+    {
+      "id": "view.pdf",
+      "file": "view.pdf.md",
+      "keywords": [
+        "PDF",
+        "внешний",
+        "просмотр",
+        "ассоциация",
+        "приложение"
+      ]
+    },
+    {
+      "id": "view.print",
+      "file": "view.print.md",
+      "keywords": [
+        "печать",
+        "принтер",
+        "Markdown",
+        "страницы",
+        "отмена"
+      ]
+    },
+    {
+      "id": "security.password",
+      "file": "security.password.md",
+      "keywords": [
+        "ключ",
+        "пароль",
+        "повтор",
+        "шифрование"
+      ]
+    },
+    {
+      "id": "security.protect",
+      "file": "security.protect.md",
+      "keywords": [
+        "защита",
+        "копия",
+        "шифровать",
+        "заменить",
+        "папка",
+        "пакет"
+      ]
+    },
+    {
+      "id": "security.decrypt",
+      "file": "security.decrypt.md",
+      "keywords": [
+        "расшифровать",
+        "формат",
+        "исходник",
+        "текст"
+      ]
+    },
+    {
+      "id": "security.lock",
+      "file": "security.lock.md",
+      "keywords": [
+        "сброс",
+        "блокировка",
+        "бездействие",
+        "таймер"
+      ]
+    },
+    {
+      "id": "security.compatibility",
+      "file": "security.compatibility.md",
+      "keywords": [
+        "совместимость",
+        "контейнер",
+        "старый",
+        "формат"
+      ]
+    },
+    {
+      "id": "recovery.backup",
+      "file": "recovery.backup.md",
+      "keywords": [
+        "предыдущая",
+        "версия",
+        "резервная",
+        "копия",
+        "bak"
+      ]
+    },
+    {
+      "id": "recovery.crash",
+      "file": "recovery.crash.md",
+      "keywords": [
+        "аварийная",
+        "копия",
+        "незавершённый",
+        "сеанс",
+        "снимок"
+      ]
+    },
+    {
+      "id": "recovery.lock",
+      "file": "recovery.lock.md",
+      "keywords": [
+        "снимок",
+        "разблокировка",
+        "восстановление",
+        "пароль"
+      ]
+    },
+    {
+      "id": "recovery.write",
+      "file": "recovery.write.md",
+      "keywords": [
+        "ошибка",
+        "запись",
+        "доступ",
+        "занят",
+        "место"
+      ]
+    },
+    {
+      "id": "ai.start",
+      "file": "ai.start.md",
+      "keywords": [
+        "помощник",
+        "локально",
+        "включить",
+        "панель"
+      ]
+    },
+    {
+      "id": "ai.models",
+      "file": "ai.models.md",
+      "keywords": [
+        "модель",
+        "GGUF",
+        "проектор",
+        "mmproj",
+        "проверка"
+      ]
+    },
+    {
+      "id": "ai.lifecycle",
+      "file": "ai.lifecycle.md",
+      "keywords": [
+        "загрузка",
+        "остановить",
+        "выгрузить",
+        "простой"
+      ]
+    },
+    {
+      "id": "ai.troubleshoot",
+      "file": "ai.troubleshoot.md",
+      "keywords": [
+        "ошибка",
+        "память",
+        "процесс",
+        "диагностика"
+      ]
+    },
+    {
+      "id": "ai.chat",
+      "file": "ai.chat.md",
+      "keywords": [
+        "чат",
+        "вопрос",
+        "сообщение",
+        "копировать",
+        "выбор",
+        "очистить"
+      ]
+    },
+    {
+      "id": "ai.templates",
+      "file": "ai.templates.md",
+      "keywords": [
+        "шаблон",
+        "инструкция",
+        "создать",
+        "удалить",
+        "отменить"
+      ]
+    },
+    {
+      "id": "ai.attachments",
+      "file": "ai.attachments.md",
+      "keywords": [
+        "вложение",
+        "документ",
+        "изображение",
+        "HEX",
+        "перетащить",
+        "снимок"
+      ]
+    },
+    {
+      "id": "ai.apply",
+      "file": "ai.apply.md",
+      "keywords": [
+        "вставить",
+        "заменить",
+        "выделение",
+        "таблица",
+        "Markdown",
+        "отмена"
+      ]
+    },
+    {
+      "id": "ai.context",
+      "file": "ai.context.md",
+      "keywords": [
+        "контекст",
+        "токены",
+        "лимит",
+        "оценка",
+        "кеш",
+        "предзагрузка"
+      ]
+    },
+    {
+      "id": "ai.memory",
+      "file": "ai.memory.md",
+      "keywords": [
+        "память",
+        "процессор",
+        "видеокарта",
+        "слои",
+        "рассуждения",
+        "повторы"
+      ]
+    },
+    {
+      "id": "ai.performance",
+      "file": "ai.performance.md",
+      "keywords": [
+        "производительность",
+        "сбалансированный",
+        "экономичный",
+        "оптимальный",
+        "замер",
+        "остановка"
+      ]
+    },
+    {
+      "id": "ai.appearance",
+      "file": "ai.appearance.md",
+      "keywords": [
+        "оформление",
+        "шрифт",
+        "цвет",
+        "код",
+        "рамки",
+        "Markdown",
+        "сброс"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Оглавление, поиск и иллюстрации справки"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Версия и сведения о программе"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Тема, начальный экран и шаблон"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Где хранятся данные и настройки"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Горячие клавиши и область фокуса"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Язык приложения и справки"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Типичные проблемы и безопасные действия"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Проверка и установка обновления"
+      ]
+    }
+  ]
+}

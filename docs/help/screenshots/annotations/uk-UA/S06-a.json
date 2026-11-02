@@ -1,0 +1,22 @@
+{
+  "shotId": "S06-a",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S06-a.png",
+  "crop": {
+    "x": 0,
+    "y": 40,
+    "width": 900,
+    "height": 850
+  },
+  "marks": [
+    {
+      "number": 9,
+      "shape": "rectangle",
+      "x": 0.014444444444444444,
+      "y": 0.5609058823529411,
+      "width": 0.26555555555555554,
+      "height": 0.06264705882352942,
+      "badge": null
+    }
+  ]
+}

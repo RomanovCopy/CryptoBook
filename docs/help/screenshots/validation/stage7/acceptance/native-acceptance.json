@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-31",
+  "method": "UI Automation of actual WPF acceptance panel, Windows PrintDialog, printer selector and native Save Print Output dialog",
+  "externalPdf": {
+    "pageControl": "AVPageView",
+    "parser": "Poppler pdfinfo",
+    "viewerWindow": "CryptoBook-Stage7.pdf - Adobe Acrobat Reader (64-bit)",
+    "fixture": "Complete one-page ASCII PDF with valid xref",
+    "currentDocumentPreserved": true
+  },
+  "nativePrint": {
+    "outputs": [
+      {
+        "file": "ordinary-output.pdf",
+        "bytes": 141733,
+        "sha256": "C9FF4850B48328BA582336C780C236C409329A848518256B300C005D668F7B4A",
+        "pages": 1,
+        "pageSize": "A4",
+        "visualReview": "Poppler render inspected; formatted heading/list preserved; no clipping"
+      },
+      {
+        "file": "markdown-output.pdf",
+        "bytes": 253349,
+        "sha256": "12D58EF89B63E25C92487E7DF1D849E427D43B28C94A50E2FB04E3325374DF08",
+        "pages": 1,
+        "pageSize": "A4",
+        "visualReview": "Poppler render inspected; formatted heading/list preserved; no clipping"
+      }
+    ],
+    "physicalEpsonSelected": false,
+    "verifiedSelectedPrinter": "Microsoft Print to PDF",
+    "cancelInvoked": true
+  },
+  "source": "native-session.json",
+  "limitations": "No physical print. No accepted screenshot of native print dialog. PDFs retain Windows account metadata and remain in ignored artifacts; only rendered pages and hashes retained here."
+}

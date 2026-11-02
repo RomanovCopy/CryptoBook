@@ -308,7 +308,9 @@ namespace CryptoBook.Models
             {
                 await messageService.ShowMessage(
                     LocalizationManager.GetString("Document.SaveError"),
-                    exception.Message);
+                    exception is IOException && (exception.HResult & 0xFFFF) is 32 or 33
+                        ? LocalizationManager.GetString("Document.FileInUse")
+                        : exception.Message);
                 return false;
             }
             finally

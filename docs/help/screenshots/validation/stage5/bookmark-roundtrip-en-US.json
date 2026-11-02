@@ -1,0 +1,8 @@
+{
+  "beforeSave": 1,
+  "anchorsWithoutBackground": 0,
+  "afterReopen": 0,
+  "namesAfterReopen": [],
+  "format": "XamlPackage",
+  "operation": "Save with background finalization, open another file, reopen saved package and rebuild bookmark index"
+}

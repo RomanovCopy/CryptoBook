@@ -1,0 +1,33 @@
+{
+  "shotId": "S36-d",
+  "topicId": "recovery.lock",
+  "articleStepOrArea": "open saved file or restore unsaved snapshot",
+  "culture": "ru-RU",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "8daa2d5ff29c7f9645eea81775e771a402be2001",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T12:46:39.1031391+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 640,
+    "height": 235.79
+  },
+  "rawPixels": {
+    "width": 624,
+    "height": 197
+  },
+  "outputPixels": {
+    "width": 624,
+    "height": 197
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/ru-RU/S36-d.png",
+  "annotationFile": "docs/help/screenshots/annotations/ru-RU/S36-d.json",
+  "outputFile": "docs/help/content/ru-RU/images/S36-d.png",
+  "actionCheck": "Stage8 production save/export/backup/key/reset/recovery commands and real disposable file operations; 87 passing checks per culture. Native Save As and .bak confirmation decisions supplied by queues; no physical input.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\ru-RU\\35bb481a\\Demo\\План поездки.cbook",
+  "visualCheck": "Reviewed 2026-11-01: visible production WPF, matching UI language, complete controls/warnings, fictional fixtures, hidden password fields; contact sheet and individual dialog/restore checks.",
+  "validationReport": "docs/help/screenshots/validation/stage8/capture-ru-RU.json"
+}

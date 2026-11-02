@@ -1,0 +1,33 @@
+{
+  "shotId": "S37-a",
+  "topicId": "recovery.backup",
+  "articleStepOrArea": "previous-version menu entry",
+  "culture": "en-US",
+  "osCulture": "ru-RU",
+  "version": "1.1.5.2",
+  "commit": "8daa2d5ff29c7f9645eea81775e771a402be2001",
+  "dirtyWorkingTree": true,
+  "capturedAt": "2026-11-01T13:33:45.7379794+03:00",
+  "captureMethod": "RenderTargetBitmap; visible production WPF; isolated App.OnStartup",
+  "theme": "Light",
+  "windowDip": {
+    "width": 1440,
+    "height": 960
+  },
+  "rawPixels": {
+    "width": 1440,
+    "height": 960
+  },
+  "outputPixels": {
+    "width": 950,
+    "height": 850
+  },
+  "dpi": 96,
+  "rawFile": "docs/help/screenshots/raw/en-US/S37-a.png",
+  "annotationFile": "docs/help/screenshots/annotations/en-US/S37-a.json",
+  "outputFile": "docs/help/content/en-US/images/S37-a.png",
+  "actionCheck": "90 passing stage8 checks per culture, including no automatic recovery banners and actual routed File-menu commands.",
+  "demoFile": "D:\\Visual Studio\\Projects\\CryptoBook\\artifacts\\hv\\en-US\\3df4073d\\Demo\\Journey plan.cbook",
+  "visualCheck": "Reviewed 2026-11-01 after removing automatic recovery notices: real File menu, correct localized recovery command, preserved fictional files, complete highlighted entry.",
+  "validationReport": "docs/help/screenshots/validation/stage8/manual-recovery/capture-en-US.json"
+}

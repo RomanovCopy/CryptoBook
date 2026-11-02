@@ -1,0 +1,26 @@
+{
+  "cultures": ["en-US", "ru-RU", "uk-UA", "de-DE"],
+  "captions": {
+    "S04-a": ["Paper size and orientation in the new document dialog", "Формат листа и ориентация в диалоге создания документа", "Формат аркуша й орієнтація в діалозі створення документа", "Papierformat und Ausrichtung beim Erstellen eines Dokuments"],
+    "S08-a": ["Editor context menu with undo and text cleanup commands", "Контекстное меню редактора с отменой и очисткой текста", "Контекстне меню редактора зі скасуванням і очищенням тексту", "Editor-Kontextmenü mit Rückgängig- und Bereinigungsbefehlen"],
+    "S08-b": ["Font panel with typeface, size, text and highlight colors", "Панель шрифта: начертание, размер, цвет текста и выделения", "Панель шрифту: накреслення, розмір, колір тексту й виділення", "Schriftbereich mit Schriftschnitt, Größe, Text- und Hervorhebungsfarben"],
+    "S09-a": ["Paragraph alignment, first-line indent and line spacing", "Выравнивание абзаца, отступ первой строки и межстрочный интервал", "Вирівнювання абзацу, відступ першого рядка й міжрядковий інтервал", "Absatzausrichtung, Erstzeileneinzug und Zeilenabstand"],
+    "S09-b": ["Bulleted and numbered list controls", "Команды маркированного и нумерованного списка", "Команди маркованого й нумерованого списку", "Befehle für Aufzählungen und nummerierte Listen"],
+    "S09-c": ["Color choices for an ink-palette slot", "Выбор цвета ячейки палитры чернил", "Вибір кольору комірки палітри чорнила", "Farbauswahl für ein Feld der Tintenpalette"],
+    "S10-a": ["Insert hyperlink dialog with address and display text", "Диалог вставки гиперссылки: адрес и отображаемый текст", "Діалог вставлення гіперпосилання: адреса й відображуваний текст", "Hyperlink-Dialog mit Adresse und Anzeigetext"],
+    "S11-a": ["Paginated document preview with page-fit controls", "Постраничный просмотр документа с подгонкой страницы", "Посторінковий перегляд документа з припасуванням сторінки", "Seitenweise Dokumentvorschau mit Einpassfunktion"],
+    "S12-a": ["Selected image placed inline with text", "Выбранное изображение в строке текста", "Вибране зображення в рядку тексту", "Ausgewähltes Bild in der Textzeile"],
+    "S12-b": ["Selected image placed in a centered block", "Выбранное изображение отдельным блоком по центру", "Вибране зображення окремим блоком по центру", "Ausgewähltes Bild als zentrierter Block"],
+    "S12-c": ["Selected image on the left with text wrapping", "Выбранное изображение слева с обтеканием текстом", "Вибране зображення ліворуч з обтіканням текстом", "Ausgewähltes Bild links mit Textumfluss"],
+    "S12-d": ["Selected image on the right with text wrapping", "Выбранное изображение справа с обтеканием текстом", "Вибране зображення праворуч з обтіканням текстом", "Ausgewähltes Bild rechts mit Textumfluss"],
+    "S13-a": ["Paper controls with document background image selected", "Параметры бумаги с выбранным фоновым изображением", "Параметри паперу з вибраним фоновим зображенням", "Papiereinstellungen mit ausgewähltem Hintergrundbild"],
+    "S13-b": ["Warning before finalizing the background crop", "Предупреждение перед фиксацией кадрирования фона", "Попередження перед фіксацією кадрування тла", "Warnung vor der endgültigen Fixierung des Hintergrund-Ausschnitts"],
+    "S14-a": ["Context menu for inserting and deleting table rows and columns", "Контекстное меню добавления и удаления строк и столбцов таблицы", "Контекстне меню додавання й видалення рядків і стовпців таблиці", "Kontextmenü zum Einfügen und Löschen von Tabellenzeilen und -spalten"],
+    "S15-a": ["Bookmark panel with naming, navigation and link controls", "Панель закладок: имена, переходы и вставка ссылки", "Панель закладок: назви, переходи й вставлення посилання", "Lesezeichenbereich mit Namen, Navigation und Linkbefehlen"],
+    "S15-b": ["Bookmark manager with an editable practice note", "Диспетчер закладок с редактируемой учебной заметкой", "Диспетчер закладок із редагованою навчальною нотаткою", "Lesezeichen-Manager mit bearbeitbarer Übungsnotiz"],
+    "S16-a": ["Expanded structure tree beside the ordinary document", "Раскрытое дерево структуры рядом с обычным документом", "Розгорнуте дерево структури поруч зі звичайним документом", "Aufgeklappter Strukturbaum neben dem normalen Dokument"],
+    "S17-a": ["Markdown source editor with save commands", "Редактор исходного Markdown с командами сохранения", "Редактор вихідного Markdown із командами збереження", "Markdown-Quelleditor mit Speicherbefehlen"],
+    "S17-b": ["Rendered Markdown preview with formatted examples", "Предпросмотр Markdown с оформленными примерами", "Перегляд Markdown з оформленими прикладами", "Gerenderte Markdown-Vorschau mit formatierten Beispielen"],
+    "S17-c": ["Markdown syntax article in the separate help window", "Статья о синтаксисе Markdown в отдельном окне справки", "Стаття про синтаксис Markdown в окремому вікні довідки", "Markdown-Syntaxartikel im eigenen Hilfefenster"]
+  }
+}

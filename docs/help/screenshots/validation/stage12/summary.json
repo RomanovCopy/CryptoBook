@@ -1,0 +1,237 @@
+{
+  "date": "2026-11-02",
+  "branch": "updates",
+  "head": "a82f67cee84b27461dd442487577258483b4c68a",
+  "workingTree": "includes previous stage-11 continuation and stage-12 changes; no commit/push",
+  "version": "1.1.5.2",
+  "sdk": "10.0.403",
+  "stage11Closure": "Explicit user instruction; hardware limits retained",
+  "tests": [
+    {
+      "group": "ai-integration",
+      "total": 150,
+      "passed": 150,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "32EFDBCC99D325B7715B760DA2D87BAAF5CC21C1E49FF17AA9EA1CDBD64E6F1D"
+    },
+    {
+      "group": "ai-runtime",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "21E41C228A41B85D96ED49DA4F5413D37D51BE6C3526725017BAA7263F36A961"
+    },
+    {
+      "group": "batch-rename-window",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "52CF54DC2454ADBBEC2E3337E741BA1A6776800B99F1B4C398C46328C8EE46B3"
+    },
+    {
+      "group": "document-search",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "4AD6ECD54D30F2CED0DE0DDD494126CAD037C237DEF0466602C1F10CE880C55B"
+    },
+    {
+      "group": "help",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "3D0B6F1CFE96773DF9D37FDCDC1D36C440C3F5985ED67929DEA4C33691944DB3"
+    },
+    {
+      "group": "image-layout",
+      "total": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "BA60213B6BCD64E39530A1A2E409FA8F340384D915EEEA545EE0896EDEC16F1F"
+    },
+    {
+      "group": "remaining",
+      "total": 968,
+      "passed": 968,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "AC6C1BF239E817652BB84FF221AFDE8F8E1CF03B62813B40E70DCB22EA62D3B3"
+    },
+    {
+      "group": "worker-cancellation",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "7868DCB038931B8C82FCEA4F31BE8F8FE6CAE5149E2066A171F28BF57CFAC643"
+    }
+  ],
+  "packageRuns": [
+    {
+      "culture": "en-US",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\en-US\\artifacts\\hv\\en-US\\6ad09596\\result.json"
+    },
+    {
+      "culture": "ru-RU",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\ru-RU\\artifacts\\hv\\ru-RU\\065d123d\\result.json"
+    },
+    {
+      "culture": "uk-UA",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\uk-UA\\artifacts\\hv\\uk-UA\\c8eb65fa\\result.json"
+    },
+    {
+      "culture": "de-DE",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\de-DE\\artifacts\\hv\\de-DE\\5e0dffc3\\result.json"
+    }
+  ],
+  "packageChecks": 5240.0,
+  "embeddedHelpFiles": 897,
+  "topicsPerCulture": 76,
+  "articles": 304,
+  "imageFiles": 588,
+  "imageReferences": 612,
+  "portableFiles": 23,
+  "installer": "Compiled using project CryptoBook.iss; not executed; UAC/profile upgrade not tested",
+  "network": "No network service is used by the package check; OS connectivity was not changed",
+  "signing": "Application and installer: NotSigned",
+  "preservation": "3910/3910 prior content/screenshots files unchanged",
+  "artifacts": [
+    {
+      "name": "CryptoBook.exe",
+      "bytes": 420045801,
+      "version": "1.1.5.2",
+      "sha256": "AE79650019C9A7DC0620B08717E98B5593A8FC2584FFFD16616C6C26D71D051C",
+      "signature": "NotSigned"
+    },
+    {
+      "name": "CryptoBook-Setup-1.1.5.2.exe",
+      "bytes": 119604879,
+      "version": "1.1.5.2             ",
+      "sha256": "669A9A197B0F7726A4BA8421A6D10BFAE9F1223D582E06BE0C66EC21A58C9BB0",
+      "signature": "NotSigned"
+    },
+    {
+      "name": "CryptoBook-win-x64-1.1.5.2-local.zip",
+      "bytes": 182208602,
+      "version": null,
+      "sha256": "73244A72D1DFB4F0538FA3F9D912E465E56778118698491CAABC660372A477EB",
+      "signature": "UnknownError"
+    }
+  ],
+  "productionCodeChanged": false,
+  "scenarioRuns": [
+    {
+      "culture": "en-US",
+      "checks": 39,
+      "bindingErrors": 0,
+      "report": "reports/scenario-en-US-1.json",
+      "preservation": "reports/preservation-en-US-1.json"
+    },
+    {
+      "culture": "ru-RU",
+      "checks": 39,
+      "bindingErrors": 0,
+      "report": "reports/scenario-ru-RU-1.json",
+      "preservation": "reports/preservation-ru-RU-1.json"
+    },
+    {
+      "culture": "uk-UA",
+      "checks": 39,
+      "bindingErrors": 0,
+      "report": "reports/scenario-uk-UA-1.json",
+      "preservation": "reports/preservation-uk-UA-1.json"
+    },
+    {
+      "culture": "uk-UA",
+      "checks": 39,
+      "bindingErrors": 0,
+      "report": "reports/scenario-uk-UA-2.json",
+      "preservation": "reports/preservation-uk-UA-2.json"
+    },
+    {
+      "culture": "uk-UA",
+      "checks": 39,
+      "bindingErrors": 0,
+      "report": "reports/scenario-uk-UA-3.json",
+      "preservation": "reports/preservation-uk-UA-3.json"
+    },
+    {
+      "culture": "de-DE",
+      "checks": 39,
+      "bindingErrors": 0,
+      "report": "reports/scenario-de-DE-1.json",
+      "preservation": "reports/preservation-de-DE-1.json"
+    }
+  ],
+  "scenarioChecksWithRepeats": 234.0,
+  "logs": [
+    {
+      "path": "artifacts/stage12/logs/build-solution.log",
+      "sha256": "527A7A665A810289F97B727C053CB49E3DB20ED8727C14BC8CDA5AE43B0EC0B1"
+    },
+    {
+      "path": "artifacts/stage12/logs/build-validation.log",
+      "sha256": "9AA68B06F68B46218FBBE4981BD023C1BD069BFB48DA9D86C51D208B76BE9074"
+    },
+    {
+      "path": "artifacts/stage12/logs/ffmpeg-provenance.log",
+      "sha256": "86050C4410AFB1A35C299B4C7F38D6D443E2C49AA9586ED470E1151240D0A5A0"
+    },
+    {
+      "path": "artifacts/stage12/logs/flyleaf-template.log",
+      "sha256": "C5EA029D777850FB347DE3155189F0E1CA37069212E4941223B6CDBB1769AFA2"
+    },
+    {
+      "path": "artifacts/stage12/logs/help-content-final.log",
+      "sha256": "8F79546DC60393400B7025195C24B95C66A1626F253816189F4AED85FB7B54C7"
+    },
+    {
+      "path": "artifacts/stage12/logs/help-content.log",
+      "sha256": "84B151822F0A27854CAF54F8C6867A3E4658B0D66AD56AE75377CC19C9E0F004"
+    },
+    {
+      "path": "artifacts/stage12/logs/installer.log",
+      "sha256": "10E13520C2BE4463367DBE846A21127C76F4B3ADE694E058F7A549A723654019"
+    },
+    {
+      "path": "artifacts/stage12/logs/publish.log",
+      "sha256": "53F3F495D635512324F0FA12BDB4CC29FAB8E89DD80B582BFB86A72F9C49CB05"
+    },
+    {
+      "path": "artifacts/stage12/logs/release-tests-final.log",
+      "sha256": "6637A654487F38B49CE811D8E83C02287C9981946511DF30C41C99BBCE94B995"
+    },
+    {
+      "path": "artifacts/stage12/logs/release-tests.log",
+      "sha256": "A27E07BF8A2FDF18055EDD4601D072F702F6E31D06CAE08C0EB95C8CDC6043E8"
+    },
+    {
+      "path": "artifacts/stage12/logs/restore-final.log",
+      "sha256": "A9385050A34BB5917F27A877196C027DC7D8ECFDEBE48AB49491B585C240A49C"
+    },
+    {
+      "path": "artifacts/stage12/logs/restore.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  ],
+  "contentValidation": {
+    "errors": 0,
+    "imageReferences": 612,
+    "uiKeys": 1125,
+    "cultures": 4,
+    "imageFiles": 588,
+    "articles": 304,
+    "topics": 76,
+    "relativeLinks": 399
+  }
+}

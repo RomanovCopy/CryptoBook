@@ -1,0 +1,8 @@
+  CryptoBook -> D:\Visual Studio\Projects\CryptoBook\CryptoBook\bin\Release\net10.0-windows10.0.17763.0\win-x64\CryptoBook.dll
+  CryptoBook.Tests -> D:\Visual Studio\Projects\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll
+
+Сборка успешно завершена.
+    Предупреждений: 0
+    Ошибок: 0
+
+Прошло времени 00:00:05.28

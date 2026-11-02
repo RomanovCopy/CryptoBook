@@ -576,9 +576,9 @@
   <data name="Media.OpenDialogTitle" xml:space="preserve"><value>Open an image or video</value></data>
   <data name="Media.Loading" xml:space="preserve"><value>Loading: {0}</value></data>
   <data name="Media.DeleteTitle" xml:space="preserve"><value>Delete image</value></data>
-  <data name="Media.DeletePrompt" xml:space="preserve"><value>Delete “{0}”?</value></data>
+  <data name="Media.DeletePrompt" xml:space="preserve"><value>Move the file “{0}” to the Windows Recycle Bin? You can restore it from the Recycle Bin.</value></data>
   <data name="Media.DeleteError" xml:space="preserve"><value>Delete error</value></data>
-  <data name="Media.DeleteFailed" xml:space="preserve"><value>Could not delete the image.</value></data>
+  <data name="Media.DeleteFailed" xml:space="preserve"><value>Could not move the file to the Windows Recycle Bin. It was not permanently deleted.</value></data>
   <data name="Media.NoMoreImages" xml:space="preserve"><value>There are no more images in the folder.</value></data>
   <data name="Media.DecodeFailed" xml:space="preserve"><value>Could not decode the image.</value></data>
   <data name="Media.Filter" xml:space="preserve"><value>Media files|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp;*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|Images|*.bmp;*.gif;*.ico;*.jpeg;*.jpg;*.png;*.tif;*.tiff;*.webp|Video|*.avi;*.mkv;*.mov;*.mp4;*.m4v;*.mpeg;*.mpg;*.ts;*.webm;*.wmv|CryptoBook files|*.cbook;*.cbox|All files|*.*</value></data>
@@ -830,65 +830,7 @@
   <data name="DecryptionExport.ConversionFailed" xml:space="preserve"><value>Could not convert and publish the decrypted document: {0}</value></data>
   <data name="Explorer.PermanentDeleteTitle" xml:space="preserve"><value>Permanent deletion</value></data>
   <data name="Explorer.PermanentDeleteAndroidWarning" xml:space="preserve"><value>Android deletion is usually irreversible and does not use the Recycle Bin. Permanently delete the selected items?</value></data>
-  <data name="MarkdownHelp.Title" xml:space="preserve"><value>Markdown syntax</value></data>
-  <data name="MarkdownHelp.Description" xml:space="preserve"><value>A complete reference to the Markdown syntax and editor commands supported by the current CryptoBook preview.</value></data>
   <data name="MarkdownHelp.OpenHint" xml:space="preserve"><value>Open Markdown syntax help</value></data>
-  <data name="MarkdownHelp.Back" xml:space="preserve"><value>Back to editor</value></data>
-  <data name="MarkdownHelp.BackHint" xml:space="preserve"><value>Return to the Markdown editor (Esc)</value></data>
-  <data name="MarkdownHelp.Group.Blocks" xml:space="preserve"><value>Block elements</value></data>
-  <data name="MarkdownHelp.Group.Inline" xml:space="preserve"><value>Inline formatting</value></data>
-  <data name="MarkdownHelp.Group.Spacing" xml:space="preserve"><value>Paragraphs and line breaks</value></data>
-  <data name="MarkdownHelp.Group.Editor" xml:space="preserve"><value>Editor commands</value></data>
-  <data name="MarkdownHelp.Group.Structure" xml:space="preserve"><value>Headings and separators</value></data>
-  <data name="MarkdownHelp.Group.Lists" xml:space="preserve"><value>Lists and quotes</value></data>
-  <data name="MarkdownHelp.Group.Links" xml:space="preserve"><value>Links and images</value></data>
-  <data name="MarkdownHelp.Group.Code" xml:space="preserve"><value>Code blocks</value></data>
-  <data name="MarkdownHelp.Group.Tables" xml:space="preserve"><value>Tables</value></data>
-  <data name="MarkdownHelp.Group.Limitations" xml:space="preserve"><value>Preview limitations</value></data>
-  <data name="MarkdownHelp.Syntax" xml:space="preserve"><value>SYNTAX</value></data>
-  <data name="MarkdownHelp.Result" xml:space="preserve"><value>RESULT</value></data>
-  <data name="MarkdownHelp.Editor.Save.Result" xml:space="preserve"><value>Save changes to the current file.</value></data>
-  <data name="MarkdownHelp.Editor.SaveAs.Result" xml:space="preserve"><value>Save the current document to a different file.</value></data>
-  <data name="MarkdownHelp.Editor.Toggle.Result" xml:space="preserve"><value>Switch between editing the source and viewing the rendered document.</value></data>
-  <data name="MarkdownHelp.Editor.Tab.Result" xml:space="preserve"><value>Insert a tab character in the source editor.</value></data>
-  <data name="MarkdownHelp.Editor.Help.Result" xml:space="preserve"><value>The ? button opens this reference; Esc returns from it to the editor.</value></data>
-  <data name="MarkdownHelp.Headings.Result" xml:space="preserve"><value>ATX headings of levels 1–6. An optional matching run of # characters may close the heading.</value></data>
-  <data name="MarkdownHelp.SetextH1.Result" xml:space="preserve"><value>A level-one Setext heading.</value></data>
-  <data name="MarkdownHelp.SetextH2.Result" xml:space="preserve"><value>A level-two Setext heading.</value></data>
-  <data name="MarkdownHelp.Quote.Result" xml:space="preserve"><value>A quoted block. Additional &gt; characters create nested quotes.</value></data>
-  <data name="MarkdownHelp.BulletedList.Result" xml:space="preserve"><value>A bulleted list; -, +, and * are accepted as markers.</value></data>
-  <data name="MarkdownHelp.NumberedList.Result" xml:space="preserve"><value>A numbered list using . or ) after the number. The first number sets the starting value.</value></data>
-  <data name="MarkdownHelp.NestedList.Result" xml:space="preserve"><value>Indent an item to create a nested list. Lists may contain paragraphs, quotes, code, and other lists.</value></data>
-  <data name="MarkdownHelp.Rule.Result" xml:space="preserve"><value>A horizontal separator made from at least three -, *, or _ characters.</value></data>
-  <data name="MarkdownHelp.CodeBlock.Result" xml:space="preserve"><value>A fenced code block. Text after the opening fence is shown as a language label; syntax highlighting is not applied.</value></data>
-  <data name="MarkdownHelp.TildeCode.Result" xml:space="preserve"><value>A fenced code block using three or more tildes instead of backticks.</value></data>
-  <data name="MarkdownHelp.IndentedCode.Result" xml:space="preserve"><value>A code block created by indenting every line by four spaces or one tab.</value></data>
-  <data name="MarkdownHelp.Table.Result" xml:space="preserve"><value>A pipe table. The separator row creates the header; outer pipes are optional.</value></data>
-  <data name="MarkdownHelp.GridTable.Result" xml:space="preserve"><value>A grid table. = marks the header boundary; grid tables may span rows and columns.</value></data>
-  <data name="MarkdownHelp.Bold.Result" xml:space="preserve"><value>Bold text.</value></data>
-  <data name="MarkdownHelp.Italic.Result" xml:space="preserve"><value>Italic text.</value></data>
-  <data name="MarkdownHelp.BoldItalic.Result" xml:space="preserve"><value>Bold italic text. Three underscores may be used instead of asterisks.</value></data>
-  <data name="MarkdownHelp.Strikethrough.Result" xml:space="preserve"><value>Strikethrough text.</value></data>
-  <data name="MarkdownHelp.InlineCode.Result" xml:space="preserve"><value>A monospaced code fragment. Use a longer backtick delimiter when the fragment contains a backtick.</value></data>
-  <data name="MarkdownHelp.Escape.Result" xml:space="preserve"><value>A backslash displays Markdown punctuation literally instead of interpreting it as markup.</value></data>
-  <data name="MarkdownHelp.Entity.Result" xml:space="preserve"><value>A named or numeric HTML entity, converted to its Unicode character.</value></data>
-  <data name="MarkdownHelp.Link.Result" xml:space="preserve"><value>A clickable HTTP, HTTPS, or email link.</value></data>
-  <data name="MarkdownHelp.ReferenceLink.Result" xml:space="preserve"><value>A link whose URL is declared elsewhere. Collapsed [text][] and shortcut [ref] forms are also supported.</value></data>
-  <data name="MarkdownHelp.AutoLink.Result" xml:space="preserve"><value>A web address displayed as a clickable link without a custom caption.</value></data>
-  <data name="MarkdownHelp.AutoEmail.Result" xml:space="preserve"><value>An email address converted to a clickable mailto link.</value></data>
-  <data name="MarkdownHelp.BareLink.Result" xml:space="preserve"><value>A bare HTTP or HTTPS address is recognized automatically.</value></data>
-  <data name="MarkdownHelp.Image.Result" xml:space="preserve"><value>An image stored next to the Markdown file or in a relative subfolder.</value></data>
-  <data name="MarkdownHelp.ReferenceImage.Result" xml:space="preserve"><value>A local image whose relative path is declared in a reference definition.</value></data>
-  <data name="MarkdownHelp.Paragraph.Result" xml:space="preserve"><value>A blank line starts a new paragraph.</value></data>
-  <data name="MarkdownHelp.SoftBreak.Result" xml:space="preserve"><value>A normal source line ending is displayed as a space within the same paragraph.</value></data>
-  <data name="MarkdownHelp.LineBreak.Result" xml:space="preserve"><value>Two spaces at the end of a line insert a line break without starting a new paragraph.</value></data>
-  <data name="MarkdownHelp.BackslashBreak.Result" xml:space="preserve"><value>A backslash at the end of a line also inserts a hard line break.</value></data>
-  <data name="MarkdownHelp.Html.Result" xml:space="preserve"><value>Raw HTML is shown as inert source text and is never executed.</value></data>
-  <data name="MarkdownHelp.UnsafeLinks.Result" xml:space="preserve"><value>FTP, file, relative, javascript, and other non-HTTP schemes are displayed as text, not active links.</value></data>
-  <data name="MarkdownHelp.RemoteImage.Result" xml:space="preserve"><value>Remote and absolute-path images are not loaded; their alternative text is shown instead.</value></data>
-  <data name="MarkdownHelp.UnsupportedExtensions.Result" xml:space="preserve"><value>All specially rendered syntax is listed above. Other Markdig extensions—including task checkboxes, footnotes, formulas, diagrams, definition lists, alerts, custom containers, media, abbreviations, inserted/marked text, subscript, and superscript—have no corresponding presentation.</value></data>
-  <data name="MarkdownHelp.Safety.Title" xml:space="preserve"><value>Safe preview</value></data>
-  <data name="MarkdownHelp.Safety.Description" xml:space="preserve"><value>Raw HTML is displayed as inert text. Remote and absolute-path images are not loaded; only relative local images up to 25 MB are shown.</value></data>
   <data name="File.PaperSize" xml:space="preserve"><value>Paper size</value></data>
   <data name="File.Orientation" xml:space="preserve"><value>Orientation</value></data>
   <data name="File.Portrait" xml:space="preserve"><value>Portrait</value></data>
@@ -1202,7 +1144,7 @@ Author: [Name]
   <data name="AI.DisabledHint" xml:space="preserve"><value>Enable the assistant and choose a model in model settings.</value></data>
   <data name="AI.Insert" xml:space="preserve"><value>Insert selected</value></data>
   <data name="AI.Replace" xml:space="preserve"><value>Replace selection</value></data>
-  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Remove attached text</value></data>
+  <data name="AI.RemoveAttachment" xml:space="preserve"><value>Remove attachment</value></data>
   <data name="AI.AttachDocument" xml:space="preserve"><value>Current document</value></data>
   <data name="AI.Prompt" xml:space="preserve"><value>Message to the model; Ctrl+Enter to send</value></data>
   <data name="AI.Send" xml:space="preserve"><value>Send</value></data>
@@ -1429,4 +1371,53 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="BatchRename.TokenExtension" xml:space="preserve"><value>File extension without dot</value></data>
   <data name="BatchRename.TokenName" xml:space="preserve"><value>File name without extension</value></data>
   <data name="BatchRename.TokenTime" xml:space="preserve"><value>Current time: HHmmss (24-hour), fixed at preview time</value></data>
+  <data name="Help.Title" xml:space="preserve"><value>Help</value></data>
+  <data name="Help.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Help.Forward" xml:space="preserve"><value>Forward</value></data>
+  <data name="Help.Contents" xml:space="preserve"><value>Contents</value></data>
+  <data name="Help.Search" xml:space="preserve"><value>Search help</value></data>
+  <data name="Help.ClearSearch" xml:space="preserve"><value>Clear search</value></data>
+  <data name="Help.NoResults" xml:space="preserve"><value>No articles found.</value></data>
+  <data name="Help.Planned" xml:space="preserve"><value>This article is being prepared.</value></data>
+  <data name="Help.LoadError" xml:space="preserve"><value>This article could not be loaded.</value></data>
+  <data name="Help.ImageError" xml:space="preserve"><value>This image is unavailable.</value></data>
+  <data name="Help.CloseImage" xml:space="preserve"><value>Close image</value></data>
+  <data name="Help.Results" xml:space="preserve"><value>Search results</value></data>
+  <data name="Help.Article" xml:space="preserve"><value>Help article</value></data>
+  <data name="File.OpenWriteFailed" xml:space="preserve"><value>Could not open '{0}' for writing: {1}</value></data>
+  <data name="File.CannotOpenForWriting" xml:space="preserve"><value>Cannot open file for writing: {0}</value></data>
+  <data name="Document.FileInUse" xml:space="preserve"><value>The file is in use and cannot be written. Release the file and try saving again.</value></data>
+  <data name="File.InvalidName" xml:space="preserve"><value>Enter a valid file name without path separators, reserved names, or a trailing dot or space.</value></data>
+  <data name="Explorer.RecoverableDeleteWarning" xml:space="preserve"><value>Delete the selected items? Local files and folders will be moved to the Windows Recycle Bin. Restore them from the Recycle Bin. If recycling is unavailable, the operation fails instead of permanently deleting them.</value></data>
+  <data name="Explorer.RestoreFiles" xml:space="preserve"><value>Restore operations</value></data>
+  <data name="Explorer.RestoreFilesConfirmation" xml:space="preserve"><value>Restore interrupted local transfers and renames recorded in this folder? Existing names will not be overwritten. Restore newly deleted files from the Windows Recycle Bin.</value></data>
+  <data name="Explorer.RestoreFilesDone" xml:space="preserve"><value>Recovery finished. Existing files were not overwritten.</value></data>
+  <data name="Explorer.RecoveryRequired" xml:space="preserve"><value>Some files could not be restored. Close programs using them or free the original names, then use Restore files in the folder containing this recovery log:</value></data>
+  <data name="Explorer.TransferVerificationFailed" xml:space="preserve"><value>The copied item could not be verified; the original has been preserved.</value></data>
+  <data name="Explorer.RecycleBinFailed" xml:space="preserve"><value>Could not move the item to the Windows Recycle Bin. It was not permanently deleted.</value></data>
+  <data name="Explorer.RecycleCanceledPartial" xml:space="preserve"><value>Some items were already moved to the Windows Recycle Bin before cancellation. Restore them from the Recycle Bin.</value></data>
+  <data name="Security.UnlockTitle" xml:space="preserve"><value>Access to protected document</value></data>
+  <data name="Security.KeyLabel" xml:space="preserve"><value>Encryption key</value></data>
+  <data name="Security.EnterKey" xml:space="preserve"><value>Enter the key.</value></data>
+  <data name="Security.WrongUnlockKey" xml:space="preserve"><value>Incorrect key. Try again in a few seconds.</value></data>
+  <data name="Security.KeyCheckFailed" xml:space="preserve"><value>The key could not be verified.</value></data>
+  <data name="Security.RestoreTitle" xml:space="preserve"><value>Document recovery</value></data>
+  <data name="Security.OpenLastFile" xml:space="preserve"><value>Open the last file “{0}”?</value></data>
+  <data name="Security.SourceUnavailableRestore" xml:space="preserve"><value>The original file “{0}” is unavailable. Restore the snapshot?</value></data>
+  <data name="Security.DocumentLabel" xml:space="preserve"><value>Document</value></data>
+  <data name="Security.RestoreSnapshot" xml:space="preserve"><value>Restore snapshot</value></data>
+  <data name="Security.ResetTitle" xml:space="preserve"><value>Reset encryption key</value></data>
+  <data name="Security.RestoreFailed" xml:space="preserve"><value>The document could not be restored.</value></data>
+  <data name="Security.ResetInterval.1" xml:space="preserve"><value>1 minute</value></data>
+  <data name="Security.ResetInterval.5" xml:space="preserve"><value>5 minutes</value></data>
+  <data name="Security.ResetInterval.10" xml:space="preserve"><value>10 minutes</value></data>
+  <data name="Security.ResetInterval.15" xml:space="preserve"><value>15 minutes</value></data>
+  <data name="Security.ResetInterval.30" xml:space="preserve"><value>30 minutes</value></data>
+  <data name="Security.ResetInterval.0" xml:space="preserve"><value>Never</value></data>
+  <data name="Recovery.CrashAvailable" xml:space="preserve"><value>Unsaved work from an earlier session is available. You can restore the most recent retained crash snapshot or dismiss this notice.</value></data>
+  <data name="Recovery.RestoreCrash" xml:space="preserve"><value>Restore unsaved work</value></data>
+  <data name="Recovery.CrashRestoreFailed" xml:space="preserve"><value>Recovery failed. Check the original encryption key and access to the snapshot, then retry. The retained copy was not deleted.</value></data>
+  <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Open a saved crash copy of unsaved work</value></data>
+  <data name="Recovery.RestoreLock" xml:space="preserve"><value>Restore snapshot after key reset</value></data>
+  <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Restore protected work using its original key</value></data>
 </root>

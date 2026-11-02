@@ -1,0 +1,22 @@
+{
+  "shotId": "S06-c",
+  "culture": "en-US",
+  "rawFile": "docs/help/screenshots/raw/en-US/S06-c.png",
+  "crop": {
+    "x": 0,
+    "y": 40,
+    "width": 920,
+    "height": 850
+  },
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.014130434782608696,
+      "y": 0.6063411764705883,
+      "width": 0.2597826086956522,
+      "height": 0.06264705882352942,
+      "badge": null
+    }
+  ]
+}

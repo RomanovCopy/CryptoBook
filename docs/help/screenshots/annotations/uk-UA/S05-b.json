@@ -1,0 +1,17 @@
+{
+  "shotId": "S05-b",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S05-b.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 2,
+      "shape": "rectangle",
+      "x": 0.8267405063291139,
+      "y": 0.9494944512946979,
+      "width": 0.08702531645569621,
+      "height": 0.036942046855733664,
+      "badge": null
+    }
+  ]
+}

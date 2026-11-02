@@ -1,0 +1,164 @@
+{
+  "bindings": [
+    {
+      "source": "CryptoBook/Views/MainWindow.xaml",
+      "key": "L",
+      "modifiers": "Control",
+      "command": "{Binding ResetEncryptionKey}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/Views/SettingsWindow.xaml",
+      "key": "L",
+      "modifiers": "Control",
+      "command": "{Binding ResetEncryptionKey}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/Views/SettingsWindow.xaml",
+      "key": "Enter",
+      "modifiers": "",
+      "command": "{Binding Search}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/MyControls/Richtextbox.xaml",
+      "key": "S",
+      "modifiers": "Control",
+      "command": "{Binding SaveDocument}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/MyControls/Richtextbox.xaml",
+      "key": "S",
+      "modifiers": "Control+Shift",
+      "command": "{Binding SaveDocumentAs}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/MyPages/MarkdownEditor.xaml",
+      "key": "S",
+      "modifiers": "Control",
+      "command": "{Binding SaveDocument}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/MyPages/MarkdownEditor.xaml",
+      "key": "S",
+      "modifiers": "Control+Shift",
+      "command": "{Binding SaveDocumentAs}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/MyPages/Home.xaml",
+      "key": "F",
+      "modifiers": "Control",
+      "command": "{Binding DocumentView.Search.Open}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/MyPages/Home.xaml",
+      "key": "Enter",
+      "modifiers": "Control",
+      "command": "{Binding AddParagraphCommand}",
+      "parameter": "{Binding SelectedItem, ElementName=DocumentStructureTree}"
+    },
+    {
+      "source": "CryptoBook/MyPages/Home.xaml",
+      "key": "Up",
+      "modifiers": "Alt",
+      "command": "{Binding MoveUpCommand}",
+      "parameter": "{Binding SelectedItem, ElementName=DocumentStructureTree}"
+    },
+    {
+      "source": "CryptoBook/MyPages/Home.xaml",
+      "key": "Down",
+      "modifiers": "Alt",
+      "command": "{Binding MoveDownCommand}",
+      "parameter": "{Binding SelectedItem, ElementName=DocumentStructureTree}"
+    },
+    {
+      "source": "CryptoBook/Views/FileExplorer.xaml",
+      "key": "M",
+      "modifiers": "Control",
+      "command": "{Binding BatchRenameCommand}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/Views/FileExplorer.xaml",
+      "key": "Enter",
+      "modifiers": "",
+      "command": "{Binding ApplyAddressCommand}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/Views/FileExplorer.xaml",
+      "key": "Escape",
+      "modifiers": "",
+      "command": "{Binding CancelAddressCommand}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/Views/FileExplorer.xaml",
+      "key": "Enter",
+      "modifiers": "Alt",
+      "command": "{Binding DetailedPropertiesCommand}",
+      "parameter": "{Binding SelectedItemsSnapshot}"
+    },
+    {
+      "source": "CryptoBook/Views/FileExplorer.xaml",
+      "key": "Enter",
+      "modifiers": "",
+      "command": "{Binding RenameCommand}",
+      "parameter": "{Binding SelectedItem,                         RelativeSource={RelativeSource AncestorType=ListView}}"
+    },
+    {
+      "source": "CryptoBook/Views/FileExplorer.xaml",
+      "key": "Escape",
+      "modifiers": "",
+      "command": "{Binding CancelRenameCommand}",
+      "parameter": "{Binding SelectedItem,                         RelativeSource={RelativeSource AncestorType=ListView}}"
+    },
+    {
+      "source": "CryptoBook/Views/MediaPlayer.xaml",
+      "key": "Left",
+      "modifiers": "Alt",
+      "command": "{Binding PreviousVideoCommand}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/Views/MediaPlayer.xaml",
+      "key": "Right",
+      "modifiers": "Alt",
+      "command": "{Binding NextVideoCommand}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/Views/BatchRenameWindow.xaml",
+      "key": "Escape",
+      "modifiers": "",
+      "command": "{Binding Close}",
+      "parameter": ""
+    },
+    {
+      "source": "CryptoBook/MyControls/AiAssistantPanel.xaml",
+      "key": "Enter",
+      "modifiers": "Control",
+      "command": "{Binding Send}",
+      "parameter": ""
+    }
+  ],
+  "routedOwners": [
+    "CryptoBook/Help/HelpShortcutBehavior.cs",
+    "CryptoBook/Help/HelpWindowBehavior.cs",
+    "CryptoBook/Behaviors/DocumentSearchBehavior.cs",
+    "CryptoBook/Services/RichTextBoxService.cs",
+    "CryptoBook/Behaviors/DocumentPageKeyboardNavigationBehavior.cs",
+    "CryptoBook/Behaviors/DocumentImageResizeBehavior.cs",
+    "CryptoBook/Behaviors/DocumentBackgroundImageBehavior.cs",
+    "CryptoBook/Behaviors/ImageInteractionBehavior.cs",
+    "CryptoBook/Behaviors/VideoNavigationBehavior.cs"
+  ],
+  "wpfStandard": "https://source.dot.net/PresentationFramework/System/Windows/Documents/TextEditorCharacters.cs.html",
+  "verification": "Custom routes/source and previous thematic evidence; live Bold/Italic/Underline commands and F1/Enter/Escape in stage10. No physical modified-key gesture is claimed."
+}

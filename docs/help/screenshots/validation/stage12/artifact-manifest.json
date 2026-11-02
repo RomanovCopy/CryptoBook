@@ -1,0 +1,23 @@
+[
+  {
+    "name": "CryptoBook.exe",
+    "bytes": 420045801,
+    "version": "1.1.5.2",
+    "sha256": "AE79650019C9A7DC0620B08717E98B5593A8FC2584FFFD16616C6C26D71D051C",
+    "signature": "NotSigned"
+  },
+  {
+    "name": "CryptoBook-Setup-1.1.5.2.exe",
+    "bytes": 119604879,
+    "version": "1.1.5.2             ",
+    "sha256": "669A9A197B0F7726A4BA8421A6D10BFAE9F1223D582E06BE0C66EC21A58C9BB0",
+    "signature": "NotSigned"
+  },
+  {
+    "name": "CryptoBook-win-x64-1.1.5.2-local.zip",
+    "bytes": 182208602,
+    "version": null,
+    "sha256": "73244A72D1DFB4F0538FA3F9D912E465E56778118698491CAABC660372A477EB",
+    "signature": "UnknownError"
+  }
+]

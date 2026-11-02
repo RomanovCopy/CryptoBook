@@ -319,6 +319,8 @@ public sealed class LocalStorageProvider: IStorageProvider
         string newName,
         CancellationToken cancellationToken = default)
     {
+        if(FileNameValidation.Validate(newName) is { } error)
+            return FileOperationResult.Fail(error);
         StorageLocation? parent = GetParent(location);
         if(parent is null)
             return FileOperationResult.Fail("A storage root cannot be renamed.");

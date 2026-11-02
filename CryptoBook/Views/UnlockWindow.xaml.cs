@@ -1,4 +1,5 @@
 using CryptoBook.Interfaces;
+using CryptoBook.Infrastructure;
 
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
@@ -26,7 +27,7 @@ public partial class UnlockWindow : Window
         using SecureString password = KeyBox.SecurePassword;
         if(password.Length == 0)
         {
-            ErrorText.Text = "Введите ключ.";
+            ErrorText.Text = LocalizationManager.GetString("Security.EnterKey");
             return;
         }
 
@@ -43,14 +44,14 @@ public partial class UnlockWindow : Window
             bool accepted = await keyResetService.TryUnlockAsync(characters);
             if(!accepted)
             {
-                ErrorText.Text = "Неверный ключ. Повторите попытку через несколько секунд.";
+                ErrorText.Text = LocalizationManager.GetString("Security.WrongUnlockKey");
                 return;
             }
             DialogResult = true;
         }
         catch(Exception)
         {
-            ErrorText.Text = "Не удалось проверить ключ.";
+            ErrorText.Text = LocalizationManager.GetString("Security.KeyCheckFailed");
         }
         finally
         {

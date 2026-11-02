@@ -1,0 +1,12 @@
+{
+  "culture": "de-DE",
+  "model": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-Q4_K_S.gguf",
+  "answer": "| Route | Minuten |\n|---|---|\n| Nord | 73 |\n| S\u00FCd | 24 |",
+  "followup": "73",
+  "vision": "Die rote Form ist ein Quadrat und die blaue Form ist ein Kreis; der MOON-Code lautet MOON-73.",
+  "templates": "Create/edit/empty/duplicate/last/Cancel/select/delete",
+  "clipboard": "Memory sink only, original source/order and failure checked",
+  "editors": "Ordinary formatted table, Markdown source, insert/replace/multiple, one-step Undo/Redo, preview/read-only refusal",
+  "attachments": "Text/limited HEX, queued picker, routed Drop, entire-document immutable snapshot, real mixed vision, follow-up, limits",
+  "personalData": false
+}

@@ -43,10 +43,12 @@ Before opening a pull request, run:
 
 ```powershell
 dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
-dotnet test CryptoBook/CryptoBook.sln -c Release --no-restore
+./tools/Run-ReleaseTests.ps1
 ```
 
-The project uses xUnit and STA tests for WPF. Compiler warnings and detected NuGet
+The release script runs all xUnit tests in isolated processes so WPF groups do not
+reuse another group's dispatcher. TRX reports are written to `artifacts/TestResults`.
+Compiler warnings and detected NuGet
 vulnerabilities are treated as errors in the release workflow.
 
 ## Pull requests

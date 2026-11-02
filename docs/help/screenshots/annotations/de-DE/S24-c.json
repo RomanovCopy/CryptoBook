@@ -1,0 +1,20 @@
+{
+  "shotId": "S24-c",
+  "culture": "de-DE",
+  "rawFile": "docs/help/screenshots/raw/de-DE/S24-c.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.5595199275362318,
+      "y": 0.9352299605781866,
+      "width": 0.15542572463768117,
+      "height": 0.04111695137976347,
+      "badge": {
+        "x": 0.6376811594202898,
+        "y": 0.8961892247043364
+      }
+    }
+  ]
+}

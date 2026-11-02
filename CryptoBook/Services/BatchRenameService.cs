@@ -90,61 +90,59 @@ public sealed class BatchRenameService: IBatchRenameService
         IReadOnlyList<BatchRenameEntry> entries, IProgress<int>? progress, CancellationToken cancellationToken)
     {
         var states = new List<RenameState>();
+        LocalOperationJournal? journal = null;
         try
         {
             var validated = Validate(entries, cancellationToken);
             if(validated.FirstOrDefault(e => e.Error is not null) is { } invalid)
                 return new(false, false, invalid.OldName + ": " + invalid.Error,
                     new Dictionary<string, string>());
-            foreach(var entry in validated.Where(e => e.IsChanged))
+            var changed = validated.Where(e => e.IsChanged).ToArray();
+            if(changed.Length == 0) return new(true, false, null, new Dictionary<string, string>());
+            journal = LocalOperationJournal.Create(Path.GetDirectoryName(changed[0].SourcePath)!);
+            foreach(var entry in changed)
             {
-                states.Add(new RenameState(entry, Path.Combine(Path.GetDirectoryName(entry.SourcePath)!,
-                    ".cryptobook-rename-" + Guid.NewGuid().ToString("N") + ".tmp")));
+                states.Add(new RenameState(entry, journal.Allocate(entry.SourcePath)));
             }
             int completed = 0;
             foreach(var state in states)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                File.Move(state.CurrentPath, state.TemporaryPath);
+                journal.Move(state.CurrentPath, state.TemporaryPath, state.Identity);
                 state.CurrentPath = state.TemporaryPath;
                 progress?.Report(++completed * 100 / (states.Count * 2));
             }
             foreach(var state in states)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                File.Move(state.CurrentPath, state.Entry.TargetPath);
+                journal.Move(state.CurrentPath, state.Entry.TargetPath, state.Identity);
                 state.CurrentPath = state.Entry.TargetPath;
                 progress?.Report(++completed * 100 / (states.Count * 2));
             }
+            cancellationToken.ThrowIfCancellationRequested();
+            journal.Complete();
             return new(true, false, null, Changes(states));
         }
         catch(Exception exception)
         {
             var errors = new List<string>();
-            // Vacate final names first: they may be another file's original name.
-            foreach(var state in states.Where(s => s.CurrentPath == s.Entry.TargetPath))
-                TryMove(state, state.TemporaryPath, errors);
-            foreach(var state in states.Where(s => s.CurrentPath == s.TemporaryPath))
-                TryMove(state, state.Entry.SourcePath, errors);
+            if(journal is not null && !journal.IsCommitted && journal.Rollback() is { } recoveryError)
+                errors.Add(recoveryError);
+            foreach(var state in states)
+                state.CurrentPath = new[] { state.Entry.SourcePath, state.TemporaryPath, state.Entry.TargetPath }
+                    .FirstOrDefault(p => Path.Exists(p) && LocalOperationJournal.Identity(p) == state.Identity)
+                    ?? state.CurrentPath;
             var changes = Changes(states);
             string? message = exception is OperationCanceledException ? null : exception.Message;
             if(changes.Count > 0)
                 message = string.Join(Environment.NewLine,
                     new[] { message, BatchRenamePattern.Text("RecoveryRequired") }
-                    .Concat(changes.Select(p => p.Key + " → " + p.Value)).Concat(errors)
+                    .Concat(changes.Select(p => p.Key + " → " + p.Value))
                     .Where(s => !string.IsNullOrEmpty(s)));
-            return new(false, exception is OperationCanceledException, message, changes);
+            return new(false, exception is OperationCanceledException,
+                errors.Count > 0 ? string.Join(Environment.NewLine, new[] { message }.Concat(errors)) : message, changes);
         }
-    }
-
-    private static void TryMove(RenameState state, string destination, List<string> errors)
-    {
-        try
-        {
-            File.Move(state.CurrentPath, destination);
-            state.CurrentPath = destination;
-        }
-        catch(Exception exception) { errors.Add(exception.Message); }
+        finally { journal?.Dispose(); }
     }
 
     private static IReadOnlyDictionary<string, string> Changes(IEnumerable<RenameState> states) =>
@@ -153,6 +151,7 @@ public sealed class BatchRenameService: IBatchRenameService
 
     private sealed class RenameState(BatchRenameEntry entry, string temporaryPath)
     {
+        public string Identity { get; } = LocalOperationJournal.Identity(entry.SourcePath);
         public BatchRenameEntry Entry { get; } = entry;
         public string TemporaryPath { get; } = temporaryPath;
         public string CurrentPath { get; set; } = entry.SourcePath;

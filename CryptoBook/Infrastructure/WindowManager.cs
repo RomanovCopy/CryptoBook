@@ -59,6 +59,9 @@ namespace CryptoBook.Infrastructure
         public Guid CreateWindow<T>(IReadOnlyDictionary<string, object?>? args = null)
             where T: Window => CreateWindow<T>(args, GetOwner());
 
+        public Guid CreateOwnedWindow<T>(Window? owner, IReadOnlyDictionary<string, object?>? args = null)
+            where T: Window => CreateWindow<T>(args, owner);
+
         public Guid CreateSiblingWindow<T>(
             IReadOnlyDictionary<string, object?>? args = null)
             where T: Window
@@ -271,7 +274,7 @@ namespace CryptoBook.Infrastructure
                     ? window.Height
                     : window.MinHeight;
 
-        private static Rect GetWorkArea(Window window)
+        internal static Rect GetWorkArea(Window window)
         {
             try
             {

@@ -1,0 +1,8 @@
+{
+  "codec": "uncompressed BGR24 AVI, silent, generated disposable frames",
+  "IsMediaLoaded": true,
+  "durationSeconds": 5,
+  "seekSeconds": 2,
+  "capture": "No D3D video pixel capture claimed",
+  "synchronization": "two real windows: independent playback, Pause all, shared switch on/off; timing alignment is not claimed"
+}

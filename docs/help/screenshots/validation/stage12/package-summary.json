@@ -1,0 +1,28 @@
+{
+  "executable": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\portable\\CryptoBook.exe",
+  "executableSha256": "AE79650019C9A7DC0620B08717E98B5593A8FC2584FFFD16616C6C26D71D051C",
+  "hookSha256": "1540F0AF104D05EB55084C2C451225FEFB414C64A9896F10FD6A584B0A535521",
+  "expectedHelpFiles": 897,
+  "runs": [
+    {
+      "culture": "en-US",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\en-US\\artifacts\\hv\\en-US\\6ad09596\\result.json"
+    },
+    {
+      "culture": "ru-RU",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\ru-RU\\artifacts\\hv\\ru-RU\\065d123d\\result.json"
+    },
+    {
+      "culture": "uk-UA",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\uk-UA\\artifacts\\hv\\uk-UA\\c8eb65fa\\result.json"
+    },
+    {
+      "culture": "de-DE",
+      "checks": 1310,
+      "result": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\de-DE\\artifacts\\hv\\de-DE\\5e0dffc3\\result.json"
+    }
+  ]
+}

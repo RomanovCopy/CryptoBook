@@ -1,0 +1,17 @@
+{
+  "shotId": "S03-a",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S03-a.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.38015277777777784,
+      "y": 0.14875347222222224,
+      "width": 0.13996064814814815,
+      "height": 0.04714583333333334,
+      "badge": null
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "culture": "uk-UA",
+  "onAc": true,
+  "logicalProcessors": 16,
+  "model": "Qwythos-9B-Claude-Mythos-5-1M-uncensored-heretic-Q4_K_S.gguf",
+  "balanced": {
+    "ContextLength": 1024,
+    "GpuLayers": 29,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": false,
+    "Threads": 0,
+    "BatchThreads": 0,
+    "PerformanceBoost": false,
+    "PowerSaving": false
+  },
+  "saving": {
+    "ContextLength": 1024,
+    "GpuLayers": 29,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": false,
+    "Threads": 4,
+    "BatchThreads": 4,
+    "PerformanceBoost": false,
+    "PowerSaving": true
+  },
+  "optimal": {
+    "ContextLength": 1024,
+    "GpuLayers": 29,
+    "BatchSize": 256,
+    "UBatchSize": 128,
+    "FlashAttention": null,
+    "CpuBackend": false,
+    "Threads": 0,
+    "BatchThreads": 0,
+    "PerformanceBoost": false,
+    "PowerSaving": false
+  },
+  "measured": {
+    "Baseline": {
+      "InputTokens": 110,
+      "OutputTokens": 127,
+      "PromptSeconds": 0.4447199,
+      "GenerationSeconds": 4.4404997999999996,
+      "PeakRamBytes": 5812039680,
+      "PeakGpuBytes": 5089300480,
+      "PromptTokensPerSecond": 247.34670069857455,
+      "GenerationTokensPerSecond": 28.37518425290775
+    },
+    "Selected": {
+      "InputTokens": 110,
+      "OutputTokens": 127,
+      "PromptSeconds": 0.4447199,
+      "GenerationSeconds": 4.4404997999999996,
+      "PeakRamBytes": 5812039680,
+      "PeakGpuBytes": 5089300480,
+      "PromptTokensPerSecond": 247.34670069857455,
+      "GenerationTokensPerSecond": 28.37518425290775
+    },
+    "BoostSelected": false,
+    "TestedUtc": "2026-11-01T16:21:19.2408413Z",
+    "Speedup": 1
+  },
+  "stop": "Native benchmark cancelled at a real trial",
+  "retune": "Fresh model test after profile removal",
+  "otherProcessesChanged": false
+}

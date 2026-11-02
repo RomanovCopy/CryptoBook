@@ -1,0 +1,972 @@
+{
+  "date": "2026-11-02",
+  "base": "a82f67c",
+  "method": "Recomputed current catalog coverage; not a recovered stage10 artifact.",
+  "features": 158,
+  "uncovered": 0,
+  "rows": [
+    {
+      "feature": "F001",
+      "topics": [
+        "start.install"
+      ]
+    },
+    {
+      "feature": "F002",
+      "topics": [
+        "start.interface"
+      ]
+    },
+    {
+      "feature": "F003",
+      "topics": [
+        "start.interface"
+      ]
+    },
+    {
+      "feature": "F004",
+      "topics": [
+        "start.workspace",
+        "settings.data"
+      ]
+    },
+    {
+      "feature": "F005",
+      "topics": [
+        "doc.create"
+      ]
+    },
+    {
+      "feature": "F006",
+      "topics": [
+        "doc.create",
+        "doc.templates",
+        "settings.appearance"
+      ]
+    },
+    {
+      "feature": "F007",
+      "topics": [
+        "doc.create",
+        "edit.page"
+      ]
+    },
+    {
+      "feature": "F008",
+      "topics": [
+        "doc.create"
+      ]
+    },
+    {
+      "feature": "F009",
+      "topics": [
+        "doc.open"
+      ]
+    },
+    {
+      "feature": "F010",
+      "topics": [
+        "doc.create",
+        "doc.save"
+      ]
+    },
+    {
+      "feature": "F011",
+      "topics": [
+        "doc.create",
+        "doc.save"
+      ]
+    },
+    {
+      "feature": "F012",
+      "topics": [
+        "doc.create",
+        "doc.formats"
+      ]
+    },
+    {
+      "feature": "F013",
+      "topics": [
+        "start.interface",
+        "doc.switch"
+      ]
+    },
+    {
+      "feature": "F014",
+      "topics": [
+        "doc.switch"
+      ]
+    },
+    {
+      "feature": "F015",
+      "topics": [
+        "doc.save",
+        "doc.switch"
+      ]
+    },
+    {
+      "feature": "F016",
+      "topics": [
+        "edit.basic"
+      ]
+    },
+    {
+      "feature": "F017",
+      "topics": [
+        "edit.basic"
+      ]
+    },
+    {
+      "feature": "F018",
+      "topics": [
+        "edit.basic"
+      ]
+    },
+    {
+      "feature": "F019",
+      "topics": [
+        "edit.basic"
+      ]
+    },
+    {
+      "feature": "F020",
+      "topics": [
+        "edit.font"
+      ]
+    },
+    {
+      "feature": "F021",
+      "topics": [
+        "edit.font"
+      ]
+    },
+    {
+      "feature": "F022",
+      "topics": [
+        "edit.font"
+      ]
+    },
+    {
+      "feature": "F023",
+      "topics": [
+        "edit.palette"
+      ]
+    },
+    {
+      "feature": "F024",
+      "topics": [
+        "edit.paragraph"
+      ]
+    },
+    {
+      "feature": "F025",
+      "topics": [
+        "edit.paragraph"
+      ]
+    },
+    {
+      "feature": "F026",
+      "topics": [
+        "edit.paragraph"
+      ]
+    },
+    {
+      "feature": "F027",
+      "topics": [
+        "edit.paragraph"
+      ]
+    },
+    {
+      "feature": "F028",
+      "topics": [
+        "edit.links"
+      ]
+    },
+    {
+      "feature": "F029",
+      "topics": [
+        "edit.page"
+      ]
+    },
+    {
+      "feature": "F030",
+      "topics": [
+        "edit.view"
+      ]
+    },
+    {
+      "feature": "F031",
+      "topics": [
+        "edit.view"
+      ]
+    },
+    {
+      "feature": "F032",
+      "topics": [
+        "content.images"
+      ]
+    },
+    {
+      "feature": "F033",
+      "topics": [
+        "content.images"
+      ]
+    },
+    {
+      "feature": "F034",
+      "topics": [
+        "content.images"
+      ]
+    },
+    {
+      "feature": "F035",
+      "topics": [
+        "content.images"
+      ]
+    },
+    {
+      "feature": "F036",
+      "topics": [
+        "content.images"
+      ]
+    },
+    {
+      "feature": "F037",
+      "topics": [
+        "content.background"
+      ]
+    },
+    {
+      "feature": "F038",
+      "topics": [
+        "content.background"
+      ]
+    },
+    {
+      "feature": "F039",
+      "topics": [
+        "content.tables"
+      ]
+    },
+    {
+      "feature": "F040",
+      "topics": [
+        "content.bookmarks"
+      ]
+    },
+    {
+      "feature": "F041",
+      "topics": [
+        "content.bookmarks"
+      ]
+    },
+    {
+      "feature": "F042",
+      "topics": [
+        "content.bookmarks"
+      ]
+    },
+    {
+      "feature": "F043",
+      "topics": [
+        "content.bookmarks"
+      ]
+    },
+    {
+      "feature": "F044",
+      "topics": [
+        "content.bookmarks"
+      ]
+    },
+    {
+      "feature": "F045",
+      "topics": [
+        "content.bookmarks"
+      ]
+    },
+    {
+      "feature": "F046",
+      "topics": [
+        "content.structure"
+      ]
+    },
+    {
+      "feature": "F047",
+      "topics": [
+        "content.structure"
+      ]
+    },
+    {
+      "feature": "F048",
+      "topics": [
+        "content.structure"
+      ]
+    },
+    {
+      "feature": "F049",
+      "topics": [
+        "content.structure"
+      ]
+    },
+    {
+      "feature": "F050",
+      "topics": [
+        "md.edit"
+      ]
+    },
+    {
+      "feature": "F051",
+      "topics": [
+        "md.edit"
+      ]
+    },
+    {
+      "feature": "F052",
+      "topics": [
+        "md.syntax"
+      ]
+    },
+    {
+      "feature": "F053",
+      "topics": [
+        "md.preview"
+      ]
+    },
+    {
+      "feature": "F054",
+      "topics": [
+        "doc.formats",
+        "md.save"
+      ]
+    },
+    {
+      "feature": "F055",
+      "topics": [
+        "files.create"
+      ]
+    },
+    {
+      "feature": "F056",
+      "topics": [
+        "files.navigate"
+      ]
+    },
+    {
+      "feature": "F057",
+      "topics": [
+        "files.navigate"
+      ]
+    },
+    {
+      "feature": "F058",
+      "topics": [
+        "files.navigate"
+      ]
+    },
+    {
+      "feature": "F059",
+      "topics": [
+        "files.navigate"
+      ]
+    },
+    {
+      "feature": "F060",
+      "topics": [
+        "files.views"
+      ]
+    },
+    {
+      "feature": "F061",
+      "topics": [
+        "files.views"
+      ]
+    },
+    {
+      "feature": "F062",
+      "topics": [
+        "files.views"
+      ]
+    },
+    {
+      "feature": "F063",
+      "topics": [
+        "files.views"
+      ]
+    },
+    {
+      "feature": "F064",
+      "topics": [
+        "files.manage"
+      ]
+    },
+    {
+      "feature": "F065",
+      "topics": [
+        "files.manage"
+      ]
+    },
+    {
+      "feature": "F066",
+      "topics": [
+        "files.manage"
+      ]
+    },
+    {
+      "feature": "F067",
+      "topics": [
+        "files.create"
+      ]
+    },
+    {
+      "feature": "F068",
+      "topics": [
+        "files.manage"
+      ]
+    },
+    {
+      "feature": "F069",
+      "topics": [
+        "files.manage"
+      ]
+    },
+    {
+      "feature": "F070",
+      "topics": [
+        "files.transfer"
+      ]
+    },
+    {
+      "feature": "F071",
+      "topics": [
+        "files.transfer"
+      ]
+    },
+    {
+      "feature": "F072",
+      "topics": [
+        "files.transfer"
+      ]
+    },
+    {
+      "feature": "F073",
+      "topics": [
+        "files.transfer"
+      ]
+    },
+    {
+      "feature": "F074",
+      "topics": [
+        "files.conflicts"
+      ]
+    },
+    {
+      "feature": "F075",
+      "topics": [
+        "files.transfer"
+      ]
+    },
+    {
+      "feature": "F076",
+      "topics": [
+        "files.favorites"
+      ]
+    },
+    {
+      "feature": "F077",
+      "topics": [
+        "files.pinned"
+      ]
+    },
+    {
+      "feature": "F078",
+      "topics": [
+        "files.pinned"
+      ]
+    },
+    {
+      "feature": "F079",
+      "topics": [
+        "files.recent"
+      ]
+    },
+    {
+      "feature": "F080",
+      "topics": [
+        "files.batch"
+      ]
+    },
+    {
+      "feature": "F081",
+      "topics": [
+        "files.batch"
+      ]
+    },
+    {
+      "feature": "F082",
+      "topics": [
+        "files.batch"
+      ]
+    },
+    {
+      "feature": "F083",
+      "topics": [
+        "files.batch"
+      ]
+    },
+    {
+      "feature": "F084",
+      "topics": [
+        "files.batch"
+      ]
+    },
+    {
+      "feature": "F085",
+      "topics": [
+        "files.batch"
+      ]
+    },
+    {
+      "feature": "F086",
+      "topics": [
+        "files.batch"
+      ]
+    },
+    {
+      "feature": "F087",
+      "topics": [
+        "files.properties"
+      ]
+    },
+    {
+      "feature": "F088",
+      "topics": [
+        "files.properties"
+      ]
+    },
+    {
+      "feature": "F089",
+      "topics": [
+        "files.properties"
+      ]
+    },
+    {
+      "feature": "F090",
+      "topics": [
+        "search.name"
+      ]
+    },
+    {
+      "feature": "F091",
+      "topics": [
+        "search.workspace"
+      ]
+    },
+    {
+      "feature": "F092",
+      "topics": [
+        "search.workspace"
+      ]
+    },
+    {
+      "feature": "F093",
+      "topics": [
+        "search.document"
+      ]
+    },
+    {
+      "feature": "F094",
+      "topics": [
+        "devices.android"
+      ]
+    },
+    {
+      "feature": "F095",
+      "topics": [
+        "devices.transfers"
+      ]
+    },
+    {
+      "feature": "F096",
+      "topics": [
+        "devices.limits",
+        "security.decrypt"
+      ]
+    },
+    {
+      "feature": "F097",
+      "topics": [
+        "view.preview"
+      ]
+    },
+    {
+      "feature": "F098",
+      "topics": [
+        "view.images"
+      ]
+    },
+    {
+      "feature": "F099",
+      "topics": [
+        "view.video"
+      ]
+    },
+    {
+      "feature": "F100",
+      "topics": [
+        "view.video"
+      ]
+    },
+    {
+      "feature": "F101",
+      "topics": [
+        "view.pdf"
+      ]
+    },
+    {
+      "feature": "F102",
+      "topics": [
+        "view.print"
+      ]
+    },
+    {
+      "feature": "F103",
+      "topics": [
+        "security.password"
+      ]
+    },
+    {
+      "feature": "F104",
+      "topics": [
+        "security.password"
+      ]
+    },
+    {
+      "feature": "F105",
+      "topics": [
+        "security.protect"
+      ]
+    },
+    {
+      "feature": "F106",
+      "topics": [
+        "security.protect"
+      ]
+    },
+    {
+      "feature": "F107",
+      "topics": [
+        "security.protect"
+      ]
+    },
+    {
+      "feature": "F108",
+      "topics": [
+        "security.decrypt"
+      ]
+    },
+    {
+      "feature": "F109",
+      "topics": [
+        "security.lock"
+      ]
+    },
+    {
+      "feature": "F110",
+      "topics": [
+        "security.lock"
+      ]
+    },
+    {
+      "feature": "F111",
+      "topics": [
+        "security.lock",
+        "recovery.lock"
+      ]
+    },
+    {
+      "feature": "F112",
+      "topics": [
+        "security.compatibility"
+      ]
+    },
+    {
+      "feature": "F113",
+      "topics": [
+        "recovery.backup"
+      ]
+    },
+    {
+      "feature": "F114",
+      "topics": [
+        "recovery.crash"
+      ]
+    },
+    {
+      "feature": "F115",
+      "topics": [
+        "recovery.lock"
+      ]
+    },
+    {
+      "feature": "F116",
+      "topics": [
+        "recovery.write"
+      ]
+    },
+    {
+      "feature": "F117",
+      "topics": [
+        "ai.start"
+      ]
+    },
+    {
+      "feature": "F118",
+      "topics": [
+        "start.interface",
+        "ai.start"
+      ]
+    },
+    {
+      "feature": "F119",
+      "topics": [
+        "ai.models"
+      ]
+    },
+    {
+      "feature": "F120",
+      "topics": [
+        "ai.models"
+      ]
+    },
+    {
+      "feature": "F121",
+      "topics": [
+        "ai.models"
+      ]
+    },
+    {
+      "feature": "F122",
+      "topics": [
+        "ai.lifecycle"
+      ]
+    },
+    {
+      "feature": "F123",
+      "topics": [
+        "ai.lifecycle"
+      ]
+    },
+    {
+      "feature": "F124",
+      "topics": [
+        "ai.lifecycle"
+      ]
+    },
+    {
+      "feature": "F125",
+      "topics": [
+        "ai.chat"
+      ]
+    },
+    {
+      "feature": "F126",
+      "topics": [
+        "ai.chat"
+      ]
+    },
+    {
+      "feature": "F127",
+      "topics": [
+        "ai.chat"
+      ]
+    },
+    {
+      "feature": "F128",
+      "topics": [
+        "ai.templates"
+      ]
+    },
+    {
+      "feature": "F129",
+      "topics": [
+        "ai.templates"
+      ]
+    },
+    {
+      "feature": "F130",
+      "topics": [
+        "ai.attachments"
+      ]
+    },
+    {
+      "feature": "F131",
+      "topics": [
+        "ai.attachments"
+      ]
+    },
+    {
+      "feature": "F132",
+      "topics": [
+        "ai.attachments"
+      ]
+    },
+    {
+      "feature": "F133",
+      "topics": [
+        "ai.attachments"
+      ]
+    },
+    {
+      "feature": "F134",
+      "topics": [
+        "ai.apply"
+      ]
+    },
+    {
+      "feature": "F135",
+      "topics": [
+        "ai.context"
+      ]
+    },
+    {
+      "feature": "F136",
+      "topics": [
+        "ai.context"
+      ]
+    },
+    {
+      "feature": "F137",
+      "topics": [
+        "ai.context"
+      ]
+    },
+    {
+      "feature": "F138",
+      "topics": [
+        "ai.context"
+      ]
+    },
+    {
+      "feature": "F139",
+      "topics": [
+        "ai.memory"
+      ]
+    },
+    {
+      "feature": "F140",
+      "topics": [
+        "ai.memory"
+      ]
+    },
+    {
+      "feature": "F141",
+      "topics": [
+        "ai.memory"
+      ]
+    },
+    {
+      "feature": "F142",
+      "topics": [
+        "ai.memory"
+      ]
+    },
+    {
+      "feature": "F143",
+      "topics": [
+        "ai.performance"
+      ]
+    },
+    {
+      "feature": "F144",
+      "topics": [
+        "ai.performance"
+      ]
+    },
+    {
+      "feature": "F145",
+      "topics": [
+        "ai.appearance"
+      ]
+    },
+    {
+      "feature": "F146",
+      "topics": [
+        "ai.troubleshoot"
+      ]
+    },
+    {
+      "feature": "F147",
+      "topics": [
+        "settings.appearance"
+      ]
+    },
+    {
+      "feature": "F148",
+      "topics": [
+        "settings.appearance"
+      ]
+    },
+    {
+      "feature": "F149",
+      "topics": [
+        "settings.language"
+      ]
+    },
+    {
+      "feature": "F150",
+      "topics": [
+        "settings.about"
+      ]
+    },
+    {
+      "feature": "F151",
+      "topics": [
+        "settings.updates"
+      ]
+    },
+    {
+      "feature": "F152",
+      "topics": [
+        "settings.updates"
+      ]
+    },
+    {
+      "feature": "F153",
+      "topics": [
+        "settings.data"
+      ]
+    },
+    {
+      "feature": "F154",
+      "topics": [
+        "settings.hotkeys",
+        "settings.troubleshoot"
+      ]
+    },
+    {
+      "feature": "F155",
+      "topics": [
+        "start.interface",
+        "help.use"
+      ]
+    },
+    {
+      "feature": "F156",
+      "topics": [
+        "help.use"
+      ]
+    },
+    {
+      "feature": "F157",
+      "topics": [
+        "help.use"
+      ]
+    },
+    {
+      "feature": "F158",
+      "topics": [
+        "help.use"
+      ]
+    }
+  ]
+}

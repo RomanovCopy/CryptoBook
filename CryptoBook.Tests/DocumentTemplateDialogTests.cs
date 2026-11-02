@@ -7,6 +7,7 @@ using CryptoBook.Interfaces;
 using CryptoBook.Models;
 using CryptoBook.Services;
 using CryptoBook.Views;
+using CryptoBook.Validation;
 
 using System.IO;
 using System.Globalization;
@@ -28,6 +29,8 @@ public sealed class SettingsUiCollection;
 [Collection("Settings UI")]
 public sealed class DocumentTemplateDialogTests
 {
+    public DocumentTemplateDialogTests() => MemorySettingsProvider.Install();
+
     [WpfFact]
     public async Task NewDialog_SelectsDefaultAndCreatesChosenTemplateUsingBindings()
     {
@@ -118,13 +121,15 @@ public sealed class DocumentTemplateDialogTests
             selector.SelectedItem = viewModel.KeyResetIntervals.Single(option => option.Minutes == 0);
             Assert.Equal(0, viewModel.SelectedKeyResetInterval.Minutes);
             Assert.Equal(TimeSpan.Zero, resetService.Timeout);
-            Assert.Equal(0, new Properties.Settings().KeyResetTimeoutMinutes);
+            Properties.Settings.Default.Reload();
+            Assert.Equal(0, Properties.Settings.Default.KeyResetTimeoutMinutes);
             using ILifetimeScope reopenedScope = container.BeginLifetimeScope();
             Assert.Equal(0, reopenedScope.Resolve<ISettingsViewModel>().SelectedKeyResetInterval.Minutes);
 
             selector.SelectedItem = viewModel.KeyResetIntervals.Single(option => option.Minutes == 5);
             Assert.Equal(TimeSpan.FromMinutes(5), resetService.Timeout);
-            Assert.Equal(5, new Properties.Settings().KeyResetTimeoutMinutes);
+            Properties.Settings.Default.Reload();
+            Assert.Equal(5, Properties.Settings.Default.KeyResetTimeoutMinutes);
         }
         finally
         {

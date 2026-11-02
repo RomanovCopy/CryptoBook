@@ -1,0 +1,17 @@
+{
+  "shotId": "S03-a",
+  "culture": "de-DE",
+  "rawFile": "docs/help/screenshots/raw/de-DE/S03-a.png",
+  "crop": null,
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.3798611111111111,
+      "y": 0.14875347222222224,
+      "width": 0.13431481481481483,
+      "height": 0.04714583333333334,
+      "badge": null
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-31",
+  "mode": "stage7-connection",
+  "run": "artifacts/hv/ru-RU/eff19a9a",
+  "physicalDisconnectObserved": true,
+  "disposableFileReadFailed": true,
+  "observedException": "System.ArgumentException from StorageDevice.FromId",
+  "outcome": "Expected access failure observed; initial validation exception filter was too narrow and host stopped before Refresh/Retry. Filter expanded; separate read-only reconnect continuation passed.",
+  "limitations": "Idle disconnect only. No successful live Retry or transfer interruption claimed."
+}

@@ -1,0 +1,14 @@
+{
+  "editor": {
+    "total": 193,
+    "passed": 193,
+    "failed": 0,
+    "source": "artifacts/stage5/editor-tests.trx"
+  },
+  "help": {
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "source": "artifacts/stage5/help-tests.trx"
+  }
+}

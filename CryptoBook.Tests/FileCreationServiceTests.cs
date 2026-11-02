@@ -61,6 +61,25 @@ namespace CryptoBook.Tests
                 Directory.Delete(testDirectory, recursive: true);
         }
 
+        [Theory]
+        [InlineData("bad|name.txt")]
+        [InlineData("../outside.txt")]
+        [InlineData("CON.txt")]
+        [InlineData("name.")]
+        [InlineData("name ")]
+        [InlineData("")]
+        public async Task InvalidNameDoesNotCreateOrSubstituteAnyFile(string name)
+        {
+            var template = new PlainTextTemplate();
+            var service = new FileCreationService(new LocalFileManagerStub(), new SecureFileProcessorStub(),
+                new FileTemplateRegistry([template]));
+            var result = await service.CreateAsync(testDirectory, name, template,
+                IfExistsMode.AutoRename, false, false, CancellationToken.None);
+            Assert.False(result.Success);
+            Assert.Null(result.AffectedPath);
+            Assert.Empty(Directory.GetFileSystemEntries(testDirectory));
+        }
+
         [WpfTheory]
         [InlineData(false)]
         [InlineData(true)]

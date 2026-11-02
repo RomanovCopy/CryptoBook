@@ -1,0 +1,25 @@
+{
+  "shotId": "S22-a",
+  "culture": "uk-UA",
+  "rawFile": "docs/help/screenshots/raw/uk-UA/S22-a.png",
+  "crop": {
+    "x": 0,
+    "y": 0,
+    "width": 1344,
+    "height": 119
+  },
+  "marks": [
+    {
+      "number": 1,
+      "shape": "rectangle",
+      "x": 0.19940476190476192,
+      "y": 0.046218487394957986,
+      "width": 0.02976190476190476,
+      "height": 0.3025210084033613,
+      "badge": {
+        "x": 0.5877976190476191,
+        "y": 0.19327731092436976
+      }
+    }
+  ]
+}
