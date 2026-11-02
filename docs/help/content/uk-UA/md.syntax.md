@@ -283,7 +283,7 @@ HTML-код показується як неактивний вихідний т
 [relative](relative.md)
 ````
 
-FTP, file, відносні, javascript- та інші посилання поза HTTP відображаються як текст, а не як активні посилання.
+FTP, file, відносні та javascript-посилання відображаються як текст, а не як активні посилання. Активні лише посилання HTTP, HTTPS та mailto.
 
 ````text
 ![alt](https://example.com/image.png)

@@ -1,9 +1,13 @@
 [CmdletBinding()]
-param()
+param(
+    [ValidatePattern('\A[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}\z')]
+    [string]$EvidenceTag
+)
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $contentRoot = Join-Path $repoRoot 'docs/help/content'
 $evidence = Join-Path $repoRoot 'docs/help/screenshots/validation/stage11'
+if ($EvidenceTag) { $evidence = Join-Path $evidence $EvidenceTag }
 New-Item -ItemType Directory -Path $evidence -Force | Out-Null
 $catalog = Get-Content -LiteralPath (Join-Path $contentRoot 'catalog.json') -Raw | ConvertFrom-Json
 $rows = [Collections.Generic.List[object]]::new()

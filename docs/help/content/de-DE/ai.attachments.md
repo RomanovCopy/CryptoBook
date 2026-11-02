@@ -4,7 +4,7 @@ Anhänge ergänzen Informationen zu einer Frage. Wählen Sie Dateien, die Sie de
 
 ## Hinzufügen und entfernen
 
-1. Klicken Sie neben dem Eingabefeld auf **Dateien anhängen…** (1). Die Systemauswahl bietet Dokumente/Bilder und **Alle Dateien (*.*)**. Wählen Sie mehrere Dateien oder ziehen Sie sie auf den Bereich.
+1. Klicken Sie neben dem Eingabefeld auf **Dateien anhängen…** (1). Die Systemauswahl bietet Dokumente/Bilder und **Alle Dateien** (`*.*`). Wählen Sie mehrere Dateien oder ziehen Sie sie auf den Bereich.
 2. Prüfen Sie die Karten. Vor dem Senden entfernt das Kreuz **Anhang entfernen** die entsprechende Karte.
 
 ![Karten für eine Text- und Binärdatei mit den Anhangschaltflächen](images/S42-a.png "Bereich 1 wählt Dateien; Bereich 2 hängt einen Schnappschuss des aktuellen Dokuments an.")
@@ -24,7 +24,7 @@ Text, Markdown, RTF, DOCX und XamlPackage werden als ausgelesener Text übergebe
 
 ## Grenzen und Fehler
 
-Bis zu vier Dateien pro Nachricht; höchstens 32 MB pro Datei; bis zu 500000 ausgelesene Textzeichen; bis zu 100 Megapixel vor der Bildverkleinerung. Große Bilder werden verkleinert; feine Details können verloren gehen. Anhänge und Verlauf beanspruchen Modellkontext: Auch eine zulässige Datei kann das Budget einer konkreten Anfrage überschreiten.
+Bis zu vier Dateien pro Nachricht; höchstens 32 MiB pro Datei; bis zu 500000 ausgelesene Textzeichen; bis zu 100 Megapixel vor der Bildverkleinerung. Große Bilder werden verkleinert; feine Details können verloren gehen. Anhänge und Verlauf beanspruchen Modellkontext: Auch eine zulässige Datei kann das Budget einer konkreten Anfrage überschreiten.
 
 ![Zurückgewiesene fünfte Datei mit erhaltenen bereits angenommenen Karten](images/S42-c.png "Vier Dateien wurden angenommen, die fünfte abgewiesen. Die Kartenliste ist scrollbar.")
 

@@ -4,7 +4,7 @@ Bilder lassen sich in normale Dokumente einfügen. Arbeiten Sie zunächst mit ei
 
 ## Schritte
 
-1. Setzen Sie die Einfügemarke und öffnen Sie **Inhalt** → den Befehl zum Einfügen eines Bilds oder den entsprechenden Kontextmenüpunkt. Wählen Sie eine Datei; Abbrechen verändert das Dokument nicht.
+1. Setzen Sie die Einfügemarke und wählen Sie **Inhalt → Bild einfügen** oder den entsprechenden Kontextmenüpunkt. Wählen Sie eine Datei; Abbrechen verändert das Dokument nicht.
 2. Klicken Sie das Bild an, um Größenanfasser anzuzeigen. Ziehen Sie einen Anfasser und prüfen Sie Proportionen und Seitengrenzen.
 3. Wählen Sie im Bildkontextmenü die Platzierung: in der Zeile, zentrierter Block, links oder rechts mit Textumfluss. Die vier Abbildungen zeigen diese Ergebnisse in dieser Reihenfolge.
 

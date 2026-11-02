@@ -1,0 +1,16 @@
+{
+  "culture": "uk-UA",
+  "commit": "a82f67cee84b27461dd442487577258483b4c68a\u002Bstage12-working-tree",
+  "entryAssembly": "CryptoBook",
+  "applicationVersion": "1.1.5.2",
+  "assemblyPath": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\uk-UA\\bundle\\CryptoBook\\0au-mKqqfXXH\\CryptoBook.dll",
+  "assemblySha256": "948D8992E973257707296F77F80DF469BC500054B2B2E710BED5BD065EB55E15",
+  "executable": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\portable\\CryptoBook.exe",
+  "cwd": "C:\\Users\\Encrypto\\.codex\\visualizations\\2026\\11\\02\\01a19d06-3d53-7790-b183-608ce6d109a9\\stage12\\package-check-final\\uk-UA\\artifacts\\hv\\uk-UA\\c8eb65fa",
+  "helpFiles": 897,
+  "hashesMatched": 897,
+  "checks": 1308,
+  "bindingErrors": [],
+  "startup": "Published EXE; tool-only startup hook invokes production App.OnStartup with isolated services before the normal entry point.",
+  "network": "No network service is used: updates return no release, models are disabled, help reads only WPF pack resources."
+}

@@ -28,7 +28,7 @@ Use a local folder where you can create files and a file name that is not alread
 
 ## Check the result
 
-Open the same RTF file again with **Open** in the side menu. The line **Departure at 09:00.** should still be there. Check the actual document name if the application chose a different free name because of a conflict.
+Close the saved RTF document, then open the same file again with **Open** in the side menu. Selecting a file that is still active may merely return to its editor without reading it from disk. The line **Departure at 09:00.** should still be there. Check the actual document name if the application chose a different free name because of a conflict.
 
 ![Trip plan.rtf reopened with the saved departure line](images/S06-b.png "Result. The text is still present after reopening the file.")
 
@@ -51,8 +51,6 @@ If a name is taken, the application chooses a free name, which can differ from w
 If the selected folder becomes unavailable, the dialog may remain open with an error. Choose an accessible folder and retry. Check whether a file from the previous attempt already exists first. **Cancel** does not delete a file that was already written.
 
 ![Lower part of the creation dialog reporting a write error in an unavailable folder](images/S04-d.png "Creation error. Check the folder and any already created file before retrying.")
-
-To verify saving, close the saved disposable file before reopening it: selecting an already active file may merely return to its editor.
 
 ## Related topics
 

@@ -37,6 +37,7 @@ foreach ($topic in $catalog.topics) {
     Assert-Help ($topic.section -in $catalog.sections) ('Unknown section: ' + $topic.id)
     foreach ($feature in $topic.featureIds) { Assert-Help ($feature -in $features) ('Unknown feature: ' + $feature) }
 }
+Assert-Help (Same-Set $features @($catalog.topics | ForEach-Object { $_.featureIds })) 'Feature coverage incomplete.'
 foreach ($culture in $catalog.cultures) {
     $localeRoot = Join-Path $root ('content/' + $culture)
     $locale = Get-Content -LiteralPath (Join-Path $localeRoot 'locale.json') -Raw | ConvertFrom-Json
@@ -49,16 +50,30 @@ foreach ($culture in $catalog.cultures) {
         $body = Get-Content -LiteralPath (Join-Path $localeRoot $entry.file) -Raw
         $prose = Remove-CodeFences $body
         Assert-Help (-not [regex]::IsMatch($prose, '\*\*[^*\r\n]*_[^*\r\n]*\*\*')) ('Visible command contains an access-key marker: '+$culture+'/'+$entry.id)
+        $withoutInlineCode = [regex]::Replace($prose, '`[^`\r\n]+`', '')
+        Assert-Help (-not $withoutInlineCode.Contains('(*.*)')) ('Wildcard needs inline-code formatting to retain its asterisks: '+$culture+'/'+$entry.id)
         if ($entry.id -eq 'md.syntax') {
             $legacy = Get-Content -LiteralPath (Join-Path $root 'screenshots/validation/stage5/markdown-legacy.json') -Raw | ConvertFrom-Json
-            $examples = @([regex]::Matches(($body -replace '\r\n',"`n"), '(?ms)^`{4}text\n(.*?)\n`{4}$'))
+            $syntaxBody = $body -replace '\r\n',"`n"
+            $examples = @([regex]::Matches($syntaxBody, '(?ms)^`{4}text\n(.*?)\n`{4}$'))
             Assert-Help ($examples.Count -eq 40 -and $legacy.entries.Count -eq 40) ('Markdown example count: '+$culture)
             for ($i=0; $i -lt [Math]::Min($examples.Count, $legacy.entries.Count); $i++) {
                 $old = $legacy.entries[$i]
                 if ($old.key -in @('MarkdownHelp.Editor.Help.Result','MarkdownHelp.Editor.Toggle.Result')) { continue }
                 $expected = $old.syntax.Replace("  `n", '  ⏎'+"`n")
                 Assert-Help ($examples[$i].Groups[1].Value -ceq $expected) ('Lost Markdown syntax: '+$culture+'/'+$old.key)
-                Assert-Help ($body.Contains($legacy.resources.$culture.($old.key))) ('Lost Markdown explanation: '+$culture+'/'+$old.key)
+                if ($old.key -eq 'MarkdownHelp.UnsafeLinks.Result') {
+                    # Historical wording incorrectly excluded mailto. Keep the syntax fixture
+                    # immutable, but check the corrected explanation beside this exact example.
+                    $start = $examples[$i].Index + $examples[$i].Length
+                    $end = if ($i + 1 -lt $examples.Count) { $examples[$i + 1].Index } else { $syntaxBody.Length }
+                    $explanation = $syntaxBody.Substring($start, $end - $start)
+                    foreach ($scheme in @('HTTP', 'HTTPS', 'mailto')) {
+                        Assert-Help ($explanation.Contains($scheme)) ('Missing allowed Markdown link scheme: '+$culture+'/'+$scheme)
+                    }
+                } else {
+                    Assert-Help ($body.Contains($legacy.resources.$culture.($old.key))) ('Lost Markdown explanation: '+$culture+'/'+$old.key)
+                }
             }
         }
         Assert-Help ([regex]::Matches((Remove-CodeFences $body), '(?m)^# ').Count -eq 1) ('Article must have one H1: ' + $entry.file)

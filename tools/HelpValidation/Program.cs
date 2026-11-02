@@ -32,7 +32,7 @@ internal static partial class Program
     private static int checks;
     private static readonly List<string> bindingErrors = [];
     [STAThread]
-    private static int Main(string[] args)
+    internal static int Main(string[] args)
     {
         if (args.Length < 3) { Console.Error.WriteLine("HelpValidation <repository> <culture> <commit> [verify]"); return 2; }
         repo = Path.GetFullPath(args[0]); culture = args[1]; commit = args[2];
@@ -45,6 +45,7 @@ internal static partial class Program
         bool stage92 = args.Length > 3 && args[3].StartsWith("stage9-chat", StringComparison.Ordinal);
         bool stage93 = args.Length > 3 && (args[3].StartsWith("stage9-settings", StringComparison.Ordinal) || args[3] == "stage9-performance");
         bool stage10 = args.Length > 3 && args[3].StartsWith("stage10", StringComparison.Ordinal);
+        bool stage12 = args.Length > 3 && args[3] == "stage12-package";
         bool stage11 = args.Length > 3 && args[3].StartsWith("stage11", StringComparison.Ordinal);
         if (stage10) captureActionCheck = "Production settings/help commands and update coordinator with an isolated fictional release source. No network, installer execution, personal profile, clipboard or physical input.";
         if (stage93) captureActionCheck = "Production settings/commands and real native inference; isolated per-model profiles and memory-only Copy. See the mode's scenario and result reports. No physical input, native color-picker gesture or power transition.";
@@ -61,7 +62,7 @@ internal static partial class Program
         Properties.Settings.Default.CultureInfo = culture;
         Properties.Settings.Default.FileOverviewFirstStart = true;
         Properties.Settings.Default.WindowState = "Normal";
-        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7 || stage8 || stage9 || stage10 || stage11, stage7, acceptance7, stage92 || stage93 || stage11, stage10);
+        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7 || stage8 || stage9 || stage10 || stage11 || stage12, stage7, acceptance7, stage92 || stage93 || stage11 || stage12, stage10);
         var app = new App(isolated.Configure) { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.InitializeComponent();
         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingListener(bindingErrors));
@@ -78,7 +79,8 @@ internal static partial class Program
                     Console.WriteLine($"HELP_ACCEPTANCE SESSION CLOSED report={Path.Combine(runRoot, "acceptance.json")}");
                     return;
                 }
-                if (stage11) await ValidateStage11(isolated, args[3] == "stage11-input", args[3] == "stage11-verify");
+                if (stage12) await ValidateStage12(isolated);
+                else if (stage11) await ValidateStage11(isolated, args[3] == "stage11-input", args[3] == "stage11-verify");
                 else if (stage10) await ValidateStage10(isolated, args[3] == "stage10-verify");
                 else if (stage93) await ValidateStage93(isolated, args[3] == "stage9-settings-verify", args[3] == "stage9-performance", args[3] == "stage9-settings-reasoning");
                 else if (stage92) await ValidateStage92(isolated, args[3] == "stage9-chat-verify", args[3] == "stage9-chat-templates");
@@ -96,10 +98,15 @@ internal static partial class Program
                 Check(bindingErrors.Count == 0, "No WPF binding errors.");
                 File.WriteAllText(Path.Combine(runRoot, "result.json"), JsonSerializer.Serialize(new
                 {
-                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, stage8, stage9, stage92, stage93, stage10, stage11, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
+                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, stage8, stage9, stage92, stage93, stage10, stage11, stage12, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
                     captureFilter, storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
                     captureMethod = media7 ? "Flyleaf TakeSnapshotToBitmapSource of the actual decoded video frame; not a window screenshot" : "RenderTargetBitmap of visible production WPF windows",
-                    interaction = stage11 ? "All embedded topics and images, four themes and two window sizes; stage11-input waits for external OS input in isolated fixture windows. See stage11 reports."
+                    interaction = stage12 ? "Published single-file executable with a validation-only startup hook; production App.OnStartup with isolated services, every embedded resource hashed, all topics rendered and images enlarged, history/search/language/reopening and unsaved documents/chat preserved."
+                        : stage11 ? args[3] == "stage11-input"
+                        ? "Waits for external input in isolated fixture windows; only the observed Help key events are logged. Input origin must be recorded by the operator."
+                        : args[3] == "stage11-verify"
+                        ? "All embedded topics and images in Light at the wide size, plus history/language/reopening and scaled-layout checks. Image enlargement is skipped only with the explicit text filter."
+                        : "All embedded topics and images in four themes at two window sizes, image enlargement, history/language/reopening and scaled-layout checks."
                         : stage10 ? "Production settings, immediate language/theme changes, update service/coordinator/notification with fictional release metadata, routed F1/Enter/Escape and help navigation. Verify mode reads all nine embedded topics/images."
                         : stage93 ? "Production context/memory/performance/appearance settings and real adaptive native worker. Fictional requests, memory-only Copy sink, per-model isolated profiles. See stage9-settings.json or stage9-performance.json. Verify mode reads embedded resources only."
                         : stage92 ? "Production chat/templates/attachment readers/drop behavior and both visible editors; real GGUF/vision, selected-message Copy to an isolated memory sink, native picker decisions queued. See stage9-chat.json. Verify mode reads embedded resources only."
@@ -113,7 +120,8 @@ internal static partial class Program
                         : stage6 ? "production file-manager commands, local disk pipelines, WPF folder/name/conflict/batch/details dialogs; isolated stores and disposable clipboard with prior data restored in memory"
                         : stage5 ? "visible production control DataContexts and commands; real link/crop dialogs; production image/layout/crop services; image paths and unsaved decisions supplied by queues; disposable clipboard roundtrip with prior data object restored in memory"
                         : stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
-                    limitations = stage11 ? "RenderTargetBitmap at 144/192 DPI is raster-density coverage, not an OS monitor/DPI transition. Computer Use SendInput is recorded separately and is not a human physical key press. No user profile, clipboard, device, model or network access."
+                    limitations = stage12 ? "Validation hook exits before the normal entry point, keeping user settings/storage isolated. No installer execution, profile upgrade, physical input, OS DPI change, models or network. Not an uninstrumented installed-profile startup."
+                        : stage11 ? "RenderTargetBitmap at 144/192 DPI is raster-density coverage, not an OS monitor/DPI transition. Computer Use SendInput is recorded separately and is not a human physical key press. No user profile, clipboard, device, model or network access."
                         : stage10 ? "No live GitHub request, real download, UAC, installer launch/upgrade, installed-profile migration, physical keyboard/mouse or DPI acceptance. Synthetic HTTP/download/integrity/cancellation and profile migration are checked separately by existing tests."
                         : stage93 ? "No personal data, system clipboard, native color-picker gesture, physical input, power-cable operation or induced system memory pressure. Real results are recorded without substituting hardware readings. Reuse internals and failure fallbacks are checked separately."
                         : stage92 ? "No personal data, system clipboard, native file-picker gesture, physical input or performance benchmark. Ctrl+Enter binding is inspected; production Send command is executed. Routed Drop uses disposable paths. Model output is real, never substituted."
@@ -266,9 +274,17 @@ internal static partial class Program
         Check(helpVm.Back.CanExecute(null), "Culture change preserves history.");
         LocalizationManager.SelectCulture(culture); await Settle(help);
         var inactiveAfter = workspace.CaptureInactiveDocument();
-        Check(ordinary == new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text &&
-            inactiveAfter is not null && inactive!.Content.SequenceEqual(inactiveAfter.Content) && inactive.Revision == inactiveAfter.Revision &&
-            selection == editor.Selection.Text && prompt == aiVm.Prompt && aiVm.Messages.Contains(chatMessage) && session.IsDirty && navigation.CurrentKey == page,
+        var preservation = new
+        {
+            ordinaryText = ordinary == new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text,
+            inactiveContent = inactiveAfter is not null && inactive!.Content.SequenceEqual(inactiveAfter.Content),
+            inactiveRevision = inactive?.Revision, inactiveRevisionAfter = inactiveAfter?.Revision,
+            selection = selection == editor.Selection.Text, prompt = prompt == aiVm.Prompt,
+            chat = aiVm.Messages.Contains(chatMessage), dirty = session.IsDirty, page, pageAfter = navigation.CurrentKey
+        };
+        WriteJson(Path.Combine(isolated.Root, "help-preservation.json"), preservation);
+        Check(preservation.ordinaryText && preservation.inactiveContent && preservation.inactiveRevision == preservation.inactiveRevisionAfter &&
+            preservation.selection && preservation.prompt && preservation.chat && preservation.dirty && preservation.pageAfter == preservation.page,
             "Help preserves both documents, dirty revisions, selection, AI messages/input and main navigation.");
 
         mainModel.IsMenuOpen = true; await Settle(main);

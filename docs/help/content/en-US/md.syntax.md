@@ -283,7 +283,7 @@ Raw HTML is shown as inert source text and is never executed.
 [relative](relative.md)
 ````
 
-FTP, file, relative, javascript, and other non-HTTP schemes are displayed as text, not active links.
+FTP, file, relative and javascript links are displayed as text, not active links. Only HTTP, HTTPS and mailto links are active.
 
 ````text
 ![alt](https://example.com/image.png)

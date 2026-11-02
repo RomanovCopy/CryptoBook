@@ -18,7 +18,7 @@ The numbered areas show 1 — name mask, 2 — preview, 3 — apply. Both masks 
 | [C] | Counter using **Start at**, **Step** and **Digits** |
 | [DMY] / [HMS] | Local date ddMMyyyy / time HHmmss, captured once for the entire preview |
 
-For example, name mask Photo_[C], extension [E], start 1, step 1 and 3 digits produce Photo_001.jpg, Photo_002.jpg for JPG sources. Start must be nonnegative, step positive and digits 1–18. A range beyond the source length contributes an empty string.
+For example, name mask Photo_[C], extension [E], start 1, step 1 and 3 digits produce Photo_001.jpg, Photo_002.jpg for JPG sources. Start must be nonnegative, step positive and digits 1–18. If a range starts beyond the source length, it contributes an empty string. If only its end exceeds the length, it takes the remaining characters: [N1-5] applied to AB.txt gives AB.
 
 3. If needed, set **Find (in the entire resulting name)** and **Replace with**. Replacement processes the entire constructed filename, including extension; **Letter case** is applied afterward. **Match case** controls matching. **Regular expressions** enables .NET regular expressions and replacement groups such as $1. A malformed expression blocks a valid preview.
 4. Compare **Old name**, **New name** and **Error** for every row. Duplicate names, occupied targets, invalid or Windows-reserved names block application. **Refresh** rechecks the folder and updates the date/time used by tokens; execution uses the names already shown.

@@ -28,7 +28,7 @@ Verwenden Sie einen lokalen Ordner, in dem Sie Dateien erstellen können, und ei
 
 ## Ergebnis prüfen
 
-Öffnen Sie dieselbe RTF-Datei erneut über die Schnellaktion **Öffnen** im Seitenmenü. Die Zeile **Abfahrt um 09:00 Uhr.** sollte weiterhin auf der Seite stehen. Prüfen Sie den tatsächlichen Dokumentnamen, falls die Anwendung wegen einer Namenskollision einen anderen freien Namen gewählt hat.
+Schließen Sie das gespeicherte RTF-Dokument und öffnen Sie dieselbe Datei erneut über die Schnellaktion **Öffnen** im Seitenmenü. Die Auswahl einer noch aktiven Datei kann lediglich zu ihrem Editor zurückkehren, ohne die Datei vom Datenträger einzulesen. Die Zeile **Abfahrt um 09:00 Uhr.** sollte weiterhin auf der Seite stehen. Prüfen Sie den tatsächlichen Dokumentnamen, falls die Anwendung wegen einer Namenskollision einen anderen freien Namen gewählt hat.
 
 ![Erneut geöffnete Datei Reiseplan.rtf mit der gespeicherten Abfahrtszeile](images/S06-b.png "Ergebnis. Der Text ist nach dem erneuten Öffnen weiterhin vorhanden.")
 
@@ -51,8 +51,6 @@ Ist ein Name belegt, wählt die Anwendung einen freien Namen, der von Ihrer Eing
 Wird der ausgewählte Ordner nicht mehr verfügbar, kann der Dialog mit einer Fehlermeldung geöffnet bleiben. Wählen Sie einen verfügbaren Ordner und wiederholen Sie die Erstellung. Prüfen Sie vorher, ob eine Datei aus dem letzten Versuch bereits vorhanden ist. **Abbrechen** löscht keine bereits geschriebene Datei.
 
 ![Unterer Bereich des Erstellungsdialogs mit Schreibfehler in einem nicht verfügbaren Ordner](images/S04-d.png "Erstellungsfehler. Prüfen Sie vor einem erneuten Versuch Ordner und bereits erstellte Dateien.")
-
-Schließen Sie zum Prüfen der Speicherung zuerst die gespeicherte Beispieldatei und öffnen Sie sie erneut: Die erneute Auswahl einer bereits aktiven Datei kann lediglich zu ihrem Editor zurückkehren.
 
 ## Verwandte Themen
 

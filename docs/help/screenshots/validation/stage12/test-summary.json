@@ -1,0 +1,66 @@
+[
+  {
+    "group": "ai-integration",
+    "total": 150,
+    "passed": 150,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "32EFDBCC99D325B7715B760DA2D87BAAF5CC21C1E49FF17AA9EA1CDBD64E6F1D"
+  },
+  {
+    "group": "ai-runtime",
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "21E41C228A41B85D96ED49DA4F5413D37D51BE6C3526725017BAA7263F36A961"
+  },
+  {
+    "group": "batch-rename-window",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "52CF54DC2454ADBBEC2E3337E741BA1A6776800B99F1B4C398C46328C8EE46B3"
+  },
+  {
+    "group": "document-search",
+    "total": 14,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "4AD6ECD54D30F2CED0DE0DDD494126CAD037C237DEF0466602C1F10CE880C55B"
+  },
+  {
+    "group": "help",
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "3D0B6F1CFE96773DF9D37FDCDC1D36C440C3F5985ED67929DEA4C33691944DB3"
+  },
+  {
+    "group": "image-layout",
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "BA60213B6BCD64E39530A1A2E409FA8F340384D915EEEA545EE0896EDEC16F1F"
+  },
+  {
+    "group": "remaining",
+    "total": 968,
+    "passed": 968,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "AC6C1BF239E817652BB84FF221AFDE8F8E1CF03B62813B40E70DCB22EA62D3B3"
+  },
+  {
+    "group": "worker-cancellation",
+    "total": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "7868DCB038931B8C82FCEA4F31BE8F8FE6CAE5149E2066A171F28BF57CFAC643"
+  }
+]

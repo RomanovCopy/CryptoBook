@@ -18,7 +18,7 @@ Die Bereiche zeigen 1 — Namensmaske, 2 — Vorschau, 3 — Anwenden. Beide Mas
 | [C] | Zähler aus **Startwert**, **Schrittweite** und **Stellen** |
 | [DMY] / [HMS] | Lokales Datum ddMMyyyy / Uhrzeit HHmmss, einmal für die gesamte Vorschau erfasst |
 
-Beispiel: Maske Photo_[C], Erweiterung [E], Startwert 1, Schrittweite 1 und 3 Stellen ergeben Photo_001.jpg und Photo_002.jpg für JPG-Quelldateien. Startwert muss nicht negativ, Schrittweite positiv und Stellenzahl 1–18 sein. Ein Bereich außerhalb des Quelltextes liefert eine leere Zeichenfolge.
+Beispiel: Maske Photo_[C], Erweiterung [E], Startwert 1, Schrittweite 1 und 3 Stellen ergeben Photo_001.jpg und Photo_002.jpg für JPG-Quelldateien. Startwert muss nicht negativ, Schrittweite positiv und Stellenzahl 1–18 sein. Beginnt ein Bereich hinter dem Ende des ursprünglichen Namens, liefert er eine leere Zeichenfolge. Liegt nur sein Ende dahinter, werden die restlichen Zeichen übernommen: [N1-5] ergibt bei AB.txt den Text AB.
 
 3. Legen Sie bei Bedarf **Suchen (im gesamten neuen Namen)** und **Ersetzen durch** fest. Die Ersetzung verarbeitet den gesamten gebildeten Namen samt Erweiterung; **Schreibweise** folgt danach. **Groß-/Kleinschreibung beachten** steuert den Vergleich. **Reguläre Ausdrücke** aktiviert reguläre .NET-Ausdrücke und Ersetzungsgruppen wie $1. Ein ungültiger Ausdruck verhindert eine gültige Vorschau.
 4. Vergleichen Sie **Alter Name**, **Neuer Name** und **Fehler** jeder Zeile. Doppelte Namen, belegte Ziele, ungültige und von Windows reservierte Namen blockieren die Ausführung. **Aktualisieren** prüft den Ordner neu und aktualisiert Datum/Uhrzeit der Token. Ausgeführt werden die bereits angezeigten Namen.

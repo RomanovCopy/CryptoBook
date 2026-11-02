@@ -1,0 +1,146 @@
+{
+  "date": "2026-11-02",
+  "base": "updates/a82f67c",
+  "status": "semantic pass complete; human input and real DPI/multi-monitor acceptance open",
+  "semanticReviewComplete": true,
+  "semanticReview": "semantic-review.json",
+  "physicalInputComplete": false,
+  "osDpiMonitorAcceptanceComplete": false,
+  "nativeSpeakerAcceptance": false,
+  "runs": [
+    {
+      "culture": "en-US",
+      "checks": 396,
+      "bindingErrors": 0,
+      "topics": 76,
+      "horizontalOverflow": 0,
+      "enlargements": 153,
+      "source": "artifacts\\hv\\en-US\\b9d68658\\result.json",
+      "sha256": "5BB5B8F930AC96C6ED361D1429EC1EBA5486B01514F931C96A508E9A15BD5F8D"
+    },
+    {
+      "culture": "ru-RU",
+      "checks": 396,
+      "bindingErrors": 0,
+      "topics": 76,
+      "horizontalOverflow": 0,
+      "enlargements": 153,
+      "source": "artifacts\\hv\\ru-RU\\5889caab\\result.json",
+      "sha256": "C1478BA16DDE4C9759B36C7A6F5B51672DC21FBA07C7E38A275EE23E618707BF"
+    },
+    {
+      "culture": "uk-UA",
+      "checks": 396,
+      "bindingErrors": 0,
+      "topics": 76,
+      "horizontalOverflow": 0,
+      "enlargements": 153,
+      "source": "artifacts\\hv\\uk-UA\\c8d1645f\\result.json",
+      "sha256": "C85781E626F4634C3D413DE6CC0B441DBD1F42D1A3015CB31DEA058ACA348009"
+    },
+    {
+      "culture": "de-DE",
+      "checks": 396,
+      "bindingErrors": 0,
+      "topics": 76,
+      "horizontalOverflow": 0,
+      "enlargements": 153,
+      "source": "artifacts\\hv\\de-DE\\702bf397\\result.json",
+      "sha256": "3B27A54E568835B617FF5413053123A0D12F8ABB2D71A33FCD59542C203BD0AD"
+    }
+  ],
+  "fullChecks": 1584.0,
+  "finalTextRuns": [
+    {
+      "culture": "en-US",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\en-US\\84ce7d8e\\result.json",
+      "sha256": "EDE1E51C4DF37587569665B02EC1571B4E2F3FEC4DDF7CAE1325AB93B2280A0E"
+    },
+    {
+      "culture": "ru-RU",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\ru-RU\\053678a7\\result.json",
+      "sha256": "C3A36172DC7B45C495795EDDB78A7F29493EBB91E517FF8B65A12C14CB510948"
+    },
+    {
+      "culture": "uk-UA",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\uk-UA\\cd6fdbd1\\result.json",
+      "sha256": "3285227AB1791016134FB59ADF0B9DE2493D12C02CB0899110B13DB9835C6A29"
+    },
+    {
+      "culture": "de-DE",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\de-DE\\3d70cd6f\\result.json",
+      "sha256": "732E252C6256D6145193A36D97CA634DF28D2E2B5C75DB4DA054689B95177EB3"
+    }
+  ],
+  "finalTextChecks": 972.0,
+  "totalChecks": 2556.0,
+  "layoutRows": 304,
+  "themesInThisRun": [
+    "Light"
+  ],
+  "sizesInThisRun": [
+    "1120x780 DIP"
+  ],
+  "priorFourThemeMatrix": "../summary.json",
+  "tests": [
+    {
+      "group": "HelpTests",
+      "total": 23,
+      "passed": 23,
+      "file": "tests/HelpTests.trx",
+      "sha256": "231CBDF2A0A40D157A127DB2B8427AD753655C8886D13D1FD817CBD8EAD598D7"
+    },
+    {
+      "group": "MarkdownTests",
+      "total": 9,
+      "passed": 9,
+      "file": "tests/MarkdownTests.trx",
+      "sha256": "F4F95B3F4F6B2A9BCFECBCDFBE9D9347B0794806F8F3D702AF642749384B16EA"
+    }
+  ],
+  "totalTests": 32.0,
+  "priorCaptures": 2352,
+  "changedCaptures": 0,
+  "monitorCount": 1,
+  "screenBounds": {
+    "Location": {
+      "IsEmpty": true,
+      "X": 0,
+      "Y": 0
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 1920,
+      "Height": 1200
+    },
+    "X": 0,
+    "Y": 0,
+    "Width": 1920,
+    "Height": 1200,
+    "Left": 0,
+    "Top": 0,
+    "Right": 1920,
+    "Bottom": 1200,
+    "IsEmpty": false
+  },
+  "dpi": {
+    "DpiScaleX": 1,
+    "DpiScaleY": 1,
+    "PixelsPerDip": 1,
+    "PixelsPerInchX": 96,
+    "PixelsPerInchY": 96
+  },
+  "limitation": "Scaled/raster screenshots are not OS DPI changes. No physical keyboard or multi-monitor transition performed."
+}

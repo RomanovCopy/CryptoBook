@@ -1,12 +1,12 @@
 # Vorhandene Tabellen bearbeiten
 
-Tabellen werden in normalen Dokumenten bearbeitet, etwa nach Einfügen einer formatierten AI-Antwort oder Öffnen eines XamlPackage mit Tabelle. Einen separaten Befehl für eine neue leere Tabelle gibt es nicht.
+Tabellen werden in normalen Dokumenten bearbeitet, etwa nach Einfügen einer formatierten KI-Antwort oder Öffnen eines XamlPackage mit Tabelle. Einen separaten Befehl für eine neue leere Tabelle gibt es nicht.
 
 ## Schritte
 
 1. Setzen Sie die Einfügemarke in eine einzelne Zelle und bearbeiten Sie den Text. Markieren Sie für Strukturänderungen nicht mehrere Zellen.
 2. Unter **Tabelle** im Kontextmenü fügen Sie eine Zeile oberhalb/unterhalb oder eine Spalte links/rechts ein.
-3. Das Löschen einer Zeile oder Spalte entfernt deren Inhalt. Die letzte Zeile oder Spalte entfernt die gesamte Tabelle: Speichern Sie vorher eine Kopie und verwenden Sie bei Bedarf Strg+Z.
+3. Das Löschen einer Zeile oder Spalte entfernt deren Inhalt. Das Löschen der letzten Zeile oder Spalte entfernt die gesamte Tabelle: Speichern Sie vorher eine Kopie und verwenden Sie bei Bedarf Strg+Z.
 
 ![Kontextmenü zum Einfügen und Löschen von Tabellenzeilen und -spalten](images/S14-a.png "Kontextmenü zum Einfügen und Löschen von Tabellenzeilen und -spalten.")
 
@@ -16,5 +16,5 @@ Strukturbefehle benötigen eine rechteckige Tabelle ohne verbundene Zellen, eine
 
 ## Verwandte Themen
 
-- [AI-Antwort übernehmen](help:ai.apply)
+- [KI-Antwort übernehmen](help:ai.apply)
 - [Formate und Kodierungen](help:doc.formats)

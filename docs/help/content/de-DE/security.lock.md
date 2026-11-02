@@ -20,7 +20,7 @@ Nach Erfolg bleibt gewöhnliche Arbeit möglich. Die Wiederherstellung einer Mom
 
 ## Zurückkehren
 
-Öffnen Sie das Seitenmenü → **Datei** → **Momentaufnahme nach Schlüsselreset wiederherstellen**. Für nach einem Kopierfehler im Speicher verborgene Arbeit verwenden Sie **Entsperren**. Ein Eingabeabbruch erhält die Kopie. **Nie** deaktiviert den Inaktivitätstimer; manuelles Zurücksetzen und Systemereignisse bleiben wirksam.
+Öffnen Sie das Seitenmenü → **Datei** → **Momentaufnahme nach Schlüsselreset wiederherstellen**. Für Arbeit, die nach einem Fehler beim Erstellen der Momentaufnahme im Speicher verborgen bleibt, verwenden Sie **Entsperren**. Ein Eingabeabbruch erhält die Kopie. **Nie** deaktiviert den Inaktivitätstimer; manuelles Zurücksetzen und Systemereignisse bleiben wirksam.
 
 - [Wiederherstellung einer Sperrkopie](help:recovery.lock)
 - [Schlüsseleingabe](help:security.password)

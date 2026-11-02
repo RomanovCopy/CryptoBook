@@ -4,7 +4,7 @@ Insert images into an ordinary document. Start with a disposable copy in editing
 
 ## Steps
 
-1. Position the caret and open **Content** → the image insertion command, or its context-menu equivalent. Choose a file; cancelling selection preserves the document.
+1. Position the caret and choose **Content → Insert image**, or its context-menu equivalent. Choose a file; cancelling selection preserves the document.
 2. Click the inserted image to show resize handles. Drag a handle while checking proportions and page boundaries.
 3. In the image context menu choose inline, a centred block, float left or float right. The four illustrations below show those results in that order.
 

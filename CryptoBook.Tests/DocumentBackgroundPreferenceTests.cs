@@ -1,4 +1,5 @@
 using CryptoBook.Services;
+using CryptoBook.Validation;
 
 using Drawing = System.Drawing;
 
@@ -6,8 +7,11 @@ using Xunit;
 
 namespace CryptoBook.Tests;
 
+[Collection("Settings UI")]
 public sealed class DocumentBackgroundPreferenceTests
 {
+    public DocumentBackgroundPreferenceTests() => MemorySettingsProvider.Install();
+
     [Fact]
     public void Store_RestoresArgbColorAcrossInstances()
     {

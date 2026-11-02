@@ -283,7 +283,7 @@ HTML-Code wird als inaktiver Quelltext angezeigt und niemals ausgeführt.
 [relative](relative.md)
 ````
 
-FTP-, Datei-, relative, JavaScript- und andere Nicht-HTTP-Links werden als Text statt als aktive Links angezeigt.
+FTP-, Datei-, relative und JavaScript-Links werden als Text statt als aktive Links angezeigt. Nur HTTP-, HTTPS- und mailto-Links sind aktiv.
 
 ````text
 ![alt](https://example.com/image.png)

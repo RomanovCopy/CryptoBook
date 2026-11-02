@@ -4,7 +4,7 @@ Attachments supply information for a question. Choose files you intend to share 
 
 ## Add and remove
 
-1. Click **Attach files…** (1) beside the prompt. The system picker offers documents/images and **All files (*.*)**. Select several files or drag files onto the panel.
+1. Click **Attach files…** (1) beside the prompt. The system picker offers documents/images and **All files** (`*.*`). Select several files or drag files onto the panel.
 2. Check the cards. Before sending, the **Remove attachment** cross removes the corresponding card.
 
 ![Text and binary file cards with attachment controls](images/S42-a.png "Area 1 selects files; area 2 attaches a snapshot of the current document.")
@@ -24,7 +24,7 @@ Text, Markdown, RTF, DOCX and XamlPackage are supplied as extracted text. Format
 
 ## Limits and errors
 
-Up to four files per message; up to 32 MB per file; up to 500000 extracted text characters; up to 100 megapixels before image resizing. Large images are reduced for processing and fine details may be lost. Attachments and history occupy model context: an allowed file can still exceed a particular request's budget.
+Up to four files per message; up to 32 MiB per file; up to 500000 extracted text characters; up to 100 megapixels before image resizing. Large images are reduced for processing and fine details may be lost. Attachments and history occupy model context: an allowed file can still exceed a particular request's budget.
 
 ![Fifth-file rejection with the already accepted cards retained](images/S42-c.png "Four files were accepted and the fifth rejected. The card list scrolls.")
 

@@ -145,7 +145,10 @@ Release-сборка решения, итоговые сборки HelpValidatio
 Проверены 76 ID/четыре культуры/304 текста/588 уникальных PNG, ссылки, паспорта, alt/подписи,
 переведённые наборы ссылок и изображения. Planned-ссылок нет. Итог валидатора — content-check.txt;
 `git diff --check` пройден. Все 158 функций реестра связаны с доступными темами:
-[coverage.json](screenshots/validation/stage10/coverage.json).
+[актуальная повторная сверка](screenshots/validation/stage11/continuation/feature-coverage.json).
+Уточнение продолжения этапа 11: прежний `stage10/coverage.json` отсутствует в репозитории
+из-за общего правила `coverage*.json` в `.gitignore`. Новый отчёт построен заново
+по текущим реестру и каталогу; это не восстановленный исторический артефакт этапа 10.
 
 [Сравнение SHA-256](screenshots/validation/stage10/prior-captures-check.json) подтверждает
 сохранность **2144** прежних файлов: 536 поставляемых PNG и по 536 raw/аннотаций/паспортов.

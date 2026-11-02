@@ -2,6 +2,43 @@
 
 This Windows/WPF executable runs the production `App.OnStartup`, views, container and commands with an in-memory `Properties.Settings` provider and explicitly redirected stores. Automated capture modes skip user settings migration, production crash-log handlers, IPC activation, device monitoring and live update requests. Their folder picker returns only the generated demo folder. The explicit `stage7-acceptance` mode below enables real device monitoring and native pickers/printing for human acceptance; persistent stores still remain isolated. Models are loaded only by the explicit AI inference modes described below.
 
+## Stage 12: help in the published single-file executable
+
+Run all visible WPF validation processes sequentially, including separate modes:
+they share the desktop and keyboard focus. Do not overlap package checks with
+the ordinary `verify` scenarios. Scenario reports retain per-field document,
+selection, chat and navigation preservation diagnostics in `help-preservation.json`.
+
+Build HelpValidation in Release, then use PowerShell 7:
+
+```powershell
+./tools/Test-HelpPackage.ps1 -ExecutablePath 'C:/disposable/portable/CryptoBook.exe' -OutputDirectory 'C:/disposable/package-check'
+```
+
+Choose a new output directory. The script records source-resource hashes before
+launch, copies only the validation DLL, and starts the supplied EXE once per
+culture with an explicit `DOTNET_STARTUP_HOOKS` configuration. The hook lives in
+this tool, never in the application or installer. All application dependencies
+and help resources must come from that EXE's isolated bundle extraction; no
+CryptoBook.dll from the tool's build directory is supplied. The package check
+rejects an adjacent Help/docs directory and a CWD with source documentation.
+
+The production `App.OnStartup` runs with the usual isolated services, settings in
+memory, disposable files and no network update source. Every embedded help file
+must match the reviewed source hash. All 76 topics of the selected language render,
+all article image links enlarge, localized searches and language/history/reopening
+are checked, and dirty ordinary/Markdown documents plus AI fixtures survive.
+The script requires a successful exit and result JSON, not just a PASS log line.
+
+After `App.Run` finishes normal cleanup and closes its reports, the hook terminates
+its owned process with the result code. It does not enter the normal entry point
+with the user's profile. This avoids CLR teardown reentry from a WPF startup hook.
+The check is an instrumented package startup, not an installed-profile upgrade or
+an uninstrumented launch. No installer, UAC, native picker, physical input or OS DPI
+transition is exercised. Existing stage-11 scaled-layout captures retain their
+original meaning. Full matrices/PNG stay under the chosen output directory;
+stage-12's report retains selected images and compact JSON as repository evidence.
+
 ## Stage 11: complete help layout matrix and separate OS-input session
 
 Use an existing disposable TEMP/TMP under artifacts, one culture/process at a time.
@@ -24,12 +61,21 @@ until Help closes. It records actual WPF key-up/focus state for external OS inpu
 it generates no routed keys. Use Computer Use or human input, distinguishing the
 two in the acceptance report. It never sends a model request or uses the clipboard.
 Close Help to finish and verify preservation. The initial physical-input and
-multi-monitor/DPI acceptance remains open in `docs/help/VALIDATION_STAGE11.md`.
+multi-monitor/DPI limits are recorded in `docs/help/VALIDATION_STAGE11.md`; the user
+closed that stage with those limits on 2 November 2026.
 
 `tools/Audit-HelpLanguage.ps1` inventories every title, bold label, alt/caption and
 resource match, with an alphabet/mnemonic scan. It is not semantic proofreading.
 `tools/New-HelpContactSheets.ps1` makes separate evidence sheets from a chosen PNG
 folder. Neither tool changes the source screenshots.
+
+For a later pass, set `CRYPTOBOOK_HELP_STAGE11_EVIDENCE_TAG` to a simple directory
+name such as `continuation` before running a stage11 mode. Its evidence goes under
+that subdirectory instead of overwriting the earlier stage11 files. Pass the same
+name as `-EvidenceTag continuation` to `tools/Audit-HelpLanguage.ps1`. The input
+report records observed events; the operator must state whether their source was
+physical human input or OS automation. See
+`docs/help/STAGE11_MANUAL_CHECKLIST.md` for the remaining hardware acceptance.
 
 ## Stage 10: settings, updates and help
 
