@@ -33,7 +33,7 @@ Liefert das Modell eine getrennte Analyse, können Sie diese in der Nachricht au
 
 ![Echte Modellantwort bei erlaubtem Nachdenken](images/S44-e.png "Getrennte Analyse wird nur angezeigt, wenn das Modell sie liefert.")
 
-Vor dem Speichern wählen Sie **Abbrechen**. Nach dem Speichern stellen Sie frühere Werte wieder her und speichern erneut; gelöschte Nachrichten kehren dadurch nicht zurück. Lädt der manuelle Modus nicht, wechseln Sie zu automatisch oder CPU und prüfen eine kurze Frage.
+Um ungespeicherte Änderungen zu verwerfen, wählen Sie **Abbrechen**. Nach dem Speichern stellen Sie frühere Werte wieder her und speichern erneut; gelöschte Nachrichten kehren dadurch nicht zurück. Lädt der manuelle Modus nicht, wechseln Sie zu automatisch oder CPU und prüfen eine kurze Frage.
 
 - [Kontext und Antwortgrenze](help:ai.context)
 - [Leistung und Messung](help:ai.performance)

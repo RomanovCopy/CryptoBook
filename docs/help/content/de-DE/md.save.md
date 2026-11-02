@@ -8,7 +8,7 @@ Gespeichert wird Quelltext einschließlich Auszeichnung, nicht die sichtbare Vor
 2. **Speichern unter** oder Strg+Umschalt+S speichert anderswo. Bei abgebrochener Zielwahl bleibt der Quelltext mit Änderungen geöffnet.
 3. Öffnen Sie eine Kopie und prüfen Sie Text, Auszeichnung und relative Bilder. Bilder werden nicht in .md eingebettet: Übertragen Sie sie separat mit unveränderten relativen Pfaden.
 
-![Markdown-Quelltext speichern — Oberflächenzustand 1.](images/S17-a.png "Markdown-Quelltext speichern — Oberflächenzustand 1.")
+![Markdown-Quelleditor mit Speicherbefehlen](images/S17-a.png "Markdown-Quelleditor mit Speicherbefehlen.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

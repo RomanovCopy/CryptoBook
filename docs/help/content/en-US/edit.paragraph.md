@@ -8,9 +8,9 @@ Paragraph settings affect the paragraphs containing the selection, or the paragr
 2. **First-line indent** sets the first-line indent. **Increase line spacing** and **Decrease line spacing** adjust line spacing in steps.
 3. In **Lists**, choose a bulleted or numbered list. Clearing the list returns its items to ordinary paragraphs.
 
-![Paragraphs, spacing and lists — Interface state 1.](images/S09-a.png "Paragraphs, spacing and lists — Interface state 1.")
+![Paragraph alignment, first-line indent and line spacing](images/S09-a.png "Paragraph alignment, first-line indent and line spacing.")
 
-![Paragraphs, spacing and lists — Interface state 2.](images/S09-b.png "Paragraphs, spacing and lists — Interface state 2.")
+![Bulleted and numbered list controls](images/S09-b.png "Bulleted and numbered list controls.")
 
 ## Check, undo and limitations
 

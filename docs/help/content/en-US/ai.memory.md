@@ -33,7 +33,7 @@ If the model supplies separate analysis, expand it in the message. Copying and a
 
 ![A real model reply with reasoning enabled](images/S44-e.png "Separate analysis appears only when the model supplies it.")
 
-Before saving, click **Cancel**. After saving, restore previous values and save again; this does not recover cleared messages. If manual placement fails to load, return to automatic or CPU mode and test a short question.
+To discard unsaved changes, click **Cancel**. After saving, restore previous values and save again; this does not recover cleared messages. If manual placement fails to load, return to automatic or CPU mode and test a short question.
 
 - [Context and reply limit](help:ai.context)
 - [Performance and measurement](help:ai.performance)

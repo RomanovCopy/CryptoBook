@@ -8,9 +8,9 @@ Absatzeinstellungen gelten für die Absätze der Auswahl oder den Absatz an der 
 2. **Erste Zeile einrücken** setzt den Erstzeileneinzug. **Zeilenabstand erhöhen** und **Zeilenabstand verringern** ändern den Zeilenabstand schrittweise.
 3. Unter **Listen** wählen Sie eine Aufzählung oder nummerierte Liste. Das Entfernen der Liste stellt normale Absätze her.
 
-![Absätze, Abstände und Listen — Oberflächenzustand 1.](images/S09-a.png "Absätze, Abstände und Listen — Oberflächenzustand 1.")
+![Absatzausrichtung, Erstzeileneinzug und Zeilenabstand](images/S09-a.png "Absatzausrichtung, Erstzeileneinzug und Zeilenabstand.")
 
-![Absätze, Abstände und Listen — Oberflächenzustand 2.](images/S09-b.png "Absätze, Abstände und Listen — Oberflächenzustand 2.")
+![Befehle für Aufzählungen und nummerierte Listen](images/S09-b.png "Befehle für Aufzählungen und nummerierte Listen.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

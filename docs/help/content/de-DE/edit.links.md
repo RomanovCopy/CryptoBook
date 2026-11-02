@@ -8,7 +8,7 @@ Ein Hyperlink verbindet sichtbaren Text mit einer Webadresse. Für Sprünge inne
 2. Geben Sie unter **Link-Adresse:** eine HTTP/HTTPS-Adresse ein. Fehlt das Schema, wird https:// ergänzt. **Anzeigetext:** enthält die Beschriftung; ein leeres Feld übernimmt die Adresse.
 3. Klicken Sie **Einfügen**. Prüfen Sie Beschriftung und Ziel in der Vorschau; externe Links öffnen sich über die Systemanwendung.
 
-![Weblinks und sichtbarer Text — Oberflächenzustand 1.](images/S10-a.png "Weblinks und sichtbarer Text — Oberflächenzustand 1.")
+![Hyperlink-Dialog mit Adresse und Anzeigetext](images/S10-a.png "Hyperlink-Dialog mit Adresse und Anzeigetext.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

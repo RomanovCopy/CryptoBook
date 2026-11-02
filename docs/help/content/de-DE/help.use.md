@@ -20,7 +20,7 @@ Die integrierte Hilfe funktioniert ohne Netzwerk und ohne geöffnetes Dokument. 
 
 ## Bild vergrößern
 
-6. Klicken Sie auf ein Bild oder wechseln Sie mit Tab zu seiner Schaltfläche und drücken Enter. Große Bilder lassen sich scrollen.
+6. Klicken Sie auf ein Bild oder wechseln Sie mit Tab zu seiner Schaltfläche und drücken Enter. Große Bilder lassen sich scrollen. Schließen Sie das vergrößerte Bild, bevor Sie suchen oder zu einem anderen Thema wechseln.
 
 ![Vergrößertes Bild aus dem aktuellen Artikel](images/S48-c.png "Nach dem Schließen kehren Leseposition und vorheriger Fokus zurück.")
 

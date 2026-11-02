@@ -8,13 +8,13 @@ Bilder lassen sich in normale Dokumente einfügen. Arbeiten Sie zunächst mit ei
 2. Klicken Sie das Bild an, um Größenanfasser anzuzeigen. Ziehen Sie einen Anfasser und prüfen Sie Proportionen und Seitengrenzen.
 3. Wählen Sie im Bildkontextmenü die Platzierung: in der Zeile, zentrierter Block, links oder rechts mit Textumfluss. Die vier Abbildungen zeigen diese Ergebnisse in dieser Reihenfolge.
 
-![Eingebettete Bilder — Oberflächenzustand 1.](images/S12-a.png "Eingebettete Bilder — Oberflächenzustand 1.")
+![Ausgewähltes Bild in der Textzeile](images/S12-a.png "Ausgewähltes Bild in der Textzeile.")
 
-![Eingebettete Bilder — Oberflächenzustand 2.](images/S12-b.png "Eingebettete Bilder — Oberflächenzustand 2.")
+![Ausgewähltes Bild als zentrierter Block](images/S12-b.png "Ausgewähltes Bild als zentrierter Block.")
 
-![Eingebettete Bilder — Oberflächenzustand 3.](images/S12-c.png "Eingebettete Bilder — Oberflächenzustand 3.")
+![Ausgewähltes Bild links mit Textumfluss](images/S12-c.png "Ausgewähltes Bild links mit Textumfluss.")
 
-![Eingebettete Bilder — Oberflächenzustand 4.](images/S12-d.png "Eingebettete Bilder — Oberflächenzustand 4.")
+![Ausgewähltes Bild rechts mit Textumfluss](images/S12-d.png "Ausgewähltes Bild rechts mit Textumfluss.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

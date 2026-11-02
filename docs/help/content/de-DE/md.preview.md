@@ -8,7 +8,7 @@ Die Vorschau zeigt eine formatierte Kopie des aktuellen Markdown. Ändern Sie de
 2. HTTP/HTTPS-Weblinks und mailto können über Systemanwendungen geöffnet werden. Relative Dokumentlinks sowie file: und ftp: bleiben inaktiv.
 3. Legen Sie ein Bild neben die .md-Datei oder in einen Unterordner und geben Sie `![Landschaft](illustration.png)` ein. Erlaubt sind lokale relative Bildpfade bis 25 MiB Dateigröße; die Dekodierung ist auf 1600 Pixel begrenzt. Entfernte und absolute Bildpfade werden nicht geladen.
 
-![Markdown-Vorschau, Links und Bilder — Oberflächenzustand 1.](images/S17-b.png "Markdown-Vorschau, Links und Bilder — Oberflächenzustand 1.")
+![Gerenderte Markdown-Vorschau mit formatierten Beispielen](images/S17-b.png "Gerenderte Markdown-Vorschau mit formatierten Beispielen.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

@@ -9,9 +9,9 @@ A bookmark marks a position in an ordinary document. The current XamlPackage sav
 3. Enter a new name and click **Rename selected bookmark** to rename it. To insert a link, move the caret elsewhere, enter link text and click **Insert link to selected bookmark**.
 4. Open **Open bookmark manager**, select an entry and edit its note. **Refresh index from document** rereads anchors in the current document.
 
-![Bookmarks, notes and internal links — Interface state 1.](images/S15-a.png "Bookmarks, notes and internal links — Interface state 1.")
+![Bookmark panel with naming, navigation and link controls](images/S15-a.png "Bookmark panel with naming, navigation and link controls.")
 
-![Bookmarks, notes and internal links — Interface state 2.](images/S15-b.png "Bookmarks, notes and internal links — Interface state 2.")
+![Bookmark manager with an editable practice note](images/S15-b.png "Bookmark manager with an editable practice note.")
 
 ## Check, undo and limitations
 

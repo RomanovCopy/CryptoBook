@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2249f0d2-50c2-4b76-9bb5-fc178770466d" name="Rosem@ROSEMINEXTMSI 2026-11-02 13:32:05" runUser="ROSEMINEXTMSI\Rosem" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-02T13:32:05.0698546+03:00" queuing="2026-11-02T13:32:05.0698550+03:00" start="2026-11-02T13:31:57.1010803+03:00" finish="2026-11-02T13:32:05.6362093+03:00" />
+  <TestSettings name="default" id="78f84de7-429e-4180-bbbb-cb7c27e275aa">
+    <Deployment runDeploymentRoot="Rosem_ROSEMINEXTMSI_2026-11-02_13_32_05" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e2e7e608-060a-467a-aa2d-4aed0ae9d8dd" testId="7ac88832-20f0-ff02-420e-9d1ffab57d28" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.MarkdownOnly_RemovesStartPage_AndLastCloseRestoresIt" computerName="ROSEMINEXTMSI" duration="00:00:00.0420000" startTime="2026-11-02T13:32:05.3190224+03:00" endTime="2026-11-02T13:32:05.3617529+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2e7e608-060a-467a-aa2d-4aed0ae9d8dd" />
+    <UnitTestResult executionId="4793b7a6-f310-4f60-a698-ddbc2043009b" testId="106cbd96-be8c-f11f-15ca-dcb7abfe455a" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage(choice: Save)" computerName="ROSEMINEXTMSI" duration="00:00:00.0320000" startTime="2026-11-02T13:32:04.3807814+03:00" endTime="2026-11-02T13:32:04.4138758+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4793b7a6-f310-4f60-a698-ddbc2043009b" />
+    <UnitTestResult executionId="c7c0c4ca-3700-4cdb-beac-d139f1ef78e6" testId="e373cc4f-a93d-9699-f99a-01fd308d033a" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.Navigation_PreservesBothContentsPathsAndDirtyRevisions" computerName="ROSEMINEXTMSI" duration="00:00:00.0420000" startTime="2026-11-02T13:32:05.4101868+03:00" endTime="2026-11-02T13:32:05.4536364+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7c0c4ca-3700-4cdb-beac-d139f1ef78e6" />
+    <UnitTestResult executionId="9d018800-dc98-4a29-b5c6-c76d39eda288" testId="e75e4fd9-1506-9baf-14cf-6d13ba660ea6" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.WorkspaceSnapshot_RestoresInactiveContentAndMetadata(activePage: &quot;MarkdownEditor&quot;)" computerName="ROSEMINEXTMSI" duration="00:00:00.1310000" startTime="2026-11-02T13:32:05.1764136+03:00" endTime="2026-11-02T13:32:05.3094377+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d018800-dc98-4a29-b5c6-c76d39eda288" />
+    <UnitTestResult executionId="d3a1bc78-42e5-4d73-837a-acf63e3402fb" testId="28b1439b-2860-63fe-487b-4faee293ef78" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage(choice: Cancel)" computerName="ROSEMINEXTMSI" duration="00:00:00.0250000" startTime="2026-11-02T13:32:04.3451900+03:00" endTime="2026-11-02T13:32:04.3728039+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3a1bc78-42e5-4d73-837a-acf63e3402fb" />
+    <UnitTestResult executionId="4a935bdb-1a86-48c3-a192-b07fee27bc65" testId="381f54fe-c6c7-a40f-bd58-c62878ce0757" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.ReplacingOneFormat_LeavesOtherDocumentIntact" computerName="ROSEMINEXTMSI" duration="00:00:00.6200000" startTime="2026-11-02T13:32:03.5559125+03:00" endTime="2026-11-02T13:32:04.2086608+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a935bdb-1a86-48c3-a192-b07fee27bc65" />
+    <UnitTestResult executionId="4a0f8f63-516f-45c3-ad94-e43346e12671" testId="e30b0d55-1b93-20df-5ba7-b0b05c70b3ba" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.InactiveSnapshot_RestoresSelectedPageWidth" computerName="ROSEMINEXTMSI" duration="00:00:00.0330000" startTime="2026-11-02T13:32:05.3686535+03:00" endTime="2026-11-02T13:32:05.4030492+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a0f8f63-516f-45c3-ad94-e43346e12671" />
+    <UnitTestResult executionId="fb51bfaf-1d7a-43f3-b372-22fcff43d897" testId="f97301a0-702e-63ac-0337-e56ac57b0e39" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.CloseCurrent_ShowsRemainingDocument(closing: &quot;Home&quot;, remaining: &quot;MarkdownEditor&quot;)" computerName="ROSEMINEXTMSI" duration="00:00:00.0110000" startTime="2026-11-02T13:32:04.9015364+03:00" endTime="2026-11-02T13:32:04.9140653+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb51bfaf-1d7a-43f3-b372-22fcff43d897" />
+    <UnitTestResult executionId="4703b11f-92e4-4277-8c8c-156e3855aac3" testId="f3c43554-0f9e-4667-8ace-b4676f5074a1" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.SavingDocument_HoldsItsPageUntilOperationCompletes" computerName="ROSEMINEXTMSI" duration="00:00:00.0170000" startTime="2026-11-02T13:32:04.2623293+03:00" endTime="2026-11-02T13:32:04.2803861+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4703b11f-92e4-4277-8c8c-156e3855aac3" />
+    <UnitTestResult executionId="1f35c2aa-56fd-414a-a936-96d0b33ecbbe" testId="5890a01c-563a-9b7a-c7ba-c3798894398e" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage(choice: Discard)" computerName="ROSEMINEXTMSI" duration="00:00:00.0400000" startTime="2026-11-02T13:32:04.3006320+03:00" endTime="2026-11-02T13:32:04.3416116+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f35c2aa-56fd-414a-a936-96d0b33ecbbe" />
+    <UnitTestResult executionId="84b22765-c5bb-480b-ae2f-5ff37ecd2c20" testId="f911da77-910c-b62b-a9df-b04b6b908d7f" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.CloseCurrent_ShowsRemainingDocument(closing: &quot;MarkdownEditor&quot;, remaining: &quot;Home&quot;)" computerName="ROSEMINEXTMSI" duration="00:00:00.4690000" startTime="2026-11-02T13:32:04.4240879+03:00" endTime="2026-11-02T13:32:04.8948973+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84b22765-c5bb-480b-ae2f-5ff37ecd2c20" />
+    <UnitTestResult executionId="4ad26e58-0a65-4d36-a01a-a6bb339386f1" testId="02d9a32d-e04e-8762-f373-f14b646ec363" testName="CryptoBook.Tests.WorkspaceDocumentSessionTests.WorkspaceSnapshot_RestoresInactiveContentAndMetadata(activePage: &quot;Home&quot;)" computerName="ROSEMINEXTMSI" duration="00:00:00.2450000" startTime="2026-11-02T13:32:04.9218766+03:00" endTime="2026-11-02T13:32:05.1685809+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4ad26e58-0a65-4d36-a01a-a6bb339386f1" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.WorkspaceSnapshot_RestoresInactiveContentAndMetadata(activePage: &quot;Home&quot;)" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="02d9a32d-e04e-8762-f373-f14b646ec363">
+      <Execution id="4ad26e58-0a65-4d36-a01a-a6bb339386f1" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="WorkspaceSnapshot_RestoresInactiveContentAndMetadata" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.MarkdownOnly_RemovesStartPage_AndLastCloseRestoresIt" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="7ac88832-20f0-ff02-420e-9d1ffab57d28">
+      <Execution id="e2e7e608-060a-467a-aa2d-4aed0ae9d8dd" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="MarkdownOnly_RemovesStartPage_AndLastCloseRestoresIt" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage(choice: Save)" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="106cbd96-be8c-f11f-15ca-dcb7abfe455a">
+      <Execution id="4793b7a6-f310-4f60-a698-ddbc2043009b" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage(choice: Cancel)" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="28b1439b-2860-63fe-487b-4faee293ef78">
+      <Execution id="d3a1bc78-42e5-4d73-837a-acf63e3402fb" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.SavingDocument_HoldsItsPageUntilOperationCompletes" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="f3c43554-0f9e-4667-8ace-b4676f5074a1">
+      <Execution id="4703b11f-92e4-4277-8c8c-156e3855aac3" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="SavingDocument_HoldsItsPageUntilOperationCompletes" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.InactiveSnapshot_RestoresSelectedPageWidth" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="e30b0d55-1b93-20df-5ba7-b0b05c70b3ba">
+      <Execution id="4a0f8f63-516f-45c3-ad94-e43346e12671" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="InactiveSnapshot_RestoresSelectedPageWidth" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.WorkspaceSnapshot_RestoresInactiveContentAndMetadata(activePage: &quot;MarkdownEditor&quot;)" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="e75e4fd9-1506-9baf-14cf-6d13ba660ea6">
+      <Execution id="9d018800-dc98-4a29-b5c6-c76d39eda288" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="WorkspaceSnapshot_RestoresInactiveContentAndMetadata" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage(choice: Discard)" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="5890a01c-563a-9b7a-c7ba-c3798894398e">
+      <Execution id="1f35c2aa-56fd-414a-a936-96d0b33ecbbe" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="ClosingWindow_ChecksHiddenChangesAndRestoresSelectedPage" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.Navigation_PreservesBothContentsPathsAndDirtyRevisions" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="e373cc4f-a93d-9699-f99a-01fd308d033a">
+      <Execution id="c7c0c4ca-3700-4cdb-beac-d139f1ef78e6" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="Navigation_PreservesBothContentsPathsAndDirtyRevisions" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.CloseCurrent_ShowsRemainingDocument(closing: &quot;MarkdownEditor&quot;, remaining: &quot;Home&quot;)" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="f911da77-910c-b62b-a9df-b04b6b908d7f">
+      <Execution id="84b22765-c5bb-480b-ae2f-5ff37ecd2c20" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="CloseCurrent_ShowsRemainingDocument" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.ReplacingOneFormat_LeavesOtherDocumentIntact" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="381f54fe-c6c7-a40f-bd58-c62878ce0757">
+      <Execution id="4a935bdb-1a86-48c3-a192-b07fee27bc65" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="ReplacingOneFormat_LeavesOtherDocumentIntact" />
+    </UnitTest>
+    <UnitTest name="CryptoBook.Tests.WorkspaceDocumentSessionTests.CloseCurrent_ShowsRemainingDocument(closing: &quot;Home&quot;, remaining: &quot;MarkdownEditor&quot;)" storage="d:\visualstudio\проекты\cryptobook\cryptobook.tests\bin\release\net10.0-windows10.0.17763.0\cryptobook.tests.dll" id="f97301a0-702e-63ac-0337-e56ac57b0e39">
+      <Execution id="fb51bfaf-1d7a-43f3-b372-22fcff43d897" />
+      <TestMethod codeBase="D:\VisualStudio\Проекты\CryptoBook\CryptoBook.Tests\bin\Release\net10.0-windows10.0.17763.0\CryptoBook.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="CryptoBook.Tests.WorkspaceDocumentSessionTests" name="CloseCurrent_ShowsRemainingDocument" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7ac88832-20f0-ff02-420e-9d1ffab57d28" executionId="e2e7e608-060a-467a-aa2d-4aed0ae9d8dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="106cbd96-be8c-f11f-15ca-dcb7abfe455a" executionId="4793b7a6-f310-4f60-a698-ddbc2043009b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e373cc4f-a93d-9699-f99a-01fd308d033a" executionId="c7c0c4ca-3700-4cdb-beac-d139f1ef78e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e75e4fd9-1506-9baf-14cf-6d13ba660ea6" executionId="9d018800-dc98-4a29-b5c6-c76d39eda288" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="28b1439b-2860-63fe-487b-4faee293ef78" executionId="d3a1bc78-42e5-4d73-837a-acf63e3402fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="381f54fe-c6c7-a40f-bd58-c62878ce0757" executionId="4a935bdb-1a86-48c3-a192-b07fee27bc65" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e30b0d55-1b93-20df-5ba7-b0b05c70b3ba" executionId="4a0f8f63-516f-45c3-ad94-e43346e12671" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f97301a0-702e-63ac-0337-e56ac57b0e39" executionId="fb51bfaf-1d7a-43f3-b372-22fcff43d897" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3c43554-0f9e-4667-8ace-b4676f5074a1" executionId="4703b11f-92e4-4277-8c8c-156e3855aac3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5890a01c-563a-9b7a-c7ba-c3798894398e" executionId="1f35c2aa-56fd-414a-a936-96d0b33ecbbe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f911da77-910c-b62b-a9df-b04b6b908d7f" executionId="84b22765-c5bb-480b-ae2f-5ff37ecd2c20" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02d9a32d-e04e-8762-f373-f14b646ec363" executionId="4ad26e58-0a65-4d36-a01a-a6bb339386f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="12" executed="12" passed="12" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.01] xUnit.net VSTest Adapter v4.0.0+05679a7ab5 (64-bit .NET 10.0.14)&#xD;
+[xUnit.net 00:00:01.35]   Discovering: CryptoBook.Tests (app domain = off, method display = ClassAndMethod, method display options = None)&#xD;
+[xUnit.net 00:00:03.44]   Discovered:  CryptoBook.Tests (1208 test cases to be run)&#xD;
+[xUnit.net 00:00:04.05]   Starting:    CryptoBook.Tests (parallel mode = collections [8 threads], stop on fail = off, explicit = off, seed = 1333638200)&#xD;
+[xUnit.net 00:00:06.36]   Finished:    CryptoBook.Tests (ID = 'e7b8d31101aae6489ec0618072b632c010c403c45460df9846d3b06e781fa685')&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

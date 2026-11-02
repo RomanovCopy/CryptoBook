@@ -8,9 +8,9 @@ A background fills the paper behind text. Unlike an embedded image, it can move 
 2. Hold Ctrl and drag the background with the left mouse button. Esc cancels the current drag. **Remove document background image** removes the background.
 3. Save as XamlPackage. The first save of an adjustable background asks you to finalize the crop. Read the warning; cancelling leaves the file and adjustable background unfinalized.
 
-![Page background and cropping — Interface state 1.](images/S13-a.png "Page background and cropping — Interface state 1.")
+![Paper controls with document background image selected](images/S13-a.png "Paper controls with document background image selected.")
 
-![Page background and cropping — Interface state 2.](images/S13-b.png "Page background and cropping — Interface state 2.")
+![Warning before finalizing the background crop](images/S13-b.png "Warning before finalizing the background crop.")
 
 ## Check, undo and limitations
 

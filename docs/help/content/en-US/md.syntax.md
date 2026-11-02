@@ -299,9 +299,9 @@ $math$
 
 All specially rendered syntax is listed above. Other Markdig extensions—including task checkboxes, footnotes, formulas, diagrams, definition lists, alerts, custom containers, media, abbreviations, inserted/marked text, subscript, and superscript—have no corresponding presentation.
 
-![Markdown syntax and examples — Interface state 1.](images/S17-c.png "Markdown syntax and examples — Interface state 1.")
+![Markdown syntax article in the separate help window](images/S17-c.png "Markdown syntax article in the separate help window.")
 
-![Markdown syntax and examples — Interface state 2.](images/S17-b.png "Markdown syntax and examples — Interface state 2.")
+![Rendered Markdown preview with formatted examples](images/S17-b.png "Rendered Markdown preview with formatted examples.")
 
 ## Check, undo and limitations
 

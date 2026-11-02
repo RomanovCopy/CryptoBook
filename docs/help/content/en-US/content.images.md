@@ -8,13 +8,13 @@ Insert images into an ordinary document. Start with a disposable copy in editing
 2. Click the inserted image to show resize handles. Drag a handle while checking proportions and page boundaries.
 3. In the image context menu choose inline, a centred block, float left or float right. The four illustrations below show those results in that order.
 
-![Embedded images — Interface state 1.](images/S12-a.png "Embedded images — Interface state 1.")
+![Selected image placed inline with text](images/S12-a.png "Selected image placed inline with text.")
 
-![Embedded images — Interface state 2.](images/S12-b.png "Embedded images — Interface state 2.")
+![Selected image placed in a centered block](images/S12-b.png "Selected image placed in a centered block.")
 
-![Embedded images — Interface state 3.](images/S12-c.png "Embedded images — Interface state 3.")
+![Selected image on the left with text wrapping](images/S12-c.png "Selected image on the left with text wrapping.")
 
-![Embedded images — Interface state 4.](images/S12-d.png "Embedded images — Interface state 4.")
+![Selected image on the right with text wrapping](images/S12-d.png "Selected image on the right with text wrapping.")
 
 ## Check, undo and limitations
 

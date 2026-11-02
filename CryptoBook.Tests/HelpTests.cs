@@ -6,12 +6,63 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Xunit;
 
 namespace CryptoBook.Tests;
 
 public sealed class HelpTests
 {
+    private static async Task CheckImageKeyboardLayer()
+    {
+        MemorySettingsProvider.Install();
+        var app = System.Windows.Application.Current ?? new System.Windows.Application();
+        app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        using var model = new HelpWindowViewModel(new HelpContentService(new MemorySource()), new MemoryPreferences());
+        var grid = new Grid();
+        var search = new System.Windows.Controls.TextBox();
+        var close = new System.Windows.Controls.Button();
+        var viewer = new FlowDocumentScrollViewer { Document = model.Article };
+        var window = new Window { Content = grid, DataContext = model, Width = 800, Height = 600 };
+        NameScope.SetNameScope(window, new NameScope());
+        foreach (var (name, element) in new (string, FrameworkElement)[]
+        {
+            ("HelpSearch", search), ("CloseImageButton", close), ("ArticleViewer", viewer),
+            ("ContentsTree", new TreeView()), ("SearchResults", new System.Windows.Controls.ListBox())
+        }) { window.RegisterName(name, element); grid.Children.Add(element); }
+        window.RegisterName("NavigationColumn", new ColumnDefinition());
+        var behavior = new HelpWindowBehavior(); behavior.Attach(window);
+        try
+        {
+            window.Show(); search.Focus();
+            model.ShowImage.Execute(new HelpImage(BitmapSource.Create(1, 1, 96, 96,
+                System.Windows.Media.PixelFormats.Bgra32, null, new byte[4], 4), "Fixture"));
+            await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+            Assert.Same(close, Keyboard.FocusedElement);
+            foreach (var (key, modifiers) in new[]
+            {
+                (Key.F, ModifierKeys.Control), (Key.Left, ModifierKeys.Alt), (Key.Right, ModifierKeys.Alt)
+            })
+            {
+                var e = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, key)
+                    { RoutedEvent = Keyboard.PreviewKeyDownEvent };
+                behavior.HandleKey(e, modifiers);
+                Assert.True(e.Handled); Assert.True(model.IsImageOpen);
+                Assert.Equal("start.interface", model.CurrentTopicId);
+                Assert.Same(close, Keyboard.FocusedElement);
+            }
+            var escape = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Escape)
+                { RoutedEvent = Keyboard.PreviewKeyDownEvent };
+            behavior.HandleKey(escape, ModifierKeys.None);
+            Assert.True(escape.Handled); Assert.False(model.IsImageOpen);
+            Assert.Same(search, Keyboard.FocusedElement);
+        }
+        finally { window.Close(); behavior.Detach(); }
+    }
+
     [Theory]
     [InlineData("../secret.png")]
     [InlineData("images/../../secret.png")]
@@ -101,12 +152,13 @@ public sealed class HelpTests
     }
 
     [WpfFact]
-    public void PackagedTranslations_History_Search_CultureAndRendererPolicies_WorkTogether()
+    public async Task PackagedTranslations_History_Search_CultureAndRendererPolicies_WorkTogether()
     {
         MemorySettingsProvider.Install();
         var app = System.Windows.Application.Current ?? new System.Windows.Application();
         app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         LocalizationManager.SelectCulture("en-US");
+        await CheckImageKeyboardLayer();
         var content = new HelpContentService(new ResourceHelpContentSource());
         Assert.Equal(4, content.Cultures.Count);
         Assert.Equal(LocalizationManager.AvailableLanguages.Select(l => l.CultureName).Order(), content.Cultures.Order());

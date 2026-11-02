@@ -2,6 +2,35 @@
 
 This Windows/WPF executable runs the production `App.OnStartup`, views, container and commands with an in-memory `Properties.Settings` provider and explicitly redirected stores. Automated capture modes skip user settings migration, production crash-log handlers, IPC activation, device monitoring and live update requests. Their folder picker returns only the generated demo folder. The explicit `stage7-acceptance` mode below enables real device monitoring and native pickers/printing for human acceptance; persistent stores still remain isolated. Models are loaded only by the explicit AI inference modes described below.
 
+## Stage 11: complete help layout matrix and separate OS-input session
+
+Use an existing disposable TEMP/TMP under artifacts, one culture/process at a time.
+`stage11` reads all 76 embedded topics in four application themes at 1120×780 and
+720×480 DIP, records article overflow and scroll bounds, loads and enlarges every
+image, checks history/language/reopening and preserves dirty ordinary/Markdown
+documents plus an unsent AI fixture. It writes only validation evidence, never
+production PNG/raw/annotations/passports. Settings and stores remain isolated.
+
+After editorial changes and rebuilding, `stage11-verify` repeats all 76 topics in
+Light at the wide size and all image enlargements. Both modes also capture 144/192
+DPI raster density and root LayoutTransform 1.5/2.0: neither is a Windows DPI change.
+Environment reports contain the actual monitor count/bounds and WPF DPI.
+For a final text-only correction after enlargements already passed, append `text`
+after `stage11-verify`: all articles and image resources are still read and laid
+out, while repeated enlargement commands are skipped. Reports retain this filter.
+
+`stage11-input` leaves a visible ordinary fixture and Help on doc.create, then waits
+until Help closes. It records actual WPF key-up/focus state for external OS input;
+it generates no routed keys. Use Computer Use or human input, distinguishing the
+two in the acceptance report. It never sends a model request or uses the clipboard.
+Close Help to finish and verify preservation. The initial physical-input and
+multi-monitor/DPI acceptance remains open in `docs/help/VALIDATION_STAGE11.md`.
+
+`tools/Audit-HelpLanguage.ps1` inventories every title, bold label, alt/caption and
+resource match, with an alphabet/mnemonic scan. It is not semantic proofreading.
+`tools/New-HelpContactSheets.ps1` makes separate evidence sheets from a chosen PNG
+folder. Neither tool changes the source screenshots.
+
 ## Stage 10: settings, updates and help
 
 Run `HelpValidation.exe <repository> <culture> <commit> stage10` once per culture

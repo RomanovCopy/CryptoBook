@@ -163,14 +163,24 @@ public sealed class HelpWindowBehavior : Behavior<Window>
         if (column.Width.Value > max) column.Width = new GridLength(max);
         model.ArticleWidth = Math.Max(160, Control<FlowDocumentScrollViewer>("ArticleViewer").ActualWidth - 64);
     }
-    private void KeyDown(object sender, KeyEventArgs e)
+    private void KeyDown(object sender, KeyEventArgs e) => HandleKey(e, Keyboard.Modifiers);
+    internal void HandleKey(KeyEventArgs e, ModifierKeys modifiers)
     {
         if (model is null) return;
         Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+        // The enlarged image is a modal layer within this window. Window-level
+        // shortcuts must not move focus or navigate the article behind it.
+        if (model.IsImageOpen)
+        {
+            if (key == Key.Escape) { model.CloseImage.Execute(null); e.Handled = true; }
+            else if ((key == Key.F && modifiers == ModifierKeys.Control) ||
+                (modifiers == ModifierKeys.Alt && key is Key.Left or Key.Right)) e.Handled = true;
+            return;
+        }
         if (key == Key.F1) { AssociatedObject.Activate(); e.Handled = true; }
-        else if (key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
+        else if (key == Key.F && modifiers == ModifierKeys.Control)
         { Control<TextBox>("HelpSearch").Focus(); e.Handled = true; }
-        else if (Keyboard.Modifiers == ModifierKeys.Alt && key is Key.Left or Key.Right)
+        else if (modifiers == ModifierKeys.Alt && key is Key.Left or Key.Right)
         {
             var command = key == Key.Left ? model.Back : model.Forward;
             if (command.CanExecute(null)) command.Execute(null);

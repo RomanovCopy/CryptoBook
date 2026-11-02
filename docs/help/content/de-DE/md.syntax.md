@@ -299,9 +299,9 @@ $math$
 
 Alle speziell dargestellten Konstrukte sind oben aufgeführt. Andere Markdig-Erweiterungen – darunter Aufgaben-Kontrollkästchen, Fußnoten, Formeln, Diagramme, Definitionslisten, Hinweise, Container, Medien, Abkürzungen, eingefügter/markierter Text sowie Tief- und Hochstellung – haben keine entsprechende Darstellung.
 
-![Markdown-Syntax mit Beispielen — Oberflächenzustand 1.](images/S17-c.png "Markdown-Syntax mit Beispielen — Oberflächenzustand 1.")
+![Markdown-Syntaxartikel im eigenen Hilfefenster](images/S17-c.png "Markdown-Syntaxartikel im eigenen Hilfefenster.")
 
-![Markdown-Syntax mit Beispielen — Oberflächenzustand 2.](images/S17-b.png "Markdown-Syntax mit Beispielen — Oberflächenzustand 2.")
+![Gerenderte Markdown-Vorschau mit formatierten Beispielen](images/S17-b.png "Gerenderte Markdown-Vorschau mit formatierten Beispielen.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

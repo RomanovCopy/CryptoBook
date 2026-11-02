@@ -6,7 +6,7 @@ The mode is an optional choice saved separately for each model file. Speed depen
 
 1. Open **Model settings → AI performance → Performance mode**.
 2. Choose **Balanced** for ordinary use. **Power saving** reduces thread counts and uses Windows energy-saving scheduling. It is not a fixed GPU power limit or a promise of specific battery life.
-3. Click **Save** and send a short question. **Model runtime** shows the active profile. A mode change retains the conversation and draft, but releases the previous worker; the next request loads the model again.
+3. Click **Save** and send a short question. **Model runtime** shows the active profile. A mode change retains the conversation and draft, but unloads the model; the next request loads the model again.
 
 ![Actual power-saving generation with the applied thread profile](images/S44-g.png "Step 3. Inspect the effective profile as well as the selected name.")
 
@@ -19,7 +19,7 @@ Finish the current reply first. Testing can increase load, heat and fan noise; d
 
 ![A real performance measurement in progress with Stop available](images/S44-h.png "Step 5. Wait for completion or stop the measurement.")
 
-6. Click **Stop** if necessary. The test worker is released; **Find optimal mode** can be used again. Cancellation does not count as a successful measurement.
+6. Click **Stop** if necessary. The model used for testing is unloaded; **Find optimal mode** can be used again. Cancellation does not count as a successful measurement.
 
 ![An actually stopped test with retry available](images/S44-i.png "Step 6. Retry under suitable conditions after cancellation.")
 

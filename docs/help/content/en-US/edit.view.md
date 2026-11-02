@@ -8,7 +8,7 @@ The ordinary document has editing and paginated preview modes. Preview helps ins
 2. In the editor, Ctrl+mouse wheel adjusts zoom. The **100%** button at the bottom restores actual size; the indicator shows the current percentage.
 3. In preview, use the fit-page button and standard zoom controls. With the viewer focused, Left/PageUp and Right/PageDown change pages; Home/End select the first/last page.
 
-![Preview, pages and zoom — Interface state 1.](images/S11-a.png "Preview, pages and zoom — Interface state 1.")
+![Paginated document preview with page-fit controls](images/S11-a.png "Paginated document preview with page-fit controls.")
 
 ## Check, undo and limitations
 

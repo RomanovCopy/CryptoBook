@@ -8,7 +8,7 @@ Normale Dokumente bieten Bearbeitung und seitenweise Vorschau. In der Vorschau k
 2. Im Editor ändert Strg+Mausrad den Zoom. **100%** unten stellt die tatsächliche Größe wieder her; die Anzeige zeigt den aktuellen Prozentsatz.
 3. In der Vorschau verwenden Sie die Schaltfläche zum Einpassen und die üblichen Zoomregler. Bei Fokus im Betrachter wechseln Links/Bild auf und Rechts/Bild ab die Seite; Pos1/Ende führen zur ersten/letzten Seite.
 
-![Vorschau, Seiten und Zoom — Oberflächenzustand 1.](images/S11-a.png "Vorschau, Seiten und Zoom — Oberflächenzustand 1.")
+![Seitenweise Dokumentvorschau mit Einpassfunktion](images/S11-a.png "Seitenweise Dokumentvorschau mit Einpassfunktion.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

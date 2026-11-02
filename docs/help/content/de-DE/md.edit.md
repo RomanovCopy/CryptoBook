@@ -8,7 +8,7 @@ Markdown ist ein eigenes Textdokument mit Auszeichnung. Es kann neben einem norm
 2. **Vorschau** zeigt das Ergebnis; **Editor** führt zum Quelltext zurück. Ändern Sie die Auszeichnung, um das Ergebnis zu ändern.
 3. Die Hilfeschaltfläche öffnet den Syntaxartikel in einem separaten nichtmodalen Fenster. Haupteditor und beide Dokumente bleiben erhalten. Schließen Sie Hilfe über die Fensterschaltfläche oder Alt+F4, wenn sie den Fokus hat.
 
-![Markdown-Quelltext bearbeiten — Oberflächenzustand 1.](images/S17-a.png "Markdown-Quelltext bearbeiten — Oberflächenzustand 1.")
+![Markdown-Quelleditor mit Speicherbefehlen](images/S17-a.png "Markdown-Quelleditor mit Speicherbefehlen.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

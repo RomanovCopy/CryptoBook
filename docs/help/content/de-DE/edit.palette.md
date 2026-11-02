@@ -8,7 +8,7 @@
 2. Klicken Sie eine Palettenfarbe an, um sie auf den Text anzuwenden.
 3. Zum Ersetzen eines Felds klicken Sie es mit der rechten Maustaste an und wählen eine Farbe. Klicken Sie das Feld anschließend normal an, wenn Sie die neue Farbe anwenden möchten.
 
-![Die Tintenpalette — Oberflächenzustand 1.](images/S09-c.png "Die Tintenpalette — Oberflächenzustand 1.")
+![Farbauswahl für ein Feld der Tintenpalette](images/S09-c.png "Farbauswahl für ein Feld der Tintenpalette.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

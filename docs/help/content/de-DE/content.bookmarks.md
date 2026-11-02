@@ -9,9 +9,9 @@ Ein Lesezeichen markiert eine Position im normalen Dokument. Die aktuelle XamlPa
 3. Geben Sie einen neuen Namen ein und klicken Sie **Ausgewähltes Lesezeichen umbenennen**. Für einen Link setzen Sie die Einfügemarke anderswo, geben Linktext ein und klicken **Link zum ausgewählten Lesezeichen einfügen**.
 4. Öffnen Sie **Lesezeichen-Manager öffnen**, wählen Sie einen Eintrag und ändern Sie seine Notiz. **Index aus Dokument aktualisieren** liest die Anker des aktuellen Dokuments neu ein.
 
-![Lesezeichen, Notizen und interne Links — Oberflächenzustand 1.](images/S15-a.png "Lesezeichen, Notizen und interne Links — Oberflächenzustand 1.")
+![Lesezeichenbereich mit Namen, Navigation und Linkbefehlen](images/S15-a.png "Lesezeichenbereich mit Namen, Navigation und Linkbefehlen.")
 
-![Lesezeichen, Notizen und interne Links — Oberflächenzustand 2.](images/S15-b.png "Lesezeichen, Notizen und interne Links — Oberflächenzustand 2.")
+![Lesezeichen-Manager mit bearbeitbarer Übungsnotiz](images/S15-b.png "Lesezeichen-Manager mit bearbeitbarer Übungsnotiz.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

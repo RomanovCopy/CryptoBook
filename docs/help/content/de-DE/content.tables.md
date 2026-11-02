@@ -8,7 +8,7 @@ Tabellen werden in normalen Dokumenten bearbeitet, etwa nach Einfügen einer for
 2. Unter **Tabelle** im Kontextmenü fügen Sie eine Zeile oberhalb/unterhalb oder eine Spalte links/rechts ein.
 3. Das Löschen einer Zeile oder Spalte entfernt deren Inhalt. Die letzte Zeile oder Spalte entfernt die gesamte Tabelle: Speichern Sie vorher eine Kopie und verwenden Sie bei Bedarf Strg+Z.
 
-![Vorhandene Tabellen bearbeiten — Oberflächenzustand 1.](images/S14-a.png "Vorhandene Tabellen bearbeiten — Oberflächenzustand 1.")
+![Kontextmenü zum Einfügen und Löschen von Tabellenzeilen und -spalten](images/S14-a.png "Kontextmenü zum Einfügen und Löschen von Tabellenzeilen und -spalten.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

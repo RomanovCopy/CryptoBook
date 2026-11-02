@@ -2,6 +2,8 @@
 
 Ein Kürzel wirkt im genannten Fenster oder Steuerelement, wenn sein Befehl verfügbar ist. Klicken Sie zuerst in den gewünschten Editor, das Feld oder die Liste. Außerhalb eines Editors bewegen Tab und Shift+Tab den Fokus; im Editor kann Tab ein Tabulatorzeichen einfügen. Space wirkt auf ein fokussiertes Kontrollkästchen oder eine Schaltfläche; Enter folgt den Regeln des aktuellen Feldes.
 
+Die Tabellen verwenden internationale Tastennamen. Auf einer deutschen Tastatur entsprechen Ctrl der Strg-Taste, Shift der Umschalttaste, Enter der Eingabetaste, Space der Leertaste und Delete der Entf-Taste. PageUp/PageDown heißen Bild auf/Bild ab; Home/End entsprechen Pos1/Ende.
+
 ## Dokumente und Schutz
 
 | Tasten | Bereich und Aktion |

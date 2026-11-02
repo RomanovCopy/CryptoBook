@@ -8,9 +8,9 @@ Die Papiergröße bestimmt Textbreite und Vorschauseiten. Die Papierfarbe gehör
 2. Öffnen Sie **Schriftart**. Wählen Sie unter **Papier** die Option **Hintergrundfarbe des Dokuments** oder ein Hintergrundbild.
 3. Wechseln Sie zur Vorschau und prüfen Sie die Seiten. Beim Bearbeiten ist die Seitenhöhe fortlaufend; Vorschauseiten hängen von Papiergröße und Inhalt ab.
 
-![Seiteneinstellungen und Papierfarbe — Oberflächenzustand 1.](images/S04-a.png "Seiteneinstellungen und Papierfarbe — Oberflächenzustand 1.")
+![Papierformat und Ausrichtung beim Erstellen eines Dokuments](images/S04-a.png "Papierformat und Ausrichtung beim Erstellen eines Dokuments.")
 
-![Seiteneinstellungen und Papierfarbe — Oberflächenzustand 2.](images/S13-a.png "Seiteneinstellungen und Papierfarbe — Oberflächenzustand 2.")
+![Papiereinstellungen mit ausgewähltem Hintergrundbild](images/S13-a.png "Papiereinstellungen mit ausgewähltem Hintergrundbild.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

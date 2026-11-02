@@ -8,7 +8,7 @@ Markdown is a separate text document containing markup. It can remain open along
 2. Click **Preview** to see the result. **Editor** returns to source. Change the source markup to change the result.
 3. The help button opens the syntax article in a separate modeless window. The main editor and both documents stay in place. Close help with its close button or Alt+F4 while it has focus.
 
-![Editing Markdown source — Interface state 1.](images/S17-a.png "Editing Markdown source — Interface state 1.")
+![Markdown source editor with save commands](images/S17-a.png "Markdown source editor with save commands.")
 
 ## Check, undo and limitations
 

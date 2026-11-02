@@ -47,6 +47,8 @@ foreach ($culture in $catalog.cultures) {
         $articleCount++
         Assert-Help ($entry.file -ceq ($entry.id + '.md')) ('Unsafe article path: ' + $entry.file)
         $body = Get-Content -LiteralPath (Join-Path $localeRoot $entry.file) -Raw
+        $prose = Remove-CodeFences $body
+        Assert-Help (-not [regex]::IsMatch($prose, '\*\*[^*\r\n]*_[^*\r\n]*\*\*')) ('Visible command contains an access-key marker: '+$culture+'/'+$entry.id)
         if ($entry.id -eq 'md.syntax') {
             $legacy = Get-Content -LiteralPath (Join-Path $root 'screenshots/validation/stage5/markdown-legacy.json') -Raw | ConvertFrom-Json
             $examples = @([regex]::Matches(($body -replace '\r\n',"`n"), '(?ms)^`{4}text\n(.*?)\n`{4}$'))

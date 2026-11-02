@@ -8,7 +8,7 @@ Edit tables in ordinary documents, for example after inserting a formatted AI re
 2. Open **Table** in the context menu to insert a row above/below or a column to the left/right.
 3. Deleting a row or column removes its contents. Deleting the last row or column removes the whole table: save a copy first and use Ctrl+Z if needed.
 
-![Editing an existing table — Interface state 1.](images/S14-a.png "Editing an existing table — Interface state 1.")
+![Context menu for inserting and deleting table rows and columns](images/S14-a.png "Context menu for inserting and deleting table rows and columns.")
 
 ## Check, undo and limitations
 

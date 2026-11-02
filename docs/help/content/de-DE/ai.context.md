@@ -19,7 +19,7 @@ Vor dem Senden und nach Abschluss bedeutet **≈** eine Schätzung. Sie berücks
 
 ![Großer fiktiver Entwurf mit geschätztem vollem Kontext](images/S40-d.png "Schätzung vor dem Senden: Kürzen Sie Frage oder Anhänge.")
 
-Während der Generierung nutzt die Anzeige tatsächliche Daten der Engine: Eingabe- und bereits ausgegebene Token einschließlich des Nachdenkens. Der Antwortspielraum nimmt während der Generierung ab. Hat der automatische Speichermodus den Kontext verkleinert, steht die wirksame Größe unter **Modellstatus**; das gespeicherte Eingabefeld allein beschreibt sie nicht.
+Während der Generierung nutzt die Anzeige tatsächliche Daten der Engine: Eingabe- und bereits ausgegebene Token einschließlich des Nachdenkens. Der Antwortspielraum nimmt während der Generierung ab. Hat der automatische Speichermodus den Kontext verkleinert, steht die wirksame Größe im aufklappbaren Bereich **Modellstatus**; das gespeicherte Eingabefeld allein beschreibt sie nicht. Dieser Bereich ist von der gleichnamigen Ladezustandsanzeige unter dem Modellnamen zu unterscheiden.
 
 ![Gemessene Kontextanzeige während einer echten Generierung](images/S40-e.png "Ohne ≈ zeigt die Anzeige Messwerte der aktuellen Anfrage.")
 

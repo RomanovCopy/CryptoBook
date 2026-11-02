@@ -6,7 +6,7 @@ Der Modus ist eine freiwillige Wahl und wird getrennt für jede Modelldatei gesp
 
 1. Öffnen Sie **Modelleinstellungen → KI-Leistung → Leistungsmodus**.
 2. Wählen Sie **Ausgewogen** für den normalen Einsatz. **Energiesparend** reduziert Threadzahlen und fordert energiesparende Windows-Planung an. Das ist weder eine feste GPU-Leistungsgrenze noch eine Zusage bestimmter Akkulaufzeit.
-3. Klicken Sie auf **Speichern** und senden Sie eine kurze Frage. **Modellstatus** zeigt das aktive Profil. Ein Moduswechsel erhält Gespräch und Entwurf, gibt aber den bisherigen Worker frei; die nächste Anfrage lädt das Modell erneut.
+3. Klicken Sie auf **Speichern** und senden Sie eine kurze Frage. **Modellstatus** zeigt das aktive Profil. Ein Moduswechsel erhält Gespräch und Entwurf, entlädt aber das Modell; die nächste Anfrage lädt das Modell erneut.
 
 ![Echte Generierung im Energiesparmodus mit angewendeten Threads](images/S44-g.png "Schritt 3. Prüfen Sie das wirksame Profil zusätzlich zum gewählten Namen.")
 
@@ -19,7 +19,7 @@ Beenden Sie zuerst die aktuelle Antwort. Tests können Last, Wärme und Lüfterg
 
 ![Echte laufende Leistungsmessung mit verfügbarer Stoppfunktion](images/S44-h.png "Schritt 5. Warten Sie auf das Ergebnis oder stoppen Sie die Messung.")
 
-6. Klicken Sie bei Bedarf auf **Stoppen**. Der Testworker wird freigegeben; **Optimalen Modus ermitteln** steht erneut bereit. Abbruch gilt nicht als erfolgreiche Messung.
+6. Klicken Sie bei Bedarf auf **Stoppen**. Das Testmodell wird entladen; **Optimalen Modus ermitteln** steht erneut bereit. Abbruch gilt nicht als erfolgreiche Messung.
 
 ![Tatsächlich gestoppter Test mit erneuter Startmöglichkeit](images/S44-i.png "Schritt 6. Wiederholen Sie den Test nach Abbruch unter geeigneten Bedingungen.")
 

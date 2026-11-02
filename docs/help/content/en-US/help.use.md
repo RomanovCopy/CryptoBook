@@ -20,7 +20,7 @@ Built-in help works without a network or an open document. It opens in a separat
 
 ## Enlarge an illustration
 
-6. Click an illustration, or Tab to its button and press Enter. You can scroll a large image.
+6. Click an illustration, or Tab to its button and press Enter. You can scroll a large image. Close the enlarged image before searching or navigating to another topic.
 
 ![An enlarged image from the current article](images/S48-c.png "Closing enlargement restores your reading position and previous focus.")
 

@@ -8,7 +8,7 @@
 2. Click a palette colour to apply it to the text.
 3. To replace one slot, right-click it and choose a colour from the set. Then click the slot normally if you want to apply that new colour.
 
-![The ink palette — Interface state 1.](images/S09-c.png "The ink palette — Interface state 1.")
+![Color choices for an ink-palette slot](images/S09-c.png "Color choices for an ink-palette slot.")
 
 ## Check, undo and limitations
 

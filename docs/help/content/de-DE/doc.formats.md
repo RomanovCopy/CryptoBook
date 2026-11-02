@@ -10,7 +10,7 @@ Das Format bestimmt, was nach dem Speichern und erneuten Öffnen erhalten bleibt
 | XamlPackage (`.XamlPackage`) | Formatiertes Dokument mit eingebetteten Ressourcen; geeignet für CryptoBook-Inhalte einschließlich Seitenhintergrund |
 | TXT und andere normale Texttypen | Text ohne Schriftformatierung, Farben, Bilder oder Tabellenstruktur |
 | XAML (`.xaml`) | Die aktuelle Anwendung öffnet und speichert es als einfachen Text; es ersetzt XamlPackage nicht |
-| Markdown (`.md`, `.markdown`) | Ausgezeichneter Quelltext in einem eigenen Editor; daraus wird die Vorschau erzeugt |
+| Markdown (`.md`, `.markdown`) | Quelltext mit Markdown-Auszeichnung in einem eigenen Editor; daraus wird die Vorschau erzeugt |
 | Geschütztes Dokument (`.cbook`) | CryptoBook-Container, der zum Lesen und Schreiben den passenden Schlüssel benötigt |
 
 Beim Textexport können Wörter einer Tabelle erhalten bleiben, die Tabelle selbst und Bilder gehen jedoch verloren. Das Ändern einer Erweiterung im Dateimanager konvertiert keine Daten. Verlassen Sie sich nicht auf eine obligatorische Warnung vor Formatierungsverlust.

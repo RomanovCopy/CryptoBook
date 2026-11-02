@@ -8,7 +8,7 @@ Die Strukturansicht hilft, Teile eines normalen Dokuments zu finden und neu anzu
 2. Wählen Sie einen Knoten zum Navigieren. Über sein Kontextmenü fügen Sie einen Absatz vor, innerhalb oder nach einem zulässigen Element ein. Die Hinzufügen-Schaltfläche und Strg+Eingabe verwenden die aktuelle Auswahl.
 3. Auf/Ab-Befehle, Alt+Auf/Ab und Ziehen ändern die Reihenfolge, wenn das Ziel das Element erlaubt. Das Löschen eines Knotens entfernt dessen Dokumentinhalt.
 
-![Der Dokumentstrukturbaum — Oberflächenzustand 1.](images/S16-a.png "Der Dokumentstrukturbaum — Oberflächenzustand 1.")
+![Aufgeklappter Strukturbaum neben dem normalen Dokument](images/S16-a.png "Aufgeklappter Strukturbaum neben dem normalen Dokument.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

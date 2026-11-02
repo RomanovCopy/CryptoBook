@@ -1,0 +1,281 @@
+{
+  "date": "2026-11-02",
+  "base": "updates/eaee765",
+  "status": "partial; semantic and hardware acceptance open",
+  "matrix": [
+    {
+      "culture": "en-US",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\en-US\\a5dbf36b\\result.json",
+      "written": "2026-11-02T10:23:35.535124Z",
+      "sha256": "3FDF6259CC707EB23A32F97673D324BE7C079BF9B9C929C047725DA5940FEFD1"
+    },
+    {
+      "culture": "ru-RU",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\ru-RU\\599940af\\result.json",
+      "written": "2026-11-02T10:28:20.7034309Z",
+      "sha256": "433374B3C6CB33371F16765F80726CC973DC4CC327BFE59CF9C9D92AA7E69964"
+    },
+    {
+      "culture": "uk-UA",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\uk-UA\\f9b6f744\\result.json",
+      "written": "2026-11-02T10:32:38.6279222Z",
+      "sha256": "3A433127C2DF151D83F8A3626B26D56F432AEF947C0A019B93FE394577C07AAD"
+    },
+    {
+      "culture": "de-DE",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\de-DE\\c087bc80\\result.json",
+      "written": "2026-11-02T10:36:24.473756Z",
+      "sha256": "44C7CFB5A3D63DAC0CA70EDD072FF12C1581D0CAD59501E5038502926BB4955D"
+    }
+  ],
+  "finalResourceTextChecks": [
+    {
+      "culture": "en-US",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\en-US\\381d24bd\\result.json",
+      "written": "2026-11-02T10:45:07.1998901Z",
+      "sha256": "126621321AA3E30F1E5C50071DF1F83C8F1D747F9E5EB972F4D691549330968F"
+    },
+    {
+      "culture": "ru-RU",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\ru-RU\\b3bd9e1c\\result.json",
+      "written": "2026-11-02T10:45:56.9757292Z",
+      "sha256": "438DC9A629D45EBE1F6E8F3B12B3E1222CD1EDDF281E8EBE568699068AB17D5A"
+    },
+    {
+      "culture": "uk-UA",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\uk-UA\\314cbdf6\\result.json",
+      "written": "2026-11-02T10:46:43.4718584Z",
+      "sha256": "94C42BD184A844B8A49DC0D932DCDC5423D84D95EA4330CCDA0763DF2C1230B3"
+    },
+    {
+      "culture": "de-DE",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\de-DE\\7a940e9c\\result.json",
+      "written": "2026-11-02T10:47:29.945533Z",
+      "sha256": "7B2BA67972990FB9A3DBBB1B5E8A60D46EB468747CF5508B70597B67BB9C0789"
+    }
+  ],
+  "allRuns": [
+    {
+      "culture": "de-DE",
+      "mode": "stage11-verify",
+      "checks": 394,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\de-DE\\10cf9a69\\result.json",
+      "written": "2026-11-02T10:42:56.1456315Z",
+      "sha256": "F844E385D1877C4D436A411081EE18A7AAEC8EA07C428314C4150578CC499BBC"
+    },
+    {
+      "culture": "de-DE",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\de-DE\\7a940e9c\\result.json",
+      "written": "2026-11-02T10:47:29.945533Z",
+      "sha256": "7B2BA67972990FB9A3DBBB1B5E8A60D46EB468747CF5508B70597B67BB9C0789"
+    },
+    {
+      "culture": "de-DE",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\de-DE\\c087bc80\\result.json",
+      "written": "2026-11-02T10:36:24.473756Z",
+      "sha256": "44C7CFB5A3D63DAC0CA70EDD072FF12C1581D0CAD59501E5038502926BB4955D"
+    },
+    {
+      "culture": "en-US",
+      "mode": "stage11-verify",
+      "checks": 394,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\en-US\\2f93df3c\\result.json",
+      "written": "2026-11-02T10:39:18.2877677Z",
+      "sha256": "9CFDE66069DD4977F3F361ABAD1A7D24EBFE426E55BC1F3B7B2D64A6EDD3A5E6"
+    },
+    {
+      "culture": "en-US",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\en-US\\381d24bd\\result.json",
+      "written": "2026-11-02T10:45:07.1998901Z",
+      "sha256": "126621321AA3E30F1E5C50071DF1F83C8F1D747F9E5EB972F4D691549330968F"
+    },
+    {
+      "culture": "en-US",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\en-US\\a5dbf36b\\result.json",
+      "written": "2026-11-02T10:23:35.535124Z",
+      "sha256": "3FDF6259CC707EB23A32F97673D324BE7C079BF9B9C929C047725DA5940FEFD1"
+    },
+    {
+      "culture": "ru-RU",
+      "mode": "stage11-input",
+      "checks": 7,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\ru-RU\\0743d4ec\\result.json",
+      "written": "2026-11-02T10:16:54.4277074Z",
+      "sha256": "0B0C554F9BD80F8CC0774B3B6FEE0E0FFD0652B238DE6AB32539C8A7DA4A6229"
+    },
+    {
+      "culture": "ru-RU",
+      "mode": "stage11-input",
+      "checks": 7,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\ru-RU\\514318ba\\result.json",
+      "written": "2026-11-02T10:13:07.5027232Z",
+      "sha256": "DDBE8251CC2ED6ACA5793940FDDD8BBC276FF13C62CE1A3625F070806C20BC94"
+    },
+    {
+      "culture": "ru-RU",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\ru-RU\\599940af\\result.json",
+      "written": "2026-11-02T10:28:20.7034309Z",
+      "sha256": "433374B3C6CB33371F16765F80726CC973DC4CC327BFE59CF9C9D92AA7E69964"
+    },
+    {
+      "culture": "ru-RU",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\ru-RU\\b3bd9e1c\\result.json",
+      "written": "2026-11-02T10:45:56.9757292Z",
+      "sha256": "438DC9A629D45EBE1F6E8F3B12B3E1222CD1EDDF281E8EBE568699068AB17D5A"
+    },
+    {
+      "culture": "ru-RU",
+      "mode": "stage11-verify",
+      "checks": 394,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\ru-RU\\d637e5e1\\result.json",
+      "written": "2026-11-02T10:40:32.3494485Z",
+      "sha256": "FDAB874BA53D57CEA291EE6094363B27BBC58014A5D157A3E7BD11B3D2402C8E"
+    },
+    {
+      "culture": "uk-UA",
+      "mode": "stage11-verify",
+      "checks": 243,
+      "bindingErrors": 0,
+      "captureFilter": "text",
+      "source": "artifacts\\hv\\uk-UA\\314cbdf6\\result.json",
+      "written": "2026-11-02T10:46:43.4718584Z",
+      "sha256": "94C42BD184A844B8A49DC0D932DCDC5423D84D95EA4330CCDA0763DF2C1230B3"
+    },
+    {
+      "culture": "uk-UA",
+      "mode": "stage11-verify",
+      "checks": 394,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\uk-UA\\c52bcadc\\result.json",
+      "written": "2026-11-02T10:41:43.8240449Z",
+      "sha256": "B64E25D9B272ED1B141023C43F617239A3D34C0C994EC38BEE5F69FAF92DF8C5"
+    },
+    {
+      "culture": "uk-UA",
+      "mode": "stage11",
+      "checks": 1988,
+      "bindingErrors": 0,
+      "captureFilter": null,
+      "source": "artifacts\\hv\\uk-UA\\f9b6f744\\result.json",
+      "written": "2026-11-02T10:32:38.6279222Z",
+      "sha256": "3A433127C2DF151D83F8A3626B26D56F432AEF947C0A019B93FE394577C07AAD"
+    }
+  ],
+  "layoutRows": 2432,
+  "horizontalOverflow": 0,
+  "tests": [
+    {
+      "passed": 23,
+      "total": 23,
+      "file": "tests/help-passed.trx",
+      "sha256": "5D7D4D26D7D2224FE5758E0A44C765CFC2CC4BDF018BAA8D4AA62CDF6027ABAC"
+    },
+    {
+      "passed": 40,
+      "total": 40,
+      "file": "tests/ThemeSettingsTests.trx",
+      "sha256": "E39EF7A6549B8BBCDCA0CEB67FC01C69C1B944ED0A10EEEAB6F70BE888D6FD6B"
+    },
+    {
+      "passed": 9,
+      "total": 9,
+      "file": "tests/MarkdownTests.trx",
+      "sha256": "0F0D5FB679D7AED73E6302BAF6B2A4021A242E0DEFA5FB7F0FE9702B74BC3E2C"
+    },
+    {
+      "passed": 12,
+      "total": 12,
+      "file": "tests/WorkspaceDocumentSessionTests.trx",
+      "sha256": "D9894CE187033CB566D7C7D873C0CB64F3C33BD4810A839C6E409D709DFECFFB"
+    }
+  ],
+  "totalTests": 84.0,
+  "priorCaptures": {
+    "checked": 2352,
+    "changes": [],
+    "changed": 0
+  },
+  "languageArticles": 304,
+  "alphabetMnemonicCandidates": 0,
+  "cultures": [
+    "en-US",
+    "ru-RU",
+    "uk-UA",
+    "de-DE"
+  ],
+  "topics": 76,
+  "embeddedPng": 588,
+  "monitor": "One 1920x1080 screen, 96 DPI",
+  "scaledLayout": "LayoutTransform 1.5/2.0 only; not OS DPI",
+  "input": "Computer Use SendInput in ru-RU; physical input not claimed",
+  "semanticReviewComplete": false,
+  "physicalInputComplete": false,
+  "osDpiMonitorAcceptanceComplete": false
+}

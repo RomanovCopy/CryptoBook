@@ -8,7 +8,7 @@ Preview shows a formatted copy of current Markdown. Make changes in the source r
 2. HTTP/HTTPS web links and mailto links can open through system applications. Relative document links, file: and ftp: links are inactive.
 3. Keep an image beside the .md file or in its subfolder and enter `![Landscape](illustration.png)`. Only local relative image paths are allowed, with a 25 MiB file limit and decoding limited to 1600 pixels. Remote and absolute image paths are not loaded.
 
-![Markdown preview, links and images — Interface state 1.](images/S17-b.png "Markdown preview, links and images — Interface state 1.")
+![Rendered Markdown preview with formatted examples](images/S17-b.png "Rendered Markdown preview with formatted examples.")
 
 ## Check, undo and limitations
 

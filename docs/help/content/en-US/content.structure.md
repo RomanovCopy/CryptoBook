@@ -8,7 +8,7 @@ The structure panel helps find and rearrange parts of an ordinary document. Make
 2. Select a node to navigate. Its context menu can add a paragraph before, inside or after a permitted element; the add button and Ctrl+Enter use the current selection.
 3. Up/down commands, Alt+Up/Down and drag-and-drop reorder elements where the destination permits them. Deleting a node removes its contents from the document.
 
-![The document structure tree — Interface state 1.](images/S16-a.png "The document structure tree — Interface state 1.")
+![Expanded structure tree beside the ordinary document](images/S16-a.png "Expanded structure tree beside the ordinary document.")
 
 ## Check, undo and limitations
 

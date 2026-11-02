@@ -8,9 +8,9 @@ Der Hintergrund füllt das Papier hinter dem Text. Anders als ein eingefügtes B
 2. Halten Sie Strg gedrückt und ziehen Sie den Hintergrund mit der linken Maustaste. Esc bricht das laufende Ziehen ab. **Hintergrundbild des Dokuments entfernen** entfernt den Hintergrund.
 3. Speichern Sie als XamlPackage. Beim ersten Speichern eines verschiebbaren Hintergrunds erscheint eine Warnung zur Fixierung des Ausschnitts. Abbrechen lässt Datei und Hintergrund ohne endgültige Fixierung.
 
-![Seitenhintergrund und Bildausschnitt — Oberflächenzustand 1.](images/S13-a.png "Seitenhintergrund und Bildausschnitt — Oberflächenzustand 1.")
+![Papiereinstellungen mit ausgewähltem Hintergrundbild](images/S13-a.png "Papiereinstellungen mit ausgewähltem Hintergrundbild.")
 
-![Seitenhintergrund und Bildausschnitt — Oberflächenzustand 2.](images/S13-b.png "Seitenhintergrund und Bildausschnitt — Oberflächenzustand 2.")
+![Warnung vor der endgültigen Fixierung des Hintergrund-Ausschnitts](images/S13-b.png "Warnung vor der endgültigen Fixierung des Hintergrund-Ausschnitts.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 

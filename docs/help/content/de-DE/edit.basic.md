@@ -6,13 +6,13 @@ Markieren Sie einen Abschnitt, um ihn zu ersetzen, zu kopieren oder zu entfernen
 
 1. Markieren Sie mit der Maus oder Umschalt und den Pfeiltasten. Strg+A markiert das gesamte Dokument.
 2. Öffnen Sie das Kontextmenü: **Kopieren** (Strg+C), **Ausschneiden** (Strg+X), **Einfügen** (Strg+V). Einfügen ersetzt die Auswahl.
-3. Korrigieren Sie mit **_Rückgängig** (Strg+Z) und **_Wiederholen** (Strg+Y). Eingabe erzeugt einen Zeilenumbruch im aktuellen Absatz; Strg+Eingabe beginnt einen neuen Absatz.
+3. Korrigieren Sie mit **Rückgängig** (Strg+Z) und **Wiederholen** (Strg+Y). Eingabe erzeugt einen Zeilenumbruch im aktuellen Absatz; Strg+Eingabe beginnt einen neuen Absatz.
 
-![Grundlegende Textbearbeitung — Oberflächenzustand 1.](images/S08-a.png "Grundlegende Textbearbeitung — Oberflächenzustand 1.")
+![Editor-Kontextmenü mit Rückgängig- und Bereinigungsbefehlen](images/S08-a.png "Editor-Kontextmenü mit Rückgängig- und Bereinigungsbefehlen.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 
-**Dokument _leeren** entfernt den gesamten aktuellen Inhalt: Speichern Sie vorher eine Kopie. **Leere Absätze _entfernen** entfernt leere Absätze und damit möglicherweise gewollte Abstände. Prüfen Sie den Text und machen Sie unerwünschte Änderungen rechtzeitig rückgängig. Der Verlauf ersetzt keine Dateisicherung. Bei nicht verfügbaren Befehlen prüfen Sie Auswahl, Tastaturfokus und Bearbeitungsmodus.
+**Dokument leeren** entfernt den gesamten aktuellen Inhalt: Speichern Sie vorher eine Kopie. **Leere Absätze entfernen** entfernt leere Absätze und damit möglicherweise gewollte Abstände. Prüfen Sie den Text und machen Sie unerwünschte Änderungen rechtzeitig rückgängig. Der Verlauf ersetzt keine Dateisicherung. Bei nicht verfügbaren Befehlen prüfen Sie Auswahl, Tastaturfokus und Bearbeitungsmodus.
 
 ## Verwandte Themen
 

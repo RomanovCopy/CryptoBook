@@ -8,9 +8,9 @@ Paper size determines the text width and preview pages. Paper colour belongs to 
 2. In the open document, expand **Font**. Under **Paper**, select **Document background color** or a background image.
 3. Switch to preview to check pages. Editing uses continuous page height; preview page breaks depend on paper size and content.
 
-![Page settings and paper colour — Interface state 1.](images/S04-a.png "Page settings and paper colour — Interface state 1.")
+![Paper size and orientation in the new document dialog](images/S04-a.png "Paper size and orientation in the new document dialog.")
 
-![Page settings and paper colour — Interface state 2.](images/S13-a.png "Page settings and paper colour — Interface state 2.")
+![Paper controls with document background image selected](images/S13-a.png "Paper controls with document background image selected.")
 
 ## Check, undo and limitations
 

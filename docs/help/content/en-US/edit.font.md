@@ -6,9 +6,9 @@ The **Font** panel changes selected text. With no selection, settings apply to s
 
 1. Select a passage and expand **Font** above the document.
 2. Choose **Font family**, **Style**, **Weight**, **Decoration**, **Stretch** and **Size**.
-3. **Color** changes letters; **Highlight** changes the highlight behind them. Paper colour is separate. Use **_Clear formatting** in the context menu to reset text formatting.
+3. **Color** changes letters; **Highlight** changes the highlight behind them. Paper colour is separate. Use **Clear formatting** in the context menu to reset text formatting.
 
-![Fonts, text colour and highlighting — Interface state 1.](images/S08-b.png "Fonts, text colour and highlighting — Interface state 1.")
+![Font panel with typeface, size, text and highlight colors](images/S08-b.png "Font panel with typeface, size, text and highlight colors.")
 
 ## Check, undo and limitations
 

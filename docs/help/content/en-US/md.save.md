@@ -8,7 +8,7 @@ Saving writes source text including markup, rather than the visible preview. Sel
 2. **Save as** or Ctrl+Shift+S saves elsewhere. Cancelling the destination leaves the source open with its edits.
 3. Reopen a copy and check text, markup and relative images. Images are not embedded in .md: transfer them separately while keeping relative paths.
 
-![Saving Markdown source — Interface state 1.](images/S17-a.png "Saving Markdown source — Interface state 1.")
+![Markdown source editor with save commands](images/S17-a.png "Markdown source editor with save commands.")
 
 ## Check, undo and limitations
 

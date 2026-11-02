@@ -8,7 +8,7 @@ A hyperlink connects visible text to a web address. To jump within the document,
 2. Enter an HTTP/HTTPS address in **Link address:**. If the scheme is missing, https:// is added. Enter a label in **Display text:**; a blank label uses the address.
 3. Click **Insert**. Check the label and test the link in preview mode; external links open through the system application.
 
-![Web links and display text — Interface state 1.](images/S10-a.png "Web links and display text — Interface state 1.")
+![Insert hyperlink dialog with address and display text](images/S10-a.png "Insert hyperlink dialog with address and display text.")
 
 ## Check, undo and limitations
 

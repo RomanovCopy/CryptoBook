@@ -6,9 +6,9 @@
 
 1. Markieren Sie Text und öffnen Sie **Schriftart** über dem Dokument.
 2. Wählen Sie **Schriftfamilie**, **Stil**, **Schriftstärke**, **Verzierung**, **Schriftbreite** und **Größe**.
-3. **Farbe** bestimmt die Buchstabenfarbe, **Hervorhebung** deren Hintergrund. Die Papierfarbe ist getrennt. **Formatierung _löschen** im Kontextmenü setzt Textformatierung zurück.
+3. **Farbe** bestimmt die Buchstabenfarbe, **Hervorhebung** deren Hintergrund. Die Papierfarbe ist getrennt. **Formatierung löschen** im Kontextmenü setzt Textformatierung zurück.
 
-![Schrift, Textfarbe und Hervorhebung — Oberflächenzustand 1.](images/S08-b.png "Schrift, Textfarbe und Hervorhebung — Oberflächenzustand 1.")
+![Schriftbereich mit Schriftschnitt, Größe, Text- und Hervorhebungsfarben](images/S08-b.png "Schriftbereich mit Schriftschnitt, Größe, Text- und Hervorhebungsfarben.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 
