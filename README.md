@@ -3,7 +3,7 @@
 [Русский](README.ru.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.1.5.2-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.2)
+[![Version](https://img.shields.io/badge/version-1.1.5.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.3)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -35,7 +35,7 @@ machine unless you explicitly move or share them.
 - **Local AI assistant** — GGUF chat, document/image attachments and editor actions.
 - **Windows integration** — system dialogs, themes and self-contained x64 releases.
 
-The current development build also includes offline help: open **Help** in the side menu
+Offline help is included: open **Help** in the side menu
 or press **F1** in the main window. It has contents, search, history and enlarged illustrations
 in English, Russian, Ukrainian and German. Markdown help opens its syntax topic in the same window.
 The [help progress](docs/help/PROGRESS.md) records validation separately from published releases.
@@ -55,13 +55,14 @@ The [help progress](docs/help/PROGRESS.md) records validation separately from pu
 Screenshots show an illustrated travel journal and a page background. See the
 [capture notes and sample documents](docs/screenshots/README.md).
 
-## New in 1.1.5.2
+## New in 1.1.5.3
 
-- Batch rename local files with Ctrl+M: name and extension masks, counters, date and time, search and replace, regular expressions and case conversion. Preview detects conflicts before execution; cancellation restores names, and the last operation can be undone.
-- Renaming updates the active document path, pinned documents and recent documents. Name swaps and case-only changes preserve existing files without overwriting them.
-- Updated detection of connected drives and Android/MTP devices. When a source disconnects, the file browser clears the unavailable listing and offers retry; reconnecting refreshes the available sources.
+- Built-in offline help: 76 topics in English, Russian, Ukrainian and German, illustrated guides, search, navigation history and enlarged images. Open it with F1 or the Help menu.
+- Local deletion in the file manager and media player uses the Windows Recycle Bin. Recovery-journal availability follows the current folder.
+- Restore crash copies and snapshots retained after key reset through explicit File menu commands, without automatic recovery notices at startup.
+- Improved help translations, illustration captions and keyboard handling in the enlarged-image viewer.
 
-See the [release notes](docs/releases/v1.1.5.2.md), [batch rename guide](docs/BATCH_RENAME.md) and [changelog](CHANGELOG.md).
+See the [release notes](docs/releases/v1.1.5.3.md), [help validation](docs/help/VALIDATION_STAGE12.md) and [changelog](CHANGELOG.md).
 
 ## Main features
 
@@ -171,25 +172,25 @@ The installer is self-contained and does not require a separate .NET Desktop Run
 
 ## Download and run
 
-The published release is [CryptoBook 1.1.5.2](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.2),
-released on October 28, 2026.
+The published release is [CryptoBook 1.1.5.3](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.3),
+released on November 2, 2026.
 
 | File | Purpose |
 | --- | --- |
-| [Windows x64 installer](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/CryptoBook-Setup-1.1.5.2.exe) | Install or update CryptoBook |
-| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/CryptoBook-win-x64.zip) | Extract to a separate folder and run `CryptoBook.exe` |
-| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/SHA256SUMS.txt) | Verify downloaded files |
-| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/SIGNING-STATUS.txt) | Check the declared signing status |
+| [Windows x64 installer](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/CryptoBook-Setup-1.1.5.3.exe) | Install or update CryptoBook |
+| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/CryptoBook-win-x64.zip) | Extract to a separate folder and run `CryptoBook.exe` |
+| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/SHA256SUMS.txt) | Verify downloaded files |
+| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/SIGNING-STATUS.txt) | Check the declared signing status |
 
-The 1.1.5.2 installer and application are **not digitally signed**. Before running a download,
+The 1.1.5.3 installer and application are **not digitally signed**. Before running a download,
 compare its SHA-256 with the entry in `SHA256SUMS.txt`, for example:
 
 ```powershell
-Get-FileHash .\CryptoBook-Setup-1.1.5.2.exe -Algorithm SHA256
+Get-FileHash .\CryptoBook-Setup-1.1.5.3.exe -Algorithm SHA256
 ```
 
 The release also includes the license archive, FFmpeg/Flyleaf provenance archive, dependency
-lock and SPDX SBOM. See the [release notes](docs/releases/v1.1.5.2.md) and
+lock and SPDX SBOM. See the [release notes](docs/releases/v1.1.5.3.md) and
 [changelog](CHANGELOG.md). The built-in updater verifies the installer checksum before launch.
 
 Portable uses the Windows user profile for preferences, recent/pinned paths and recovery;
@@ -214,14 +215,14 @@ dotnet build CryptoBook/CryptoBook.sln -c Release --no-restore
 dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c Release --no-restore -- --template-only
 
 # Self-contained single-file x64 build and installer (requires Inno Setup 6)
-./installer/Build-Installer.ps1 -Version 1.1.5.2
+./installer/Build-Installer.ps1 -Version 1.1.5.3
 ```
 
 `Run-ReleaseTests.ps1` runs all tests in eight isolated processes: AI integration, AI runtime,
 document search, worker cancellation, the batch rename window, help, image layout and the remaining tests. This prevents interference from process-wide WPF
-application state. Validation results for the 1.1.5.2 candidate are recorded in [the release notes](docs/releases/v1.1.5.2.md).
+application state. Validation results for the 1.1.5.3 candidate are recorded in [the release notes](docs/releases/v1.1.5.3.md).
 TRX reports are written to `artifacts/TestResults`; the installer is written to
-`artifacts/CryptoBook-Setup-1.1.5.2.exe`.
+`artifacts/CryptoBook-Setup-1.1.5.3.exe`.
 
 The project uses xUnit and STA tests for WPF. Compiler warnings and detected NuGet
 vulnerabilities are treated as errors.
@@ -257,7 +258,7 @@ starts the production workflow, which stores the verified release files as an ar
 Public release publication is a separate step after candidate approval and successful CI;
 the approved local installer is preserved.
 
-Release 1.1.5.2 contains eight files: installer, portable ZIP, license archive, FFmpeg provenance
+Release 1.1.5.3 contains eight files: installer, portable ZIP, license archive, FFmpeg provenance
 archive, dependency lock, SPDX SBOM, signing status and SHA-256 manifest.
 
 Operational release details are documented in [docs/PRODUCTION.md](docs/PRODUCTION.md).

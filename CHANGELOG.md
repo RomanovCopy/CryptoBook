@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.1.5.3 - 2026-11-02
+
+### Added
+- Offline help with 76 topics in four languages, illustrated guides, search, history and enlarged images; F1 and Help menu integration.
+- Explicit File menu recovery of crash copies and snapshots retained after encryption-key reset.
+
+### Changed
+- Local deletion in the file manager and media player uses the Windows Recycle Bin; recovery-journal availability tracks the current folder.
+- Remove automatic recovery notices at startup and after key reset.
+
+### Fixed
+- Help translations, illustration captions and keyboard handling in the enlarged-image viewer.
+
+### Release
+- Synchronize application, manifest, installer, version test and distribution documentation for 1.1.5.3. User verified the installer and approved GitHub publication on November 2, 2026.
+
+Full comparison: [v1.1.5.2...v1.1.5.3](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.5.2...v1.1.5.3)
+
+
 ## 1.1.5.2 - 2026-10-28
 
 ### Added

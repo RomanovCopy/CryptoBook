@@ -3,7 +3,7 @@
 [English](README.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Версия](https://img.shields.io/badge/version-1.1.5.2-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.2)
+[![Версия](https://img.shields.io/badge/version-1.1.5.3-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.3)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -34,7 +34,7 @@ CryptoBook объединяет форматированный текстовы�
 - **Медиа** — предпросмотр текста и изображений, видео через Flyleaf/FFmpeg.
 - **Локальный AI-помощник** — GGUF-чат, вложения документов и изображений, применение ответов к документу.
 
-Текущая сборка из исходников также содержит автономную справку: пункт **Справка** в боковом
+В приложение включена автономная справка: пункт **Справка** в боковом
 меню или **F1** в главном окне. Оглавление, поиск, история и увеличение иллюстраций доступны
 на английском, русском, украинском и немецком. Справка Markdown открывает тему синтаксиса в том же окне.
 [Прогресс справки](docs/help/PROGRESS.md) отделяет проверку разработки от опубликованных релизов.
@@ -54,13 +54,14 @@ CryptoBook объединяет форматированный текстовы�
 Скриншоты показывают дневник путешествия с иллюстрацией и фоном страницы.
 [Описание съёмки и примеры документов](docs/screenshots/README.md).
 
-## Новое в 1.1.5.2
+## Новое в 1.1.5.3
 
-- Групповое переименование локальных файлов по Ctrl+M: маски имени и расширения, счётчики, дата и время, поиск и замена, регулярные выражения и изменение регистра. Предпросмотр показывает конфликты до выполнения; доступны отмена с восстановлением имён и откат последней операции.
-- После переименования обновляются путь активного документа, закреплённые и недавние документы. Поддерживаются обмен именами и изменение только регистра без перезаписи существующих файлов.
-- Обновлено обнаружение подключённых дисков и Android/MTP-устройств. При отключении источника файловый менеджер очищает недоступный список и предлагает повторить переход; повторное подключение обновляет доступные источники.
+- Автономная встроенная справка: 76 тем на русском, английском, украинском и немецком языках, иллюстрации, поиск, история переходов и увеличение изображений. Доступна по F1 и из меню «Справка».
+- Удаление локальных файлов и папок из файлового менеджера и медиаплеера через корзину Windows. Доступность восстановления журнала зависит от текущей папки.
+- Ручное восстановление аварийных копий и снимков после сброса ключа через меню «Файл», без автоматических уведомлений при запуске.
+- Уточнены переводы, подписи иллюстраций и обработка клавиатуры при увеличенном изображении.
 
-Подробнее — в [описании релиза](docs/releases/v1.1.5.2.md), [руководстве по групповому переименованию](docs/BATCH_RENAME.md) и [истории изменений](CHANGELOG.md).
+Подробнее — в [описании релиза](docs/releases/v1.1.5.3.md), [проверке справки](docs/help/VALIDATION_STAGE12.md) и [истории изменений](CHANGELOG.md).
 
 ## Основные возможности
 
@@ -162,25 +163,25 @@ Argon2id и AES-256-GCM; снимки обычных документов — Wi
 
 ## Скачать и запустить
 
-Опубликован [CryptoBook 1.1.5.2](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.2)
-от 28 октября 2026 года.
+Опубликован [CryptoBook 1.1.5.3](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.3)
+от 2 ноября 2026 года.
 
 | Файл | Назначение |
 | --- | --- |
-| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/CryptoBook-Setup-1.1.5.2.exe) | Установка или обновление CryptoBook |
-| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
-| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/SHA256SUMS.txt) | Проверка загруженных файлов |
-| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.2/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
+| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/CryptoBook-Setup-1.1.5.3.exe) | Установка или обновление CryptoBook |
+| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
+| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/SHA256SUMS.txt) | Проверка загруженных файлов |
+| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.3/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
 
-Установщик и приложение версии 1.1.5.2 **не подписаны цифровой подписью**. Перед запуском
+Установщик и приложение версии 1.1.5.3 **не подписаны цифровой подписью**. Перед запуском
 сравните SHA-256 загруженного файла с соответствующей записью в `SHA256SUMS.txt`, например:
 
 ```powershell
-Get-FileHash .\CryptoBook-Setup-1.1.5.2.exe -Algorithm SHA256
+Get-FileHash .\CryptoBook-Setup-1.1.5.3.exe -Algorithm SHA256
 ```
 
 В релиз также входят архив лицензий, архив происхождения FFmpeg/Flyleaf, файл зафиксированных
-зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.5.2.md) и
+зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.5.3.md) и
 [CHANGELOG.md](CHANGELOG.md). Встроенное обновление проверяет SHA-256 установщика перед запуском.
 
 Portable хранит настройки, пути недавних/закреплённых файлов и восстановление в профиле Windows;
@@ -208,14 +209,14 @@ dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c R
 Для self-contained x64-сборки и установщика требуется Inno Setup 6:
 
 ```powershell
-./installer/Build-Installer.ps1 -Version 1.1.5.2
+./installer/Build-Installer.ps1 -Version 1.1.5.3
 ```
 
 `Run-ReleaseTests.ps1` выполняет все тесты в восьми отдельных процессах: интеграция AI, жизненный цикл AI,
 поиск в документе, отмена worker, окно группового переименования, справка, размещение изображений и остальные тесты. Это исключает взаимное влияние глобального состояния
-WPF-приложения. Результаты проверки кандидата 1.1.5.2 приведены в [описании релиза](docs/releases/v1.1.5.2.md).
+WPF-приложения. Результаты проверки кандидата 1.1.5.3 приведены в [описании релиза](docs/releases/v1.1.5.3.md).
 TRX-отчёты сохраняются в `artifacts/TestResults`, установщик — в
-`artifacts/CryptoBook-Setup-1.1.5.2.exe`.
+`artifacts/CryptoBook-Setup-1.1.5.3.exe`.
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные
 NuGet-уязвимости считаются ошибками.
@@ -250,7 +251,7 @@ GitHub Actions восстанавливает зафиксированные з�
 Публичная публикация выполняется отдельно после одобрения кандидата и успешного CI;
 одобренный локальный установщик сохраняется.
 
-Релиз 1.1.5.2 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
+Релиз 1.1.5.3 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
 происхождения FFmpeg, файл зафиксированных зависимостей, SPDX SBOM, статус подписи и список SHA-256.
 
 Подробности выпуска описаны в [docs/PRODUCTION.md](docs/PRODUCTION.md).
