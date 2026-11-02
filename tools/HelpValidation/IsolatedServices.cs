@@ -10,7 +10,7 @@ using System.Windows.Threading;
 
 namespace CryptoBook.Validation;
 
-public sealed class IsolatedServices(string root, bool documentValidation = false, bool stage7 = false, bool hardwareAcceptance = false, bool chatValidation = false)
+public sealed class IsolatedServices(string root, bool documentValidation = false, bool stage7 = false, bool hardwareAcceptance = false, bool chatValidation = false, bool settingsValidation = false)
 {
     public ILifetimeScope Container { get; private set; } = null!;
     public string Root { get; } = Path.GetFullPath(root);
@@ -24,6 +24,7 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     public ValidationPrintSink PrintSink { get; } = new();
     public ValidationAiPicker AiPicker { get; } = new(Path.GetFullPath(root));
     public ValidationTextClipboard TextClipboard { get; } = new();
+    public ValidationReleaseSource Releases { get; } = new();
     public Task PrepareDemoDriveAsync() => ((NoDriveMonitoring)Container.Resolve<IDriveManagerService>())
         .PrepareAsync(Container.Resolve<ISystemItemCreateService>(), DemoDirectory);
     public async Task PreparePortableDemoAsync(StorageItemMetadata device, StorageItemMetadata volume, StorageItemMetadata folder)
@@ -78,7 +79,13 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
             builder.RegisterInstance<IImageFilePicker>(ImagePicker);
             builder.RegisterInstance<IDirectoryMonitoringService>(new NoDirectoryMonitoring());
         }
-        builder.RegisterInstance<IApplicationUpdateService>(new NoUpdates());
+        if (settingsValidation)
+        {
+            builder.RegisterInstance<IReleaseSource>(Releases);
+            builder.RegisterType<ApplicationUpdateService>().As<IApplicationUpdateService>().SingleInstance();
+            builder.RegisterInstance<IApplicationUpdateInstaller>(new NoInstaller());
+        }
+        else builder.RegisterInstance<IApplicationUpdateService>(new NoUpdates());
         builder.RegisterInstance<IApplicationActivationService>(new NoActivation());
         if (!hardwareAcceptance) builder.RegisterInstance<IDriveManagerService>(new NoDriveMonitoring());
         // Theme, ink palette, geometry and help state use the installed memory provider.
@@ -86,6 +93,11 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
     }
     private sealed class NoUpdates : IApplicationUpdateService
     { public Task<ApplicationRelease?> CheckAsync(CancellationToken cancellationToken = default) => Task.FromResult<ApplicationRelease?>(null); }
+    private sealed class NoInstaller : IApplicationUpdateInstaller
+    {
+        public Task InstallAsync(ApplicationRelease release, IProgressReporter? progress = null, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("Installer execution is forbidden in help validation.");
+    }
     private sealed class NoDirectoryMonitoring : IDirectoryMonitoringService
     {
         public bool StartMonitoring(string directoryPath, Action<FileSystemEventArgs>? onCreated = null,
@@ -129,6 +141,22 @@ public sealed class IsolatedServices(string root, bool documentValidation = fals
         public void StartMonitoring() { }
         public void StopMonitoring() { }
         public void Dispose() { }
+    }
+}
+
+public sealed class ValidationReleaseSource : IReleaseSource
+{
+    public ApplicationRelease? Release { get; set; }
+    public Exception? Failure { get; set; }
+    public TaskCompletionSource? Gate { get; set; }
+    public int Calls { get; private set; }
+    public async Task<ApplicationRelease?> GetLatestAsync(CancellationToken cancellationToken = default)
+    {
+        Calls++;
+        if (Gate is { } gate) await gate.Task.WaitAsync(cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (Failure is { } error) throw error;
+        return Release;
     }
 }
 

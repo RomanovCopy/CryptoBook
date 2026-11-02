@@ -123,66 +123,67 @@
                 <ListBox SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}"
                          Background="Transparent"
                          BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemContainerStyle="{StaticResource SettingsNavigationItemStyle}">
                     <ListBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE790;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding [Settings.Appearance], Source={StaticResource Res}}"/>
-                        </StackPanel>
+                            <TextBlock Text="{Binding [Settings.Appearance], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </DockPanel>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE838;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding [Settings.Workspace], Source={StaticResource Res}}"/>
-                        </StackPanel>
+                            <TextBlock Text="{Binding [Settings.Workspace], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </DockPanel>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE72E;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding [Settings.Security], Source={StaticResource Res}}"/>
-                        </StackPanel>
+                            <TextBlock Text="{Binding [Settings.Security], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </DockPanel>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE774;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding [Settings.Language], Source={StaticResource Res}}"/>
-                        </StackPanel>
+                            <TextBlock Text="{Binding [Settings.Language], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </DockPanel>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE946;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding [Settings.About], Source={StaticResource Res}}"/>
-                        </StackPanel>
+                            <TextBlock Text="{Binding [Settings.About], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </DockPanel>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" FontFamily="Segoe MDL2 Assets"
                                        Text="&#xE943;"
                                        FontSize="16"
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding [Settings.Developers], Source={StaticResource Res}}"/>
-                        </StackPanel>
+                            <TextBlock Text="{Binding [Settings.Developers], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </DockPanel>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="AI" FontWeight="SemiBold" Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding [AI.Assistant], Source={StaticResource Res}}"/>
-                        </StackPanel>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Text="AI" FontWeight="SemiBold" Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding [AI.Assistant], Source={StaticResource Res}}" TextWrapping="Wrap"/>
+                        </DockPanel>
                     </ListBoxItem>
                 </ListBox>
             </DockPanel>

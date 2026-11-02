@@ -35,6 +35,11 @@ machine unless you explicitly move or share them.
 - **Local AI assistant** — GGUF chat, document/image attachments and editor actions.
 - **Windows integration** — system dialogs, themes and self-contained x64 releases.
 
+The current development build also includes offline help: open **Help** in the side menu
+or press **F1** in the main window. It has contents, search, history and enlarged illustrations
+in English, Russian, Ukrainian and German. Markdown help opens its syntax topic in the same window.
+The [help progress](docs/help/PROGRESS.md) records validation separately from published releases.
+
 ## Screenshots
 
 ![Find in the current document](docs/screenshots/document-search.png)
@@ -187,6 +192,11 @@ The release also includes the license archive, FFmpeg/Flyleaf provenance archive
 lock and SPDX SBOM. See the [release notes](docs/releases/v1.1.5.2.md) and
 [changelog](CHANGELOG.md). The built-in updater verifies the installer checksum before launch.
 
+Portable uses the Windows user profile for preferences, recent/pinned paths and recovery;
+the exe folder is not a complete backup. The built-in update action starts an installer even
+from portable. For ZIP updates, close the old copy and extract the entire new package into a
+new folder. Keep personal documents outside the installation folder.
+
 ## Build from source
 
 Development requires the .NET 10 SDK (10.0.400 or newer in the 10.0 feature
@@ -207,8 +217,8 @@ dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c R
 ./installer/Build-Installer.ps1 -Version 1.1.5.2
 ```
 
-`Run-ReleaseTests.ps1` runs all tests in six isolated processes: AI integration, AI runtime,
-document search, worker cancellation, the batch rename window and the remaining tests. This prevents interference from process-wide WPF
+`Run-ReleaseTests.ps1` runs all tests in eight isolated processes: AI integration, AI runtime,
+document search, worker cancellation, the batch rename window, help, image layout and the remaining tests. This prevents interference from process-wide WPF
 application state. Validation results for the 1.1.5.2 candidate are recorded in [the release notes](docs/releases/v1.1.5.2.md).
 TRX reports are written to `artifacts/TestResults`; the installer is written to
 `artifacts/CryptoBook-Setup-1.1.5.2.exe`.

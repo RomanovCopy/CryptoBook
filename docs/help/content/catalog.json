@@ -26,7 +26,13 @@
     {
       "id": "start.install",
       "section": "start",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F001"
+      ],
+      "illustrationIds": [
+        "S01-a"
+      ]
     },
     {
       "id": "start.interface",
@@ -931,47 +937,99 @@
     {
       "id": "settings.appearance",
       "section": "settings",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F006",
+        "F147",
+        "F148"
+      ],
+      "illustrationIds": [
+        "S46-a",
+        "S46-b"
+      ]
     },
     {
       "id": "settings.language",
       "section": "settings",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F149"
+      ],
+      "illustrationIds": [
+        "S46-c"
+      ]
     },
     {
       "id": "settings.about",
       "section": "settings",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F150"
+      ],
+      "illustrationIds": [
+        "S47-a",
+        "S47-b"
+      ]
     },
     {
       "id": "settings.updates",
       "section": "settings",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F151",
+        "F152"
+      ],
+      "illustrationIds": [
+        "S47-c",
+        "S47-d"
+      ]
     },
     {
       "id": "settings.data",
       "section": "settings",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F004",
+        "F153"
+      ],
+      "illustrationIds": [
+        "S46-d"
+      ]
     },
     {
       "id": "settings.hotkeys",
       "section": "settings",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F154"
+      ],
+      "illustrationIds": []
     },
     {
       "id": "settings.troubleshoot",
       "section": "settings",
-      "status": "planned"
+      "status": "ready",
+      "featureIds": [
+        "F154"
+      ],
+      "illustrationIds": [
+        "S47-e"
+      ]
     },
     {
       "id": "help.use",
       "section": "help",
-      "status": "planned",
+      "status": "ready",
       "featureIds": [
         "F155",
         "F156",
         "F157",
         "F158"
+      ],
+      "illustrationIds": [
+        "S48-a",
+        "S48-b",
+        "S48-c"
       ]
     }
   ],
@@ -1779,6 +1837,84 @@
       "scenarioId": "S45",
       "status": "ready",
       "file": "images/S45-d.png"
+    },
+    {
+      "id": "S01-a",
+      "scenarioId": "S01",
+      "status": "ready",
+      "file": "images/S01-a.png"
+    },
+    {
+      "id": "S46-a",
+      "scenarioId": "S46",
+      "status": "ready",
+      "file": "images/S46-a.png"
+    },
+    {
+      "id": "S46-b",
+      "scenarioId": "S46",
+      "status": "ready",
+      "file": "images/S46-b.png"
+    },
+    {
+      "id": "S46-c",
+      "scenarioId": "S46",
+      "status": "ready",
+      "file": "images/S46-c.png"
+    },
+    {
+      "id": "S46-d",
+      "scenarioId": "S46",
+      "status": "ready",
+      "file": "images/S46-d.png"
+    },
+    {
+      "id": "S47-a",
+      "scenarioId": "S47",
+      "status": "ready",
+      "file": "images/S47-a.png"
+    },
+    {
+      "id": "S47-b",
+      "scenarioId": "S47",
+      "status": "ready",
+      "file": "images/S47-b.png"
+    },
+    {
+      "id": "S47-c",
+      "scenarioId": "S47",
+      "status": "ready",
+      "file": "images/S47-c.png"
+    },
+    {
+      "id": "S47-d",
+      "scenarioId": "S47",
+      "status": "ready",
+      "file": "images/S47-d.png"
+    },
+    {
+      "id": "S47-e",
+      "scenarioId": "S47",
+      "status": "ready",
+      "file": "images/S47-e.png"
+    },
+    {
+      "id": "S48-a",
+      "scenarioId": "S48",
+      "status": "ready",
+      "file": "images/S48-a.png"
+    },
+    {
+      "id": "S48-b",
+      "scenarioId": "S48",
+      "status": "ready",
+      "file": "images/S48-b.png"
+    },
+    {
+      "id": "S48-c",
+      "scenarioId": "S48",
+      "status": "ready",
+      "file": "images/S48-c.png"
     }
   ]
 }

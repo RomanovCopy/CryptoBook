@@ -18,6 +18,13 @@
   },
   "topics": [
     {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Installation und portabler Start"
+      ]
+    },
+    {
       "id": "start.interface",
       "file": "start.interface.md",
       "keywords": [
@@ -770,6 +777,62 @@
         "Rahmen",
         "Markdown",
         "Zurücksetzen"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Inhaltsverzeichnis, Suche und Hilfebilder"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Version und Programminformationen"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Design, Startbildschirm und Standardvorlage"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Speicherorte für Daten und Einstellungen"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Tastenkürzel und Fokus"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Sprache der Anwendung und Hilfe"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Häufige Probleme und sichere Schritte"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Updates prüfen und installieren"
       ]
     }
   ]

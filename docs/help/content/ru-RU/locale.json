@@ -18,6 +18,13 @@
   },
   "topics": [
     {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Установка и запуск portable"
+      ]
+    },
+    {
       "id": "start.interface",
       "file": "start.interface.md",
       "keywords": [
@@ -776,6 +783,62 @@
         "рамки",
         "Markdown",
         "сброс"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Оглавление, поиск и иллюстрации справки"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Версия и сведения о программе"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Тема, начальный экран и шаблон"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Где хранятся данные и настройки"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Горячие клавиши и область фокуса"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Язык приложения и справки"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Типичные проблемы и безопасные действия"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Проверка и установка обновления"
       ]
     }
   ]

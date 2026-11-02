@@ -44,6 +44,8 @@ internal static partial class Program
         bool stage9 = args.Length > 3 && args[3].StartsWith("stage9", StringComparison.Ordinal);
         bool stage92 = args.Length > 3 && args[3].StartsWith("stage9-chat", StringComparison.Ordinal);
         bool stage93 = args.Length > 3 && (args[3].StartsWith("stage9-settings", StringComparison.Ordinal) || args[3] == "stage9-performance");
+        bool stage10 = args.Length > 3 && args[3].StartsWith("stage10", StringComparison.Ordinal);
+        if (stage10) captureActionCheck = "Production settings/help commands and update coordinator with an isolated fictional release source. No network, installer execution, personal profile, clipboard or physical input.";
         if (stage93) captureActionCheck = "Production settings/commands and real native inference; isolated per-model profiles and memory-only Copy. See the mode's scenario and result reports. No physical input, native color-picker gesture or power transition.";
         bool acceptance7 = args.Length > 3 && args[3] == "stage7-acceptance";
         bool connection7 = args.Length > 3 && args[3] == "stage7-connection";
@@ -58,7 +60,7 @@ internal static partial class Program
         Properties.Settings.Default.CultureInfo = culture;
         Properties.Settings.Default.FileOverviewFirstStart = true;
         Properties.Settings.Default.WindowState = "Normal";
-        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7 || stage8 || stage9, stage7, acceptance7, stage92 || stage93);
+        var isolated = new IsolatedServices(runRoot, stage4 || stage5 || stage6 || stage7 || stage8 || stage9 || stage10, stage7, acceptance7, stage92 || stage93, stage10);
         var app = new App(isolated.Configure) { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.InitializeComponent();
         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingListener(bindingErrors));
@@ -75,7 +77,8 @@ internal static partial class Program
                     Console.WriteLine($"HELP_ACCEPTANCE SESSION CLOSED report={Path.Combine(runRoot, "acceptance.json")}");
                     return;
                 }
-                if (stage93) await ValidateStage93(isolated, args[3] == "stage9-settings-verify", args[3] == "stage9-performance", args[3] == "stage9-settings-reasoning");
+                if (stage10) await ValidateStage10(isolated, args[3] == "stage10-verify");
+                else if (stage93) await ValidateStage93(isolated, args[3] == "stage9-settings-verify", args[3] == "stage9-performance", args[3] == "stage9-settings-reasoning");
                 else if (stage92) await ValidateStage92(isolated, args[3] == "stage9-chat-verify", args[3] == "stage9-chat-templates");
                 else if (stage9) await ValidateStage9(isolated, args[3] == "stage9-verify");
                 else if (stage8) await ValidateStage8(isolated, args[3] == "stage8-verify");
@@ -91,10 +94,11 @@ internal static partial class Program
                 Check(bindingErrors.Count == 0, "No WPF binding errors.");
                 File.WriteAllText(Path.Combine(runRoot, "result.json"), JsonSerializer.Serialize(new
                 {
-                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, stage8, stage9, stage92, stage93, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
+                    culture, commit, dirtyWorkingTree = true, checks, checkMessages, stage4, stage5, stage6, stage7, stage8, stage9, stage92, stage93, stage10, device7, connection7, resources7, media7, mode = args.Length > 3 ? args[3] : "capture", bindingErrors, settingsSaveCount = settings.SaveCount,
                     captureFilter, storageRoot = isolated.Root, stores = isolated.Paths, appStartup = "App.OnStartup with explicit isolated services",
                     captureMethod = media7 ? "Flyleaf TakeSnapshotToBitmapSource of the actual decoded video frame; not a window screenshot" : "RenderTargetBitmap of visible production WPF windows",
-                    interaction = stage93 ? "Production context/memory/performance/appearance settings and real adaptive native worker. Fictional requests, memory-only Copy sink, per-model isolated profiles. See stage9-settings.json or stage9-performance.json. Verify mode reads embedded resources only."
+                    interaction = stage10 ? "Production settings, immediate language/theme changes, update service/coordinator/notification with fictional release metadata, routed F1/Enter/Escape and help navigation. Verify mode reads all nine embedded topics/images."
+                        : stage93 ? "Production context/memory/performance/appearance settings and real adaptive native worker. Fictional requests, memory-only Copy sink, per-model isolated profiles. See stage9-settings.json or stage9-performance.json. Verify mode reads embedded resources only."
                         : stage92 ? "Production chat/templates/attachment readers/drop behavior and both visible editors; real GGUF/vision, selected-message Copy to an isolated memory sink, native picker decisions queued. See stage9-chat.json. Verify mode reads embedded resources only."
                         : stage9 ? "Production AI panel/settings and adaptive worker with a read-only local GGUF and projector; synthetic requests only; see stage9.json. Verify mode reads embedded resources only."
                         : stage8 ? "Production protection/export/save/backup/lock/recovery services and visible WPF dialogs, isolated disposable files; see stage8.json for distinct recovery outcomes"
@@ -106,7 +110,8 @@ internal static partial class Program
                         : stage6 ? "production file-manager commands, local disk pipelines, WPF folder/name/conflict/batch/details dialogs; isolated stores and disposable clipboard with prior data restored in memory"
                         : stage5 ? "visible production control DataContexts and commands; real link/crop dialogs; production image/layout/crop services; image paths and unsaved decisions supplied by queues; disposable clipboard roundtrip with prior data object restored in memory"
                         : stage4 ? "production WPF ICommand/bindings and disk pipelines; native Save As and unsaved choices supplied by queues" : "production ICommand/ViewModel and storage services, plus routed keyboard events",
-                    limitations = stage93 ? "No personal data, system clipboard, native color-picker gesture, physical input, power-cable operation or induced system memory pressure. Real results are recorded without substituting hardware readings. Reuse internals and failure fallbacks are checked separately."
+                    limitations = stage10 ? "No live GitHub request, real download, UAC, installer launch/upgrade, installed-profile migration, physical keyboard/mouse or DPI acceptance. Synthetic HTTP/download/integrity/cancellation and profile migration are checked separately by existing tests."
+                        : stage93 ? "No personal data, system clipboard, native color-picker gesture, physical input, power-cable operation or induced system memory pressure. Real results are recorded without substituting hardware readings. Reuse internals and failure fallbacks are checked separately."
                         : stage92 ? "No personal data, system clipboard, native file-picker gesture, physical input or performance benchmark. Ctrl+Enter binding is inspected; production Send command is executed. Routed Drop uses disposable paths. Model output is real, never substituted."
                         : stage9 ? "Native model path entered through the real text binding; native Browse gesture not tested. No download, personal files, clipboard, device, performance benchmark or physical input. Idle time is advanced through the production check. Only the isolated owned idle worker is terminated for exit detection."
                         : stage8 ? "Native save/backup decisions supplied by queues. No physical input, Windows sleep/lock or disk-full test. Crash recovery uses a re-created service/coordinator and the explicit recovery command; no process is killed. No passwords retained."
@@ -247,7 +252,7 @@ internal static partial class Program
         help.WindowState = WindowState.Minimized; service.Open(); Check(help.WindowState == WindowState.Normal, "Repeated opening restores a minimized window.");
         helpVm.OpenTopic("doc.create"); helpVm.Back.Execute(null); Check(helpVm.CurrentTopicId == "start.interface", "Back works.");
         helpVm.Forward.Execute(null); Check(helpVm.CurrentTopicId == "doc.create", "Forward works.");
-        Check(!helpVm.OpenTopic("settings.data") && helpVm.CurrentTopicId == "doc.create", "Planned target preserves article and history.");
+        Check(!helpVm.OpenTopic("missing.topic") && helpVm.CurrentTopicId == "doc.create", "Unknown target preserves article and history.");
         helpVm.Query = "09:00"; helpVm.RunSearch(); Check(helpVm.Results.Single().Id == "doc.create", "Search includes visible article text.");
         helpVm.Query = "zzzz-no-such-help-topic"; helpVm.RunSearch(); Check(helpVm.HasNoResults, "No-result state.");
         helpVm.Query = "  "; Check(!helpVm.IsSearching, "Whitespace query returns the contents tree.");

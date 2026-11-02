@@ -1,6 +1,28 @@
 # Isolated help validation
 
-This Windows/WPF executable runs the production `App.OnStartup`, views, container and commands with an in-memory `Properties.Settings` provider and explicitly redirected stores. Automated capture modes skip user settings migration, production crash-log handlers, IPC activation, device monitoring and update requests. Their folder picker returns only the generated demo folder. The explicit `stage7-acceptance` mode below enables real device monitoring and native pickers/printing for human acceptance; persistent stores still remain isolated. No model is loaded.
+This Windows/WPF executable runs the production `App.OnStartup`, views, container and commands with an in-memory `Properties.Settings` provider and explicitly redirected stores. Automated capture modes skip user settings migration, production crash-log handlers, IPC activation, device monitoring and live update requests. Their folder picker returns only the generated demo folder. The explicit `stage7-acceptance` mode below enables real device monitoring and native pickers/printing for human acceptance; persistent stores still remain isolated. Models are loaded only by the explicit AI inference modes described below.
+
+## Stage 10: settings, updates and help
+
+Run `HelpValidation.exe <repository> <culture> <commit> stage10` once per culture
+(en-US, ru-RU, uk-UA, de-DE), with TEMP/TMP under artifacts. This exercises the real
+settings selectors, all four themes, language changes while help is open, startup/template
+preference persistence, about/developer views and reopening. Seven navigation labels must
+fit the default pane. The live WPF bold/italic/underline commands are checked separately
+from physical keyboard gestures. Both dirty document types and an unsent AI draft must survive.
+
+An isolated fictional release source feeds the production update service, coordinator and
+notification: busy/no-update/available/failure/cancellation, Later, Skip and manual override.
+Version 99.0.0 is a demonstration, never a real-release claim. A rejecting installer service
+prevents installer execution. There is no network, download, UAC, real installation, user-profile
+migration, system clipboard or model call. Existing updater/migration tests complement this mode.
+
+It captures 13 new states (52 localized PNGs): S01-a, S46-a/b/c/d, S47-a/b/c/d/e and S48-a/b/c.
+Review raw/cropped PNGs and passports, rebuild, then run `stage10-verify` in separate processes.
+The program changes CWD to its isolated root before running; verify opens all nine new embedded
+articles/images and records previews of the hotkey/help articles without overwriting shipped captures.
+The stage report is `docs/help/VALIDATION_STAGE10.md`. DPI, physical input and release packaging
+remain separate stages.
 
 Build with the repository SDK and locked dependencies, then run one culture per process:
 

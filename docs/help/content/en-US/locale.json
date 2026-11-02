@@ -18,6 +18,13 @@
   },
   "topics": [
     {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Installation and portable startup"
+      ]
+    },
+    {
       "id": "start.interface",
       "file": "start.interface.md",
       "keywords": [
@@ -775,6 +782,62 @@
         "borders",
         "Markdown",
         "reset"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Help contents, search and illustrations"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Version and application information"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Theme, startup screen and default template"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Where data and preferences are stored"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Keyboard shortcuts and focus"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Application and help language"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Common problems and safe next steps"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Checking for and installing updates"
       ]
     }
   ]

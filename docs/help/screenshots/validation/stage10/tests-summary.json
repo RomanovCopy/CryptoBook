@@ -1,0 +1,102 @@
+{
+  "total": 120,
+  "passed": 120,
+  "groups": [
+    {
+      "name": "HelpTests",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/HelpTests.trx",
+      "sha256": "B059820ED74C496127CCF13C07663F5B1487AA156AE228534821B159AC03B111"
+    },
+    {
+      "name": "ThemeSettingsTests",
+      "total": 40,
+      "passed": 40,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/ThemeSettingsTests.trx",
+      "sha256": "E123D39F5D2B9268E282E4E1ED56377F1956129283891C615EC5D106411D449B"
+    },
+    {
+      "name": "DocumentTemplateTests",
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/DocumentTemplateTests.trx",
+      "sha256": "57B1D7436A3760B9AD9A40BCC2E7E9D2927B496BEC2C024E48B4C8529AE16344"
+    },
+    {
+      "name": "DocumentTemplateDialogTests",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/DocumentTemplateDialogTests.trx",
+      "sha256": "098046917161A423EB1CE6DC8A4EB2B8FE8491285E8FC5B7A6777CB791980C6C"
+    },
+    {
+      "name": "UserSettingsMigratorTests",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/UserSettingsMigratorTests.trx",
+      "sha256": "2E42A39C4401155361681FE4E203B269987C184B76389375ADC4B1DF4F6A95F9"
+    },
+    {
+      "name": "ApplicationUpdateServiceTests",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/ApplicationUpdateServiceTests.trx",
+      "sha256": "BA64CEE9FD22C9E1EDB32C9EB7FB35344000E932A5624CDC3DCDB3E69D39856F"
+    },
+    {
+      "name": "ApplicationUpdateCoordinatorTests",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/ApplicationUpdateCoordinatorTests.trx",
+      "sha256": "C2A053FE8DC4A80249D96B853D5C27DD510FDE2202DA81EBE187CFA7DFC813A1"
+    },
+    {
+      "name": "JsonUpdateCheckStateStoreTests",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/JsonUpdateCheckStateStoreTests.trx",
+      "sha256": "C11D2505751B84676E55CD0FAB9AA718994CE95E8EF170A43BFD38BD88A2BF08"
+    },
+    {
+      "name": "GitHubReleaseSourceTests",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/GitHubReleaseSourceTests.trx",
+      "sha256": "D9C33313B18F197794A14BB130C0E00A579FA61CBCE218D093EDB9506343FF6F"
+    },
+    {
+      "name": "UpdateNotificationViewModelTests",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/UpdateNotificationViewModelTests.trx",
+      "sha256": "EBB014676B3B4B095E8C1D70110F364DAB5ECA2D40227F4E5A49930AAA6A98F8"
+    },
+    {
+      "name": "ApplicationUpdateInstallerTests",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/ApplicationUpdateInstallerTests.trx",
+      "sha256": "AA0A65C2DE2DA29B63DB9C475EE5019D1C84D64DD08B655013E51BEFD3C31859"
+    },
+    {
+      "name": "InstallerDefinitionTests",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "source": "artifacts/stage10/tests/InstallerDefinitionTests.trx",
+      "sha256": "B39D1959269F58BF488972974D51AA9B4167C24FABE363529A68C427FE08B4B8"
+    }
+  ]
+}

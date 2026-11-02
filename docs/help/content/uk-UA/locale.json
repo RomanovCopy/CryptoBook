@@ -18,6 +18,13 @@
   },
   "topics": [
     {
+      "id": "start.install",
+      "file": "start.install.md",
+      "keywords": [
+        "Установлення та запуск portable"
+      ]
+    },
+    {
       "id": "start.interface",
       "file": "start.interface.md",
       "keywords": [
@@ -776,6 +783,62 @@
         "рамки",
         "Markdown",
         "скидання"
+      ]
+    },
+    {
+      "id": "help.use",
+      "file": "help.use.md",
+      "keywords": [
+        "Зміст, пошук та ілюстрації довідки"
+      ]
+    },
+    {
+      "id": "settings.about",
+      "file": "settings.about.md",
+      "keywords": [
+        "Версія та відомості про програму"
+      ]
+    },
+    {
+      "id": "settings.appearance",
+      "file": "settings.appearance.md",
+      "keywords": [
+        "Тема, початковий екран і шаблон"
+      ]
+    },
+    {
+      "id": "settings.data",
+      "file": "settings.data.md",
+      "keywords": [
+        "Де зберігаються дані й налаштування"
+      ]
+    },
+    {
+      "id": "settings.hotkeys",
+      "file": "settings.hotkeys.md",
+      "keywords": [
+        "Гарячі клавіші та область фокуса"
+      ]
+    },
+    {
+      "id": "settings.language",
+      "file": "settings.language.md",
+      "keywords": [
+        "Мова програми та довідки"
+      ]
+    },
+    {
+      "id": "settings.troubleshoot",
+      "file": "settings.troubleshoot.md",
+      "keywords": [
+        "Типові проблеми та безпечні дії"
+      ]
+    },
+    {
+      "id": "settings.updates",
+      "file": "settings.updates.md",
+      "keywords": [
+        "Перевірка та встановлення оновлення"
       ]
     }
   ]

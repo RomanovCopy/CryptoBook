@@ -1,0 +1,115 @@
+{
+  "comparisons": 5416,
+  "unchanged": 5404,
+  "differences": [
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "ru-RU",
+      "key": "Explorer.RecoverableDeleteWarning",
+      "status": "changed",
+      "previous": "Удалить выбранные объекты? Локальные объекты сохранятся в скрытой папке восстановления рядом с исходными. Для возврата используйте «Восстановить файлы» в этой папке. Копии занимают место до восстановления или явного удаления.",
+      "current": "Удалить выбранные объекты? Локальные файлы и папки будут перемещены в корзину Windows. Для возврата используйте корзину. Если перемещение в корзину недоступно, операция завершится ошибкой без безвозвратного удаления.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "ru-RU",
+      "key": "Explorer.RestoreFiles",
+      "status": "changed",
+      "previous": "Восстановить файлы",
+      "current": "Восстановить операции",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "ru-RU",
+      "key": "Explorer.RestoreFilesConfirmation",
+      "status": "changed",
+      "previous": "Вернуть удалённые объекты и прерванные локальные операции, записанные в этой папке? Занятые имена не будут перезаписаны. Перед восстановлением закройте программы, использующие эти файлы.",
+      "current": "Восстановить прерванные локальные передачи и переименования по журналам в этой папке? Занятые имена не перезаписываются. Недавно удалённые файлы возвращаются через корзину Windows.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "de-DE",
+      "key": "Explorer.RecoverableDeleteWarning",
+      "status": "changed",
+      "previous": "Ausgewählte Objekte löschen? Lokale Objekte bleiben in einem versteckten Wiederherstellungsordner neben den Originalen erhalten. Mit „Dateien wiederherstellen“ in diesem Ordner holen Sie sie zurück. Die Kopien belegen Speicherplatz, bis sie wiederhergestellt oder ausdrücklich entfernt werden.",
+      "current": "Ausgewählte Objekte löschen? Lokale Dateien und Ordner werden in den Windows-Papierkorb verschoben. Stellen Sie sie dort wieder her. Ist dies nicht möglich, wird der Vorgang mit einem Fehler beendet, ohne die Objekte endgültig zu löschen.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "de-DE",
+      "key": "Explorer.RestoreFiles",
+      "status": "changed",
+      "previous": "Dateien wiederherstellen",
+      "current": "Vorgänge wiederherstellen",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "de-DE",
+      "key": "Explorer.RestoreFilesConfirmation",
+      "status": "changed",
+      "previous": "Gelöschte Objekte und unterbrochene lokale Vorgänge aus diesem Ordner wiederherstellen? Vorhandene Namen werden nicht überschrieben. Schließen Sie zuvor Programme, die diese Dateien verwenden.",
+      "current": "Unterbrochene lokale Übertragungen und Umbenennungen anhand der Protokolle in diesem Ordner wiederherstellen? Belegte Namen werden nicht überschrieben. Kürzlich gelöschte Dateien stellen Sie im Windows-Papierkorb wieder her.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "uk-UA",
+      "key": "Explorer.RecoverableDeleteWarning",
+      "status": "changed",
+      "previous": "Видалити вибрані об’єкти? Локальні об’єкти збережуться в прихованій папці відновлення поряд з оригіналами. Для повернення натисніть «Відновити файли» в цій папці. Копії займають місце до відновлення або явного видалення.",
+      "current": "Видалити вибрані об’єкти? Локальні файли та папки буде переміщено до кошика Windows. Для повернення використовуйте кошик. Якщо переміщення до кошика недоступне, операція завершиться помилкою без незворотного видалення.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "uk-UA",
+      "key": "Explorer.RestoreFiles",
+      "status": "changed",
+      "previous": "Відновити файли",
+      "current": "Відновити операції",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "uk-UA",
+      "key": "Explorer.RestoreFilesConfirmation",
+      "status": "changed",
+      "previous": "Повернути видалені об’єкти та перервані локальні операції, записані в цій папці? Зайняті імена не буде перезаписано. Перед відновленням закрийте програми, що використовують ці файли.",
+      "current": "Відновити перервані локальні передавання та перейменування за журналами в цій папці? Зайняті імена не перезаписуються. Нещодавно видалені файли повертаються через кошик Windows.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "en-US",
+      "key": "Explorer.RecoverableDeleteWarning",
+      "status": "changed",
+      "previous": "Delete the selected items? Local items will be kept in a hidden recovery folder beside the originals. Use Restore files in this folder to return them. Recovery copies use disk space until restored or explicitly removed.",
+      "current": "Delete the selected items? Local files and folders will be moved to the Windows Recycle Bin. Restore them from the Recycle Bin. If recycling is unavailable, the operation fails instead of permanently deleting them.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "en-US",
+      "key": "Explorer.RestoreFiles",
+      "status": "changed",
+      "previous": "Restore files",
+      "current": "Restore operations",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    },
+    {
+      "source": "docs\\help\\screenshots\\validation\\stage6\\fixes\\ui-terms.json",
+      "culture": "en-US",
+      "key": "Explorer.RestoreFilesConfirmation",
+      "status": "changed",
+      "previous": "Restore deleted items and interrupted local operations recorded in this folder? Existing names will never be overwritten. Close programs using these files before restoring.",
+      "current": "Restore interrupted local transfers and renames recorded in this folder? Existing names will not be overwritten. Restore newly deleted files from the Windows Recycle Bin.",
+      "resolution": "Historical stage6/fixes evidence predates recycle-bin correction. Newer stage6/recycle-bin evidence and current files.manage articles use the current terms. Historical evidence preserved."
+    }
+  ],
+  "meaning": "Cross-stage terminology drift audit against current owning resx. This is not independent linguistic acceptance."
+}

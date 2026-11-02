@@ -15,6 +15,32 @@ namespace CryptoBook.Tests;
 public sealed class ApplicationUpdateInstallerTests
 {
     [Fact]
+    public async Task InstallAsync_CancelDuringDownload_RemovesPartialAndKeepsExistingFiles()
+    {
+        using var directory = new TemporaryDirectory();
+        string previousInstaller = directory.WriteFile("CryptoBook-Setup-1.1.0.exe", [1, 2, 3]);
+        string unrelatedFile = directory.WriteFile("notes.txt", [4, 5, 6]);
+        using var client = CreateClient(new byte[512 * 1024]);
+        using var cancellation = new CancellationTokenSource();
+        var launcher = new FileLauncherStub();
+        var signature = new AuthenticodeVerifierStub(AuthenticodeStatus.NotSigned);
+        var installer = new ApplicationUpdateInstaller(client, launcher, directory.Path,
+            UnsignedReleasePolicy.AllowWithVerifiedChecksum, signature);
+        var progress = new CancelDownloadReporter(cancellation);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => installer.InstallAsync(
+            CreateRelease("1.2.0"), progress, cancellation.Token));
+
+        Assert.True(progress.ObservedPartialDownload);
+        Assert.Null(launcher.LaunchedPath);
+        Assert.Equal(0, signature.VerifyCount);
+        Assert.False(File.Exists(System.IO.Path.Combine(directory.Path, "CryptoBook-Setup-1.2.0.exe.download")));
+        Assert.False(File.Exists(System.IO.Path.Combine(directory.Path, "CryptoBook-Setup-1.2.0.exe")));
+        Assert.Equal(new byte[] { 1, 2, 3 }, File.ReadAllBytes(previousInstaller));
+        Assert.Equal(new byte[] { 4, 5, 6 }, File.ReadAllBytes(unrelatedFile));
+    }
+
+    [Fact]
     public async Task InstallAsync_ReportsDownloadAndRemovesOldInstallers()
     {
         using var directory = new TemporaryDirectory();
@@ -259,6 +285,19 @@ public sealed class ApplicationUpdateInstallerTests
             Values.Add(value);
             if(currentInfo is not null)
                 Messages.Add(currentInfo);
+        }
+    }
+
+    private sealed class CancelDownloadReporter(CancellationTokenSource cancellation): IProgressReporter
+    {
+        public bool ObservedPartialDownload { get; private set; }
+        public void Report(double? value, string? currentInfo = null)
+        {
+            if(value is > 0 and < 0.9)
+            {
+                ObservedPartialDownload = true;
+                cancellation.Cancel();
+            }
         }
     }
 
