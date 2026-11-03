@@ -2271,4 +2271,9 @@
   <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Відкрити збережену аварійну копію незбереженої роботи</value></data>
   <data name="Recovery.RestoreLock" xml:space="preserve"><value>Відновити знімок після скидання ключа</value></data>
   <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Повернути захищену роботу з попереднім ключем</value></data>
+  <data name="Explorer.RecycleSpaceUnknown" xml:space="preserve"><value>Не вдалося визначити вільний обсяг кошика. Нічого не видалено. Перевірте налаштування кошика та повторіть спробу.</value></data>
+  <data name="Explorer.PermanentDeleteWholeSelectionWarning" xml:space="preserve"><value>Кошик недоступний або весь вибраний набір у нього не вміщується. Видалити ВСІ вибрані об’єкти ({0}) незворотно? Відновити їх із кошика буде неможливо. Поки нічого не видалено.&#10;&#10;{1}</value></data>
+  <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: вибрано — {1:N2} МіБ; вільно в кошику — {2:N2} МіБ.</value></data>
+  <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Незворотне видалення…</value></data>
+  <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Не вдалося незворотно видалити об’єкт. Уже видалені об’єкти неможливо відновити з кошика.</value></data>
 </root>

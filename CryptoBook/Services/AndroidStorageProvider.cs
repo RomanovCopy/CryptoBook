@@ -127,6 +127,12 @@ public sealed class AndroidStorageProvider:
                 StringComparison.Ordinal);
     }
 
+    public string GetComparisonKey(StorageLocation location)
+    {
+        (string serial, string objectId) = AndroidLocatorCodec.Decode(location);
+        return serial + "\0" + NormalizeRemote(objectId);
+    }
+
     public bool IsDescendant(StorageLocation parent, StorageLocation candidate)
     {
         (string parentSerial, string parentObject) = AndroidLocatorCodec.Decode(parent);

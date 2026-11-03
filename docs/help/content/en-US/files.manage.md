@@ -1,6 +1,6 @@
 # Open, rename and delete
 
-The selected row determines which object a command uses. Keep a separate copy before changing important files. Local deletion asks for confirmation and moves files and folders to the Windows Recycle Bin.
+The selected row determines which object a command uses. Keep a separate copy before changing important files. Local deletion checks the available Recycle Bin capacity and asks you to confirm the deletion mode.
 
 ## Open or copy a path
 
@@ -21,7 +21,7 @@ After success, refresh and check the full path. Single renaming updates the matc
 
 ## Delete
 
-Select local objects, choose **Delete** and confirm the selection. **Cancel** in the confirmation leaves files in place. Objects enter the Windows Recycle Bin with their original names; no sibling folders are created to store deleted files. If recycling is unavailable, an error is shown; the app does not substitute permanent deletion.
+Select local objects and choose **Delete**. The app first totals the entire selection and compares it with the available Recycle Bin quota on each volume. If it fits, confirm recycling. If the entire selection does not fit or there is no Recycle Bin, a separate warning offers to permanently delete **all selected objects**. Nothing is deleted before confirmation; **Cancel** leaves the entire selection in place. If the quota cannot be determined, the operation stops with a message. The app does not itself empty old items from the bin.
 
 To return them, open the Windows **Recycle Bin**, select the objects and choose **Restore**. They return to their original folders. Canceling a running multi-item deletion or encountering an error may leave some objects in the bin and others in place. Return completed items using the Recycle Bin. Emptying the bin or permanently deleting items from it removes this normal recovery option.
 

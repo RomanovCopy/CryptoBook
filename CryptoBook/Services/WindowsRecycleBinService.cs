@@ -15,66 +15,123 @@ public sealed class WindowsRecycleBinService : IRecycleBinService
     internal const int Cancelled = unchecked((int)0x800704C7);
     internal const int NotSupported = unchecked((int)0x80070032);
 
-    public Task<FileOperationResult> RecycleAsync(string path, CancellationToken cancellationToken = default)
+    public Task<RecycleBinDeletionPlan> PlanDeletionAsync(IReadOnlyList<string> paths,
+        CancellationToken cancellationToken = default) =>
+        Task.Run(() => WindowsRecycleBinCapacityService.Plan(paths, cancellationToken), cancellationToken);
+
+    public async Task<FileOperationResult> RecycleAsync(string path, CancellationToken cancellationToken = default)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        var completion = new TaskCompletionSource<FileOperationResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        FileOperationBatchResult result = await RecycleBatchAsync([path], cancellationToken: cancellationToken);
+        if(result.Canceled && result.CompletedCount == 0)
+            throw new OperationCanceledException(cancellationToken);
+        return result.Results.FirstOrDefault() ?? Failure();
+    }
+
+    public Task<FileOperationBatchResult> RecycleBatchAsync(IReadOnlyList<string> paths,
+        IProgressReporter? progress = null, CancellationToken cancellationToken = default) =>
+        RunBatchAsync(paths, false, progress, cancellationToken);
+
+    public Task<FileOperationBatchResult> DeletePermanentlyAsync(IReadOnlyList<string> paths,
+        IProgressReporter? progress = null, CancellationToken cancellationToken = default) =>
+        RunBatchAsync(paths, true, progress, cancellationToken);
+
+    private static Task<FileOperationBatchResult> RunBatchAsync(IReadOnlyList<string> paths,
+        bool permanent, IProgressReporter? progress, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(paths);
+        token.ThrowIfCancellationRequested();
+        string[] snapshot = paths.Select(Path.GetFullPath).ToArray();
+        var completion = new TaskCompletionSource<FileOperationBatchResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var thread = new Thread(() =>
         {
-            try { completion.SetResult(Recycle(Path.GetFullPath(path), cancellationToken)); }
-            catch(OperationCanceledException) { completion.SetCanceled(cancellationToken); }
-            catch(Exception e) { completion.SetResult(Failure(e.Message)); }
+            try { completion.SetResult(DeleteBatch(snapshot, permanent, progress, token)); }
+            catch(OperationCanceledException) { completion.SetResult(new([], 0, 0, true, false)); }
+            catch(Exception e) { completion.SetResult(new([Failure(e.Message, permanent)], 0, 0, false, false)); }
         }) { IsBackground = true, Name = "CryptoBook Recycle Bin" };
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         return completion.Task;
     }
 
-    private static FileOperationResult Recycle(string path, CancellationToken token)
+    private static FileOperationBatchResult DeleteBatch(string[] paths, bool permanent,
+        IProgressReporter? progress, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         IFileOperation? operation = null;
-        IShellItem? item = null;
-        var sink = new RecyclingProgressSink(token);
+        var items = new List<IShellItem>(paths.Length);
+        var sinks = new List<RecyclingProgressSink>(paths.Length);
+        int completed = 0;
         try
         {
             var type = Type.GetTypeFromCLSID(new Guid("3ad05575-8857-4850-9277-11b85bdb8e09"), throwOnError: true)!;
             operation = (IFileOperation)Activator.CreateInstance(type)!;
-            operation.SetOperationFlags(OperationFlags);
-            Guid itemId = typeof(IShellItem).GUID;
-            SHCreateItemFromParsingName(path, IntPtr.Zero, ref itemId, out item);
-            operation.DeleteItem(item, sink);
+            // No native confirmation can authorize a silent switch from recycle
+            // to permanent deletion. The caller chooses permanent mode only after consent.
+            operation.SetOperationFlags(permanent ? OperationFlags & ~0x00080000u : OperationFlags);
+            foreach(string path in paths)
+            {
+                token.ThrowIfCancellationRequested();
+                Guid itemId = typeof(IShellItem).GUID;
+                SHCreateItemFromParsingName(path, IntPtr.Zero, ref itemId, out IShellItem item);
+                items.Add(item);
+                var sink = new RecyclingProgressSink(token, permanent,
+                    () => progress?.Report((double)++completed / paths.Length, path));
+                sinks.Add(sink);
+                operation.DeleteItem(item, sink);
+            }
             int performed = operation.PerformOperations();
             operation.GetAnyOperationsAborted(out bool aborted);
-            // Cancellation may arrive after the item has already entered the bin.
-            // Report that item as completed so the batch counts remain accurate.
-            if(sink.Recycled) return FileOperationResult.Ok(sink.RecycledPath);
-            if(token.IsCancellationRequested) throw new OperationCanceledException(token);
-            if(sink.RefusedPermanentDeletion) return Failure();
-            int error = sink.Error < 0 ? sink.Error : performed;
-            if(error < 0) Marshal.ThrowExceptionForHR(error);
-            return Failure(aborted ? LocalizationManager.GetString("Explorer.DeleteCanceledTitle") : null);
+            var results = new List<FileOperationResult>();
+            foreach(RecyclingProgressSink sink in sinks)
+            {
+                if(sink.Completed) results.Add(FileOperationResult.Ok(sink.RecycledPath));
+                else if(sink.Error < 0 && !IsCancellation(sink.Error))
+                    results.Add(Failure(Marshal.GetExceptionForHR(sink.Error)?.Message, permanent));
+                else if(sink.RefusedPermanentDeletion) results.Add(Failure());
+            }
+            int actualCompleted = sinks.Count(sink => sink.Completed);
+            bool canceled = token.IsCancellationRequested || IsCancellation(performed) ||
+                (aborted && results.All(result => result.Success));
+            if(!canceled && results.All(result => result.Success) && actualCompleted != paths.Length)
+                results.Add(Failure(performed < 0 ? Marshal.GetExceptionForHR(performed)?.Message : null, permanent));
+            return new(results, actualCompleted, 0, canceled, actualCompleted > 0)
+            { PermanentlyDeletedCount = sinks.Count(sink => sink.PermanentlyDeleted) };
+        }
+        catch(Exception exception)
+        {
+            FileOperationResult[] successful = sinks.Where(sink => sink.Completed)
+                .Select(sink => FileOperationResult.Ok(sink.RecycledPath)).ToArray();
+            bool canceled = exception is OperationCanceledException || token.IsCancellationRequested;
+            return new(canceled ? successful : successful.Append(Failure(exception.Message, permanent)).ToArray(),
+                successful.Length, 0, canceled, successful.Length > 0)
+            { PermanentlyDeletedCount = sinks.Count(sink => sink.PermanentlyDeleted) };
         }
         finally
         {
-            if(item is not null) Marshal.FinalReleaseComObject(item);
+            foreach(IShellItem item in items) Marshal.FinalReleaseComObject(item);
             if(operation is not null) Marshal.FinalReleaseComObject(operation);
-            GC.KeepAlive(sink);
+            GC.KeepAlive(sinks);
         }
     }
 
-    private static FileOperationResult Failure(string? detail = null) => FileOperationResult.Fail(
-        LocalizationManager.GetString("Explorer.RecycleBinFailed") +
+    private static bool IsCancellation(int result) =>
+        result == Cancelled || result == unchecked((int)0x80270000) || result == unchecked((int)0x80270001);
+
+    private static FileOperationResult Failure(string? detail = null, bool permanent = false) => FileOperationResult.Fail(
+        LocalizationManager.GetString(permanent ? "Explorer.PermanentDeleteFailed" : "Explorer.RecycleBinFailed") +
         (string.IsNullOrWhiteSpace(detail) ? string.Empty : Environment.NewLine + detail));
 
     [ComVisible(true), ClassInterface(ClassInterfaceType.None)]
-    internal sealed class RecyclingProgressSink(CancellationToken token) : IFileOperationProgressSink
+    internal sealed class RecyclingProgressSink(CancellationToken token, bool permanent = false,
+        Action? onCompleted = null) : IFileOperationProgressSink
     {
         public bool Recycled { get; private set; }
         public string? RecycledPath { get; private set; }
         public bool RefusedPermanentDeletion { get; private set; }
         public int Error { get; private set; }
+        public bool PermanentlyDeleted { get; private set; }
+        public bool Completed => Recycled || PermanentlyDeleted;
         public int StartOperations() => token.IsCancellationRequested ? Cancelled : 0;
         public int FinishOperations(int result) => 0;
         public int PreRenameItem(uint flags, IShellItem item, string name) => 0;
@@ -86,20 +143,27 @@ public sealed class WindowsRecycleBinService : IRecycleBinService
         public int PreDeleteItem(uint flags, IShellItem item)
         {
             if(token.IsCancellationRequested) return Cancelled;
-            if((flags & RecycleTransferFlag) != 0) return 0;
+            if(permanent || (flags & RecycleTransferFlag) != 0) return 0;
             RefusedPermanentDeletion = true;
             return NotSupported;
         }
         public int PostDeleteItem(uint flags, IShellItem item, int result, IShellItem? created)
         {
             if(result < 0) Error = result;
+            bool wasCompleted = Completed;
+            PermanentlyDeleted |= permanent && result >= 0 && created is null;
             Recycled |= result >= 0 && created is not null;
             if(result >= 0 && created is not null)
             {
-                created.GetDisplayName(0x80058000, out IntPtr name); // SIGDN_FILESYSPATH
-                try { RecycledPath = Marshal.PtrToStringUni(name); }
-                finally { Marshal.FreeCoTaskMem(name); }
+                try
+                {
+                    created.GetDisplayName(0x80058000, out IntPtr name); // SIGDN_FILESYSPATH
+                    try { RecycledPath = Marshal.PtrToStringUni(name); }
+                    finally { Marshal.FreeCoTaskMem(name); }
+                }
+                catch(COMException) { /* Recycling already succeeded; keep its completed count. */ }
             }
+            if(!wasCompleted && Completed) onCompleted?.Invoke();
             return 0;
         }
         public int PreNewItem(uint flags, IShellItem folder, string name) => 0;

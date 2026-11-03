@@ -4,7 +4,7 @@ The media player opens an image in a separate window. Rotation, zoom and panning
 
 ## Before you start
 
-> **Deleting moves the original file to the Windows Recycle Bin.** The player first shows a warning and asks for confirmation. For .cbook/.cbox, the encrypted file itself is moved to the Recycle Bin.
+> **Deletion targets the original file, including the encrypted .cbook/.cbox itself, not a decrypted copy.** The player first checks its size and available Recycle Bin capacity. If it fits, it asks to recycle the file. If the bin is missing or space is insufficient, it offers permanent deletion and waits for separate consent. Nothing is deleted before confirmation.
 
 Use a local file or a local copy from a device. Decoding support depends on Windows.
 
@@ -14,7 +14,7 @@ Use a local file or a local copy from a device. Decoding support depends on Wind
 2. **Previous image** / **Next image** and ←/→ move through images in the selected catalog; navigation is disabled at the ends.
 3. Choose **Rotate** to rotate. The wheel and ↑/↓ zoom in/out; dragging with the left mouse button pans the image.
 4. Choose **Fit image** to reset rotation, zoom and offset.
-5. To delete the file, choose **Delete image** or press Delete. Read the warning and choose **OK** to move it to the Recycle Bin, or **Cancel** to keep the file.
+5. To delete the file, choose **Delete image** or press Delete. Wait for the capacity check and verify the original path and deletion mode in the warning. Choose **OK** for the stated action or **Cancel** to keep the file. Repeated deletion and image navigation are unavailable during the operation. Progress closes after the next image opens or the viewer is cleared.
 
 ![Actual image viewing in a separate player.](images/S30-c.png "Actual image viewing in a separate player.")
 
@@ -24,13 +24,13 @@ The image appears in the window. Image controls appear on hover and have tooltip
 
 ## Cancel and return
 
-Close the window or open another file. Choose **Cancel** in the deletion prompt to keep the original. After deletion, open the Windows Recycle Bin, select the file and choose **Restore**. Then open it in the player again.
+Choose **Cancel** in the deletion prompt to keep the original. Closing the player cancels work that has not completed yet. After recycling, open the Windows Recycle Bin, select the file and choose **Restore**, then open it in the player again. A file permanently deleted with your consent cannot be restored from the bin.
 
 ## If it did not work
 
 No adjacent image: check the chosen catalog and file order. For decoding errors try a supported format. PDF and video use different viewing paths.
 
-If moving to the Recycle Bin is unavailable or fails, the player reports the error and keeps the file in place. It does not permanently delete the file instead.
+If the bin limit cannot be determined, the operation stops with a message. Declining confirmation or an error before deletion preserves the original and the current image. If deletion has already succeeded when cancellation arrives, the player advances to the next image; cancellation does not automatically restore an already deleted file.
 
 ## Related topics
 

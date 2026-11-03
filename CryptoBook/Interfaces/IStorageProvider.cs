@@ -33,6 +33,8 @@ public interface IStorageProvider: IService
     StorageLocation? GetParent(StorageLocation location);
     StorageLocation GetChild(StorageLocation container, string name);
     bool AreEquivalent(StorageLocation left, StorageLocation right);
+    /// <summary>Canonical identity within this provider, compared with Ordinal. Normalize case here if needed.</summary>
+    string GetComparisonKey(StorageLocation location) => location.OpaqueId;
     bool IsDescendant(StorageLocation parent, StorageLocation candidate);
 
     Task<StorageLocation> CreateUniqueLocationAsync(

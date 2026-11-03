@@ -51,16 +51,22 @@ namespace CryptoBook.Services
             }
             finally
             {
+                await reporter.CompleteAsync();
                 // Окно остаётся открытым, пока операция действительно не завершится.
                 await _dispatcher.InvokeAsync(() => _windowManager.CloseWindow(windowId));
             }
         }
 
-        private sealed class DispatcherProgressReporter: IProgressReporter
+        internal sealed class DispatcherProgressReporter: IProgressReporter
         {
             private readonly Dispatcher _dispatcher;
             private readonly ProgressViewModel _viewModel;
             private readonly StoragePathDisplayService _pathDisplay;
+            private readonly object _sync = new();
+            private double? _latestValue;
+            private string? _latestInfo;
+            private bool _updateQueued;
+            private bool _completed;
 
             public DispatcherProgressReporter(
                 Dispatcher dispatcher,
@@ -74,10 +80,41 @@ namespace CryptoBook.Services
 
             public void Report(double? value, string? currentInfo = null)
             {
-                string? displayInfo = currentInfo is null
-                    ? null
-                    : _pathDisplay.FormatMessage(currentInfo);
-                _dispatcher.BeginInvoke(() => _viewModel.Report(value, displayInfo));
+                lock(_sync)
+                {
+                    if(_completed)
+                        return;
+                    _latestValue = value;
+                    if(!string.IsNullOrWhiteSpace(currentInfo))
+                        _latestInfo = currentInfo;
+                    if(_updateQueued)
+                        return;
+                    _updateQueued = true;
+                    _dispatcher.BeginInvoke(ApplyPending, DispatcherPriority.Background);
+                }
+            }
+
+            public async Task CompleteAsync()
+            {
+                lock(_sync)
+                    _completed = true;
+                await _dispatcher.InvokeAsync(ApplyPending);
+            }
+
+            private void ApplyPending()
+            {
+                double? value;
+                string? info;
+                lock(_sync)
+                {
+                    if(!_updateQueued)
+                        return;
+                    value = _latestValue;
+                    info = _latestInfo;
+                    _latestInfo = null;
+                    _updateQueued = false;
+                }
+                _viewModel.Report(value, info is null ? null : _pathDisplay.FormatMessage(info));
             }
         }
     }

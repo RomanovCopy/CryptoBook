@@ -19,7 +19,9 @@ namespace CryptoBook.DTO
         private readonly IDirectoryMonitoringService _directoryMonitoringService;
         private readonly ISystemItemCreateService _systemItemCreateService;
         private readonly ISystemItemSortService _systemItemSortService;
-        private readonly SemaphoreSlim _monitorEventGate = new(1, 1);
+        private readonly object _monitorEventLock = new();
+        private readonly List<(string Path, string? OldPath)> _monitorEvents = [];
+        private TaskCompletionSource? _monitorCompletion;
 
         public string Name { get => name; set => SetProperty(ref name, value); }
         string name;
@@ -390,133 +392,125 @@ namespace CryptoBook.DTO
                 return;
 
             _monitor = _directoryMonitoringService.StartMonitoring(FullPath,
-                onCreated: e => RunMonitoringHandler(
-                    () => HandleCreatedAsync(e.FullPath)),
-                onDeleted: e => RunMonitoringHandler(
-                    () => HandleDeletedAsync(e.FullPath)),
-                onRenamed: e => RunMonitoringHandler(
-                    () => HandleRenamedAsync(e.OldFullPath, e.FullPath)),
-                onChanged: e => RunMonitoringHandler(
-                    () => HandleChangedAsync(e)));
+                onCreated: e => QueueMonitoringEvent(e.FullPath),
+                onDeleted: e => QueueMonitoringEvent(e.FullPath),
+                onRenamed: e => QueueMonitoringEvent(e.FullPath, e.OldFullPath),
+                onChanged: e => QueueMonitoringEvent(e.FullPath));
         }
 
-        private void RunMonitoringHandler(Func<Task> handler)
+        public Task FlushMonitoringAsync(CancellationToken ct = default)
         {
-            _ = RunMonitoringHandlerAsync(handler);
+            lock(_monitorEventLock)
+                return (_monitorCompletion?.Task ?? Task.CompletedTask).WaitAsync(ct);
         }
 
-        private static async Task RunMonitoringHandlerAsync(Func<Task> handler)
+        private void QueueMonitoringEvent(string path, string? oldPath = null)
+        {
+            TaskCompletionSource completion;
+            lock(_monitorEventLock)
+            {
+                _monitorEvents.Add((path, oldPath));
+                if(_monitorCompletion is not null)
+                    return;
+
+                completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                _monitorCompletion = completion;
+            }
+            _ = ProcessMonitoringEventsAsync(completion);
+        }
+
+        private async Task ProcessMonitoringEventsAsync(TaskCompletionSource completion)
         {
             try
             {
-                await handler().ConfigureAwait(false);
-            }
-            catch(OperationCanceledException)
-            {
-                // Dispatcher cancels queued operations during application shutdown.
+                while(true)
+                {
+                    // Одна задержка на пакет, а не на каждый файл. За это время
+                    // атомарная запись успевает опубликовать итоговый файл.
+                    await Task.Delay(75).ConfigureAwait(false);
+                    (string Path, string? OldPath)[] events;
+                    lock(_monitorEventLock)
+                    {
+                        events = _monitorEvents.ToArray();
+                        _monitorEvents.Clear();
+                    }
+
+                    var incoming = events
+                        .SelectMany(e => e.OldPath is null
+                            ? new[] { e.Path } : new[] { e.OldPath, e.Path })
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .ToDictionary(path => path, CreateItemIfExists,
+                            StringComparer.OrdinalIgnoreCase);
+                    await _dispatcherService.InvokeAsync(
+                        () => ApplyMonitoringEvents(events, incoming)).ConfigureAwait(false);
+
+                    lock(_monitorEventLock)
+                    {
+                        if(_monitorEvents.Count != 0)
+                            continue;
+                        _monitorCompletion = null;
+                        completion.TrySetResult();
+                        return;
+                    }
+                }
             }
             catch(Exception)
             {
-                // FileSystemWatcher callbacks must not terminate the application.
-            }
-        }
-
-        private async Task HandleChangedAsync(FileSystemEventArgs e)
-        {
-            await _dispatcherService.InvokeAsync(new Action(() =>
-            {
-                if(e.ChangeType != WatcherChangeTypes.Created &&
-                   e.ChangeType != WatcherChangeTypes.Renamed)
+                // В том числе отмена Dispatcher при закрытии приложения.
+                // Полная синхронизация каталога остаётся источником истины.
+                lock(_monitorEventLock)
                 {
-                    ISystemItem? item = _children.FirstOrDefault(x =>
-                        string.Equals(
-                            x.FullPath,
-                            e.FullPath,
-                            StringComparison.OrdinalIgnoreCase));
-                    var info = new FileInfo(e.FullPath);
-                    if(item is not null && info.Exists)
-                    {
-                        item.Size = info.Length;
-                        item.LastWriteTimeUtc = info.LastWriteTime.ToLocalTime();
-                    }
+                    _monitorEvents.Clear();
+                    _monitorCompletion = null;
+                    completion.TrySetResult();
                 }
-            }));
-        }
-
-        private async Task HandleCreatedAsync(string fullPath)
-        {
-            // Сериализация событий не позволяет временным файлам обогнать их удаление.
-            await _monitorEventGate.WaitAsync();
-            try
-            {
-                // Атомарная запись создаёт краткоживущий *.tmp. Даём операции
-                // завершить Move/Delete и добавляем только существующий результат.
-                await Task.Delay(75);
-                ISystemItem? item = CreateItemIfExists(fullPath);
-                if(item is not null)
-                    await AddChildAsync([item], child => child.FullPath);
-            }
-            finally
-            {
-                _monitorEventGate.Release();
             }
         }
 
-        private async Task HandleDeletedAsync(string fullPath)
+        private void ApplyMonitoringEvents(
+            (string Path, string? OldPath)[] events,
+            Dictionary<string, ISystemItem?> incoming)
         {
-            await _monitorEventGate.WaitAsync();
-            try
+            var items = _children.ToDictionary(item => item.FullPath,
+                StringComparer.OrdinalIgnoreCase);
+            foreach(var change in events)
             {
-                ISystemItem? existing = await _dispatcherService.InvokeAsync(
-                    () => _children.FirstOrDefault(item =>
-                        string.Equals(
-                            item.FullPath,
-                            fullPath,
-                            StringComparison.OrdinalIgnoreCase)));
-                if(existing is not null)
-                    await RemoveChildAsync([existing], item => item.FullPath);
+                // Сохраняем объект и выделение даже для цепочки a -> b -> c.
+                if(change.OldPath is not null &&
+                   items.Remove(change.OldPath, out ISystemItem? renamed))
+                    items.TryAdd(change.Path, renamed);
             }
-            finally
+
+            foreach(var (path, item) in incoming)
             {
-                _monitorEventGate.Release();
+                if(item is null)
+                    items.Remove(path);
+                else if(items.TryGetValue(path, out ISystemItem? existing) &&
+                    (existing is IContainerSystemItem) == (item is IContainerSystemItem))
+                    ApplyRenamedItem(existing, item);
+                else
+                    items[path] = item;
             }
-        }
 
-        private async Task HandleRenamedAsync(string oldFullPath, string newFullPath)
-        {
-            await _monitorEventGate.WaitAsync();
-            try
+            var remaining = items.Values.ToHashSet(ReferenceEqualityComparer.Instance);
+            ISystemItem[] removed = _children.Where(item => !remaining.Contains(item)).ToArray();
+            var original = _children.ToHashSet(ReferenceEqualityComparer.Instance);
+            ISystemItem[] added = items.Values.Where(item => !original.Contains(item)).ToArray();
+            if(removed.Length + added.Length > 1)
             {
-                await Task.Delay(75);
-                ISystemItem? incoming = CreateItemIfExists(newFullPath);
-                ISystemItem? existing = await _dispatcherService.InvokeAsync(
-                    () => _children.FirstOrDefault(item =>
-                        string.Equals(
-                            item.FullPath,
-                            oldFullPath,
-                            StringComparison.OrdinalIgnoreCase)));
-
-                if(existing is null)
-                {
-                    if(incoming is not null)
-                        await AddChildAsync([incoming], item => item.FullPath);
-                    return;
-                }
-
-                if(incoming is null)
-                {
-                    await RemoveChildAsync([existing], item => item.FullPath);
-                    return;
-                }
-
-                // Rename обновляет существующий объект на месте. ListView сохраняет
-                // выделение, preview и позицию прокрутки.
-                await _dispatcherService.InvokeAsync(
-                    () => ApplyRenamedItem(existing, incoming));
+                ReplaceChildren(_children.Where(remaining.Contains).Concat(added).ToArray());
             }
-            finally
+            else if(removed.Length == 1)
             {
-                _monitorEventGate.Release();
+                _children.Remove(removed[0]);
+                if(removed[0] is IContainerSystemItem directory)
+                    _directoryChildren.Remove(directory);
+            }
+            else if(added.Length == 1)
+            {
+                _children.Add(added[0]);
+                if(added[0] is IContainerSystemItem directory)
+                    _directoryChildren.Add(directory);
             }
         }
 
@@ -555,7 +549,8 @@ namespace CryptoBook.DTO
         {
             ContainerSystemItem? monitoredContainer =
                 existing as ContainerSystemItem;
-            bool restartMonitoring = monitoredContainer?._monitor == true;
+            bool restartMonitoring = monitoredContainer?._monitor == true &&
+                !string.Equals(existing.FullPath, incoming.FullPath, StringComparison.OrdinalIgnoreCase);
             if(restartMonitoring)
             {
                 monitoredContainer!._directoryMonitoringService.StopMonitoring(

@@ -206,9 +206,132 @@ public sealed class FileExplorerCollectionPerformanceTests
             WatcherChangeTypes.Changed,
             container.FullPath,
             "file.txt"));
-        await Task.Delay(50);
+        await container.FlushMonitoringAsync();
 
         Assert.Equal(1, dispatcher.InvocationCount);
+    }
+
+    [Fact]
+    public async Task WatcherDelete_TenThousandItems_UsesOneCollectionReset()
+    {
+        var monitoring = new MonitoringStub();
+        DirectoryItem container = CreateContainer(monitoring);
+        container.FullPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        ISystemItem[] items = CreateItems(0, 10_000);
+        foreach(ISystemItem item in items)
+            item.FullPath = Path.Combine(container.FullPath, item.Name);
+        await container.AddChildAsync(items, item => item.FullPath);
+        var actions = new List<NotifyCollectionChangedAction>();
+        ((INotifyCollectionChanged)container.Children).CollectionChanged +=
+            (_, args) => actions.Add(args.Action);
+        container.IsSelected = true;
+
+        foreach(ISystemItem item in items)
+            monitoring.Deleted!(new FileSystemEventArgs(
+                WatcherChangeTypes.Deleted, container.FullPath, item.Name));
+        await container.FlushMonitoringAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Empty(container.Children);
+        Assert.Equal([NotifyCollectionChangedAction.Reset], actions);
+    }
+
+    [Fact]
+    public async Task WatcherCreate_ThousandItems_WaitsOnceForWholeBatch()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            for(int index = 0; index < 1_000; index++)
+                File.WriteAllText(Path.Combine(directory, $"file-{index}.txt"), "content");
+            var monitoring = new MonitoringStub();
+            DirectoryItem container = CreateContainer(monitoring, new LocalItemFactoryStub());
+            container.FullPath = directory;
+            container.IsSelected = true;
+            var actions = new List<NotifyCollectionChangedAction>();
+            ((INotifyCollectionChanged)container.Children).CollectionChanged +=
+                (_, args) => actions.Add(args.Action);
+
+            foreach(string file in Directory.GetFiles(directory))
+                monitoring.Created!(new FileSystemEventArgs(
+                    WatcherChangeTypes.Created, directory, Path.GetFileName(file)));
+            await container.FlushMonitoringAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+            Assert.Equal(1_000, container.Children.Count);
+            Assert.Equal([NotifyCollectionChangedAction.Reset], actions);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task WatcherRenameChain_PreservesObjectAndIgnoresTemporaryFile()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string finalPath = Path.Combine(directory, "final.txt");
+            File.WriteAllText(finalPath, "content");
+            var monitoring = new MonitoringStub();
+            DirectoryItem container = CreateContainer(monitoring, new LocalItemFactoryStub());
+            container.FullPath = directory;
+            var original = new FileItem { Name = "before.txt", FullPath = Path.Combine(directory, "before.txt") };
+            await container.AddChildAsync([original], item => item.FullPath);
+            container.IsSelected = true;
+            var actions = new List<NotifyCollectionChangedAction>();
+            ((INotifyCollectionChanged)container.Children).CollectionChanged +=
+                (_, args) => actions.Add(args.Action);
+
+            monitoring.Renamed!(new RenamedEventArgs(WatcherChangeTypes.Renamed, directory, "middle.txt", "before.txt"));
+            monitoring.Renamed!(new RenamedEventArgs(WatcherChangeTypes.Renamed, directory, "final.txt", "middle.txt"));
+            monitoring.Created!(new FileSystemEventArgs(WatcherChangeTypes.Created, directory, "transient.tmp"));
+            monitoring.Deleted!(new FileSystemEventArgs(WatcherChangeTypes.Deleted, directory, "transient.tmp"));
+            await container.FlushMonitoringAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+            Assert.Same(original, Assert.Single(container.Children));
+            Assert.Equal(finalPath, original.FullPath);
+            Assert.Empty(actions);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task RealWatcher_BulkCreateAndDelete_ConvergesWithoutPerFileDelay()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        using var monitoring = new DirectoryMonitoringService();
+        var container = new DirectoryItem(new ImmediateDispatcher(), monitoring,
+            new LocalItemFactoryStub(), new SystemItemSortService())
+        {
+            FullPath = directory, IsSelected = true
+        };
+        try
+        {
+            for(int index = 0; index < 250; index++)
+                File.WriteAllText(Path.Combine(directory, $"file-{index}.txt"), "content");
+            await WaitUntilAsync(() => container.Children.Count == 250);
+            await container.FlushMonitoringAsync();
+
+            foreach(string path in Directory.GetFiles(directory))
+                File.Delete(path);
+            await WaitUntilAsync(() => container.Children.Count == 0);
+            await container.FlushMonitoringAsync();
+
+            Assert.Empty(container.Children);
+        }
+        finally
+        {
+            container.IsSelected = false;
+            await container.FlushMonitoringAsync();
+            Directory.Delete(directory, recursive: true);
+        }
     }
 
     [Fact]
@@ -318,6 +441,8 @@ public sealed class FileExplorerCollectionPerformanceTests
     {
         public Action<RenamedEventArgs>? Renamed { get; private set; }
         public Action<FileSystemEventArgs>? Changed { get; private set; }
+        public Action<FileSystemEventArgs>? Created { get; private set; }
+        public Action<FileSystemEventArgs>? Deleted { get; private set; }
 
         public bool StartMonitoring(
             string directoryPath,
@@ -334,6 +459,8 @@ public sealed class FileExplorerCollectionPerformanceTests
         {
             Renamed = onRenamed;
             Changed = onChanged;
+            Created = onCreated;
+            Deleted = onDeleted;
             return true;
         }
         public bool StopMonitoring(string directoryPath) => true;

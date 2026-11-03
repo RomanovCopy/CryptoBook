@@ -4,7 +4,7 @@ Der Mediaplayer öffnet ein Bild in einem eigenen Fenster. Drehen, Zoomen und Ve
 
 ## Vorbereitung
 
-> **Beim Löschen wird die Originaldatei in den Windows-Papierkorb verschoben.** Der Player zeigt zuerst eine Warnung an und fragt nach einer Bestätigung. Bei .cbook/.cbox wird die verschlüsselte Datei selbst in den Papierkorb verschoben.
+> **Gelöscht wird die Originaldatei, auch die verschlüsselte .cbook/.cbox selbst, nicht eine entschlüsselte Kopie.** Zuerst prüft der Player ihre Größe und den freien Papierkorbplatz. Bei ausreichend Platz fragt er nach dem Verschieben in den Papierkorb. Fehlt der Papierkorb oder reicht der Platz nicht, bietet er endgültiges Löschen an und wartet auf eine gesonderte Zustimmung. Vor der Bestätigung wird nichts gelöscht.
 
 Verwenden Sie eine lokale Datei oder eine lokale Kopie vom Gerät. Die Dekodierung hängt von Windows ab.
 
@@ -14,7 +14,7 @@ Verwenden Sie eine lokale Datei oder eine lokale Kopie vom Gerät. Die Dekodieru
 2. **Vorheriges Bild** / **Nächstes Bild** und ←/→ wechseln zwischen Bildern des ausgewählten Katalogs; an den Enden ist der Wechsel gesperrt.
 3. **Drehen** dreht das Bild. Mausrad und ↑/↓ vergrößern/verkleinern es; Ziehen mit der linken Maustaste verschiebt es.
 4. **Bild anpassen** setzt Drehung, Zoom und Verschiebung zurück.
-5. Wählen Sie **Bild löschen** oder drücken Sie Entf, um die Datei zu löschen. Lesen Sie die Warnung und wählen Sie **OK**, um sie in den Papierkorb zu verschieben, oder **Abbrechen**, um die Datei zu behalten.
+5. Wählen Sie **Bild löschen** oder drücken Sie Entf. Warten Sie die Papierkorbprüfung ab und prüfen Sie Originalpfad und Löschart in der Warnung. Wählen Sie **OK** für die angegebene Aktion oder **Abbrechen**, um die Datei zu behalten. Erneutes Löschen und Bildwechsel sind währenddessen gesperrt. Der Fortschritt schließt nach dem Öffnen des nächsten Bildes oder dem Leeren der Anzeige.
 
 ![Tatsächliche Bildanzeige in einem eigenen Player.](images/S30-c.png "Tatsächliche Bildanzeige in einem eigenen Player.")
 
@@ -24,13 +24,13 @@ Das Bild erscheint im Fenster. Bildschaltflächen werden beim Darüberfahren sic
 
 ## Abbrechen und zurückkehren
 
-Schließen Sie das Fenster oder öffnen Sie eine andere Datei. Wählen Sie in der Löschabfrage **Abbrechen**, um das Original zu behalten. Öffnen Sie nach dem Löschen den Windows-Papierkorb, wählen Sie die Datei und **Wiederherstellen**. Öffnen Sie die Datei anschließend erneut im Player.
+Wählen Sie in der Löschabfrage **Abbrechen**, um das Original zu behalten. Das Schließen des Players bricht noch nicht abgeschlossene Arbeit ab. Öffnen Sie nach dem Verschieben in den Papierkorb diesen, wählen Sie die Datei und **Wiederherstellen** und öffnen Sie sie erneut im Player. Nach einer bestätigten endgültigen Löschung ist keine Wiederherstellung aus dem Papierkorb möglich.
 
 ## Bei Problemen
 
 Kein Nachbarbild: Prüfen Sie Katalog und Dateireihenfolge. Versuchen Sie bei Dekodierungsfehlern ein unterstütztes Format. PDF und Video verwenden andere Anzeigewege.
 
-Wenn das Verschieben in den Papierkorb nicht möglich ist oder fehlschlägt, meldet der Player den Fehler und belässt die Datei an ihrem Ort. Die Datei wird stattdessen nicht endgültig gelöscht.
+Kann das Papierkorblimit nicht ermittelt werden, wird der Vorgang mit einer Meldung beendet. Eine abgelehnte Bestätigung oder ein Fehler vor dem Löschen erhält Originaldatei und aktuelles Bild. War das Löschen beim Abbruch bereits erfolgreich, wechselt der Player zum nächsten Bild; ein Abbruch stellt eine bereits gelöschte Datei nicht automatisch wieder her.
 
 ## Verwandte Themen
 

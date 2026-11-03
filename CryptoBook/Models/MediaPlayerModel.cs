@@ -31,7 +31,10 @@ namespace CryptoBook.Models
             };
 
         private CancellationTokenSource? _openCancellation;
-        private readonly IRecycleBinService _recycleBinService;
+        private readonly IFileOperationCoordinator _fileOperationCoordinator;
+        private readonly IViewRenderSynchronizationService _viewRenderSynchronizationService;
+        private CancellationTokenSource? _deleteCancellation;
+        private bool _isOpening;
         private readonly IMessageService _messageService;
         private readonly IMediaSourcePreparationService _mediaSourcePreparationService;
         private readonly IFileExplorerService _fileExplorerService;
@@ -62,17 +65,20 @@ namespace CryptoBook.Models
             IMediaPlayerService videoService,
             IImageService imageService,
             IWindowContext windowContext,
-            IRecycleBinService recycleBinService,
+            IFileOperationCoordinator fileOperationCoordinator,
             IMessageService messageService,
             IMediaSourcePreparationService mediaSourcePreparationService,
             IFileExplorerService fileExplorerService,
             IWindowManager windowManager,
-            IMediaPlaybackCoordinator playbackCoordinator)
+            IMediaPlaybackCoordinator playbackCoordinator,
+            IViewRenderSynchronizationService viewRenderSynchronizationService)
         {
             VideoService = videoService ?? throw new ArgumentNullException(nameof(videoService));
             ImageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
-            _recycleBinService = recycleBinService ??
-                throw new ArgumentNullException(nameof(recycleBinService));
+            _fileOperationCoordinator = fileOperationCoordinator ??
+                throw new ArgumentNullException(nameof(fileOperationCoordinator));
+            _viewRenderSynchronizationService = viewRenderSynchronizationService ??
+                throw new ArgumentNullException(nameof(viewRenderSynchronizationService));
             _messageService = messageService ??
                 throw new ArgumentNullException(nameof(messageService));
             _mediaSourcePreparationService = mediaSourcePreparationService ??
@@ -125,7 +131,7 @@ namespace CryptoBook.Models
             set => _playbackCoordinator.IsSynchronizationEnabled = value;
         }
 
-        public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing;
+        public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing && _deleteCancellation is null;
         public void Execute_OpenFile(object? obj) => ShowFileExplorer(
             selection => _ = OpenSelectedFileAsync(selection));
 
@@ -162,13 +168,14 @@ namespace CryptoBook.Models
         public void Execute_ResetImageTransform(object? obj) => ImageService.ResetTransform();
 
         public bool CanExecute_PreviousImage(object? obj) =>
-            !_disposed && !_isClosing && _isImageVisible && _currentImageIndex > 0;
+            !_disposed && !_isClosing && _deleteCancellation is null && _isImageVisible && _currentImageIndex > 0;
 
         public void Execute_PreviousImage(object? obj) => _ = NavigateImageAsync(-1);
 
         public bool CanExecute_NextImage(object? obj) =>
             !_disposed &&
             !_isClosing &&
+            _deleteCancellation is null &&
             _isImageVisible &&
             _currentImageIndex >= 0 &&
             _currentImageIndex < _imagePaths.Count - 1;
@@ -194,6 +201,8 @@ namespace CryptoBook.Models
         public bool CanExecute_DeleteCurrentImage(object? obj) =>
             !_disposed &&
             !_isClosing &&
+            !_isOpening &&
+            _deleteCancellation is null &&
             _isImageVisible &&
             _currentImageIndex >= 0 &&
             _currentImageIndex < _imagePaths.Count;
@@ -213,6 +222,7 @@ namespace CryptoBook.Models
                 return;
 
             _isClosing = true;
+            _deleteCancellation?.Cancel();
             CancelPendingOpen();
             CommandManager.InvalidateRequerySuggested();
         }
@@ -276,7 +286,7 @@ namespace CryptoBook.Models
 
         private async Task OpenSelectedFileAsync(MediaCatalogSelection selection)
         {
-            if(_disposed || _isClosing)
+            if(_disposed || _isClosing || _deleteCancellation is not null)
                 return;
 
             ApplyCatalog(selection);
@@ -297,14 +307,18 @@ namespace CryptoBook.Models
         private async Task OpenPathAsync(
             string path,
             bool autoPlay = false,
-            string? sequencePath = null)
+            string? sequencePath = null,
+            bool allowDuringDeletion = false)
         {
-            if(_disposed || _isClosing)
+            if(_disposed || _isClosing || (_deleteCancellation is not null && !allowDuringDeletion))
                 return;
 
             CancelPendingOpen();
-            _openCancellation = new CancellationTokenSource();
-            var token = _openCancellation.Token;
+            var openCancellation = new CancellationTokenSource();
+            _openCancellation = openCancellation;
+            var token = openCancellation.Token;
+            _isOpening = true;
+            CommandManager.InvalidateRequerySuggested();
 
             SetLocalizedStatus("Media.Loading", Path.GetFileName(path));
             _usesDefaultTitle = false;
@@ -396,6 +410,11 @@ namespace CryptoBook.Models
             finally
             {
                 preparedSource?.Dispose();
+                if(ReferenceEquals(_openCancellation, openCancellation))
+                {
+                    _isOpening = false;
+                    CommandManager.InvalidateRequerySuggested();
+                }
             }
         }
 
@@ -463,36 +482,42 @@ namespace CryptoBook.Models
             await OpenPathAsync(_videoPaths[targetIndex], autoPlay);
         }
 
-        private async Task DeleteCurrentImageAsync()
+        internal async Task DeleteCurrentImageAsync()
         {
             if(!CanExecute_DeleteCurrentImage(null))
                 return;
 
             var deletedIndex = _currentImageIndex;
             var path = _imagePaths[deletedIndex];
-            var dialogId = await _messageService.ShowMessage(
-                LocalizationManager.GetString("Media.DeleteTitle"),
-                LocalizationManager.Format(
-                    "Media.DeletePrompt",
-                    Path.GetFileName(path)),
-                isCanceled: true);
-
-            if(!_messageService.ShowConfirmation(dialogId) || _disposed || _isClosing)
-                return;
-
-            var result = await _recycleBinService.RecycleAsync(path);
-            if(_disposed || _isClosing)
-                return;
-
-            if(!result.Success)
+            using var cancellation = new CancellationTokenSource();
+            _deleteCancellation = cancellation;
+            CommandManager.InvalidateRequerySuggested();
+            try
             {
-                await _messageService.ShowMessage(
-                    LocalizationManager.GetString("Media.DeleteError"),
-                    result.ErrorMessage ?? LocalizationManager.GetString(
-                        "Media.DeleteFailed"));
-                return;
+                FileOperationBatchResult result = await _fileOperationCoordinator.DeleteAsync(
+                    [path], cancellation.Token,
+                    synchronizeResultAsync: outcome => SynchronizeAfterImageDeletionAsync(path, deletedIndex, outcome));
+                if(!_disposed && !_isClosing && result.Failure is { } failure)
+                    await _messageService.ShowMessage(LocalizationManager.GetString("Media.DeleteError"),
+                        failure.ErrorMessage ?? LocalizationManager.GetString("Media.DeleteFailed"));
             }
+            catch(OperationCanceledException) { }
+            catch(Exception exception)
+            {
+                if(!_disposed && !_isClosing)
+                    await _messageService.ShowMessage(LocalizationManager.GetString("Media.DeleteError"), exception.Message);
+            }
+            finally
+            {
+                _deleteCancellation = null;
+                if(!_disposed) CommandManager.InvalidateRequerySuggested();
+            }
+        }
 
+        private async Task SynchronizeAfterImageDeletionAsync(string path, int deletedIndex, FileOperationBatchResult result)
+        {
+            if(_disposed || _isClosing || result.CompletedCount == 0)
+                return;
             var remainingImages = _imagePaths
                 .Where(file => !string.Equals(
                     Path.GetFullPath(file),
@@ -504,17 +529,22 @@ namespace CryptoBook.Models
             if(remainingImages.Length == 0)
             {
                 ImageService.Clear();
+                _activeSource?.Dispose();
+                _activeSource = null;
                 ClearImageSequence();
                 _usesDefaultTitle = true;
                 _currentDisplayName = null;
                 UpdateMediaTitle();
                 SetEmpty(LocalizationManager.GetString("Media.NoMoreImages"));
                 SetLocalizedStatus("Media.NoMoreImages");
-                return;
             }
-
-            var nextIndex = Math.Min(deletedIndex, remainingImages.Length - 1);
-            await OpenPathAsync(remainingImages[nextIndex]);
+            else
+            {
+                var nextIndex = Math.Min(deletedIndex, remainingImages.Length - 1);
+                await OpenPathAsync(remainingImages[nextIndex], allowDuringDeletion: true);
+            }
+            if(!_disposed && !_isClosing && _windowManager.FindHostWindow(WindowId)?.Window is { IsLoaded: true, IsVisible: true } window)
+                await _viewRenderSynchronizationService.WaitForRenderAsync(window);
         }
 
         private void UpdateImageSequence(string path, bool isEncrypted)
@@ -743,6 +773,7 @@ namespace CryptoBook.Models
                 return;
 
             _disposed = true;
+            _deleteCancellation?.Cancel();
             CancelPendingOpen();
             VideoService.MediaFailed -= OnMediaFailed;
             _playbackCoordinator.PropertyChanged -= OnPlaybackCoordinatorPropertyChanged;

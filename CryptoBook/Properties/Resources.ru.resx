@@ -1420,4 +1420,9 @@
   <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Открыть сохранённую аварийную копию несохранённой работы</value></data>
   <data name="Recovery.RestoreLock" xml:space="preserve"><value>Восстановить снимок после сброса ключа</value></data>
   <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Вернуть защищённую работу с прежним ключом</value></data>
+  <data name="Explorer.RecycleSpaceUnknown" xml:space="preserve"><value>Не удалось определить свободный объём корзины. Ничего не удалено. Проверьте настройки корзины и повторите попытку.</value></data>
+  <data name="Explorer.PermanentDeleteWholeSelectionWarning" xml:space="preserve"><value>Корзина недоступна или весь выбранный набор в неё не помещается. Удалить ВСЕ выбранные объекты ({0}) безвозвратно? Восстановить их из корзины будет невозможно. Пока ничего не удалено.&#10;&#10;{1}</value></data>
+  <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: выбрано — {1:N2} МиБ; свободно в корзине — {2:N2} МиБ.</value></data>
+  <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Безвозвратное удаление…</value></data>
+  <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Не удалось безвозвратно удалить объект. Уже удалённые объекты невозможно восстановить из корзины.</value></data>
 </root>

@@ -11,19 +11,41 @@ namespace CryptoBook.Services
         private readonly IFileConflictResolver _conflictResolver;
         private readonly IStorageFacade _storage;
         private readonly LocalFileOperationService _localOperations;
+        private readonly IMessageService? _messageService;
 
         public FileOperationCoordinator(
             IFileManagerService fileManager,
             IProgressDialogService progressDialog,
             IFileConflictResolver conflictResolver,
             IStorageFacade? storageFacade = null,
-            IRecycleBinService? recycleBin = null)
+            IRecycleBinService? recycleBin = null,
+            IMessageService? messageService = null)
         {
             _fileManager = fileManager ?? throw new ArgumentNullException(nameof(fileManager));
             _progressDialog = progressDialog ?? throw new ArgumentNullException(nameof(progressDialog));
             _conflictResolver = conflictResolver ?? throw new ArgumentNullException(nameof(conflictResolver));
             _storage = storageFacade ?? new StorageFacade([new LocalStorageProvider()]);
-            _localOperations = new LocalFileOperationService(_fileManager, _storage, recycleBin ?? new WindowsRecycleBinService());
+            _messageService = messageService;
+            _localOperations = new LocalFileOperationService(_fileManager, _storage,
+                recycleBin ?? new WindowsRecycleBinService(), ConfirmLocalDeletionAsync);
+        }
+
+        private async Task<bool> ConfirmLocalDeletionAsync(RecycleBinDeletionPlan plan, IReadOnlyList<string> paths, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            if(_messageService is null) return plan.Fits;
+            string message = plan.Fits
+                ? LocalizationManager.GetString("Explorer.RecoverableDeleteWarning")
+                : LocalizationManager.Format("Explorer.PermanentDeleteWholeSelectionWarning", paths.Count,
+                    string.Join(Environment.NewLine, plan.Volumes.Select(volume =>
+                        LocalizationManager.Format("Explorer.RecycleSpaceLine", volume.VolumePath,
+                            volume.RequiredBytes / (1024.0 * 1024), volume.AvailableBytes!.Value / (1024.0 * 1024)))));
+            if(paths.Count == 1)
+                message += Environment.NewLine + Environment.NewLine + paths[0];
+            Guid id = await _messageService.ShowMessage(LocalizationManager.GetString(
+                plan.Fits ? "Common.Delete" : "Explorer.PermanentDeleteTitle"), message, true);
+            token.ThrowIfCancellationRequested();
+            return _messageService.ShowConfirmation(id);
         }
 
         public async Task<FileOperationBatchResult> TransferAsync(
@@ -163,7 +185,8 @@ namespace CryptoBook.Services
         public async Task<FileOperationBatchResult> DeleteAsync(
             IEnumerable<string> sourcePaths,
             CancellationToken cancellationToken = default,
-            Func<Task>? synchronizeViewAsync = null)
+            Func<Task>? synchronizeViewAsync = null,
+            Func<FileOperationBatchResult, Task>? synchronizeResultAsync = null)
         {
             ArgumentNullException.ThrowIfNull(sourcePaths);
             string[] sources = NormalizeTopLevelSources(sourcePaths);
@@ -173,6 +196,8 @@ namespace CryptoBook.Services
             using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             var results = new List<FileOperationResult>();
             int completed = 0;
+            int permanentlyDeleted = 0;
+            FileOperationBatchResult? operationResult = null;
 
             try
             {
@@ -190,14 +215,15 @@ namespace CryptoBook.Services
                                 null,
                                 LocalizationManager.GetString("Explorer.CalculatingSize"));
                             if(sources.All(p => _storage.Resolve(p).IsLocal))
-                                return await _localOperations.DeleteAsync(sources, progress, token);
+                                return operationResult = await _localOperations.DeleteAsync(sources, progress, token);
                             string[] localSources = sources.Where(p => _storage.Resolve(p).IsLocal).ToArray();
                             if(localSources.Length > 0)
                             {
                                 FileOperationBatchResult local = await _localOperations.DeleteAsync(localSources, progress, token);
-                                if(!local.Success) return local;
+                                if(!local.Success) return operationResult = local;
                                 results.AddRange(local.Results);
                                 completed += local.CompletedCount;
+                                permanentlyDeleted += local.PermanentlyDeletedCount;
                             }
                             IReadOnlyList<StorageDeletionEntry> entries =
                                 await BuildDeletionPlanAsync(sources.Where(p => !_storage.Resolve(p).IsLocal), token);
@@ -215,33 +241,55 @@ namespace CryptoBook.Services
                                     break;
 
                                 completed++;
+                                permanentlyDeleted++;
                                 completedBytes += entry.Size;
                                 progress.Report(
                                     CalculateOverall(completedBytes, totalBytes, completed, entries.Count),
                                     path);
                             }
 
-                            return new FileOperationBatchResult(
+                            return operationResult = new FileOperationBatchResult(
                                 results,
                                 completed,
                                 0,
                                 false,
-                                completed > 0);
+                                completed > 0) { PermanentlyDeletedCount = permanentlyDeleted };
+                        }
+                        catch(Exception exception)
+                        {
+                            operationResult = new(
+                                exception is OperationCanceledException ? results : results.Append(FileOperationResult.Fail(exception.Message)).ToArray(),
+                                completed, 0, exception is OperationCanceledException, completed > 0)
+                            { PermanentlyDeletedCount = permanentlyDeleted };
+                            throw;
                         }
                         finally
                         {
                             await SynchronizeViewAsync(progress, synchronizeViewAsync);
+                            if(synchronizeResultAsync is not null && operationResult is not null)
+                            {
+                                progress.Report(null, LocalizationManager.GetString("Explorer.RefreshingAfterOperation"));
+                                await synchronizeResultAsync(operationResult);
+                            }
                         }
                     });
             }
             catch(OperationCanceledException)
             {
-                return new FileOperationBatchResult(results, completed, 0, true, completed > 0);
+                return new FileOperationBatchResult(operationResult?.Results ?? results,
+                    operationResult?.CompletedCount ?? completed, 0, true,
+                    operationResult?.HasPartialChanges ?? completed > 0)
+                { PermanentlyDeletedCount = operationResult?.PermanentlyDeletedCount ?? permanentlyDeleted };
             }
             catch(Exception exception)
             {
-                results.Add(FileOperationResult.Fail(exception.Message));
-                return new FileOperationBatchResult(results, completed, 0, false, completed > 0);
+                IReadOnlyList<FileOperationResult> failures = operationResult?.Results ?? results;
+                if(!failures.Any(result => !result.Success && result.ErrorMessage == exception.Message))
+                    failures = failures.Append(FileOperationResult.Fail(exception.Message)).ToArray();
+                return new FileOperationBatchResult(failures,
+                    operationResult?.CompletedCount ?? completed, 0, false,
+                    operationResult?.HasPartialChanges ?? completed > 0)
+                { PermanentlyDeletedCount = operationResult?.PermanentlyDeletedCount ?? permanentlyDeleted };
             }
         }
 
@@ -394,34 +442,40 @@ namespace CryptoBook.Services
             return entries;
         }
 
-        private string[] NormalizeTopLevelSources(IEnumerable<string> sourcePaths)
+        internal string[] NormalizeTopLevelSources(IEnumerable<string> sourcePaths)
         {
-            string[] paths = sourcePaths
-                .Where(path => !string.IsNullOrWhiteSpace(path))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToArray();
-
-            return paths
-                .Where(candidate => !paths.Any(parent =>
-                    !_storage.AreEquivalent(
-                        _storage.Resolve(parent),
-                        _storage.Resolve(candidate)) &&
-                    IsChildPath(parent, candidate)))
-                .ToArray();
-        }
-
-        private bool IsChildPath(string parentPath, string candidatePath)
-        {
-            try
+            string Key(StorageLocation location) => location.ProviderId + "\0" +
+                _storage.GetProvider(location).GetComparisonKey(location);
+            var selected = new Dictionary<string, (string Path, StorageLocation Location)>(
+                StringComparer.Ordinal);
+            foreach(string path in sourcePaths.Where(path => !string.IsNullOrWhiteSpace(path)))
             {
-                return _storage.IsDescendant(
-                    _storage.Resolve(parentPath),
-                    _storage.Resolve(candidatePath));
+                StorageLocation location = _storage.Resolve(path);
+                selected.TryAdd(Key(location), (path, location));
             }
-            catch
+
+            var ancestorCache = new Dictionary<string, bool>(StringComparer.Ordinal);
+            var result = new List<string>(selected.Count);
+            foreach(var (path, location) in selected.Values)
             {
-                return false;
+                var visited = new HashSet<string>(StringComparer.Ordinal);
+                StorageLocation? parent = _storage.GetParent(location);
+                bool covered = false;
+                while(parent is { } ancestor)
+                {
+                    string key = Key(ancestor);
+                    if(selected.ContainsKey(key)) { covered = true; break; }
+                    if(ancestorCache.TryGetValue(key, out covered)) break;
+                    if(!visited.Add(key))
+                        throw new InvalidOperationException("Storage provider returned a cyclic parent chain.");
+                    parent = _storage.GetParent(ancestor);
+                }
+                foreach(string key in visited)
+                    ancestorCache[key] = covered;
+                if(!covered)
+                    result.Add(path);
             }
+            return result.ToArray();
         }
 
         internal static double CalculateOverall(

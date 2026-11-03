@@ -1420,4 +1420,9 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Eine gespeicherte Notfallkopie ungespeicherter Arbeit öffnen</value></data>
   <data name="Recovery.RestoreLock" xml:space="preserve"><value>Momentaufnahme nach Schlüsselreset wiederherstellen</value></data>
   <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Geschützte Arbeit mit dem ursprünglichen Schlüssel wiederherstellen</value></data>
+  <data name="Explorer.RecycleSpaceUnknown" xml:space="preserve"><value>Der freie Speicherplatz im Papierkorb konnte nicht ermittelt werden. Es wurde nichts gelöscht. Prüfen Sie die Papierkorbeinstellungen und versuchen Sie es erneut.</value></data>
+  <data name="Explorer.PermanentDeleteWholeSelectionWarning" xml:space="preserve"><value>Der Papierkorb ist nicht verfügbar oder bietet nicht genug Platz für die gesamte Auswahl. ALLE ausgewählten Objekte ({0}) endgültig löschen? Sie können nicht aus dem Papierkorb wiederhergestellt werden. Bisher wurde nichts gelöscht.&#10;&#10;{1}</value></data>
+  <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: ausgewählt — {1:N2} MiB; im Papierkorb verfügbar — {2:N2} MiB.</value></data>
+  <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Endgültiges Löschen…</value></data>
+  <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Ein Objekt konnte nicht endgültig gelöscht werden. Bereits gelöschte Objekte können nicht aus dem Papierkorb wiederhergestellt werden.</value></data>
 </root>
