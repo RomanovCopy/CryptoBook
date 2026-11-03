@@ -248,9 +248,9 @@ namespace CryptoBook.Models
             return !IsCurrentDirectoryUnavailable &&
                 _keyProvider.HasKey &&
                 items.Count > 0 &&
-                items.All(item => item is IFileItem && Supports(
-                    item,
-                    StorageProviderCapabilities.Encrypt));
+                items.All(item =>
+                    (item is IFileItem || item is IDirectoryItem && item.Location.IsLocal) &&
+                    Supports(item, StorageProviderCapabilities.Encrypt));
         }
         public bool CanExecute_EncryptCommand(object? obj)
         {
@@ -698,7 +698,7 @@ namespace CryptoBook.Models
             {
                 string? initialDirectory = _storage.GetParent(items[0].Location)
                     is StorageLocation parent ? _storage.Format(parent) : null;
-                string? destinationDirectory = items.Count == 1
+                string? destinationDirectory = items.Count == 1 && items[0] is IFileItem
                     ? initialDirectory
                     : await _folderPickerService.PickFolderAsync(
                         initialDirectory,

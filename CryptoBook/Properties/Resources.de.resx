@@ -1425,4 +1425,6 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: ausgewählt — {1:N2} MiB; im Papierkorb verfügbar — {2:N2} MiB.</value></data>
   <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Endgültiges Löschen…</value></data>
   <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Ein Objekt konnte nicht endgültig gelöscht werden. Bereits gelöschte Objekte können nicht aus dem Papierkorb wiederhergestellt werden.</value></data>
+  <data name="Security.LinkedDirectoryNotSupported" xml:space="preserve"><value>Wählen Sie einen normalen Ordner statt eines symbolischen Links oder einer Junction.</value></data>
+  <data name="Security.DestinationMustBeDirectory" xml:space="preserve"><value>Das Ziel muss ein Ordner sein.</value></data>
 </root>

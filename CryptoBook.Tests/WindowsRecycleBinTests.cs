@@ -2,6 +2,10 @@ using CryptoBook.Services;
 using CryptoBook.Validation;
 
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
+using Microsoft.Win32.SafeHandles;
 using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 
@@ -9,8 +13,143 @@ using Xunit;
 
 namespace CryptoBook.Tests;
 
+[Collection(WindowsRecycleBinCollection.Name)]
 public sealed class WindowsRecycleBinTests
 {
+    [Fact]
+    public async Task DirectoryHandleWithoutDeleteSharing_PreservesFolderUntilHandleIsReleased()
+    {
+        using var temp = new BatchRenameTests.TestDirectory();
+        string folder = Directory.CreateDirectory(Path.Combine(temp.Path, "locked-folder")).FullName;
+        string file = Path.Combine(folder, "content.txt");
+        File.WriteAllText(file, "disposable");
+        var service = new WindowsRecycleBinService();
+        FileOperationBatchResult? deleted = null;
+        try
+        {
+            using(SafeFileHandle handle = CreateFile(folder, 0x80000000, 3, IntPtr.Zero, 3, 0x02000000, IntPtr.Zero))
+            {
+                Assert.False(handle.IsInvalid);
+                deleted = await service.RecycleBatchAsync([folder]);
+                Assert.False(deleted.Success);
+                Assert.Equal(0, deleted.CompletedCount);
+                Assert.True(deleted.Failure?.ErrorMessage?.Contains("0x80270027", StringComparison.OrdinalIgnoreCase) == true,
+                    deleted.Failure?.ErrorMessage);
+                Assert.Equal("disposable", File.ReadAllText(file));
+            }
+            deleted = await service.RecycleBatchAsync([folder]);
+            Assert.True(deleted.Success, deleted.Failure?.ErrorMessage);
+            Assert.Equal(1, deleted.CompletedCount);
+            Assert.False(Directory.Exists(folder));
+        }
+        finally
+        {
+            string? recycled = deleted?.Results.FirstOrDefault(result => result.Success)?.AffectedPath;
+            if(recycled is not null && Path.Exists(recycled) && !Path.Exists(folder))
+                await RecycleBinValidation.RestoreAsync(recycled, folder);
+        }
+    }
+
+    [Fact]
+    public async Task SourceDeletePermissionDenied_PreservesFolderAndCanBeRecycledAfterPermissionsRestored()
+    {
+        using var temp = new BatchRenameTests.TestDirectory();
+        var parent = new DirectoryInfo(temp.Path);
+        var folder = Directory.CreateDirectory(Path.Combine(temp.Path, "permission-denied"));
+        string file = Path.Combine(folder.FullName, "content.txt");
+        File.WriteAllText(file, "disposable");
+        byte[] parentPermissions = parent.GetAccessControl().GetSecurityDescriptorBinaryForm();
+        byte[] folderPermissions = folder.GetAccessControl().GetSecurityDescriptorBinaryForm();
+        using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+        SecurityIdentifier user = identity.User!;
+        var service = new WindowsRecycleBinService();
+        FileOperationBatchResult? deleted = null;
+        try
+        {
+            DirectorySecurity deniedParent = parent.GetAccessControl();
+            deniedParent.AddAccessRule(new FileSystemAccessRule(user,
+                FileSystemRights.DeleteSubdirectoriesAndFiles, AccessControlType.Deny));
+            parent.SetAccessControl(deniedParent);
+            DirectorySecurity deniedFolder = folder.GetAccessControl();
+            deniedFolder.AddAccessRule(new FileSystemAccessRule(user,
+                FileSystemRights.Delete, AccessControlType.Deny));
+            folder.SetAccessControl(deniedFolder);
+            try
+            {
+                deleted = await service.RecycleBatchAsync([folder.FullName]);
+                Assert.False(deleted.Success);
+                Assert.Equal(0, deleted.CompletedCount);
+                Assert.True(deleted.Failure?.ErrorMessage?.Contains("0x80270021", StringComparison.OrdinalIgnoreCase) == true,
+                    deleted.Failure?.ErrorMessage);
+                Assert.Equal("disposable", File.ReadAllText(file));
+            }
+            finally
+            {
+                RestorePermissions(folder, folderPermissions);
+                RestorePermissions(parent, parentPermissions);
+            }
+            deleted = await service.RecycleBatchAsync([folder.FullName]);
+            Assert.True(deleted.Success, deleted.Failure?.ErrorMessage);
+            Assert.Equal(1, deleted.CompletedCount);
+        }
+        finally
+        {
+            // Восстановление прав и данных обязательно и при неожиданном результате Shell.
+            RestorePermissions(parent, parentPermissions);
+            string? recycled = deleted?.Results.FirstOrDefault(result => result.Success)?.AffectedPath;
+            if(recycled is not null && Path.Exists(recycled) && !Path.Exists(folder.FullName))
+                await RecycleBinValidation.RestoreAsync(recycled, folder.FullName);
+            if(Directory.Exists(folder.FullName))
+                RestorePermissions(folder, folderPermissions);
+        }
+    }
+
+    private static void RestorePermissions(DirectoryInfo directory, byte[] descriptor)
+    {
+        var permissions = new DirectorySecurity();
+        permissions.SetSecurityDescriptorBinaryForm(descriptor, AccessControlSections.Access);
+        directory.SetAccessControl(permissions);
+    }
+
+    [DllImport("kernel32.dll", EntryPoint = "CreateFileW", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern SafeFileHandle CreateFile(string name, uint access, uint share,
+        IntPtr security, uint disposition, uint flags, IntPtr template);
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadOnlyFolderAndFiles_CanBeRecycledAndRestored(bool readOnlyFiles)
+    {
+        using var temp = new BatchRenameTests.TestDirectory();
+        string folder = Directory.CreateDirectory(Path.Combine(temp.Path, "readonly-folder")).FullName;
+        string nested = Directory.CreateDirectory(Path.Combine(folder, "nested")).FullName;
+        string file = Path.Combine(nested, "content.txt");
+        File.WriteAllText(file, "disposable");
+        File.SetAttributes(folder, File.GetAttributes(folder) | FileAttributes.ReadOnly);
+        File.SetAttributes(nested, File.GetAttributes(nested) | FileAttributes.ReadOnly);
+        if(readOnlyFiles)
+            File.SetAttributes(file, File.GetAttributes(file) | FileAttributes.ReadOnly);
+        FileOperationBatchResult? deleted = null;
+        try
+        {
+            deleted = await new WindowsRecycleBinService().RecycleBatchAsync([folder]);
+            Assert.True(deleted.Success, deleted.Failure?.ErrorMessage);
+            Assert.Equal(1, deleted.CompletedCount);
+            Assert.Equal(0, deleted.PermanentlyDeletedCount);
+            Assert.False(Directory.Exists(folder));
+        }
+        finally
+        {
+            string? recycled = deleted?.Results.FirstOrDefault(result => result.Success)?.AffectedPath;
+            if(recycled is not null && Path.Exists(recycled) && !Path.Exists(folder))
+                await RecycleBinValidation.RestoreAsync(recycled, folder);
+            if(File.Exists(file)) File.SetAttributes(file, FileAttributes.Normal);
+            if(Directory.Exists(nested)) File.SetAttributes(nested, FileAttributes.Directory);
+            if(Directory.Exists(folder)) File.SetAttributes(folder, FileAttributes.Directory);
+        }
+        Assert.Equal("disposable", File.ReadAllText(file));
+    }
+
     [Fact]
     public async Task BatchRecyclesWholeSelectionAndRestoresEveryFile()
     {

@@ -2,6 +2,7 @@ using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 using CryptoBook.Security;
 using CryptoBook.Services;
+using CryptoBook.Validation;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using Xunit;
 
 namespace CryptoBook.Tests;
 
+[Collection(WindowsRecycleBinCollection.Name)]
 public sealed class FileSecurityServiceBatchTests: IDisposable
 {
     private readonly string testDirectory = Path.Combine(
@@ -319,6 +321,287 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
     }
 
     [Fact]
+    public async Task ProtectedDirectory_RealCodecPreservesTreeAndDecryptsNestedCopies()
+    {
+        string source = Path.Combine(testDirectory, "source");
+        string nested = Path.Combine(source, "one", "two", "три");
+        Directory.CreateDirectory(nested);
+        Directory.CreateDirectory(Path.Combine(source, "empty"));
+        var expected = new Dictionary<string, byte[]>
+        {
+            ["top.txt"] = [1, 2, 3],
+            [Path.Combine("one", "two", "три", "report.2026.txt")] = [0, 255, 17],
+            [Path.Combine("one", "two", "empty.bin")] = []
+        };
+        foreach(var (relative, content) in expected)
+            await File.WriteAllBytesAsync(Path.Combine(source, relative), content);
+        string hidden = Path.Combine(source, "top.txt");
+        File.SetAttributes(hidden, FileAttributes.Hidden);
+        string destination = Path.Combine(testDirectory, "copies");
+        FileSecurityService service = CreateRealService();
+        var progress = new ProgressRecorder();
+
+        FileOperationBatchResult encrypted = await service.CreateProtectedCopiesAsync(
+            [new DirectoryStub(source)], destination, progress);
+
+        Assert.True(encrypted.Success, encrypted.Failure?.ErrorMessage);
+        Assert.Equal(3, encrypted.CompletedCount);
+        Assert.Equal(1.0, progress.Values[^1]);
+        string protectedRoot = Path.Combine(destination, "source");
+        Assert.True(Directory.Exists(Path.Combine(protectedRoot, "empty")));
+        foreach(var (relative, content) in expected)
+        {
+            Assert.Equal(content, await File.ReadAllBytesAsync(Path.Combine(source, relative)));
+            Assert.True(await new SecureFileValidator().HasCryptoBookHeaderAsync(
+                Path.ChangeExtension(Path.Combine(protectedRoot, relative), ".cbook")));
+        }
+
+        string decryptedRoot = Path.Combine(testDirectory, "decrypted");
+        FileOperationBatchResult decrypted = await service.DecryptAsync(
+            [new DirectoryStub(protectedRoot)], decryptedRoot);
+
+        Assert.True(decrypted.Success, decrypted.Failure?.ErrorMessage);
+        Assert.Equal(3, decrypted.Results.Sum(result => result.ProcessedFileCount));
+        foreach(var (relative, content) in expected)
+            Assert.Equal(content, await File.ReadAllBytesAsync(Path.Combine(decryptedRoot, "source", relative)));
+        Assert.Equal(3, Directory.GetFiles(protectedRoot, "*", SearchOption.AllDirectories).Length);
+        Assert.True(File.GetAttributes(hidden).HasFlag(FileAttributes.Hidden));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ProtectedAndDecryptedDirectories_CanBeRecycledImmediately(bool decrypt)
+    {
+        string source = Path.Combine(testDirectory, "source");
+        Directory.CreateDirectory(Path.Combine(source, "nested"));
+        string original = Path.Combine(source, "nested", "report.txt");
+        await File.WriteAllBytesAsync(original, [1, 2, 255]);
+        FileSecurityService service = CreateRealService();
+        string copies = Path.Combine(testDirectory, "copies");
+        FileOperationBatchResult encrypted = await service.CreateProtectedCopiesAsync(
+            [new DirectoryStub(source)], copies);
+        Assert.True(encrypted.Success, encrypted.Failure?.ErrorMessage);
+        string resultRoot = Path.Combine(copies, "source");
+        if(decrypt)
+        {
+            string destination = Path.Combine(testDirectory, "decrypted");
+            FileOperationBatchResult decrypted = await service.DecryptAsync(
+                [new DirectoryStub(resultRoot)], destination);
+            Assert.True(decrypted.Success, decrypted.Failure?.ErrorMessage);
+            resultRoot = Path.Combine(destination, "source");
+        }
+        // FileShare.Delete сам по себе разрешает удаление даже при утечке чтения.
+        // Эксклюзивное открытие проверяет именно освобождение файловых потоков.
+        foreach(string path in Directory.EnumerateFiles(testDirectory, "*", SearchOption.AllDirectories))
+        {
+            using FileStream exclusive = new(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+        }
+        // Открытая/развёрнутая папка в FileExplorer также наблюдается за изменениями.
+        Assert.False(File.GetAttributes(resultRoot).HasFlag(FileAttributes.ReadOnly));
+        Assert.All(Directory.GetFileSystemEntries(resultRoot, "*", SearchOption.AllDirectories),
+            path => Assert.False(File.GetAttributes(path).HasFlag(FileAttributes.ReadOnly)));
+        using var monitoring = new DirectoryMonitoringService();
+        Assert.True(monitoring.StartMonitoring(resultRoot, includeSubdirectories: true));
+        var bin = new WindowsRecycleBinService();
+        RecycleBinDeletionPlan plan = await bin.PlanDeletionAsync([resultRoot]);
+        Assert.True(plan.Fits, "The disposable recycling test requires known free Recycle Bin capacity.");
+        FileOperationBatchResult deleted = await bin.RecycleBatchAsync([resultRoot]);
+        try
+        {
+            Assert.True(deleted.Success, deleted.Failure?.ErrorMessage);
+            Assert.Equal(1, deleted.CompletedCount);
+            Assert.Equal(0, deleted.PermanentlyDeletedCount);
+            Assert.False(Directory.Exists(resultRoot));
+            Assert.Equal([1, 2, 255], await File.ReadAllBytesAsync(original));
+        }
+        finally
+        {
+            monitoring.StopMonitoring(resultRoot);
+            string? recycled = deleted.Results.FirstOrDefault(result => result.Success)?.AffectedPath;
+            if(recycled is not null && Path.Exists(recycled) && !Path.Exists(resultRoot))
+                await RecycleBinValidation.RestoreAsync(recycled, resultRoot);
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ProtectedDirectory_DestinationInsideSourceDoesNotCaptureOutput(bool sameDirectory)
+    {
+        string source = Path.Combine(testDirectory, "source");
+        Directory.CreateDirectory(Path.Combine(source, "nested"));
+        await File.WriteAllBytesAsync(Path.Combine(source, "nested", "original.txt"), [1]);
+        string destination = sameDirectory ? source : Path.Combine(source, "output");
+        Directory.CreateDirectory(destination);
+        if(!sameDirectory)
+            await File.WriteAllBytesAsync(Path.Combine(destination, "existing.txt"), [9]);
+        var processor = new VerifyingSecureFileProcessor();
+        FileSecurityService service = CreateService(processor, new PredicateEncryptedValidator(_ => false));
+
+        FileOperationBatchResult result = await service.CreateProtectedCopiesAsync(
+            [new DirectoryStub(source)], destination);
+
+        Assert.True(result.Success, result.Failure?.ErrorMessage);
+        Assert.Equal(1, result.CompletedCount);
+        Assert.Equal([Path.Combine(source, "nested", "original.txt")], processor.EncryptedInputs);
+        Assert.Equal([1], await File.ReadAllBytesAsync(Path.Combine(destination, "source", "nested", "original.cbook")));
+        Assert.Equal([1], await File.ReadAllBytesAsync(Path.Combine(source, "nested", "original.txt")));
+        if(!sameDirectory)
+            Assert.Equal([9], await File.ReadAllBytesAsync(Path.Combine(destination, "existing.txt")));
+    }
+
+    [Fact]
+    public async Task ProtectedDirectories_KeepConflictingRootsAndSkipProtectedFiles()
+    {
+        string destination = Path.Combine(testDirectory, "copies");
+        Directory.CreateDirectory(Path.Combine(destination, "same"));
+        string existing = Path.Combine(destination, "same", "keep.cbook");
+        await File.WriteAllBytesAsync(existing, [99]);
+        var sources = new List<ISystemItem>();
+        foreach(string parent in new[] { "first", "second" })
+        {
+            string root = Path.Combine(testDirectory, parent, "same");
+            Directory.CreateDirectory(root);
+            await File.WriteAllBytesAsync(Path.Combine(root, "report.txt"), [1]);
+            await File.WriteAllBytesAsync(Path.Combine(root, "report.rtf"), [2]);
+            await File.WriteAllBytesAsync(Path.Combine(root, "protected.data"), [3]);
+            sources.Add(new DirectoryStub(root));
+        }
+        FileSecurityService service = CreateService(new VerifyingSecureFileProcessor(),
+            new PredicateEncryptedValidator(path => path.EndsWith("protected.data")));
+
+        FileOperationBatchResult result = await service.CreateProtectedCopiesAsync(sources, destination);
+
+        Assert.True(result.Success, result.Failure?.ErrorMessage);
+        Assert.Equal(4, result.CompletedCount);
+        Assert.Equal(2, result.SkippedCount);
+        Assert.Equal([99], await File.ReadAllBytesAsync(existing));
+        foreach(string name in new[] { "same (2)", "same (3)" })
+        {
+            string[] copies = Directory.GetFiles(Path.Combine(destination, name));
+            Assert.Equal(2, copies.Length);
+            Assert.Equal(new byte[] { 1, 2 }, copies.Select(path => File.ReadAllBytes(path)[0]).Order());
+        }
+        foreach(ISystemItem source in sources)
+            Assert.Equal(3, Directory.GetFiles(source.FullPath).Length);
+        Assert.Empty(Directory.GetFiles(destination, ".cryptobook-copy-*.tmp", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public async Task ProtectedDirectory_CancelDuringScanDoesNotCreateOutput()
+    {
+        string source = Path.Combine(testDirectory, "source");
+        Directory.CreateDirectory(Path.Combine(source, "nested"));
+        string original = Path.Combine(source, "nested", "file.txt");
+        await File.WriteAllBytesAsync(original, [1, 2, 3]);
+        string destination = Path.Combine(testDirectory, "copies");
+        using var cancellation = new CancellationTokenSource();
+        var progress = new CallbackProgressReporter((_, path) =>
+        {
+            if(path == Path.Combine(source, "nested"))
+                cancellation.Cancel();
+        });
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            CreateRealService().CreateProtectedCopiesAsync(
+                [new DirectoryStub(source)], destination, progress, cancellation.Token));
+
+        Assert.False(Directory.Exists(destination));
+        Assert.Equal([1, 2, 3], await File.ReadAllBytesAsync(original));
+    }
+
+    [Fact]
+    public async Task ProtectedDirectory_CancelAfterCompletedBranchKeepsSourcesAndReportsPartialCopies()
+    {
+        string source = Path.Combine(testDirectory, "source");
+        Directory.CreateDirectory(Path.Combine(source, "nested"));
+        string first = Path.Combine(source, "first.txt");
+        string second = Path.Combine(source, "nested", "second.txt");
+        await File.WriteAllBytesAsync(first, [1]);
+        await File.WriteAllBytesAsync(second, [2]);
+        string destination = Path.Combine(testDirectory, "copies");
+        using var cancellation = new CancellationTokenSource();
+        var progress = new CallbackProgressReporter((value, path) =>
+        {
+            if(path == source && value is > 0 and < 1)
+                cancellation.Cancel();
+        });
+        FileSecurityService service = CreateService(new VerifyingSecureFileProcessor(),
+            new PredicateEncryptedValidator(_ => false));
+
+        FileOperationBatchResult result = await service.CreateProtectedCopiesAsync(
+            [new DirectoryStub(source)], destination, progress, cancellation.Token);
+
+        Assert.True(result.Canceled);
+        Assert.True(result.HasPartialChanges);
+        Assert.Equal(1, result.CompletedCount);
+        Assert.Equal([1], await File.ReadAllBytesAsync(first));
+        Assert.Equal([2], await File.ReadAllBytesAsync(second));
+        Assert.Equal([1], await File.ReadAllBytesAsync(Path.Combine(destination, "source", "first.cbook")));
+        Assert.Single(Directory.GetFiles(destination, "*", SearchOption.AllDirectories));
+        Assert.Empty(Directory.GetFiles(destination, ".cryptobook-copy-*.tmp", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public async Task ProtectedDirectory_FileFailureDoesNotPreventOtherCopies()
+    {
+        string source = Path.Combine(testDirectory, "source");
+        Directory.CreateDirectory(Path.Combine(source, "nested"));
+        string failed = Path.Combine(source, "nested", "failed.txt");
+        string good = Path.Combine(source, "nested", "good.txt");
+        await File.WriteAllBytesAsync(failed, [1]);
+        await File.WriteAllBytesAsync(good, [2]);
+        string destination = Path.Combine(testDirectory, "copies");
+        FileSecurityService service = CreateService(new VerifyingSecureFileProcessor
+        {
+            EncryptFailurePath = failed
+        }, new PredicateEncryptedValidator(_ => false));
+
+        FileOperationBatchResult result = await service.CreateProtectedCopiesAsync(
+            [new DirectoryStub(source)], destination);
+
+        Assert.False(result.Success);
+        Assert.True(result.HasPartialChanges);
+        Assert.Equal(1, result.CompletedCount);
+        Assert.Contains(failed, result.Failure?.ErrorMessage);
+        Assert.Equal([1], await File.ReadAllBytesAsync(failed));
+        Assert.Equal([2], await File.ReadAllBytesAsync(good));
+        Assert.Equal([2], await File.ReadAllBytesAsync(Path.Combine(destination, "source", "nested", "good.cbook")));
+        Assert.Single(Directory.GetFiles(destination, "*", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public async Task ProtectedLocalDirectory_CanBeCopiedToDeviceAndDecryptedBack()
+    {
+        string source = Path.Combine(testDirectory, "source");
+        Directory.CreateDirectory(Path.Combine(source, "nested"));
+        string original = Path.Combine(source, "nested", "report.txt");
+        await File.WriteAllBytesAsync(original, [1, 2, 255]);
+        var bridge = new WpdStorageProviderTests.BridgeStub();
+        bridge.Entries[("device", "/Download")] = new("/Download", "Download", true, 0, null);
+        var storage = new StorageFacade([new LocalStorageProvider(), new WpdStorageProvider(bridge)]);
+        FileSecurityService service = CreateRealService(storage);
+
+        FileOperationBatchResult encrypted = await service.CreateProtectedCopiesAsync(
+            [new DirectoryStub(source)], WpdLocatorCodec.Encode("device", "/Download").ToString());
+
+        Assert.True(encrypted.Success, encrypted.Failure?.ErrorMessage);
+        Assert.Equal(1, encrypted.CompletedCount);
+        string protectedPath = Assert.Single(encrypted.Results).AffectedPath!;
+        Assert.Equal(WpdLocatorCodec.Encode("device", "/Download/source/nested/report.cbook").ToString(), protectedPath);
+        var protectedFile = new FileItem { FullPath = protectedPath, Name = "report", Extension = ".cbook" };
+        string decrypted = Path.Combine(testDirectory, "decrypted");
+        Directory.CreateDirectory(decrypted);
+        FileOperationBatchResult result = await service.DecryptAsync([protectedFile], decrypted);
+
+        Assert.True(result.Success, result.Failure?.ErrorMessage);
+        Assert.Equal([1, 2, 255], await File.ReadAllBytesAsync(Path.Combine(decrypted, "report.txt")));
+        Assert.Equal([1, 2, 255], await File.ReadAllBytesAsync(original));
+        Assert.True(bridge.Content.ContainsKey(("device", "/Download/source/nested/report.cbook")));
+    }
+
+    [Fact]
     public async Task CreateProtectedCopies_PreservesSourcesAndUsesUniqueCbookNames()
     {
         string firstDirectory = Path.Combine(testDirectory, "first-source");
@@ -514,7 +797,7 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
             secureFileValidator: validator ??
                 new AlwaysEncryptedValidator());
 
-    private FileSecurityService CreateRealService()
+    private FileSecurityService CreateRealService(IStorageFacade? storage = null)
     {
         var keyProvider = new FixedKeyProvider();
         var options = new SecureFileV2Options
@@ -532,7 +815,8 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
         return new FileSecurityService(
             new CreateServiceStub(),
             processor,
-            secureFileValidator: new SecureFileValidator());
+            secureFileValidator: new SecureFileValidator(),
+            storageFacade: storage);
     }
 
     private string CreateFile(string name, byte[] content)
@@ -563,6 +847,11 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
 
         public void Report(double? value, string? currentInfo = null) =>
             Values.Add(value);
+    }
+
+    private sealed class CallbackProgressReporter(Action<double?, string?> report): IProgressReporter
+    {
+        public void Report(double? value, string? currentInfo = null) => report(value, currentInfo);
     }
 
     private sealed class FixedKeyProvider: IKeyProvider
@@ -660,6 +949,7 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
 
         public List<string> EncryptedInputs { get; } = [];
         public string? StoredExtensionOverride { get; init; }
+        public string? EncryptFailurePath { get; init; }
 
         public async Task EncryptFileAsync(
             string inputFile,
@@ -668,6 +958,8 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
             CancellationToken cancellationToken = default)
         {
             EncryptedInputs.Add(inputFile);
+            if(inputFile == EncryptFailurePath)
+                throw new IOException("Expected encryption failure.");
             storedExtensions[outputFile] = Path.GetExtension(inputFile);
             await File.WriteAllBytesAsync(
                 outputFile,

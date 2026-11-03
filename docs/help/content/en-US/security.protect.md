@@ -8,7 +8,7 @@ Choose **Save as**, the protected .cbook format and a destination. Read and acce
 
 ## Files and folders
 
-1. Select files in the file manager and choose **Create protected copies (.cbook)**. One file gets a copy beside it; for several files choose a destination folder. Output is verified, existing files are preserved and conflicting names get unique names. Already protected files are skipped. This command does not process folders.
+1. Select files or local folders in the file manager and choose **Create protected copies (.cbook)**. One file gets a copy beside it; for a folder or several items choose a destination. Local folders are copied recursively, preserving their structure, hidden files and empty folders. Output is verified, sources and existing files are preserved, and conflicting names get unique names. Already protected files are skipped. If the destination already contains a folder with the same name, a separate numbered folder is created. Symbolic links and junctions are not followed; a selected destination inside the source tree is excluded from traversal. Remote Android/MTP folders are not supported by this command.
 2. Choose **Encrypt or replace selected items…** for another mode. A single file offers **Save file as...** and **Replace source file**. Replacement requires confirmation.
 
 ![File copy or replacement choice](images/S34-a.png "Choose the mode before confirming.")

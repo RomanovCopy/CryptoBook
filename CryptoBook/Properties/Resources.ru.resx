@@ -1425,4 +1425,6 @@
   <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: выбрано — {1:N2} МиБ; свободно в корзине — {2:N2} МиБ.</value></data>
   <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Безвозвратное удаление…</value></data>
   <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Не удалось безвозвратно удалить объект. Уже удалённые объекты невозможно восстановить из корзины.</value></data>
+  <data name="Security.LinkedDirectoryNotSupported" xml:space="preserve"><value>Выберите обычную папку вместо символической ссылки или junction.</value></data>
+  <data name="Security.DestinationMustBeDirectory" xml:space="preserve"><value>Назначение должно быть папкой.</value></data>
 </root>

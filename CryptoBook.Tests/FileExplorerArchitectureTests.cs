@@ -83,9 +83,6 @@ public sealed class FileExplorerArchitectureTests
         Assert.Contains(
             ".CreateProtectedCopiesAsync(",
             modelSource);
-        Assert.Contains(
-            "items.All(item => item is IFileItem",
-            modelSource);
     }
 
     [Fact]

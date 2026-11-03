@@ -84,6 +84,12 @@ namespace CryptoBook.Services
             if(sources.Count == 0)
                 return new FileOperationBatchResult([], 0, 0, false, false);
 
+            if(sources.Any(source => source is IDirectoryItem))
+            {
+                return await CreateDirectoryProtectedCopiesAsync(
+                    sources, destinationDirectory, progress, cancellationToken);
+            }
+
             if(!storage.Resolve(destinationDirectory).IsLocal ||
                sources.Any(source => !source.Location.IsLocal))
             {

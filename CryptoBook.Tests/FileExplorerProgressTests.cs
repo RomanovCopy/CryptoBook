@@ -3,6 +3,7 @@ using Autofac;
 using CryptoBook.DTO;
 using CryptoBook.Interfaces;
 using CryptoBook.Models;
+using CryptoBook.Security;
 using CryptoBook.Services;
 using CryptoBook.Validation;
 using CryptoBook.ViewModels;
@@ -115,6 +116,39 @@ public sealed class FileExplorerProgressTests
         Assert.Equal(expected.Order(), explorer.Root.Children.Select(item => item.FullPath).Order());
     }
 
+    [WpfFact]
+    public async Task ProtectedCopy_LocalFolderIsEnabledAndPromptsForDestination()
+    {
+        using var explorer = new ExplorerFixture();
+        var folder = new DirectoryItem(new WpfDispatcherService(Dispatcher.CurrentDispatcher),
+            Stub<IDirectoryMonitoringService>(), Stub<ISystemItemCreateService>(), new SystemItemSortService())
+        {
+            FullPath = explorer.Path, Name = "source",
+            Capabilities = StorageProviderCapabilities.Encrypt
+        };
+        var called = new TaskCompletionSource<(IReadOnlyList<ISystemItem> Items, string Destination)>();
+        explorer.ProtectedCopyAction = (items, destination, _) =>
+        {
+            called.SetResult((items, destination));
+            return Task.FromResult(new FileOperationBatchResult([], 0, 0, false, false));
+        };
+        explorer.PickedDirectory = System.IO.Path.Combine(explorer.Path, "copies");
+
+        Assert.True(explorer.ViewModel.CreateProtectedCopyCommand.CanExecute(new[] { folder }));
+        Assert.False(explorer.ViewModel.CreateProtectedCopyCommand.CanExecute(new[] { explorer.Root }));
+        explorer.ViewModel.CreateProtectedCopyCommand.Execute(new[] { folder });
+        var request = await called.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await explorer.Progress.Completed.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Same(folder, Assert.Single(request.Items));
+        Assert.Equal(explorer.PickedDirectory, request.Destination);
+        Assert.Equal(1, explorer.FolderPickCount);
+        Assert.Null(explorer.Progress.Error);
+
+        folder.FullPath = WpdLocatorCodec.Encode("phone", "/Download").ToString();
+        Assert.False(explorer.ViewModel.CreateProtectedCopyCommand.CanExecute(new[] { folder }));
+    }
+
     private sealed class ExplorerFixture: IDisposable
     {
         public string Path { get; } = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "CryptoBook.Tests", Guid.NewGuid().ToString("N"));
@@ -125,6 +159,9 @@ public sealed class FileExplorerProgressTests
         public RecycleStub Recycle { get; }
         public FlatViewStub FlatView { get; }
         public Func<IReadOnlyList<ISystemItem>, CancellationToken, Task<FileOperationBatchResult>>? EncryptAction { get; set; }
+        public Func<IReadOnlyList<ISystemItem>, string, CancellationToken, Task<FileOperationBatchResult>>? ProtectedCopyAction { get; set; }
+        public string? PickedDirectory { get; set; }
+        public int FolderPickCount { get; private set; }
         private readonly IFileManagerService files;
 
         public ExplorerFixture()
@@ -153,9 +190,23 @@ public sealed class FileExplorerProgressTests
                     method.Name == "get_WritableDrives" ? drives : null),
                 [typeof(IProgressDialogService)] = Progress,
                 [typeof(IFileOperationCoordinator)] = coordinator,
+                [typeof(IKeyProvider)] = Stub<IKeyProvider>((method, _) => method.Name == "get_HasKey" ? true : null),
+                [typeof(IFolderPickerService)] = Stub<IFolderPickerService>((method, _) =>
+                {
+                    if(method.Name != "PickFolderAsync")
+                        return null;
+                    FolderPickCount++;
+                    return Task.FromResult(PickedDirectory);
+                }),
                 [typeof(IFileSecurityService)] = Stub<IFileSecurityService>((method, args) =>
-                    method.Name == "EncryptAsync" && args![0] is IReadOnlyList<ISystemItem> items
-                        ? EncryptAction!(items, (CancellationToken)args[^1]!) : null),
+                    method.Name switch
+                    {
+                        "EncryptAsync" when args![0] is IReadOnlyList<ISystemItem> items =>
+                            EncryptAction!(items, (CancellationToken)args[^1]!),
+                        "CreateProtectedCopiesAsync" => ProtectedCopyAction!(
+                            (IReadOnlyList<ISystemItem>)args![0]!, (string)args[1]!, (CancellationToken)args[^1]!),
+                        _ => null
+                    }),
                 [typeof(IMessageService)] = Stub<IMessageService>((method, _) => method.Name switch
                 {
                     "ShowMessage" => Task.FromResult(Guid.NewGuid()),

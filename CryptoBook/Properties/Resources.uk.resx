@@ -2276,4 +2276,6 @@
   <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: вибрано — {1:N2} МіБ; вільно в кошику — {2:N2} МіБ.</value></data>
   <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Незворотне видалення…</value></data>
   <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Не вдалося незворотно видалити об’єкт. Уже видалені об’єкти неможливо відновити з кошика.</value></data>
+  <data name="Security.LinkedDirectoryNotSupported" xml:space="preserve"><value>Виберіть звичайну папку замість символічного посилання або junction.</value></data>
+  <data name="Security.DestinationMustBeDirectory" xml:space="preserve"><value>Місце призначення має бути папкою.</value></data>
 </root>

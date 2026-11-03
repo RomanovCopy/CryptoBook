@@ -8,7 +8,7 @@ Wählen Sie **Speichern unter**, das geschützte Format .cbook und einen Zielort
 
 ## Dateien und Ordner
 
-1. Markieren Sie Dateien im Dateimanager und wählen Sie **Geschützte Kopien erstellen (.cbook)**. Eine einzelne Kopie entsteht neben der Quelle; für mehrere Dateien wählen Sie einen Zielordner. Ergebnisse werden geprüft, vorhandene Dateien beibehalten und Namenskonflikte durch eindeutige Namen gelöst. Bereits geschützte Dateien werden übersprungen. Ordner gehören nicht zu diesem Befehl.
+1. Markieren Sie Dateien oder lokale Ordner im Dateimanager und wählen Sie **Geschützte Kopien erstellen (.cbook)**. Eine einzelne Dateikopie entsteht neben der Quelle; für einen Ordner oder mehrere Elemente wählen Sie ein Ziel. Lokale Ordner werden rekursiv mit ihrer Struktur, versteckten Dateien und leeren Ordnern kopiert. Ergebnisse werden geprüft, Quellen und vorhandene Dateien beibehalten und Namenskonflikte durch eindeutige Namen gelöst. Bereits geschützte Dateien werden übersprungen. Existiert im Ziel bereits ein gleichnamiger Ordner, entsteht ein eigener nummerierter Ordner. Symbolischen Links und Junctions wird nicht gefolgt; ein gewähltes Ziel innerhalb des Quellbaums wird vom Durchlauf ausgeschlossen. Entfernte Android/MTP-Ordner werden mit diesem Befehl nicht verarbeitet.
 2. Für einen anderen Modus wählen Sie **Ausgewählte Elemente verschlüsseln oder ersetzen…**. Eine einzelne Datei bietet **Datei speichern unter...** und **Quelldatei ersetzen**. Ersetzen verlangt eine Bestätigung.
 
 ![Auswahl zwischen Dateikopie und Ersetzen](images/S34-a.png "Den Modus vor der Bestätigung wählen.")
