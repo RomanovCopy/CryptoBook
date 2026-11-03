@@ -91,8 +91,7 @@ namespace CryptoBook.Models
 
         internal bool CanExecute_Canceled(object? obj)
         {
-            IsOperationRunning = !cancellationToken.IsCancellationRequested;
-            return IsOperationRunning;
+            return IsOperationRunning && !cancellationToken.IsCancellationRequested;
         }
         internal void Execute_Canceled(object? obj)
         {

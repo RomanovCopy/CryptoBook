@@ -146,6 +146,7 @@ namespace CryptoBook.Services
             foreach(BatchSourceWork item in work)
             {
                 FileOperationResult result;
+                string? temporaryProtectedPath = null;
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -168,7 +169,7 @@ namespace CryptoBook.Services
                     }
                     else
                     {
-                        string temporaryProtectedPath = Path.Combine(
+                        temporaryProtectedPath = Path.Combine(
                             destination,
                             $".cryptobook-copy-{Guid.NewGuid():N}.tmp");
                         IProgressReporter? itemProgress = progress is null
@@ -227,6 +228,11 @@ namespace CryptoBook.Services
                             ex.Message),
                         AffectedPath = item.Source.FullPath
                     };
+                }
+                finally
+                {
+                    if(temporaryProtectedPath is not null)
+                        TryDeleteProtectedCopy(temporaryProtectedPath);
                 }
 
                 results.Add(result);

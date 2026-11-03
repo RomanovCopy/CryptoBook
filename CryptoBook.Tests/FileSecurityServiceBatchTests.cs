@@ -703,6 +703,58 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
     }
 
     [Fact]
+    public async Task CreateProtectedCopies_RemovesCopyWhenEncryptionFailsAfterWriting()
+    {
+        string source = CreateFile("draft.txt", [1, 2, 3]);
+        string destination = Path.Combine(testDirectory, "copies");
+        var processor = new VerifyingSecureFileProcessor
+        {
+            AfterEncryptWrite = () => throw new IOException("Expected failure after writing.")
+        };
+        FileSecurityService service = CreateService(
+            processor,
+            new PredicateEncryptedValidator(_ => false));
+
+        FileOperationBatchResult result = await service.CreateProtectedCopiesAsync(
+            [CreateFileItem(source)], destination);
+
+        Assert.False(result.Success);
+        Assert.False(result.Canceled);
+        Assert.Equal(0, result.CompletedCount);
+        Assert.Contains("Expected failure after writing.", result.Failure?.ErrorMessage);
+        Assert.Empty(Directory.GetFiles(destination));
+        Assert.Equal([1, 2, 3], await File.ReadAllBytesAsync(source));
+    }
+
+    [Fact]
+    public async Task CreateProtectedCopies_RemovesCopyWhenEncryptionIsCanceledAfterWriting()
+    {
+        string source = CreateFile("draft.txt", [1, 2, 3]);
+        string destination = Path.Combine(testDirectory, "copies");
+        using var cancellation = new CancellationTokenSource();
+        var processor = new VerifyingSecureFileProcessor
+        {
+            AfterEncryptWrite = () =>
+            {
+                cancellation.Cancel();
+                cancellation.Token.ThrowIfCancellationRequested();
+            }
+        };
+        FileSecurityService service = CreateService(
+            processor,
+            new PredicateEncryptedValidator(_ => false));
+
+        FileOperationBatchResult result = await service.CreateProtectedCopiesAsync(
+            [CreateFileItem(source)], destination, cancellationToken: cancellation.Token);
+
+        Assert.False(result.Success);
+        Assert.True(result.Canceled);
+        Assert.Equal(0, result.CompletedCount);
+        Assert.Empty(Directory.GetFiles(destination));
+        Assert.Equal([1, 2, 3], await File.ReadAllBytesAsync(source));
+    }
+
+    [Fact]
     public async Task CreateProtectedCopies_RealCodecRoundTripsWithoutChangingSource()
     {
         byte[] expected = Enumerable.Range(0, 4097)
@@ -950,6 +1002,7 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
         public List<string> EncryptedInputs { get; } = [];
         public string? StoredExtensionOverride { get; init; }
         public string? EncryptFailurePath { get; init; }
+        public Action? AfterEncryptWrite { get; init; }
 
         public async Task EncryptFileAsync(
             string inputFile,
@@ -965,6 +1018,7 @@ public sealed class FileSecurityServiceBatchTests: IDisposable
                 outputFile,
                 await File.ReadAllBytesAsync(inputFile, cancellationToken),
                 cancellationToken);
+            AfterEncryptWrite?.Invoke();
             progress?.Report(1.0, inputFile);
         }
 
