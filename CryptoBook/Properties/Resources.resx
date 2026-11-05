@@ -1427,4 +1427,21 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: selected — {1:N2} MiB; available in Recycle Bin — {2:N2} MiB.</value></data>
   <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Permanently deleting…</value></data>
   <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Could not permanently delete an item. Items already deleted cannot be restored from the Recycle Bin.</value></data>
+  <data name="ImageEdit.Title" xml:space="preserve"><value>Edit image</value></data>
+  <data name="ImageEdit.Contrast" xml:space="preserve"><value>Contrast</value></data>
+  <data name="ImageEdit.Brightness" xml:space="preserve"><value>Brightness</value></data>
+  <data name="ImageEdit.Saturation" xml:space="preserve"><value>Saturation</value></data>
+  <data name="ImageEdit.Width" xml:space="preserve"><value>Width (pixels)</value></data>
+  <data name="ImageEdit.Height" xml:space="preserve"><value>Height (pixels)</value></data>
+  <data name="ImageEdit.KeepAspectRatio" xml:space="preserve"><value>Keep aspect ratio</value></data>
+  <data name="ImageEdit.Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="ImageEdit.SaveTitle" xml:space="preserve"><value>Save edited image</value></data>
+  <data name="ImageEdit.InvalidSize" xml:space="preserve"><value>Enter dimensions from 1 to 32768 pixels, up to 100 megapixels.</value></data>
+  <data name="ImageEdit.UnsupportedFormat" xml:space="preserve"><value>Choose PNG, JPEG, BMP or TIFF.</value></data>
+  <data name="ImageEdit.FormatHint" xml:space="preserve"><value>Saves a single frame without source metadata. JPEG and BMP use a white background for transparency.</value></data>
+  <data name="ImageEdit.EncryptedHint" xml:space="preserve"><value>This protected image will be saved as an unencrypted copy.</value></data>
+  <data name="ImageEdit.Saving" xml:space="preserve"><value>Saving image…</value></data>
+  <data name="ImageEdit.Cancelled" xml:space="preserve"><value>Saving cancelled.</value></data>
+  <data name="ImageEdit.SaveFailed" xml:space="preserve"><value>Could not save the image.</value></data>
+  <data name="ImageEdit.PreviewFailed" xml:space="preserve"><value>Could not update the preview.</value></data>
 </root>

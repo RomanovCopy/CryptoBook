@@ -271,6 +271,10 @@
                         Command="{Binding ResetImageTransformCommand}"
                         Style="{StaticResource ImageToolbarButtonStyle}"
                         ToolTip="{Binding [Media.FitImage], Source={StaticResource Res}}"/>
+                <Button Content="&#xE70F;"
+                        Command="{Binding EditImageCommand}"
+                        Style="{StaticResource ImageToolbarButtonStyle}"
+                        ToolTip="{Binding [ImageEdit.Title], Source={StaticResource Res}}"/>
                 <Button Content="&#xE74D;"
                         Command="{Binding DeleteCurrentImageCommand}"
                         Style="{StaticResource ImageToolbarButtonStyle}"

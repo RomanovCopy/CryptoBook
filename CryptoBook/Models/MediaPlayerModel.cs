@@ -1,12 +1,14 @@
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
 using CryptoBook.Interfaces;
+using CryptoBook.ViewModels;
 using CryptoBook.Views;
 
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace CryptoBook.Models
 {
@@ -35,6 +37,7 @@ namespace CryptoBook.Models
         private readonly IViewRenderSynchronizationService _viewRenderSynchronizationService;
         private CancellationTokenSource? _deleteCancellation;
         private bool _isOpening;
+        private bool _isEditing;
         private readonly IMessageService _messageService;
         private readonly IMediaSourcePreparationService _mediaSourcePreparationService;
         private readonly IFileExplorerService _fileExplorerService;
@@ -131,7 +134,7 @@ namespace CryptoBook.Models
             set => _playbackCoordinator.IsSynchronizationEnabled = value;
         }
 
-        public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing && _deleteCancellation is null;
+        public bool CanExecute_OpenFile(object? obj) => !_disposed && !_isClosing && !_isEditing && _deleteCancellation is null;
         public void Execute_OpenFile(object? obj) => ShowFileExplorer(
             selection => _ = OpenSelectedFileAsync(selection));
 
@@ -167,14 +170,57 @@ namespace CryptoBook.Models
 
         public void Execute_ResetImageTransform(object? obj) => ImageService.ResetTransform();
 
+        public bool CanExecute_EditImage(object? obj) =>
+            !_disposed && !_isClosing && !_isOpening && !_isEditing &&
+            _deleteCancellation is null && _isImageVisible &&
+            _activeSource is not null && ImageService.ImageSource is BitmapSource;
+
+        public void Execute_EditImage(object? obj)
+        {
+            if(CanExecute_EditImage(obj))
+                _ = EditImageAsync();
+        }
+
+        private async Task EditImageAsync()
+        {
+            _isEditing = true;
+            CommandManager.InvalidateRequerySuggested();
+            try
+            {
+                var request = new ImageEditRequest((BitmapSource)ImageService.ImageSource!,
+                    _activeSource!.OriginalPath, _activeSource.IsEncrypted);
+                Guid editorId = _windowManager.CreateWindow<ImageEditWindow>(
+                    new Dictionary<string, object?> { [ImageEditViewModel.RequestContextKey] = request });
+                _windowManager.ShowWindowDialog(editorId);
+                string? savedPath = _windowManager.GetResult<string>(editorId);
+                if(savedPath is not null && !_disposed && !_isClosing)
+                {
+                    if(_catalogPaths.Count > 0 && !_catalogPaths.Contains(savedPath, StringComparer.OrdinalIgnoreCase))
+                        _catalogPaths = _catalogPaths.Append(savedPath).ToArray();
+                    await OpenPathAsync(savedPath, autoPlay: false);
+                }
+            }
+            catch(Exception exception)
+            {
+                if(!_disposed && !_isClosing)
+                    SetStatus(exception.Message);
+            }
+            finally
+            {
+                _isEditing = false;
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
         public bool CanExecute_PreviousImage(object? obj) =>
-            !_disposed && !_isClosing && _deleteCancellation is null && _isImageVisible && _currentImageIndex > 0;
+            !_disposed && !_isClosing && !_isEditing && _deleteCancellation is null && _isImageVisible && _currentImageIndex > 0;
 
         public void Execute_PreviousImage(object? obj) => _ = NavigateImageAsync(-1);
 
         public bool CanExecute_NextImage(object? obj) =>
             !_disposed &&
             !_isClosing &&
+            !_isEditing &&
             _deleteCancellation is null &&
             _isImageVisible &&
             _currentImageIndex >= 0 &&
@@ -201,6 +247,7 @@ namespace CryptoBook.Models
         public bool CanExecute_DeleteCurrentImage(object? obj) =>
             !_disposed &&
             !_isClosing &&
+            !_isEditing &&
             !_isOpening &&
             _deleteCancellation is null &&
             _isImageVisible &&

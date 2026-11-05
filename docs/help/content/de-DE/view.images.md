@@ -18,6 +18,19 @@ Verwenden Sie eine lokale Datei oder eine lokale Kopie vom Gerät. Die Dekodieru
 
 ![Tatsächliche Bildanzeige in einem eigenen Player.](images/S30-c.png "Tatsächliche Bildanzeige in einem eigenen Player.")
 
+## Bearbeiten und speichern
+
+1. Klicken Sie auf **Bild bearbeiten** (Stiftsymbol in der Bildleiste), um den separaten Editor zu öffnen.
+2. Stellen Sie **Kontrast**, **Helligkeit** und **Sättigung** zwischen −100 und 100 ein. Die Vorschau wird automatisch aktualisiert; die Quelldatei bleibt bis zum Speichern erhalten.
+3. Geben Sie Breite und Höhe in Pixeln ein. **Seitenverhältnis beibehalten** ist standardmäßig aktiviert und berechnet die andere Seite anhand der ursprünglichen Proportionen. Deaktivieren Sie die Option für unabhängige Abmessungen. Erlaubt sind 1 bis 32768 Pixel pro Seite und insgesamt höchstens 100 Megapixel.
+4. **Zurücksetzen** stellt die ursprüngliche Größe und neutrale Farbwerte wieder her. **Abbrechen** schließt den Editor ohne Speichern.
+5. Klicken Sie auf **Speichern unter** und wählen Sie einen Pfad sowie PNG, JPEG, BMP oder TIFF. Um die Quelle zu ersetzen, wählen Sie denselben Pfad und bestätigen die Ersetzung. Der Player öffnet das gespeicherte Ergebnis.
+
+Zuerst wird eine temporäre Datei im Zielordner geschrieben, dann die Zieldatei atomar ersetzt. Schreibfehler oder Abbruch vor der Ersetzung erhalten die vorhandene Datei. Bei Fehlern bleibt der Editor für einen erneuten Versuch geöffnet. Ein Abbruch während des Speicherns fordert einen Stopp an und wartet auf das Ende des laufenden Schreibschritts.
+
+Gespeichert wird ein Einzelbild ohne Quellmetadaten; Animationen und mehrere Seiten werden nicht übernommen. PNG und TIFF erhalten Transparenz; JPEG und BMP ersetzen sie durch Weiß. GIF, ICO und WebP können in ein angebotenes Format umgewandelt werden. Bilder aus .cbook/.cbox werden als **unverschlüsselte Kopien** gespeichert; der geschützte Quellcontainer bleibt erhalten. Drehung und Zoom der Ansicht gehören nicht zu den Editoreinstellungen.
+
+
 ## Ergebnis prüfen
 
 Das Bild erscheint im Fenster. Bildschaltflächen werden beim Darüberfahren sichtbar und haben Hinweise. Pfeiltasten ohne Zusatztasten wirken im aktiven Playerfenster auf das Bild. Nach dem Verschieben in den Papierkorb zeigt der Player ein Nachbarbild an; wenn keine Bilder mehr vorhanden sind, wird der Anzeigebereich geleert.

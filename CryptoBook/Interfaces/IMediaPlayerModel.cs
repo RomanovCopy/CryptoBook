@@ -27,6 +27,8 @@ namespace CryptoBook.Interfaces
         void Execute_RotateImage(object? obj);
         bool CanExecute_ResetImageTransform(object? obj);
         void Execute_ResetImageTransform(object? obj);
+        bool CanExecute_EditImage(object? obj);
+        void Execute_EditImage(object? obj);
         bool CanExecute_PreviousImage(object? obj);
         void Execute_PreviousImage(object? obj);
         bool CanExecute_NextImage(object? obj);

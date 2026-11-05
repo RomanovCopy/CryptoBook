@@ -21,6 +21,7 @@ namespace CryptoBook.Interfaces
         ICommand DeactivatedCommand { get; }
         ICommand RotateImageCommand { get; }
         ICommand ResetImageTransformCommand { get; }
+        ICommand EditImageCommand { get; }
         ICommand PreviousImageCommand { get; }
         ICommand NextImageCommand { get; }
         ICommand PreviousVideoCommand { get; }

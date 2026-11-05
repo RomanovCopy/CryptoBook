@@ -69,6 +69,10 @@ namespace CryptoBook.ViewModels
                 _model.CanExecute_ResetImageTransform);
         private RelayCommand? _resetImageTransformCommand;
 
+        public ICommand EditImageCommand => _editImageCommand ??=
+            new RelayCommand(_model.Execute_EditImage, _model.CanExecute_EditImage);
+        private RelayCommand? _editImageCommand;
+
         public ICommand PreviousImageCommand => _previousImageCommand ??=
             new RelayCommand(
                 _model.Execute_PreviousImage,

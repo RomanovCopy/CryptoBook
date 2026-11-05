@@ -112,6 +112,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<FileDetailsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<BatchRenameViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<ImageEditViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FavoriteDirectoriesViewModel>().As<IFavoriteDirectoriesViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<PinnedDocumentsViewModel>()
                 .As<IPinnedDocumentsViewModel>()
@@ -186,6 +187,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileExplorer>().InstancePerDependency();
             builder.RegisterType<FileDetailsWindow>().InstancePerDependency();
             builder.RegisterType<BatchRenameWindow>().InstancePerDependency();
+            builder.RegisterType<ImageEditWindow>().InstancePerDependency();
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
             builder.RegisterType<DirectoryNameDialog>().InstancePerDependency();
@@ -519,6 +521,8 @@ namespace CryptoBook.Injections
             builder.RegisterType<RichTextBoxDocumentLayoutMetrics>().As<IDocumentLayoutMetrics>().SingleInstance();
             builder.RegisterType<DocumentImageInserter>().As<IDocumentImageInserter>().SingleInstance();
             builder.RegisterType<ImageService>().As<IImageService>().InstancePerDependency();
+            builder.RegisterType<ImageEditingService>().As<IImageEditingService>().SingleInstance();
+            builder.RegisterType<ImageSaveTargetPicker>().As<IImageSaveTargetPicker>().SingleInstance();
             builder.RegisterType<MediaPlayerService>().As<IMediaPlayerService>().InstancePerDependency();
             builder.RegisterType<MediaPlaybackCoordinator>()
                 .As<IMediaPlaybackCoordinator>()

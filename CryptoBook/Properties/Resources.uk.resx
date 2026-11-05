@@ -2278,4 +2278,21 @@
   <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Не вдалося незворотно видалити об’єкт. Уже видалені об’єкти неможливо відновити з кошика.</value></data>
   <data name="Security.LinkedDirectoryNotSupported" xml:space="preserve"><value>Виберіть звичайну папку замість символічного посилання або junction.</value></data>
   <data name="Security.DestinationMustBeDirectory" xml:space="preserve"><value>Місце призначення має бути папкою.</value></data>
+  <data name="ImageEdit.Title" xml:space="preserve"><value>Змінити зображення</value></data>
+  <data name="ImageEdit.Contrast" xml:space="preserve"><value>Контрастність</value></data>
+  <data name="ImageEdit.Brightness" xml:space="preserve"><value>Яскравість</value></data>
+  <data name="ImageEdit.Saturation" xml:space="preserve"><value>Насиченість</value></data>
+  <data name="ImageEdit.Width" xml:space="preserve"><value>Ширина (пікселі)</value></data>
+  <data name="ImageEdit.Height" xml:space="preserve"><value>Висота (пікселі)</value></data>
+  <data name="ImageEdit.KeepAspectRatio" xml:space="preserve"><value>Зберігати пропорції</value></data>
+  <data name="ImageEdit.Reset" xml:space="preserve"><value>Скинути</value></data>
+  <data name="ImageEdit.SaveTitle" xml:space="preserve"><value>Зберегти змінене зображення</value></data>
+  <data name="ImageEdit.InvalidSize" xml:space="preserve"><value>Введіть розміри від 1 до 32768 пікселів, не більше 100 мегапікселів.</value></data>
+  <data name="ImageEdit.UnsupportedFormat" xml:space="preserve"><value>Виберіть PNG, JPEG, BMP або TIFF.</value></data>
+  <data name="ImageEdit.FormatHint" xml:space="preserve"><value>Зберігається один кадр без метаданих оригіналу. У JPEG і BMP прозорість замінюється білим тлом.</value></data>
+  <data name="ImageEdit.EncryptedHint" xml:space="preserve"><value>Захищене зображення буде збережено як незашифрована копія.</value></data>
+  <data name="ImageEdit.Saving" xml:space="preserve"><value>Збереження зображення…</value></data>
+  <data name="ImageEdit.Cancelled" xml:space="preserve"><value>Збереження скасовано.</value></data>
+  <data name="ImageEdit.SaveFailed" xml:space="preserve"><value>Не вдалося зберегти зображення.</value></data>
+  <data name="ImageEdit.PreviewFailed" xml:space="preserve"><value>Не вдалося оновити попередній перегляд.</value></data>
 </root>

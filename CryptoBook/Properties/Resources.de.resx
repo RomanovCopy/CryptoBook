@@ -1427,4 +1427,21 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Ein Objekt konnte nicht endgültig gelöscht werden. Bereits gelöschte Objekte können nicht aus dem Papierkorb wiederhergestellt werden.</value></data>
   <data name="Security.LinkedDirectoryNotSupported" xml:space="preserve"><value>Wählen Sie einen normalen Ordner statt eines symbolischen Links oder einer Junction.</value></data>
   <data name="Security.DestinationMustBeDirectory" xml:space="preserve"><value>Das Ziel muss ein Ordner sein.</value></data>
+  <data name="ImageEdit.Title" xml:space="preserve"><value>Bild bearbeiten</value></data>
+  <data name="ImageEdit.Contrast" xml:space="preserve"><value>Kontrast</value></data>
+  <data name="ImageEdit.Brightness" xml:space="preserve"><value>Helligkeit</value></data>
+  <data name="ImageEdit.Saturation" xml:space="preserve"><value>Sättigung</value></data>
+  <data name="ImageEdit.Width" xml:space="preserve"><value>Breite (Pixel)</value></data>
+  <data name="ImageEdit.Height" xml:space="preserve"><value>Höhe (Pixel)</value></data>
+  <data name="ImageEdit.KeepAspectRatio" xml:space="preserve"><value>Seitenverhältnis beibehalten</value></data>
+  <data name="ImageEdit.Reset" xml:space="preserve"><value>Zurücksetzen</value></data>
+  <data name="ImageEdit.SaveTitle" xml:space="preserve"><value>Bearbeitetes Bild speichern</value></data>
+  <data name="ImageEdit.InvalidSize" xml:space="preserve"><value>Geben Sie Abmessungen von 1 bis 32768 Pixeln mit höchstens 100 Megapixeln ein.</value></data>
+  <data name="ImageEdit.UnsupportedFormat" xml:space="preserve"><value>Wählen Sie PNG, JPEG, BMP oder TIFF.</value></data>
+  <data name="ImageEdit.FormatHint" xml:space="preserve"><value>Es wird ein Einzelbild ohne Metadaten gespeichert. JPEG und BMP ersetzen Transparenz durch Weiß.</value></data>
+  <data name="ImageEdit.EncryptedHint" xml:space="preserve"><value>Dieses geschützte Bild wird als unverschlüsselte Kopie gespeichert.</value></data>
+  <data name="ImageEdit.Saving" xml:space="preserve"><value>Bild wird gespeichert…</value></data>
+  <data name="ImageEdit.Cancelled" xml:space="preserve"><value>Speichern abgebrochen.</value></data>
+  <data name="ImageEdit.SaveFailed" xml:space="preserve"><value>Das Bild konnte nicht gespeichert werden.</value></data>
+  <data name="ImageEdit.PreviewFailed" xml:space="preserve"><value>Die Vorschau konnte nicht aktualisiert werden.</value></data>
 </root>

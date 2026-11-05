@@ -18,6 +18,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Release test build failed.' }
 # Worker cancellation tests also need a fresh process: loading cancellation can
 # hang in the combined WPF group while the isolated cancellation group passes.
 # The visible batch rename window needs its own Application dispatcher as well.
+# The image editor window also owns an Application dispatcher and modal player.
 # Help tests also own an Application and an in-memory settings provider; isolate them.
 # Image layout templates must not inherit Application resources from another STA thread.
 # Window relationship tests own the Application dispatcher and show modal progress.
@@ -27,10 +28,11 @@ $groups = @(
     @{ Name = 'document-search'; Arguments = @('-class', 'CryptoBook.Tests.DocumentSearchTests') },
     @{ Name = 'worker-cancellation'; Arguments = @('-class', 'CryptoBook.Tests.AiWorkerCancellationTests') },
     @{ Name = 'batch-rename-window'; Arguments = @('-class', 'CryptoBook.Tests.BatchRenameWindowTests') },
+    @{ Name = 'image-edit-window'; Arguments = @('-class', 'CryptoBook.Tests.ImageEditWindowTests') },
     @{ Name = 'help'; Arguments = @('-class', 'CryptoBook.Tests.HelpTests') },
     @{ Name = 'image-layout'; Arguments = @('-class', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests') },
     @{ Name = 'window-relationships'; Arguments = @('-class', 'CryptoBook.Tests.WindowRelationshipTests') },
-    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.HelpTests', '-class-', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests', '-class-', 'CryptoBook.Tests.WindowRelationshipTests') }
+    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.ImageEditWindowTests', '-class-', 'CryptoBook.Tests.HelpTests', '-class-', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests', '-class-', 'CryptoBook.Tests.WindowRelationshipTests') }
 )
 $total = 0
 foreach ($group in $groups) {

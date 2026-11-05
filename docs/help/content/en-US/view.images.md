@@ -18,6 +18,19 @@ Use a local file or a local copy from a device. Decoding support depends on Wind
 
 ![Actual image viewing in a separate player.](images/S30-c.png "Actual image viewing in a separate player.")
 
+## Editing and saving
+
+1. Click **Edit image** (the pencil icon on the image toolbar) to open a separate editor.
+2. Adjust **Contrast**, **Brightness** and **Saturation** from −100 to 100. The preview updates automatically without changing the source file.
+3. Enter width and height in pixels. **Keep aspect ratio** is enabled by default and recalculates the other dimension using the original proportions. Disable it to set dimensions independently. Each side must be from 1 to 32768 pixels, with at most 100 megapixels in total.
+4. **Reset** restores the original size and neutral color settings. **Cancel** closes the editor without saving.
+5. Click **Save as**, then choose a path and PNG, JPEG, BMP or TIFF. To replace the source, choose its path and confirm replacement. The player opens the saved result.
+
+The editor writes a temporary file in the destination folder, then replaces the target atomically. A write failure or cancellation before replacement preserves the existing file. Errors leave the editor open for retry. Cancelling during saving requests a stop and waits for the current writing stage to finish.
+
+The output contains one frame without source metadata; animation and multiple pages are not retained. PNG and TIFF preserve transparency; JPEG and BMP use a white background. GIF, ICO and WebP can be converted to an offered format. Images from .cbook/.cbox are saved as **unencrypted copies**; the protected source container is preserved. Viewing rotation and zoom are separate from editor settings.
+
+
 ## Check the result
 
 The image appears in the window. Image controls appear on hover and have tooltips. Unmodified arrow keys act on the image while the player window is active. After moving the file to the Recycle Bin, the player shows an adjacent image; if no images remain, the viewing area is cleared.
