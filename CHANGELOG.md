@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.5.4 - 2026-11-05
+
+### Added
+- Media-player image editor: resize, optional aspect-ratio preservation, brightness, contrast, saturation, preview and save a copy.
+- Recursive protected copies of local folders, including hidden files and empty directories; skip links and junctions.
+
+### Fixed
+- Check Recycle Bin capacity per volume before deleting a local selection and request explicit confirmation for permanent deletion when required.
+- Improve cancellation, progress and folder refresh after file operations.
+- Correct media-player dialog ownership and prevent duplicate file-manager windows.
+- Update related offline help in all four languages.
+
+### Release
+- Synchronize version 1.1.5.4 and distribution documentation. User authorized publication on November 5, 2026; preserve the reviewed local installer.
+
+Full comparison: [v1.1.5.3...v1.1.5.4](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.5.3...v1.1.5.4)
+
 ## 1.1.5.3 - 2026-11-02
 
 ### Added

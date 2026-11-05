@@ -31,8 +31,10 @@ are checked, and dirty ordinary/Markdown documents plus AI fixtures survive.
 The script requires a successful exit and result JSON, not just a PASS log line.
 
 After `App.Run` finishes normal cleanup and closes its reports, the hook terminates
-its owned process with the result code. It does not enter the normal entry point
-with the user's profile. This avoids CLR teardown reentry from a WPF startup hook.
+its owned process with the result code before the validation STA thread exits.
+Waiting for that thread to exit first can trigger a CLR assertion during WPF/COM
+thread teardown. The hook does not enter the normal entry point with the user's
+profile. Validation failures retain a nonzero process exit code.
 The check is an instrumented package startup, not an installed-profile upgrade or
 an uninstrumented launch. No installer, UAC, native picker, physical input or OS DPI
 transition is exercised. Existing stage-11 scaled-layout captures retain their
