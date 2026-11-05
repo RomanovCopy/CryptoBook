@@ -13,6 +13,7 @@ Die Tabellen verwenden internationale Tastennamen. Auf einer deutschen Tastatur 
 | Ctrl+X / C / V / A | Textfeld im Fokus: ausschneiden / kopieren / einfügen / alles auswählen |
 | Ctrl+B / I / U | Gewöhnlicher Editor: fett / kursiv / unterstrichen; keine Markdown-Quelltextformatierung |
 | Enter / Ctrl+Enter | Gewöhnlicher Editor: Zeilenumbruch / neuer Absatz; Listen behalten eigene Regeln |
+| ↑; ←/→; Enter; Esc | Wenn Windows-Textvorschläge erscheinen: zu den Vorschlägen wechseln; Wort auswählen; Auswahl einfügen; ohne Einfügen schließen |
 | Ctrl+F | Gewöhnliches oder Markdown-Dokument: Suche öffnen |
 | F3 / Shift+F3 | Bei geöffneter Dokumentsuche: nächster / vorheriger Treffer |
 | Enter / Shift+Enter | Suchfeld im Dokument: nächster / vorheriger Treffer |
