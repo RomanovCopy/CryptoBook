@@ -20,6 +20,7 @@ namespace CryptoBook.Services
 
         private readonly IWindowManager windowManager;
         private readonly IFileManagerService fileManagerService;
+        private FileSelectionSession? fileSelectionSession;
 
         public FileExplorerService(
             IWindowManager windowManager,
@@ -43,14 +44,45 @@ namespace CryptoBook.Services
             Action<MediaCatalogSelection> fileSelected)
         {
             ArgumentNullException.ThrowIfNull(fileSelected);
+            if(fileSelectionSession is { } existing &&
+               windowManager.IsWindowOpen(existing.WindowId))
+            {
+                existing.FileSelected = fileSelected;
+                windowManager.ActivateWindow(existing.WindowId);
+                return;
+            }
+
+            if(fileSelectionSession is { } previous)
+                previous.FileSelected = null;
+            var session = new FileSelectionSession { FileSelected = fileSelected };
             Guid windowId = windowManager.CreateSiblingWindow<FileExplorer>(
                 CreateContext(
                     FileExplorerMode.SelectFile,
                     initialDirectory,
-                    fileSelected));
+                    session.SelectFile));
+            session.WindowId = windowId;
+            fileSelectionSession = session;
+            if(windowManager.FindHostWindow(windowId)?.Window is { } window)
+            {
+                window.Closed += (_, _) =>
+                {
+                    session.FileSelected = null;
+                    if(ReferenceEquals(fileSelectionSession, session))
+                        fileSelectionSession = null;
+                };
+            }
             // MediaPlayer использует FileExplorer как постоянный браузер:
             // каждый выбор открывает файл, не завершая окно выбора.
             windowManager.ShowWindow(windowId);
+        }
+
+        private sealed class FileSelectionSession
+        {
+            public Guid WindowId { get; set; }
+            public Action<MediaCatalogSelection>? FileSelected { get; set; }
+
+            public void SelectFile(MediaCatalogSelection selection) =>
+                FileSelected?.Invoke(selection);
         }
 
         public Task<string?> PickFileAsync(

@@ -119,6 +119,8 @@ public sealed class LocalStorageProvider: IStorageProvider
             NormalizeComparable(right),
             StringComparison.OrdinalIgnoreCase);
 
+    public string GetComparisonKey(StorageLocation location) => NormalizeComparable(location).ToUpperInvariant();
+
     public bool IsDescendant(StorageLocation parent, StorageLocation candidate)
     {
         string parentPath = NormalizeComparable(parent);

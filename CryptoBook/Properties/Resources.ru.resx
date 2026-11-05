@@ -1420,4 +1420,28 @@
   <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Открыть сохранённую аварийную копию несохранённой работы</value></data>
   <data name="Recovery.RestoreLock" xml:space="preserve"><value>Восстановить снимок после сброса ключа</value></data>
   <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Вернуть защищённую работу с прежним ключом</value></data>
+  <data name="Explorer.RecycleSpaceUnknown" xml:space="preserve"><value>Не удалось определить свободный объём корзины. Ничего не удалено. Проверьте настройки корзины и повторите попытку.</value></data>
+  <data name="Explorer.PermanentDeleteWholeSelectionWarning" xml:space="preserve"><value>Корзина недоступна или весь выбранный набор в неё не помещается. Удалить ВСЕ выбранные объекты ({0}) безвозвратно? Восстановить их из корзины будет невозможно. Пока ничего не удалено.&#10;&#10;{1}</value></data>
+  <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: выбрано — {1:N2} МиБ; свободно в корзине — {2:N2} МиБ.</value></data>
+  <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Безвозвратное удаление…</value></data>
+  <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Не удалось безвозвратно удалить объект. Уже удалённые объекты невозможно восстановить из корзины.</value></data>
+  <data name="Security.LinkedDirectoryNotSupported" xml:space="preserve"><value>Выберите обычную папку вместо символической ссылки или junction.</value></data>
+  <data name="Security.DestinationMustBeDirectory" xml:space="preserve"><value>Назначение должно быть папкой.</value></data>
+  <data name="ImageEdit.Title" xml:space="preserve"><value>Изменить изображение</value></data>
+  <data name="ImageEdit.Contrast" xml:space="preserve"><value>Контрастность</value></data>
+  <data name="ImageEdit.Brightness" xml:space="preserve"><value>Яркость</value></data>
+  <data name="ImageEdit.Saturation" xml:space="preserve"><value>Насыщенность</value></data>
+  <data name="ImageEdit.Width" xml:space="preserve"><value>Ширина (пиксели)</value></data>
+  <data name="ImageEdit.Height" xml:space="preserve"><value>Высота (пиксели)</value></data>
+  <data name="ImageEdit.KeepAspectRatio" xml:space="preserve"><value>Сохранять пропорции</value></data>
+  <data name="ImageEdit.Reset" xml:space="preserve"><value>Сбросить</value></data>
+  <data name="ImageEdit.SaveTitle" xml:space="preserve"><value>Сохранить изменённое изображение</value></data>
+  <data name="ImageEdit.InvalidSize" xml:space="preserve"><value>Введите размеры от 1 до 32768 пикселей, не более 100 мегапикселей.</value></data>
+  <data name="ImageEdit.UnsupportedFormat" xml:space="preserve"><value>Выберите PNG, JPEG, BMP или TIFF.</value></data>
+  <data name="ImageEdit.FormatHint" xml:space="preserve"><value>Сохраняется один кадр без метаданных исходника. В JPEG и BMP прозрачность заменяется белым фоном.</value></data>
+  <data name="ImageEdit.EncryptedHint" xml:space="preserve"><value>Защищённое изображение будет сохранено как незашифрованная копия.</value></data>
+  <data name="ImageEdit.Saving" xml:space="preserve"><value>Сохранение изображения…</value></data>
+  <data name="ImageEdit.Cancelled" xml:space="preserve"><value>Сохранение отменено.</value></data>
+  <data name="ImageEdit.SaveFailed" xml:space="preserve"><value>Не удалось сохранить изображение.</value></data>
+  <data name="ImageEdit.PreviewFailed" xml:space="preserve"><value>Не удалось обновить предпросмотр.</value></data>
 </root>

@@ -21,20 +21,30 @@ namespace CryptoBook.Infrastructure
         private readonly ILifetimeScope _root;
         private readonly Dictionary<Guid, WindowHost> _windowHosts;
         private readonly Dictionary<Guid, IDialogResult> _results;
+        private Window? _lastActiveWindow;
 
-        static Window? GetOwner()
+        private Window? GetOwner()
         {
-            var windows = System.Windows.Application.Current.Windows;
-            if(windows.Count > 0)
-            {
-                foreach(Window vin in windows)
-                {
-                    if(vin.IsActive)
-                        return vin;
-                }
-            }
-            return null;
+            var app = System.Windows.Application.Current;
+            Window? active = app?.Windows.OfType<Window>()
+                .FirstOrDefault(window => window.IsActive && IsAvailableOwner(window));
+            if(active is not null)
+                return active;
+            if(IsAvailableOwner(_lastActiveWindow))
+                return _lastActiveWindow;
+            if(IsAvailableOwner(app?.MainWindow))
+                return app!.MainWindow;
+            return _windowHosts.Values.Select(host => host.Window)
+                .FirstOrDefault(IsAvailableOwner);
         }
+
+        private bool IsAvailableOwner(Window? window) =>
+            window is { IsLoaded: true, IsVisible: true } &&
+            !_windowHosts.Values.Any(host => ReferenceEquals(host.Window, window) &&
+                (host.IsClosing || host.IsClosed));
+
+        private void OnWindowActivated(object? sender, EventArgs args) =>
+            _lastActiveWindow = sender as Window;
 
         public TResult? GetResult<TResult>(Guid guid)
         {
@@ -98,9 +108,13 @@ namespace CryptoBook.Infrastructure
 
 
             var host = RegisterWindow(scope, window) ?? throw new InvalidOperationException("Failed to register window");
+            window.Activated += OnWindowActivated;
 
             window.Closed += (_, __) =>
             {
+                window.Activated -= OnWindowActivated;
+                if(ReferenceEquals(_lastActiveWindow, window))
+                    _lastActiveWindow = null;
                 if(window.DataContext is IDialogResult dialogResult)
                 {
                     if(dialogResult is not IConditionalDialogResult conditional ||
@@ -302,6 +316,7 @@ namespace CryptoBook.Infrastructure
             // как фабрику дочерних scope и не должен уничтожать контейнер повторно.
             _windowHosts.Clear();
             _results.Clear();
+            _lastActiveWindow = null;
         }
 
     }

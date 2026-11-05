@@ -239,6 +239,30 @@ public sealed class FileOperationCoordinatorTests
     }
 
     [Fact]
+    public async Task DeleteAsync_ViewSynchronizationFailurePreservesCompletedResult()
+    {
+        using var temp = new TempDirectory();
+        string file = Path.Combine(temp.Path, "original.txt");
+        File.WriteAllText(file, "disposable");
+        using var bin = new RecycleBinStub();
+        var progress = new ProgressDialogStub();
+        var coordinator = new FileOperationCoordinator(new FileManagerStub(), progress,
+            new ConflictResolverStub(FileConflictAction.Skip), recycleBin: bin);
+        FileOperationBatchResult result = await coordinator.DeleteAsync([file],
+            synchronizeResultAsync: outcome =>
+            {
+                Assert.True(progress.IsOperationActive);
+                Assert.Equal(1, outcome.CompletedCount);
+                throw new InvalidOperationException("view refresh failed");
+            });
+        Assert.False(result.Success);
+        Assert.Equal(1, result.CompletedCount);
+        Assert.True(result.HasPartialChanges);
+        Assert.False(File.Exists(file));
+        Assert.Equal("view refresh failed", result.Failure!.ErrorMessage);
+    }
+
+    [Fact]
     public async Task DeleteAsync_UnavailableRecycleBinDoesNotPermanentlyDeleteSource()
     {
         using var temp = new TempDirectory();

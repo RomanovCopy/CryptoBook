@@ -21,15 +21,15 @@ public static class StartupHook
         {
             try { result = Program.Main(args); }
             catch (Exception error) { Console.Error.WriteLine(error); }
+            // App.Run has completed OnExit and all reports are closed. Terminate
+            // before this STA thread exits: COM/WPF thread teardown can invoke
+            // managed callbacks after the CLR has destroyed its thread state.
+            // This owned validation process must never enter the user's app.
+            TerminateProcess(GetCurrentProcess(), (uint)result);
         });
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         thread.Join();
-        // App.Run has completed its normal OnExit and all report files are closed.
-        // CLR teardown from inside a startup hook can assert after WPF thread teardown;
-        // terminate this owned validation process without reentering runtime shutdown
-        // or subsequently starting the application with the user's profile.
-        TerminateProcess(GetCurrentProcess(), (uint)result);
         throw new InvalidOperationException("Unable to terminate the package-check process.");
     }
 

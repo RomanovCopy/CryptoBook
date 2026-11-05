@@ -1,6 +1,6 @@
 # Öffnen, umbenennen und löschen
 
-Ein Befehl verwendet die ausgewählte Zeile. Bewahren Sie vor Änderungen wichtiger Dateien eine separate Kopie auf. Lokales Löschen fragt nach einer Bestätigung und verschiebt Dateien und Ordner in den Windows-Papierkorb.
+Ein Befehl verwendet die ausgewählte Zeile. Bewahren Sie vor Änderungen wichtiger Dateien eine separate Kopie auf. Vor dem lokalen Löschen prüft die App den freien Papierkorbplatz und bittet um Bestätigung der Löschart.
 
 ## Öffnen oder Pfad kopieren
 
@@ -21,7 +21,7 @@ Aktualisieren Sie anschließend die Liste und prüfen Sie den vollständigen Pfa
 
 ## Löschen
 
-Markieren Sie lokale Objekte, wählen Sie **Löschen** und bestätigen Sie die Auswahl. **Abbrechen** im Bestätigungsdialog lässt Dateien unverändert. Objekte werden unter ihren ursprünglichen Namen in den Windows-Papierkorb verschoben; daneben werden keine Ordner für gelöschte Dateien angelegt. Ist das Verschieben in den Papierkorb nicht möglich, erscheint ein Fehler. Die App löscht die Objekte dann nicht endgültig.
+Wählen Sie lokale Objekte und dann **Löschen**. Die App ermittelt zuerst die Größe der gesamten Auswahl und vergleicht sie mit dem freien Papierkorblimit auf jedem Datenträger. Bei ausreichend Platz bestätigen Sie das Verschieben in den Papierkorb. Passt die gesamte Auswahl nicht hinein oder ist kein Papierkorb verfügbar, bietet eine gesonderte Warnung das endgültige Löschen **aller ausgewählten Objekte** an. Vor der Bestätigung wird nichts gelöscht; **Abbrechen** lässt die gesamte Auswahl unverändert. Kann das Limit nicht ermittelt werden, wird der Vorgang mit einer Meldung beendet. Die App leert vorhandene Papierkorbeinträge nicht selbst.
 
 Öffnen Sie zum Zurückholen den Windows-**Papierkorb**, markieren Sie die Objekte und wählen Sie **Wiederherstellen**. Sie kehren in ihre ursprünglichen Ordner zurück. Bei Abbruch eines laufenden Stapels oder einem Fehler können einige Objekte bereits im Papierkorb liegen, während andere unverändert bleiben. Bereits verschobene Objekte stellen Sie im Papierkorb wieder her. Nach dem Leeren des Papierkorbs oder endgültigem Löschen daraus entfällt diese normale Wiederherstellung.
 

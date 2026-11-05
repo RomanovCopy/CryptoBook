@@ -44,6 +44,7 @@ namespace CryptoBook.ViewModels
         private int _flatViewFileCount;
         private int _flatViewSkippedDirectoryCount;
         private bool _flatViewHasResult;
+        private int _flatViewChangeQueued;
 
         public double WindowWidth { get =>_fileExplorerModel.WindowWidth; set => _fileExplorerModel.WindowWidth=value; }
         public double WindowHeight { get => _fileExplorerModel.WindowHeight; set => _fileExplorerModel.WindowHeight=value; }
@@ -191,6 +192,7 @@ namespace CryptoBook.ViewModels
                 FlatViewRefreshTimer_Tick,
                 _dispatcher);
             _fileExplorerModel.PropertyChanged += FileExplorerModel_PropertyChanged;
+            _fileExplorerModel.ViewRefreshRequested += SynchronizeViewAfterOperationAsync;
             _flatViewService.FilesChanged += FlatViewService_FilesChanged;
             Favorites.OpenRequested += Favorites_OpenRequested;
             LocalizationManager.CultureChanged += OnCultureChanged;
@@ -273,13 +275,14 @@ namespace CryptoBook.ViewModels
 
         private void FlatViewService_FilesChanged(object? sender, EventArgs e)
         {
-            if(_isClosed)
+            if(_isClosed || Interlocked.Exchange(ref _flatViewChangeQueued, 1) != 0)
                 return;
 
             try
             {
                 _dispatcher.BeginInvoke(new Action(() =>
                 {
+                    Interlocked.Exchange(ref _flatViewChangeQueued, 0);
                     if(!IsFlatViewEnabled || _isClosed)
                         return;
 
@@ -292,7 +295,22 @@ namespace CryptoBook.ViewModels
             }
             catch(InvalidOperationException)
             {
+                Interlocked.Exchange(ref _flatViewChangeQueued, 0);
             }
+        }
+
+        private async Task SynchronizeViewAfterOperationAsync()
+        {
+            _filterDebounceTimer.Stop();
+            ChildrenView.Refresh();
+            // Прогресс ожидает сам скан и применение результата. Уведомления,
+            // пришедшие во время скана, объединяются в следующий проход.
+            do
+            {
+                _flatViewRefreshTimer.Stop();
+                await RefreshFlatViewAsync(throwOnError: true);
+            }
+            while(_flatViewRefreshTimer.IsEnabled && !_isClosed && IsFlatViewEnabled);
         }
 
         private async void FlatViewRefreshTimer_Tick(object? sender, EventArgs e)
@@ -307,7 +325,7 @@ namespace CryptoBook.ViewModels
             _flatViewRefreshTimer.Start();
         }
 
-        private async Task RefreshFlatViewAsync()
+        private async Task RefreshFlatViewAsync(bool throwOnError = false)
         {
             if(_isClosed ||
                !IsFlatViewEnabled ||
@@ -385,6 +403,8 @@ namespace CryptoBook.ViewModels
                         "Explorer.FlatView.Error",
                         exception.Message);
                 }
+                if(throwOnError)
+                    throw;
             }
             finally
             {
@@ -721,6 +741,7 @@ namespace CryptoBook.ViewModels
             _flatViewCancellationSource = null;
             cancellation?.Cancel();
             _fileExplorerModel.PropertyChanged -= FileExplorerModel_PropertyChanged;
+            _fileExplorerModel.ViewRefreshRequested -= SynchronizeViewAfterOperationAsync;
             _flatViewService.FilesChanged -= FlatViewService_FilesChanged;
             _flatViewService.StopMonitoring();
             Favorites.OpenRequested -= Favorites_OpenRequested;

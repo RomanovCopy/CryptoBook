@@ -126,6 +126,12 @@ public sealed class WpdStorageProvider:
             leftPath.Equals(rightPath, StringComparison.OrdinalIgnoreCase);
     }
 
+    public string GetComparisonKey(StorageLocation location)
+    {
+        (string deviceId, string relativePath) = WpdLocatorCodec.Decode(location);
+        return (deviceId + "\0" + relativePath).ToUpperInvariant();
+    }
+
     public bool IsDescendant(StorageLocation parent, StorageLocation candidate)
     {
         (string parentDevice, string parentPath) = WpdLocatorCodec.Decode(parent);

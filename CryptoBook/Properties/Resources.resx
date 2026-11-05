@@ -862,6 +862,8 @@
   <data name="Explorer.ProtectedCopiesResult" xml:space="preserve"><value>Created protected copies: {0}. Already protected files skipped: {1}.{2}Destination: {3}. Existing files and sources were preserved; name conflicts received unique names.</value></data>
   <data name="Security.ProtectedCopyVerificationFailed" xml:space="preserve"><value>The protected copy failed verification because its stored source type does not match the original.</value></data>
   <data name="Security.ProtectedCopyNameUnknown" xml:space="preserve"><value>Could not determine the protected copy file name.</value></data>
+  <data name="Security.LinkedDirectoryNotSupported" xml:space="preserve"><value>Select a regular folder instead of a symbolic link or junction.</value></data>
+  <data name="Security.DestinationMustBeDirectory" xml:space="preserve"><value>The destination must be a folder.</value></data>
   <data name="File.DocumentTemplate" xml:space="preserve"><value>Document template</value></data>
   <data name="Settings.DefaultDocumentTemplate" xml:space="preserve"><value>Default new document template</value></data>
   <data name="Settings.DefaultDocumentTemplate.Description" xml:space="preserve"><value>This template will be selected when creating a new document. You can choose another template or an empty document in the creation dialog.</value></data>
@@ -1420,4 +1422,26 @@ Peak RAM: {5} MB; GPU memory: {6} MB.
   <data name="Recovery.RestoreCrash.Description" xml:space="preserve"><value>Open a saved crash copy of unsaved work</value></data>
   <data name="Recovery.RestoreLock" xml:space="preserve"><value>Restore snapshot after key reset</value></data>
   <data name="Recovery.RestoreLock.Description" xml:space="preserve"><value>Restore protected work using its original key</value></data>
+  <data name="Explorer.RecycleSpaceUnknown" xml:space="preserve"><value>Could not determine the available Recycle Bin capacity. No items were deleted. Check the Recycle Bin settings and try again.</value></data>
+  <data name="Explorer.PermanentDeleteWholeSelectionWarning" xml:space="preserve"><value>The Recycle Bin is unavailable or cannot hold the entire selection. Permanently delete ALL selected items ({0})? They cannot be restored from the Recycle Bin. Nothing has been deleted yet.&#10;&#10;{1}</value></data>
+  <data name="Explorer.RecycleSpaceLine" xml:space="preserve"><value>{0}: selected — {1:N2} MiB; available in Recycle Bin — {2:N2} MiB.</value></data>
+  <data name="Explorer.DeletingPermanently" xml:space="preserve"><value>Permanently deleting…</value></data>
+  <data name="Explorer.PermanentDeleteFailed" xml:space="preserve"><value>Could not permanently delete an item. Items already deleted cannot be restored from the Recycle Bin.</value></data>
+  <data name="ImageEdit.Title" xml:space="preserve"><value>Edit image</value></data>
+  <data name="ImageEdit.Contrast" xml:space="preserve"><value>Contrast</value></data>
+  <data name="ImageEdit.Brightness" xml:space="preserve"><value>Brightness</value></data>
+  <data name="ImageEdit.Saturation" xml:space="preserve"><value>Saturation</value></data>
+  <data name="ImageEdit.Width" xml:space="preserve"><value>Width (pixels)</value></data>
+  <data name="ImageEdit.Height" xml:space="preserve"><value>Height (pixels)</value></data>
+  <data name="ImageEdit.KeepAspectRatio" xml:space="preserve"><value>Keep aspect ratio</value></data>
+  <data name="ImageEdit.Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="ImageEdit.SaveTitle" xml:space="preserve"><value>Save edited image</value></data>
+  <data name="ImageEdit.InvalidSize" xml:space="preserve"><value>Enter dimensions from 1 to 32768 pixels, up to 100 megapixels.</value></data>
+  <data name="ImageEdit.UnsupportedFormat" xml:space="preserve"><value>Choose PNG, JPEG, BMP or TIFF.</value></data>
+  <data name="ImageEdit.FormatHint" xml:space="preserve"><value>Saves a single frame without source metadata. JPEG and BMP use a white background for transparency.</value></data>
+  <data name="ImageEdit.EncryptedHint" xml:space="preserve"><value>This protected image will be saved as an unencrypted copy.</value></data>
+  <data name="ImageEdit.Saving" xml:space="preserve"><value>Saving image…</value></data>
+  <data name="ImageEdit.Cancelled" xml:space="preserve"><value>Saving cancelled.</value></data>
+  <data name="ImageEdit.SaveFailed" xml:space="preserve"><value>Could not save the image.</value></data>
+  <data name="ImageEdit.PreviewFailed" xml:space="preserve"><value>Could not update the preview.</value></data>
 </root>

@@ -36,5 +36,25 @@ namespace CryptoBook.Tests
             Assert.True(host.IsClosing);
             Assert.True(host.IsClosed);
         }
+        [WpfFact]
+        public void CloseCanceledByLaterHandler_DoesNotLeaveHostInClosingState()
+        {
+            using Autofac.IContainer container = new ContainerBuilder().Build();
+            using ILifetimeScope scope = container.BeginLifetimeScope();
+            var window = new Window();
+            using var host = new WindowHost(Guid.NewGuid(), scope, window);
+            CancelEventHandler cancel = (_, args) => args.Cancel = true;
+            window.Closing += cancel;
+
+            window.Close();
+
+            Assert.False(host.IsClosing);
+            Assert.False(host.IsClosed);
+
+            window.Closing -= cancel;
+            window.Close();
+
+            Assert.True(host.IsClosed);
+        }
     }
 }

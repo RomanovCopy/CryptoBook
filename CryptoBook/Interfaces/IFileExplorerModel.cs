@@ -12,6 +12,7 @@ namespace CryptoBook.Interfaces
 {
     public interface IFileExplorerModel:IModel,IWindowWithId,IWindowOptions
     {
+        event Func<Task>? ViewRefreshRequested;
         double LeftColumnPercent { get; set; }
         double RightColumnPercent { get; set; }
         bool IsHiddenFilesVisible { get; set; } 

@@ -83,9 +83,6 @@ public sealed class FileExplorerArchitectureTests
         Assert.Contains(
             ".CreateProtectedCopiesAsync(",
             modelSource);
-        Assert.Contains(
-            "items.All(item => item is IFileItem",
-            modelSource);
     }
 
     [Fact]
@@ -325,7 +322,8 @@ public sealed class FileExplorerArchitectureTests
         var service = new FileExplorerService(
             windows,
             new FileManagerService([]));
-        Action<MediaCatalogSelection> handler = _ => { };
+        MediaCatalogSelection? selected = null;
+        Action<MediaCatalogSelection> handler = value => selected = value;
 
         service.ShowFileSelection(@"C:\Media", handler);
 
@@ -336,9 +334,84 @@ public sealed class FileExplorerArchitectureTests
         Assert.Equal(
             FileExplorerMode.SelectFile,
             windows.Arguments?[FileExplorerService.ModeContextKey]);
-        Assert.Same(
-            handler,
+        var selectionHandler = Assert.IsType<Action<MediaCatalogSelection>>(
             windows.Arguments?[FileExplorerService.FileSelectionHandlerContextKey]);
+        var selection = new MediaCatalogSelection(@"C:\Media\video.mp4", []);
+        selectionHandler(selection);
+        Assert.Same(selection, selected);
+    }
+
+    [Fact]
+    public void FileExplorerService_PersistentSelection_ReusesWindowAndReplacesHandler()
+    {
+        var windows = new WindowManagerStub();
+        var service = new FileExplorerService(windows, new FileManagerService([]));
+        var firstSelections = new List<MediaCatalogSelection>();
+        var currentSelections = new List<MediaCatalogSelection>();
+        service.ShowFileSelection(@"C:\Media", firstSelections.Add);
+        Guid windowId = windows.CreatedWindowId;
+        var handler = Assert.IsType<Action<MediaCatalogSelection>>(
+            windows.Arguments?[FileExplorerService.FileSelectionHandlerContextKey]);
+        var first = new MediaCatalogSelection(@"C:\Media\first.jpg", []);
+        handler(first);
+
+        service.ShowFileSelection(@"C:\Other", currentSelections.Add);
+        service.ShowFileSelection(null, currentSelections.Add);
+        var second = new MediaCatalogSelection(@"C:\Media\second.jpg", []);
+        handler(second);
+        handler(first);
+
+        Assert.Equal(1, windows.CreateCount);
+        Assert.Equal(1, windows.ShowCount);
+        Assert.Equal([windowId, windowId], windows.ActivatedWindowIds);
+        Assert.Equal(@"C:\Media", windows.Arguments?[FileExplorerService.InitialDirectoryContextKey]);
+        Assert.Equal([first], firstSelections);
+        Assert.Equal([second, first], currentSelections);
+    }
+
+    [Fact]
+    public void FileExplorerService_PersistentSelection_RecreatesClosedWindow()
+    {
+        var windows = new WindowManagerStub();
+        var service = new FileExplorerService(windows, new FileManagerService([]));
+        var selections = new List<MediaCatalogSelection>();
+        service.ShowFileSelection(null, _ => Assert.Fail("Closed window handler was invoked."));
+        Guid firstWindowId = windows.CreatedWindowId;
+        var oldHandler = Assert.IsType<Action<MediaCatalogSelection>>(
+            windows.Arguments?[FileExplorerService.FileSelectionHandlerContextKey]);
+        windows.CloseWindow(firstWindowId);
+
+        service.ShowFileSelection(@"C:\Other", selections.Add);
+        var handler = Assert.IsType<Action<MediaCatalogSelection>>(
+            windows.Arguments?[FileExplorerService.FileSelectionHandlerContextKey]);
+        var selection = new MediaCatalogSelection(@"C:\Other\video.mp4", []);
+        oldHandler(selection);
+        handler(selection);
+
+        Assert.Equal(2, windows.CreateCount);
+        Assert.Equal(2, windows.ShowCount);
+        Assert.NotEqual(firstWindowId, windows.CreatedWindowId);
+        Assert.Empty(windows.ActivatedWindowIds);
+        Assert.Equal([selection], selections);
+    }
+
+    [Fact]
+    public async Task FileExplorerService_PickersAndManageWindow_DoNotReplacePersistentSelection()
+    {
+        var windows = new WindowManagerStub();
+        var service = new FileExplorerService(windows, new FileManagerService([]));
+        service.ShowFileSelection(@"C:\Media", _ => { });
+        Guid selectionWindowId = windows.CreatedWindowId;
+
+        service.Show();
+        await service.PickFileAsync(null, CancellationToken.None);
+        await service.PickFolderAsync(null, CancellationToken.None);
+        service.ShowFileSelection(null, _ => { });
+
+        Assert.Equal(4, windows.CreateCount);
+        Assert.Equal(2, windows.ShowCount);
+        Assert.Equal(2, windows.ShowDialogCount);
+        Assert.Equal([selectionWindowId], windows.ActivatedWindowIds);
     }
 
     [WpfFact]
@@ -418,7 +491,9 @@ public sealed class FileExplorerArchitectureTests
 
         Assert.Contains("items.All(item => item.Location.IsLocal)", modelSource);
         Assert.Contains("Explorer.PermanentDeleteAndroidWarning", modelSource);
-        Assert.Contains("Explorer.RecoverableDeleteWarning", modelSource);
+        string coordinatorSource = File.ReadAllText(FindRepositoryFile(
+            "CryptoBook", "Services", "FileOperationCoordinator.cs"));
+        Assert.Contains("Explorer.RecoverableDeleteWarning", coordinatorSource);
         Assert.Contains("ShowConfirmation(confirmationId)", modelSource);
     }
 
@@ -494,6 +569,10 @@ public sealed class FileExplorerArchitectureTests
         public IReadOnlyDictionary<string, object?>? Arguments { get; private set; }
         public int ShowCount { get; private set; }
         public int ShowDialogCount { get; private set; }
+        public int CreateCount { get; private set; }
+        public Guid CreatedWindowId { get; private set; }
+        public List<Guid> ActivatedWindowIds { get; } = [];
+        private readonly HashSet<Guid> openWindowIds = [];
 
         public Guid CreateWindow<T>(
             IReadOnlyDictionary<string, object?>? args = null)
@@ -501,7 +580,10 @@ public sealed class FileExplorerArchitectureTests
         {
             CreatedType = typeof(T);
             Arguments = args;
-            return Guid.NewGuid();
+            CreateCount++;
+            CreatedWindowId = Guid.NewGuid();
+            openWindowIds.Add(CreatedWindowId);
+            return CreatedWindowId;
         }
 
         public Guid CreateSiblingWindow<T>(
@@ -515,9 +597,9 @@ public sealed class FileExplorerArchitectureTests
         public TResult? GetResult<TResult>(Guid guid) => default;
         public void ShowWindow(Guid windowId) => ShowCount++;
         public void ShowWindowDialog(Guid windowId) => ShowDialogCount++;
-        public void ActivateWindow(Guid windowId) { }
-        public void CloseWindow(Guid windowId) { }
-        public bool IsWindowOpen(Guid windowId) => false;
+        public void ActivateWindow(Guid windowId) => ActivatedWindowIds.Add(windowId);
+        public void CloseWindow(Guid windowId) => openWindowIds.Remove(windowId);
+        public bool IsWindowOpen(Guid windowId) => openWindowIds.Contains(windowId);
         public WindowHost? FindHostWindow(Guid windowId) => null;
     }
 

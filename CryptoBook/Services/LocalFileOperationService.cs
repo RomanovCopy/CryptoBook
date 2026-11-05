@@ -11,7 +11,8 @@ namespace CryptoBook.Services;
 
 /// <summary>Owns native local paths; the coordinator only routes provider locations.</summary>
 internal sealed class LocalFileOperationService(IFileManagerService fileManager, IStorageFacade storage,
-    IRecycleBinService recycleBin)
+    IRecycleBinService recycleBin,
+    Func<RecycleBinDeletionPlan, IReadOnlyList<string>, CancellationToken, Task<bool>>? confirmDeletion = null)
 {
     private readonly IFileManagerService _fileManager = fileManager;
     private readonly IStorageFacade _storage = storage;
@@ -97,26 +98,29 @@ internal sealed class LocalFileOperationService(IFileManagerService fileManager,
     internal async Task<FileOperationBatchResult> DeleteAsync(string[] sources, IProgressReporter progress,
         CancellationToken token)
     {
-        int count = 0;
-        var results = new List<FileOperationResult>();
         try
         {
-            foreach(string path in sources)
+            string[] paths = sources.Select(path => _storage.Resolve(path).OpaqueId).ToArray();
+            RecycleBinDeletionPlan plan = await recycleBin.PlanDeletionAsync(paths, token);
+            if(!plan.IsKnown)
+                return new([FileOperationResult.Fail(LocalizationManager.GetString("Explorer.RecycleSpaceUnknown"))], 0, 0, false, false);
+            token.ThrowIfCancellationRequested();
+            bool confirmed = confirmDeletion is null ? plan.Fits
+                : await confirmDeletion(plan, paths, token);
+            if(!confirmed) return new([], 0, 0, true, false);
+            token.ThrowIfCancellationRequested();
+            if(!plan.Fits)
             {
-                token.ThrowIfCancellationRequested();
-                string source = _storage.Resolve(path).OpaqueId;
-                FileOperationResult result = await recycleBin.RecycleAsync(source, token);
-                results.Add(result);
-                if(!result.Success) return new(results, count, 0, false, count > 0);
-                progress.Report((double)++count / sources.Length, path);
+                progress.Report(null, LocalizationManager.GetString("Explorer.DeletingPermanently"));
+                return await recycleBin.DeletePermanentlyAsync(paths, progress, token);
             }
-            return new(results, count, 0, token.IsCancellationRequested, count > 0);
+            progress.Report(null, LocalizationManager.GetString("Explorer.Deleting"));
+            return await recycleBin.RecycleBatchAsync(paths, progress, token);
         }
-        catch(OperationCanceledException) { return new(results, count, 0, true, count > 0); }
+        catch(OperationCanceledException) { return new([], 0, 0, true, false); }
         catch(Exception e)
         {
-            results.Add(FileOperationResult.Fail(e.Message));
-            return new(results, count, 0, false, count > 0);
+            return new([FileOperationResult.Fail(e.Message)], 0, 0, false, false);
         }
     }
 

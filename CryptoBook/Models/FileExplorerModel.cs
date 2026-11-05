@@ -21,6 +21,7 @@ namespace CryptoBook.Models
 {
     public class FileExplorerModel: ViewModelBase, IFileExplorerModel
     {
+        public event Func<Task>? ViewRefreshRequested;
         private readonly SemaphoreSlim _gate = new(1, 1);
         private readonly IFileManagerService _fileManagerService;
         private readonly IStorageFacade _storage;
@@ -247,9 +248,9 @@ namespace CryptoBook.Models
             return !IsCurrentDirectoryUnavailable &&
                 _keyProvider.HasKey &&
                 items.Count > 0 &&
-                items.All(item => item is IFileItem && Supports(
-                    item,
-                    StorageProviderCapabilities.Encrypt));
+                items.All(item =>
+                    (item is IFileItem || item is IDirectoryItem && item.Location.IsLocal) &&
+                    Supports(item, StorageProviderCapabilities.Encrypt));
         }
         public bool CanExecute_EncryptCommand(object? obj)
         {
@@ -562,11 +563,11 @@ namespace CryptoBook.Models
             if(items.Count == 0)
                 return;
 
+            if(!items.All(item => item.Location.IsLocal))
             {
-                bool local = items.All(item => item.Location.IsLocal);
                 Guid confirmationId = await _messageService.ShowMessage(
-                    LocalizationManager.GetString(local ? "Common.Delete" : "Explorer.PermanentDeleteTitle"),
-                    LocalizationManager.GetString(local ? "Explorer.RecoverableDeleteWarning" : "Explorer.PermanentDeleteAndroidWarning"),
+                    LocalizationManager.GetString("Explorer.PermanentDeleteTitle"),
+                    LocalizationManager.GetString("Explorer.PermanentDeleteAndroidWarning"),
                     true);
                 if(!_messageService.ShowConfirmation(confirmationId))
                     return;
@@ -590,7 +591,7 @@ namespace CryptoBook.Models
                 {
                     await _messageService.ShowMessage(
                         LocalizationManager.GetString("Explorer.DeleteCanceledTitle"),
-                        LocalizationManager.GetString(items.All(item => item.Location.IsLocal)
+                        LocalizationManager.GetString(items.All(item => item.Location.IsLocal) && result.PermanentlyDeletedCount == 0
                             ? "Explorer.RecycleCanceledPartial" : "Explorer.DeleteCanceledPartial"));
                 }
 
@@ -697,7 +698,7 @@ namespace CryptoBook.Models
             {
                 string? initialDirectory = _storage.GetParent(items[0].Location)
                     is StorageLocation parent ? _storage.Format(parent) : null;
-                string? destinationDirectory = items.Count == 1
+                string? destinationDirectory = items.Count == 1 && items[0] is IFileItem
                     ? initialDirectory
                     : await _folderPickerService.PickFolderAsync(
                         initialDirectory,
@@ -706,29 +707,15 @@ namespace CryptoBook.Models
                     return;
 
                 FileOperationBatchResult result =
-                    await _progressDialogService.RunAsync(
+                    await RunAndRefreshAsync(
                         LocalizationManager.GetString(
                             "Explorer.CreatingProtectedCopies"),
-                        async (progress, token) =>
-                        {
-                            FileOperationBatchResult operationResult =
-                                await _fileSecurityService
-                                    .CreateProtectedCopiesAsync(
-                                        items,
-                                        destinationDirectory,
-                                        progress,
-                                        token);
-
-                            progress.Report(
-                                null,
-                                LocalizationManager.GetString(
-                                    "Explorer.RefreshingAfterOperation"));
-                            await RefreshOperationContainersAsync(
-                                items.Select(item => item.FullPath),
-                                destinationDirectory,
-                                token);
-                            return operationResult;
-                        });
+                        (progress, token) => _fileSecurityService.CreateProtectedCopiesAsync(
+                            items, destinationDirectory, progress, token),
+                        () => RefreshOperationContainersAsync(
+                            items.Select(item => item.FullPath),
+                            destinationDirectory,
+                            CancellationToken.None));
 
                 if(result.Canceled)
                     return;
@@ -1774,27 +1761,14 @@ namespace CryptoBook.Models
                     if(!await ConfirmBatchSourceReplacementAsync(items.Count, decrypt: false))
                         return;
 
-                    FileOperationBatchResult batchResult = await _progressDialogService.RunAsync(
+                    FileOperationBatchResult batchResult = await RunAndRefreshAsync(
                         LocalizationManager.GetString(
                             decrypt
                                 ? "Explorer.Decryption"
                                 : "Explorer.Encryption"),
-                        async (progress, token) =>
-                        {
-                            FileOperationBatchResult operationResult =
-                                await _fileSecurityService.EncryptAsync(
-                                    items,
-                                    progress,
-                                    token);
-
-                            progress.Report(
-                                null,
-                                LocalizationManager.GetString(
-                                    "Explorer.RefreshingAfterOperation"));
-                            await RefreshFileSecurityItemsAsync(
-                                items.Take(operationResult.Results.Count));
-                            return operationResult;
-                        });
+                        (progress, token) => _fileSecurityService.EncryptAsync(
+                            items, progress, token),
+                        () => RefreshFileSecurityItemsAsync(items));
 
                     if(batchResult.Canceled)
                         return;
@@ -1857,36 +1831,25 @@ namespace CryptoBook.Models
                     return;
                 }
 
-                FileOperationResult result = await _progressDialogService.RunAsync(
+                FileOperationResult result = await RunAndRefreshAsync(
                     LocalizationManager.GetString(
                         decrypt
                             ? "Explorer.Decryption"
                             : "Explorer.Encryption"),
-                    async (progress, token) =>
-                    {
-                        FileOperationResult operationResult = decrypt
-                            ? await _fileSecurityService.DecryptAsync(
+                    (progress, token) => decrypt
+                            ? _fileSecurityService.DecryptAsync(
                                 item,
                                 targetPath,
                                 mode,
                                 progress,
                                 token)
-                            : await _fileSecurityService.EncryptAsync(
+                            : _fileSecurityService.EncryptAsync(
                                 item,
                                 targetPath,
                                 mode,
                                 progress,
-                                token);
-
-                        progress.Report(
-                            null,
-                            LocalizationManager.GetString(
-                                "Explorer.RefreshingAfterOperation"));
-                        await RefreshFileSecurityItemsAsync(
-                            [item],
-                            targetPath);
-                        return operationResult;
-                    });
+                                token),
+                    () => RefreshFileSecurityItemsAsync([item], targetPath));
 
                 if(!result.Success)
                 {
@@ -1918,7 +1881,7 @@ namespace CryptoBook.Models
                     return;
 
                 FileOperationBatchResult directoryResult =
-                    await _progressDialogService.RunAsync(
+                    await RunAndRefreshAsync(
                         LocalizationManager.GetString(
                             "Explorer.Decryption"),
                         (progress, token) =>
@@ -1926,7 +1889,8 @@ namespace CryptoBook.Models
                                 [item],
                                 destinationDirectory,
                                 progress,
-                                token));
+                                token),
+                        () => RefreshFileSecurityItemsAsync([item], destinationDirectory));
                 if(!directoryResult.Success)
                 {
                     string failures = string.Join(
@@ -1942,9 +1906,6 @@ namespace CryptoBook.Models
                             failures));
                 }
 
-                await RefreshFileSecurityItemsAsync(
-                    [item],
-                    destinationDirectory);
                 await ShowDecryptionSummaryAsync(directoryResult);
                 return;
             }
@@ -1988,7 +1949,7 @@ namespace CryptoBook.Models
                 if(string.IsNullOrWhiteSpace(destinationPath))
                     return;
 
-                await _progressDialogService.RunAsync(
+                await RunAndRefreshAsync(
                     LocalizationManager.GetString(
                         "Explorer.SavingDecryptedCopy"),
                     async (progress, token) =>
@@ -1999,11 +1960,8 @@ namespace CryptoBook.Models
                             progress,
                             token);
                         return true;
-                    });
-
-                await RefreshFileSecurityItemsAsync(
-                    [item],
-                    destinationPath);
+                    },
+                    () => RefreshFileSecurityItemsAsync([item], destinationPath));
             }
             finally
             {
@@ -2087,7 +2045,7 @@ namespace CryptoBook.Models
             if(string.IsNullOrWhiteSpace(destinationPath))
                 return;
 
-            string publishedPath = await _progressDialogService.RunAsync(
+            await RunAndRefreshAsync(
                 LocalizationManager.GetString(
                     "Explorer.SavingDecryptedCopy"),
                 (progress, token) => _decryptionExportService.PublishAsync(
@@ -2095,9 +2053,8 @@ namespace CryptoBook.Models
                     options,
                     destinationPath,
                     progress,
-                    token));
-
-            await RefreshFileSecurityItemsAsync([item], publishedPath);
+                    token),
+                () => RefreshFileSecurityItemsAsync([item], destinationPath));
         }
 
         private async Task<bool> ConfirmPlainTextSourceReplacementAsync(
@@ -2231,31 +2188,19 @@ namespace CryptoBook.Models
             }
 
             FileOperationBatchResult batchResult =
-                await _progressDialogService.RunAsync(
+                await RunAndRefreshAsync(
                     LocalizationManager.GetString("Explorer.Decryption"),
-                    async (progress, token) =>
-                    {
-                        FileOperationBatchResult operationResult =
-                            destinationDirectory is null
-                                ? await _fileSecurityService.DecryptAsync(
+                    (progress, token) => destinationDirectory is null
+                                ? _fileSecurityService.DecryptAsync(
                                     items,
                                     progress,
                                     token)
-                                : await _fileSecurityService.DecryptAsync(
+                                : _fileSecurityService.DecryptAsync(
                                     items,
                                     destinationDirectory,
                                     progress,
-                                    token);
-
-                        progress.Report(
-                            null,
-                            LocalizationManager.GetString(
-                                "Explorer.RefreshingAfterOperation"));
-                        await RefreshFileSecurityItemsAsync(
-                            items.Take(operationResult.Results.Count),
-                            destinationDirectory);
-                        return operationResult;
-                    });
+                                    token),
+                    () => RefreshFileSecurityItemsAsync(items, destinationDirectory));
 
             if(batchResult.Canceled)
                 return;
@@ -2315,6 +2260,24 @@ namespace CryptoBook.Models
             return _messageService.ShowConfirmation(messageId);
         }
 
+        private Task<T> RunAndRefreshAsync<T>(
+            string operationName,
+            Func<IProgressReporter, CancellationToken, Task<T>> operation,
+            Func<Task> synchronizeViewAsync) =>
+            _progressDialogService.RunAsync(operationName, async (progress, token) =>
+            {
+                try
+                {
+                    return await operation(progress, token);
+                }
+                finally
+                {
+                    progress.Report(null, LocalizationManager.GetString(
+                        "Explorer.RefreshingAfterOperation"));
+                    await synchronizeViewAsync();
+                }
+            });
+
         private async Task RefreshFileSecurityItemsAsync(
             IEnumerable<ISystemItem> items,
             string? singleTargetPath = null)
@@ -2350,6 +2313,7 @@ namespace CryptoBook.Models
                         container,
                         CancellationToken.None);
                 }
+                await RefreshViewAfterOperationAsync(CancellationToken.None);
             }
             catch(Exception ex)
             {
@@ -2439,6 +2403,7 @@ namespace CryptoBook.Models
 
         private async Task RefreshContainerAsync( IContainerSystemItem container, CancellationToken token)
         {
+            await container.FlushMonitoringAsync(token);
             // Полный снимок устраняет пропущенные события FileSystemWatcher.
             var children = await _fileManagerService.BrowseAsync(
                 container.FullPath,
@@ -2458,6 +2423,7 @@ namespace CryptoBook.Models
                 token);
 
             container.IsLoaded = true;
+            await container.FlushMonitoringAsync(token);
             await WaitForFileExplorerRenderAsync(token);
             if(PathsEqual(container.FullPath, CurrentPath))
                 await RefreshRecoveryAvailabilityAsync(token);
@@ -2523,6 +2489,17 @@ namespace CryptoBook.Models
             {
                 await RefreshContainerAsync(container, token);
             }
+            await RefreshViewAfterOperationAsync(token);
+        }
+
+        private async Task RefreshViewAfterOperationAsync(CancellationToken token)
+        {
+            if(ViewRefreshRequested is { } handlers)
+            {
+                foreach(Func<Task> refresh in handlers.GetInvocationList())
+                    await refresh();
+            }
+            await WaitForFileExplorerRenderAsync(token);
         }
 
         public async void Execute_DropCommand(object? obj)

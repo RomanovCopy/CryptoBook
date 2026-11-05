@@ -29,17 +29,18 @@ namespace CryptoBook.DTO
         public ILifetimeScope Scope { get; }
         public Window Window { get; }
 
-        public bool IsClosing { get; private set; }
+        private CancelEventArgs? closingArgs;
+        public bool IsClosing => IsClosed || closingArgs is { Cancel: false };
         public bool IsClosed { get; private set; }
 
         private void OnClosing(object? sender, CancelEventArgs e)
         {
-            IsClosing = !e.Cancel;
+            // Поздние обработчики Closing тоже могут отменить закрытие.
+            closingArgs = e;
         }
 
         private void OnClosed(object? sender, EventArgs e)
         {
-            IsClosing = true;
             IsClosed = true;
             Window.Closing -= OnClosing;
             Window.Closed -= OnClosed;
