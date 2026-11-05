@@ -59,6 +59,7 @@
                                FontWeight="SemiBold"
                                Margin="4,0,4,4"/>
                     <ComboBox ItemsSource="{Binding Bookmarks}"
+                              Style="{StaticResource DropUpComboBoxStyle}"
                               SelectedItem="{Binding SelectedBookmark, Mode=TwoWay}"
                               DisplayMemberPath="Name"
                               Margin="3"

@@ -145,6 +145,7 @@ public sealed class DocumentLineSpacingPreferenceTests
 
     private sealed class BookmarkServiceStub: IBookmarkService
     {
+        public event EventHandler? MetadataChanged { add { } remove { } }
         public event PropertyChangedEventHandler? PropertyChanged
         {
             add { }

@@ -140,6 +140,7 @@ namespace CryptoBook.Services
                 new TextRange(parked.Document.ContentStart, parked.Document.ContentEnd)
                     .Save(stream, System.Windows.DataFormats.XamlPackage);
                 content = XamlPackageDocumentAppearanceCodec.Preserve(parked.Document, stream.ToArray());
+                content = XamlPackageBookmarkCodec.Preserve(parked.Document, content);
             }
             return new(parked.FilePath, parked.DisplayName, parked.Template?.Id,
                 parked.Revision, parked.SavedRevision, parked.Markdown is not null, content,
@@ -164,6 +165,7 @@ namespace CryptoBook.Services
                 new TextRange(document.ContentStart, document.ContentEnd)
                     .Load(stream, System.Windows.DataFormats.XamlPackage);
                 XamlPackageDocumentAppearanceCodec.Restore(document, snapshot.Content);
+                XamlPackageBookmarkCodec.Restore(document, snapshot.Content);
             }
             IFileTemplate? restoredTemplate = snapshot.TemplateId switch
             {
@@ -205,6 +207,8 @@ namespace CryptoBook.Services
             this.templateRegistry = templateRegistry;
             this.bookmarks = bookmarks;
             richTextBox.Service.TextChanged += OnDocumentChanged;
+            if(bookmarks is not null)
+                bookmarks.MetadataChanged += OnBookmarkMetadataChanged;
             if(markdownDocument is not null)
                 markdownDocument.PropertyChanged += OnMarkdownDocumentChanged;
         }
@@ -364,6 +368,7 @@ namespace CryptoBook.Services
             try
             {
                 richTextBox.ReplaceDocument(document);
+                bookmarks?.RebuildIndexFromDocument(richTextBox);
                 if(markdownDocument is not null)
                 {
                     if(markdownSource is not null)
@@ -384,6 +389,7 @@ namespace CryptoBook.Services
                 inactiveDocument = previousInactive;
                 if(!ReferenceEquals(richTextBox.Document, previousDocument))
                     richTextBox.ReplaceDocument(previousDocument);
+                bookmarks?.RebuildIndexFromDocument(richTextBox);
                 richTextBox.IsReadOnly = previousIsReadOnly;
                 if(markdownDocument is not null)
                 {
@@ -415,6 +421,7 @@ namespace CryptoBook.Services
             try
             {
                 richTextBox.ClearDocument();
+                bookmarks?.RebuildIndexFromDocument(richTextBox);
                 markdownDocument?.Deactivate();
                 richTextBox.IsReadOnly = false;
             }
@@ -502,6 +509,12 @@ namespace CryptoBook.Services
         {
             // Загрузка и программная очистка временно подавляют TextChanged,
             // иначе только что открытый документ сразу считался бы изменённым.
+            if(!suppressDocumentChanges)
+                MarkDirty();
+        }
+
+        private void OnBookmarkMetadataChanged(object? sender, EventArgs args)
+        {
             if(!suppressDocumentChanges)
                 MarkDirty();
         }

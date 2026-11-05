@@ -1,11 +1,11 @@
 # Lesezeichen, Notizen und interne Links
 
-Ein Lesezeichen markiert eine Position im normalen Dokument. Die aktuelle XamlPackage-Speicherung stellt Lesezeichenanker und Notizen nach erneutem Öffnen nicht wieder her. Der Linktext kann bleiben, während sein Ziel nicht mehr funktioniert. Verlassen Sie sich bei gespeicherten Dateien nicht allein auf Lesezeichen.
+Ein Lesezeichen markiert eine Position im normalen Dokument. Speichern Sie als XamlPackage oder als geschütztes CryptoBook-Dokument, damit Positionen, Namen, Notizen und interne Links beim erneuten Öffnen erhalten bleiben. Lesezeichen, die beim Speichern in früheren Versionen verloren gingen, werden nicht automatisch wiederhergestellt.
 
 ## Schritte
 
 1. Setzen Sie die Einfügemarke und öffnen Sie **Lesezeichen** über dem Dokument. Geben Sie einen Namen ein und klicken Sie **An Cursorposition hinzufügen**.
-2. Wählen Sie einen Eintrag. **Zum ausgewählten Lesezeichen wechseln**, **Vorheriges Lesezeichen** und **Nächstes Lesezeichen** bewegen die Einfügemarke; die Nachbarnavigation läuft am Dokumentende wieder zum Anfang.
+2. Wählen Sie einen Eintrag. **Zum ausgewählten Lesezeichen wechseln**, **Vorheriges Lesezeichen** und **Nächstes Lesezeichen** zentrieren die Lesezeichenzeile vertikal im sichtbaren Editorbereich und heben sie kurz hervor. Die Dokumentränder begrenzen das Scrollen. Die Nachbarnavigation läuft am Dokumentende wieder zum Anfang; interne Links zentrieren und markieren ihr Lesezeichenziel ebenfalls.
 3. Geben Sie einen neuen Namen ein und klicken Sie **Ausgewähltes Lesezeichen umbenennen**. Für einen Link setzen Sie die Einfügemarke anderswo, geben Linktext ein und klicken **Link zum ausgewählten Lesezeichen einfügen**.
 4. Öffnen Sie **Lesezeichen-Manager öffnen**, wählen Sie einen Eintrag und ändern Sie seine Notiz. **Index aus Dokument aktualisieren** liest die Anker des aktuellen Dokuments neu ein.
 

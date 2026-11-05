@@ -30,13 +30,17 @@ namespace CryptoBook.Services
 
         protected override void RestoreDocumentProperties(
             System.Windows.Documents.FlowDocument document,
-            ReadOnlyMemory<byte> content) =>
+            ReadOnlyMemory<byte> content)
+        {
             XamlPackageDocumentAppearanceCodec.Restore(document, content);
+            XamlPackageBookmarkCodec.Restore(document, content);
+        }
 
         protected override byte[] PreserveDocumentProperties(
             System.Windows.Documents.FlowDocument document,
             byte[] content) =>
-            XamlPackageDocumentAppearanceCodec.Preserve(document, content);
+            XamlPackageBookmarkCodec.Preserve(document,
+                XamlPackageDocumentAppearanceCodec.Preserve(document, content));
 
         protected override ReadOnlyMemory<byte> PrepareLoadContent(
             ReadOnlyMemory<byte> content)

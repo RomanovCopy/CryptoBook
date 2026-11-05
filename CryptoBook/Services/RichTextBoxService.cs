@@ -611,6 +611,7 @@ namespace CryptoBook.Services
                     this.CaretPosition = position;
                     target.BringIntoView();
                     this.Focus();
+                    RichTextBoxNavigation.CenterCaretInView(this);
                     return true;
                 }
                 return false;

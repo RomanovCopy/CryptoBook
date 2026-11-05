@@ -17,6 +17,9 @@ namespace CryptoBook.Interfaces
         /// </summary>
         ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; }
 
+        /// <summary>Имя или заметка изменились без события TextChanged редактора.</summary>
+        event EventHandler? MetadataChanged;
+
 
         /// <summary>
         /// закладка с таким именем уже существует?

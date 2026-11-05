@@ -1,11 +1,11 @@
 # Bookmarks, notes and internal links
 
-A bookmark marks a position in an ordinary document. The current XamlPackage save does not restore bookmark anchors and notes after reopening. Link text may remain while its bookmark destination stops working. Do not rely on bookmarks as the only navigation in a saved file.
+A bookmark marks a position in an ordinary document. Save as XamlPackage or a protected CryptoBook document to preserve bookmark positions, names, notes and internal links when reopening. Bookmarks lost during saving in earlier versions cannot be restored automatically.
 
 ## Steps
 
 1. Position the caret and expand **Bookmarks** above the document. Enter a name and click **Add at caret position**.
-2. Select a bookmark. **Go to selected bookmark**, **Previous bookmark** and **Next bookmark** move the caret; adjacent navigation wraps around the document.
+2. Select a bookmark. **Go to selected bookmark**, **Previous bookmark** and **Next bookmark** center the bookmark line vertically in the editor viewport and briefly highlight it. Scrolling is limited by the document edges. Adjacent navigation wraps around the document; internal links also center and highlight their bookmark destinations.
 3. Enter a new name and click **Rename selected bookmark** to rename it. To insert a link, move the caret elsewhere, enter link text and click **Insert link to selected bookmark**.
 4. Open **Open bookmark manager**, select an entry and edit its note. **Refresh index from document** rereads anchors in the current document.
 

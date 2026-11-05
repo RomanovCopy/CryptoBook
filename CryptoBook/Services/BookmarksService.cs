@@ -25,6 +25,8 @@ namespace CryptoBook.Services
 
         public ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; } = [];
 
+        public event EventHandler? MetadataChanged;
+
         public BookmarksService(IRichTextBoxService service)
         {
             _ = service ?? throw new ArgumentNullException(nameof(service));
@@ -92,10 +94,11 @@ namespace CryptoBook.Services
 
             if(!index.TryGetValue(oldName, out var record))
                 throw new KeyNotFoundException($"Нет закладки «{oldName}».");
-            if(string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+            if(string.Equals(record.Entry.Name, newName, StringComparison.Ordinal))
                 return;
 
-            EnsureValidNewName(newName);
+            if(!string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+                EnsureValidNewName(newName);
             index.Remove(oldName);
             record.Entry.Name = newName;
             index[newName] = record;
@@ -118,6 +121,7 @@ namespace CryptoBook.Services
             service.CaretPosition = position;
             anchor.BringIntoView();
             service.Focus();
+            RichTextBoxNavigation.CenterCaretInView(service.Service);
             return true;
         }
 
@@ -282,7 +286,13 @@ namespace CryptoBook.Services
         {
             var anchor = FindAnchor(service.Document, record.AnchorId);
             if(anchor != null)
-                anchor.Tag = SerializeMetadata(record.Entry);
+            {
+                string metadata = SerializeMetadata(record.Entry);
+                if(Equals(anchor.Tag, metadata))
+                    return;
+                anchor.Tag = metadata;
+                MetadataChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void EnsureValidNewName(string name)

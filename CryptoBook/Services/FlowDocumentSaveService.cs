@@ -161,7 +161,10 @@ namespace CryptoBook.Services
 
                     range.Save( memory, GetDataFormat(template), preserveTextElements: true);
 
-                    return memory.ToArray();
+                    byte[] content = memory.ToArray();
+                    return template is SecureFileTemplate
+                        ? XamlPackageBookmarkCodec.Preserve(document, content)
+                        : content;
 
                 });
         }

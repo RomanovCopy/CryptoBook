@@ -70,13 +70,13 @@ namespace CryptoBook.Services
             if(newName.Length > 128 || newName.Any(char.IsControl) || newName.Contains('#'))
                 return ValidationResult.Fail(ValidationCode.NameInvalid,
                     LocalizationManager.GetString("Bookmarks.NameInvalid"));
-            if(string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+            if(string.Equals(oldName, newName, StringComparison.Ordinal))
                 return ValidationResult.Fail(ValidationCode.NameUnchanged,
                     LocalizationManager.GetString("Bookmarks.NameUnchanged"));
             if(!existsByName(oldName))
                 return ValidationResult.Fail(ValidationCode.NameNotFound,
                     LocalizationManager.Format("Bookmarks.NameNotFound", oldName));
-            if(existsByName(newName))
+            if(existsByName(newName) && !string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
                 return ValidationResult.Fail(ValidationCode.NameExists,
                     LocalizationManager.Format("Bookmarks.NameExists", newName));
             return ValidationResult.Success();
