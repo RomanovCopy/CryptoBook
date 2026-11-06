@@ -217,8 +217,8 @@ dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c R
 ./installer/Build-Installer.ps1 -Version 1.1.5.5
 ```
 
-`Run-ReleaseTests.ps1` runs all tests in ten isolated processes: AI integration, AI runtime,
-document search, worker cancellation, the batch rename window, image editor window, help, image layout, window relationships and the remaining tests. This prevents interference from process-wide WPF
+`Run-ReleaseTests.ps1` runs all tests in eleven isolated processes: AI integration, AI runtime,
+document search, worker cancellation, the batch rename window, image editor window, help, image layout, window relationships, bookmark preview and the remaining tests. This prevents interference from process-wide WPF
 application state. Validation results for the 1.1.5.5 candidate are recorded in [the release notes](docs/releases/v1.1.5.5.md).
 TRX reports are written to `artifacts/TestResults`; the installer is written to
 `artifacts/CryptoBook-Setup-1.1.5.5.exe`.
