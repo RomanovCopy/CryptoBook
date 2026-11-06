@@ -9,13 +9,15 @@ Ein Lesezeichen markiert eine Position im normalen Dokument. Speichern Sie als X
 3. Geben Sie einen neuen Namen ein und klicken Sie **Ausgewähltes Lesezeichen umbenennen**. Für einen Link setzen Sie die Einfügemarke anderswo, geben Linktext ein und klicken **Link zum ausgewählten Lesezeichen einfügen**.
 4. Öffnen Sie **Lesezeichen-Manager öffnen**, wählen Sie einen Eintrag und ändern Sie seine Notiz. **Index aus Dokument aktualisieren** liest die Anker des aktuellen Dokuments neu ein.
 
+In der Seitenvorschau öffnen diese Befehle und internen Links die Seite mit dem Lesezeichen, ohne den Vorschaumodus zu verlassen, und heben die Zielzeile für 2,5 Sekunden hervor. Die Hervorhebung ändert die Dokumentformatierung nicht. Lesezeichen und Links können nur im Editor eingefügt werden, auch im separaten Manager; Name und Linktext bleiben beim Moduswechsel erhalten. Interne Links und die Navigation zwischen benachbarten Lesezeichen aktualisieren in beiden Modi den ausgewählten Eintrag im Menü „Lesezeichen“.
+
 ![Lesezeichenbereich mit Namen, Navigation und Linkbefehlen](images/S15-a.png "Lesezeichenbereich mit Namen, Navigation und Linkbefehlen.")
 
 ![Lesezeichen-Manager mit bearbeitbarer Übungsnotiz](images/S15-b.png "Lesezeichen-Manager mit bearbeitbarer Übungsnotiz.")
 
 ## Prüfung, Rückgängigmachen und Grenzen
 
-Prüfen Sie Name und Ziel. **Ausgewähltes Lesezeichen löschen** entfernt den Anker, nicht die Datei. Korrigieren Sie leere oder doppelte Namen gemäß Panelmeldung. Das Schließen des Managers verwirft vorgenommene Änderungen nicht; speichern Sie ausdrücklich. Aktualisieren Sie den Index, wenn Textverschiebungen oder Löschungen ein Lesezeichen entfernen. TXT, XAML und RTF garantieren den Erhalt von Ankern und Notizen nicht.
+Prüfen Sie Name und Ziel. **Ausgewähltes Lesezeichen löschen** entfernt den Anker und wandelt alle Links dorthin in normalen Text um. Linktexte und benutzerdefinierte Formatierung sowie andere Lesezeichen und externe Links bleiben erhalten. Korrigieren Sie leere oder doppelte Namen gemäß Panelmeldung. Das Schließen des Managers verwirft vorgenommene Änderungen nicht; speichern Sie ausdrücklich. Aktualisieren Sie den Index, wenn Textverschiebungen oder Löschungen ein Lesezeichen entfernen. TXT, XAML und RTF garantieren den Erhalt von Ankern und Notizen nicht.
 
 ## Verwandte Themen
 

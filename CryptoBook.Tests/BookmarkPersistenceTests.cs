@@ -16,6 +16,28 @@ namespace CryptoBook.Tests;
 
 public sealed class BookmarkPersistenceTests
 {
+    [WpfFact]
+    public async Task RemovingBookmark_PersistsPlainCaptionsAndRemainingBookmarks()
+    {
+        var (editor, bookmarks) = CreateBookmarkedEditor();
+        string removedName = bookmarks.Bookmarks[0].Name;
+        string[] remainingNames = bookmarks.Bookmarks.Skip(1).Select(b => b.Name).ToArray();
+        Assert.True(bookmarks.Remove(editor, removedName));
+        Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
+        var handler = new XamlPackageDocumentFormatHandler(new WpfDispatcherService(Dispatcher.CurrentDispatcher));
+        byte[] bytes = await handler.SerializeAsync(editor.Document);
+        var reopened = CreateEditor();
+        await handler.LoadAsync(reopened.Document, bytes);
+        var restored = new BookmarksService(reopened);
+        restored.RebuildIndexFromDocument(reopened);
+
+        Assert.Equal(remainingNames, restored.Bookmarks.Select(b => b.Name));
+        Assert.False(restored.Exists(removedName));
+        Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(reopened.Document));
+        Assert.Equal(Text(editor.Document), Text(reopened.Document));
+        Assert.Contains("К разделу", Text(reopened.Document));
+    }
+
     [WpfTheory]
     [InlineData(false)]
     [InlineData(true)]

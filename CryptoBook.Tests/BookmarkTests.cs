@@ -6,12 +6,100 @@ using CryptoBook.Accessors;
 using CryptoBook.Models;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Media;
 using Xunit;
 
 namespace CryptoBook.Tests;
 
 public sealed class BookmarkTests
 {
+    [WpfFact]
+    public void Remove_UnlinksAllReferencesPreservingCaptionsFormattingAndOtherLinks()
+    {
+        var editor = CreateRichText("target", "other", "links");
+        var bookmarks = new BookmarksService(editor);
+        var paragraphs = editor.Document.Blocks.Cast<Paragraph>().ToArray();
+        editor.CaretPosition = paragraphs[0].ContentStart;
+        bookmarks.AddAtCaret(editor, "Target");
+        var target = bookmarks.Bookmarks[0].BookmarkUri!;
+        editor.CaretPosition = paragraphs[1].ContentStart;
+        bookmarks.AddAtCaret(editor, "Other");
+        var other = bookmarks.Bookmarks[1].BookmarkUri!;
+
+        var formatted = new Hyperlink(new Bold(new Run("first caption"))) { NavigateUri = target, FontSize = 21 };
+        var child = ((Bold)formatted.Inlines.FirstInline!).Inlines.FirstInline!;
+        paragraphs[2].Inlines.Add(new Span(formatted));
+        paragraphs[2].Inlines.Add(new Hyperlink(new Run("second caption")) { NavigateUri = target });
+        var otherLink = new Hyperlink(new Run("other link")) { NavigateUri = other };
+        var external = new Hyperlink(new Run("external")) { NavigateUri = new Uri("https://example.com/" + target) };
+        paragraphs[2].Inlines.Add(otherLink);
+        paragraphs[2].Inlines.Add(external);
+        var listLink = new Hyperlink(new Run("list caption")) {
+            NavigateUri = new Uri(target.OriginalString.Replace("#B", "#%42"), UriKind.Relative)
+        };
+        editor.Document.Blocks.Add(new System.Windows.Documents.List(new ListItem(new Paragraph(listLink))));
+        var tableLink = new Hyperlink(new Run("table caption")) { NavigateUri = target };
+        var table = new Table();
+        var group = new TableRowGroup();
+        var row = new TableRow();
+        row.Cells.Add(new TableCell(new Paragraph(tableLink)));
+        group.Rows.Add(row);
+        table.RowGroups.Add(group);
+        editor.Document.Blocks.Add(table);
+        paragraphs[2].Inlines.Add(new Floater(new Paragraph(
+            new Hyperlink(new Run("floating caption")) { NavigateUri = target })));
+        string before = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text.Replace("\u200B", "");
+        var window = new Window { Content = editor.Service, ShowInTaskbar = false, ShowActivated = false };
+        window.Show();
+        try
+        {
+            editor.Service.IsUndoEnabled = false;
+            editor.Service.IsUndoEnabled = true;
+            using var model = new BookmarksModel(editor, bookmarks, new BookmarkValidationService(bookmarks));
+            using var menu = new BookmarksViewModel(model, new StubWindowManager());
+            menu.SelectedBookmark = bookmarks.Bookmarks[0];
+            menu.Remove.Execute(null);
+
+            Assert.Equal(new[] { otherLink, external }, new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
+            Assert.Equal(before, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text.Replace("\u200B", ""));
+            Assert.Equal(FontWeights.Bold, child.FontWeight);
+            Assert.Equal(21, child.FontSize);
+            Assert.True(bookmarks.Exists("Other"));
+            Assert.False(bookmarks.Exists("Target"));
+            Assert.Null(menu.SelectedBookmark);
+            Assert.True(editor.CanUndo);
+            editor.Undo();
+            Assert.False(editor.CanUndo);
+            bookmarks.RebuildIndexFromDocument(editor);
+            Assert.True(bookmarks.Exists("Target"));
+            Assert.Equal(7, new FlowDocumentWalker().Find<Hyperlink>(editor.Document).Count());
+        }
+        finally { window.Close(); }
+    }
+
+    [WpfFact]
+    public void RemoveLegacyAnchor_PreservesVisibleContentAndNestedBookmarks()
+    {
+        var editor = CreateRichText("suffix");
+        var paragraph = (Paragraph)editor.Document.Blocks.FirstBlock!;
+        var inner = new Span(new Run("inner text")) { Name = "Inner" };
+        var outer = new Span(new Bold(new Run("visible text"))) { Name = "Outer", Foreground = Brushes.DarkGreen };
+        outer.Inlines.Add(inner);
+        paragraph.Inlines.InsertBefore(paragraph.Inlines.FirstInline!, outer);
+        paragraph.Inlines.Add(new Hyperlink(new Run("caption")) { NavigateUri = new Uri("#Outer", UriKind.Relative) });
+        var bookmarks = new BookmarksService(editor);
+        bookmarks.RebuildIndexFromDocument(editor);
+        string before = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text;
+
+        Assert.True(bookmarks.Remove(editor, "Outer"));
+        Assert.Equal(before, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+        Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
+        bookmarks.RebuildIndexFromDocument(editor);
+        Assert.False(bookmarks.Exists("Outer"));
+        Assert.True(bookmarks.Exists("Inner"));
+        Assert.Equal(Brushes.DarkGreen, inner.Foreground);
+    }
+
     [WpfFact]
     public void BookmarksEditorIcon_IsAvailableAsWpfResource()
     {

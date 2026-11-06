@@ -9,13 +9,15 @@ A bookmark marks a position in an ordinary document. Save as XamlPackage or a pr
 3. Enter a new name and click **Rename selected bookmark** to rename it. To insert a link, move the caret elsewhere, enter link text and click **Insert link to selected bookmark**.
 4. Open **Open bookmark manager**, select an entry and edit its note. **Refresh index from document** rereads anchors in the current document.
 
+In paged preview, these commands and internal links open the page containing the bookmark while keeping preview mode active, and highlight the destination line for 2.5 seconds. The highlight does not change document formatting. Creating bookmarks and inserting links are only available in the editor, including in the separate manager; the entered name and link text are retained when switching modes. Internal links and adjacent bookmark navigation update the selected entry in the Bookmarks menu in both modes.
+
 ![Bookmark panel with naming, navigation and link controls](images/S15-a.png "Bookmark panel with naming, navigation and link controls.")
 
 ![Bookmark manager with an editable practice note](images/S15-b.png "Bookmark manager with an editable practice note.")
 
 ## Check, undo and limitations
 
-Check the name and destination. **Delete selected bookmark** removes the anchor, not the document file. Correct an empty or duplicate name according to the panel message. Closing the manager does not cancel changes already made; save the document explicitly. Refresh the index if moving or deleting text removes a bookmark. TXT, XAML and RTF do not guarantee preservation of anchors and notes.
+Check the name and destination. **Delete selected bookmark** removes the anchor and turns all links to it into plain text, preserving captions and custom formatting; other bookmarks and external links are preserved. Correct an empty or duplicate name according to the panel message. Closing the manager does not cancel changes already made; save the document explicitly. Refresh the index if moving or deleting text removes a bookmark. TXT, XAML and RTF do not guarantee preservation of anchors and notes.
 
 ## Related topics
 

@@ -216,6 +216,7 @@
                               Style="{StaticResource EditorToolbarIconStyle}"/>
                     </Button>
                     <TextBox Text="{Binding LinkText, UpdateSourceTrigger=PropertyChanged}"
+                             IsEnabled="{Binding IsLinkInsertionEnabled}"
                              Padding="7,5"
                              Margin="0,3,3,3"
                              ToolTip="{Binding [Bookmarks.LinkTextHint], Source={StaticResource Res}}"/>

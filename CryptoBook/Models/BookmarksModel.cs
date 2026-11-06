@@ -3,6 +3,8 @@ using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 
 namespace CryptoBook.Models
 {
@@ -10,7 +12,7 @@ namespace CryptoBook.Models
     /// Координирует бизнес-сценарии закладок: проверку, изменение документа
     /// и состояние текущей операции. WPF-команды создаёт ViewModel.
     /// </summary>
-    public sealed class BookmarksModel: ViewModelBase, IBookmarksModel
+    public sealed class BookmarksModel: ViewModelBase, IBookmarksModel, IDisposable
     {
         private readonly IRichTextBoxService richTextBox;
         private readonly IBookmarkService bookmarkService;
@@ -74,8 +76,36 @@ namespace CryptoBook.Models
             this.validation = validation ??
                 throw new ArgumentNullException(nameof(validation));
 
-            bookmarkService.PropertyChanged += (_, _) =>
-                OnPropertyChanged(nameof(Bookmarks));
+            bookmarkService.PropertyChanged += OnBookmarksChanged;
+            bookmarkService.Navigated += OnNavigated;
+            richTextBox.InternalHyperlinkNavigated += OnNavigated;
+        }
+
+        private void OnBookmarksChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if(SelectedBookmark != null && !Bookmarks.Contains(SelectedBookmark))
+                SelectedBookmark = null;
+            OnPropertyChanged(nameof(Bookmarks));
+        }
+
+        private void OnNavigated(object? sender, Uri uri)
+        {
+            if(uri.IsAbsoluteUri)
+                return;
+            string anchorId = Uri.UnescapeDataString(uri.OriginalString.TrimStart('#'));
+            var bookmark = Bookmarks.FirstOrDefault(entry =>
+                entry.BookmarkUri is { IsAbsoluteUri: false } bookmarkUri &&
+                string.Equals(Uri.UnescapeDataString(bookmarkUri.OriginalString.TrimStart('#')),
+                    anchorId, StringComparison.Ordinal));
+            if(bookmark != null)
+                SelectedBookmark = bookmark;
+        }
+
+        public void Dispose()
+        {
+            bookmarkService.PropertyChanged -= OnBookmarksChanged;
+            bookmarkService.Navigated -= OnNavigated;
+            richTextBox.InternalHyperlinkNavigated -= OnNavigated;
         }
 
         public bool CanAddAtCaret() =>
@@ -213,8 +243,11 @@ namespace CryptoBook.Models
         public void RebuildIndex() =>
             Execute(() =>
             {
+                var selectedUri = SelectedBookmark?.BookmarkUri;
                 bookmarkService.RebuildIndexFromDocument(richTextBox);
                 SelectedBookmark = null;
+                if(selectedUri != null)
+                    OnNavigated(this, selectedUri);
                 StatusMessage = LocalizationManager.Format(
                     "Bookmarks.IndexRefreshed",
                     Bookmarks.Count);

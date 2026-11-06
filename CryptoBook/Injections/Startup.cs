@@ -77,7 +77,14 @@ namespace CryptoBook.Injections
             builder.RegisterType<EncryptionMode_Model>().As<IEncryptionMode_Model>().InstancePerLifetimeScope();
             builder.RegisterType<MediaPlayerModel>().As<IMediaPlayerModel>().InstancePerLifetimeScope();
             builder.RegisterType<BookmarksModel>().As<IBookmarksModel>().InstancePerLifetimeScope();
-            builder.RegisterType<BookmarksEditorModel>().As<IBookmarksEditorModel>().InstancePerLifetimeScope();
+            builder.Register(c =>
+            {
+                var context = c.ResolveOptional<IWindowContext>();
+                var bookmarks = context != null && context.TryGet<IBookmarksModel>(
+                    BookmarksEditorViewModel.BookmarksContextKey, out var sharedBookmarks)
+                    ? sharedBookmarks : c.Resolve<IBookmarksModel>();
+                return new BookmarksEditorModel(bookmarks, c.Resolve<IWindowManager>());
+            }).As<IBookmarksEditorModel>().InstancePerLifetimeScope();
             builder.RegisterType<RichtextboxModel>().As<IRichtextboxModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsModel>().As<ISettingsModel>().InstancePerLifetimeScope();
             builder.RegisterType<WorkspaceSearchModel>().InstancePerLifetimeScope();

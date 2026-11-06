@@ -22,6 +22,8 @@ namespace CryptoBook.Interfaces
         string RenameTo { get; set; }
         string LinkText { get; set; }
         string StatusMessage { get; }
+        bool IsBookmarkCreationEnabled { get; }
+        bool IsLinkInsertionEnabled { get; }
 
 
         /// <summary>

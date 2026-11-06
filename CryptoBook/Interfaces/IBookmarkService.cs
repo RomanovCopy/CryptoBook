@@ -20,6 +20,9 @@ namespace CryptoBook.Interfaces
         /// <summary>Имя или заметка изменились без события TextChanged редактора.</summary>
         event EventHandler? MetadataChanged;
 
+        /// <summary>Переход выполнен в исходном документе; синхронизирует видимый предпросмотр.</summary>
+        event EventHandler<Uri>? Navigated;
+
 
         /// <summary>
         /// закладка с таким именем уже существует?
@@ -42,6 +45,8 @@ namespace CryptoBook.Interfaces
         /// Перейти к закладке
         /// </summary>
         bool NavigateTo(IRichTextBoxService service, string name);
+        /// <summary>Перейти по внутренней ссылке в исходном документе.</summary>
+        bool NavigateToUri(Uri uri);
         bool NavigateNext(IRichTextBoxService service);
         bool NavigatePrevious(IRichTextBoxService service);
         /// <summary>

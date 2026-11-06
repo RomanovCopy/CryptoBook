@@ -34,6 +34,9 @@ namespace CryptoBook.Interfaces
         bool CanUndo { get; }
         bool CanRedo { get; }
 
+        /// <summary>Успешный переход по внутренней ссылке редактора.</summary>
+        event EventHandler<Uri>? InternalHyperlinkNavigated;
+
         // Навигация и фокус
         void Focus();
         void ScrollToCaret();

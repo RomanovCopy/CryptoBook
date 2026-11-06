@@ -3,6 +3,7 @@ using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -14,9 +15,14 @@ namespace CryptoBook.ViewModels
     /// </summary>
     public sealed class BookmarksEditorViewModel:
         ViewModelBase,
-        IBookmarksEditorViewModel
+        IBookmarksEditorViewModel,
+        IDisposable
     {
+        public const string BookmarksContextKey = "Bookmarks";
+        public const string DocumentViewContextKey = "DocumentView";
+
         private readonly IBookmarksEditorModel model;
+        private readonly IRichtextboxViewModel? documentView;
 
         event EventHandler ICloseable.RequestClose
         {
@@ -78,13 +84,39 @@ namespace CryptoBook.ViewModels
         }
 
         public string StatusMessage => model.StatusMessage;
+        public bool IsLinkInsertionEnabled => documentView?.IsPreviewMode != true;
 
-        public BookmarksEditorViewModel(IBookmarksEditorModel model)
+        public BookmarksEditorViewModel(IBookmarksEditorModel model, IWindowContext? context = null)
         {
             this.model = model ??
                 throw new ArgumentNullException(nameof(model));
-            model.PropertyChanged += (_, args) =>
-                OnPropertyChanged(args.PropertyName ?? string.Empty);
+            documentView = context != null && context.TryGet<IRichtextboxViewModel>(DocumentViewContextKey, out var activeView)
+                ? activeView : null;
+            model.PropertyChanged += OnModelChanged;
+            if(documentView != null)
+                documentView.PropertyChanged += OnDocumentViewChanged;
+        }
+
+        private void OnModelChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            OnPropertyChanged(args.PropertyName ?? string.Empty);
+            if(args.PropertyName is nameof(SelectedBookmark) or nameof(LinkText) or nameof(Bookmarks))
+                insertHyperlinkTo?.RaiseCanExecuteChanged();
+        }
+
+        private void OnDocumentViewChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName != nameof(IRichtextboxViewModel.IsPreviewMode))
+                return;
+            OnPropertyChanged(nameof(IsLinkInsertionEnabled));
+            insertHyperlinkTo?.RaiseCanExecuteChanged();
+        }
+
+        public void Dispose()
+        {
+            model.PropertyChanged -= OnModelChanged;
+            if(documentView != null)
+                documentView.PropertyChanged -= OnDocumentViewChanged;
         }
 
         public ICommand NavigateTo => navigateTo ??=
@@ -107,8 +139,14 @@ namespace CryptoBook.ViewModels
 
         public ICommand InsertHyperlinkTo => insertHyperlinkTo ??=
             new RelayCommand(
-                parameter => model.InsertHyperlink(parameter as IBookmarkEntryViewModel),
-                parameter => model.CanInsertHyperlink(parameter as IBookmarkEntryViewModel));
+                parameter =>
+                {
+                    var bookmark = parameter as IBookmarkEntryViewModel;
+                    if(IsLinkInsertionEnabled && model.CanInsertHyperlink(bookmark))
+                        model.InsertHyperlink(bookmark);
+                },
+                parameter => IsLinkInsertionEnabled &&
+                    model.CanInsertHyperlink(parameter as IBookmarkEntryViewModel));
         private RelayCommand? insertHyperlinkTo;
 
         public ICommand RebuildIndexFromDocument => rebuildIndexFromDocument ??=

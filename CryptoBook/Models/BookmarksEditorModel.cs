@@ -3,6 +3,7 @@ using CryptoBook.Interfaces;
 
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 
 namespace CryptoBook.Models
@@ -13,7 +14,8 @@ namespace CryptoBook.Models
     /// </summary>
     public sealed class BookmarksEditorModel:
         ViewModelBase,
-        IBookmarksEditorModel
+        IBookmarksEditorModel,
+        IDisposable
     {
         private const double MinimumWidth = 560;
         private const double MinimumHeight = 360;
@@ -79,10 +81,14 @@ namespace CryptoBook.Models
             this.windowManager = windowManager ??
                 throw new ArgumentNullException(nameof(windowManager));
 
-            bookmarks.PropertyChanged += (_, args) =>
-                OnPropertyChanged(args.PropertyName ?? string.Empty);
+            bookmarks.PropertyChanged += OnBookmarksChanged;
             RestoreWindowSettings();
         }
+
+        private void OnBookmarksChanged(object? sender, PropertyChangedEventArgs args) =>
+            OnPropertyChanged(args.PropertyName ?? string.Empty);
+
+        public void Dispose() => bookmarks.PropertyChanged -= OnBookmarksChanged;
 
         public bool CanNavigateTo(IBookmarkEntryViewModel? bookmark) =>
             bookmarks.CanNavigateTo(bookmark);

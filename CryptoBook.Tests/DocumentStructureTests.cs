@@ -30,6 +30,32 @@ public sealed class DocumentStructureTests
         IHomeViewModel home = scope.Resolve<IHomeViewModel>();
 
         Assert.Same(structure, home.DocumentStructure);
+
+        var bookmarks = scope.Resolve<IBookmarksViewModel>();
+        var documentView = scope.Resolve<IRichtextboxViewModel>();
+        Assert.True(bookmarks.IsBookmarkCreationEnabled);
+        Assert.True(bookmarks.IsLinkInsertionEnabled);
+        bookmarks.NewBookmarkName = "Scope bookmark";
+        bookmarks.AddAtCaret.Execute(null);
+        Assert.Equal("Scope bookmark", bookmarks.SelectedBookmark!.Name);
+        documentView.ToggleView.Execute(null);
+        Assert.False(bookmarks.IsBookmarkCreationEnabled);
+        Assert.False(bookmarks.IsLinkInsertionEnabled);
+        using var managerScope = container.BeginLifetimeScope(builder => builder.RegisterInstance(
+            new WindowContext(new Dictionary<string, object?> {
+                [BookmarksEditorViewModel.BookmarksContextKey] = scope.Resolve<IBookmarksModel>(),
+                [BookmarksEditorViewModel.DocumentViewContextKey] = documentView
+            })).As<IWindowContext>());
+        var manager = managerScope.Resolve<IBookmarksEditorViewModel>();
+        Assert.False(manager.IsLinkInsertionEnabled);
+        Assert.Same(bookmarks.SelectedBookmark, manager.SelectedBookmark);
+        manager.Loaded.Execute(null);
+        Assert.Equal("Scope bookmark", bookmarks.SelectedBookmark!.Name);
+        Assert.Same(bookmarks.SelectedBookmark, manager.SelectedBookmark);
+        documentView.ToggleView.Execute(null);
+        Assert.True(bookmarks.IsBookmarkCreationEnabled);
+        Assert.True(bookmarks.IsLinkInsertionEnabled);
+        Assert.True(manager.IsLinkInsertionEnabled);
     }
 
     [WpfFact]

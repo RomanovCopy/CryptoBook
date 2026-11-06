@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
+using System.Windows;
 using System.Windows.Documents;
 
 namespace CryptoBook.Services
@@ -20,16 +21,19 @@ namespace CryptoBook.Services
         private const string MetadataPrefix = "CryptoBook.Bookmark:";
         private const string ZeroWidthSpace = "\u200B";
 
+        private readonly IRichTextBoxService source;
+
         private readonly Dictionary<string, BookmarkRecord> index =
             new(StringComparer.OrdinalIgnoreCase);
 
         public ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; } = [];
 
         public event EventHandler? MetadataChanged;
+        public event EventHandler<Uri>? Navigated;
 
         public BookmarksService(IRichTextBoxService service)
         {
-            _ = service ?? throw new ArgumentNullException(nameof(service));
+            source = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         public bool Exists(string name) =>
@@ -73,9 +77,22 @@ namespace CryptoBook.Services
             service.BeginChange();
             try
             {
+                var links = new FlowDocumentWalker().Find<Hyperlink>(service.Document)
+                    .Where(link => link.NavigateUri is { IsAbsoluteUri: false } uri &&
+                        string.Equals(Uri.UnescapeDataString(uri.OriginalString.TrimStart('#')),
+                            record.AnchorId, StringComparison.Ordinal))
+                    .ToList();
+                foreach(var link in links)
+                    ReplaceWithPlainSpan(link, preserveMetadata: true);
+
                 var anchor = FindAnchor(service.Document, record.AnchorId);
                 if(anchor != null)
-                    anchor.SiblingInlines?.Remove(anchor);
+                {
+                    if(anchor.Inlines.Count == 1 && anchor.Inlines.FirstInline is Run { Text: ZeroWidthSpace })
+                        anchor.SiblingInlines?.Remove(anchor);
+                    else
+                        ReplaceWithPlainSpan(anchor, preserveMetadata: false);
+                }
                 RemoveRecord(record);
             }
             finally
@@ -122,7 +139,20 @@ namespace CryptoBook.Services
             anchor.BringIntoView();
             service.Focus();
             RichTextBoxNavigation.CenterCaretInView(service.Service);
+            Navigated?.Invoke(this, record.Entry.BookmarkUri!);
             return true;
+        }
+
+        public bool NavigateToUri(Uri uri)
+        {
+            ArgumentNullException.ThrowIfNull(uri);
+            if(uri.IsAbsoluteUri || !uri.OriginalString.StartsWith('#'))
+                return false;
+
+            var anchorId = Uri.UnescapeDataString(uri.OriginalString[1..]);
+            var record = index.Values.FirstOrDefault(item =>
+                string.Equals(item.AnchorId, anchorId, StringComparison.Ordinal));
+            return record != null && NavigateTo(source, record.Entry.Name);
         }
 
         public bool NavigateNext(IRichTextBoxService service) =>
@@ -336,6 +366,36 @@ namespace CryptoBook.Services
                     span.Name,
                     anchorId,
                     StringComparison.Ordinal));
+
+        private static void ReplaceWithPlainSpan(Span wrapper, bool preserveMetadata)
+        {
+            if(wrapper.SiblingInlines is not { } siblings)
+                return;
+            var replacement = new Span();
+            // Preserve explicit formatting and child objects, without Hyperlink's
+            // default link styling or its navigation behavior.
+            var values = wrapper.GetLocalValueEnumerator();
+            while(values.MoveNext())
+            {
+                var property = values.Current.Property;
+                if(property.OwnerType == typeof(TextElement) || property.OwnerType == typeof(Inline) ||
+                   property.OwnerType == typeof(Typography) || property == FrameworkElement.FlowDirectionProperty ||
+                   property == FrameworkContentElement.LanguageProperty)
+                    replacement.SetValue(property, wrapper.GetValue(property));
+            }
+            if(preserveMetadata)
+            {
+                replacement.Name = wrapper.Name;
+                replacement.Tag = wrapper.Tag;
+            }
+            siblings.InsertBefore(wrapper, replacement);
+            while(wrapper.Inlines.FirstInline is { } child)
+            {
+                wrapper.Inlines.Remove(child);
+                replacement.Inlines.Add(child);
+            }
+            siblings.Remove(wrapper);
+        }
 
         private static IEnumerable<Span> EnumerateNamedSpans(FlowDocument document)
         {

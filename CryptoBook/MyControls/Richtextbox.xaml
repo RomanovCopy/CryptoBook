@@ -91,7 +91,12 @@
                                         behaviors:HyperlinkCommandBehavior.Command="{Binding OpenHyperlink}"
                                         behaviors:DocumentPageKeyboardNavigationBehavior.IsEnabled="True"
                                         behaviors:DocumentPageFitBehavior.IsEnabled="{Binding IsFitToWindow}"
-                                        Zoom="100"/>
+                                        Zoom="100">
+                    <i:Interaction.Behaviors>
+                        <behaviors:BookmarkPreviewNavigationBehavior
+                            Bookmarks="{markup:ResolveService ServiceType={x:Type interfaces:IBookmarkService}}"/>
+                    </i:Interaction.Behaviors>
+                </FlowDocumentPageViewer>
                 <Button HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Margin="12,56,12,12"

@@ -4,6 +4,8 @@ using CryptoBook.Views;
 
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace CryptoBook.ViewModels
@@ -12,10 +14,11 @@ namespace CryptoBook.ViewModels
     /// Представляет модель закладок в WPF: создаёт команды и открывает менеджер.
     /// Прикладные операции и валидация находятся в <see cref="IBookmarksModel"/>.
     /// </summary>
-    public sealed class BookmarksViewModel: ViewModelBase, IBookmarksViewModel
+    public sealed class BookmarksViewModel: ViewModelBase, IBookmarksViewModel, IDisposable
     {
         private readonly IBookmarksModel model;
         private readonly IWindowManager windowManager;
+        private readonly IRichtextboxViewModel? documentView;
 
         event EventHandler ICloseable.RequestClose
         {
@@ -51,22 +54,65 @@ namespace CryptoBook.ViewModels
         }
 
         public string StatusMessage => model.StatusMessage;
+        public bool IsBookmarkCreationEnabled => documentView?.IsPreviewMode != true;
+        public bool IsLinkInsertionEnabled => documentView?.IsPreviewMode != true;
 
         public BookmarksViewModel(
             IBookmarksModel model,
-            IWindowManager windowManager)
+            IWindowManager windowManager,
+            IRichtextboxViewModel? documentView = null)
         {
             this.model = model ??
                 throw new ArgumentNullException(nameof(model));
             this.windowManager = windowManager ??
                 throw new ArgumentNullException(nameof(windowManager));
+            this.documentView = documentView;
 
-            model.PropertyChanged += (_, args) =>
-                OnPropertyChanged(args.PropertyName ?? string.Empty);
+            model.PropertyChanged += OnModelChanged;
+            if(documentView != null)
+                documentView.PropertyChanged += OnDocumentViewChanged;
+        }
+
+        private void OnModelChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            OnPropertyChanged(args.PropertyName ?? string.Empty);
+            if(args.PropertyName is nameof(NewBookmarkName) or nameof(Bookmarks))
+                addAtCaret?.RaiseCanExecuteChanged();
+            if(args.PropertyName == nameof(LinkText))
+                insertHyperlinkTo?.RaiseCanExecuteChanged();
+            if(args.PropertyName is nameof(SelectedBookmark) or nameof(Bookmarks))
+            {
+                navigateTo?.RaiseCanExecuteChanged();
+                remove?.RaiseCanExecuteChanged();
+                rename?.RaiseCanExecuteChanged();
+                insertHyperlinkTo?.RaiseCanExecuteChanged();
+                nextBookmark?.RaiseCanExecuteChanged();
+                previousBookmark?.RaiseCanExecuteChanged();
+            }
+        }
+
+        private void OnDocumentViewChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName != nameof(IRichtextboxViewModel.IsPreviewMode))
+                return;
+            OnPropertyChanged(nameof(IsBookmarkCreationEnabled), nameof(IsLinkInsertionEnabled));
+            addAtCaret?.RaiseCanExecuteChanged();
+            insertHyperlinkTo?.RaiseCanExecuteChanged();
+        }
+
+        public void Dispose()
+        {
+            model.PropertyChanged -= OnModelChanged;
+            if(documentView != null)
+                documentView.PropertyChanged -= OnDocumentViewChanged;
         }
 
         public ICommand AddAtCaret => addAtCaret ??=
-            new RelayCommand(_ => model.AddAtCaret(), _ => model.CanAddAtCaret());
+            new RelayCommand(_ =>
+            {
+                if(IsBookmarkCreationEnabled && model.CanAddAtCaret())
+                    model.AddAtCaret();
+            }, _ => IsBookmarkCreationEnabled && model.CanAddAtCaret());
         private RelayCommand? addAtCaret;
 
         public ICommand NextBookmark => nextBookmark ??=
@@ -99,8 +145,14 @@ namespace CryptoBook.ViewModels
 
         public ICommand InsertHyperlinkTo => insertHyperlinkTo ??=
             new RelayCommand(
-                parameter => model.InsertHyperlink(parameter as IBookmarkEntryViewModel),
-                parameter => model.CanInsertHyperlink(parameter as IBookmarkEntryViewModel));
+                parameter =>
+                {
+                    var bookmark = parameter as IBookmarkEntryViewModel;
+                    if(IsLinkInsertionEnabled && model.CanInsertHyperlink(bookmark))
+                        model.InsertHyperlink(bookmark);
+                },
+                parameter => IsLinkInsertionEnabled &&
+                    model.CanInsertHyperlink(parameter as IBookmarkEntryViewModel));
         private RelayCommand? insertHyperlinkTo;
 
         public ICommand RebuildIndexFromDocument => rebuildIndexFromDocument ??=
@@ -110,7 +162,10 @@ namespace CryptoBook.ViewModels
         public ICommand OpenManager => openManager ??=
             new RelayCommand(_ =>
             {
-                var id = windowManager.CreateWindow<BookmarksEditor>();
+                var id = windowManager.CreateWindow<BookmarksEditor>(new Dictionary<string, object?> {
+                    [BookmarksEditorViewModel.BookmarksContextKey] = model,
+                    [BookmarksEditorViewModel.DocumentViewContextKey] = documentView
+                });
                 windowManager.ShowWindow(id);
             });
         private RelayCommand? openManager;

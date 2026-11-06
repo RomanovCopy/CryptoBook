@@ -88,6 +88,7 @@ namespace CryptoBook.Services
         bool IRichTextBoxService.CanRedo => this.CanRedo;
 
         public event EventHandler? DocumentReplaced;
+        public event EventHandler<Uri>? InternalHyperlinkNavigated;
 
 
         public RichTextBoxService(
@@ -612,6 +613,7 @@ namespace CryptoBook.Services
                     target.BringIntoView();
                     this.Focus();
                     RichTextBoxNavigation.CenterCaretInView(this);
+                    InternalHyperlinkNavigated?.Invoke(this, uri);
                     return true;
                 }
                 return false;
