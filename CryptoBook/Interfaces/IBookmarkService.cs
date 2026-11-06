@@ -30,11 +30,11 @@ namespace CryptoBook.Interfaces
         bool Exists(string name);
 
         /// <summary>
-        /// Добавить закладку в позицию каретки с именем пользователя
+        /// Вставить закладку с собственным текстом (именем) в позицию каретки без выделения
         /// </summary>
         void AddAtCaret(IRichTextBoxService service, string name);
         /// <summary>
-        /// Удалить закладку
+        /// Удалить закладку вместе с её содержимым и всеми ссылками на неё, включая их подписи
         /// </summary>
         bool Remove(IRichTextBoxService service, string name);
         /// <summary>
@@ -50,7 +50,7 @@ namespace CryptoBook.Interfaces
         bool NavigateNext(IRichTextBoxService service);
         bool NavigatePrevious(IRichTextBoxService service);
         /// <summary>
-        /// Вставить Hyperlink на закладку в текущую позицию (видимый текст задаётся параметром)
+        /// Вставить Hyperlink с собственным текстом в позицию каретки без выделения
         /// </summary>
         void InsertHyperlinkTo(IRichTextBoxService service, string bookmarkName, string? linkText = null);
         /// <summary>

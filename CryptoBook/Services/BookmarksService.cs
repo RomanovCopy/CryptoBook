@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
-using System.Windows;
 using System.Windows.Documents;
 
 namespace CryptoBook.Services
@@ -19,7 +18,6 @@ namespace CryptoBook.Services
     public sealed class BookmarksService: ViewModelBase, IBookmarkService
     {
         private const string MetadataPrefix = "CryptoBook.Bookmark:";
-        private const string ZeroWidthSpace = "\u200B";
 
         private readonly IRichTextBoxService source;
 
@@ -42,6 +40,8 @@ namespace CryptoBook.Services
         public void AddAtCaret(IRichTextBoxService service, string name)
         {
             ArgumentNullException.ThrowIfNull(service);
+            if(!service.Selection.IsEmpty)
+                throw new InvalidOperationException(LocalizationManager.GetString("Bookmarks.SelectionNotAllowed"));
             name = NormalizeName(name);
             EnsureValidNewName(name);
 
@@ -55,8 +55,8 @@ namespace CryptoBook.Services
                 {
                     Name = anchorId
                 };
-                anchor.Inlines.Add(new Run(ZeroWidthSpace));
-                service.CaretPosition = anchor.ElementEnd;
+                anchor.Inlines.Add(new Run(name));
+                MoveCaretAfterSpan(service, anchor);
 
                 var record = CreateRecord(service, name, string.Empty, anchorId);
                 anchor.Tag = SerializeMetadata(record.Entry);
@@ -77,23 +77,39 @@ namespace CryptoBook.Services
             service.BeginChange();
             try
             {
-                var links = new FlowDocumentWalker().Find<Hyperlink>(service.Document)
-                    .Where(link => link.NavigateUri is { IsAbsoluteUri: false } uri &&
-                        string.Equals(Uri.UnescapeDataString(uri.OriginalString.TrimStart('#')),
-                            record.AnchorId, StringComparison.Ordinal))
-                    .ToList();
-                foreach(var link in links)
-                    ReplaceWithPlainSpan(link, preserveMetadata: true);
-
-                var anchor = FindAnchor(service.Document, record.AnchorId);
+                var anchors = EnumerateNamedSpans(service.Document).ToList();
+                var anchor = anchors.FirstOrDefault(span => span.Name == record.AnchorId);
+                var removedIds = new HashSet<string>(StringComparer.Ordinal) { record.AnchorId };
+                var removedElements = new HashSet<Span>();
                 if(anchor != null)
+                    removedElements.Add(anchor);
+                var links = new FlowDocumentWalker().Find<Hyperlink>(service.Document).ToList();
+                // Старые документы могут содержать закладки внутри якоря или подписи
+                // ссылки. Удаляем и их ссылки, не оставляя записей на удалённый текст.
+                bool expanded;
+                do
                 {
-                    if(anchor.Inlines.Count == 1 && anchor.Inlines.FirstInline is Run { Text: ZeroWidthSpace })
-                        anchor.SiblingInlines?.Remove(anchor);
-                    else
-                        ReplaceWithPlainSpan(anchor, preserveMetadata: false);
-                }
-                RemoveRecord(record);
+                    foreach(var link in links.Where(link =>
+                        link.NavigateUri is { IsAbsoluteUri: false } uri &&
+                        removedIds.Contains(Uri.UnescapeDataString(uri.OriginalString.TrimStart('#')))))
+                    {
+                        removedElements.Add(link);
+                    }
+                    expanded = false;
+                    foreach(var nested in anchors.Where(span =>
+                        removedElements.Any(parent => ContainsSpan(parent, span))))
+                    {
+                        expanded |= removedIds.Add(nested.Name);
+                    }
+                } while(expanded);
+
+                var removedRecords = index.Values.Where(item => removedIds.Contains(item.AnchorId)).ToList();
+                var roots = removedElements.Where(span => !removedElements.Any(parent =>
+                    parent != span && ContainsSpan(parent, span))).ToList();
+                foreach(var element in roots)
+                    element.SiblingInlines?.Remove(element);
+                foreach(var removed in removedRecords)
+                    RemoveRecord(removed);
             }
             finally
             {
@@ -167,6 +183,8 @@ namespace CryptoBook.Services
             string? linkText = null)
         {
             ArgumentNullException.ThrowIfNull(service);
+            if(!service.Selection.IsEmpty)
+                throw new InvalidOperationException(LocalizationManager.GetString("Bookmarks.LinkSelectionNotAllowed"));
             if(string.IsNullOrWhiteSpace(bookmarkName) ||
                !index.TryGetValue(bookmarkName.Trim(), out var record))
             {
@@ -177,21 +195,13 @@ namespace CryptoBook.Services
             service.BeginChange();
             try
             {
-                Hyperlink link;
-                if(!service.Selection.IsEmpty)
-                {
-                    link = new Hyperlink(service.Selection.Start, service.Selection.End);
-                }
-                else
-                {
-                    var position = GetInsertionPosition(service);
-                    link = new Hyperlink(position, position);
-                    link.Inlines.Add(new Run(
-                        string.IsNullOrWhiteSpace(linkText) ? record.Entry.Name : linkText));
-                }
+                var position = GetInsertionPosition(service);
+                var link = new Hyperlink(position, position);
+                link.Inlines.Add(new Run(
+                    string.IsNullOrWhiteSpace(linkText) ? record.Entry.Name : linkText));
 
                 link.NavigateUri = uri;
-                service.CaretPosition = link.ContentEnd;
+                MoveCaretAfterSpan(service, link);
                 service.ClearSelection();
             }
             finally
@@ -367,35 +377,19 @@ namespace CryptoBook.Services
                     anchorId,
                     StringComparison.Ordinal));
 
-        private static void ReplaceWithPlainSpan(Span wrapper, bool preserveMetadata)
+        private static void MoveCaretAfterSpan(IRichTextBoxService service, Span span)
         {
-            if(wrapper.SiblingInlines is not { } siblings)
-                return;
-            var replacement = new Span();
-            // Preserve explicit formatting and child objects, without Hyperlink's
-            // default link styling or its navigation behavior.
-            var values = wrapper.GetLocalValueEnumerator();
-            while(values.MoveNext())
-            {
-                var property = values.Current.Property;
-                if(property.OwnerType == typeof(TextElement) || property.OwnerType == typeof(Inline) ||
-                   property.OwnerType == typeof(Typography) || property == FrameworkElement.FlowDirectionProperty ||
-                   property == FrameworkContentElement.LanguageProperty)
-                    replacement.SetValue(property, wrapper.GetValue(property));
-            }
-            if(preserveMetadata)
-            {
-                replacement.Name = wrapper.Name;
-                replacement.Tag = wrapper.Tag;
-            }
-            siblings.InsertBefore(wrapper, replacement);
-            while(wrapper.Inlines.FirstInline is { } child)
-            {
-                wrapper.Inlines.Remove(child);
-                replacement.Inlines.Add(child);
-            }
-            siblings.Remove(wrapper);
+            // Отдельный Run и направление Forward не дают WPF включить
+            // последующий обычный ввод в удаляемый текст закладки или ссылки.
+            var followingText = new Run();
+            span.SiblingInlines!.InsertAfter(span, followingText);
+            service.CaretPosition = followingText.ContentStart.GetPositionAtOffset(0, LogicalDirection.Forward);
         }
+
+        private static bool ContainsSpan(Span parent, Span child) =>
+            parent == child ||
+            (parent.ContentStart.CompareTo(child.ElementStart) <= 0 &&
+             parent.ContentEnd.CompareTo(child.ElementEnd) >= 0);
 
         private static IEnumerable<Span> EnumerateNamedSpans(FlowDocument document)
         {

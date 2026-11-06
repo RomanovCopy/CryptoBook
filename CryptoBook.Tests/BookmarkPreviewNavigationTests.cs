@@ -61,12 +61,14 @@ public sealed class BookmarkPreviewNavigationTests
     [WpfTheory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeletingBookmark_UnlinksTheSourceAndVisiblePreview(bool manager)
+    public async Task DeletingBookmark_DeletesOwnTextAndLinkCaptionsInSourceAndVisiblePreview(bool manager)
     {
         using var host = new PreviewHost();
         await Settle();
         host.MenuViewModel.SelectedBookmark = host.Bookmarks.Bookmarks.Single(b => b.Name == "Middle");
         var command = manager ? host.ManagerViewModel.Remove : host.MenuViewModel.Remove;
+        string expected = new TextRange(host.Editor.Document.ContentStart, host.Editor.Document.ContentEnd).Text
+            .Replace("Middle", "").Replace("Go to middle", "");
         Assert.True(command.CanExecute(null));
         command.Execute(null);
         await Settle();
@@ -74,8 +76,8 @@ public sealed class BookmarkPreviewNavigationTests
         Assert.False(host.Bookmarks.Exists("Middle"));
         Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(host.Editor.Document));
         Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(host.ViewModel.PreviewDocument!));
-        Assert.Contains("Go to middle", new TextRange(host.Editor.Document.ContentStart, host.Editor.Document.ContentEnd).Text);
-        Assert.Contains("Go to middle", new TextRange(host.ViewModel.PreviewDocument!.ContentStart,
+        Assert.Equal(expected, new TextRange(host.Editor.Document.ContentStart, host.Editor.Document.ContentEnd).Text);
+        Assert.Equal(expected, new TextRange(host.ViewModel.PreviewDocument!.ContentStart,
             host.ViewModel.PreviewDocument.ContentEnd).Text);
         Assert.True(host.ViewModel.IsPreviewMode);
         Assert.True(host.IsDirty);

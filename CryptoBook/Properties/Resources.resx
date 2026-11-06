@@ -342,7 +342,9 @@
   <data name="Editor.ToggleDocumentMode" xml:space="preserve"><value>Switch document mode</value></data>
   <data name="Bookmarks.New" xml:space="preserve"><value>New bookmark</value></data>
   <data name="Bookmarks.AddAtCaret" xml:space="preserve"><value>Add at caret position</value></data>
-  <data name="Bookmarks.NewName" xml:space="preserve"><value>New bookmark name</value></data>
+  <data name="Bookmarks.AddAtCaretHint" xml:space="preserve"><value>Insert a new bookmark with its own text from the entered name. Clear the text selection first.</value></data>
+  <data name="Bookmarks.SelectionNotAllowed" xml:space="preserve"><value>Clear the text selection: a new bookmark inserts its own text at the caret position.</value></data>
+  <data name="Bookmarks.NewName" xml:space="preserve"><value>New bookmark name; on creation it is inserted into the document as the bookmark's own text</value></data>
   <data name="Bookmarks.Selected" xml:space="preserve"><value>Selected bookmark</value></data>
   <data name="Bookmarks.Previous" xml:space="preserve"><value>Previous bookmark</value></data>
   <data name="Bookmarks.GoToSelected" xml:space="preserve"><value>Go to selected bookmark</value></data>
@@ -350,10 +352,13 @@
   <data name="Bookmarks.OpenManager" xml:space="preserve"><value>Open bookmark manager</value></data>
   <data name="Bookmarks.RefreshIndex" xml:space="preserve"><value>Refresh index from document</value></data>
   <data name="Bookmarks.DeleteSelected" xml:space="preserve"><value>Delete selected bookmark</value></data>
+  <data name="Bookmarks.DeleteSelectedHint" xml:space="preserve"><value>Delete the selected bookmark with all its text and all links to it, including their captions. Ctrl+Z undoes the deletion.</value></data>
   <data name="Bookmarks.RenameSelected" xml:space="preserve"><value>Rename selected bookmark</value></data>
   <data name="Bookmarks.SelectedNewName" xml:space="preserve"><value>New name for selected bookmark</value></data>
   <data name="Bookmarks.InsertSelectedLink" xml:space="preserve"><value>Insert link to selected bookmark</value></data>
-  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>Link text; you can select text in the document first</value></data>
+  <data name="Bookmarks.InsertSelectedLinkHint" xml:space="preserve"><value>Insert a link to the selected bookmark with its own caption from the Link text field. Clear the text selection first.</value></data>
+  <data name="Bookmarks.LinkSelectionNotAllowed" xml:space="preserve"><value>Clear the text selection and enter a link caption: it is inserted at the caret as the link's own text.</value></data>
+  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>The new link's own text; enter a caption and clear the document text selection</value></data>
   <data name="Common.Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Common.Insert" xml:space="preserve"><value>Insert</value></data>
   <data name="Hyperlink.Title" xml:space="preserve"><value>Insert hyperlink</value></data>
@@ -442,7 +447,7 @@
   <data name="Bookmarks.Anchor" xml:space="preserve"><value>Anchor:</value></data>
   <data name="Bookmarks.Refresh" xml:space="preserve"><value>Refresh</value></data>
   <data name="Bookmarks.Added" xml:space="preserve"><value>Bookmark “{0}” was added.</value></data>
-  <data name="Bookmarks.Removed" xml:space="preserve"><value>Bookmark “{0}” was removed.</value></data>
+  <data name="Bookmarks.Removed" xml:space="preserve"><value>Bookmark “{0}”, its text and all links to it were deleted.</value></data>
   <data name="Bookmarks.Renamed" xml:space="preserve"><value>“{0}” was renamed to “{1}”.</value></data>
   <data name="Bookmarks.LinkInserted" xml:space="preserve"><value>A link to “{0}” was inserted.</value></data>
   <data name="Bookmarks.IndexRefreshed" xml:space="preserve"><value>Index refreshed. Bookmarks: {0}.</value></data>
@@ -460,7 +465,7 @@
   <data name="Bookmarks.InsideHyperlink" xml:space="preserve"><value>The caret is inside a hyperlink.</value></data>
   <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Only inline content within one paragraph is supported.</value></data>
   <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>The selection overlaps another hyperlink.</value></data>
-  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Enter link text or select text in the document.</value></data>
+  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Enter the new link's own text in the Link text field.</value></data>
   <data name="Explorer.Picker.SelectFile" xml:space="preserve"><value>Select file</value></data>
   <data name="Explorer.Picker.SelectFolder" xml:space="preserve"><value>Select folder</value></data>
   <data name="Explorer.WindowTitle" xml:space="preserve"><value>File Explorer</value></data>

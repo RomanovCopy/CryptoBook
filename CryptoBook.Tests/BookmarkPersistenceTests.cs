@@ -17,7 +17,7 @@ namespace CryptoBook.Tests;
 public sealed class BookmarkPersistenceTests
 {
     [WpfFact]
-    public async Task RemovingBookmark_PersistsPlainCaptionsAndRemainingBookmarks()
+    public async Task RemovingBookmark_PersistsDeletedTextAndLinksAndRemainingBookmarks()
     {
         var (editor, bookmarks) = CreateBookmarkedEditor();
         string removedName = bookmarks.Bookmarks[0].Name;
@@ -33,9 +33,10 @@ public sealed class BookmarkPersistenceTests
 
         Assert.Equal(remainingNames, restored.Bookmarks.Select(b => b.Name));
         Assert.False(restored.Exists(removedName));
+        Assert.DoesNotContain(removedName, Text(reopened.Document));
         Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(reopened.Document));
         Assert.Equal(Text(editor.Document), Text(reopened.Document));
-        Assert.Contains("К разделу", Text(reopened.Document));
+        Assert.DoesNotContain("К разделу", Text(reopened.Document));
     }
 
     [WpfTheory]
@@ -93,6 +94,9 @@ public sealed class BookmarkPersistenceTests
             await handler.LoadAsync(reopened.Document, content);
             restored.RebuildIndexFromDocument(reopened);
             Assert.Equal(before, Describe(reopened, restored));
+            Assert.True(restored.Remove(reopened, "Раздел первый"));
+            Assert.Equal(text.Replace("Раздел первый", "").Replace("К разделу", ""), Text(reopened.Document));
+            Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(reopened.Document));
         }
         finally { if(File.Exists(path)) File.Delete(path); }
     }

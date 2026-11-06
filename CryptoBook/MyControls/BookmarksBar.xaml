@@ -40,7 +40,8 @@
                         <Button DockPanel.Dock="Right"
                                 Style="{StaticResource EditorToolButtonStyle}"
                                 Command="{Binding AddAtCaret}"
-                                ToolTip="{Binding [Bookmarks.AddAtCaret], Source={StaticResource Res}}">
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="{Binding [Bookmarks.AddAtCaretHint], Source={StaticResource Res}}">
                             <Path Data="{StaticResource Icon.BookmarkAdd}"
                                   Style="{StaticResource EditorToolbarIconStyle}"/>
                         </Button>
@@ -103,7 +104,7 @@
                         <Button DockPanel.Dock="Right"
                                 Style="{StaticResource EditorToolButtonStyle}"
                                 Command="{Binding Remove}"
-                                ToolTip="{Binding [Bookmarks.DeleteSelected], Source={StaticResource Res}}">
+                                ToolTip="{Binding [Bookmarks.DeleteSelectedHint], Source={StaticResource Res}}">
                             <Path Data="{StaticResource Icon.BookmarkRemove}"
                                   Style="{StaticResource EditorToolbarIconStyle}"/>
                         </Button>
@@ -125,7 +126,8 @@
                         <Button DockPanel.Dock="Right"
                                 Style="{StaticResource EditorToolButtonStyle}"
                                 Command="{Binding InsertHyperlinkTo}"
-                                ToolTip="{Binding [Bookmarks.InsertSelectedLink], Source={StaticResource Res}}">
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="{Binding [Bookmarks.InsertSelectedLinkHint], Source={StaticResource Res}}">
                             <Path Data="{StaticResource Icon.Link}"
                                   Style="{StaticResource EditorToolbarIconStyle}"/>
                         </Button>

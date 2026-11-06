@@ -342,7 +342,9 @@
   <data name="Editor.ToggleDocumentMode" xml:space="preserve"><value>Переключить режим документа</value></data>
   <data name="Bookmarks.New" xml:space="preserve"><value>Новая закладка</value></data>
   <data name="Bookmarks.AddAtCaret" xml:space="preserve"><value>Добавить в позиции каретки</value></data>
-  <data name="Bookmarks.NewName" xml:space="preserve"><value>Имя новой закладки</value></data>
+  <data name="Bookmarks.AddAtCaretHint" xml:space="preserve"><value>Вставить новую закладку с собственным текстом из введённого имени. Сначала снимите выделение текста.</value></data>
+  <data name="Bookmarks.SelectionNotAllowed" xml:space="preserve"><value>Снимите выделение текста: новая закладка вставляет собственный текст в позиции каретки.</value></data>
+  <data name="Bookmarks.NewName" xml:space="preserve"><value>Имя новой закладки; при создании оно вставляется в документ как её собственный текст</value></data>
   <data name="Bookmarks.Selected" xml:space="preserve"><value>Выбранная закладка</value></data>
   <data name="Bookmarks.Previous" xml:space="preserve"><value>Предыдущая закладка</value></data>
   <data name="Bookmarks.GoToSelected" xml:space="preserve"><value>Перейти к выбранной закладке</value></data>
@@ -350,10 +352,13 @@
   <data name="Bookmarks.OpenManager" xml:space="preserve"><value>Открыть диспетчер закладок</value></data>
   <data name="Bookmarks.RefreshIndex" xml:space="preserve"><value>Обновить индекс из документа</value></data>
   <data name="Bookmarks.DeleteSelected" xml:space="preserve"><value>Удалить выбранную закладку</value></data>
+  <data name="Bookmarks.DeleteSelectedHint" xml:space="preserve"><value>Удалить выбранную закладку вместе со всем её текстом и всеми ссылками на неё, включая подписи. Ctrl+Z отменяет удаление.</value></data>
   <data name="Bookmarks.RenameSelected" xml:space="preserve"><value>Переименовать выбранную закладку</value></data>
   <data name="Bookmarks.SelectedNewName" xml:space="preserve"><value>Новое имя выбранной закладки</value></data>
   <data name="Bookmarks.InsertSelectedLink" xml:space="preserve"><value>Вставить ссылку на выбранную закладку</value></data>
-  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>Текст ссылки; можно предварительно выделить текст в документе</value></data>
+  <data name="Bookmarks.InsertSelectedLinkHint" xml:space="preserve"><value>Вставить ссылку на выбранную закладку с собственной подписью из поля «Текст ссылки». Сначала снимите выделение текста.</value></data>
+  <data name="Bookmarks.LinkSelectionNotAllowed" xml:space="preserve"><value>Снимите выделение текста и укажите подпись ссылки: она вставляется в позиции каретки как собственный текст.</value></data>
+  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>Собственный текст новой ссылки; укажите подпись и снимите выделение текста в документе</value></data>
   <data name="Common.Cancel" xml:space="preserve"><value>Отмена</value></data>
   <data name="Common.Insert" xml:space="preserve"><value>Вставить</value></data>
   <data name="Hyperlink.Title" xml:space="preserve"><value>Вставка гиперссылки</value></data>
@@ -442,7 +447,7 @@
   <data name="Bookmarks.Anchor" xml:space="preserve"><value>Якорь:</value></data>
   <data name="Bookmarks.Refresh" xml:space="preserve"><value>Обновить</value></data>
   <data name="Bookmarks.Added" xml:space="preserve"><value>Закладка «{0}» добавлена.</value></data>
-  <data name="Bookmarks.Removed" xml:space="preserve"><value>Закладка «{0}» удалена.</value></data>
+  <data name="Bookmarks.Removed" xml:space="preserve"><value>Закладка «{0}» удалена вместе с её текстом и всеми ссылками на неё.</value></data>
   <data name="Bookmarks.Renamed" xml:space="preserve"><value>«{0}» переименована в «{1}».</value></data>
   <data name="Bookmarks.LinkInserted" xml:space="preserve"><value>Ссылка на «{0}» вставлена.</value></data>
   <data name="Bookmarks.IndexRefreshed" xml:space="preserve"><value>Индекс обновлён. Закладок: {0}.</value></data>
@@ -460,7 +465,7 @@
   <data name="Bookmarks.InsideHyperlink" xml:space="preserve"><value>Позиция находится внутри ссылки.</value></data>
   <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Поддерживается только содержимое в пределах одного абзаца.</value></data>
   <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>Выделение пересекается с другой ссылкой.</value></data>
-  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Укажите текст ссылки или выделите текст в документе.</value></data>
+  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Укажите собственный текст новой ссылки в поле «Текст ссылки».</value></data>
   <data name="Explorer.Picker.SelectFile" xml:space="preserve"><value>Выбрать файл</value></data>
   <data name="Explorer.Picker.SelectFolder" xml:space="preserve"><value>Выбрать папку</value></data>
   <data name="Explorer.WindowTitle" xml:space="preserve"><value>Проводник</value></data>

@@ -13,8 +13,65 @@ namespace CryptoBook.Tests;
 
 public sealed class BookmarkTests
 {
+    [WpfTheory]
+    [InlineData("ab", 0)]
+    [InlineData("ab", 1)]
+    [InlineData("ab", 2)]
+    [InlineData("", 0)]
+    public void AddAtCaret_InsertsOwnTextWithoutIncludingSurroundingText(string text, int offset)
+    {
+        var editor = CreateRichText(text);
+        var bookmarks = new BookmarksService(editor);
+        var paragraph = (Paragraph)editor.Document.Blocks.FirstBlock!;
+        var run = (Run)paragraph.Inlines.FirstInline!;
+        editor.CaretPosition = run.ContentStart.GetPositionAtOffset(offset)!;
+
+        bookmarks.AddAtCaret(editor, "  Marker  ");
+
+        var entry = Assert.Single(bookmarks.Bookmarks);
+        var anchor = FindAnchor(editor.Document, entry.BookmarkUri!.OriginalString.TrimStart('#'))!;
+        Assert.Equal("Marker", new TextRange(anchor.ContentStart, anchor.ContentEnd).Text);
+        Assert.Equal(text.Insert(offset, "Marker"), new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text);
+        Assert.True(editor.Selection.IsEmpty);
+        editor.InsertTextAtCaret("!");
+        Assert.Equal("Marker", new TextRange(anchor.ContentStart, anchor.ContentEnd).Text);
+        Assert.True(bookmarks.Remove(editor, entry.Name));
+        Assert.Equal(text.Insert(offset, "!"), new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text);
+    }
+
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void AddAtCaret_RejectsSelectionWithoutChangingTextOrSelection(bool multipleParagraphs)
+    {
+        var editor = CreateRichText("selected text", "second paragraph");
+        var bookmarks = new BookmarksService(editor);
+        var validation = new BookmarkValidationService(bookmarks);
+        using var model = new BookmarksModel(editor, bookmarks, validation);
+        using var viewModel = new BookmarksViewModel(model, new StubWindowManager());
+        var paragraphs = editor.Document.Blocks.Cast<Paragraph>().ToArray();
+        editor.Selection.Select(paragraphs[0].ContentStart,
+            paragraphs[multipleParagraphs ? 1 : 0].ContentEnd);
+        string before = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text;
+        string selected = editor.Selection.Text;
+        viewModel.NewBookmarkName = "Marker";
+
+        Assert.False(validation.CanInsertBookmark(editor, "Marker", bookmarks.Exists).Ok);
+        Assert.False(viewModel.AddAtCaret.CanExecute(null));
+        viewModel.AddAtCaret.Execute(null);
+        Assert.Throws<InvalidOperationException>(() => bookmarks.AddAtCaret(editor, "Marker"));
+
+        Assert.Empty(bookmarks.Bookmarks);
+        Assert.Equal(before, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+        Assert.Equal(selected, editor.Selection.Text);
+        editor.ClearSelection();
+        Assert.True(viewModel.AddAtCaret.CanExecute(null));
+        viewModel.AddAtCaret.Execute(null);
+        Assert.Single(bookmarks.Bookmarks);
+    }
+
     [WpfFact]
-    public void Remove_UnlinksAllReferencesPreservingCaptionsFormattingAndOtherLinks()
+    public void Remove_DeletesOwnTextAndAllLinkCaptionsAndPreservesOtherLinksWithUndo()
     {
         var editor = CreateRichText("target", "other", "links");
         var bookmarks = new BookmarksService(editor);
@@ -27,10 +84,9 @@ public sealed class BookmarkTests
         var other = bookmarks.Bookmarks[1].BookmarkUri!;
 
         var formatted = new Hyperlink(new Bold(new Run("first caption"))) { NavigateUri = target, FontSize = 21 };
-        var child = ((Bold)formatted.Inlines.FirstInline!).Inlines.FirstInline!;
         paragraphs[2].Inlines.Add(new Span(formatted));
         paragraphs[2].Inlines.Add(new Hyperlink(new Run("second caption")) { NavigateUri = target });
-        var otherLink = new Hyperlink(new Run("other link")) { NavigateUri = other };
+        var otherLink = new Hyperlink(new Run("other link")) { NavigateUri = other, FontSize = 23 };
         var external = new Hyperlink(new Run("external")) { NavigateUri = new Uri("https://example.com/" + target) };
         paragraphs[2].Inlines.Add(otherLink);
         paragraphs[2].Inlines.Add(external);
@@ -61,9 +117,11 @@ public sealed class BookmarkTests
             menu.Remove.Execute(null);
 
             Assert.Equal(new[] { otherLink, external }, new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
-            Assert.Equal(before, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text.Replace("\u200B", ""));
-            Assert.Equal(FontWeights.Bold, child.FontWeight);
-            Assert.Equal(21, child.FontSize);
+            string expected = before;
+            foreach(string deleted in new[] { "Target", "first caption", "second caption", "list caption", "table caption", "floating caption" })
+                expected = expected.Replace(deleted, "");
+            Assert.Equal(expected, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+            Assert.Equal(23, otherLink.FontSize);
             Assert.True(bookmarks.Exists("Other"));
             Assert.False(bookmarks.Exists("Target"));
             Assert.Null(menu.SelectedBookmark);
@@ -72,13 +130,21 @@ public sealed class BookmarkTests
             Assert.False(editor.CanUndo);
             bookmarks.RebuildIndexFromDocument(editor);
             Assert.True(bookmarks.Exists("Target"));
+            Assert.Equal(before, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
             Assert.Equal(7, new FlowDocumentWalker().Find<Hyperlink>(editor.Document).Count());
+            Assert.True(editor.CanRedo);
+            editor.Redo();
+            bookmarks.RebuildIndexFromDocument(editor);
+            Assert.Equal(expected, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+            Assert.False(bookmarks.Exists("Target"));
+            Assert.True(bookmarks.Exists("Other"));
+            Assert.Equal(2, new FlowDocumentWalker().Find<Hyperlink>(editor.Document).Count());
         }
         finally { window.Close(); }
     }
 
     [WpfFact]
-    public void RemoveLegacyAnchor_PreservesVisibleContentAndNestedBookmarks()
+    public void RemoveLegacyAnchor_DeletesItsContentAndNestedBookmarksAndTheirReferences()
     {
         var editor = CreateRichText("suffix");
         var paragraph = (Paragraph)editor.Document.Blocks.FirstBlock!;
@@ -87,17 +153,121 @@ public sealed class BookmarkTests
         outer.Inlines.Add(inner);
         paragraph.Inlines.InsertBefore(paragraph.Inlines.FirstInline!, outer);
         paragraph.Inlines.Add(new Hyperlink(new Run("caption")) { NavigateUri = new Uri("#Outer", UriKind.Relative) });
+        paragraph.Inlines.Add(new Hyperlink(new Run("inner caption")) { NavigateUri = new Uri("#Inner", UriKind.Relative) });
+        paragraph.Inlines.Add(new Span(new Run("other text")) { Name = "Other" });
         var bookmarks = new BookmarksService(editor);
         bookmarks.RebuildIndexFromDocument(editor);
-        string before = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text;
 
         Assert.True(bookmarks.Remove(editor, "Outer"));
-        Assert.Equal(before, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+        Assert.Equal("suffixother text", new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text);
         Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
-        bookmarks.RebuildIndexFromDocument(editor);
         Assert.False(bookmarks.Exists("Outer"));
-        Assert.True(bookmarks.Exists("Inner"));
-        Assert.Equal(Brushes.DarkGreen, inner.Foreground);
+        Assert.False(bookmarks.Exists("Inner"));
+        Assert.Equal("Other", Assert.Single(bookmarks.Bookmarks).Name);
+        bookmarks.RebuildIndexFromDocument(editor);
+        Assert.Equal("Other", Assert.Single(bookmarks.Bookmarks).Name);
+    }
+
+    [WpfFact]
+    public void Remove_DeletesBookmarksInsideLinkCaptionsAndTheirReferences()
+    {
+        var editor = CreateRichText("suffix", "links");
+        var paragraph = (Paragraph)editor.Document.Blocks.LastBlock!;
+        var bookmarks = new BookmarksService(editor);
+        bookmarks.AddAtCaret(editor, "Target");
+        var target = bookmarks.Bookmarks[0].BookmarkUri!;
+        paragraph.Inlines.Add(new Hyperlink(new Span(new Run("nested text")) { Name = "Nested" }) {
+            NavigateUri = target
+        });
+        paragraph.Inlines.Add(new Hyperlink(new Span(new Run("deeper text")) { Name = "Deeper" }) {
+            NavigateUri = new Uri("#Nested", UriKind.Relative)
+        });
+        paragraph.Inlines.Add(new Hyperlink(new Run("last caption")) {
+            NavigateUri = new Uri("#Deeper", UriKind.Relative)
+        });
+        bookmarks.RebuildIndexFromDocument(editor);
+        Assert.Equal(3, bookmarks.Bookmarks.Count);
+
+        Assert.True(bookmarks.Remove(editor, "Target"));
+
+        Assert.Empty(bookmarks.Bookmarks);
+        Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
+        Assert.Equal("suffix\r\nlinks\r\n", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+        bookmarks.RebuildIndexFromDocument(editor);
+        Assert.Empty(bookmarks.Bookmarks);
+    }
+
+    [WpfTheory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public void HyperlinkFromSelection_IsRejectedInPanelManagerAndService(bool multipleParagraphs, bool manager)
+    {
+        var editor = CreateRichText("target", "selected text", "second paragraph");
+        var bookmarks = new BookmarksService(editor);
+        bookmarks.AddAtCaret(editor, "Target");
+        var validation = new BookmarkValidationService(bookmarks);
+        using var model = new BookmarksModel(editor, bookmarks, validation);
+        using var menu = new BookmarksViewModel(model, new StubWindowManager());
+        using var editorModel = new BookmarksEditorModel(model, new StubWindowManager());
+        using var managerViewModel = new BookmarksEditorViewModel(editorModel);
+        menu.SelectedBookmark = Assert.Single(bookmarks.Bookmarks);
+        menu.LinkText = "Own caption";
+        var command = manager ? managerViewModel.InsertHyperlinkTo : menu.InsertHyperlinkTo;
+        var paragraphs = editor.Document.Blocks.Cast<Paragraph>().ToArray();
+        editor.Selection.Select(paragraphs[1].ContentStart,
+            paragraphs[multipleParagraphs ? 2 : 1].ContentEnd);
+        string before = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text;
+        string selected = editor.Selection.Text;
+
+        var validationResult = validation.CanInsertHyperlink(editor, menu.LinkText);
+        Assert.Equal(ValidationCode.BadSelection, validationResult.Code);
+        Assert.False(command.CanExecute(null));
+        command.Execute(null);
+        Assert.Throws<InvalidOperationException>(() => bookmarks.InsertHyperlinkTo(editor, "Target", "Own caption"));
+        Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
+        Assert.Equal(before, new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+        Assert.Equal(selected, editor.Selection.Text);
+        Assert.Equal("Own caption", menu.LinkText);
+
+        editor.ClearSelection();
+        menu.LinkText = string.Empty;
+        Assert.Equal(ValidationCode.NeedLinkText, validation.CanInsertHyperlink(editor, menu.LinkText).Code);
+        Assert.False(command.CanExecute(null));
+        menu.LinkText = "Own caption";
+        Assert.True(command.CanExecute(null));
+        command.Execute(null);
+        var link = Assert.Single(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
+        Assert.Equal("Own caption", new TextRange(link.ContentStart, link.ContentEnd).Text);
+        Assert.Contains("selected text", new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+    }
+
+    [WpfTheory]
+    [InlineData("ab", 0)]
+    [InlineData("ab", 1)]
+    [InlineData("ab", 2)]
+    [InlineData("", 0)]
+    public void HyperlinkInsertion_KeepsOwnCaptionSeparateFromSurroundingAndFollowingText(string text, int offset)
+    {
+        var editor = CreateRichText("target", text);
+        var bookmarks = new BookmarksService(editor);
+        bookmarks.AddAtCaret(editor, "Target");
+        var paragraph = (Paragraph)editor.Document.Blocks.LastBlock!;
+        var run = (Run)paragraph.Inlines.FirstInline!;
+        editor.CaretPosition = run.ContentStart.GetPositionAtOffset(offset)!;
+
+        Assert.True(new BookmarkValidationService(bookmarks).CanInsertHyperlink(editor, "Own caption").Ok);
+        bookmarks.InsertHyperlinkTo(editor, "Target", "Own caption");
+        var link = Assert.Single(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
+        Assert.Equal("Own caption", new TextRange(link.ContentStart, link.ContentEnd).Text);
+        Assert.Equal(text.Insert(offset, "Own caption"), new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text);
+        Assert.True(editor.Selection.IsEmpty);
+        editor.InsertTextAtCaret("!");
+        Assert.Equal("Own caption", new TextRange(link.ContentStart, link.ContentEnd).Text);
+        Assert.True(bookmarks.Remove(editor, "Target"));
+        Assert.Equal(text.Insert(offset, "!"), new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text);
+        Assert.Empty(new FlowDocumentWalker().Find<Hyperlink>(editor.Document));
     }
 
     [WpfFact]
@@ -281,6 +451,10 @@ public sealed class BookmarkTests
 
         Assert.True(bookmarkService.Exists("Renamed in editor"));
         Assert.Equal("Renamed in editor", viewModel.SelectedBookmark!.Name);
+        Assert.True(viewModel.Remove.CanExecute(null));
+        viewModel.Remove.Execute(null);
+        Assert.Empty(bookmarkService.Bookmarks);
+        Assert.Equal("text\r\n", new TextRange(richText.Document.ContentStart, richText.Document.ContentEnd).Text);
     }
 
     private static void AssertCaretAt(

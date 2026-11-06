@@ -29,6 +29,9 @@ namespace CryptoBook.Services
             if(svc.IsReadOnly)
                 return ValidationResult.Fail(ValidationCode.ReadOnly,
                     LocalizationManager.GetString("Bookmarks.ReadOnly"));
+            if(!svc.Selection.IsEmpty)
+                return ValidationResult.Fail(ValidationCode.BadSelection,
+                    LocalizationManager.GetString("Bookmarks.SelectionNotAllowed"));
             if(string.IsNullOrWhiteSpace(name))
                 return ValidationResult.Fail(ValidationCode.NameEmpty,
                     LocalizationManager.GetString("Bookmarks.NameEmpty"));
@@ -108,8 +111,12 @@ namespace CryptoBook.Services
                 return ValidationResult.Fail(ValidationCode.ReadOnly,
                     LocalizationManager.GetString("Bookmarks.ReadOnly"));
 
-            var sel = svc.Selection;
-            var hasSelection = !sel.IsEmpty;
+            if(!svc.Selection.IsEmpty)
+                return ValidationResult.Fail(ValidationCode.BadSelection,
+                    LocalizationManager.GetString("Bookmarks.LinkSelectionNotAllowed"));
+            if(string.IsNullOrWhiteSpace(linkText))
+                return ValidationResult.Fail(ValidationCode.NeedLinkText,
+                    LocalizationManager.GetString("Bookmarks.NeedLinkText"));
 
             var caret = svc.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
             if(caret is null)
@@ -118,25 +125,6 @@ namespace CryptoBook.Services
             if(GetAncestor<Hyperlink>(caret) != null)
                 return ValidationResult.Fail(ValidationCode.InsideHyperlink,
                     LocalizationManager.GetString("Bookmarks.InsideHyperlink"));
-
-            if(hasSelection)
-            {
-                var start = sel.Start.GetInsertionPosition(LogicalDirection.Forward);
-                var end = sel.End.GetInsertionPosition(LogicalDirection.Backward);
-                if(start is null || end is null || start.CompareTo(end) >= 0)
-                    return ValidationResult.Fail(ValidationCode.BadSelection);
-                if(!IsInlineRange(start, end))
-                    return ValidationResult.Fail(ValidationCode.RangeNotInline,
-                        LocalizationManager.GetString("Bookmarks.RangeNotInline"));
-                if(HasHyperlinkInRange(start, end))
-                    return ValidationResult.Fail(ValidationCode.OverlapsHyperlink,
-                        LocalizationManager.GetString("Bookmarks.OverlapsHyperlink"));
-            } else
-            {
-                if(string.IsNullOrWhiteSpace(linkText))
-                    return ValidationResult.Fail(ValidationCode.NeedLinkText,
-                        LocalizationManager.GetString("Bookmarks.NeedLinkText"));
-            }
 
             return ValidationResult.Success();
         }
@@ -180,34 +168,5 @@ namespace CryptoBook.Services
             return null;
         }
 
-        static bool IsInlineRange(TextPointer start, TextPointer end)
-        {
-            var p1 = start.Paragraph;
-            var p2 = end.Paragraph;
-            if(p1 == null || p2 == null || !ReferenceEquals(p1, p2))
-                return false;
-            return IsInlineSide(start) && IsInlineSide(end);
-        }
-
-        static bool IsInlineSide(TextPointer p)
-        {
-            for(TextElement? el = p.Parent as TextElement; el != null; el = el.Parent as TextElement)
-            {
-                if(el is Paragraph)
-                    return true;
-                if(el is Inline)
-                    continue;
-                return false;
-            }
-            return false;
-        }
-
-        static bool HasHyperlinkInRange(TextPointer start, TextPointer end)
-        {
-            for(var nav = start; nav != null && nav.CompareTo(end) < 0; nav = nav.GetNextContextPosition(LogicalDirection.Forward))
-                if(nav.GetAdjacentElement(LogicalDirection.Forward) is Hyperlink)
-                    return true;
-            return false;
-        }
     }
 }
