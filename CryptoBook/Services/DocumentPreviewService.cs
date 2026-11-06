@@ -22,6 +22,7 @@ namespace CryptoBook.Services
 
             var previewRange = new TextRange(preview.ContentStart, preview.ContentEnd);
             previewRange.Load(stream, System.Windows.DataFormats.XamlPackage);
+            XamlPackageBookmarkCodec.Copy(source, preview);
             preview.PageWidth = source.PageWidth;
             DocumentPageLayout.Apply(preview);
             preview.Background = source.Background;

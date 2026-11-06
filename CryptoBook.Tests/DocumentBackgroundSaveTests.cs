@@ -21,6 +21,11 @@ public sealed class DocumentBackgroundSaveTests
     public async Task Save_ContainsOnlyCropAndLocksOnlyAfterSuccessfulWrite(bool secure)
     {
         var (editor, fonts) = Create();
+        var bookmarks = new BookmarksService(editor);
+        editor.Document.Blocks.Add(new Paragraph(new Run("Bookmarked text")));
+        editor.CaretPosition = ((Paragraph)editor.Document.Blocks.LastBlock!).ContentStart;
+        bookmarks.AddAtCaret(editor, "Background bookmark");
+        bookmarks.Bookmarks[0].Note = "Retained after crop";
         var original = (ImageBrush)editor.Document.Background;
         Assert.Equal(new Rect(0.25, 0, 0.5, 1), DocumentBackgroundImageLayout.GetVisibleCrop(original, original.Viewport.Size));
         Assert.Equal(200, ((BitmapSource)DocumentBackgroundSaveOperation.Crop(original, editor.Document.PageWidth).ImageSource).PixelWidth);
@@ -79,6 +84,14 @@ public sealed class DocumentBackgroundSaveTests
             }
             var loaded = new FlowDocument();
             await handler.LoadAsync(loaded, content!);
+            IRichTextBoxService loadedEditor = new RichTextBoxService(new Paragraphs(), new Navigation(), new DocumentAppearanceDefaults());
+            loadedEditor.ReplaceDocument(loaded);
+            var loadedBookmarks = new BookmarksService(loadedEditor);
+            loadedBookmarks.RebuildIndexFromDocument(loadedEditor);
+            var bookmark = Assert.Single(loadedBookmarks.Bookmarks);
+            Assert.Equal("Background bookmark", bookmark.Name);
+            Assert.Equal("Retained after crop", bookmark.Note);
+            Assert.True(loadedBookmarks.NavigateTo(loadedEditor, bookmark.Name));
             Assert.True(DocumentBackgroundImageLayout.IsFinalized((ImageBrush)loaded.Background));
             Assert.Equal(saved.Viewport, ((ImageBrush)loaded.Background).Viewport);
             Assert.True(await operation.RunAsync(template, false, snapshot =>

@@ -165,6 +165,8 @@ namespace CryptoBook.Services
             var range = new TextRange( document.ContentStart, document.ContentEnd);
 
             range.Load( stream, ToDataFormat(template));
+            if(template is SecureFileTemplate)
+                XamlPackageBookmarkCodec.Restore(document, buffer);
         }
 
 

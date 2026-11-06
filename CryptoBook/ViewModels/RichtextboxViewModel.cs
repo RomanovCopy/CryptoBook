@@ -4,10 +4,11 @@ using CryptoBook.Interfaces;
 
 using System.Windows.Input;
 using System.Windows.Documents;
+using System.ComponentModel;
 
 namespace CryptoBook.ViewModels
 {
-    public class RichtextboxViewModel: ViewModelBase, IRichtextboxViewModel
+    public class RichtextboxViewModel: ViewModelBase, IRichtextboxViewModel, IDisposable
     {
         private readonly IRichtextboxModel richtextboxModel;
         private readonly IRichTextBoxService richTextBox;
@@ -39,8 +40,9 @@ namespace CryptoBook.ViewModels
             this.fontService = fontService;
             Ai = ai;
             Search.FocusRequested += OnSearchFocusRequested;
-            richtextboxModel.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+            richtextboxModel.PropertyChanged += OnModelChanged;
             LocalizationManager.CultureChanged += OnCultureChanged;
+            richTextBox.Service.TextChanged += OnSourceDocumentChanged;
             if(fontService is not null)
             {
                 fontService.DocumentBackgroundChanged +=
@@ -105,10 +107,10 @@ namespace CryptoBook.ViewModels
             new RelayCommand(
                 parameter =>
                 {
-                    if(parameter is Uri uri)
+                    if(parameter is Uri { IsAbsoluteUri: true } uri)
                         uriNavigationService.TryOpen(uri);
                 },
-                parameter => parameter is Uri);
+                parameter => parameter is Uri { IsAbsoluteUri: true });
         private RelayCommand? openHyperlink;
 
         public ICommand SaveDocument => menuFile.SaveFile;
@@ -130,17 +132,24 @@ namespace CryptoBook.ViewModels
             new RelayCommand(
                 parameter =>
                 {
-                    LocalizationManager.CultureChanged -= OnCultureChanged;
-                    Search.FocusRequested -= OnSearchFocusRequested;
-                    if(fontService is not null)
-                    {
-                        fontService.DocumentBackgroundChanged -=
-                            OnDocumentBackgroundChanged;
-                    }
+                    Dispose();
                     richtextboxModel.Execute_Closed(parameter);
                 },
                 richtextboxModel.CanExecute_Closed);
         private RelayCommand? closed;
+
+        private void OnModelChanged(object? sender, PropertyChangedEventArgs args) =>
+            OnPropertyChanged(args.PropertyName ?? string.Empty);
+
+        public void Dispose()
+        {
+            richtextboxModel.PropertyChanged -= OnModelChanged;
+            LocalizationManager.CultureChanged -= OnCultureChanged;
+            richTextBox.Service.TextChanged -= OnSourceDocumentChanged;
+            Search.FocusRequested -= OnSearchFocusRequested;
+            if(fontService != null)
+                fontService.DocumentBackgroundChanged -= OnDocumentBackgroundChanged;
+        }
 
         private void SetPreviewMode(bool previewMode)
         {
@@ -180,6 +189,12 @@ namespace CryptoBook.ViewModels
                 PreviewDocument = previewService.CreatePreview(
                     richTextBox.Document);
             }
+        }
+
+        private void OnSourceDocumentChanged(object sender, System.Windows.Controls.TextChangedEventArgs args)
+        {
+            if(IsPreviewMode)
+                PreviewDocument = previewService.CreatePreview(richTextBox.Document);
         }
     }
 }

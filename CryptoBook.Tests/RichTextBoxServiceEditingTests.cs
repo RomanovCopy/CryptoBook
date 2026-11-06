@@ -13,6 +13,47 @@ namespace CryptoBook.Tests;
 
 public sealed class RichTextBoxServiceEditingTests
 {
+    [WpfTheory]
+    [InlineData(false, "привет")]
+    [InlineData(true, "привет")]
+    [InlineData(false, "Ж😀")]
+    public void ImeWordSuggestion_WithPendingFormatting_IsLeftToWpf(
+        bool selectPrefix, string suggestion)
+    {
+        var service = CreateEditor("при далее");
+        var run = GetOnlyRun(service);
+        var start = run.ContentStart;
+        var end = start.GetPositionAtOffset(3)!;
+        MoveCaret(service, end);
+        if(selectPrefix)
+            service.Selection.Select(start, end);
+        service.SetTypingProperty(TextElement.FontWeightProperty, FontWeights.Bold);
+
+        // WPF exposes no public constructor for real IME compositions. Use its
+        // own composition type and replacement range, rather than plain typing.
+        var composition = (FrameworkRichTextComposition)Activator.CreateInstance(
+            typeof(FrameworkRichTextComposition),
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+            binder: null,
+            args: [InputManager.Current, service.Service, new object()],
+            culture: null)!;
+        typeof(FrameworkTextComposition).GetMethod("SetResultPositions",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .Invoke(composition, [start, end, suggestion]);
+        var args = new TextCompositionEventArgs(Keyboard.PrimaryDevice, composition)
+        {
+            RoutedEvent = TextCompositionManager.PreviewTextInputEvent
+        };
+
+        service.Service.RaiseEvent(args);
+
+        Assert.False(args.Handled);
+        Assert.Equal("при далее", GetText(service));
+        Assert.Equal(0, start.CompareTo(composition.ResultStart));
+        Assert.Equal(0, end.CompareTo(composition.ResultEnd));
+        Assert.Equal(selectPrefix ? "при" : string.Empty, service.Selection.Text);
+    }
+
     [WpfFact]
     public void ReadOnly_WithPendingTypingProperty_DoesNotModifyDocument()
     {

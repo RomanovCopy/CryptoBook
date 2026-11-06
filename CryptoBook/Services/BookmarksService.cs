@@ -18,16 +18,20 @@ namespace CryptoBook.Services
     public sealed class BookmarksService: ViewModelBase, IBookmarkService
     {
         private const string MetadataPrefix = "CryptoBook.Bookmark:";
-        private const string ZeroWidthSpace = "\u200B";
+
+        private readonly IRichTextBoxService source;
 
         private readonly Dictionary<string, BookmarkRecord> index =
             new(StringComparer.OrdinalIgnoreCase);
 
         public ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; } = [];
 
+        public event EventHandler? MetadataChanged;
+        public event EventHandler<Uri>? Navigated;
+
         public BookmarksService(IRichTextBoxService service)
         {
-            _ = service ?? throw new ArgumentNullException(nameof(service));
+            source = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         public bool Exists(string name) =>
@@ -36,6 +40,8 @@ namespace CryptoBook.Services
         public void AddAtCaret(IRichTextBoxService service, string name)
         {
             ArgumentNullException.ThrowIfNull(service);
+            if(!service.Selection.IsEmpty)
+                throw new InvalidOperationException(LocalizationManager.GetString("Bookmarks.SelectionNotAllowed"));
             name = NormalizeName(name);
             EnsureValidNewName(name);
 
@@ -49,8 +55,8 @@ namespace CryptoBook.Services
                 {
                     Name = anchorId
                 };
-                anchor.Inlines.Add(new Run(ZeroWidthSpace));
-                service.CaretPosition = anchor.ElementEnd;
+                anchor.Inlines.Add(new Run(name));
+                MoveCaretAfterSpan(service, anchor);
 
                 var record = CreateRecord(service, name, string.Empty, anchorId);
                 anchor.Tag = SerializeMetadata(record.Entry);
@@ -71,10 +77,39 @@ namespace CryptoBook.Services
             service.BeginChange();
             try
             {
-                var anchor = FindAnchor(service.Document, record.AnchorId);
+                var anchors = EnumerateNamedSpans(service.Document).ToList();
+                var anchor = anchors.FirstOrDefault(span => span.Name == record.AnchorId);
+                var removedIds = new HashSet<string>(StringComparer.Ordinal) { record.AnchorId };
+                var removedElements = new HashSet<Span>();
                 if(anchor != null)
-                    anchor.SiblingInlines?.Remove(anchor);
-                RemoveRecord(record);
+                    removedElements.Add(anchor);
+                var links = new FlowDocumentWalker().Find<Hyperlink>(service.Document).ToList();
+                // Старые документы могут содержать закладки внутри якоря или подписи
+                // ссылки. Удаляем и их ссылки, не оставляя записей на удалённый текст.
+                bool expanded;
+                do
+                {
+                    foreach(var link in links.Where(link =>
+                        link.NavigateUri is { IsAbsoluteUri: false } uri &&
+                        removedIds.Contains(Uri.UnescapeDataString(uri.OriginalString.TrimStart('#')))))
+                    {
+                        removedElements.Add(link);
+                    }
+                    expanded = false;
+                    foreach(var nested in anchors.Where(span =>
+                        removedElements.Any(parent => ContainsSpan(parent, span))))
+                    {
+                        expanded |= removedIds.Add(nested.Name);
+                    }
+                } while(expanded);
+
+                var removedRecords = index.Values.Where(item => removedIds.Contains(item.AnchorId)).ToList();
+                var roots = removedElements.Where(span => !removedElements.Any(parent =>
+                    parent != span && ContainsSpan(parent, span))).ToList();
+                foreach(var element in roots)
+                    element.SiblingInlines?.Remove(element);
+                foreach(var removed in removedRecords)
+                    RemoveRecord(removed);
             }
             finally
             {
@@ -92,10 +127,11 @@ namespace CryptoBook.Services
 
             if(!index.TryGetValue(oldName, out var record))
                 throw new KeyNotFoundException($"Нет закладки «{oldName}».");
-            if(string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+            if(string.Equals(record.Entry.Name, newName, StringComparison.Ordinal))
                 return;
 
-            EnsureValidNewName(newName);
+            if(!string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+                EnsureValidNewName(newName);
             index.Remove(oldName);
             record.Entry.Name = newName;
             index[newName] = record;
@@ -118,7 +154,21 @@ namespace CryptoBook.Services
             service.CaretPosition = position;
             anchor.BringIntoView();
             service.Focus();
+            RichTextBoxNavigation.CenterCaretInView(service.Service);
+            Navigated?.Invoke(this, record.Entry.BookmarkUri!);
             return true;
+        }
+
+        public bool NavigateToUri(Uri uri)
+        {
+            ArgumentNullException.ThrowIfNull(uri);
+            if(uri.IsAbsoluteUri || !uri.OriginalString.StartsWith('#'))
+                return false;
+
+            var anchorId = Uri.UnescapeDataString(uri.OriginalString[1..]);
+            var record = index.Values.FirstOrDefault(item =>
+                string.Equals(item.AnchorId, anchorId, StringComparison.Ordinal));
+            return record != null && NavigateTo(source, record.Entry.Name);
         }
 
         public bool NavigateNext(IRichTextBoxService service) =>
@@ -133,6 +183,8 @@ namespace CryptoBook.Services
             string? linkText = null)
         {
             ArgumentNullException.ThrowIfNull(service);
+            if(!service.Selection.IsEmpty)
+                throw new InvalidOperationException(LocalizationManager.GetString("Bookmarks.LinkSelectionNotAllowed"));
             if(string.IsNullOrWhiteSpace(bookmarkName) ||
                !index.TryGetValue(bookmarkName.Trim(), out var record))
             {
@@ -143,21 +195,13 @@ namespace CryptoBook.Services
             service.BeginChange();
             try
             {
-                Hyperlink link;
-                if(!service.Selection.IsEmpty)
-                {
-                    link = new Hyperlink(service.Selection.Start, service.Selection.End);
-                }
-                else
-                {
-                    var position = GetInsertionPosition(service);
-                    link = new Hyperlink(position, position);
-                    link.Inlines.Add(new Run(
-                        string.IsNullOrWhiteSpace(linkText) ? record.Entry.Name : linkText));
-                }
+                var position = GetInsertionPosition(service);
+                var link = new Hyperlink(position, position);
+                link.Inlines.Add(new Run(
+                    string.IsNullOrWhiteSpace(linkText) ? record.Entry.Name : linkText));
 
                 link.NavigateUri = uri;
-                service.CaretPosition = link.ContentEnd;
+                MoveCaretAfterSpan(service, link);
                 service.ClearSelection();
             }
             finally
@@ -282,7 +326,13 @@ namespace CryptoBook.Services
         {
             var anchor = FindAnchor(service.Document, record.AnchorId);
             if(anchor != null)
-                anchor.Tag = SerializeMetadata(record.Entry);
+            {
+                string metadata = SerializeMetadata(record.Entry);
+                if(Equals(anchor.Tag, metadata))
+                    return;
+                anchor.Tag = metadata;
+                MetadataChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void EnsureValidNewName(string name)
@@ -326,6 +376,20 @@ namespace CryptoBook.Services
                     span.Name,
                     anchorId,
                     StringComparison.Ordinal));
+
+        private static void MoveCaretAfterSpan(IRichTextBoxService service, Span span)
+        {
+            // Отдельный Run и направление Forward не дают WPF включить
+            // последующий обычный ввод в удаляемый текст закладки или ссылки.
+            var followingText = new Run();
+            span.SiblingInlines!.InsertAfter(span, followingText);
+            service.CaretPosition = followingText.ContentStart.GetPositionAtOffset(0, LogicalDirection.Forward);
+        }
+
+        private static bool ContainsSpan(Span parent, Span child) =>
+            parent == child ||
+            (parent.ContentStart.CompareTo(child.ElementStart) <= 0 &&
+             parent.ContentEnd.CompareTo(child.ElementEnd) >= 0);
 
         private static IEnumerable<Span> EnumerateNamedSpans(FlowDocument document)
         {

@@ -22,6 +22,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Release test build failed.' }
 # Help tests also own an Application and an in-memory settings provider; isolate them.
 # Image layout templates must not inherit Application resources from another STA thread.
 # Window relationship tests own the Application dispatcher and show modal progress.
+# Bookmark preview commands raise notifications through Application.Current;
+# keep them away from Application dispatchers left by other WPF test classes.
 $groups = @(
     @{ Name = 'ai-integration'; Arguments = @('-class', 'CryptoBook.Tests.AiIntegrationTests') },
     @{ Name = 'ai-runtime'; Arguments = @('-class', 'CryptoBook.Tests.AdaptiveAiInferenceTests') },
@@ -32,7 +34,8 @@ $groups = @(
     @{ Name = 'help'; Arguments = @('-class', 'CryptoBook.Tests.HelpTests') },
     @{ Name = 'image-layout'; Arguments = @('-class', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests') },
     @{ Name = 'window-relationships'; Arguments = @('-class', 'CryptoBook.Tests.WindowRelationshipTests') },
-    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.ImageEditWindowTests', '-class-', 'CryptoBook.Tests.HelpTests', '-class-', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests', '-class-', 'CryptoBook.Tests.WindowRelationshipTests') }
+    @{ Name = 'bookmark-preview'; Arguments = @('-class', 'CryptoBook.Tests.BookmarkPreviewNavigationTests') },
+    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.ImageEditWindowTests', '-class-', 'CryptoBook.Tests.HelpTests', '-class-', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests', '-class-', 'CryptoBook.Tests.WindowRelationshipTests', '-class-', 'CryptoBook.Tests.BookmarkPreviewNavigationTests') }
 )
 $total = 0
 foreach ($group in $groups) {

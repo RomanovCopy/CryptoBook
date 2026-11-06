@@ -88,6 +88,7 @@ namespace CryptoBook.Services
         bool IRichTextBoxService.CanRedo => this.CanRedo;
 
         public event EventHandler? DocumentReplaced;
+        public event EventHandler<Uri>? InternalHyperlinkNavigated;
 
 
         public RichTextBoxService(
@@ -511,6 +512,12 @@ namespace CryptoBook.Services
         }
         private void RichTextBoxService_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
+            // IME/Windows word suggestions carry their own replacement range.
+            // WPF must commit them through TextStore/ImmComposition; inserting
+            // e.Text at the caret loses that range and interrupts composition.
+            if(e.TextComposition is FrameworkTextComposition)
+                return;
+
             if(this.IsReadOnly ||
                string.IsNullOrEmpty(e.Text) ||
                typingProperties.Count == 0)
@@ -605,6 +612,8 @@ namespace CryptoBook.Services
                     this.CaretPosition = position;
                     target.BringIntoView();
                     this.Focus();
+                    RichTextBoxNavigation.CenterCaretInView(this);
+                    InternalHyperlinkNavigated?.Invoke(this, uri);
                     return true;
                 }
                 return false;

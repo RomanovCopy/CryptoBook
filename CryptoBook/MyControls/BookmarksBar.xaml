@@ -36,11 +36,12 @@
                     <TextBlock Text="{Binding [Bookmarks.New], Source={StaticResource Res}}"
                                FontWeight="SemiBold"
                                Margin="4,2,4,4"/>
-                    <DockPanel LastChildFill="True">
+                    <DockPanel LastChildFill="True" IsEnabled="{Binding IsBookmarkCreationEnabled}">
                         <Button DockPanel.Dock="Right"
                                 Style="{StaticResource EditorToolButtonStyle}"
                                 Command="{Binding AddAtCaret}"
-                                ToolTip="{Binding [Bookmarks.AddAtCaret], Source={StaticResource Res}}">
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="{Binding [Bookmarks.AddAtCaretHint], Source={StaticResource Res}}">
                             <Path Data="{StaticResource Icon.BookmarkAdd}"
                                   Style="{StaticResource EditorToolbarIconStyle}"/>
                         </Button>
@@ -59,6 +60,7 @@
                                FontWeight="SemiBold"
                                Margin="4,0,4,4"/>
                     <ComboBox ItemsSource="{Binding Bookmarks}"
+                              Style="{StaticResource DropUpComboBoxStyle}"
                               SelectedItem="{Binding SelectedBookmark, Mode=TwoWay}"
                               DisplayMemberPath="Name"
                               Margin="3"
@@ -102,7 +104,7 @@
                         <Button DockPanel.Dock="Right"
                                 Style="{StaticResource EditorToolButtonStyle}"
                                 Command="{Binding Remove}"
-                                ToolTip="{Binding [Bookmarks.DeleteSelected], Source={StaticResource Res}}">
+                                ToolTip="{Binding [Bookmarks.DeleteSelectedHint], Source={StaticResource Res}}">
                             <Path Data="{StaticResource Icon.BookmarkRemove}"
                                   Style="{StaticResource EditorToolbarIconStyle}"/>
                         </Button>
@@ -120,11 +122,12 @@
                                  ToolTip="{Binding [Bookmarks.SelectedNewName], Source={StaticResource Res}}"/>
                     </DockPanel>
 
-                    <DockPanel LastChildFill="True">
+                    <DockPanel LastChildFill="True" IsEnabled="{Binding IsLinkInsertionEnabled}">
                         <Button DockPanel.Dock="Right"
                                 Style="{StaticResource EditorToolButtonStyle}"
                                 Command="{Binding InsertHyperlinkTo}"
-                                ToolTip="{Binding [Bookmarks.InsertSelectedLink], Source={StaticResource Res}}">
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="{Binding [Bookmarks.InsertSelectedLinkHint], Source={StaticResource Res}}">
                             <Path Data="{StaticResource Icon.Link}"
                                   Style="{StaticResource EditorToolbarIconStyle}"/>
                         </Button>

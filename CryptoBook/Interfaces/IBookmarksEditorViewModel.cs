@@ -29,6 +29,7 @@ namespace CryptoBook.Interfaces
         string RenameTo { get; set; }
         string LinkText { get; set; }
         string StatusMessage { get; }
+        bool IsLinkInsertionEnabled { get; }
 
         ICommand NavigateTo { get; }
         ICommand Remove { get; }

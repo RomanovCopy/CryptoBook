@@ -17,6 +17,12 @@ namespace CryptoBook.Interfaces
         /// </summary>
         ObservableCollection<IBookmarkEntryViewModel> Bookmarks { get; }
 
+        /// <summary>Имя или заметка изменились без события TextChanged редактора.</summary>
+        event EventHandler? MetadataChanged;
+
+        /// <summary>Переход выполнен в исходном документе; синхронизирует видимый предпросмотр.</summary>
+        event EventHandler<Uri>? Navigated;
+
 
         /// <summary>
         /// закладка с таким именем уже существует?
@@ -24,11 +30,11 @@ namespace CryptoBook.Interfaces
         bool Exists(string name);
 
         /// <summary>
-        /// Добавить закладку в позицию каретки с именем пользователя
+        /// Вставить закладку с собственным текстом (именем) в позицию каретки без выделения
         /// </summary>
         void AddAtCaret(IRichTextBoxService service, string name);
         /// <summary>
-        /// Удалить закладку
+        /// Удалить закладку вместе с её содержимым и всеми ссылками на неё, включая их подписи
         /// </summary>
         bool Remove(IRichTextBoxService service, string name);
         /// <summary>
@@ -39,10 +45,12 @@ namespace CryptoBook.Interfaces
         /// Перейти к закладке
         /// </summary>
         bool NavigateTo(IRichTextBoxService service, string name);
+        /// <summary>Перейти по внутренней ссылке в исходном документе.</summary>
+        bool NavigateToUri(Uri uri);
         bool NavigateNext(IRichTextBoxService service);
         bool NavigatePrevious(IRichTextBoxService service);
         /// <summary>
-        /// Вставить Hyperlink на закладку в текущую позицию (видимый текст задаётся параметром)
+        /// Вставить Hyperlink с собственным текстом в позицию каретки без выделения
         /// </summary>
         void InsertHyperlinkTo(IRichTextBoxService service, string bookmarkName, string? linkText = null);
         /// <summary>

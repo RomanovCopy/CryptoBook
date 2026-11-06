@@ -11,6 +11,7 @@ A shortcut works in the stated window or control when its command is available. 
 | Ctrl+X / C / V / A | Focused text field: cut / copy / paste / select all |
 | Ctrl+B / I / U | Ordinary editor: bold / italic / underline; not Markdown-source formatting |
 | Enter / Ctrl+Enter | Ordinary editor: line break / new paragraph; lists retain their own rules |
+| ↑; ←/→; Enter; Esc | When Windows text suggestions appear: move to suggestions; choose a word; insert the selection; dismiss without inserting |
 | Ctrl+F | Ordinary or Markdown document: open search |
 | F3 / Shift+F3 | With document search open: next / previous match |
 | Enter / Shift+Enter | Document search field: next / previous match |

@@ -527,8 +527,14 @@
   <data name="Bookmarks.AddAtCaret" xml:space="preserve">
     <value>Додати в позиції каретки</value>
   </data>
+  <data name="Bookmarks.AddAtCaretHint" xml:space="preserve">
+    <value>Вставити нову закладку з власним текстом із введеного імені. Спочатку зніміть виділення тексту.</value>
+  </data>
+  <data name="Bookmarks.SelectionNotAllowed" xml:space="preserve">
+    <value>Зніміть виділення тексту: нова закладка вставляє власний текст у позиції каретки.</value>
+  </data>
   <data name="Bookmarks.NewName" xml:space="preserve">
-    <value>Нова назва закладки</value>
+    <value>Ім'я нової закладки; під час створення воно вставляється в документ як її власний текст</value>
   </data>
   <data name="Bookmarks.Selected" xml:space="preserve">
     <value>Вибрана закладка</value>
@@ -551,6 +557,9 @@
   <data name="Bookmarks.DeleteSelected" xml:space="preserve">
     <value>Видалити вибрану закладку</value>
   </data>
+  <data name="Bookmarks.DeleteSelectedHint" xml:space="preserve">
+    <value>Видалити вибрану закладку разом з усім її текстом і всіма посиланнями на неї, включно з підписами. Ctrl+Z скасовує видалення.</value>
+  </data>
   <data name="Bookmarks.RenameSelected" xml:space="preserve">
     <value>Перейменувати вибрану закладку</value>
   </data>
@@ -560,8 +569,14 @@
   <data name="Bookmarks.InsertSelectedLink" xml:space="preserve">
     <value>Вставити посилання на вибрану закладку</value>
   </data>
+  <data name="Bookmarks.InsertSelectedLinkHint" xml:space="preserve">
+    <value>Вставити посилання на вибрану закладку з власним підписом із поля «Текст посилання». Спочатку зніміть виділення тексту.</value>
+  </data>
+  <data name="Bookmarks.LinkSelectionNotAllowed" xml:space="preserve">
+    <value>Зніміть виділення тексту й укажіть підпис посилання: він вставляється в позиції каретки як власний текст.</value>
+  </data>
   <data name="Bookmarks.LinkTextHint" xml:space="preserve">
-    <value>Текст посилання; можна спочатку виділити текст у документі</value>
+    <value>Власний текст нового посилання; укажіть підпис і зніміть виділення тексту в документі</value>
   </data>
   <data name="Common.Cancel" xml:space="preserve">
     <value>Скасувати</value>
@@ -826,7 +841,7 @@
     <value>Додано закладку «{0}».</value>
   </data>
   <data name="Bookmarks.Removed" xml:space="preserve">
-    <value>Закладку «{0}» видалено.</value>
+    <value>Закладку «{0}» видалено разом із її текстом і всіма посиланнями на неї.</value>
   </data>
   <data name="Bookmarks.Renamed" xml:space="preserve">
     <value>«{0}» перейменовано на «{1}».</value>
@@ -880,7 +895,7 @@
     <value>Виділення перетинається з іншим гіперпосиланням.</value>
   </data>
   <data name="Bookmarks.NeedLinkText" xml:space="preserve">
-    <value>Введіть текст посилання або виділіть текст у документі.</value>
+    <value>Укажіть власний текст нового посилання в полі «Текст посилання».</value>
   </data>
   <data name="Explorer.Picker.SelectFile" xml:space="preserve">
     <value>Вибрати файл</value>

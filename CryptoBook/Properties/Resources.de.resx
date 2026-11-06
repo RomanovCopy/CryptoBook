@@ -342,7 +342,9 @@
   <data name="Editor.ToggleDocumentMode" xml:space="preserve"><value>Dokumentmodus wechseln</value></data>
   <data name="Bookmarks.New" xml:space="preserve"><value>Neues Lesezeichen</value></data>
   <data name="Bookmarks.AddAtCaret" xml:space="preserve"><value>An Cursorposition hinzufügen</value></data>
-  <data name="Bookmarks.NewName" xml:space="preserve"><value>Neuer Lesezeichenname</value></data>
+  <data name="Bookmarks.AddAtCaretHint" xml:space="preserve"><value>Ein neues Lesezeichen mit eigenem Text aus dem eingegebenen Namen einfügen. Heben Sie zuerst die Textauswahl auf.</value></data>
+  <data name="Bookmarks.SelectionNotAllowed" xml:space="preserve"><value>Heben Sie die Textauswahl auf: Ein neues Lesezeichen fügt eigenen Text an der Cursorposition ein.</value></data>
+  <data name="Bookmarks.NewName" xml:space="preserve"><value>Name des neuen Lesezeichens; wird beim Erstellen als eigener Text des Lesezeichens in das Dokument eingefügt</value></data>
   <data name="Bookmarks.Selected" xml:space="preserve"><value>Ausgewähltes Lesezeichen</value></data>
   <data name="Bookmarks.Previous" xml:space="preserve"><value>Vorheriges Lesezeichen</value></data>
   <data name="Bookmarks.GoToSelected" xml:space="preserve"><value>Zum ausgewählten Lesezeichen wechseln</value></data>
@@ -350,10 +352,13 @@
   <data name="Bookmarks.OpenManager" xml:space="preserve"><value>Lesezeichen-Manager öffnen</value></data>
   <data name="Bookmarks.RefreshIndex" xml:space="preserve"><value>Index aus Dokument aktualisieren</value></data>
   <data name="Bookmarks.DeleteSelected" xml:space="preserve"><value>Ausgewähltes Lesezeichen löschen</value></data>
+  <data name="Bookmarks.DeleteSelectedHint" xml:space="preserve"><value>Das ausgewählte Lesezeichen mit seinem gesamten Text und allen Links darauf einschließlich der Linktexte löschen. Strg+Z macht das Löschen rückgängig.</value></data>
   <data name="Bookmarks.RenameSelected" xml:space="preserve"><value>Ausgewähltes Lesezeichen umbenennen</value></data>
   <data name="Bookmarks.SelectedNewName" xml:space="preserve"><value>Neuer Name für das ausgewählte Lesezeichen</value></data>
   <data name="Bookmarks.InsertSelectedLink" xml:space="preserve"><value>Link zum ausgewählten Lesezeichen einfügen</value></data>
-  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>Linktext; Sie können zuerst Text im Dokument auswählen</value></data>
+  <data name="Bookmarks.InsertSelectedLinkHint" xml:space="preserve"><value>Einen Link zum ausgewählten Lesezeichen mit eigenem Text aus dem Feld „Linktext“ einfügen. Heben Sie zuerst die Textauswahl auf.</value></data>
+  <data name="Bookmarks.LinkSelectionNotAllowed" xml:space="preserve"><value>Heben Sie die Textauswahl auf und geben Sie den Linktext ein: Er wird als eigener Text des Links an der Cursorposition eingefügt.</value></data>
+  <data name="Bookmarks.LinkTextHint" xml:space="preserve"><value>Eigener Text des neuen Links; geben Sie den Linktext ein und heben Sie die Textauswahl im Dokument auf</value></data>
   <data name="Common.Cancel" xml:space="preserve"><value>Abbrechen</value></data>
   <data name="Common.Insert" xml:space="preserve"><value>Einfügen</value></data>
   <data name="Hyperlink.Title" xml:space="preserve"><value>Hyperlink einfügen</value></data>
@@ -442,7 +447,7 @@
   <data name="Bookmarks.Anchor" xml:space="preserve"><value>Anker:</value></data>
   <data name="Bookmarks.Refresh" xml:space="preserve"><value>Aktualisieren</value></data>
   <data name="Bookmarks.Added" xml:space="preserve"><value>Das Lesezeichen „{0}“ wurde hinzugefügt.</value></data>
-  <data name="Bookmarks.Removed" xml:space="preserve"><value>Das Lesezeichen „{0}“ wurde entfernt.</value></data>
+  <data name="Bookmarks.Removed" xml:space="preserve"><value>Das Lesezeichen „{0}“ wurde mit seinem Text und allen Links darauf gelöscht.</value></data>
   <data name="Bookmarks.Renamed" xml:space="preserve"><value>„{0}“ wurde in „{1}“ umbenannt.</value></data>
   <data name="Bookmarks.LinkInserted" xml:space="preserve"><value>Ein Link zu „{0}“ wurde eingefügt.</value></data>
   <data name="Bookmarks.IndexRefreshed" xml:space="preserve"><value>Index aktualisiert. Lesezeichen: {0}.</value></data>
@@ -460,7 +465,7 @@
   <data name="Bookmarks.InsideHyperlink" xml:space="preserve"><value>Der Cursor befindet sich in einem Hyperlink.</value></data>
   <data name="Bookmarks.RangeNotInline" xml:space="preserve"><value>Nur Inline-Inhalte innerhalb eines Absatzes werden unterstützt.</value></data>
   <data name="Bookmarks.OverlapsHyperlink" xml:space="preserve"><value>Die Auswahl überschneidet sich mit einem anderen Hyperlink.</value></data>
-  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Geben Sie Linktext ein oder wählen Sie Text im Dokument aus.</value></data>
+  <data name="Bookmarks.NeedLinkText" xml:space="preserve"><value>Geben Sie den eigenen Text des neuen Links im Feld „Linktext“ ein.</value></data>
   <data name="Explorer.Picker.SelectFile" xml:space="preserve"><value>Datei auswählen</value></data>
   <data name="Explorer.Picker.SelectFolder" xml:space="preserve"><value>Ordner auswählen</value></data>
   <data name="Explorer.WindowTitle" xml:space="preserve"><value>Datei-Explorer</value></data>

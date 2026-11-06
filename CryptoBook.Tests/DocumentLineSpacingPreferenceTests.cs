@@ -145,6 +145,8 @@ public sealed class DocumentLineSpacingPreferenceTests
 
     private sealed class BookmarkServiceStub: IBookmarkService
     {
+        public event EventHandler? MetadataChanged { add { } remove { } }
+        public event EventHandler<Uri>? Navigated { add { } remove { } }
         public event PropertyChangedEventHandler? PropertyChanged
         {
             add { }
@@ -158,6 +160,7 @@ public sealed class DocumentLineSpacingPreferenceTests
         public bool Remove(IRichTextBoxService service, string name) => false;
         public void Rename(IRichTextBoxService service, string oldName, string newName) { }
         public bool NavigateTo(IRichTextBoxService service, string name) => false;
+        public bool NavigateToUri(Uri uri) => false;
         public bool NavigateNext(IRichTextBoxService service) => false;
         public bool NavigatePrevious(IRichTextBoxService service) => false;
         public void InsertHyperlinkTo(
