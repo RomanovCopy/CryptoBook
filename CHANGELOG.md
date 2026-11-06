@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.1.5.5 - 2026-11-06
+
+### Fixed
+- Preserve bookmark names, notes, positions and internal links in XamlPackage and protected documents, snapshots and preview copies; retain compatibility with older packages.
+- Center and temporarily highlight bookmark destinations in the editor; navigate and highlight the correct page in paginated preview without changing document formatting or undo history.
+- Synchronize bookmark selection between the toolbar and manager; mark name and note edits as unsaved changes.
+- Insert bookmarks and internal links with their own text and keep subsequent typing outside their anchors. Delete bookmark content and all its links as one undoable operation.
+- Let WPF handle Windows/IME word suggestions with their original replacement range.
+- Update related help in all four languages.
+
+### Release
+- Synchronize version 1.1.5.5 and distribution documentation. User confirmed the candidate and authorized publication on November 6, 2026; preserve the reviewed local installer.
+
+Full comparison: [v1.1.5.4...v1.1.5.5](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.5.4...v1.1.5.5)
+
 ## 1.1.5.4 - 2026-11-05
 
 ### Added
