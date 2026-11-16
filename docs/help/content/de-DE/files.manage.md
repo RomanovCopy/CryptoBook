@@ -33,6 +33,14 @@ Die Schaltfläche **Vorgänge wiederherstellen** ist nur verfügbar, wenn der ge
 
 Objekte, die eine frühere Version in einem benachbarten Wiederherstellungsordner aufbewahrt hat, lassen sich weiterhin über diese Schaltfläche im Ordner mit dem alten Protokoll zurückholen.
 
+## Mit Archiven arbeiten
+
+Wählen Sie lokale Dateien oder Ordner und anschließend **Archiv erstellen…** in der Symbolleiste oder im Kontextmenü. Wählen Sie Zielordner, einen neuen Archivnamen und ZIP oder 7z. Ein optionales Passwort aktiviert AES-256; ZIP-Passwörter dürfen 1–99 druckbare ASCII-Zeichen enthalten. Wählen Sie 7z für Unicode-Passwörter.
+
+Für ein einzelnes ZIP, 7z, RAR oder RAR5 stehen **Archiv entpacken…** und **Archiv prüfen…** bereit. Beim Entpacken wird ein neuer Ordner erstellt; vorhandene Dateien und Ordner werden nicht ersetzt. Wählen Sie bei Konflikten einen neuen Namen. Das voreingestellte Entpacklimit beträgt 20 GiB und kann im Dialog geändert werden. Im Fortschrittsfenster lässt sich der Vorgang abbrechen. Bei Fehlern oder Abbruch wird kein Endergebnis erstellt; sind temporäre Dateien gesperrt, nennt die Meldung ihren Ordner.
+
+Das Archivpasswort ist vom CryptoBook-Schlüssel getrennt, wird nicht gespeichert und beim Start aus dem Feld gelöscht. Geben Sie es nach einem Fehler erneut ein. Eine Integritätsprüfung ist keine Prüfung auf Schadsoftware. Android/MTP, Netzwerkpfade, RAR-Erstellung und Bearbeitung innerhalb von Archiven werden noch nicht unterstützt. Verknüpfungen und unsichere Namen werden abgelehnt. Ein Doppelklick öffnet das Archiv weiterhin wie üblich über Windows.
+
 ## Verwandte Themen
 
 - [Mehrere Dateien umbenennen](help:files.batch)

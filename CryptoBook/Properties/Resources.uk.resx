@@ -2310,4 +2310,131 @@
   <data name="ImageEdit.Cancelled" xml:space="preserve"><value>Збереження скасовано.</value></data>
   <data name="ImageEdit.SaveFailed" xml:space="preserve"><value>Не вдалося зберегти зображення.</value></data>
   <data name="ImageEdit.PreviewFailed" xml:space="preserve"><value>Не вдалося оновити попередній перегляд.</value></data>
+  <data name="Archive.Create" xml:space="preserve">
+    <value>Упакувати в архів…</value>
+  </data>
+  <data name="Archive.Extract" xml:space="preserve">
+    <value>Розпакувати архів…</value>
+  </data>
+  <data name="Archive.Test" xml:space="preserve">
+    <value>Перевірити архів…</value>
+  </data>
+  <data name="Archive.CreateHint" xml:space="preserve">
+    <value>Створення нового ZIP або 7z з вибраних локальних файлів і папок. Наявні файли не перезаписуються. Необов’язковий пароль вмикає шифрування AES-256.</value>
+  </data>
+  <data name="Archive.ExtractHint" xml:space="preserve">
+    <value>Розпакування ZIP, 7z або RAR у нову папку. Укажіть ім’я папки, якої ще немає. Посилання й небезпечні шляхи відхиляються.</value>
+  </data>
+  <data name="Archive.TestHint" xml:space="preserve">
+    <value>Перевірка читання архіву та збережених контрольних сум. Перевірка не визначає наявність шкідливих файлів.</value>
+  </data>
+  <data name="Archive.Sources" xml:space="preserve">
+    <value>Вибрані файли й папки</value>
+  </data>
+  <data name="Archive.Destination" xml:space="preserve">
+    <value>Папка призначення</value>
+  </data>
+  <data name="Archive.Browse" xml:space="preserve">
+    <value>Вибрати папку призначення</value>
+  </data>
+  <data name="Archive.OutputName" xml:space="preserve">
+    <value>Ім’я нового архіву або папки</value>
+  </data>
+  <data name="Archive.Format" xml:space="preserve">
+    <value>Формат архіву</value>
+  </data>
+  <data name="Archive.MaximumSize" xml:space="preserve">
+    <value>Максимальний розмір розпакування, ГіБ</value>
+  </data>
+  <data name="Archive.Password" xml:space="preserve">
+    <value>Пароль архіву (необов’язково)</value>
+  </data>
+  <data name="Archive.Reading" xml:space="preserve">
+    <value>Читання вмісту архіву…</value>
+  </data>
+  <data name="Archive.Creating" xml:space="preserve">
+    <value>Створення архіву…</value>
+  </data>
+  <data name="Archive.Verifying" xml:space="preserve">
+    <value>Перевірка цілісності архіву…</value>
+  </data>
+  <data name="Archive.TestSuccess" xml:space="preserve">
+    <value>Перевірку цілісності архіву пройдено.</value>
+  </data>
+  <data name="Archive.Success" xml:space="preserve">
+    <value>Готово: {0}
+Файлів: {1}</value>
+  </data>
+  <data name="Archive.Cancelled" xml:space="preserve">
+    <value>Операцію скасовано. Результат не створено.</value>
+  </data>
+  <data name="Archive.Unsupported" xml:space="preserve">
+    <value>Підтримуються архіви ZIP, 7z і RAR.</value>
+  </data>
+  <data name="Archive.UnsafePath" xml:space="preserve">
+    <value>Архів містить небезпечне або непідтримуване ім’я файлу.</value>
+  </data>
+  <data name="Archive.LocalOnly" xml:space="preserve">
+    <value>Виберіть шлях на локальному диску. Android/MTP і мережеві шляхи не підтримуються.</value>
+  </data>
+  <data name="Archive.LinksUnsupported" xml:space="preserve">
+    <value>Символічні посилання, з’єднання каталогів і точки повторної обробки не підтримуються.</value>
+  </data>
+  <data name="Archive.InvalidPassword" xml:space="preserve">
+    <value>Пароль не має містити перенесення рядка або нульового символу.</value>
+  </data>
+  <data name="Archive.EngineMissing" xml:space="preserve">
+    <value>Вбудований рушій архівів відсутній. Перевстановіть CryptoBook.</value>
+  </data>
+  <data name="Archive.EngineInvalid" xml:space="preserve">
+    <value>Рушій архівів не пройшов перевірку цілісності.</value>
+  </data>
+  <data name="Archive.EngineError" xml:space="preserve">
+    <value>Архівну операцію не виконано. Перевірте пароль, цілісність архіву й доступ до файлів.</value>
+  </data>
+  <data name="Archive.TooManyEntries" xml:space="preserve">
+    <value>Перевищено ліміт: не більше 100 000 записів і 32 МіБ метаданих.</value>
+  </data>
+  <data name="Archive.NoSelection" xml:space="preserve">
+    <value>Виберіть хоча б один файл або папку.</value>
+  </data>
+  <data name="Archive.ExtensionMismatch" xml:space="preserve">
+    <value>Розширення файлу має відповідати вибраному формату архіву.</value>
+  </data>
+  <data name="Archive.RootUnsupported" xml:space="preserve">
+    <value>Виберіть файли або папки, а не корінь диска.</value>
+  </data>
+  <data name="Archive.DifferentDrives" xml:space="preserve">
+    <value>Вибрані вихідні файли мають бути на одному диску.</value>
+  </data>
+  <data name="Archive.OutputInsideSource" xml:space="preserve">
+    <value>Збережіть архів поза папками, що пакуються.</value>
+  </data>
+  <data name="Archive.NotEnoughSpace" xml:space="preserve">
+    <value>Недостатньо вільного місця для розпакування.</value>
+  </data>
+  <data name="Archive.SizeMismatch" xml:space="preserve">
+    <value>Розпаковані дані не відповідають метаданим архіву.</value>
+  </data>
+  <data name="Archive.DuplicatePath" xml:space="preserve">
+    <value>Архів містить дубльовані або конфліктні імена файлів Windows.</value>
+  </data>
+  <data name="Archive.ExtractionLimit" xml:space="preserve">
+    <value>Архів перевищує вибраний максимальний розмір розпакування.</value>
+  </data>
+  <data name="Archive.OutputExists" xml:space="preserve">
+    <value>Файл або папка з таким ім’ям уже існує. Укажіть нове ім’я.</value>
+  </data>
+  <data name="Archive.NameOnly" xml:space="preserve">
+    <value>Укажіть ім’я файлу або папки без шляху.</value>
+  </data>
+  <data name="Archive.InvalidLimit" xml:space="preserve">
+    <value>Укажіть додатне ціле число ГіБ для ліміту розпакування.</value>
+  </data>
+  <data name="Archive.ZipPasswordAscii" xml:space="preserve">
+    <value>Для ZIP використовуйте пароль з 1–99 друкованих символів ASCII. Для пароля з кирилицею виберіть 7z.</value>
+  </data>
+  <data name="Archive.CleanupFailed" xml:space="preserve">
+    <value>Не вдалося видалити тимчасові файли. Після закриття програм, що їх використовують, видаліть папку операції: {0}</value>
+  </data>
 </root>

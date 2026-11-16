@@ -27,6 +27,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\third_party\7zip\win-x64\7z.exe" LogicalName="CryptoBook.ArchiveEngine.7z.exe"/>
+    <EmbeddedResource Include="..\third_party\7zip\win-x64\7z.dll" LogicalName="CryptoBook.ArchiveEngine.7z.dll"/>
+    <EmbeddedResource Include="..\third_party\7zip\License.txt" LogicalName="CryptoBook.ArchiveEngine.License.txt"/>
+    <EmbeddedResource Include="..\third_party\7zip\Copying.txt" LogicalName="CryptoBook.ArchiveEngine.Copying.txt"/>
+    <EmbeddedResource Include="..\third_party\7zip\UnRAR-License.txt" LogicalName="CryptoBook.ArchiveEngine.UnRAR-License.txt"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Infrastrucrure\**" />
     <EmbeddedResource Remove="Infrastrucrure\**" />
     <None Remove="Infrastrucrure\**" />

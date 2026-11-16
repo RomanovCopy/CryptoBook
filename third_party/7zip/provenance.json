@@ -1,0 +1,29 @@
+{
+  "version": "26.06",
+  "release": "https://github.com/ip7z/7zip/releases/tag/26.06",
+  "assets": [
+    {
+      "name": "7z2606-x64.msi",
+      "url": "https://github.com/ip7z/7zip/releases/download/26.06/7z2606-x64.msi",
+      "sha256": "6dc822569e777d9a3ecd5ffcbc22b55600af87e6c5d9810a64e8566cf5a4af9f"
+    },
+    {
+      "name": "7z2606-src.tar.xz",
+      "url": "https://github.com/ip7z/7zip/releases/download/26.06/7z2606-src.tar.xz",
+      "sha256": "a4e374c8f864f51df48c2cfd0e1413ec3b2ea030deae852d6a655402ebb61ac4"
+    }
+  ],
+  "components": [
+    {
+      "name": "7z.exe",
+      "sha256": "dc0493429fe28136fcb177a0e77c9875cbb3b0bff5f2f8eeba4df302e98cef76"
+    },
+    {
+      "name": "7z.dll",
+      "sha256": "500db9eb17f3c21b729ba41dd02ecfe1823da05028c7e4ba129084cc74cc364e"
+    }
+  ],
+  "extraction": "Official MSI extracted with msiexec /a /qn TARGETDIR=<repository artifact directory>; no system installation.",
+  "license": "License.txt",
+  "source": "https://github.com/ip7z/7zip/releases/download/26.06/7z2606-src.tar.xz"
+}

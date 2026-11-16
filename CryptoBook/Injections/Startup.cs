@@ -119,6 +119,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileExplorerViewModel>().As<IFileExplorerViewModel>().InstancePerLifetimeScope(); 
             builder.RegisterType<FileDetailsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<BatchRenameViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<ArchiveOperationViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<ImageEditViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<FavoriteDirectoriesViewModel>().As<IFavoriteDirectoriesViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<PinnedDocumentsViewModel>()
@@ -194,6 +195,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileExplorer>().InstancePerDependency();
             builder.RegisterType<FileDetailsWindow>().InstancePerDependency();
             builder.RegisterType<BatchRenameWindow>().InstancePerDependency();
+            builder.RegisterType<ArchiveOperationWindow>().InstancePerDependency();
             builder.RegisterType<ImageEditWindow>().InstancePerDependency();
             builder.RegisterType<MessageWindow>().InstancePerDependency();
             builder.RegisterType<KeyInputWindow>().InstancePerDependency();
@@ -349,6 +351,7 @@ namespace CryptoBook.Injections
                 .SingleInstance();
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
             builder.RegisterType<BatchRenameService>().As<IBatchRenameService>().SingleInstance();
+            builder.RegisterType<ArchiveService>().As<IArchiveService>().SingleInstance();
             builder.RegisterType<FileExplorerFlatViewService>()
                 .As<IFileExplorerFlatViewService>()
                 .InstancePerLifetimeScope();

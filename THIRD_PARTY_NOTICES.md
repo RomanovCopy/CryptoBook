@@ -1,7 +1,7 @@
 # Third-party notices
 
 CryptoBook uses the third-party components listed below. This notice is based
-on the dependency locks for CryptoBook 1.1.5.5 and was updated on 2026-11-06. A package's own license
+on the dependency locks and bundled archive engine for CryptoBook 1.1.5.5 and was updated on 2026-11-16. A package's own license
 and notices control if this summary differs
 from them. CryptoBook does not claim ownership of third-party software.
 
@@ -9,6 +9,16 @@ The GNU GPL v3 text is in `LICENSE`. Other standard license texts are in
 `LICENSES/`. Source availability is described in `SOURCE_CODE.md`.
 
 ## Components included in application distributions
+
+### 7-Zip: LGPL-2.1-or-later, BSD notices and unRAR restriction
+
+- Unmodified `7z.exe` and `7z.dll` 26.06 — Copyright (C) 1999–2026 Igor Pavlov.
+  They are embedded as resources and run as a separate console application.
+  Project: <https://www.7-zip.org/>. Exact license and notices:
+  `LICENSES/7ZIP-26.06-LICENSE.txt`, `LICENSES/LGPL-2.1-or-later.txt` and
+  `LICENSES/7ZIP-UnRAR-LICENSE.txt`. Exact binary/source origins and SHA-256 digests:
+  `third_party/7zip/provenance.json` in the source tree. Matching source:
+  <https://github.com/ip7z/7zip/releases/download/26.06/7z2606-src.tar.xz>.
 
 ### GPL-3.0-or-later
 

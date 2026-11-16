@@ -1,5 +1,12 @@
 # Source code availability
 
+The bundled, unmodified 7-Zip 26.06 console engine has matching source at
+<https://github.com/ip7z/7zip/releases/download/26.06/7z2606-src.tar.xz>.
+Its official MSI/source digests and exact component hashes are recorded in
+`third_party/7zip/provenance.json`; its license is included as
+`LICENSES/7ZIP-26.06-LICENSE.txt`. The original 7-Zip project is
+<https://www.7-zip.org/>. CryptoBook does not modify or rebuild this engine.
+
 CryptoBook binary releases are built from a version tag in
 <https://github.com/RomanovCopy/CryptoBook>. For a binary whose version is
 `X.Y.Z` or `X.Y.Z.W`, the matching source is the tag `vX.Y.Z` or `vX.Y.Z.W`.

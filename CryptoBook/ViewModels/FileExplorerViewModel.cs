@@ -597,6 +597,48 @@ namespace CryptoBook.ViewModels
             ExecuteBatchRename, CanBatchRename);
         private RelayCommand? _batchRenameCommand;
 
+        public ICommand CreateArchiveCommand => _createArchiveCommand ??= new RelayCommand(
+            parameter => OpenArchiveOperation(parameter, ArchiveAction.Create), CanCreateArchive);
+        private RelayCommand? _createArchiveCommand;
+        public ICommand ExtractArchiveCommand => _extractArchiveCommand ??= new RelayCommand(
+            parameter => OpenArchiveOperation(parameter, ArchiveAction.Extract), CanReadArchive);
+        private RelayCommand? _extractArchiveCommand;
+        public ICommand TestArchiveCommand => _testArchiveCommand ??= new RelayCommand(
+            parameter => OpenArchiveOperation(parameter, ArchiveAction.Test), CanReadArchive);
+        private RelayCommand? _testArchiveCommand;
+
+        private bool CanCreateArchive(object? parameter)
+        {
+            var items = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot);
+            return !IsCurrentDirectoryUnavailable && items.Count > 0 && items.All(item =>
+                item.Location.IsLocal && !item.IsEditing && item is IFileItem or IDirectoryItem &&
+                !item.FullPath.StartsWith("\\\\", StringComparison.Ordinal) &&
+                (item.Capabilities == StorageProviderCapabilities.None ||
+                 item.Capabilities.HasFlag(StorageProviderCapabilities.Read)));
+        }
+
+        private bool CanReadArchive(object? parameter)
+        {
+            var items = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot);
+            return CanCreateArchive(parameter) && items.Count == 1 && items[0] is IFileItem &&
+                ArchivePathPolicy.IsSupportedArchive(items[0].FullPath);
+        }
+
+        private void OpenArchiveOperation(object? parameter, ArchiveAction action)
+        {
+            if(action == ArchiveAction.Create ? !CanCreateArchive(parameter) : !CanReadArchive(parameter)) return;
+            string[] paths = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot)
+                .Select(item => item.FullPath).ToArray();
+            Guid dialog = _windowManager.CreateWindow<Views.ArchiveOperationWindow>(
+                new Dictionary<string, object?>
+                {
+                    [ArchiveOperationViewModel.SourcesContextKey] = paths,
+                    [ArchiveOperationViewModel.ActionContextKey] = action
+                });
+            _windowManager.ShowWindowDialog(dialog);
+            ExecuteRefresh(SelectedItem);
+        }
+
         private bool CanBatchRename(object? parameter)
         {
             var items = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot);
