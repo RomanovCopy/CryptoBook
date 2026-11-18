@@ -1,5 +1,6 @@
 using CryptoBook.DTO;
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 using CryptoBook.Services;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
@@ -11,6 +12,20 @@ namespace CryptoBook.Models;
 
 public partial class FileExplorerModel
 {
+    private async Task<FileOperationResult?> RunArchiveChangeAsync(
+        Func<IProgressReporter, CancellationToken, Task<FileOperationResult>> operation)
+    {
+        try
+        {
+            return await _progressDialogService.RunAsync(ArchivePathPolicy.Text("Updating"), async (progress, dialogToken) =>
+            {
+                using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(dialogToken, _cancellationTokenSource.Token);
+                return await operation(progress, cancellation.Token);
+            });
+        }
+        catch(OperationCanceledException) { return null; }
+    }
+
     public async Task<bool> OpenArchiveAsync(string path, CancellationToken cancellationToken = default)
     {
         if(_archives is null || _archiveOpening || _closed) return false;
@@ -37,7 +52,7 @@ public partial class FileExplorerModel
                         {
                             using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, dialogToken);
                             progress.Report(null, ArchivePathPolicy.Text("Reading"));
-                            return await _archives.MountAsync(WindowId, path, password, linked.Token);
+                            return await _archives.MountSourceAsync(WindowId, _storage.Resolve(path), _storage, password, linked.Token);
                         });
                     password = null;
                     break;
@@ -48,7 +63,7 @@ public partial class FileExplorerModel
                     token.ThrowIfCancellationRequested();
                     Guid dialog = _windowManager.CreateWindow<ArchivePasswordWindow>(new Dictionary<string, object?>
                     {
-                        ["source"] = path, ["retry"] = retry
+                        ["source"] = _storage.FormatDisplayPath(_storage.Resolve(path)), ["retry"] = retry
                     });
                     _windowManager.ShowWindowDialog(dialog);
                     using SecureString? secure = _windowManager.GetResult<SecureString>(dialog);
@@ -71,8 +86,18 @@ public partial class FileExplorerModel
         }
         finally
         {
-            if(_closed) _archives.CloseOwner(WindowId);
+            if(_closed) CloseArchiveSessions();
             _archiveOpening = false;
+        }
+    }
+
+    private void CloseArchiveSessions()
+    {
+        try { _archives?.CloseOwner(WindowId); }
+        catch(AggregateException exception)
+        {
+            _ = _messageService.ShowMessage(ArchivePathPolicy.Text("CleanupTitle"),
+                string.Join(Environment.NewLine, exception.InnerExceptions.Select(item => item.Message)));
         }
     }
 

@@ -1513,8 +1513,8 @@ Dateien: {1}</value>
   <data name="Archive.UnsafePath" xml:space="preserve">
     <value>Das Archiv enthält einen unsicheren oder nicht unterstützten Dateinamen.</value>
   </data>
-  <data name="Archive.LocalOnly" xml:space="preserve">
-    <value>Wählen Sie einen lokalen Datenträgerpfad. Android/MTP- und Netzwerkpfade werden nicht unterstützt.</value>
+<data name="Archive.LocalOnly" xml:space="preserve">
+    <value>Für diesen Vorgang ist ein lokaler Datenträgerpfad erforderlich. Geräte-, Archiveintrags- und Netzwerkpfade können hier nicht verwendet werden.</value>
   </data>
   <data name="Archive.LinksUnsupported" xml:space="preserve">
     <value>Symbolische Links, Verzeichnisverknüpfungen und Analysepunkte werden nicht unterstützt.</value>
@@ -1549,8 +1549,8 @@ Dateien: {1}</value>
   <data name="Archive.OutputInsideSource" xml:space="preserve">
     <value>Speichern Sie das Archiv außerhalb der zu archivierenden Ordner.</value>
   </data>
-  <data name="Archive.NotEnoughSpace" xml:space="preserve">
-    <value>Nicht genügend freier Speicherplatz zum Entpacken.</value>
+<data name="Archive.NotEnoughSpace" xml:space="preserve">
+    <value>Nicht genügend freier Speicherplatz für den Archivvorgang.</value>
   </data>
   <data name="Archive.SizeMismatch" xml:space="preserve">
     <value>Die entpackten Daten stimmen nicht mit den Archivmetadaten überein.</value>
@@ -1558,8 +1558,8 @@ Dateien: {1}</value>
   <data name="Archive.DuplicatePath" xml:space="preserve">
     <value>Das Archiv enthält doppelte oder widersprüchliche Windows-Dateinamen.</value>
   </data>
-  <data name="Archive.ExtractionLimit" xml:space="preserve">
-    <value>Das Archiv überschreitet die gewählte maximale entpackte Größe.</value>
+<data name="Archive.ExtractionLimit" xml:space="preserve">
+    <value>Die zulässige Datenmenge für diesen Archivvorgang wurde überschritten.</value>
   </data>
   <data name="Archive.OutputExists" xml:space="preserve">
     <value>Eine Datei oder ein Ordner mit diesem Namen ist bereits vorhanden. Wählen Sie einen neuen Namen.</value>
@@ -1582,4 +1582,22 @@ Dateien: {1}</value>
   <data name="Archive.PasswordRetry" xml:space="preserve"><value>Das Passwort wurde nicht akzeptiert. Erneut eingeben oder abbrechen.</value></data>
   <data name="Archive.SessionClosed" xml:space="preserve"><value>Diese Archivsitzung ist geschlossen. Öffnen Sie das Archiv erneut.</value></data>
   <data name="Archive.NotAFile" xml:space="preserve"><value>Wählen Sie eine Datei im Archiv aus.</value></data>
+  <data name="Archive.Editable" xml:space="preserve"><value>Archiv — Bearbeitung möglich</value></data>
+  <data name="Archive.Changed" xml:space="preserve"><value>Das Archiv wurde seit dem Öffnen des Dokuments geändert. Speichern Sie eine Kopie mit „Speichern unter“ und öffnen Sie das Dokument erneut.</value></data>
+  <data name="Archive.InternalDocumentsOnly" xml:space="preserve"><value>Hier können Dokumente des integrierten Editors geöffnet werden. Kopieren Sie andere Dateien zuerst in einen lokalen Ordner.</value></data>
+  <data name="Archive.SaveAsRequired" xml:space="preserve"><value>Speichern Sie dieses Dokument mit „Speichern unter“ als lokale Datei.</value></data>
+  <data name="Archive.NestingLimit" xml:space="preserve"><value>Es sind höchstens 5 verschachtelte Archivebenen erlaubt.</value></data>
+  <data name="Archive.VolumesLocalOnly" xml:space="preserve"><value>Kopieren Sie alle Archivteile in einen lokalen Ordner und öffnen Sie den ersten Teil.</value></data>
+  <data name="Archive.DocumentLimit" xml:space="preserve"><value>Dokumente aus Archiven dürfen höchstens 64 MiB groß sein. Entpacken Sie größere Dokumente zuerst.</value></data>
+  <data name="Archive.CommitConflict" xml:space="preserve"><value>Das Archiv wurde gleichzeitig ersetzt oder seine Sicherung konnte nicht geprüft werden. Archivversionen und Arbeitsdateien wurden hier aufbewahrt: {0}</value></data>
+  <data name="Archive.Updating" xml:space="preserve"><value>Archiv aktualisieren</value></data>
+  <data name="Archive.DeleteTitle" xml:space="preserve"><value>Aus Archiv löschen</value></data>
+  <data name="Archive.DeleteWarning" xml:space="preserve"><value>Die ausgewählten Dateien und Ordner aus dem Archiv löschen? Der Papierkorb wird nicht verwendet. Das Archiv wird zum Speichern der Änderungen neu erstellt.</value></data>
+  <data name="Archive.DeleteCanceledPartial" xml:space="preserve"><value>Löschen abgebrochen. Einige Einträge wurden bereits aus dem Archiv entfernt; diese Änderungen wurden gespeichert.</value></data>
+  <data name="Archive.CleanupTitle" xml:space="preserve"><value>Temporäre Archivdateien bereinigen</value></data>
+  <data name="Archive.SourceChanged" xml:space="preserve"><value>Das Quellarchiv wurde während des Vorgangs geändert. Aktualisieren Sie seinen Inhalt im Dateimanager und versuchen Sie es erneut.</value></data>
+  <data name="Preview.ArchiveDisplayFailed" xml:space="preserve"><value>Der Archiveintrag konnte nicht für die Vorschau gelesen werden:{0}{1}</value></data>
+  <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Metadaten des Archiveintrags werden angezeigt. Extrahieren Sie den Eintrag in eine lokale Datei, um Inhalt, NTFS-Eigenschaften oder Signatur zu prüfen.</value></data>
+  <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Einige ausgewählte Elemente werden ohne Verwendung des Papierkorbs gelöscht. Fortfahren?</value></data>
+  <data name="Archive.Rebuilding" xml:space="preserve"><value>Archiv wird neu erstellt…</value></data>
 </root>

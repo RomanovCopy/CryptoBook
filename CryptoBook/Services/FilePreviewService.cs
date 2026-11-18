@@ -80,7 +80,9 @@ namespace CryptoBook.Services
                 return new FilePreviewContent(
                     FilePreviewKind.Error,
                     Message: LocalizationManager.Format(
-                        file.Location.IsLocal
+                        ArchiveStorageProvider.IsArchive(file.Location)
+                            ? "Preview.ArchiveDisplayFailed"
+                            : file.Location.IsLocal
                             ? "Preview.DisplayFailed"
                             : "Preview.RemoteDisplayFailed",
                         Environment.NewLine,

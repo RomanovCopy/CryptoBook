@@ -89,6 +89,16 @@ try
     var storage = new StorageFacade([localProvider, provider]);
     var engine = new TransferEngine(storage);
 
+    if(!args.Contains("--decryption-only", StringComparer.OrdinalIgnoreCase) &&
+       !args.Contains("--security-only", StringComparer.OrdinalIgnoreCase))
+        await ArchiveIntegration.RunAsync(provider, remoteTestFolder.Value, localRoot);
+    if(args.Contains("--archives-only", StringComparer.OrdinalIgnoreCase))
+    {
+        await DeleteRemoteTestFolderAsync();
+        Console.WriteLine("REMOTE_WPD_ARCHIVES_TEST: PASS");
+        return 0;
+    }
+
     await DecryptionIntegration.RunAsync(storage, provider, remoteTestFolder.Value, localRoot);
     if(args.Contains("--decryption-only", StringComparer.OrdinalIgnoreCase) ||
        args.Contains("--security-only", StringComparer.OrdinalIgnoreCase))

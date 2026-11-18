@@ -38,6 +38,7 @@ namespace CryptoBook.Services
         private readonly IRecentDocumentService? recentDocumentService;
         private readonly string temporaryRoot;
         private bool disposed;
+        private readonly Lazy<ArchiveDocumentService>? archiveDocuments;
 
         public WorkspaceFileOpenService(
             ISecureFileValidator secureFileValidator,
@@ -53,7 +54,8 @@ namespace CryptoBook.Services
             IDocumentRecoveryService recoveryService,
             IDocumentDialogService dialogService,
             IKeyResetService? keyResetService = null,
-            IRecentDocumentService? recentDocumentService = null)
+            IRecentDocumentService? recentDocumentService = null,
+            Lazy<ArchiveDocumentService>? archiveDocuments = null)
         {
             this.secureFileValidator = secureFileValidator ??
                 throw new ArgumentNullException(nameof(secureFileValidator));
@@ -81,6 +83,7 @@ namespace CryptoBook.Services
                 throw new ArgumentNullException(nameof(dialogService));
             this.keyResetService = keyResetService;
             this.recentDocumentService = recentDocumentService;
+            this.archiveDocuments = archiveDocuments;
 
             string externalRoot = Path.Combine(
                 Path.GetTempPath(),
@@ -211,6 +214,19 @@ namespace CryptoBook.Services
             using IDisposable? timerPause = keyResetService?.Pause();
             if(string.IsNullOrWhiteSpace(targetPath))
                 return WorkspaceFileOpenResult.Fail("File path is empty.");
+
+            if(StorageLocation.TryParse(targetPath, out var archiveLocation) && ArchiveStorageProvider.IsArchive(archiveLocation))
+            {
+                if(archiveDocuments is null) return WorkspaceFileOpenResult.Fail(ArchivePathPolicy.Text("InternalDocumentsOnly"));
+                await switchGate.WaitAsync(cancellationToken);
+                try
+                {
+                    var opened = await archiveDocuments.Value.OpenAsync(archiveLocation, cancellationToken);
+                    if(opened.Success) await TryDeletePreviousRecoverySnapshotAsync();
+                    return opened;
+                }
+                finally { switchGate.Release(); }
+            }
 
             string normalizedPath;
             try
@@ -505,6 +521,7 @@ namespace CryptoBook.Services
 
         private bool IsCurrentDocument(string path) =>
             !string.IsNullOrWhiteSpace(documentSession.FilePath) &&
+            !documentSession.FilePath.StartsWith("archive://", StringComparison.OrdinalIgnoreCase) &&
             string.Equals(
                 Path.GetFullPath(documentSession.FilePath),
                 path,

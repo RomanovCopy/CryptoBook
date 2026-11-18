@@ -9,6 +9,8 @@ public interface IWorkspaceDocumentSession : INotifyPropertyChanged
     bool HasHomeDocument { get; }
     bool HasMarkdownDocument { get; }
     bool HasInactiveChanges { get; }
+    bool HasArchiveDocument => false;
+    bool ContainsDocument(string filePath) => false;
     bool SelectPage(string pageKey);
     IDisposable HoldActiveDocument();
     void CloseCurrent();

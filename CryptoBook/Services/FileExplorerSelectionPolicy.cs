@@ -8,6 +8,15 @@ namespace CryptoBook.Services
 {
     public static class FileExplorerSelectionPolicy
     {
+        internal static string? GetDeletionWarningKey(IReadOnlyList<ISystemItem> items)
+        {
+            if(items.All(item => item.Location.IsLocal)) return null;
+            if(items.All(item => ArchiveStorageProvider.IsArchive(item.Location))) return "Archive.DeleteWarning";
+            if(items.All(item => item.Location.ProviderId is AndroidLocatorCodec.ProviderId or WpdLocatorCodec.ProviderId))
+                return "Explorer.PermanentDeleteAndroidWarning";
+            return "Explorer.PermanentDeleteWarning";
+        }
+
         public static IReadOnlyList<ISystemItem> CreateSnapshot(object? selection)
         {
             IEnumerable<ISystemItem> items = selection switch

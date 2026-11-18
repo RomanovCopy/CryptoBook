@@ -199,7 +199,9 @@ namespace CryptoBook.Models
             GetSingleSelection(obj) is ISystemItem item &&
             (item is IContainerSystemItem
                 ? Supports(item, StorageProviderCapabilities.Browse)
-                : Supports(item, StorageProviderCapabilities.OpenExternally));
+                : ArchiveStorageProvider.IsArchive(item.Location) ||
+                    (item is IFileItem archive && ArchivePathPolicy.IsSupportedArchive(archive.Name + archive.Extension)) ||
+                    Supports(item, StorageProviderCapabilities.OpenExternally));
         public bool CanExecute_OpenWithCommand(object? obj) =>
             !IsCurrentDirectoryUnavailable &&
             GetSingleSelection(obj) is IFileItem item &&
@@ -274,6 +276,7 @@ namespace CryptoBook.Models
         {
             return !IsCurrentDirectoryUnavailable &&
                 SelectedItem is IContainerSystemItem container &&
+                !ArchiveStorageProvider.IsArchive(container.Location) &&
                 Supports(container, StorageProviderCapabilities.Write);
         }
         public bool CanExecute_CreateDirectoryCommand(object? obj)
@@ -573,7 +576,8 @@ namespace CryptoBook.Models
                 catch(Exception ex)
                 {
                     _ = await _messageService.ShowMessage(
-                        LocalizationManager.GetString("Explorer.CopyError"),
+                        LocalizationManager.GetString(clipboard.Operation == ClipboardOperationKind.Copy
+                            ? "Explorer.CopyError" : "Explorer.MoveError"),
                         ex.Message);
                 }
             } else
@@ -587,11 +591,13 @@ namespace CryptoBook.Models
             if(items.Count == 0)
                 return;
 
-            if(!items.All(item => item.Location.IsLocal))
+            string? warningKey = FileExplorerSelectionPolicy.GetDeletionWarningKey(items);
+            if(warningKey is not null)
             {
                 Guid confirmationId = await _messageService.ShowMessage(
-                    LocalizationManager.GetString("Explorer.PermanentDeleteTitle"),
-                    LocalizationManager.GetString("Explorer.PermanentDeleteAndroidWarning"),
+                    LocalizationManager.GetString(warningKey == "Archive.DeleteWarning"
+                        ? "Archive.DeleteTitle" : "Explorer.PermanentDeleteTitle"),
+                    LocalizationManager.GetString(warningKey),
                     true);
                 if(!_messageService.ShowConfirmation(confirmationId))
                     return;
@@ -615,8 +621,10 @@ namespace CryptoBook.Models
                 {
                     await _messageService.ShowMessage(
                         LocalizationManager.GetString("Explorer.DeleteCanceledTitle"),
-                        LocalizationManager.GetString(items.All(item => item.Location.IsLocal) && result.PermanentlyDeletedCount == 0
-                            ? "Explorer.RecycleCanceledPartial" : "Explorer.DeleteCanceledPartial"));
+                        LocalizationManager.GetString(items.All(item => ArchiveStorageProvider.IsArchive(item.Location))
+                            ? "Archive.DeleteCanceledPartial"
+                            : items.All(item => item.Location.IsLocal) && result.PermanentlyDeletedCount == 0
+                                ? "Explorer.RecycleCanceledPartial" : "Explorer.DeleteCanceledPartial"));
                 }
 
             }
@@ -831,7 +839,10 @@ namespace CryptoBook.Models
                 return;
             }
 
-            FileOperationResult result = await _fileManagerService.CreateDirectoryAsync(container.FullPath, directoryName, CancellationToken.None);
+            FileOperationResult? result = ArchiveStorageProvider.IsArchive(directoryLocation) && _archives is not null
+                ? await RunArchiveChangeAsync((progress, token) => _archives.CreateContainerWithProgressAsync(directoryLocation, progress, token))
+                : await _fileManagerService.CreateDirectoryAsync(container.FullPath, directoryName, CancellationToken.None);
+            if(result is null) return;
 
             if(!result.Success)
             {
@@ -906,7 +917,15 @@ namespace CryptoBook.Models
                     : _storage.Format(_storage.GetChild(
                         directory.Value,
                         newName));
-                var res = await _fileManagerService.RenameAsync(oldPath, newName, CancellationToken.None);
+                var res = ArchiveStorageProvider.IsArchive(systemItem.Location) && _archives is not null
+                    ? await RunArchiveChangeAsync((progress, token) => _archives.RenameWithProgressAsync(systemItem.Location, newName, progress, token))
+                    : await _fileManagerService.RenameAsync(oldPath, newName, CancellationToken.None);
+                if(res is null)
+                {
+                    systemItem.Name = _lastItemName;
+                    systemItem.IsEditing = false;
+                    return;
+                }
                 if(res.Success)
                 {
                     if(!string.IsNullOrWhiteSpace(newPath))
@@ -1195,8 +1214,10 @@ namespace CryptoBook.Models
                 container.IsExpanded = true;
                 container.IsLoaded = true;
                 ObserveCurrentContainerAvailability(container);
-                Properties.Settings.Default.LastDirectory_FileExplorer = ArchiveStorageProvider.IsArchive(requestedLocation)
-                    ? _localFiles.GetParent(_archives!.SourcePath(requestedLocation)) : targetPath;
+                string? persistentDirectory = ArchiveStorageProvider.IsArchive(requestedLocation)
+                    ? _archives!.PersistentDirectory(requestedLocation) : targetPath;
+                if(persistentDirectory is not null)
+                    Properties.Settings.Default.LastDirectory_FileExplorer = persistentDirectory;
                 await RefreshRecoveryAvailabilityAsync(token);
                 System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 return true;
@@ -1510,8 +1531,8 @@ namespace CryptoBook.Models
             {
                 switch(item)
                 {
-                    case IFileItem archive when archive.Location.IsLocal && _archives is not null &&
-                        ArchivePathPolicy.IsSupportedArchive(archive.FullPath):
+                    case IFileItem archive when _archives is not null &&
+                        ArchivePathPolicy.IsSupportedArchive(archive.Name + archive.Extension):
                         await OpenArchiveAsync(archive.FullPath, _cancellationTokenSource.Token);
                         break;
                     case IContainerSystemItem container when Supports(
@@ -1521,9 +1542,9 @@ namespace CryptoBook.Models
                             container.FullPath,
                             FileExplorerNavigationMode.Standard);
                         break;
-                    case IFileItem file when !file.IsEditing && Supports(
+                    case IFileItem file when !file.IsEditing && (ArchiveStorageProvider.IsArchive(file.Location) || Supports(
                         file,
-                        StorageProviderCapabilities.OpenExternally):
+                        StorageProviderCapabilities.OpenExternally)):
                         await OpenFileAsync(file, _cancellationTokenSource.Token);
                         break;
                 }
@@ -1566,7 +1587,7 @@ namespace CryptoBook.Models
                 return;
             }
 
-            _windowManager.CloseWindow(WindowId);
+            if(!ArchiveStorageProvider.IsArchive(file.Location)) _windowManager.CloseWindow(WindowId);
         }
         public void Execute_ListViewSelectionChangedCommand(object? obj)
         {
@@ -1648,7 +1669,7 @@ namespace CryptoBook.Models
                 _currentContainerAvailabilitySource = null;
             }
             _cancellationTokenSource.Cancel();
-            _archives?.CloseOwner(WindowId);
+            CloseArchiveSessions();
             _archiveDirectories = [];
             _cancellationTokenSource.Dispose();
         }

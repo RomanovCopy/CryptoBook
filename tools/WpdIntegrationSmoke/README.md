@@ -24,3 +24,14 @@ use the application's codecs, export service, and MTP transfer engine to verify:
 The tool creates and removes its own `CryptoBook-WPD-Test-*` device folder and
 local workspace. These checks exercise application services; interactive picker
 and dialog clicks require a separate UI check.
+
+Use `--archives-only` to verify the archive integration on the connected device:
+
+```powershell
+dotnet run --project tools/WpdIntegrationSmoke/WpdIntegrationSmoke.csproj -c Release --no-build --no-restore -- --device "Galaxy S24 Ultra" --archives-only
+```
+
+This uploads a generated encrypted 7z, opens its read-only MTP snapshot and nested
+ZIP, copies a file and a directory (including an empty directory) back to MTP,
+imports an MTP file into a local encrypted archive, checks content and the unchanged
+SHA-256 of the original MTP archive, and removes snapshots and the test device folder.

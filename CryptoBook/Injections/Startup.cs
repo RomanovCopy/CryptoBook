@@ -354,6 +354,7 @@ namespace CryptoBook.Injections
             builder.RegisterType<FileManagerService>().As<IFileManagerService>().SingleInstance();
             builder.RegisterType<BatchRenameService>().As<IBatchRenameService>().SingleInstance();
             builder.RegisterType<ArchiveService>().AsSelf().As<IArchiveService>().SingleInstance();
+            builder.RegisterType<ArchiveDocumentService>().AsSelf().SingleInstance();
             builder.RegisterType<ArchiveStorageProvider>().AsSelf().As<IStorageProvider>()
                 .As<IFileProviderService>().SingleInstance();
             builder.RegisterType<FileExplorerFlatViewService>()

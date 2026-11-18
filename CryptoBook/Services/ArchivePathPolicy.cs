@@ -5,10 +5,17 @@ namespace CryptoBook.Services;
 internal static class ArchivePathPolicy
 {
     public static bool IsSupportedArchive(string path) =>
-        Path.GetExtension(path).ToLowerInvariant() is ".zip" or ".7z" or ".rar";
+        Path.GetExtension(path).ToLowerInvariant() is ".zip" or ".7z" or ".rar" || IsVolume(path);
+
+    public static bool IsVolume(string path) => path.EndsWith(".001", StringComparison.OrdinalIgnoreCase) &&
+        Path.GetExtension(Path.GetFileNameWithoutExtension(path)).ToLowerInvariant() is ".7z" or ".zip";
+
+    public static bool IsMultipart(string path) => IsVolume(path) ||
+        (Path.GetExtension(path).Equals(".zip", StringComparison.OrdinalIgnoreCase) && File.Exists(Path.ChangeExtension(path, ".z01")));
 
     public static string GetArchiveType(string path) => Path.GetExtension(path).ToLowerInvariant() switch
     {
+        ".001" when IsVolume(path) => Path.GetExtension(Path.GetFileNameWithoutExtension(path))[1..].ToLowerInvariant() + ".split",
         ".zip" => "zip", ".7z" => "7z", ".rar" => GetRarType(path),
         _ => throw new NotSupportedException(Text("Unsupported"))
     };

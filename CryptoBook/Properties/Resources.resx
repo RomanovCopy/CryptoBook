@@ -1513,8 +1513,8 @@ Files: {1}</value>
   <data name="Archive.UnsafePath" xml:space="preserve">
     <value>The archive contains an unsafe or unsupported file name.</value>
   </data>
-  <data name="Archive.LocalOnly" xml:space="preserve">
-    <value>Choose a local disk path. Android/MTP and network paths are not supported.</value>
+<data name="Archive.LocalOnly" xml:space="preserve">
+    <value>This operation requires a local disk path. Device, archive-entry and network paths cannot be used here.</value>
   </data>
   <data name="Archive.LinksUnsupported" xml:space="preserve">
     <value>Symbolic links, junctions and reparse points are not supported.</value>
@@ -1549,8 +1549,8 @@ Files: {1}</value>
   <data name="Archive.OutputInsideSource" xml:space="preserve">
     <value>Save the archive outside the folders being archived.</value>
   </data>
-  <data name="Archive.NotEnoughSpace" xml:space="preserve">
-    <value>There is not enough free disk space for extraction.</value>
+<data name="Archive.NotEnoughSpace" xml:space="preserve">
+    <value>There is not enough free disk space for the archive operation.</value>
   </data>
   <data name="Archive.SizeMismatch" xml:space="preserve">
     <value>The extracted data does not match the archive metadata.</value>
@@ -1558,8 +1558,8 @@ Files: {1}</value>
   <data name="Archive.DuplicatePath" xml:space="preserve">
     <value>The archive contains duplicate or conflicting Windows file names.</value>
   </data>
-  <data name="Archive.ExtractionLimit" xml:space="preserve">
-    <value>The archive exceeds the selected maximum extracted size.</value>
+<data name="Archive.ExtractionLimit" xml:space="preserve">
+    <value>The data exceeds the permitted size for this archive operation.</value>
   </data>
   <data name="Archive.OutputExists" xml:space="preserve">
     <value>A file or folder with this name already exists. Choose a new name.</value>
@@ -1582,4 +1582,22 @@ Files: {1}</value>
   <data name="Archive.PasswordRetry" xml:space="preserve"><value>The password was not accepted. Enter it again, or cancel.</value></data>
   <data name="Archive.SessionClosed" xml:space="preserve"><value>This archive session is closed. Open the archive again.</value></data>
   <data name="Archive.NotAFile" xml:space="preserve"><value>Select a file inside the archive.</value></data>
+  <data name="Archive.Editable" xml:space="preserve"><value>Archive — editing enabled</value></data>
+  <data name="Archive.Changed" xml:space="preserve"><value>The archive changed after the document was opened. Save a copy with Save As, then reopen the document.</value></data>
+  <data name="Archive.InternalDocumentsOnly" xml:space="preserve"><value>Only documents supported by the built-in editor can be opened here. Copy other files to a local folder first.</value></data>
+  <data name="Archive.SaveAsRequired" xml:space="preserve"><value>Save this document to a local file with Save As.</value></data>
+  <data name="Archive.NestingLimit" xml:space="preserve"><value>The maximum archive nesting depth is 5.</value></data>
+  <data name="Archive.VolumesLocalOnly" xml:space="preserve"><value>Copy all archive volumes to one local folder and open the first volume.</value></data>
+  <data name="Archive.DocumentLimit" xml:space="preserve"><value>The maximum document size for opening from an archive is 64 MiB. Extract larger documents first.</value></data>
+  <data name="Archive.CommitConflict" xml:space="preserve"><value>Concurrent archive replacement was detected or its backup could not be verified. Archive versions and operation files have been preserved in: {0}</value></data>
+  <data name="Archive.Updating" xml:space="preserve"><value>Updating archive</value></data>
+  <data name="Archive.DeleteTitle" xml:space="preserve"><value>Delete from archive</value></data>
+  <data name="Archive.DeleteWarning" xml:space="preserve"><value>Delete the selected files and folders from the archive? The Recycle Bin is not used. The archive will be rebuilt to save the changes.</value></data>
+  <data name="Archive.DeleteCanceledPartial" xml:space="preserve"><value>Deletion canceled. Some entries have already been removed from the archive; those changes were saved.</value></data>
+  <data name="Archive.CleanupTitle" xml:space="preserve"><value>Clean up archive temporary files</value></data>
+  <data name="Archive.SourceChanged" xml:space="preserve"><value>The source archive changed during the operation. Refresh it in FileExplorer and try again.</value></data>
+  <data name="Preview.ArchiveDisplayFailed" xml:space="preserve"><value>Could not read the archive entry for preview:{0}{1}</value></data>
+  <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Archive entry metadata is shown. Extract the entry to a local file to inspect its contents, NTFS properties or signature.</value></data>
+  <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Some selected items will be deleted without using the Recycle Bin. Continue?</value></data>
+  <data name="Archive.Rebuilding" xml:space="preserve"><value>Rebuilding archive…</value></data>
 </root>

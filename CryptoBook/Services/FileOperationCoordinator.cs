@@ -129,7 +129,7 @@ namespace CryptoBook.Services
                                     completedBytes,
                                     itemSize,
                                     totalBytes,
-                                    plan.SourcePath);
+                                    _storage.FormatDisplayPath(_storage.Resolve(plan.SourcePath)));
                                 FileOperationResult result;
                                 if(operation == FileTransferKind.Copy)
                                 {
@@ -155,7 +155,7 @@ namespace CryptoBook.Services
                                 completedBytes += itemSize;
                                 progress.Report(
                                     CalculateOverall(completedBytes, totalBytes, completed, plans.Items.Count),
-                                    plan.SourcePath);
+                                    _storage.FormatDisplayPath(_storage.Resolve(plan.SourcePath)));
                             }
 
                             return new FileOperationBatchResult(
@@ -245,7 +245,7 @@ namespace CryptoBook.Services
                                 completedBytes += entry.Size;
                                 progress.Report(
                                     CalculateOverall(completedBytes, totalBytes, completed, entries.Count),
-                                    path);
+                                    _storage.FormatDisplayPath(entry.Location));
                             }
 
                             return operationResult = new FileOperationBatchResult(
@@ -380,7 +380,7 @@ namespace CryptoBook.Services
                                 token);
                             break;
                         case FileConflictAction.Replace:
-                            if(ArchiveStorageProvider.IsArchive(sourceLocation))
+                            if(ArchiveStorageProvider.IsArchive(sourceLocation) || ArchiveStorageProvider.IsArchive(destinationLocation))
                                 throw new InvalidOperationException(ArchivePathPolicy.Text("OutputExists"));
                             replace = true;
                             break;
@@ -420,8 +420,6 @@ namespace CryptoBook.Services
             StorageLocation destination,
             bool sourceIsDirectory)
         {
-            if(ArchiveStorageProvider.IsArchive(source) && !destination.IsLocal)
-                throw new NotSupportedException(ArchivePathPolicy.Text("LocalOnly"));
             if(sourceIsDirectory &&
                (storage.AreEquivalent(source, destination) ||
                 storage.IsDescendant(source, destination)))

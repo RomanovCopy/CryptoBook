@@ -57,8 +57,7 @@ public sealed partial class ArchiveService: IArchiveService
                 throw new ArgumentException(ArchivePathPolicy.Text("OutputInsideSource"));
             await ValidateSourceTreeAsync(input, cancellationToken);
         }
-        string workspace = Path.Combine(parent, ".cryptobook-archive-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(workspace);
+        string workspace = ArchiveWorkspace.Create(parent, "archive");
         try
         {
             string list = Path.Combine(workspace, "sources.txt");
@@ -105,14 +104,13 @@ public sealed partial class ArchiveService: IArchiveService
         string parent = Path.GetDirectoryName(output)!;
         if(!Directory.Exists(parent)) throw new DirectoryNotFoundException(parent);
         // Keep the source stable while listing and extracting (7-Zip opens it read-only).
-        using var sourceLock = new FileStream(archive, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var sourceLock = new ArchiveSourceLock(archive);
         progress?.Report(null, ArchivePathPolicy.Text("Reading"));
         IReadOnlyList<Entry> entries = await ReadEntriesAsync(archive, type, password, limits, cancellationToken);
         long total = entries.Sum(entry => entry.Size);
         if(new DriveInfo(Path.GetPathRoot(parent)!).AvailableFreeSpace - 16L * 1024 * 1024 < total)
             throw new IOException(ArchivePathPolicy.Text("NotEnoughSpace"));
-        string staging = Path.Combine(parent, ".cryptobook-extract-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(staging);
+        string staging = ArchiveWorkspace.Create(parent, "extract");
         long completed = 0;
         try
         {
@@ -170,7 +168,7 @@ public sealed partial class ArchiveService: IArchiveService
     {
         string archive = ArchivePathPolicy.LocalPath(archivePath);
         string type = ArchivePathPolicy.GetArchiveType(archive);
-        using var sourceLock = new FileStream(archive, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var sourceLock = new ArchiveSourceLock(archive);
         progress?.Report(null, ArchivePathPolicy.Text("Verifying"));
         await engine.RunAsync(["t", "-t" + type, "-bso0", archive], password, progress, cancellationToken);
         progress?.Report(1, ArchivePathPolicy.Text("TestSuccess"));
@@ -192,7 +190,8 @@ public sealed partial class ArchiveService: IArchiveService
                 for(string? parent = Path.GetDirectoryName(entry.RelativePath); !string.IsNullOrEmpty(parent);
                     parent = Path.GetDirectoryName(parent)) parents.Add(parent);
             Entry[] leaves = entries.Where(entry => !entry.IsDirectory || !parents.Contains(entry.RelativePath)).ToArray();
-            string selection = Path.GetTempFileName();
+            string workspace = ArchiveWorkspace.CreateTransient("archive-selection");
+            string selection = Path.Combine(workspace, "selection.txt");
             try
             {
                 await File.WriteAllLinesAsync(selection, leaves.Select(entry => entry.Name), new UTF8Encoding(false), token);
@@ -203,7 +202,7 @@ public sealed partial class ArchiveService: IArchiveService
                     actual.Select(entry => (entry.Name, entry.IsDirectory, entry.Size))))
                     throw new InvalidDataException(ArchivePathPolicy.Text("UnsafePath"));
             }
-            finally { File.Delete(selection); }
+            finally { await CleanupAsync(workspace); }
         }
         return entries;
     }
@@ -296,6 +295,8 @@ public sealed partial class ArchiveService: IArchiveService
 
     private static ArchiveOperationResult Result(string path, IReadOnlyList<Entry> entries) =>
         new(path, entries.Count(entry => !entry.IsDirectory), entries.Sum(entry => entry.Size));
+
+    internal static Task RemoveWorkspaceAsync(string path) => CleanupAsync(path);
 
     private static async Task CleanupAsync(string path)
     {

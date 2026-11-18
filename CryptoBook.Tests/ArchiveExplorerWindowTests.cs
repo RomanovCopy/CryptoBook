@@ -5,6 +5,8 @@ using CryptoBook.Infrastructure;
 using CryptoBook.Injections;
 using CryptoBook.Interfaces;
 using CryptoBook.Services;
+using CryptoBook.Security;
+using CryptoBook.FileTemplates;
 using CryptoBook.Validation;
 using CryptoBook.ViewModels;
 using CryptoBook.Views;
@@ -50,6 +52,7 @@ public sealed class ArchiveExplorerWindowTests
         using var container = new Startup().ConfigureServices(app, builder =>
         {
             builder.RegisterInstance<IMessageService>(messages);
+            builder.RegisterInstance<IDocumentRecoveryService>(new NoRecovery());
             builder.RegisterInstance(service).AsSelf().As<IArchiveService>();
             builder.RegisterInstance<IFavoriteDirectoryStore>(new JsonFavoriteDirectoryStore(Path.Combine(directory.Path, "favorites.json")));
             builder.RegisterInstance<IPinnedDocumentStore>(new JsonPinnedDocumentStore(Path.Combine(directory.Path, "pinned.json")));
@@ -124,12 +127,31 @@ public sealed class ArchiveExplorerWindowTests
             Assert.Equal(FilePreviewKind.Text, vm.Preview.PreviewKind);
             Assert.Equal("Просмотр внутри архива 🔐", vm.Preview.Text);
             Assert.True(vm.CopyCommand.CanExecute(new[] { file }));
-            foreach(var command in new[] { vm.DeleteCommand, vm.CutCommand, vm.RenameClickCommand,
-                vm.OpenWithCommand, vm.EncryptCommand, vm.CreateArchiveCommand })
+            foreach(var command in new[] { vm.DeleteCommand, vm.CutCommand, vm.RenameClickCommand })
+                Assert.True(command.CanExecute(new[] { file }));
+            foreach(var command in new[] { vm.OpenWithCommand, vm.EncryptCommand, vm.CreateArchiveCommand })
                 Assert.False(command.CanExecute(new[] { file }));
             Assert.False(vm.PasteCommand.CanExecute(null));
-            Assert.False(vm.CreateDirectoryCommand.CanExecute(null));
+            Assert.True(vm.CreateDirectoryCommand.CanExecute(null));
             Assert.False(vm.Favorites.AddCurrentDirectoryCommand.CanExecute(vm.CurrentPath));
+            var renameFile = inner.Children.OfType<IFileItem>().Single(item => item.Name == "Другой");
+            vm.RenameClickCommand.Execute(new[] { renameFile });
+            Assert.True(renameFile.IsEditing);
+            renameFile.Name = "Переименованный";
+            vm.RenameCommand.Execute(renameFile);
+            await UntilAsync(() => !renameFile.IsEditing && !app.Windows.OfType<ProgressWindow>().Any());
+            Assert.EndsWith("Переименованный.txt", Uri.UnescapeDataString(renameFile.FullPath));
+            var directoryTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(100), DispatcherPriority.Background, (_, _) =>
+            {
+                var dialog = app.Windows.OfType<DirectoryNameDialog>().FirstOrDefault();
+                if(dialog is null) return;
+                ((TextBox)dialog.FindName("DirectoryNameTextBox")).Text = "Новая папка";
+                Descendants<Button>(dialog).Single(button => button.IsDefault).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }, Dispatcher.CurrentDispatcher);
+            try { vm.CreateDirectoryCommand.Execute(null); }
+            finally { directoryTimer.Stop(); }
+            await UntilAsync(() => inner.Children.OfType<IContainerSystemItem>().Any(item => item.Name == "Новая папка") &&
+                !app.Windows.OfType<ProgressWindow>().Any());
             // Archive selection removes descendants without interpreting encoded names as Windows paths.
             Assert.Single(FileExplorerSelectionPolicy.NormalizeForOperation(new ISystemItem[] { inner, file }));
             foreach(string culture in new[] { "ru-RU", "en-US", "uk-UA", "de-DE" })
@@ -140,7 +162,15 @@ public sealed class ArchiveExplorerWindowTests
                 app.Resources.MergedDictionaries.Add(dictionary);
                 window.UpdateLayout();
                 await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-                Assert.Contains(ArchivePathPolicy.Text("ReadOnly"), window.Title);
+                Assert.Contains(ArchivePathPolicy.Text("Editable"), window.Title);
+                int confirmationCount = messages.Confirmations.Count;
+                vm.DeleteCommand.Execute(new[] { renameFile });
+                await UntilAsync(() => messages.Confirmations.Count == confirmationCount + 1);
+                var confirmation = messages.Confirmations[^1];
+                Assert.Equal(ArchivePathPolicy.Text("DeleteTitle"), confirmation.Title);
+                Assert.Equal(ArchivePathPolicy.Text("DeleteWarning"), confirmation.Message);
+                Assert.DoesNotContain("Android", confirmation.Message, StringComparison.OrdinalIgnoreCase);
+                Assert.Contains(renameFile, inner.Children); // Canceling must preserve the entry.
                 Render(window, culture + "-" + theme + "-Explorer");
                 Guid promptId = windows.CreateWindow<ArchivePasswordWindow>(new Dictionary<string, object?>
                 {
@@ -160,6 +190,14 @@ public sealed class ArchiveExplorerWindowTests
                 app.Resources.MergedDictionaries.Remove(dictionary);
             }
             LocalizationManager.SelectCulture("ru-RU");
+            messages.AllowConfirmation = true;
+            try
+            {
+                vm.DeleteCommand.Execute(new[] { renameFile });
+                await UntilAsync(() => !inner.Children.Contains(renameFile) && !app.Windows.OfType<ProgressWindow>().Any());
+            }
+            finally { messages.AllowConfirmation = false; }
+            Assert.Equal(ArchivePathPolicy.Text("DeleteWarning"), messages.Confirmations[^1].Message);
             Console.WriteLine("ARCHIVE_UI: themes and preview passed");
             // Navigation via Up, Back, Forward, and the editable address uses the same history.
             vm.UpCommand.Execute(null);
@@ -243,7 +281,54 @@ public sealed class ArchiveExplorerWindowTests
             Assert.Equal(driveCount, vm.GetDrives.Count);
             Assert.IsAssignableFrom<IDirectoryItem>(vm.SelectedItem);
             Assert.Equal(directory.Path, CryptoBook.Properties.Settings.Default.LastDirectory_FileExplorer);
+            // Open an archive document through the real command, close its explorer,
+            // edit it, and save through the ordinary File menu into the encrypted archive.
+            var protectedFolder = Assert.IsAssignableFrom<IContainerSystemItem>(vm.SelectedItem).Children.OfType<IContainerSystemItem>().Single();
+            Assert.True(await model.NavigateAsync(protectedFolder.FullPath, FileExplorerNavigationMode.Standard));
+            var protectedText = Assert.IsAssignableFrom<IContainerSystemItem>(vm.SelectedItem).Children.OfType<IFileItem>().Single(item => item.Name == "Текст");
+            vm.OpenCommand.Execute(new[] { protectedText });
+            var documents = container.Resolve<IDocumentSession>();
+            await UntilAsync(() => documents.FilePath?.StartsWith("archive://", StringComparison.Ordinal) == true);
             window.Close();
+            var editor = container.Resolve<IRichTextBoxService>();
+            editor.Document.Blocks.Add(new System.Windows.Documents.Paragraph(new System.Windows.Documents.Run("Сохранено обратно")));
+            Assert.True(documents.IsDirty);
+            Assert.True(await container.Resolve<IMenuFileModel>().TrySaveCurrentAsync());
+            Assert.False(documents.IsDirty);
+            documents.Close();
+            string savedOutput = Path.Combine(directory.Path, "Сохранённый архив");
+            await service.ExtractAsync(protectedArchive, savedOutput, "Пароль 🔐");
+            Assert.Contains("Сохранено обратно", await File.ReadAllTextAsync(Path.Combine(savedOutput, "Документы/Текст.txt")));
+            // CryptoBook protection is preserved independently of the archive password.
+            container.Resolve<IKeyProvider>().SetKey("g7L!2x9R#v4M$z8Q");
+            var secureFiles = container.Resolve<ISecureFileProcessor>();
+            string protectedDocument = Path.Combine(directory.Path, "Защищённый.cbook");
+            using(var plaintext = new MemoryStream("Защищённый документ"u8.ToArray()))
+                await secureFiles.EncryptStreamAsync(plaintext, ".txt", protectedDocument);
+            string documentArchive = Path.Combine(directory.Path, "protected-document.zip");
+            await service.CreateAsync([protectedDocument], documentArchive, ArchiveFormat.Zip);
+            var archives = container.Resolve<ArchiveStorageProvider>();
+            Guid documentOwner = Guid.NewGuid();
+            var documentRoot = await archives.MountAsync(documentOwner, documentArchive, null, default);
+            var protectedEntry = Assert.Single(await archives.GetChildrenAsync(documentRoot));
+            Assert.True((await container.Resolve<IWorkspaceFileOpenService>().OpenAsync(protectedEntry.Location.ToString())).Success);
+            archives.CloseOwner(documentOwner);
+            Assert.IsType<SecureFileTemplate>(documents.Template);
+            editor.Document.Blocks.Add(new System.Windows.Documents.Paragraph(new System.Windows.Documents.Run("Защита сохранена")));
+            messages.AllowConfirmation = true;
+            try { Assert.True(await container.Resolve<IMenuFileModel>().TrySaveCurrentAsync()); }
+            finally { messages.AllowConfirmation = false; }
+            documents.Close();
+            string protectedOutput = Path.Combine(directory.Path, "protected-output");
+            await service.ExtractAsync(documentArchive, protectedOutput);
+            string savedProtectedFile = Path.Combine(protectedOutput, "Защищённый.cbook");
+            Assert.True(await container.Resolve<ISecureFileValidator>().HasCryptoBookHeaderAsync(savedProtectedFile));
+            await using(var decrypted = await secureFiles.DecryptFileContentAsync(savedProtectedFile))
+            {
+                var restored = await container.Resolve<IFlowDocumentLoadService>().PrepareAsync(decrypted.Content, new XamlPackageFileTemplate());
+                Assert.Contains("Защита сохранена", new System.Windows.Documents.TextRange(restored.ContentStart, restored.ContentEnd).Text);
+            }
+            container.Resolve<IKeyProvider>().Clear();
             using(var editable = File.Open(protectedArchive, FileMode.Open, FileAccess.Write, FileShare.None)) { }
             using(var editable = File.Open(archive, FileMode.Open, FileAccess.Write, FileShare.None)) { }
             Assert.Empty(listener.Errors);
@@ -320,13 +405,30 @@ public sealed class ArchiveExplorerWindowTests
     private sealed class RecordingMessages: IMessageService
     {
         internal List<string> Errors { get; } = [];
+        internal List<(string Title, string Message)> Confirmations { get; } = [];
+        internal bool AllowConfirmation { get; set; }
         public Task<Guid> ShowMessage(string title, string message, bool isCanceled = false)
         {
+            if(isCanceled)
+            {
+                Confirmations.Add((title, message));
+                return Task.FromResult(Guid.Empty);
+            }
             Errors.Add(title + ": " + message);
             Console.WriteLine("ARCHIVE_UI_MESSAGE: " + title + ": " + message);
             return Task.FromResult(Guid.Empty);
         }
         public void CloseDialog(Guid id) { }
-        public bool ShowConfirmation(Guid id) => false;
+        public bool ShowConfirmation(Guid id) => AllowConfirmation;
+    }
+
+    private sealed class NoRecovery: IDocumentRecoveryService
+    {
+        public bool HasSnapshot => false;
+        public void Start() { }
+        public Task StopAsync() => Task.CompletedTask;
+        public Task<bool> RestoreSnapshotAsync(CancellationToken cancellationToken = default) => Task.FromResult(false);
+        public Task DeleteSnapshotAsync() => Task.CompletedTask;
+        public void Dispose() { }
     }
 }

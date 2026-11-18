@@ -82,7 +82,7 @@ namespace CryptoBook.Services
 
         public void UpdateFilePath(string? filePath)
         {
-            SourceDirectory = string.IsNullOrWhiteSpace(filePath)
+            SourceDirectory = string.IsNullOrWhiteSpace(filePath) || filePath.StartsWith("archive://", StringComparison.OrdinalIgnoreCase)
                 ? null
                 : Path.GetDirectoryName(Path.GetFullPath(filePath));
         }

@@ -58,6 +58,10 @@ namespace CryptoBook.Services
             ? HasDocument : inactiveDocument?.Markdown is not null;
         public bool HasInactiveChanges => inactiveDocument is { } parked &&
             parked.Revision != parked.SavedRevision;
+        public bool HasArchiveDocument => FilePath?.StartsWith("archive://", StringComparison.OrdinalIgnoreCase) == true ||
+            inactiveDocument?.FilePath?.StartsWith("archive://", StringComparison.OrdinalIgnoreCase) == true;
+        public bool ContainsDocument(string path) => string.Equals(FilePath, path, StringComparison.Ordinal) ||
+            string.Equals(inactiveDocument?.FilePath, path, StringComparison.Ordinal);
 
         private ParkedDocument CaptureCurrent() => new(
             richTextBox.Document, richTextBox.IsReadOnly,
@@ -470,8 +474,8 @@ namespace CryptoBook.Services
 
             // Сохраняем именно переданную ревизию: пока шла запись на диск,
             // пользователь мог продолжить редактирование и увеличить Revision.
-            FilePath = Path.GetFullPath(filePath);
-            DisplayName = Path.GetFileName(FilePath);
+            FilePath = NormalizeDocumentPath(filePath);
+            DisplayName = DocumentFileName(FilePath);
             Template = template;
             SavedRevision = savedRevision;
             if(markdownDocument?.IsActive == true)
@@ -491,8 +495,8 @@ namespace CryptoBook.Services
         public void Rename(string filePath)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
-            FilePath = Path.GetFullPath(filePath);
-            DisplayName = Path.GetFileName(FilePath);
+            FilePath = NormalizeDocumentPath(filePath);
+            DisplayName = DocumentFileName(FilePath);
             if(markdownDocument?.IsActive == true)
                 markdownDocument.UpdateFilePath(FilePath);
         }
@@ -502,6 +506,11 @@ namespace CryptoBook.Services
             ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
             DisplayName = Path.GetFileName(displayName.Trim());
         }
+
+        private static string NormalizeDocumentPath(string path) => path.StartsWith("archive://", StringComparison.OrdinalIgnoreCase)
+            ? CryptoBook.DTO.StorageLocation.Parse(path).ToString() : Path.GetFullPath(path);
+        private static string DocumentFileName(string path) => path.StartsWith("archive://", StringComparison.OrdinalIgnoreCase)
+            ? Path.GetFileName(Uri.UnescapeDataString(path[(path.LastIndexOf('/') + 1)..])) : Path.GetFileName(path);
 
         private void OnDocumentChanged(
             object sender,

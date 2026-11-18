@@ -34,8 +34,8 @@ public sealed class ArchiveBrowsingTests
         Assert.True(folder.IsContainer);
         var files = await fixture.Provider.GetChildrenAsync(folder.Location);
         var text = files.Single(item => item.Name == "документ_@1.txt");
-        Assert.True(text.IsReadOnly);
-        Assert.False(text.Capabilities.HasFlag(StorageProviderCapabilities.Write));
+        Assert.False(text.IsReadOnly);
+        Assert.True(text.Capabilities.HasFlag(StorageProviderCapabilities.Write));
         Assert.EndsWith("Снимок.zip!/Папка/документ_@1.txt", text.DisplayPath);
         await using(var input = await fixture.Provider.OpenRawReadAsync(text.Location))
         using(var reader = new StreamReader(input)) Assert.Equal("Текст 🔐", await reader.ReadToEndAsync());
@@ -112,8 +112,8 @@ public sealed class ArchiveBrowsingTests
         {
             Assert.Empty(await fixture.Provider.GetRootsAsync());
             var file = Assert.Single(await fixture.Provider.GetChildrenAsync(root));
-            Assert.False((await fixture.Provider.DeleteAsync(file.Location)).Success);
-            Assert.False((await fixture.Provider.RenameAsync(file.Location, "x")).Success);
+            Assert.False((await fixture.Provider.DeleteAsync(root)).Success);
+            Assert.False((await fixture.Provider.RenameAsync(file.Location, "../x")).Success);
             Assert.False((await fixture.Provider.CreateContainerAsync(root)).Success);
             await Assert.ThrowsAsync<NotSupportedException>(() => fixture.Provider.OpenRawWriteAsync(file.Location, true));
             await using var stream = await fixture.Provider.OpenRawReadAsync(file.Location);

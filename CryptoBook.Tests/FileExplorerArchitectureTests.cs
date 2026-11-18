@@ -489,8 +489,7 @@ public sealed class FileExplorerArchitectureTests
             "Models",
             "FileExplorerModel.cs"));
 
-        Assert.Contains("items.All(item => item.Location.IsLocal)", modelSource);
-        Assert.Contains("Explorer.PermanentDeleteAndroidWarning", modelSource);
+        Assert.Contains("FileExplorerSelectionPolicy.GetDeletionWarningKey(items)", modelSource);
         string coordinatorSource = File.ReadAllText(FindRepositoryFile(
             "CryptoBook", "Services", "FileOperationCoordinator.cs"));
         Assert.Contains("Explorer.RecoverableDeleteWarning", coordinatorSource);

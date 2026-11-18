@@ -13,7 +13,7 @@ public sealed partial class ArchiveService
     {
         string archive = ArchivePathPolicy.LocalPath(path);
         string type = ArchivePathPolicy.GetArchiveType(archive);
-        var source = new FileStream(archive, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var source = new ArchiveSourceLock(archive);
         try
         {
             IReadOnlyList<Entry> entries;
@@ -57,7 +57,8 @@ public sealed partial class ArchiveService
     internal async Task ReadEntryAsync(ArchiveReadSession session, Entry entry, Stream destination,
         CancellationToken token)
     {
-        string selection = Path.GetTempFileName();
+        string workspace = ArchiveWorkspace.CreateTransient("archive-selection");
+        string selection = Path.Combine(workspace, "selection.txt");
         bool sizeMismatch = false;
         try
         {
@@ -81,7 +82,7 @@ public sealed partial class ArchiveService
                 });
             if(sizeMismatch) throw new InvalidDataException(ArchivePathPolicy.Text("SizeMismatch"));
         }
-        finally { File.Delete(selection); }
+        finally { await CleanupAsync(workspace); }
     }
 
     internal Task CopySelectionAsync(ArchiveReadSession session, string relative, string outputPath,
@@ -105,8 +106,7 @@ public sealed partial class ArchiveService
             throw new IOException(ArchivePathPolicy.Text("ExtractionLimit"));
         if(new DriveInfo(Path.GetPathRoot(parent)!).AvailableFreeSpace - 16L * 1024 * 1024 < total)
             throw new IOException(ArchivePathPolicy.Text("NotEnoughSpace"));
-        string staging = Path.Combine(parent, ".cryptobook-extract-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(staging);
+        string staging = ArchiveWorkspace.Create(parent, "extract");
         string result = Path.Combine(staging, "result");
         if(!isFile) Directory.CreateDirectory(result);
         long completed = 0;

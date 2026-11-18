@@ -1513,8 +1513,8 @@
   <data name="Archive.UnsafePath" xml:space="preserve">
     <value>Архив содержит небезопасное или неподдерживаемое имя файла.</value>
   </data>
-  <data name="Archive.LocalOnly" xml:space="preserve">
-    <value>Выберите путь на локальном диске. Android/MTP и сетевые пути не поддерживаются.</value>
+<data name="Archive.LocalOnly" xml:space="preserve">
+    <value>Для этой операции требуется путь на локальном диске. Адреса устройств, записей архива и сетевые пути здесь недоступны.</value>
   </data>
   <data name="Archive.LinksUnsupported" xml:space="preserve">
     <value>Символические ссылки, соединения каталогов и точки повторной обработки не поддерживаются.</value>
@@ -1549,8 +1549,8 @@
   <data name="Archive.OutputInsideSource" xml:space="preserve">
     <value>Сохраните архив за пределами упаковываемых папок.</value>
   </data>
-  <data name="Archive.NotEnoughSpace" xml:space="preserve">
-    <value>Недостаточно свободного места для распаковки.</value>
+<data name="Archive.NotEnoughSpace" xml:space="preserve">
+    <value>Недостаточно свободного места для архивной операции.</value>
   </data>
   <data name="Archive.SizeMismatch" xml:space="preserve">
     <value>Распакованные данные не соответствуют метаданным архива.</value>
@@ -1558,8 +1558,8 @@
   <data name="Archive.DuplicatePath" xml:space="preserve">
     <value>Архив содержит дублирующиеся или конфликтующие имена файлов Windows.</value>
   </data>
-  <data name="Archive.ExtractionLimit" xml:space="preserve">
-    <value>Архив превышает выбранный максимальный размер распаковки.</value>
+<data name="Archive.ExtractionLimit" xml:space="preserve">
+    <value>Превышен допустимый объём данных для архивной операции.</value>
   </data>
   <data name="Archive.OutputExists" xml:space="preserve">
     <value>Файл или папка с таким именем уже существует. Укажите новое имя.</value>
@@ -1582,4 +1582,22 @@
   <data name="Archive.PasswordRetry" xml:space="preserve"><value>Пароль не принят. Введите его повторно или отмените открытие.</value></data>
   <data name="Archive.SessionClosed" xml:space="preserve"><value>Сеанс просмотра архива закрыт. Откройте архив повторно.</value></data>
   <data name="Archive.NotAFile" xml:space="preserve"><value>Выберите файл внутри архива.</value></data>
+  <data name="Archive.Editable" xml:space="preserve"><value>Архив — доступно изменение</value></data>
+  <data name="Archive.Changed" xml:space="preserve"><value>Архив изменился после открытия документа. Сохраните копию через «Сохранить как», затем откройте документ заново.</value></data>
+  <data name="Archive.InternalDocumentsOnly" xml:space="preserve"><value>Здесь открываются документы встроенного редактора. Остальные файлы сначала скопируйте в локальную папку.</value></data>
+  <data name="Archive.SaveAsRequired" xml:space="preserve"><value>Сохраните этот документ в локальный файл через «Сохранить как».</value></data>
+  <data name="Archive.NestingLimit" xml:space="preserve"><value>Допускается не более 5 уровней вложенности архивов.</value></data>
+  <data name="Archive.VolumesLocalOnly" xml:space="preserve"><value>Скопируйте все тома архива в одну локальную папку и откройте первый том.</value></data>
+  <data name="Archive.DocumentLimit" xml:space="preserve"><value>Лимит открытия документа из архива — 64 МиБ. Большие документы сначала распакуйте.</value></data>
+  <data name="Archive.CommitConflict" xml:space="preserve"><value>Обнаружена одновременная замена архива или не удалось проверить резервную копию. Версии архива и файлы операции сохранены в папке: {0}</value></data>
+  <data name="Archive.Updating" xml:space="preserve"><value>Изменение архива</value></data>
+  <data name="Archive.DeleteTitle" xml:space="preserve"><value>Удаление из архива</value></data>
+  <data name="Archive.DeleteWarning" xml:space="preserve"><value>Удалить выбранные файлы и папки из архива? Корзина не используется. Архив будет пересобран с сохранением изменений.</value></data>
+  <data name="Archive.DeleteCanceledPartial" xml:space="preserve"><value>Удаление отменено. Часть записей уже удалена из архива; эти изменения сохранены.</value></data>
+  <data name="Archive.CleanupTitle" xml:space="preserve"><value>Очистка временных файлов архива</value></data>
+  <data name="Archive.SourceChanged" xml:space="preserve"><value>Исходный архив изменился во время операции. Обновите его содержимое в проводнике и повторите действие.</value></data>
+  <data name="Preview.ArchiveDisplayFailed" xml:space="preserve"><value>Не удалось прочитать файл из архива для предварительного просмотра:{0}{1}</value></data>
+  <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Показаны сведения записи архива. Для проверки содержимого, свойств NTFS и подписи извлеките запись в локальный файл.</value></data>
+  <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Некоторые выбранные элементы будут удалены без помещения в Корзину. Продолжить?</value></data>
+  <data name="Archive.Rebuilding" xml:space="preserve"><value>Пересборка архива…</value></data>
 </root>

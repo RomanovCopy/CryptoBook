@@ -2,6 +2,7 @@ using System.Windows;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CryptoBook.Tests")]
+[assembly: InternalsVisibleTo("WpdIntegrationSmoke")]
 [assembly: InternalsVisibleTo("LocalAiSmoke")]
 [assembly: InternalsVisibleTo("HelpValidation")]
 [assembly: ThemeInfo(

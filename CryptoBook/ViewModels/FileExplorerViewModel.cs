@@ -105,7 +105,7 @@ namespace CryptoBook.ViewModels
             FileExplorerMode.SelectFile => "File.PickerTitle",
             FileExplorerMode.SelectFolder => "File.NewFolderPickerDescription",
             _ => "Explorer.WindowTitle"
-        }) + (IsArchiveView ? " — " + ArchivePathPolicy.Text("ReadOnly") : "");
+        }) + (IsArchiveView ? " — " + ArchivePathPolicy.Text(SelectedItem?.Capabilities.HasFlag(StorageProviderCapabilities.Write) == true ? "Editable" : "ReadOnly") : "");
         public string PickerActionText => LocalizationManager.GetString(
             _mode == FileExplorerMode.SelectFolder
                 ? "Explorer.Picker.SelectFolder"
@@ -613,7 +613,9 @@ namespace CryptoBook.ViewModels
         {
             var item = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot).Single();
             await _fileExplorerModel.OpenArchiveAsync(item.FullPath, token);
-        }, parameter => !IsPickerMode && CanReadArchive(parameter));
+        }, parameter => !IsPickerMode && !IsCurrentDirectoryUnavailable &&
+            FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot) is { Count: 1 } selection &&
+            selection[0] is IFileItem archive && ArchivePathPolicy.IsSupportedArchive(archive.Name + archive.Extension));
         private AsyncRelayCommand? _openArchiveCommand;
         public ICommand ExtractArchiveCommand => _extractArchiveCommand ??= new RelayCommand(
             parameter => OpenArchiveOperation(parameter, ArchiveAction.Extract), CanReadArchive);

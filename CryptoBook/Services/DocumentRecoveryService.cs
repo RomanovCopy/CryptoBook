@@ -162,8 +162,8 @@ namespace CryptoBook.Services
             }
             finally { deferredRestoreGate.Release(); }
         }
-        private bool HasWorkspaceChanges => documentSession.IsDirty ||
-            (documentSession as IWorkspaceDocumentSession)?.HasInactiveChanges == true;
+        private bool HasWorkspaceChanges => (documentSession as IWorkspaceDocumentSession)?.HasArchiveDocument != true &&
+            (documentSession.IsDirty || (documentSession as IWorkspaceDocumentSession)?.HasInactiveChanges == true);
 
         public void Start()
         {
@@ -479,6 +479,11 @@ namespace CryptoBook.Services
 
         private async Task SaveSnapshotAsync()
         {
+            // Archive passwords are distinct from the CryptoBook key. Do not leak their
+            // decrypted documents into the ordinary, potentially plaintext recovery file.
+            if(documentSession.FilePath?.StartsWith("archive://", StringComparison.OrdinalIgnoreCase) == true ||
+                (documentSession as IWorkspaceDocumentSession)?.HasArchiveDocument == true)
+                return;
             if(preserveExistingSnapshot)
                 throw new IOException("Предыдущий снимок восстановления сохранён: его нельзя перезаписывать до восстановления.");
             long revision = documentSession.Revision;

@@ -2374,8 +2374,8 @@
   <data name="Archive.UnsafePath" xml:space="preserve">
     <value>Архів містить небезпечне або непідтримуване ім’я файлу.</value>
   </data>
-  <data name="Archive.LocalOnly" xml:space="preserve">
-    <value>Виберіть шлях на локальному диску. Android/MTP і мережеві шляхи не підтримуються.</value>
+<data name="Archive.LocalOnly" xml:space="preserve">
+    <value>Для цієї операції потрібен шлях на локальному диску. Адреси пристроїв, записів архіву та мережеві шляхи тут недоступні.</value>
   </data>
   <data name="Archive.LinksUnsupported" xml:space="preserve">
     <value>Символічні посилання, з’єднання каталогів і точки повторної обробки не підтримуються.</value>
@@ -2410,8 +2410,8 @@
   <data name="Archive.OutputInsideSource" xml:space="preserve">
     <value>Збережіть архів поза папками, що пакуються.</value>
   </data>
-  <data name="Archive.NotEnoughSpace" xml:space="preserve">
-    <value>Недостатньо вільного місця для розпакування.</value>
+<data name="Archive.NotEnoughSpace" xml:space="preserve">
+    <value>Недостатньо вільного місця для архівної операції.</value>
   </data>
   <data name="Archive.SizeMismatch" xml:space="preserve">
     <value>Розпаковані дані не відповідають метаданим архіву.</value>
@@ -2419,8 +2419,8 @@
   <data name="Archive.DuplicatePath" xml:space="preserve">
     <value>Архів містить дубльовані або конфліктні імена файлів Windows.</value>
   </data>
-  <data name="Archive.ExtractionLimit" xml:space="preserve">
-    <value>Архів перевищує вибраний максимальний розмір розпакування.</value>
+<data name="Archive.ExtractionLimit" xml:space="preserve">
+    <value>Перевищено допустимий обсяг даних для архівної операції.</value>
   </data>
   <data name="Archive.OutputExists" xml:space="preserve">
     <value>Файл або папка з таким ім’ям уже існує. Укажіть нове ім’я.</value>
@@ -2443,4 +2443,22 @@
   <data name="Archive.PasswordRetry" xml:space="preserve"><value>Пароль не прийнято. Введіть його повторно або скасуйте відкриття.</value></data>
   <data name="Archive.SessionClosed" xml:space="preserve"><value>Сеанс перегляду архіву закрито. Відкрийте архів повторно.</value></data>
   <data name="Archive.NotAFile" xml:space="preserve"><value>Виберіть файл усередині архіву.</value></data>
+  <data name="Archive.Editable" xml:space="preserve"><value>Архів — доступне редагування</value></data>
+  <data name="Archive.Changed" xml:space="preserve"><value>Архів змінився після відкриття документа. Збережіть копію через «Зберегти як», потім відкрийте документ знову.</value></data>
+  <data name="Archive.InternalDocumentsOnly" xml:space="preserve"><value>Тут відкриваються документи вбудованого редактора. Інші файли спочатку скопіюйте до локальної папки.</value></data>
+  <data name="Archive.SaveAsRequired" xml:space="preserve"><value>Збережіть цей документ у локальний файл через «Зберегти як».</value></data>
+  <data name="Archive.NestingLimit" xml:space="preserve"><value>Дозволено не більше 5 рівнів вкладеності архівів.</value></data>
+  <data name="Archive.VolumesLocalOnly" xml:space="preserve"><value>Скопіюйте всі томи архіву до однієї локальної папки та відкрийте перший том.</value></data>
+  <data name="Archive.DocumentLimit" xml:space="preserve"><value>Ліміт відкриття документа з архіву — 64 МіБ. Більші документи спочатку розпакуйте.</value></data>
+  <data name="Archive.CommitConflict" xml:space="preserve"><value>Виявлено одночасну заміну архіву або не вдалося перевірити резервну копію. Версії архіву та файли операції збережено в папці: {0}</value></data>
+  <data name="Archive.Updating" xml:space="preserve"><value>Змінення архіву</value></data>
+  <data name="Archive.DeleteTitle" xml:space="preserve"><value>Видалення з архіву</value></data>
+  <data name="Archive.DeleteWarning" xml:space="preserve"><value>Видалити вибрані файли й папки з архіву? Кошик не використовується. Архів буде перебудовано зі збереженням змін.</value></data>
+  <data name="Archive.DeleteCanceledPartial" xml:space="preserve"><value>Видалення скасовано. Частину записів уже видалено з архіву; ці зміни збережено.</value></data>
+  <data name="Archive.CleanupTitle" xml:space="preserve"><value>Очищення тимчасових файлів архіву</value></data>
+  <data name="Archive.SourceChanged" xml:space="preserve"><value>Початковий архів змінився під час операції. Оновіть його вміст у провіднику та повторіть дію.</value></data>
+  <data name="Preview.ArchiveDisplayFailed" xml:space="preserve"><value>Не вдалося прочитати файл з архіву для попереднього перегляду:{0}{1}</value></data>
+  <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Показано відомості запису архіву. Для перевірки вмісту, властивостей NTFS і підпису видобудьте запис у локальний файл.</value></data>
+  <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Деякі вибрані елементи буде видалено без переміщення до Кошика. Продовжити?</value></data>
+  <data name="Archive.Rebuilding" xml:space="preserve"><value>Перебудова архіву…</value></data>
 </root>

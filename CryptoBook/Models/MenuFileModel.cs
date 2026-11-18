@@ -42,6 +42,7 @@ namespace CryptoBook.Models
             backupRecoveryService;
         private readonly IMarkdownDocumentState? markdownDocument;
         private readonly IMarkdownFlowDocumentRenderer? markdownRenderer;
+        private readonly Lazy<ArchiveDocumentService>? archiveDocuments;
 
         public MenuFileModel(
             IWindowManager windowManager,
@@ -63,7 +64,8 @@ namespace CryptoBook.Models
             IRecentDocumentService? recentDocumentService = null,
             IDocumentBackupRecoveryService? backupRecoveryService = null,
             IMarkdownDocumentState? markdownDocument = null,
-            IMarkdownFlowDocumentRenderer? markdownRenderer = null)
+            IMarkdownFlowDocumentRenderer? markdownRenderer = null,
+            Lazy<ArchiveDocumentService>? archiveDocuments = null)
         {
             this.windowManager = windowManager
                 ?? throw new ArgumentNullException(nameof(windowManager));
@@ -105,6 +107,7 @@ namespace CryptoBook.Models
             this.backupRecoveryService = backupRecoveryService;
             this.markdownDocument = markdownDocument;
             this.markdownRenderer = markdownRenderer;
+            this.archiveDocuments = archiveDocuments;
 
             documentSession.PropertyChanged += (_, _) =>
                 OnPropertyChanged(nameof(documentSession));
@@ -233,7 +236,8 @@ namespace CryptoBook.Models
                 bool sourceIsPlaintextFile =
                     !string.IsNullOrWhiteSpace(documentSession.FilePath) &&
                     documentSession.Template is not SecureFileTemplate;
-                target = await saveEncryptionPolicy.ResolveAsync(
+                bool archiveTarget = target.FilePath.StartsWith("archive://", StringComparison.OrdinalIgnoreCase);
+                target = archiveTarget && target.Template is not SecureFileTemplate ? target : await saveEncryptionPolicy.ResolveAsync(
                     target,
                     sourceIsPlaintextFile);
                 if(target is null)
@@ -258,7 +262,13 @@ namespace CryptoBook.Models
                                         .CreateLinkedTokenSource(
                                             cancellationToken,
                                             dialogToken);
-                                if(target.Template is SecureFileTemplate)
+                                if(archiveTarget)
+                                {
+                                    if(archiveDocuments is null) throw new IOException(ArchivePathPolicy.Text("SaveAsRequired"));
+                                    await archiveDocuments.Value.SaveAsync(target.FilePath, target.Template, saveService,
+                                        richTextBox, markdownDocument, snapshot, progress, linkedTokenSource.Token);
+                                }
+                                else if(target.Template is SecureFileTemplate)
                                 {
                                     await SaveEncryptedAsync(
                                         target.FilePath,
@@ -286,7 +296,7 @@ namespace CryptoBook.Models
                     target.FilePath,
                     target.Template,
                     savedRevision);
-                if(target.Template is SecureFileTemplate &&
+                if(!archiveTarget && target.Template is SecureFileTemplate &&
                    backupRecoveryService is not null)
                 {
                     await backupRecoveryService
@@ -321,6 +331,7 @@ namespace CryptoBook.Models
 
         private async Task TryRecordSavedAsync(string path)
         {
+            if(path.StartsWith("archive://", StringComparison.OrdinalIgnoreCase)) return;
             if(recentDocumentService is null)
                 return;
 
