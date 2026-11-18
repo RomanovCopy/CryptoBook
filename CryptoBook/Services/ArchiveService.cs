@@ -11,7 +11,7 @@ namespace CryptoBook.Services;
 /// Local archive operations. Native extraction writes only to stdout; this service
 /// owns every destination path and never delegates filesystem extraction to 7-Zip.
 /// </summary>
-public sealed class ArchiveService: IArchiveService
+public sealed partial class ArchiveService: IArchiveService
 {
     private readonly SevenZipArchiveEngine engine;
 
@@ -264,7 +264,8 @@ public sealed class ArchiveService: IArchiveService
             total += size;
             DateTime? modified = DateTime.TryParse(fields.GetValueOrDefault("Modified"), CultureInfo.InvariantCulture,
                 DateTimeStyles.AssumeLocal, out DateTime date) ? date.ToUniversalTime() : null;
-            entries.Add(new Entry(name, relative, directory, size, modified));
+            entries.Add(new Entry(name, relative, directory, size, modified,
+                fields.GetValueOrDefault("Encrypted") == "+"));
             fields.Clear();
         }
     }
@@ -327,5 +328,6 @@ public sealed class ArchiveService: IArchiveService
         }
     }
 
-    internal sealed record Entry(string Name, string RelativePath, bool IsDirectory, long Size, DateTime? ModifiedUtc);
+    internal sealed record Entry(string Name, string RelativePath, bool IsDirectory, long Size, DateTime? ModifiedUtc,
+        bool IsEncrypted = false);
 }

@@ -31,12 +31,13 @@ $groups = @(
     @{ Name = 'worker-cancellation'; Arguments = @('-class', 'CryptoBook.Tests.AiWorkerCancellationTests') },
     @{ Name = 'batch-rename-window'; Arguments = @('-class', 'CryptoBook.Tests.BatchRenameWindowTests') },
     @{ Name = 'archive-operation-window'; Arguments = @('-class', 'CryptoBook.Tests.ArchiveOperationWindowTests') },
+    @{ Name = 'archive-explorer-window'; Arguments = @('-class', 'CryptoBook.Tests.ArchiveExplorerWindowTests') },
     @{ Name = 'image-edit-window'; Arguments = @('-class', 'CryptoBook.Tests.ImageEditWindowTests') },
     @{ Name = 'help'; Arguments = @('-class', 'CryptoBook.Tests.HelpTests') },
     @{ Name = 'image-layout'; Arguments = @('-class', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests') },
     @{ Name = 'window-relationships'; Arguments = @('-class', 'CryptoBook.Tests.WindowRelationshipTests') },
     @{ Name = 'bookmark-preview'; Arguments = @('-class', 'CryptoBook.Tests.BookmarkPreviewNavigationTests') },
-    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.ArchiveOperationWindowTests', '-class-', 'CryptoBook.Tests.ImageEditWindowTests', '-class-', 'CryptoBook.Tests.HelpTests', '-class-', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests', '-class-', 'CryptoBook.Tests.WindowRelationshipTests', '-class-', 'CryptoBook.Tests.BookmarkPreviewNavigationTests') }
+    @{ Name = 'remaining'; Arguments = @('-class-', 'CryptoBook.Tests.AiIntegrationTests', '-class-', 'CryptoBook.Tests.AdaptiveAiInferenceTests', '-class-', 'CryptoBook.Tests.DocumentSearchTests', '-class-', 'CryptoBook.Tests.AiWorkerCancellationTests', '-class-', 'CryptoBook.Tests.BatchRenameWindowTests', '-class-', 'CryptoBook.Tests.ArchiveOperationWindowTests', '-class-', 'CryptoBook.Tests.ArchiveExplorerWindowTests', '-class-', 'CryptoBook.Tests.ImageEditWindowTests', '-class-', 'CryptoBook.Tests.HelpTests', '-class-', 'CryptoBook.Tests.EmbeddedImageLayoutServiceTests', '-class-', 'CryptoBook.Tests.WindowRelationshipTests', '-class-', 'CryptoBook.Tests.BookmarkPreviewNavigationTests') }
 )
 $total = 0
 foreach ($group in $groups) {

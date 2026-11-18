@@ -78,11 +78,12 @@ namespace CryptoBook.ViewModels
         }
 
         private bool CanAddCurrentDirectory(object? parameter) =>
-            parameter is string path && !string.IsNullOrWhiteSpace(path);
+            parameter is string path && !string.IsNullOrWhiteSpace(path) &&
+            !path.StartsWith(Services.ArchiveStorageProvider.ProviderId + "://", StringComparison.OrdinalIgnoreCase);
 
         private async void AddCurrentDirectory(object? parameter)
         {
-            if(parameter is not string path || string.IsNullOrWhiteSpace(path))
+            if(!CanAddCurrentDirectory(parameter) || parameter is not string path)
                 return;
 
             try

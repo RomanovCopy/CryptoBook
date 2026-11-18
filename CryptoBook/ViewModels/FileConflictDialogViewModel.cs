@@ -19,6 +19,7 @@ namespace CryptoBook.ViewModels
             SourcePath = context.Get<string>("sourcePath");
             DestinationPath = context.Get<string>("destinationPath");
             bool isDirectory = context.Get<bool>("isDirectory");
+            CanReplace = !context.TryGet<bool>("canReplace", out bool canReplace) || canReplace;
             Title = LocalizationManager.GetString("Explorer.Conflict.Title");
             Message = LocalizationManager.Format(
                 isDirectory
@@ -34,6 +35,7 @@ namespace CryptoBook.ViewModels
         public string Message { get; }
         public string SourcePath { get; }
         public string DestinationPath { get; }
+        public bool CanReplace { get; }
         public FileConflictDecision? Result { get; private set; }
 
         public bool ApplyToAll
@@ -43,7 +45,7 @@ namespace CryptoBook.ViewModels
         }
 
         public ICommand ReplaceCommand => _replaceCommand ??= new RelayCommand(
-            _ => Close(FileConflictAction.Replace, true));
+            _ => Close(FileConflictAction.Replace, true), _ => CanReplace);
         private RelayCommand? _replaceCommand;
 
         public ICommand SkipCommand => _skipCommand ??= new RelayCommand(

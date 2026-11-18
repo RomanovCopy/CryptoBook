@@ -19,7 +19,7 @@ using System.Windows;
 
 namespace CryptoBook.Models
 {
-    public class FileExplorerModel: ViewModelBase, IFileExplorerModel
+    public partial class FileExplorerModel: ViewModelBase, IFileExplorerModel
     {
         public event Func<Task>? ViewRefreshRequested;
         private readonly SemaphoreSlim _gate = new(1, 1);
@@ -45,6 +45,15 @@ namespace CryptoBook.Models
         private readonly IPinnedDocumentService _pinnedDocumentService;
         private readonly IRecentDocumentService? _recentDocumentService;
         private readonly FileExplorerNavigationHistory _navigationHistory = new();
+        private IReadOnlyList<IContainerSystemItem> _archiveDirectories = [];
+        public IReadOnlyList<IContainerSystemItem> ArchiveDirectories
+        {
+            get => _archiveDirectories;
+            private set => SetProperty(ref _archiveDirectories, value);
+        }
+        private readonly ArchiveStorageProvider? _archives;
+        private bool _archiveOpening;
+        private bool _closed;
         private bool _hasPendingRecovery;
         private bool _isRestoringFiles;
         private INotifyCollectionChanged? _currentContainerAvailabilitySource;
@@ -159,7 +168,9 @@ namespace CryptoBook.Models
             CleanupOrphanedDecryptionDirectories(
                 GetDecryptionTemporaryRoot());
             GetDrives = _driveManagerService.WritableDrives;
-            ((INotifyCollectionChanged)GetDrives).CollectionChanged += Drives_CollectionChanged;
+            ((INotifyCollectionChanged)_driveManagerService.WritableDrives).CollectionChanged += Drives_CollectionChanged;
+            try { _archives = _storage.GetProvider(new StorageLocation(ArchiveStorageProvider.ProviderId, "session")) as ArchiveStorageProvider; }
+            catch(NotSupportedException) { }
         }
 
         public async Task RefreshDrivesAsync(CancellationToken cancellationToken = default)
@@ -379,9 +390,22 @@ namespace CryptoBook.Models
 
         public async void Execute_ApplyAddressCommand(object? obj)
         {
-            await NavigateAsync(
-                ResolveAddressPath(AddressText),
-                FileExplorerNavigationMode.Standard);
+            string address = AddressText;
+            try
+            {
+                if(_archives is not null && ArchiveStorageProvider.TrySplitDisplayPath(address, out string archive, out _))
+                {
+                    if(await OpenArchiveAsync(archive))
+                        await NavigateAsync(_storage.Format(_storage.ResolveDisplayPath(_storage.Resolve(CurrentPath), address)),
+                            FileExplorerNavigationMode.Standard);
+                    return;
+                }
+                await NavigateAsync(
+                    ResolveAddressPath(address),
+                    FileExplorerNavigationMode.Standard);
+            }
+            catch(OperationCanceledException) { }
+            catch(Exception exception) { await ShowNavigationErrorAsync(address, exception.Message); }
         }
 
         public void Execute_CancelAddressCommand(object? obj)
@@ -1111,6 +1135,9 @@ namespace CryptoBook.Models
                         "Explorer.DirectoryPathRequired"));
                 return false;
             }
+            if(_archives is not null && StorageLocation.TryParse(path, out var localArchive) && localArchive.IsLocal &&
+                ArchivePathPolicy.IsSupportedArchive(localArchive.OpaqueId) && _localFiles.FileExists(localArchive.OpaqueId))
+                return await OpenArchiveAsync(localArchive.OpaqueId, cancellationToken);
 
             var lockTaken = false;
             try
@@ -1124,6 +1151,7 @@ namespace CryptoBook.Models
                 lockTaken = true;
 
                 StorageLocation requestedLocation = _storage.Resolve(path);
+                if(ArchiveStorageProvider.IsArchive(requestedLocation)) IsFlatViewEnabled = false;
                 StorageItemMetadata? targetMetadata = await _storage.GetMetadataAsync(
                     requestedLocation,
                     token);
@@ -1167,7 +1195,8 @@ namespace CryptoBook.Models
                 container.IsExpanded = true;
                 container.IsLoaded = true;
                 ObserveCurrentContainerAvailability(container);
-                Properties.Settings.Default.LastDirectory_FileExplorer = targetPath;
+                Properties.Settings.Default.LastDirectory_FileExplorer = ArchiveStorageProvider.IsArchive(requestedLocation)
+                    ? _localFiles.GetParent(_archives!.SourcePath(requestedLocation)) : targetPath;
                 await RefreshRecoveryAvailabilityAsync(token);
                 System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 return true;
@@ -1231,15 +1260,17 @@ namespace CryptoBook.Models
             var ancestry = new Stack<StorageLocation>();
             StorageLocation rootLocation = target;
             StorageLocation? parent;
-            while((parent = _storage.GetParent(rootLocation)) is not null)
+            while((parent = _storage.GetParent(rootLocation)) is not null &&
+                parent.Value.ProviderId == rootLocation.ProviderId)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 ancestry.Push(rootLocation);
                 rootLocation = parent.Value;
             }
 
-            IContainerSystemItem root = GetDrives
-                .OfType<IContainerSystemItem>()
+            IEnumerable<IContainerSystemItem> roots = ArchiveStorageProvider.IsArchive(target)
+                ? ArchiveDirectories : GetDrives.OfType<IContainerSystemItem>();
+            IContainerSystemItem root = roots
                 .FirstOrDefault(item => _storage.AreEquivalent(
                     _storage.Resolve(item.FullPath),
                     rootLocation))
@@ -1267,7 +1298,12 @@ namespace CryptoBook.Models
 
                 if(existing is null)
                 {
-                    throw new DirectoryNotFoundException(
+                    // A directory may have been created while its physical parent
+                    // was inactive (for example, while browsing an archive).
+                    await RefreshContainerAsync(current, cancellationToken);
+                    existing = current.Children.OfType<IContainerSystemItem>().FirstOrDefault(item =>
+                        _storage.AreEquivalent(_storage.Resolve(item.FullPath), childLocation));
+                    if(existing is null) throw new DirectoryNotFoundException(
                         _storage.FormatDisplayPath(childLocation));
                 }
 
@@ -1322,6 +1358,8 @@ namespace CryptoBook.Models
             }
 
             StorageLocation current = _storage.Resolve(CurrentPath);
+            if(ArchiveStorageProvider.IsArchive(current))
+                return _storage.Format(_storage.ResolveDisplayPath(current, address));
             if(current.IsLocal || LooksLikeLocalPath(address))
                 return address;
 
@@ -1456,7 +1494,7 @@ namespace CryptoBook.Models
 
             IEnumerable<ISystemItem> siblings = current.Parent is
                 IContainerSystemItem parent
-                    ? parent.Children
+                    ? parent.Children.Concat(ArchiveDirectories.Where(directory => ReferenceEquals(directory.Parent, parent)))
                     : GetDrives.Cast<ISystemItem>();
             if(siblings.Any(item => PathsEqual(item.FullPath, CurrentPath)))
                 return;
@@ -1472,6 +1510,10 @@ namespace CryptoBook.Models
             {
                 switch(item)
                 {
+                    case IFileItem archive when archive.Location.IsLocal && _archives is not null &&
+                        ArchivePathPolicy.IsSupportedArchive(archive.FullPath):
+                        await OpenArchiveAsync(archive.FullPath, _cancellationTokenSource.Token);
+                        break;
                     case IContainerSystemItem container when Supports(
                         container,
                         StorageProviderCapabilities.Browse):
@@ -1592,7 +1634,8 @@ namespace CryptoBook.Models
         }
         public void Execute_Closed(object? obj)
         {
-            ((INotifyCollectionChanged)GetDrives).CollectionChanged -= Drives_CollectionChanged;
+            _closed = true;
+            ((INotifyCollectionChanged)_driveManagerService.WritableDrives).CollectionChanged -= Drives_CollectionChanged;
             if(_currentRootAvailabilitySource is not null)
             {
                 _currentRootAvailabilitySource.PropertyChanged -= CurrentRoot_PropertyChanged;
@@ -1605,6 +1648,8 @@ namespace CryptoBook.Models
                 _currentContainerAvailabilitySource = null;
             }
             _cancellationTokenSource.Cancel();
+            _archives?.CloseOwner(WindowId);
+            _archiveDirectories = [];
             _cancellationTokenSource.Dispose();
         }
 
@@ -2443,7 +2488,7 @@ namespace CryptoBook.Models
         private IEnumerable<IContainerSystemItem> EnumerateLoadedContainers()
         {
             var pending = new Stack<IContainerSystemItem>(
-                GetDrives.OfType<IContainerSystemItem>().Reverse());
+                GetDrives.OfType<IContainerSystemItem>().Concat(ArchiveDirectories).Reverse());
             var visited = new HashSet<IContainerSystemItem>();
 
             while(pending.Count > 0)

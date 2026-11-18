@@ -380,6 +380,8 @@ namespace CryptoBook.Services
                                 token);
                             break;
                         case FileConflictAction.Replace:
+                            if(ArchiveStorageProvider.IsArchive(sourceLocation))
+                                throw new InvalidOperationException(ArchivePathPolicy.Text("OutputExists"));
                             replace = true;
                             break;
                     }
@@ -418,6 +420,8 @@ namespace CryptoBook.Services
             StorageLocation destination,
             bool sourceIsDirectory)
         {
+            if(ArchiveStorageProvider.IsArchive(source) && !destination.IsLocal)
+                throw new NotSupportedException(ArchivePathPolicy.Text("LocalOnly"));
             if(sourceIsDirectory &&
                (storage.AreEquivalent(source, destination) ||
                 storage.IsDescendant(source, destination)))

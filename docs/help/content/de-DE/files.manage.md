@@ -39,7 +39,11 @@ Wählen Sie lokale Dateien oder Ordner und anschließend **Archiv erstellen…**
 
 Für ein einzelnes ZIP, 7z, RAR oder RAR5 stehen **Archiv entpacken…** und **Archiv prüfen…** bereit. Beim Entpacken wird ein neuer Ordner erstellt; vorhandene Dateien und Ordner werden nicht ersetzt. Wählen Sie bei Konflikten einen neuen Namen. Das voreingestellte Entpacklimit beträgt 20 GiB und kann im Dialog geändert werden. Im Fortschrittsfenster lässt sich der Vorgang abbrechen. Bei Fehlern oder Abbruch wird kein Endergebnis erstellt; sind temporäre Dateien gesperrt, nennt die Meldung ihren Ordner.
 
-Das Archivpasswort ist vom CryptoBook-Schlüssel getrennt, wird nicht gespeichert und beim Start aus dem Feld gelöscht. Geben Sie es nach einem Fehler erneut ein. Eine Integritätsprüfung ist keine Prüfung auf Schadsoftware. Android/MTP, Netzwerkpfade, RAR-Erstellung und Bearbeitung innerhalb von Archiven werden noch nicht unterstützt. Verknüpfungen und unsichere Namen werden abgelehnt. Ein Doppelklick öffnet das Archiv weiterhin wie üblich über Windows.
+Das Archivpasswort ist vom CryptoBook-Schlüssel getrennt, wird nicht gespeichert und beim Start aus dem Feld gelöscht. Geben Sie es nach einem Fehler erneut ein. Eine Integritätsprüfung ist keine Prüfung auf Schadsoftware. Android/MTP, Netzwerkpfade, RAR-Erstellung und Bearbeitung innerhalb von Archiven werden noch nicht unterstützt. Verknüpfungen und unsichere Namen werden abgelehnt.
+
+Ein Doppelklick auf ZIP, 7z oder RAR öffnet es als Ordner im FileExplorer; alternativ wählen Sie **Archiv öffnen**. Im Baum erscheint dieser Ordner im Verzeichnis des Quellarchivs. Verlauf, Nach oben, Filter und Text-/Bildvorschau sind verfügbar. Geschützte Archive fragen nach dem Passwort. Der Titel zeigt den schreibgeschützten Modus an.
+
+Zum Entpacken ausgewählter Inhalte wählen Sie **Kopieren**, wechseln in einen lokalen Ordner und wählen **Einfügen**. Lassen Sie das Quellfenster bis zum Abschluss geöffnet. Ein ausgewähltes Objekt ist auf 20 GiB begrenzt; wählen Sie bei Konflikten Beide behalten oder Überspringen. Ersetzen, Bearbeiten im Archiv, Alle Dateien und verschachtelte Archive sind nicht verfügbar. Die Vorschau schreibt keine entpackten Daten auf den Datenträger. Beim Schließen werden Passwort und Quellsperre freigegeben.
 
 ## Verwandte Themen
 

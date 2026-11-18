@@ -2437,4 +2437,10 @@
   <data name="Archive.CleanupFailed" xml:space="preserve">
     <value>Не вдалося видалити тимчасові файли. Після закриття програм, що їх використовують, видаліть папку операції: {0}</value>
   </data>
+  <data name="Archive.Open" xml:space="preserve"><value>Відкрити архів</value></data>
+  <data name="Archive.ReadOnly" xml:space="preserve"><value>Архів — лише читання</value></data>
+  <data name="Archive.PasswordRequired" xml:space="preserve"><value>Введіть пароль архіву.</value></data>
+  <data name="Archive.PasswordRetry" xml:space="preserve"><value>Пароль не прийнято. Введіть його повторно або скасуйте відкриття.</value></data>
+  <data name="Archive.SessionClosed" xml:space="preserve"><value>Сеанс перегляду архіву закрито. Відкрийте архів повторно.</value></data>
+  <data name="Archive.NotAFile" xml:space="preserve"><value>Виберіть файл усередині архіву.</value></data>
 </root>

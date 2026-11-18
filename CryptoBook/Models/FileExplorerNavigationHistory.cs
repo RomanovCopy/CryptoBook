@@ -71,8 +71,9 @@ namespace CryptoBook.Models
                 paths.Add(path);
         }
 
-        private static string Normalize(string path) =>
-            Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+        private static string Normalize(string path) => path.Contains("://", StringComparison.Ordinal)
+            ? StorageLocation.Parse(path).ToString()
+            : Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
 
         private static bool PathsEqual(string left, string right) =>
             string.Equals(left, right, StringComparison.OrdinalIgnoreCase);

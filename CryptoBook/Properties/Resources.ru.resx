@@ -1576,4 +1576,10 @@
   <data name="Archive.CleanupFailed" xml:space="preserve">
     <value>Не удалось удалить временные файлы. После закрытия использующих их программ удалите папку операции: {0}</value>
   </data>
+  <data name="Archive.Open" xml:space="preserve"><value>Открыть архив</value></data>
+  <data name="Archive.ReadOnly" xml:space="preserve"><value>Архив — только чтение</value></data>
+  <data name="Archive.PasswordRequired" xml:space="preserve"><value>Введите пароль архива.</value></data>
+  <data name="Archive.PasswordRetry" xml:space="preserve"><value>Пароль не принят. Введите его повторно или отмените открытие.</value></data>
+  <data name="Archive.SessionClosed" xml:space="preserve"><value>Сеанс просмотра архива закрыт. Откройте архив повторно.</value></data>
+  <data name="Archive.NotAFile" xml:space="preserve"><value>Выберите файл внутри архива.</value></data>
 </root>

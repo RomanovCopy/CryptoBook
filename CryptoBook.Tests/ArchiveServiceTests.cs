@@ -65,6 +65,21 @@ public sealed class ArchiveServiceTests
         Assert.DoesNotContain(zip.Entries, entry => entry.FullName.Contains("secret", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public async Task Create_StillRejectsSourcesFromDifferentDrives()
+    {
+        using var directory = new ArchiveTestDirectory();
+        string input = Path.Combine(directory.Path, "input.txt");
+        await File.WriteAllTextAsync(input, "content");
+        string otherDrive = Path.GetPathRoot(input)!.Equals(@"C:\", StringComparison.OrdinalIgnoreCase) ? @"D:\" : @"C:\";
+        string output = Path.Combine(directory.Path, "different-drives.zip");
+        var error = await Assert.ThrowsAsync<ArgumentException>(() => directory.CreateService().CreateAsync(
+            [input, Path.Combine(otherDrive, "cryptobook-unselected-" + Guid.NewGuid().ToString("N"))], output, ArchiveFormat.Zip));
+        Assert.Equal(ArchivePathPolicy.Text("DifferentDrives"), error.Message);
+        Assert.False(File.Exists(output));
+        AssertNoWorkspaces(directory.Path);
+    }
+
     [Theory]
     [InlineData("Rar.rar")]
     [InlineData("Rar5.rar")]

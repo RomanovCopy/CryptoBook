@@ -179,7 +179,8 @@ namespace CryptoBook.Services
                 MaxTextBytes,
                 cancellationToken);
             string text = DecodeText(bytes);
-            string? suffix = stream.CanSeek && stream.Position < stream.Length
+            bool truncated = stream.CanSeek ? stream.Position < stream.Length : file.Size > bytes.LongLength;
+            string? suffix = truncated
                 ? Environment.NewLine + Environment.NewLine +
                     LocalizationManager.GetString("Preview.Truncated")
                 : null;

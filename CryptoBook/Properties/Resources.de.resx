@@ -1576,4 +1576,10 @@ Dateien: {1}</value>
   <data name="Archive.CleanupFailed" xml:space="preserve">
     <value>Temporäre Dateien konnten nicht entfernt werden. Entfernen Sie diesen Vorgangsordner nach dem Schließen anderer Anwendungen: {0}</value>
   </data>
+  <data name="Archive.Open" xml:space="preserve"><value>Archiv öffnen</value></data>
+  <data name="Archive.ReadOnly" xml:space="preserve"><value>Archiv — schreibgeschützt</value></data>
+  <data name="Archive.PasswordRequired" xml:space="preserve"><value>Geben Sie das Archivpasswort ein.</value></data>
+  <data name="Archive.PasswordRetry" xml:space="preserve"><value>Das Passwort wurde nicht akzeptiert. Erneut eingeben oder abbrechen.</value></data>
+  <data name="Archive.SessionClosed" xml:space="preserve"><value>Diese Archivsitzung ist geschlossen. Öffnen Sie das Archiv erneut.</value></data>
+  <data name="Archive.NotAFile" xml:space="preserve"><value>Wählen Sie eine Datei im Archiv aus.</value></data>
 </root>

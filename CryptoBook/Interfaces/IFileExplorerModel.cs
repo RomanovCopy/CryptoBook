@@ -28,6 +28,7 @@ namespace CryptoBook.Interfaces
         IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get; set; }
         IReadOnlyList<string> FlatFilePathsSnapshot { get; set; }
         ReadOnlyObservableCollection<IDriveItem>GetDrives { get; }
+        IReadOnlyList<IContainerSystemItem> ArchiveDirectories => [];
         Task RefreshDrivesAsync(CancellationToken cancellationToken = default);
         Task<bool> NavigateAsync(
             string path,
@@ -35,6 +36,7 @@ namespace CryptoBook.Interfaces
             CancellationToken cancellationToken = default);
         Task RestoreLastDirectoryAsync(
             CancellationToken cancellationToken = default);
+        Task<bool> OpenArchiveAsync(string path, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
         bool CanExecute_BackCommand(object? obj);
         bool CanExecute_ForwardCommand(object? obj);

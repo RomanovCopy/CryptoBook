@@ -27,6 +27,8 @@ public sealed class TransferEngine: ITransferEngine
     {
         IStorageProvider sourceProvider = _storage.GetProvider(source);
         IStorageProvider destinationProvider = _storage.GetProvider(destination);
+        if(ArchiveStorageProvider.IsArchive(source) && !destination.IsLocal)
+            return FileOperationResult.Fail(ArchivePathPolicy.Text("LocalOnly"));
 
         if(source.ProviderId.Equals(destination.ProviderId, StringComparison.OrdinalIgnoreCase))
         {

@@ -74,10 +74,14 @@ internal static class ArchivePathPolicy
         }
     }
 
-    public static bool IsWithin(string parent, string candidate) =>
-        candidate.Equals(parent, StringComparison.OrdinalIgnoreCase) ||
-        candidate.StartsWith(Path.TrimEndingDirectorySeparator(parent) + Path.DirectorySeparatorChar,
-            StringComparison.OrdinalIgnoreCase);
+    public static bool IsWithin(string parent, string candidate)
+    {
+        string directory = Path.TrimEndingDirectorySeparator(parent);
+        // A drive root already ends in a separator; adding another breaks containment.
+        string prefix = Path.EndsInDirectorySeparator(directory) ? directory : directory + Path.DirectorySeparatorChar;
+        return candidate.Equals(directory, StringComparison.OrdinalIgnoreCase) ||
+            candidate.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
+    }
 
     public static string Text(string name) => Infrastructure.LocalizationManager.GetString("Archive." + name);
 }

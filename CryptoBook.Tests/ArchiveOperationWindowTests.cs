@@ -28,7 +28,8 @@ public sealed class ArchiveOperationWindowTests
     {
         MemorySettingsProvider.Install();
         using var directory = new ArchiveTestDirectory();
-        string source = Path.Combine(directory.Path, "Документ.txt");
+        string sourceFolder = Directory.CreateDirectory(Path.Combine(directory.Path, "Выбранная папка")).FullName;
+        string source = Path.Combine(sourceFolder, "Документ.txt");
         await File.WriteAllTextAsync(source, "Тест архива 🔐");
         var app = System.Windows.Application.Current ?? new System.Windows.Application();
         app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -66,7 +67,7 @@ public sealed class ArchiveOperationWindowTests
                         string archive = Path.Combine(directory.Path, "archive.7z");
                         Guid id = windows.CreateWindow<ArchiveOperationWindow>(new Dictionary<string, object?>
                         {
-                            [ArchiveOperationViewModel.SourcesContextKey] = new[] { action == ArchiveAction.Create ? source : archive },
+                            [ArchiveOperationViewModel.SourcesContextKey] = new[] { action == ArchiveAction.Create ? sourceFolder : archive },
                             [ArchiveOperationViewModel.ActionContextKey] = action
                         });
                         var window = Assert.IsType<ArchiveOperationWindow>(windows.FindHostWindow(id)!.Window);
@@ -106,7 +107,7 @@ public sealed class ArchiveOperationWindowTests
                 }
                 finally { app.Resources.MergedDictionaries.Remove(dictionary); }
             }
-            Assert.Equal("Тест архива 🔐", await File.ReadAllTextAsync(Path.Combine(directory.Path, "restored", "Документ.txt")));
+            Assert.Equal("Тест архива 🔐", await File.ReadAllTextAsync(Path.Combine(directory.Path, "restored", "Выбранная папка", "Документ.txt")));
             Assert.Empty(listener.Errors);
         }
         finally { PresentationTraceSources.DataBindingSource.Listeners.Remove(listener); }

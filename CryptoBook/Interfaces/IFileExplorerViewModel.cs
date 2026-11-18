@@ -45,6 +45,7 @@ namespace CryptoBook.Interfaces
         ISystemItem? SelectedListItem { get; set; }
         IReadOnlyList<ISystemItem> SelectedItemsSnapshot { get; set; }
         ReadOnlyObservableCollection<IDriveItem> GetDrives { get; }
+        IReadOnlyList<IContainerSystemItem> ArchiveDirectories { get; }
         IFavoriteDirectoriesViewModel Favorites { get; }
         IFilePreviewViewModel Preview { get; }
 
@@ -71,6 +72,7 @@ namespace CryptoBook.Interfaces
         ICommand RenameClickCommand {  get; }
         ICommand BatchRenameCommand { get; }
         ICommand CreateArchiveCommand { get; }
+        ICommand OpenArchiveCommand { get; }
         ICommand ExtractArchiveCommand { get; }
         ICommand TestArchiveCommand { get; }
         ICommand RenameCommand { get; }

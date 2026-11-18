@@ -18,6 +18,8 @@ namespace CryptoBook.Services
         {
             if(string.IsNullOrWhiteSpace(path))
                 throw new ArgumentException("Путь к директории не задан.", nameof(path));
+            if(path.StartsWith(ArchiveStorageProvider.ProviderId + "://", StringComparison.OrdinalIgnoreCase))
+                throw new NotSupportedException(ArchivePathPolicy.Text("ReadOnly"));
 
             string normalized = _fileManagerService.NormalizePath(path.Trim());
             int separatorIndex = normalized.IndexOf("://", StringComparison.Ordinal);

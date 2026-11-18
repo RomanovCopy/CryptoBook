@@ -71,6 +71,8 @@ namespace CryptoBook.Services
 
         private static string NormalizePath(string path)
         {
+            if(path.StartsWith(ArchiveStorageProvider.ProviderId + "://", StringComparison.OrdinalIgnoreCase))
+                return Uri.UnescapeDataString(path).Replace('/', '\\').TrimEnd('\\');
             int schemeSeparator = path.IndexOf("://", StringComparison.Ordinal);
             string nativePath = schemeSeparator > 0
                 ? path[(schemeSeparator + 3)..]

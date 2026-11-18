@@ -1576,4 +1576,10 @@ Files: {1}</value>
   <data name="Archive.CleanupFailed" xml:space="preserve">
     <value>Temporary files could not be removed. Remove this operation folder after closing other applications: {0}</value>
   </data>
+  <data name="Archive.Open" xml:space="preserve"><value>Open archive</value></data>
+  <data name="Archive.ReadOnly" xml:space="preserve"><value>Archive — read only</value></data>
+  <data name="Archive.PasswordRequired" xml:space="preserve"><value>Enter the archive password.</value></data>
+  <data name="Archive.PasswordRetry" xml:space="preserve"><value>The password was not accepted. Enter it again, or cancel.</value></data>
+  <data name="Archive.SessionClosed" xml:space="preserve"><value>This archive session is closed. Open the archive again.</value></data>
+  <data name="Archive.NotAFile" xml:space="preserve"><value>Select a file inside the archive.</value></data>
 </root>
