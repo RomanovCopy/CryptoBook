@@ -610,7 +610,8 @@ namespace CryptoBook.Models
                     synchronizeViewAsync: () => RefreshOperationContainersAsync(
                         items.Select(item => item.FullPath),
                         null,
-                        CancellationToken.None));
+                        CancellationToken.None),
+                    prepareLocalDeletionAsync: ReleaseArchiveSessionsForDeletionAsync);
                 if(result.Failure is not null)
                 {
                     await _messageService.ShowMessage(

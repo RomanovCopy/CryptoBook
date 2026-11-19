@@ -186,7 +186,8 @@ namespace CryptoBook.Services
             IEnumerable<string> sourcePaths,
             CancellationToken cancellationToken = default,
             Func<Task>? synchronizeViewAsync = null,
-            Func<FileOperationBatchResult, Task>? synchronizeResultAsync = null)
+            Func<FileOperationBatchResult, Task>? synchronizeResultAsync = null,
+            Func<IReadOnlyList<string>, CancellationToken, Task>? prepareLocalDeletionAsync = null)
         {
             ArgumentNullException.ThrowIfNull(sourcePaths);
             string[] sources = NormalizeTopLevelSources(sourcePaths);
@@ -215,11 +216,11 @@ namespace CryptoBook.Services
                                 null,
                                 LocalizationManager.GetString("Explorer.CalculatingSize"));
                             if(sources.All(p => _storage.Resolve(p).IsLocal))
-                                return operationResult = await _localOperations.DeleteAsync(sources, progress, token);
+                                return operationResult = await _localOperations.DeleteAsync(sources, progress, token, prepareLocalDeletionAsync);
                             string[] localSources = sources.Where(p => _storage.Resolve(p).IsLocal).ToArray();
                             if(localSources.Length > 0)
                             {
-                                FileOperationBatchResult local = await _localOperations.DeleteAsync(localSources, progress, token);
+                                FileOperationBatchResult local = await _localOperations.DeleteAsync(localSources, progress, token, prepareLocalDeletionAsync);
                                 if(!local.Success) return operationResult = local;
                                 results.AddRange(local.Results);
                                 completed += local.CompletedCount;

@@ -9,13 +9,13 @@ namespace CryptoBook.Services;
 internal sealed class ArchiveReadSession: IDisposable
 {
     private readonly ArchiveService service;
-    private readonly IDisposable sourceLock;
+    private readonly ArchiveSourceLock sourceLock;
     private readonly CancellationTokenSource lifetime = new();
     private readonly SecureString? password;
     private readonly object gate = new();
     private bool disposed;
 
-    internal ArchiveReadSession(ArchiveService service, IDisposable sourceLock, string archivePath,
+    internal ArchiveReadSession(ArchiveService service, ArchiveSourceLock sourceLock, string archivePath,
         string type, IReadOnlyList<ArchiveService.Entry> entries, string? password)
     {
         this.service = service;
@@ -34,6 +34,10 @@ internal sealed class ArchiveReadSession: IDisposable
     internal string ArchivePath { get; }
     internal string Type { get; }
     internal IReadOnlyList<ArchiveService.Entry> Entries { get; }
+    internal bool UsesSource(IReadOnlyList<string> paths)
+    {
+        lock(gate) return !disposed && sourceLock.UsesSource(paths);
+    }
     internal CancellationTokenSource CreateCancellation(CancellationToken token)
     {
         lock(gate)

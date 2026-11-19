@@ -36,4 +36,12 @@ internal sealed class ArchiveSourceLock: IDisposable
     }
 
     public void Dispose() { foreach(var file in files) file.Dispose(); files.Clear(); }
+
+    internal bool UsesSource(IReadOnlyList<string> paths) => paths.Any(path =>
+    {
+        string source = Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+        string prefix = Path.EndsInDirectorySeparator(source) ? source : source + Path.DirectorySeparatorChar;
+        return files.Any(file => file.Name.Equals(source, StringComparison.OrdinalIgnoreCase) ||
+            file.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+    });
 }

@@ -189,6 +189,54 @@ public sealed class ArchiveUpdatingTests
         Assert.False(Directory.Exists(Path.Combine(directory.Path, "missing")));
     }
 
+    [Theory]
+    [InlineData(ArchiveFormat.Zip, false)]
+    [InlineData(ArchiveFormat.Zip, true)]
+    [InlineData(ArchiveFormat.SevenZip, false)]
+    [InlineData(ArchiveFormat.SevenZip, true)]
+    public async Task Provider_ReleasesEditedArchiveAndNestedSnapshotsBeforeDeletingSource(ArchiveFormat format, bool deleteFolder)
+    {
+        using var directory = new ArchiveTestDirectory();
+        var service = directory.CreateService();
+        string folder = Directory.CreateDirectory(Path.Combine(directory.Path, "selected")).FullName;
+        string input = Path.Combine(directory.Path, "input.txt");
+        await File.WriteAllTextAsync(input, "keep");
+        string nestedArchive = Path.Combine(directory.Path, "inner.zip");
+        await service.CreateAsync([input], nestedArchive, ArchiveFormat.Zip);
+        string archive = Path.Combine(folder, format == ArchiveFormat.Zip ? "outer.zip" : "outer.7z");
+        await service.CreateAsync([input, nestedArchive], archive, format);
+        string sibling = Directory.CreateDirectory(folder + "-other").FullName;
+        string unrelated = Path.Combine(sibling, "unrelated.zip");
+        File.Copy(nestedArchive, unrelated);
+        var provider = new ArchiveStorageProvider(service, DispatchProxy.Create<ISystemItemCreateService, UnusedItems>());
+        var storage = new StorageFacade([new LocalStorageProvider(), provider]);
+        Guid owner = Guid.NewGuid(), documentOwner = Guid.NewGuid();
+        try
+        {
+            var root = await provider.MountAsync(owner, archive, null, default);
+            var document = await provider.RetainDocumentAsync(documentOwner, provider.GetChild(root, "input.txt"), default);
+            var other = await provider.MountAsync(owner, unrelated, null, default);
+            var nested = await provider.MountSourceAsync(owner, provider.GetChild(root, "inner.zip"), storage, null, default);
+            string snapshot = provider.SourcePath(nested);
+            Assert.True((await provider.DeleteAsync(provider.GetChild(root, "input.txt"))).Success);
+            Assert.Single(await provider.GetChildrenAsync(root));
+            Assert.Throws<IOException>(() => File.Open(archive, FileMode.Open, FileAccess.Write, FileShare.None));
+
+            await provider.CloseSourcesAsync(owner, [deleteFolder ? folder : archive], default);
+
+            Assert.False(provider.IsMounted(root));
+            Assert.False(provider.IsMounted(nested));
+            Assert.False(File.Exists(snapshot));
+            Assert.True(provider.IsMounted(other));
+            Assert.Single(await provider.GetChildrenAsync(other));
+            Assert.True(provider.IsMounted(document)); // The editor has its own lifetime and must keep its source stable.
+            Assert.Throws<IOException>(() => File.Open(archive, FileMode.Open, FileAccess.Write, FileShare.None));
+            provider.CloseOwner(documentOwner);
+            using var writable = File.Open(archive, FileMode.Open, FileAccess.Write, FileShare.None);
+        }
+        finally { provider.CloseOwner(owner); provider.CloseOwner(documentOwner); }
+    }
+
     private static string CreateZip(string root)
     {
         string archive = Path.Combine(root, "test.zip");

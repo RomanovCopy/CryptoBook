@@ -101,6 +101,30 @@ public partial class FileExplorerModel
         }
     }
 
+    private async Task ReleaseArchiveSessionsForDeletionAsync(IReadOnlyList<string> paths, CancellationToken token)
+    {
+        if(_archives is null) return;
+        StorageLocation? current = StorageLocation.TryParse(CurrentPath, out var location) &&
+            ArchiveStorageProvider.IsArchive(location) ? location : null;
+        string? fallback = current is null ? null : _archives.PersistentDirectory(current.Value);
+        try { await _archives.CloseSourcesAsync(WindowId, paths, token); }
+        finally
+        {
+            var closed = ArchiveDirectories.Where(directory => !_archives.IsMounted(directory.Location))
+                .Select(directory => directory.Location.OpaqueId.Split('/', 2)[0]).ToHashSet(StringComparer.Ordinal);
+            if(closed.Count > 0)
+            {
+                bool IsClosed(string path) => StorageLocation.TryParse(path, out var target) &&
+                    ArchiveStorageProvider.IsArchive(target) && closed.Contains(target.OpaqueId.Split('/', 2)[0]);
+                ArchiveDirectories = ArchiveDirectories.Where(directory => !IsClosed(directory.FullPath)).ToArray();
+                if(current is not null && IsClosed(CurrentPath) && fallback is not null)
+                    await NavigateAsync(fallback, FileExplorerNavigationMode.Standard, CancellationToken.None);
+                _navigationHistory.RemoveWhere(IsClosed);
+                System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+            }
+        }
+    }
+
     private async Task AttachArchiveDirectoryAsync(StorageLocation root, CancellationToken token)
     {
         if(ArchiveDirectories.Any(directory => _storage.AreEquivalent(directory.Location, root))) return;

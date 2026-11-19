@@ -79,6 +79,8 @@ public sealed partial class ArchiveStorageProvider: IStorageProvider, IFileProvi
         .Select(pair => (StorageLocation?)Location(pair.Key, "")).FirstOrDefault();
 
     internal string SourcePath(StorageLocation location) => Resolve(location).Mount.Session.ArchivePath;
+    internal bool IsMounted(StorageLocation location) => IsArchive(location) &&
+        mounts.ContainsKey(location.OpaqueId.Split('/', 2)[0]);
     internal static bool IsArchive(StorageLocation location) => location.ProviderId == ProviderId;
     internal static bool TrySplitDisplayPath(string displayPath, out string archive, out string relative)
     {

@@ -49,9 +49,11 @@ public sealed class ArchiveExplorerWindowTests
                 Source = new Uri($"/CryptoBook;component/Styles/{resource}.xaml", UriKind.Relative)
             });
         var messages = new RecordingMessages();
+        var recycleBin = new RecordingRecycleBin();
         using var container = new Startup().ConfigureServices(app, builder =>
         {
             builder.RegisterInstance<IMessageService>(messages);
+            builder.RegisterInstance<IRecycleBinService>(recycleBin);
             builder.RegisterInstance<IDocumentRecoveryService>(new NoRecovery());
             builder.RegisterInstance(service).AsSelf().As<IArchiveService>();
             builder.RegisterInstance<IFavoriteDirectoryStore>(new JsonFavoriteDirectoryStore(Path.Combine(directory.Path, "favorites.json")));
@@ -263,6 +265,56 @@ public sealed class ArchiveExplorerWindowTests
             vm.ForwardCommand.Execute(null);
             await UntilAsync(() => vm.CurrentPath == directory.Path);
             Console.WriteLine("ARCHIVE_UI: drive refresh and exit passed");
+            // Regression: updating an entry reopens the browsing session. Deleting
+            // the source after leaving the archive must release it before native recycling.
+            localArchive = Assert.IsAssignableFrom<IContainerSystemItem>(vm.SelectedItem).Children
+                .OfType<IFileItem>().Single(item => item.FullPath == archive);
+            int deletePrompts = messages.Confirmations.Count;
+            vm.DeleteCommand.Execute(new[] { localArchive });
+            await UntilAsync(() => messages.Confirmations.Count == deletePrompts + 1 && !app.Windows.OfType<ProgressWindow>().Any());
+            Assert.True(File.Exists(archive));
+            Assert.Same(archiveDirectory, Assert.Single(vm.ArchiveDirectories));
+            Assert.Null(recycleBin.Result);
+            var lockedDeletion = await new WindowsRecycleBinService().RecycleBatchAsync([archive]);
+            Assert.False(lockedDeletion.Success);
+            Assert.Equal(0, lockedDeletion.CompletedCount);
+            Assert.Contains("0x80270027", lockedDeletion.Failure?.ErrorMessage ?? "", StringComparison.OrdinalIgnoreCase);
+            Assert.True(File.Exists(archive));
+            Console.WriteLine("ARCHIVE_UI: retained source reproduced 0x80270027");
+            messages.AllowConfirmation = true;
+            try
+            {
+                vm.DeleteCommand.Execute(new[] { localArchive });
+                await UntilAsync(() => recycleBin.Result is not null && !app.Windows.OfType<ProgressWindow>().Any());
+                Assert.True(recycleBin.Result!.Success, recycleBin.Result.Failure?.ErrorMessage);
+                Assert.Equal(1, recycleBin.Result.CompletedCount);
+                Assert.Equal(0, recycleBin.Result.PermanentlyDeletedCount);
+                Assert.False(File.Exists(archive));
+                Assert.Empty(vm.ArchiveDirectories);
+                Assert.DoesNotContain(Descendants<TreeViewItem>(tree), item => ReferenceEquals(item.DataContext, archiveDirectory));
+                Assert.DoesNotContain(vm.ChildrenView.OfType<IFileItem>(), item => item.FullPath == archive);
+                Assert.Empty(messages.Errors);
+                vm.BackCommand.Execute(null);
+                await UntilAsync(() => vm.CurrentPath != directory.Path);
+                Assert.False(vm.IsArchiveView);
+                Assert.Empty(messages.Errors);
+                vm.ForwardCommand.Execute(null);
+                await UntilAsync(() => vm.CurrentPath == directory.Path);
+            }
+            finally
+            {
+                messages.AllowConfirmation = false;
+                string? recycled = recycleBin.Result?.Results.FirstOrDefault(item => item.Success)?.AffectedPath;
+                if(recycled is not null && !File.Exists(archive))
+                    await RecycleBinValidation.RestoreAsync(recycled, archive);
+            }
+            Assert.True(await model.OpenArchiveAsync(archive));
+            Assert.NotEqual(root, vm.CurrentPath);
+            inner = Assert.IsAssignableFrom<IContainerSystemItem>(vm.SelectedItem).Children.OfType<IContainerSystemItem>().Single();
+            Assert.True(await model.NavigateAsync(inner.FullPath, FileExplorerNavigationMode.Standard));
+            Assert.DoesNotContain(inner.Children, item => item.Name == "Переименованный");
+            Assert.True(await model.NavigateAsync(directory.Path, FileExplorerNavigationMode.Standard));
+            Console.WriteLine("ARCHIVE_UI: edited archive recycled, restored and reopened");
             int attempts = 0;
             var timer = new DispatcherTimer(TimeSpan.FromMilliseconds(100), DispatcherPriority.Background, (_, _) =>
             {
@@ -402,6 +454,19 @@ public sealed class ArchiveExplorerWindowTests
         public override void Write(string? message) { if(!string.IsNullOrEmpty(message)) Errors.Add(message); }
         public override void WriteLine(string? message) => Write(message);
     }
+    private sealed class RecordingRecycleBin: IRecycleBinService
+    {
+        private readonly WindowsRecycleBinService native = new();
+        internal FileOperationBatchResult? Result { get; private set; }
+        public Task<FileOperationResult> RecycleAsync(string path, CancellationToken cancellationToken = default) =>
+            native.RecycleAsync(path, cancellationToken);
+        public Task<RecycleBinDeletionPlan> PlanDeletionAsync(IReadOnlyList<string> paths, CancellationToken cancellationToken = default) =>
+            native.PlanDeletionAsync(paths, cancellationToken);
+        public async Task<FileOperationBatchResult> RecycleBatchAsync(IReadOnlyList<string> paths,
+            IProgressReporter? progress = null, CancellationToken cancellationToken = default) =>
+            Result = await native.RecycleBatchAsync(paths, progress, cancellationToken);
+    }
+
     private sealed class RecordingMessages: IMessageService
     {
         internal List<string> Errors { get; } = [];

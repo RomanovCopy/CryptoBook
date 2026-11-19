@@ -17,6 +17,12 @@ namespace CryptoBook.Models
         internal IReadOnlyList<string> BackPaths => _backPaths;
         internal IReadOnlyList<string> ForwardPaths => _forwardPaths;
 
+        internal void RemoveWhere(Predicate<string> predicate)
+        {
+            _backPaths.RemoveAll(predicate);
+            _forwardPaths.RemoveAll(predicate);
+        }
+
         public void Commit(
             string? previousPath,
             string targetPath,

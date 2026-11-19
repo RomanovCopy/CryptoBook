@@ -10,6 +10,48 @@ public sealed partial class ArchiveStorageProvider
 {
     private readonly SemaphoreSlim updateGate = new(1, 1);
 
+    internal async Task CloseSourcesAsync(Guid owner, IReadOnlyList<string> paths, CancellationToken token)
+    {
+        await updateGate.WaitAsync(token);
+        try
+        {
+            var owned = mounts.Where(pair => pair.Value.Owner == owner).ToArray();
+            var closing = owned.Where(pair => pair.Value.Workspace is null && pair.Value.Session.UsesSource(paths))
+                .Select(pair => pair.Key).ToHashSet(StringComparer.Ordinal);
+            // Nested snapshots depend on their outer mount even though they lock a temporary file.
+            bool added;
+            do
+            {
+                added = false;
+                foreach(var pair in owned)
+                    if(pair.Value.Parent is StorageLocation parent && IsArchive(parent) &&
+                       closing.Contains(parent.OpaqueId.Split('/', 2)[0]))
+                        added |= closing.Add(pair.Key);
+            } while(added);
+
+            List<Mount> closed = [];
+            foreach(string id in closing)
+                if(mounts.TryRemove(id, out var mount))
+                {
+                    mount.Session.Dispose();
+                    closed.Add(mount);
+                }
+            List<Exception> failures = [];
+            foreach(var mount in closed.Where(mount => mount.Workspace is not null))
+            {
+                try
+                {
+                    ArchivePathPolicy.EnsureNoLinks(mount.Workspace!);
+                    await ArchiveService.RemoveWorkspaceAsync(mount.Workspace!);
+                }
+                catch(Exception exception) when(exception is IOException or UnauthorizedAccessException)
+                { failures.Add(new IOException(Infrastructure.LocalizationManager.Format("Archive.CleanupFailed", mount.Workspace), exception)); }
+            }
+            if(failures.Count > 0) throw new AggregateException(failures);
+        }
+        finally { updateGate.Release(); }
+    }
+
     internal bool CanEdit(StorageLocation location) => Resolve(location).Mount.CanEdit;
     internal string? PersistentDirectory(StorageLocation location)
     {
