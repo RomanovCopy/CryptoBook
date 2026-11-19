@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.5.6 - 2026-11-19
+
+### Added
+- Create ZIP/7z, extract ZIP/7z/RAR/RAR5 and test integrity with bundled 7-Zip, passwords, progress and cancellation.
+- Browse archives as folders, preview text/images, extract selections and open supported documents.
+- Modify local single-volume ZIP/7z and save documents, including protected `.cbook`, back into archives using a working copy, CRC/SHA-256 checks and safe replacement.
+- Read nested and multi-volume archives; transfer files between archives and Android/MTP using bounded local staging. Nested, multi-volume and device archives remain read-only.
+
+### Fixed
+- Release browsing sessions before confirmed deletion of the source archive or containing folder, including after edits. Independent editor and other-window sessions must still be closed.
+- Distinguish archive and device operations in confirmations, errors and progress; update offline help in all four languages.
+
+### Release
+- Synchronize application, installer, version tests and distribution documentation for 1.1.5.6. User confirmed the candidate and authorized GitHub publication on November 19, 2026; preserve the reviewed local installer.
+
+Full comparison: [v1.1.5.5...v1.1.5.6](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.5.5...v1.1.5.6)
+
 ## 1.1.5.5 - 2026-11-06
 
 ### Fixed
