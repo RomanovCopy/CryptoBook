@@ -118,6 +118,19 @@ namespace CryptoBook.Tests
                 result.Message);
         }
 
+        [Theory]
+        [InlineData("archive://session/folder%5Cfile.txt", "Preview.ArchiveDisplayFailed")]
+        [InlineData(@"C:\work\file.txt", "Preview.DisplayFailed")]
+        [InlineData("android://opaque", "Preview.RemoteDisplayFailed")]
+        public async Task ReadFailure_UsesTheCorrectStorageMessage(string path, string expectedKey)
+        {
+            var source = new StubContentSource(false, false, error: new IOException("read failed"));
+            var file = new FileItem { Name = "file", Extension = ".txt", FullPath = path, Size = 1 };
+            var result = await new FilePreviewService(source).LoadAsync(file);
+            Assert.Equal(FilePreviewKind.Error, result.Kind);
+            Assert.Equal(LocalizationManager.Format(expectedKey, Environment.NewLine, "read failed"), result.Message);
+        }
+
         private static FileItem CreateEncryptedFile() => new()
         {
             Name = "secret.cbook",

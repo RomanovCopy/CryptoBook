@@ -67,7 +67,10 @@ namespace CryptoBook.ViewModels
                 _fileExplorerModel.IsFlatViewEnabled = value;
             }
         }
-        public bool CanUseFlatView => _mode != FileExplorerMode.SelectFolder;
+        public bool CanUseFlatView => _mode != FileExplorerMode.SelectFolder &&
+            (!StorageLocation.TryParse(CurrentPath, out var location) || !ArchiveStorageProvider.IsArchive(location));
+        public bool IsArchiveView => StorageLocation.TryParse(CurrentPath, out var location) && ArchiveStorageProvider.IsArchive(location);
+        public IReadOnlyList<IContainerSystemItem> ArchiveDirectories => _fileExplorerModel.ArchiveDirectories;
         public bool IsFlatViewLoading
         {
             get => _isFlatViewLoading;
@@ -102,7 +105,7 @@ namespace CryptoBook.ViewModels
             FileExplorerMode.SelectFile => "File.PickerTitle",
             FileExplorerMode.SelectFolder => "File.NewFolderPickerDescription",
             _ => "Explorer.WindowTitle"
-        });
+        }) + (IsArchiveView ? " — " + ArchivePathPolicy.Text(SelectedItem?.Capabilities.HasFlag(StorageProviderCapabilities.Write) == true ? "Editable" : "ReadOnly") : "");
         public string PickerActionText => LocalizationManager.GetString(
             _mode == FileExplorerMode.SelectFolder
                 ? "Explorer.Picker.SelectFolder"
@@ -236,7 +239,12 @@ namespace CryptoBook.ViewModels
                 nameof(IsCurrentDirectoryUnavailable))
             {
                 if(e.PropertyName == nameof(CurrentPath))
+                {
                     OnPropertyChanged(nameof(CurrentDisplayPath));
+                    OnPropertyChanged(nameof(CanUseFlatView));
+                    OnPropertyChanged(nameof(IsArchiveView));
+                    OnPropertyChanged(nameof(ExplorerTitle));
+                }
                 OnPropertyChanged(nameof(PickerSelectionPath));
                 OnPropertyChanged(nameof(PickerSelectionDisplayPath));
                 OnPropertyChanged(nameof(PickerPathLabel));
@@ -522,7 +530,8 @@ namespace CryptoBook.ViewModels
         RelayCommand _revealInExplorerCommand;
 
         public ICommand PropertiesCommand => _propertiesCommand ??=
-            new RelayCommand(ExecuteProperties, CanExecuteProperties);
+            new RelayCommand(ExecuteProperties, parameter => CanExecuteProperties(parameter) &&
+                GetSingleSelection(parameter) is { } item && !ArchiveStorageProvider.IsArchive(item.Location));
         RelayCommand _propertiesCommand;
 
         public ICommand DetailedPropertiesCommand => _detailedPropertiesCommand ??=
@@ -596,6 +605,56 @@ namespace CryptoBook.ViewModels
         public ICommand BatchRenameCommand => _batchRenameCommand ??= new RelayCommand(
             ExecuteBatchRename, CanBatchRename);
         private RelayCommand? _batchRenameCommand;
+
+        public ICommand CreateArchiveCommand => _createArchiveCommand ??= new RelayCommand(
+            parameter => OpenArchiveOperation(parameter, ArchiveAction.Create), CanCreateArchive);
+        private RelayCommand? _createArchiveCommand;
+        public ICommand OpenArchiveCommand => _openArchiveCommand ??= new AsyncRelayCommand(async (parameter, token) =>
+        {
+            var item = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot).Single();
+            await _fileExplorerModel.OpenArchiveAsync(item.FullPath, token);
+        }, parameter => !IsPickerMode && !IsCurrentDirectoryUnavailable &&
+            FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot) is { Count: 1 } selection &&
+            selection[0] is IFileItem archive && ArchivePathPolicy.IsSupportedArchive(archive.Name + archive.Extension));
+        private AsyncRelayCommand? _openArchiveCommand;
+        public ICommand ExtractArchiveCommand => _extractArchiveCommand ??= new RelayCommand(
+            parameter => OpenArchiveOperation(parameter, ArchiveAction.Extract), CanReadArchive);
+        private RelayCommand? _extractArchiveCommand;
+        public ICommand TestArchiveCommand => _testArchiveCommand ??= new RelayCommand(
+            parameter => OpenArchiveOperation(parameter, ArchiveAction.Test), CanReadArchive);
+        private RelayCommand? _testArchiveCommand;
+
+        private bool CanCreateArchive(object? parameter)
+        {
+            var items = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot);
+            return !IsCurrentDirectoryUnavailable && items.Count > 0 && items.All(item =>
+                item.Location.IsLocal && !item.IsEditing && item is IFileItem or IDirectoryItem &&
+                !item.FullPath.StartsWith("\\\\", StringComparison.Ordinal) &&
+                (item.Capabilities == StorageProviderCapabilities.None ||
+                 item.Capabilities.HasFlag(StorageProviderCapabilities.Read)));
+        }
+
+        private bool CanReadArchive(object? parameter)
+        {
+            var items = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot);
+            return CanCreateArchive(parameter) && items.Count == 1 && items[0] is IFileItem &&
+                ArchivePathPolicy.IsSupportedArchive(items[0].FullPath);
+        }
+
+        private void OpenArchiveOperation(object? parameter, ArchiveAction action)
+        {
+            if(action == ArchiveAction.Create ? !CanCreateArchive(parameter) : !CanReadArchive(parameter)) return;
+            string[] paths = FileExplorerSelectionPolicy.CreateSnapshot(parameter ?? SelectedItemsSnapshot)
+                .Select(item => item.FullPath).ToArray();
+            Guid dialog = _windowManager.CreateWindow<Views.ArchiveOperationWindow>(
+                new Dictionary<string, object?>
+                {
+                    [ArchiveOperationViewModel.SourcesContextKey] = paths,
+                    [ArchiveOperationViewModel.ActionContextKey] = action
+                });
+            _windowManager.ShowWindowDialog(dialog);
+            ExecuteRefresh(SelectedItem);
+        }
 
         private bool CanBatchRename(object? parameter)
         {
@@ -809,6 +868,7 @@ namespace CryptoBook.ViewModels
         private bool CanConfirmSelection() =>
             IsPickerMode &&
             !IsCurrentDirectoryUnavailable &&
+            !IsArchiveView &&
             !string.IsNullOrWhiteSpace(ResolvePickerSelection());
 
         private static ISystemItem? GetSingleSelection(object? parameter)

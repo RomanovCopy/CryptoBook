@@ -129,7 +129,7 @@ namespace CryptoBook.Services
                                     completedBytes,
                                     itemSize,
                                     totalBytes,
-                                    plan.SourcePath);
+                                    _storage.FormatDisplayPath(_storage.Resolve(plan.SourcePath)));
                                 FileOperationResult result;
                                 if(operation == FileTransferKind.Copy)
                                 {
@@ -155,7 +155,7 @@ namespace CryptoBook.Services
                                 completedBytes += itemSize;
                                 progress.Report(
                                     CalculateOverall(completedBytes, totalBytes, completed, plans.Items.Count),
-                                    plan.SourcePath);
+                                    _storage.FormatDisplayPath(_storage.Resolve(plan.SourcePath)));
                             }
 
                             return new FileOperationBatchResult(
@@ -186,7 +186,8 @@ namespace CryptoBook.Services
             IEnumerable<string> sourcePaths,
             CancellationToken cancellationToken = default,
             Func<Task>? synchronizeViewAsync = null,
-            Func<FileOperationBatchResult, Task>? synchronizeResultAsync = null)
+            Func<FileOperationBatchResult, Task>? synchronizeResultAsync = null,
+            Func<IReadOnlyList<string>, CancellationToken, Task>? prepareLocalDeletionAsync = null)
         {
             ArgumentNullException.ThrowIfNull(sourcePaths);
             string[] sources = NormalizeTopLevelSources(sourcePaths);
@@ -215,11 +216,11 @@ namespace CryptoBook.Services
                                 null,
                                 LocalizationManager.GetString("Explorer.CalculatingSize"));
                             if(sources.All(p => _storage.Resolve(p).IsLocal))
-                                return operationResult = await _localOperations.DeleteAsync(sources, progress, token);
+                                return operationResult = await _localOperations.DeleteAsync(sources, progress, token, prepareLocalDeletionAsync);
                             string[] localSources = sources.Where(p => _storage.Resolve(p).IsLocal).ToArray();
                             if(localSources.Length > 0)
                             {
-                                FileOperationBatchResult local = await _localOperations.DeleteAsync(localSources, progress, token);
+                                FileOperationBatchResult local = await _localOperations.DeleteAsync(localSources, progress, token, prepareLocalDeletionAsync);
                                 if(!local.Success) return operationResult = local;
                                 results.AddRange(local.Results);
                                 completed += local.CompletedCount;
@@ -245,7 +246,7 @@ namespace CryptoBook.Services
                                 completedBytes += entry.Size;
                                 progress.Report(
                                     CalculateOverall(completedBytes, totalBytes, completed, entries.Count),
-                                    path);
+                                    _storage.FormatDisplayPath(entry.Location));
                             }
 
                             return operationResult = new FileOperationBatchResult(
@@ -380,6 +381,8 @@ namespace CryptoBook.Services
                                 token);
                             break;
                         case FileConflictAction.Replace:
+                            if(ArchiveStorageProvider.IsArchive(sourceLocation) || ArchiveStorageProvider.IsArchive(destinationLocation))
+                                throw new InvalidOperationException(ArchivePathPolicy.Text("OutputExists"));
                             replace = true;
                             break;
                     }

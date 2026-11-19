@@ -29,7 +29,9 @@ namespace CryptoBook.Services
             {
                 ["sourcePath"] = _pathDisplay.FormatPath(sourcePath),
                 ["destinationPath"] = _pathDisplay.FormatPath(destinationPath),
-                ["isDirectory"] = isDirectory
+                ["isDirectory"] = isDirectory,
+                ["canReplace"] = !sourcePath.StartsWith(ArchiveStorageProvider.ProviderId + "://", StringComparison.OrdinalIgnoreCase) &&
+                    !destinationPath.StartsWith(ArchiveStorageProvider.ProviderId + "://", StringComparison.OrdinalIgnoreCase)
             };
             Guid windowId = _windowManager.CreateWindow<FileConflictDialog>(context);
             _windowManager.ShowWindowDialog(windowId);

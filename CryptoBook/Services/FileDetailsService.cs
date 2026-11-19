@@ -31,7 +31,8 @@ public sealed class FileDetailsService: IFileDetailsService
         {
             Add(rows, "General", "Size", Bytes(target.Size));
             AddDate(rows, "Modified", target.LastWriteTimeUtc);
-            Add(rows, "General", "Availability", L("RemoteLimit"));
+            Add(rows, "General", "Availability", L(StorageLocation.TryParse(target.Path, out var location) &&
+                ArchiveStorageProvider.IsArchive(location) ? "ArchiveLimit" : "RemoteLimit"));
             return rows;
         }
 

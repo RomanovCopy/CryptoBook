@@ -18,6 +18,7 @@ namespace CryptoBook.Interfaces
             IEnumerable<string> sourcePaths,
             CancellationToken cancellationToken = default,
             Func<Task>? synchronizeViewAsync = null,
-            Func<FileOperationBatchResult, Task>? synchronizeResultAsync = null);
+            Func<FileOperationBatchResult, Task>? synchronizeResultAsync = null,
+            Func<IReadOnlyList<string>, CancellationToken, Task>? prepareLocalDeletionAsync = null);
     }
 }

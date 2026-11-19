@@ -25,7 +25,14 @@ public sealed class FileDeletionPreflightTests
         fixture.Bin.Plan = new([new("D:\\", 60, hasBin ? 100 : 0, fits ? 20 : 80)]);
         fixture.Messages.Consent = consent;
 
-        FileOperationBatchResult result = await fixture.Coordinator.DeleteAsync(fixture.Paths);
+        FileOperationBatchResult result = await fixture.Coordinator.DeleteAsync(fixture.Paths,
+            prepareLocalDeletionAsync: (paths, token) =>
+            {
+                token.ThrowIfCancellationRequested();
+                Assert.Equal(fixture.Paths, paths);
+                fixture.Events.Add("prepare");
+                return Task.CompletedTask;
+            });
 
         Assert.Equal(["plan", "prompt", "answer"], fixture.Events.Take(3));
         Assert.Equal(fixture.Paths, fixture.Bin.PlannedPaths);
@@ -37,7 +44,8 @@ public sealed class FileDeletionPreflightTests
             Assert.Equal(0, result.CompletedCount);
             return;
         }
-        Assert.Equal(fits ? "recycle-batch" : "permanent-batch", fixture.Events[3]);
+        Assert.Equal("prepare", fixture.Events[3]);
+        Assert.Equal(fits ? "recycle-batch" : "permanent-batch", fixture.Events[4]);
         Assert.Equal(3, result.CompletedCount);
         Assert.Equal(fixture.Paths, fixture.Bin.DeletedPaths);
         Assert.Equal(fits ? 0 : 3, result.PermanentlyDeletedCount);
@@ -65,6 +73,18 @@ public sealed class FileDeletionPreflightTests
         fixture.Messages.AfterAnswer = fixture.Progress.Cancellation.Cancel;
         FileOperationBatchResult result = await fixture.Coordinator.DeleteAsync(fixture.Paths);
         Assert.True(result.Canceled);
+        Assert.Equal(["plan", "prompt", "answer"], fixture.Events);
+        Assert.All(fixture.Paths, path => Assert.True(File.Exists(path)));
+    }
+
+    [Fact]
+    public async Task FailedPreparationDoesNotDeleteAnyFile()
+    {
+        using var fixture = new Fixture();
+        fixture.Bin.Plan = new([new("D:\\", 60, 100, 0)]);
+        FileOperationBatchResult result = await fixture.Coordinator.DeleteAsync(fixture.Paths,
+            prepareLocalDeletionAsync: (_, _) => throw new IOException("release failed"));
+        Assert.Equal("release failed", result.Failure?.ErrorMessage);
         Assert.Equal(["plan", "prompt", "answer"], fixture.Events);
         Assert.All(fixture.Paths, path => Assert.True(File.Exists(path)));
     }

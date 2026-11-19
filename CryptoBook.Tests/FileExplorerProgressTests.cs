@@ -22,6 +22,21 @@ public sealed class FileExplorerProgressTests
 {
     public FileExplorerProgressTests() => MemorySettingsProvider.Install();
 
+    [WpfTheory]
+    [InlineData(ClipboardOperationKind.Copy, "Explorer.CopyError")]
+    [InlineData(ClipboardOperationKind.Move, "Explorer.MoveError")]
+    public async Task ArchivePasteFailure_UsesTheRequestedOperationTitle(ClipboardOperationKind operation, string expectedKey)
+    {
+        var coordinator = Stub<IFileOperationCoordinator>((method, _) => method.Name == "TransferAsync"
+            ? throw new IOException("archive transfer failed") : null);
+        using var explorer = new ExplorerFixture(coordinator);
+        explorer.Clipboard = new ClipboardData { SourcePaths = ["archive://session/file.txt"], Operation = operation };
+        explorer.Model.Execute_PasteCommand(null);
+        var message = await explorer.MessageRaised.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.Equal(CryptoBook.Infrastructure.LocalizationManager.GetString(expectedKey), message.Title);
+        Assert.Equal("archive transfer failed", message.Message);
+    }
+
     [WpfFact]
     public async Task ProgressReports_BurstAppliesLatestValueBeforeCompletion()
     {
@@ -162,9 +177,11 @@ public sealed class FileExplorerProgressTests
         public Func<IReadOnlyList<ISystemItem>, string, CancellationToken, Task<FileOperationBatchResult>>? ProtectedCopyAction { get; set; }
         public string? PickedDirectory { get; set; }
         public int FolderPickCount { get; private set; }
+        public ClipboardData Clipboard { get; set; } = new();
+        public TaskCompletionSource<(string Title, string Message)> MessageRaised { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly IFileManagerService files;
 
-        public ExplorerFixture()
+        public ExplorerFixture(IFileOperationCoordinator? coordinatorOverride = null)
         {
             Directory.CreateDirectory(Path);
             for(int index = 0; index < 200; index++)
@@ -189,7 +206,8 @@ public sealed class FileExplorerProgressTests
                 [typeof(IDriveManagerService)] = Stub<IDriveManagerService>((method, _) =>
                     method.Name == "get_WritableDrives" ? drives : null),
                 [typeof(IProgressDialogService)] = Progress,
-                [typeof(IFileOperationCoordinator)] = coordinator,
+                [typeof(IFileOperationCoordinator)] = coordinatorOverride ?? coordinator,
+                [typeof(IFileClipboardService)] = Stub<IFileClipboardService>((method, _) => method.Name == "GetData" ? Clipboard : null),
                 [typeof(IKeyProvider)] = Stub<IKeyProvider>((method, _) => method.Name == "get_HasKey" ? true : null),
                 [typeof(IFolderPickerService)] = Stub<IFolderPickerService>((method, _) =>
                 {
@@ -207,11 +225,14 @@ public sealed class FileExplorerProgressTests
                             (IReadOnlyList<ISystemItem>)args![0]!, (string)args[1]!, (CancellationToken)args[^1]!),
                         _ => null
                     }),
-                [typeof(IMessageService)] = Stub<IMessageService>((method, _) => method.Name switch
+                [typeof(IMessageService)] = Stub<IMessageService>((method, args) =>
                 {
-                    "ShowMessage" => Task.FromResult(Guid.NewGuid()),
-                    "ShowConfirmation" => true,
-                    _ => null
+                    if(method.Name == "ShowMessage")
+                    {
+                        MessageRaised.TrySetResult(((string)args![0]!, (string)args[1]!));
+                        return Task.FromResult(Guid.NewGuid());
+                    }
+                    return method.Name == "ShowConfirmation" ? true : null;
                 })
             };
             ConstructorInfo constructor = Assert.Single(typeof(FileExplorerModel).GetConstructors());

@@ -1449,4 +1449,155 @@ RAM-Spitze: {5} MB; GPU-Speicher: {6} MB.
   <data name="ImageEdit.Cancelled" xml:space="preserve"><value>Speichern abgebrochen.</value></data>
   <data name="ImageEdit.SaveFailed" xml:space="preserve"><value>Das Bild konnte nicht gespeichert werden.</value></data>
   <data name="ImageEdit.PreviewFailed" xml:space="preserve"><value>Die Vorschau konnte nicht aktualisiert werden.</value></data>
+  <data name="Archive.Create" xml:space="preserve">
+    <value>Archiv erstellen…</value>
+  </data>
+  <data name="Archive.Extract" xml:space="preserve">
+    <value>Archiv entpacken…</value>
+  </data>
+  <data name="Archive.Test" xml:space="preserve">
+    <value>Archiv prüfen…</value>
+  </data>
+  <data name="Archive.CreateHint" xml:space="preserve">
+    <value>Erstellt ein neues ZIP oder 7z aus ausgewählten lokalen Dateien und Ordnern. Vorhandene Dateien werden nicht überschrieben. Ein optionales Passwort aktiviert AES-256.</value>
+  </data>
+  <data name="Archive.ExtractHint" xml:space="preserve">
+    <value>Entpackt ZIP, 7z oder RAR in einen neuen Ordner. Wählen Sie einen noch nicht vorhandenen Namen. Verknüpfungen und unsichere Pfade werden abgelehnt.</value>
+  </data>
+  <data name="Archive.TestHint" xml:space="preserve">
+    <value>Prüft Lesbarkeit und gespeicherte Prüfsummen des Archivs. Dies ist keine Prüfung auf Schadsoftware.</value>
+  </data>
+  <data name="Archive.Sources" xml:space="preserve">
+    <value>Ausgewählte Dateien und Ordner</value>
+  </data>
+  <data name="Archive.Destination" xml:space="preserve">
+    <value>Zielordner</value>
+  </data>
+  <data name="Archive.Browse" xml:space="preserve">
+    <value>Zielordner auswählen</value>
+  </data>
+  <data name="Archive.OutputName" xml:space="preserve">
+    <value>Name des neuen Archivs oder Ordners</value>
+  </data>
+  <data name="Archive.Format" xml:space="preserve">
+    <value>Archivformat</value>
+  </data>
+  <data name="Archive.MaximumSize" xml:space="preserve">
+    <value>Maximale entpackte Größe, GiB</value>
+  </data>
+  <data name="Archive.Password" xml:space="preserve">
+    <value>Archivpasswort (optional)</value>
+  </data>
+  <data name="Archive.Reading" xml:space="preserve">
+    <value>Archivinhalt wird gelesen…</value>
+  </data>
+  <data name="Archive.Creating" xml:space="preserve">
+    <value>Archiv wird erstellt…</value>
+  </data>
+  <data name="Archive.Verifying" xml:space="preserve">
+    <value>Archivintegrität wird geprüft…</value>
+  </data>
+  <data name="Archive.TestSuccess" xml:space="preserve">
+    <value>Integritätsprüfung des Archivs bestanden.</value>
+  </data>
+  <data name="Archive.Success" xml:space="preserve">
+    <value>Abgeschlossen: {0}
+Dateien: {1}</value>
+  </data>
+  <data name="Archive.Cancelled" xml:space="preserve">
+    <value>Vorgang abgebrochen. Das Ziel wurde nicht erstellt.</value>
+  </data>
+  <data name="Archive.Unsupported" xml:space="preserve">
+    <value>Unterstützte Archivformate: ZIP, 7z und RAR.</value>
+  </data>
+  <data name="Archive.UnsafePath" xml:space="preserve">
+    <value>Das Archiv enthält einen unsicheren oder nicht unterstützten Dateinamen.</value>
+  </data>
+<data name="Archive.LocalOnly" xml:space="preserve">
+    <value>Für diesen Vorgang ist ein lokaler Datenträgerpfad erforderlich. Geräte-, Archiveintrags- und Netzwerkpfade können hier nicht verwendet werden.</value>
+  </data>
+  <data name="Archive.LinksUnsupported" xml:space="preserve">
+    <value>Symbolische Links, Verzeichnisverknüpfungen und Analysepunkte werden nicht unterstützt.</value>
+  </data>
+  <data name="Archive.InvalidPassword" xml:space="preserve">
+    <value>Das Passwort darf keine Zeilenumbrüche oder Nullzeichen enthalten.</value>
+  </data>
+  <data name="Archive.EngineMissing" xml:space="preserve">
+    <value>Die integrierte Archivkomponente fehlt. Installieren Sie CryptoBook erneut.</value>
+  </data>
+  <data name="Archive.EngineInvalid" xml:space="preserve">
+    <value>Die Integritätsprüfung der Archivkomponente ist fehlgeschlagen.</value>
+  </data>
+  <data name="Archive.EngineError" xml:space="preserve">
+    <value>Archivvorgang fehlgeschlagen. Prüfen Sie Passwort, Archivintegrität und Dateizugriff.</value>
+  </data>
+  <data name="Archive.TooManyEntries" xml:space="preserve">
+    <value>Limit überschritten: höchstens 100.000 Einträge und 32 MiB Metadaten.</value>
+  </data>
+  <data name="Archive.NoSelection" xml:space="preserve">
+    <value>Wählen Sie mindestens eine Datei oder einen Ordner.</value>
+  </data>
+  <data name="Archive.ExtensionMismatch" xml:space="preserve">
+    <value>Die Dateierweiterung muss zum gewählten Archivformat passen.</value>
+  </data>
+  <data name="Archive.RootUnsupported" xml:space="preserve">
+    <value>Wählen Sie Dateien oder Ordner statt eines Datenträgerstamms.</value>
+  </data>
+  <data name="Archive.DifferentDrives" xml:space="preserve">
+    <value>Die ausgewählten Quellen müssen auf demselben Datenträger liegen.</value>
+  </data>
+  <data name="Archive.OutputInsideSource" xml:space="preserve">
+    <value>Speichern Sie das Archiv außerhalb der zu archivierenden Ordner.</value>
+  </data>
+<data name="Archive.NotEnoughSpace" xml:space="preserve">
+    <value>Nicht genügend freier Speicherplatz für den Archivvorgang.</value>
+  </data>
+  <data name="Archive.SizeMismatch" xml:space="preserve">
+    <value>Die entpackten Daten stimmen nicht mit den Archivmetadaten überein.</value>
+  </data>
+  <data name="Archive.DuplicatePath" xml:space="preserve">
+    <value>Das Archiv enthält doppelte oder widersprüchliche Windows-Dateinamen.</value>
+  </data>
+<data name="Archive.ExtractionLimit" xml:space="preserve">
+    <value>Die zulässige Datenmenge für diesen Archivvorgang wurde überschritten.</value>
+  </data>
+  <data name="Archive.OutputExists" xml:space="preserve">
+    <value>Eine Datei oder ein Ordner mit diesem Namen ist bereits vorhanden. Wählen Sie einen neuen Namen.</value>
+  </data>
+  <data name="Archive.NameOnly" xml:space="preserve">
+    <value>Geben Sie einen Datei- oder Ordnernamen ohne Pfad ein.</value>
+  </data>
+  <data name="Archive.InvalidLimit" xml:space="preserve">
+    <value>Geben Sie eine positive ganze Zahl in GiB als Entpacklimit ein.</value>
+  </data>
+  <data name="Archive.ZipPasswordAscii" xml:space="preserve">
+    <value>ZIP-Passwörter müssen 1–99 druckbare ASCII-Zeichen enthalten. Wählen Sie 7z für ein Unicode-Passwort.</value>
+  </data>
+  <data name="Archive.CleanupFailed" xml:space="preserve">
+    <value>Temporäre Dateien konnten nicht entfernt werden. Entfernen Sie diesen Vorgangsordner nach dem Schließen anderer Anwendungen: {0}</value>
+  </data>
+  <data name="Archive.Open" xml:space="preserve"><value>Archiv öffnen</value></data>
+  <data name="Archive.ReadOnly" xml:space="preserve"><value>Archiv — schreibgeschützt</value></data>
+  <data name="Archive.PasswordRequired" xml:space="preserve"><value>Geben Sie das Archivpasswort ein.</value></data>
+  <data name="Archive.PasswordRetry" xml:space="preserve"><value>Das Passwort wurde nicht akzeptiert. Erneut eingeben oder abbrechen.</value></data>
+  <data name="Archive.SessionClosed" xml:space="preserve"><value>Diese Archivsitzung ist geschlossen. Öffnen Sie das Archiv erneut.</value></data>
+  <data name="Archive.NotAFile" xml:space="preserve"><value>Wählen Sie eine Datei im Archiv aus.</value></data>
+  <data name="Archive.Editable" xml:space="preserve"><value>Archiv — Bearbeitung möglich</value></data>
+  <data name="Archive.Changed" xml:space="preserve"><value>Das Archiv wurde seit dem Öffnen des Dokuments geändert. Speichern Sie eine Kopie mit „Speichern unter“ und öffnen Sie das Dokument erneut.</value></data>
+  <data name="Archive.InternalDocumentsOnly" xml:space="preserve"><value>Hier können Dokumente des integrierten Editors geöffnet werden. Kopieren Sie andere Dateien zuerst in einen lokalen Ordner.</value></data>
+  <data name="Archive.SaveAsRequired" xml:space="preserve"><value>Speichern Sie dieses Dokument mit „Speichern unter“ als lokale Datei.</value></data>
+  <data name="Archive.NestingLimit" xml:space="preserve"><value>Es sind höchstens 5 verschachtelte Archivebenen erlaubt.</value></data>
+  <data name="Archive.VolumesLocalOnly" xml:space="preserve"><value>Kopieren Sie alle Archivteile in einen lokalen Ordner und öffnen Sie den ersten Teil.</value></data>
+  <data name="Archive.DocumentLimit" xml:space="preserve"><value>Dokumente aus Archiven dürfen höchstens 64 MiB groß sein. Entpacken Sie größere Dokumente zuerst.</value></data>
+  <data name="Archive.CommitConflict" xml:space="preserve"><value>Das Archiv wurde gleichzeitig ersetzt oder seine Sicherung konnte nicht geprüft werden. Archivversionen und Arbeitsdateien wurden hier aufbewahrt: {0}</value></data>
+  <data name="Archive.Updating" xml:space="preserve"><value>Archiv aktualisieren</value></data>
+  <data name="Archive.DeleteTitle" xml:space="preserve"><value>Aus Archiv löschen</value></data>
+  <data name="Archive.DeleteWarning" xml:space="preserve"><value>Die ausgewählten Dateien und Ordner aus dem Archiv löschen? Der Papierkorb wird nicht verwendet. Das Archiv wird zum Speichern der Änderungen neu erstellt.</value></data>
+  <data name="Archive.DeleteCanceledPartial" xml:space="preserve"><value>Löschen abgebrochen. Einige Einträge wurden bereits aus dem Archiv entfernt; diese Änderungen wurden gespeichert.</value></data>
+  <data name="Archive.CleanupTitle" xml:space="preserve"><value>Temporäre Archivdateien bereinigen</value></data>
+  <data name="Archive.SourceChanged" xml:space="preserve"><value>Das Quellarchiv wurde während des Vorgangs geändert. Aktualisieren Sie seinen Inhalt im Dateimanager und versuchen Sie es erneut.</value></data>
+  <data name="Preview.ArchiveDisplayFailed" xml:space="preserve"><value>Der Archiveintrag konnte nicht für die Vorschau gelesen werden:{0}{1}</value></data>
+  <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Metadaten des Archiveintrags werden angezeigt. Extrahieren Sie den Eintrag in eine lokale Datei, um Inhalt, NTFS-Eigenschaften oder Signatur zu prüfen.</value></data>
+  <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Einige ausgewählte Elemente werden ohne Verwendung des Papierkorbs gelöscht. Fortfahren?</value></data>
+  <data name="Archive.Rebuilding" xml:space="preserve"><value>Archiv wird neu erstellt…</value></data>
 </root>

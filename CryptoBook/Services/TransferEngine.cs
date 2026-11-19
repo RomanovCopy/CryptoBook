@@ -27,6 +27,22 @@ public sealed class TransferEngine: ITransferEngine
     {
         IStorageProvider sourceProvider = _storage.GetProvider(source);
         IStorageProvider destinationProvider = _storage.GetProvider(destination);
+        if((ArchiveStorageProvider.IsArchive(source) && !destination.IsLocal) ||
+            (ArchiveStorageProvider.IsArchive(destination) && !source.IsLocal))
+        {
+            if(destinationProvider is not ILocalTransferProvider pusher)
+                return FileOperationResult.Fail(ArchivePathPolicy.Text("LocalOnly"));
+            string workspace = ArchiveWorkspace.CreateTransient("archive-transfer");
+            try
+            {
+                var local = new StorageLocation(StorageLocation.LocalProviderId, Path.Combine(workspace, "payload"));
+                await new ArchiveTransferStaging(_storage, progress, cancellationToken).CopyAsync(source, local.OpaqueId);
+                return await pusher.PushFromLocalAsync(local, destination, progress, cancellationToken);
+            }
+            catch(OperationCanceledException) { throw; }
+            catch(Exception exception) { return FileOperationResult.Fail(exception.Message); }
+            finally { await ArchiveService.RemoveWorkspaceAsync(workspace); }
+        }
 
         if(source.ProviderId.Equals(destination.ProviderId, StringComparison.OrdinalIgnoreCase))
         {

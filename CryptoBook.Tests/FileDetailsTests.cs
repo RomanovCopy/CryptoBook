@@ -148,6 +148,15 @@ public sealed class FileDetailsTests: IDisposable
         Assert.DoesNotContain(rows, row => row.Key == "Error");
     }
 
+    [Fact]
+    public async Task ArchiveLocation_DescribesAnEntryInsteadOfADevice()
+    {
+        var target = new FileDetailsTarget("entry.txt", "archive://session/entry.txt", @"C:\work\data.zip!/entry.txt", 23, DateTime.UtcNow, false);
+        var rows = await new FileDetailsService().ReadAsync(target);
+        Assert.Contains(rows, row => row.Key == "Availability" && row.Value == LocalizationManager.GetString("FileDetails.ArchiveLimit"));
+        Assert.DoesNotContain(rows, row => row.Value == LocalizationManager.GetString("FileDetails.RemoteLimit"));
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("abc")]

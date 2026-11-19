@@ -96,7 +96,7 @@ internal sealed class LocalFileOperationService(IFileManagerService fileManager,
     }
 
     internal async Task<FileOperationBatchResult> DeleteAsync(string[] sources, IProgressReporter progress,
-        CancellationToken token)
+        CancellationToken token, Func<IReadOnlyList<string>, CancellationToken, Task>? prepareDeletionAsync = null)
     {
         try
         {
@@ -108,6 +108,8 @@ internal sealed class LocalFileOperationService(IFileManagerService fileManager,
             bool confirmed = confirmDeletion is null ? plan.Fits
                 : await confirmDeletion(plan, paths, token);
             if(!confirmed) return new([], 0, 0, true, false);
+            token.ThrowIfCancellationRequested();
+            if(prepareDeletionAsync is not null) await prepareDeletionAsync(paths, token);
             token.ThrowIfCancellationRequested();
             if(!plan.Fits)
             {

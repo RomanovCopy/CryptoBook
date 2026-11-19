@@ -38,6 +38,8 @@ namespace CryptoBook.Services
             string? currentFilePath,
             IFileTemplate? currentTemplate)
         {
+            if(currentFilePath?.StartsWith("archive://", StringComparison.OrdinalIgnoreCase) == true)
+                currentFilePath = Path.GetFileName(Uri.UnescapeDataString(currentFilePath[(currentFilePath.LastIndexOf('/') + 1)..]));
             IReadOnlyList<IFileTemplate> availableTemplates =
                 GetAvailableTemplates();
             if(availableTemplates.Count == 0)

@@ -1,5 +1,12 @@
 # Source code availability
 
+The bundled, unmodified 7-Zip 26.06 console engine has matching source at
+<https://github.com/ip7z/7zip/releases/download/26.06/7z2606-src.tar.xz>.
+Its official MSI/source digests and exact component hashes are recorded in
+`third_party/7zip/provenance.json`; its license is included as
+`LICENSES/7ZIP-26.06-LICENSE.txt`. The original 7-Zip project is
+<https://www.7-zip.org/>. CryptoBook does not modify or rebuild this engine.
+
 CryptoBook binary releases are built from a version tag in
 <https://github.com/RomanovCopy/CryptoBook>. For a binary whose version is
 `X.Y.Z` or `X.Y.Z.W`, the matching source is the tag `vX.Y.Z` or `vX.Y.Z.W`.
@@ -12,7 +19,7 @@ the distributor must also satisfy the source-code requirements of GNU GPL v3
 section 6; a link to an unrelated or moving branch is not a substitute for the
 corresponding source of the conveyed binary.
 
-CryptoBook 1.1.5.5 consumes the local RID-native package
+CryptoBook 1.1.5.6 consumes the local RID-native package
 `CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64` 9.0.20260816. It contains the
 unmodified FFmpeg DLLs from the official Flyleaf v3.11.3 release. The libraries
 report `GPL version 3 or later` and identify the exact FFmpeg tree at commit

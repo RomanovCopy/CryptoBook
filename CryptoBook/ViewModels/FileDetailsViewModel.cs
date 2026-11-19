@@ -122,7 +122,8 @@ public sealed class FileDetailsViewModel: ViewModelBase, IWindowWithId, IDisposa
             else
             {
                 DetectedType = FileDetailsService.L(target.IsDirectory ? "Directory" : "UnknownType");
-                InspectionMessage = FileDetailsService.L(target.IsDirectory ? "DirectoryLimit" : "RemoteLimit");
+                InspectionMessage = FileDetailsService.L(StorageLocation.TryParse(target.Path, out var location) &&
+                    ArchiveStorageProvider.IsArchive(location) ? "ArchiveLimit" : target.IsDirectory ? "DirectoryLimit" : "RemoteLimit");
             }
 
             var details = await service.ReadAsync(target, source.Token);

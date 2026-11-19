@@ -13,6 +13,23 @@ namespace CryptoBook.Tests;
 
 public sealed class FileExplorerSelectionPolicyTests
 {
+    [Theory]
+    [InlineData(@"C:\work\file.txt", null, null)]
+    [InlineData("archive://session/file.txt", null, "Archive.DeleteWarning")]
+    [InlineData("archive://session/file.txt", "archive://other/entry.txt", "Archive.DeleteWarning")]
+    [InlineData("android://opaque", null, "Explorer.PermanentDeleteAndroidWarning")]
+    [InlineData("mtp://opaque", null, "Explorer.PermanentDeleteAndroidWarning")]
+    [InlineData("android://opaque", "mtp://other", "Explorer.PermanentDeleteAndroidWarning")]
+    [InlineData("archive://session/file.txt", "android://opaque", "Explorer.PermanentDeleteWarning")]
+    [InlineData(@"C:\work\file.txt", "archive://session/file.txt", "Explorer.PermanentDeleteWarning")]
+    [InlineData(@"C:\work\file.txt", "mtp://opaque", "Explorer.PermanentDeleteWarning")]
+    [InlineData("cloud://opaque", null, "Explorer.PermanentDeleteWarning")]
+    public void DeletionWarning_DescribesTheSelectedStorage(string first, string? second, string? expected)
+    {
+        IReadOnlyList<ISystemItem> items = second is null ? [CreateFile(first)] : [CreateFile(first), CreateFile(second)];
+        Assert.Equal(expected, FileExplorerSelectionPolicy.GetDeletionWarningKey(items));
+    }
+
     [Fact]
     public void CreateSnapshot_IsReadOnlyAndDetachedFromLiveSelection()
     {

@@ -33,6 +33,18 @@ The **Restore operations** toolbar button is available only when the open folder
 
 Objects retained in a sibling recovery folder by a previous build can still be returned with this button from the folder containing their old journal.
 
+## Working with archives
+
+Select local files or folders and choose **Create archive…** on the toolbar or context menu. Choose a destination folder, a new archive name and ZIP or 7z. An optional password enables AES-256; ZIP passwords require 1–99 printable ASCII characters. Choose 7z for Unicode passwords.
+
+For one ZIP, 7z, RAR or RAR5, use **Extract archive…** or **Test archive…**. Extraction creates a new folder; existing files and folders are never replaced. Choose a new name if it already exists. The default extraction limit is 20 GiB and can be changed in the dialog. The progress window allows cancellation. An error or cancellation prevents the final result from being created; if temporary files are locked, the message identifies their folder.
+
+The archive password is separate from the CryptoBook key, is not saved and is cleared from the field when the operation starts. Enter it again after an error. An integrity check is not a malware scan. Android/MTP, network paths, RAR creation and editing inside archives are not supported yet. Links and unsafe names are rejected.
+
+Double-click ZIP, 7z or RAR to browse it as a folder in FileExplorer, or choose **Open archive**. In the tree, this folder appears inside the directory containing the source archive. History, Up, filtering and text/image preview are available. Protected archives prompt for a password. The title indicates read-only mode.
+
+To extract selected content, use **Copy**, navigate to a local folder and choose **Paste**. Keep the source window open until completion. The selected object is limited to 20 GiB; choose Keep both or Skip on conflicts. Replacement, editing entries, All files mode and nested archives are unavailable. Preview does not write decoded data to disk. Closing the window releases the password and the source lock.
+
 ## Related topics
 
 - [Rename multiple files](help:files.batch)
