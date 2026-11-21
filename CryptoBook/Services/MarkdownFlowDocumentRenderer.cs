@@ -49,14 +49,16 @@ namespace CryptoBook.Services
             => Render(markdown, markdownFilePath, null, null);
 
         internal FlowDocument Render(string markdown, string? markdownFilePath,
-            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground)
-            => RenderCore(markdown, markdownFilePath, codeFontFamily, codeForeground, null);
+            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground,
+            Func<string, string?, WpfBlock>? codeBlockRenderer = null)
+            => RenderCore(markdown, markdownFilePath, codeFontFamily, codeForeground, null, codeBlockRenderer);
 
         internal FlowDocument RenderHelp(string markdown, MarkdownContentPolicy policy)
             => RenderCore(markdown, null, null, null, policy);
 
         private static FlowDocument RenderCore(string markdown, string? markdownFilePath,
-            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground, MarkdownContentPolicy? policy)
+            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground, MarkdownContentPolicy? policy,
+            Func<string, string?, WpfBlock>? codeBlockRenderer = null)
         {
             var document = new FlowDocument();
             DocumentPageLayout.Apply(document);
@@ -74,7 +76,7 @@ namespace CryptoBook.Services
                 markdown ?? string.Empty,
                 Pipeline);
             var context = new RenderContext(GetSourceDirectory(
-                markdownFilePath), codeFontFamily, codeForeground, policy);
+                markdownFilePath), codeFontFamily, codeForeground, policy, codeBlockRenderer);
             foreach(MdBlock block in parsed)
             {
                 foreach(WpfBlock rendered in RenderBlock(block, context))
@@ -253,6 +255,9 @@ namespace CryptoBook.Services
             string? language,
             RenderContext context)
         {
+            if(context.CodeBlockRenderer is not null)
+                return context.CodeBlockRenderer(code, language);
+
             var paragraph = new Paragraph
             {
                 FontFamily = context.CodeFontFamily ?? new WpfFontFamily("Cascadia Mono, Consolas"),
@@ -667,6 +672,7 @@ namespace CryptoBook.Services
             Func<string, string, string, FrameworkElement> CreateImage);
 
         private sealed record RenderContext(string? SourceDirectory, WpfFontFamily? CodeFontFamily,
-            WpfBrush? CodeForeground, MarkdownContentPolicy? Policy);
+            WpfBrush? CodeForeground, MarkdownContentPolicy? Policy,
+            Func<string, string?, WpfBlock>? CodeBlockRenderer);
     }
 }

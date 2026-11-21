@@ -93,6 +93,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
         Insert = new RelayCommand(_ => Apply(false), _ => CanApply && editor.CanInsert);
         Replace = new RelayCommand(_ => Apply(true), _ => CanApply && editor.CanReplace);
         Copy = new RelayCommand(_ => CopyResponse(), _ => CanApply);
+        CopyCode = new RelayCommand(value => CopyCodeBlock(value as string), value => value is string { Length: > 0 });
         SelectAllMessages = new RelayCommand(_ => SetMessageSelection(message => message.HasContent),
             _ => CanSelectMessages && Messages.Any(message => message.HasContent && !message.IsSelected));
         ClearMessageSelection = new RelayCommand(_ => SetMessageSelection(_ => false),
@@ -217,6 +218,7 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     public ICommand Insert { get; }
     public ICommand Replace { get; }
     public ICommand Copy { get; }
+    public ICommand CopyCode { get; }
     public ICommand SelectAllMessages { get; }
     public ICommand ClearMessageSelection { get; }
     public AsyncRelayCommand Unload { get; }
@@ -462,6 +464,12 @@ public sealed class AiAssistantViewModel : ViewModelBase, IDisposable
     {
         if(!CanApply) return;
         if(!textClipboard.TrySetText(GetSelectedText())) Status = LocalizationManager.GetString("AI.CopyFailed");
+    }
+
+    private void CopyCodeBlock(string? code)
+    {
+        if(string.IsNullOrEmpty(code)) return;
+        Status = LocalizationManager.GetString(textClipboard.TrySetText(code) ? "AI.CodeCopied" : "AI.CopyFailed");
     }
 
     internal string GetSelectedText()

@@ -32,7 +32,7 @@ public sealed class AiChatMarkdownTests
         string displayed = new TextRange(document.ContentStart, document.ContentEnd).Text;
         Assert.Contains("int n = 1;", displayed);
         Assert.DoesNotContain("**bold**", displayed);
-        var code = document.Blocks.OfType<Paragraph>().Single(paragraph => paragraph.Inlines.OfType<Run>().Any(run => run.Text.Contains("int n")));
+        var code = Descendants(document).OfType<Paragraph>().Single(paragraph => paragraph.Inlines.OfType<Run>().Any(run => run.Text.Contains("int n")));
         Assert.Equal("Courier New", code.FontFamily.Source);
         Assert.Equal("#FF123456", code.Foreground.ToString());
         var inline = Descendants(document).OfType<Run>().Single(run => run.Text == "inline");
@@ -103,10 +103,10 @@ public sealed class AiChatMarkdownTests
             AiChatMarkdownBehavior.SetText(viewer, "```cs\nstyled\n```");
             AiChatMarkdownBehavior.SetCodeFontFamily(viewer, "Courier New");
             AiChatMarkdownBehavior.SetCodeColor(viewer, "#123456");
-            await WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+            await WaitUntil(() => Descendants(viewer.Document).OfType<Paragraph>().Any(paragraph =>
                 paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground.ToString() == "#FF123456"));
             AiChatMarkdownBehavior.SetCodeColor(viewer, "");
-            await WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+            await WaitUntil(() => Descendants(viewer.Document).OfType<Paragraph>().Any(paragraph =>
                 paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground == Brushes.DarkBlue));
         }
         finally { window.Close(); }

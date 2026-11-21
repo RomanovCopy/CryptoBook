@@ -1,6 +1,7 @@
 using CryptoBook.AI;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 
@@ -17,6 +18,8 @@ public static class AiChatMarkdownBehavior
         "CodeFontFamily", typeof(string), typeof(AiChatMarkdownBehavior), new PropertyMetadata(AiChatAppearance.DefaultCodeFontFamily, OnChanged));
     public static readonly DependencyProperty CodeColorProperty = DependencyProperty.RegisterAttached(
         "CodeColor", typeof(string), typeof(AiChatMarkdownBehavior), new PropertyMetadata("", OnChanged));
+    public static readonly DependencyProperty CopyCodeCommandProperty = DependencyProperty.RegisterAttached(
+        "CopyCodeCommand", typeof(ICommand), typeof(AiChatMarkdownBehavior), new PropertyMetadata(null, OnChanged));
     private static readonly DependencyProperty StateProperty = DependencyProperty.RegisterAttached(
         "State", typeof(RenderState), typeof(AiChatMarkdownBehavior));
 
@@ -28,6 +31,8 @@ public static class AiChatMarkdownBehavior
     public static void SetCodeFontFamily(DependencyObject target, string value) => target.SetValue(CodeFontFamilyProperty, value);
     public static string GetCodeColor(DependencyObject target) => (string)target.GetValue(CodeColorProperty);
     public static void SetCodeColor(DependencyObject target, string value) => target.SetValue(CodeColorProperty, value);
+    public static ICommand? GetCopyCodeCommand(DependencyObject target) => (ICommand?)target.GetValue(CopyCodeCommandProperty);
+    public static void SetCopyCodeCommand(DependencyObject target, ICommand? value) => target.SetValue(CopyCodeCommandProperty, value);
 
     private static void OnChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
     {
@@ -95,7 +100,7 @@ public static class AiChatMarkdownBehavior
         {
             if(!viewer.IsLoaded || !viewer.IsVisible) return;
             viewer.Document = AiChatDocumentRenderer.Render(GetText(viewer), GetRenderMarkdown(viewer),
-                viewer.FontFamily, viewer.FontSize, viewer.Foreground, GetCodeFontFamily(viewer), GetCodeColor(viewer));
+                viewer.FontFamily, viewer.FontSize, viewer.Foreground, GetCodeFontFamily(viewer), GetCodeColor(viewer), GetCopyCodeCommand(viewer));
         }
     }
 }
