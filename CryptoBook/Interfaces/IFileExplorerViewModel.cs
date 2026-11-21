@@ -82,6 +82,7 @@ namespace CryptoBook.Interfaces
         ICommand CancelFlatViewScanCommand { get; }
         ICommand CancelRenameCommand { get; }
         ICommand TreeViewItemSelectedCommand { get; }
+        ICommand CollapseAllCommand { get; }
         ICommand ListViewItemDoubleClickCommand { get; }
         ICommand ListViewSelectionChangedCommand { get; }
         ICommand WindowSizeChangedCommand { get; }

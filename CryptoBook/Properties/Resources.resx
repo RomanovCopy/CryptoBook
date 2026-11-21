@@ -1602,4 +1602,6 @@ Files: {1}</value>
   <data name="Archive.Rebuilding" xml:space="preserve"><value>Rebuilding archive…</value></data>
   <data name="AI.CopyCode" xml:space="preserve"><value>Copy code</value></data>
   <data name="AI.CodeCopied" xml:space="preserve"><value>Code copied to clipboard</value></data>
+  <data name="Explorer.Folders" xml:space="preserve"><value>Folders</value></data>
+  <data name="Explorer.CollapseAll" xml:space="preserve"><value>Collapse all nodes</value></data>
 </root>

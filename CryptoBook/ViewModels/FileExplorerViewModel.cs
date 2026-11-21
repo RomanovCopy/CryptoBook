@@ -725,7 +725,51 @@ namespace CryptoBook.ViewModels
         public ICommand CancelRenameCommand => _cancelRenameCommand ??= new RelayCommand(_fileExplorerModel.Execute_CancelRenameCommand, _fileExplorerModel.CanExecute_CancelRenameCommand);
         RelayCommand _cancelRenameCommand;
 
-        public ICommand TreeViewItemSelectedCommand => _treeViewItemSelectedCommand ??= new RelayCommand(_fileExplorerModel.Execute_TreeViewItemSelectedCommand, _fileExplorerModel.CanExecute_TreeViewItemSelectedCommand);
+        public ICommand CollapseAllCommand => _collapseAllCommand ??= new AsyncRelayCommand(
+            (_, token) => CollapseAllAsync(token));
+        private AsyncRelayCommand? _collapseAllCommand;
+        private bool _isCollapsingTree;
+
+        private async Task CollapseAllAsync(CancellationToken token)
+        {
+            var root = SelectedItem as IContainerSystemItem;
+            while(root?.Parent is IContainerSystemItem parent)
+                root = parent;
+
+            _isCollapsingTree = true;
+            try
+            {
+                // Navigation selects the root and updates the file list. Wait
+                // for it before collapsing, since navigation expands its target.
+                if(root is not null && !ReferenceEquals(root, SelectedItem))
+                    await _fileExplorerModel.NavigateAsync(
+                        root.FullPath, FileExplorerNavigationMode.Standard, token);
+
+                // Work with the data so virtualized and hidden descendants are
+                // collapsed too, without loading any additional directories.
+                var pending = new Stack<IContainerSystemItem>(
+                    GetDrives.Cast<IContainerSystemItem>().Concat(ArchiveDirectories));
+                var visited = new HashSet<IContainerSystemItem>(ReferenceEqualityComparer.Instance);
+                while(pending.TryPop(out var container))
+                {
+                    if(!visited.Add(container))
+                        continue;
+
+                    foreach(var child in container.DirectoryChildren)
+                        pending.Push(child);
+                    if(container.IsExpanded)
+                        container.IsExpanded = false;
+                }
+            }
+            finally
+            {
+                _isCollapsingTree = false;
+            }
+        }
+
+        public ICommand TreeViewItemSelectedCommand => _treeViewItemSelectedCommand ??= new RelayCommand(
+            _fileExplorerModel.Execute_TreeViewItemSelectedCommand,
+            parameter => !_isCollapsingTree && _fileExplorerModel.CanExecute_TreeViewItemSelectedCommand(parameter));
         RelayCommand _treeViewItemSelectedCommand;
 
         public ICommand ListViewItemDoubleClickCommand => _listViewItemDoubleClickCommand??= new RelayCommand(

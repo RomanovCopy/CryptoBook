@@ -1602,4 +1602,6 @@ Dateien: {1}</value>
   <data name="Archive.Rebuilding" xml:space="preserve"><value>Archiv wird neu erstellt…</value></data>
   <data name="AI.CopyCode" xml:space="preserve"><value>Code kopieren</value></data>
   <data name="AI.CodeCopied" xml:space="preserve"><value>Code in die Zwischenablage kopiert</value></data>
+  <data name="Explorer.Folders" xml:space="preserve"><value>Ordner</value></data>
+  <data name="Explorer.CollapseAll" xml:space="preserve"><value>Alle Knoten einklappen</value></data>
 </root>
