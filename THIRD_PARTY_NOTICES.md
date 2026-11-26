@@ -1,7 +1,7 @@
 # Third-party notices
 
 CryptoBook uses the third-party components listed below. This notice is based
-on the dependency locks and bundled archive engine for CryptoBook 1.1.5.6 and was updated on 2026-11-19. A package's own license
+on the dependency locks and bundled archive engine for CryptoBook 1.1.5.7 and was updated on 2026-11-26. A package's own license
 and notices control if this summary differs
 from them. CryptoBook does not claim ownership of third-party software.
 
@@ -57,9 +57,9 @@ License text: `LICENSE`.
 
 ### LGPL-3.0-or-later
 
-- `FlyleafLib` 3.11.3 — SuRGeoNix, © 2026.
-- `FlyleafLib.Controls.WPF` 1.7.3 — SuRGeoNix, © 2026.
-- `Flyleaf.FFmpeg.Bindings` 9.0.0 — SuRGeoNix, © 2026.
+- `FlyleafLib` 3.12.2 — SuRGeoNix, © 2026.
+- `FlyleafLib.Controls.WPF` 1.8.0 — SuRGeoNix, © 2026.
+- `Flyleaf.FFmpeg.ABI` 9.0.0 — SuRGeoNix, © 2026.
 
 Project: <https://github.com/SuRGeoNix/Flyleaf>. License supplement:
 `LICENSES/LGPL-3.0-or-later.txt`; the GNU GPL v3 text it incorporates is in
@@ -78,7 +78,7 @@ see <https://www.sqlite.org/copyright.html>.
 
 ### BSD-2-Clause
 
-- `Markdig` 1.3.2 — Copyright (c) 2018-2019, Alexandre Mutel.
+- `Markdig` 1.6.0 — Copyright (c) 2018-2019, Alexandre Mutel.
 
 Project: <https://github.com/xoofx/markdig>. License text:
 `LICENSES/BSD-2-Clause.txt`.
@@ -94,21 +94,21 @@ Project: <https://github.com/xoofx/markdig>. License text:
   `Microsoft.Extensions.Logging.Abstractions`, `Microsoft.Bcl.AsyncInterfaces`,
   and `Microsoft.Bcl.Memory` 10.0.13 — Microsoft and .NET Foundation contributors.
 
-- Self-contained Microsoft .NET Runtime and Windows Desktop Runtime 10.0.11 —
+- Self-contained Microsoft .NET Runtime and Windows Desktop Runtime 10.0.15 —
   Copyright © .NET Foundation and contributors. Exact runtime license and
-  bundled notices: `LICENSES/DOTNET-10.0.11-LICENSE.txt` and
-  `LICENSES/DOTNET-10.0.11-THIRD-PARTY-NOTICES.txt`.
-- `Autofac` 9.3.2 and `Autofac.Extensions.DependencyInjection` 11.0.2 —
+  bundled notices: `LICENSES/DOTNET-10.0.15-LICENSE.txt` and
+  `LICENSES/DOTNET-10.0.15-THIRD-PARTY-NOTICES.txt`.
+- `Autofac` 9.3.4 and `Autofac.Extensions.DependencyInjection` 11.0.2 —
   Copyright © Autofac Contributors.
 - `Konscious.Security.Cryptography.Argon2` 1.3.1 and
   `Konscious.Security.Cryptography.Blake2` 1.1.1 — Copyright © Keef Aragon.
-- `MaterialDesignThemes` and `MaterialDesignColors` 5.3.3-ci1443 — Copyright
+- `MaterialDesignThemes` and `MaterialDesignColors` 5.4.1-ci1521 — Copyright
   2025 James Willock/Mulholland Software Ltd.
 - `Dragablz` 0.0.3.234 — Copyright James Willock, Mulholland Software and
   contributors.
-- `Microsoft.Data.Sqlite` and `Microsoft.Data.Sqlite.Core` 10.0.11;
+- `Microsoft.Data.Sqlite` and `Microsoft.Data.Sqlite.Core` 11.0.0;
   `Microsoft.Extensions.DependencyInjection.Abstractions` 10.0.13;
-  `Microsoft.Xaml.Behaviors.Wpf` 1.1.158; `System.Management` 10.0.11 —
+  `Microsoft.Xaml.Behaviors.Wpf` 1.1.161; `System.Management` and `System.CodeDom` 11.0.0 —
   Microsoft and .NET Foundation contributors.
 - `Mono.Posix.NETStandard` 5.20.1-preview — Mono contributors/Microsoft.
 - `SharpGen.Runtime` and `SharpGen.Runtime.COM` 2.4.2-beta — Copyright
@@ -122,7 +122,7 @@ Project: <https://github.com/xoofx/markdig>. License text:
 
 License text: `LICENSES/MIT.txt`.
 
-`Microsoft.NET.ILLink.Tasks` 10.0.11 is MIT-licensed build tooling marked as a
+`Microsoft.NET.ILLink.Tasks` 11.0.0 is MIT-licensed build tooling marked as a
 private asset; it is not intended to be included in the application runtime.
 
 ## Development and test-only components
