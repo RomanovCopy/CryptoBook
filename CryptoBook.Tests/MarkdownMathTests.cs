@@ -69,8 +69,13 @@ public sealed class MarkdownMathTests
         Assert.DoesNotContain('$', displayed);
         for(int task = 1; task <= 5; task++) Assert.Contains($"Задача {task}:", displayed);
         Assert.Equal(17, new FlowDocumentWalker().Find<LineBreak>(document).Count());
-        var raw = AiChatDocumentRenderer.Render(ExampleReply, false, new FontFamily("Segoe UI"), 15, Brushes.Black);
-        Assert.Equal(ExampleReply, Text(raw).Replace("\r\n", "\n").TrimEnd('\n'));
+        string expected = ExampleReply.Replace("\r\n", "\n");
+        foreach(string newline in new[] { "\n", "\r\n" })
+        {
+            string source = expected.Replace("\n", newline);
+            var raw = AiChatDocumentRenderer.Render(source, false, new FontFamily("Segoe UI"), 15, Brushes.Black);
+            Assert.Equal(expected, Text(raw).Replace("\r\n", "\n").TrimEnd('\n'));
+        }
     }
 
     [WpfTheory]
