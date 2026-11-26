@@ -16,6 +16,32 @@ public sealed class FileExplorerDeviceAvailabilityTests
     [WpfTheory]
     [InlineData("/")]
     [InlineData("/Download")]
+    [InlineData("/Download/Reports")]
+    public async Task CollapseAll_SelectsTopmostParentAndLeavesItsBranchCollapsed(string path)
+    {
+        using var explorer = new ExplorerFixture();
+        await explorer.OpenAsync(path);
+        IDriveItem root = Assert.Single(explorer.Manager.WritableDrives);
+        var selected = Assert.IsAssignableFrom<IContainerSystemItem>(explorer.Model.SelectedItem);
+        var branch = new List<IContainerSystemItem>();
+        for(IContainerSystemItem? item = selected; item is not null; item = item.Parent as IContainerSystemItem)
+            branch.Add(item);
+
+        await Assert.IsAssignableFrom<IAsyncCommand>(explorer.ViewModel.CollapseAllCommand).ExecuteAsync();
+        await Dispatcher.Yield(DispatcherPriority.ContextIdle);
+
+        Assert.Same(root, explorer.Model.SelectedItem);
+        Assert.Equal(root.FullPath, explorer.Model.CurrentPath);
+        Assert.True(root.IsSelected);
+        Assert.All(branch, item => Assert.False(item.IsExpanded));
+        if(!ReferenceEquals(selected, root))
+            Assert.False(selected.IsSelected);
+        Assert.Equal(root.Children, explorer.ViewModel.ChildrenView.Cast<ISystemItem>());
+    }
+
+    [WpfTheory]
+    [InlineData("/")]
+    [InlineData("/Download")]
     public async Task Disconnect_BlocksCurrentFolderAndRetryRecoversAfterReconnect(string path)
     {
         using var explorer = new ExplorerFixture();
@@ -97,6 +123,7 @@ public sealed class FileExplorerDeviceAvailabilityTests
             var factory = new ItemFactory(dispatcher);
             var bridge = new WpdStorageProviderTests.BridgeStub { Devices = Devices };
             bridge.Entries[("phone", "/Download")] = new("/Download", "Download", true, 0, null);
+            bridge.Entries[("phone", "/Download/Reports")] = new("/Download/Reports", "Reports", true, 0, null);
             bridge.Entries[("phone", "/Download/note.txt")] = new("/Download/note.txt", "note.txt", false, 3, null);
             var provider = new WpdStorageProvider(bridge);
             var storage = new StorageFacade([new LocalStorageProvider(), provider]);

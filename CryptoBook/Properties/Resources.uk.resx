@@ -2461,4 +2461,8 @@
   <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Показано відомості запису архіву. Для перевірки вмісту, властивостей NTFS і підпису видобудьте запис у локальний файл.</value></data>
   <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Деякі вибрані елементи буде видалено без переміщення до Кошика. Продовжити?</value></data>
   <data name="Archive.Rebuilding" xml:space="preserve"><value>Перебудова архіву…</value></data>
+  <data name="AI.CopyCode" xml:space="preserve"><value>Копіювати код</value></data>
+  <data name="AI.CodeCopied" xml:space="preserve"><value>Код скопійовано до буфера обміну</value></data>
+  <data name="Explorer.Folders" xml:space="preserve"><value>Папки</value></data>
+  <data name="Explorer.CollapseAll" xml:space="preserve"><value>Згорнути всі вузли</value></data>
 </root>

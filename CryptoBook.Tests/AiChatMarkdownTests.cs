@@ -32,7 +32,7 @@ public sealed class AiChatMarkdownTests
         string displayed = new TextRange(document.ContentStart, document.ContentEnd).Text;
         Assert.Contains("int n = 1;", displayed);
         Assert.DoesNotContain("**bold**", displayed);
-        var code = document.Blocks.OfType<Paragraph>().Single(paragraph => paragraph.Inlines.OfType<Run>().Any(run => run.Text.Contains("int n")));
+        var code = Descendants(document).OfType<Paragraph>().Single(paragraph => paragraph.Inlines.OfType<Run>().Any(run => run.Text.Contains("int n")));
         Assert.Equal("Courier New", code.FontFamily.Source);
         Assert.Equal("#FF123456", code.Foreground.ToString());
         var inline = Descendants(document).OfType<Run>().Single(run => run.Text == "inline");
@@ -50,6 +50,53 @@ public sealed class AiChatMarkdownTests
         Assert.IsType<Paragraph>(Assert.Single(document.Blocks.Cast<Block>()));
         string displayed = new TextRange(document.ContentStart, document.ContentEnd).Text.Replace("\r\n", "\n").TrimEnd('\n');
         Assert.Equal(source, displayed);
+    }
+
+    [WpfTheory]
+    [InlineData("До\n\n$$\nx_{i} + y_{j}", "$$\nx_{i} + y_{j}")]
+    [InlineData("До **значение**{#identifier} после", "{#identifier}")]
+    [InlineData("До [ссылка](https://example.com/){.custom} после", "{.custom}")]
+    [InlineData("До\n\n*[ABC]: расшифровка\n\nпосле", "расшифровка")]
+    public void Markdown_PreservesContentOfUnsupportedSyntax(string source, string expected)
+    {
+        var document = AiChatDocumentRenderer.Render(source, true, new FontFamily("Segoe UI"), 14, Brushes.Black);
+        string displayed = new TextRange(document.ContentStart, document.ContentEnd).Text.Replace("\r\n", "\n");
+        Assert.Contains(expected, displayed);
+        Assert.Contains("До", displayed);
+    }
+
+    [WpfTheory]
+    [InlineData("До $x_{i} + y_{j}$ после")]
+    [InlineData("До\n\n$$\nx_{i} + y_{j}\n$$\n\nпосле")]
+    public void Markdown_StreamedFormulaRemainsVisibleWhenClosingDelimiterArrives(string source)
+    {
+        for(int length = source.IndexOf('x') + 1; length <= source.Length; length++)
+        {
+            var document = AiChatDocumentRenderer.Render(source[..length], true, new FontFamily("Segoe UI"), 14, Brushes.Black);
+            string displayed = new TextRange(document.ContentStart, document.ContentEnd).Text;
+            Assert.Contains("До", displayed);
+            Assert.True(displayed.Contains('x') || FormulaSources(document).Any(source => source.Contains('x')));
+        }
+    }
+
+    [WpfTheory]
+    [InlineData('\0')]
+    [InlineData('\u0001')]
+    [InlineData('\b')]
+    [InlineData('\v')]
+    [InlineData('\f')]
+    [InlineData('\u001b')]
+    [InlineData('\u001f')]
+    [InlineData('\u007f')]
+    public void Markdown_ControlCharacterDoesNotDiscardFollowingText(char control)
+    {
+        string source = $"До {control} **сохранённый текст** $x_{{i}}$ после";
+        var document = AiChatDocumentRenderer.Render(source, true, new FontFamily("Segoe UI"), 14, Brushes.Black);
+        string displayed = new TextRange(document.ContentStart, document.ContentEnd).Text;
+        Assert.Contains("До", displayed);
+        Assert.Contains("сохранённый текст", displayed);
+        Assert.Contains("$x_{i}$", FormulaSources(document));
+        Assert.Contains("после", displayed);
     }
 
     [WpfFact]
@@ -103,11 +150,15 @@ public sealed class AiChatMarkdownTests
             AiChatMarkdownBehavior.SetText(viewer, "```cs\nstyled\n```");
             AiChatMarkdownBehavior.SetCodeFontFamily(viewer, "Courier New");
             AiChatMarkdownBehavior.SetCodeColor(viewer, "#123456");
-            await WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+            await WaitUntil(() => Descendants(viewer.Document).OfType<Paragraph>().Any(paragraph =>
                 paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground.ToString() == "#FF123456"));
             AiChatMarkdownBehavior.SetCodeColor(viewer, "");
-            await WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+            await WaitUntil(() => Descendants(viewer.Document).OfType<Paragraph>().Any(paragraph =>
                 paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground == Brushes.DarkBlue));
+            AiChatMarkdownBehavior.SetText(viewer, "До $x_{i} + y_{j}");
+            await WaitUntil(() => Read(viewer).Contains("$x_{i} + y_{j}"));
+            AiChatMarkdownBehavior.SetText(viewer, "До $x_{i} + y_{j}$ после");
+            await WaitUntil(() => Read(viewer).Contains("после") && FormulaSources(viewer.Document).Contains("$x_{i} + y_{j}$"));
         }
         finally { window.Close(); }
     }
@@ -137,6 +188,8 @@ public sealed class AiChatMarkdownTests
     }
 
     private static string Read(RichTextBox viewer) => new TextRange(viewer.Document.ContentStart, viewer.Document.ContentEnd).Text;
+    private static IEnumerable<string> FormulaSources(FlowDocument document) => Descendants(document)
+        .OfType<System.Windows.Controls.Image>().Select(image => image.ToolTip?.ToString() ?? "");
     private static async Task WaitUntil(Func<bool> ready)
     {
         DateTime deadline = DateTime.UtcNow.AddSeconds(5);

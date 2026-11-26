@@ -1,6 +1,7 @@
 using CryptoBook.Interfaces;
 
 using Markdig;
+using Markdig.Extensions.Mathematics;
 using Markdig.Extensions.Tables;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -39,7 +40,13 @@ namespace CryptoBook.Services
         private const long MaximumLocalImageBytes = 25L * 1024 * 1024;
         private static readonly MarkdownPipeline Pipeline =
             new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
+                // Enable only syntax handled below. Other extensions can consume
+                // text (e.g. attributes and abbreviation definitions) without displaying it.
+                .UseEmphasisExtras()
+                .UseAutoLinks()
+                .UsePipeTables()
+                .UseGridTables()
+                .UseMathematics()
                 .DisableHtml()
                 .Build();
 
@@ -49,14 +56,16 @@ namespace CryptoBook.Services
             => Render(markdown, markdownFilePath, null, null);
 
         internal FlowDocument Render(string markdown, string? markdownFilePath,
-            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground)
-            => RenderCore(markdown, markdownFilePath, codeFontFamily, codeForeground, null);
+            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground,
+            Func<string, string?, WpfBlock>? codeBlockRenderer = null)
+            => RenderCore(markdown, markdownFilePath, codeFontFamily, codeForeground, null, codeBlockRenderer);
 
         internal FlowDocument RenderHelp(string markdown, MarkdownContentPolicy policy)
             => RenderCore(markdown, null, null, null, policy);
 
         private static FlowDocument RenderCore(string markdown, string? markdownFilePath,
-            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground, MarkdownContentPolicy? policy)
+            WpfFontFamily? codeFontFamily, WpfBrush? codeForeground, MarkdownContentPolicy? policy,
+            Func<string, string?, WpfBlock>? codeBlockRenderer = null)
         {
             var document = new FlowDocument();
             DocumentPageLayout.Apply(document);
@@ -74,7 +83,7 @@ namespace CryptoBook.Services
                 markdown ?? string.Empty,
                 Pipeline);
             var context = new RenderContext(GetSourceDirectory(
-                markdownFilePath), codeFontFamily, codeForeground, policy);
+                markdownFilePath), markdown ?? string.Empty, codeFontFamily, codeForeground, policy, codeBlockRenderer);
             foreach(MdBlock block in parsed)
             {
                 foreach(WpfBlock rendered in RenderBlock(block, context))
@@ -122,6 +131,12 @@ namespace CryptoBook.Services
 
                 case MdTable table:
                     yield return RenderTable(table, context);
+                    yield break;
+
+                case MathBlock math:
+                    yield return new Paragraph(MarkdownMathRenderer.Render(math.Lines.ToString(), SourceText(math, context),
+                        display: true, complete: math.ClosingFencedCharCount > 0))
+                    { TextAlignment = TextAlignment.Center, Margin = new Thickness(0, 8, 0, 12) };
                     yield break;
 
                 case FencedCodeBlock fenced:
@@ -253,6 +268,9 @@ namespace CryptoBook.Services
             string? language,
             RenderContext context)
         {
+            if(context.CodeBlockRenderer is not null)
+                return context.CodeBlockRenderer(code, language);
+
             var paragraph = new Paragraph
             {
                 FontFamily = context.CodeFontFamily ?? new WpfFontFamily("Cascadia Mono, Consolas"),
@@ -374,6 +392,10 @@ namespace CryptoBook.Services
                     target.Add(codeRun);
                     return;
 
+                case MathInline math:
+                    target.Add(MarkdownMathRenderer.Render(math.Content.ToString(), SourceText(math, context), display: false));
+                    return;
+
                 case LineBreakInline lineBreak:
                     target.Add(lineBreak.IsHard
                         ? new LineBreak()
@@ -431,6 +453,16 @@ namespace CryptoBook.Services
                 span.FontWeight = FontWeights.Bold;
             if(emphasis.DelimiterCount % 2 != 0)
                 span.FontStyle = FontStyles.Italic;
+        }
+
+        private static string SourceText(MarkdownObject source, RenderContext context)
+        {
+            int end = source.Span.End;
+            // An unfinished math block can retain only its opening fence in Span.
+            // Include the lines already received while the response is streaming.
+            if(source is MathBlock math && math.Lines.Count > 0)
+                end = Math.Max(end, math.Lines.Lines[math.Lines.Count - 1].Slice.End);
+            return context.Markdown.Substring(source.Span.Start, end - source.Span.Start + 1);
         }
 
         private static void AppendLink(
@@ -666,7 +698,8 @@ namespace CryptoBook.Services
             Func<string, Span?> CreateLink,
             Func<string, string, string, FrameworkElement> CreateImage);
 
-        private sealed record RenderContext(string? SourceDirectory, WpfFontFamily? CodeFontFamily,
-            WpfBrush? CodeForeground, MarkdownContentPolicy? Policy);
+        private sealed record RenderContext(string? SourceDirectory, string Markdown, WpfFontFamily? CodeFontFamily,
+            WpfBrush? CodeForeground, MarkdownContentPolicy? Policy,
+            Func<string, string?, WpfBlock>? CodeBlockRenderer);
     }
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.5.7 - 2026-11-26
+
+### Added
+- Typeset mathematical formulas in Markdown documents and AI replies, including fractions, roots, powers, matrices, bold symbols and labelled arrows; preserve Markdown source and support inserting formulas into rich-text documents.
+- Copy the original code from individual AI response code blocks using their copy button.
+- Collapse the entire FileExplorer tree, including nested folders and archives, from its header.
+
+### Changed
+- Update application dependencies, including Autofac, Flyleaf, Markdig, Material Design, SQLite and WPF behaviors; add CSharpMath 0.5.1 and its component/font notices.
+- Synchronize application, manifest, installer, version test and distribution documentation for 1.1.5.7. User confirmed the candidate and authorized GitHub publication on November 26, 2026; preserve the reviewed local installer.
+
+Full comparison: [v1.1.5.6...v1.1.5.7](https://github.com/RomanovCopy/CryptoBook/compare/v1.1.5.6...v1.1.5.7)
+
 ## 1.1.5.6 - 2026-11-19
 
 ### Added

@@ -1600,4 +1600,8 @@ Dateien: {1}</value>
   <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Metadaten des Archiveintrags werden angezeigt. Extrahieren Sie den Eintrag in eine lokale Datei, um Inhalt, NTFS-Eigenschaften oder Signatur zu prüfen.</value></data>
   <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Einige ausgewählte Elemente werden ohne Verwendung des Papierkorbs gelöscht. Fortfahren?</value></data>
   <data name="Archive.Rebuilding" xml:space="preserve"><value>Archiv wird neu erstellt…</value></data>
+  <data name="AI.CopyCode" xml:space="preserve"><value>Code kopieren</value></data>
+  <data name="AI.CodeCopied" xml:space="preserve"><value>Code in die Zwischenablage kopiert</value></data>
+  <data name="Explorer.Folders" xml:space="preserve"><value>Ordner</value></data>
+  <data name="Explorer.CollapseAll" xml:space="preserve"><value>Alle Knoten einklappen</value></data>
 </root>

@@ -3,6 +3,7 @@ using CryptoBook.AI;
 using CryptoBook.Behaviors;
 using CryptoBook.Injections;
 using CryptoBook.Infrastructure;
+using CryptoBook.Interfaces;
 using CryptoBook.MyControls;
 using CryptoBook.Views;
 using Microsoft.Xaml.Behaviors;
@@ -30,10 +31,12 @@ internal static class ChatAppearanceSmoke
             var store = new AiSettingsStore(Path.Combine(outputDirectory, "settings.json"));
             store.Save(new());
             using var runtime = new IdleRuntime();
+            var clipboard = new CodeClipboard();
             using var container = new Startup().ConfigureServices(app, builder =>
             {
                 builder.RegisterInstance(store);
                 builder.RegisterInstance(runtime).As<IAiInferenceService>();
+                builder.RegisterInstance(clipboard).As<ITextClipboardService>();
             });
             var assistant = container.Resolve<AiAssistantViewModel>();
             assistant.IsOpen = true;
@@ -125,7 +128,7 @@ internal static class ChatAppearanceSmoke
             app.Resources.MergedDictionaries.Add(new ResourceDictionary
                 { Source = new Uri("/CryptoBook;component/Themes/LightTheme.xaml", UriKind.Relative) });
             UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-custom-borderless-light.png"));
-            VerifyMarkdown(app, host, panel, assistant, store, outputDirectory);
+            VerifyMarkdown(app, host, panel, assistant, store, clipboard, outputDirectory);
             VerifyMessageSelection(app, host, panel, assistant, outputDirectory);
             assistant.Messages.Add(new("user", new string('Ж', 5000)));
             assistant.Prompt = "Черновик прошлого чата";
@@ -142,7 +145,7 @@ internal static class ChatAppearanceSmoke
             Check(assistant.SelectedMessageCount == 0 && !assistant.Copy.CanExecute(null), "Chat reset left selected messages.");
             host.Close();
             report["passed"] = true;
-            report["checked"] = "WPF controls, font/color bindings, borders on/off, light/dark themes, minimum settings window size, persistence, Markdown checkbox on/off with source and token preservation, message checkbox bindings, selection counter, select/clear all, disabled empty messages, selection layout at narrow width, conversation preservation and the unified new chat button restoring the full token budget and clearing selection";
+            report["checked"] = "WPF controls, font/color bindings, borders on/off, light/dark themes, minimum settings window size, persistence, Markdown checkbox on/off with source and token preservation, code copy button availability and invocation with exact code text, message checkbox bindings, selection counter, select/clear all, disabled empty messages, selection layout at narrow width, conversation preservation and the unified new chat button restoring the full token budget and clearing selection";
         }
         catch(Exception error)
         {
@@ -159,7 +162,7 @@ internal static class ChatAppearanceSmoke
     }
 
     private static void VerifyMarkdown(Application app, Window host, AiAssistantPanel panel, AiAssistantViewModel assistant,
-        AiSettingsStore store, string outputDirectory)
+        AiSettingsStore store, CodeClipboard clipboard, string outputDirectory)
     {
         const string source = "# План работы\n\n**Готово:** настройки чата.\n\n- Шрифт и цвета\n- Счётчик токенов\n\n| Режим | Вид |\n|---|---|\n| Markdown | Оформленный |\n\n```csharp\nint count = 42;\n```";
         assistant.Messages[1].Content = source;
@@ -196,8 +199,14 @@ internal static class ChatAppearanceSmoke
             Check(persisted.CodeFontFamily == "Courier New" && persisted.CodeColor == "#A060D0", "Code appearance was not persisted.");
             if(enabled)
             {
-                WaitUntil(() => viewer.Document.Blocks.OfType<Paragraph>().Any(paragraph =>
+                WaitUntil(() => viewer.Document.Blocks.OfType<Section>().SelectMany(section => section.Blocks).OfType<Paragraph>().Any(paragraph =>
                     paragraph.FontFamily.Source == "Courier New" && paragraph.Foreground.ToString() == "#FFA060D0"));
+                var copyCode = Descendants(viewer).OfType<Button>().Single(button => button.Name == "CopyCodeButton");
+                Check(copyCode.IsVisible && copyCode.IsEnabled && ReferenceEquals(copyCode.Command, assistant.CopyCode),
+                    "The code copy button is unavailable or has no assistant command.");
+                Check((string)copyCode.CommandParameter == "int count = 42;", "The code copy button includes Markdown or a language label.");
+                ((IInvokeProvider)new ButtonAutomationPeer(copyCode).GetPattern(PatternInterface.Invoke)).Invoke();
+                WaitUntil(() => clipboard.Text == "int count = 42;");
                 UiPreview.CaptureWindow(host, Path.Combine(outputDirectory, "chat-custom-code-light.png"));
             }
             assistant.UpdateContextBudget();
@@ -291,5 +300,11 @@ internal static class ChatAppearanceSmoke
         public Task LoadAsync(AiModelSettings settings, IProgress<float>? loadProgress, CancellationToken cancellationToken) => Task.CompletedTask;
         public Task ResetContextAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
         public void Dispose() { }
+    }
+
+    private sealed class CodeClipboard : ITextClipboardService
+    {
+        public string? Text { get; private set; }
+        public bool TrySetText(string text) { Text = text; return true; }
     }
 }

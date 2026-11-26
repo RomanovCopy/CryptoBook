@@ -79,6 +79,35 @@ public sealed class AiFormattedInsertionTests
         Assert.False(target.Apply("stale", true));
     }
 
+    [WpfTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void InsertAndReplace_PreserveFormulaAndLiteralAttributes(bool replace)
+    {
+        const string reply = "**Ответ**{#identifier}: $x_{i} + y_{j}$\n\n$$\nx_{i} + y_{j}\n$$";
+        var editor = TableEditingTests.CreateEditor(1, 1);
+        using var host = new TableEditingTests.EditorHost(editor);
+        var markdown = new MarkdownDocumentState();
+        var session = new DocumentSession(editor, markdown);
+        session.Open("sample.XamlPackage", new XamlPackageFileTemplate(), editor.Document);
+        var paragraph = (Paragraph)editor.Document.Blocks.FirstBlock!;
+        editor.Selection.Select(paragraph.ContentStart, paragraph.ContentEnd);
+        using var context = new AiEditorContext(editor, markdown, session, new HomeNavigation());
+
+        Assert.True(context.Capture()!.Apply(reply, replace));
+
+        string displayed = Text(editor).Replace("\r\n", "\n");
+        Assert.Contains("Ответ{#identifier}:", displayed);
+        var formulas = new CryptoBook.Infrastructure.FlowDocumentWalker().Find<InlineUIContainer>(editor.Document)
+            .Select(inline => Assert.IsType<System.Windows.Controls.Image>(inline.Child)).ToArray();
+        Assert.Equal(2, formulas.Length);
+        Assert.Contains(formulas, image => image.ToolTip?.ToString() == "$x_{i} + y_{j}$");
+        Assert.Contains(formulas, image => image.ToolTip?.ToString()?.Replace("\r\n", "\n") == "$$\nx_{i} + y_{j}\n$$");
+        Assert.All(formulas, image => Assert.IsAssignableFrom<System.Windows.Media.Imaging.BitmapSource>(image.Source));
+        Assert.Contains("R0C0", displayed);
+        Assert.Contains("after", displayed);
+    }
+
     [WpfFact]
     public void InlineFormatting_IsInsertedWithoutExtraParagraph_AndLinksRemainInertForLocalFiles()
     {

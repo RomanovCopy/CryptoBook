@@ -23,6 +23,8 @@ Schriften, Farben und Markdown ändern die Chatdarstellung und erhalten Original
 
 **Kopieren** nutzt in beiden Modi den ursprünglichen Antworttext. Die Option steuert nicht die formatierte Übertragung in den normalen Editor; dafür gelten eigene Regeln. HTML wird nicht ausgeführt, externe Markdown-Bilder werden nicht geladen. Die Darstellung macht generierten Code nicht sicher ausführbar.
 
+Formeln in `$...$` und `$$...$$` werden mit Brüchen, Wurzeln, Potenzen, Matrizen und beschrifteten Pfeilen dargestellt. Sie sind gegenüber dem umgebenden Text um 30% vergrößert und skalieren mit dessen Schriftgröße. Der ursprüngliche LaTeX-Text bleibt im Tooltip und beim Kopieren einer Nachricht verfügbar. Unvollständige oder nicht unterstützte Formeln bleiben als Text sichtbar. Beim Übertragen in den normalen Editor werden Formeln als Bilder eingebettet, die in XamlPackage und geschützten Dokumenten erhalten bleiben. Die Darstellung prüft die Berechnungen des Modells nicht.
+
 ## Zurücksetzen und verwerfen
 
 6. Öffnen Sie das Fenster und klicken Sie auf **Zurücksetzen**: Standardwerte erscheinen — Größe 14, ohne Rahmen, Markdown aktiv und Designfarben. Klicken Sie auf **Speichern**, um sie anzuwenden.

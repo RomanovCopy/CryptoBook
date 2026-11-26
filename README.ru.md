@@ -3,7 +3,7 @@
 [English](README.md)
 
 [![CI](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanovCopy/CryptoBook/actions/workflows/ci.yml)
-[![Версия](https://img.shields.io/badge/version-1.1.5.6-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.6)
+[![Версия](https://img.shields.io/badge/version-1.1.5.7-2ea44f)](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.7)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D4)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
@@ -54,15 +54,14 @@ CryptoBook объединяет форматированный текстовы�
 Скриншоты показывают дневник путешествия с иллюстрацией и фоном страницы.
 [Описание съёмки и примеры документов](docs/screenshots/README.md).
 
-## Новое в 1.1.5.6
+## Новое в 1.1.5.7
 
-- Создание ZIP/7z, распаковка ZIP/7z/RAR/RAR5 и проверка целостности встроенным 7-Zip; пароли, прогресс и отмена.
-- Просмотр архивов как папок, предпросмотр текста и изображений, извлечение выбранных записей и открытие документов в редакторе.
-- Изменение локальных однотомных ZIP/7z и сохранение документов, включая защищённые `.cbook`, обратно в архив. Рабочая копия, проверки CRC/SHA-256 и безопасная замена исходника.
-- Чтение вложенных и многотомных архивов, обмен с Android/MTP. Вложенные, многотомные архивы и архивы на устройствах доступны только для чтения; документы сохраняются в локальный файл.
-- Освобождение сеансов просмотра перед подтверждённым удалением исходного архива или его папки, включая после редактирования; уточнение сообщений и справки на четырёх языках.
+- Математическая вёрстка в Markdown-документах и ответах AI: дроби, корни, степени, матрицы, жирные символы и подписанные стрелки. Исходный Markdown сохраняется; поддержана вставка формул из ответов AI в документ.
+- Кнопка копирования у каждого блока кода в AI-помощнике копирует исходный код, сохраняя Markdown ответа.
+- Кнопка **Свернуть все узлы** в заголовке FileExplorer сворачивает всю иерархию, включая вложенные папки и архивы.
+- Обновлены компоненты приложения, включая Flyleaf, Markdig, Autofac, Material Design, SQLite и поведения WPF; добавлены сведения о лицензиях движка формул и его шрифтов.
 
-Подробнее — в [руководстве по архивам и ограничениям](docs/ARCHIVES.md), [описании релиза](docs/releases/v1.1.5.6.md) и [истории изменений](CHANGELOG.md).
+Подробнее — в [описании релиза](docs/releases/v1.1.5.7.md) и [истории изменений](CHANGELOG.md).
 
 ## Основные возможности
 
@@ -166,24 +165,24 @@ Argon2id и AES-256-GCM; снимки обычных документов — Wi
 
 ## Скачать и запустить
 
-CryptoBook 1.1.5.6 от 19 ноября 2026 года: [страница релиза](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.6).
+CryptoBook 1.1.5.7 от 26 ноября 2026 года: [страница релиза](https://github.com/RomanovCopy/CryptoBook/releases/tag/v1.1.5.7).
 
 | Файл | Назначение |
 | --- | --- |
-| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.6/CryptoBook-Setup-1.1.5.6.exe) | Установка или обновление CryptoBook |
-| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.6/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
-| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.6/SHA256SUMS.txt) | Проверка загруженных файлов |
-| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.6/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
+| [Установщик Windows x64](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.7/CryptoBook-Setup-1.1.5.7.exe) | Установка или обновление CryptoBook |
+| [Portable ZIP](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.7/CryptoBook-win-x64.zip) | Распакуйте в отдельную папку и запустите `CryptoBook.exe` |
+| [SHA256SUMS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.7/SHA256SUMS.txt) | Проверка загруженных файлов |
+| [SIGNING-STATUS.txt](https://github.com/RomanovCopy/CryptoBook/releases/download/v1.1.5.7/SIGNING-STATUS.txt) | Заявленный статус цифровой подписи |
 
-Установщик и приложение версии 1.1.5.6 **не подписаны цифровой подписью**. Перед запуском
+Установщик и приложение версии 1.1.5.7 **не подписаны цифровой подписью**. Перед запуском
 сравните SHA-256 загруженного файла с соответствующей записью в `SHA256SUMS.txt`, например:
 
 ```powershell
-Get-FileHash .\CryptoBook-Setup-1.1.5.6.exe -Algorithm SHA256
+Get-FileHash .\CryptoBook-Setup-1.1.5.7.exe -Algorithm SHA256
 ```
 
 В релиз также входят архив лицензий, архив происхождения FFmpeg/Flyleaf, файл зафиксированных
-зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.5.6.md) и
+зависимостей и SPDX SBOM. Изменения описаны в [релизе](docs/releases/v1.1.5.7.md) и
 [CHANGELOG.md](CHANGELOG.md). Встроенное обновление проверяет SHA-256 установщика перед запуском.
 
 Portable хранит настройки, пути недавних/закреплённых файлов и восстановление в профиле Windows;
@@ -211,14 +210,14 @@ dotnet run --project tools/FlyleafPlaybackSmoke/FlyleafPlaybackSmoke.csproj -c R
 Для self-contained x64-сборки и установщика требуется Inno Setup 6:
 
 ```powershell
-./installer/Build-Installer.ps1 -Version 1.1.5.6
+./installer/Build-Installer.ps1 -Version 1.1.5.7
 ```
 
 `Run-ReleaseTests.ps1` выполняет все тесты в тринадцати отдельных процессах: интеграция AI, жизненный цикл AI,
 поиск в документе, отмена worker, окно группового переименования, окна архивных операций и проводника, окно редактора изображений, справка, размещение изображений, связи окон, предпросмотр закладок и остальные тесты. Это исключает взаимное влияние глобального состояния
-WPF-приложения. Результаты проверки кандидата 1.1.5.6 приведены в [описании релиза](docs/releases/v1.1.5.6.md).
+WPF-приложения. Результаты проверки кандидата 1.1.5.7 приведены в [описании релиза](docs/releases/v1.1.5.7.md).
 TRX-отчёты сохраняются в `artifacts/TestResults`, установщик — в
-`artifacts/CryptoBook-Setup-1.1.5.6.exe`.
+`artifacts/CryptoBook-Setup-1.1.5.7.exe`.
 
 В проекте используются xUnit и STA-тесты для WPF. Предупреждения компилятора и обнаруженные
 NuGet-уязвимости считаются ошибками.
@@ -253,7 +252,7 @@ GitHub Actions восстанавливает зафиксированные з�
 Публичная публикация выполняется отдельно после одобрения кандидата и успешного CI;
 одобренный локальный установщик сохраняется.
 
-Релиз 1.1.5.6 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
+Релиз 1.1.5.7 содержит восемь файлов: установщик, portable ZIP, архив лицензий, архив
 происхождения FFmpeg, файл зафиксированных зависимостей, SPDX SBOM, статус подписи и список SHA-256.
 
 Подробности выпуска описаны в [docs/PRODUCTION.md](docs/PRODUCTION.md).

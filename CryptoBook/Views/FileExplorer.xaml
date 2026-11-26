@@ -607,7 +607,34 @@
             </Grid.ColumnDefinitions>
 
             <!-- Navigation Pane (левая панель) -->
-            <TreeView x:Name="treeView" Grid.Column="0"
+            <DockPanel Grid.Column="0" ClipToBounds="True">
+                <Border DockPanel.Dock="Top"
+                        Padding="8,3"
+                        Background="{DynamicResource CurrentTitleBarBackground}"
+                        BorderBrush="{DynamicResource CurrentBorderColor}"
+                        BorderThickness="0,0,0,1">
+                    <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right"
+                                Width="30"
+                                Height="28"
+                                Command="{Binding CollapseAllCommand}"
+                                ToolTip="{Binding [Explorer.CollapseAll], Source={StaticResource Res}}"
+                                AutomationProperties.Name="{Binding [Explorer.CollapseAll], Source={StaticResource Res}}"
+                                Style="{StaticResource FileExplorerToolBarButtonStyle}">
+                            <Viewbox Width="16" Height="16">
+                                <Path Width="18" Height="18"
+                                      Data="M 6,1 L 17,1 17,12 M 1,6 L 12,6 12,17 1,17 Z M 4,11.5 L 9,11.5"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                      StrokeThickness="1.5"/>
+                            </Viewbox>
+                        </Button>
+                        <TextBlock Text="{Binding [Explorer.Folders], Source={StaticResource Res}}"
+                                   VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+                </Border>
+            <TreeView x:Name="treeView"
                       ItemsSource="{Binding GetDrives}"
                       VirtualizingPanel.IsContainerVirtualizable="True"
                       VirtualizingPanel.IsVirtualizing="True"
@@ -716,6 +743,7 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </TreeView>
+            </DockPanel>
 
             <GridSplitter Grid.Column="1"
                   HorizontalAlignment="Right"

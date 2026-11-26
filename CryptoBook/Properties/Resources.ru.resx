@@ -1600,4 +1600,8 @@
   <data name="FileDetails.ArchiveLimit" xml:space="preserve"><value>Показаны сведения записи архива. Для проверки содержимого, свойств NTFS и подписи извлеките запись в локальный файл.</value></data>
   <data name="Explorer.PermanentDeleteWarning" xml:space="preserve"><value>Некоторые выбранные элементы будут удалены без помещения в Корзину. Продолжить?</value></data>
   <data name="Archive.Rebuilding" xml:space="preserve"><value>Пересборка архива…</value></data>
+  <data name="AI.CopyCode" xml:space="preserve"><value>Копировать код</value></data>
+  <data name="AI.CodeCopied" xml:space="preserve"><value>Код скопирован в буфер обмена</value></data>
+  <data name="Explorer.Folders" xml:space="preserve"><value>Папки</value></data>
+  <data name="Explorer.CollapseAll" xml:space="preserve"><value>Свернуть все узлы</value></data>
 </root>

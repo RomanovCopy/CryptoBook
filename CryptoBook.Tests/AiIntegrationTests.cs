@@ -477,7 +477,7 @@ public sealed partial class AiIntegrationTests
     [WpfTheory]
     [InlineData(true)]
     [InlineData(false)]
-    public void CopyResponse_UsesInjectedClipboardAndReportsFailure(bool succeed)
+    public void CopyResponseAndCodeBlocks_UseInjectedClipboardPreserveMarkdownAndReportFailure(bool succeed)
     {
         string directory = Path.Combine(Path.GetTempPath(), "CryptoBook-AI-" + Guid.NewGuid().ToString("N"));
         try
@@ -491,6 +491,25 @@ public sealed partial class AiIntegrationTests
                 vm.Copy.Execute(null);
                 Assert.Equal("**selected answer**", clipboard.Text);
                 Assert.Equal(succeed ? string.Empty : LocalizationManager.GetString("AI.CopyFailed"), vm.Status);
+
+                const string source = "Before\n\n```csharp\n  var text = \"Привет\";\n\treturn text;\n```\n\n```\nsecond block\n```";
+                vm.Messages[0].Content = source;
+                vm.Messages[0].IsSelected = false;
+                var document = AiChatDocumentRenderer.Render(source, true, new System.Windows.Media.FontFamily("Segoe UI"), 15,
+                    System.Windows.Media.Brushes.Black, copyCodeCommand: vm.CopyCode);
+                var buttons = document.Blocks.OfType<Section>().SelectMany(section => section.Blocks.OfType<BlockUIContainer>())
+                    .SelectMany(block => ((Grid)block.Child).Children.OfType<Button>()).ToArray();
+                Assert.Equal(2, buttons.Length);
+                for(int i = 0; i < buttons.Length; i++)
+                {
+                    var button = buttons[i];
+                    Assert.True(button.Command.CanExecute(button.CommandParameter));
+                    button.Command.Execute(button.CommandParameter);
+                    Assert.Equal(i == 0 ? "  var text = \"Привет\";\n\treturn text;" : "second block", clipboard.Text?.Replace("\r\n", "\n"));
+                    Assert.Equal(LocalizationManager.GetString(succeed ? "AI.CodeCopied" : "AI.CopyFailed"), vm.Status);
+                }
+                Assert.Equal(source, vm.Messages[0].Content);
+                Assert.False(vm.Messages[0].IsSelected);
             }
         }
         finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
