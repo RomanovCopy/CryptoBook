@@ -1,4 +1,5 @@
 using CryptoBook.Infrastructure;
+using CryptoBook.Services;
 
 using System.Windows;
 using System.Windows.Documents;
@@ -28,6 +29,8 @@ internal static class AiDocumentFragmentFormatter
 
         foreach(var element in new FlowDocumentWalker().Traverse(fragment))
         {
+            if(element is InlineUIContainer { Child: System.Windows.Controls.Image image })
+                MarkdownMathRenderer.PrepareForInsertion(image, ink);
             element.ClearValue(TextElement.ForegroundProperty);
             // A subtly softer ink keeps links readable on the same paper.
             // It also differs from the inherited foreground, so TextRange

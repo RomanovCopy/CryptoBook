@@ -24,6 +24,15 @@
         "resolved": "9.0.20260816",
         "contentHash": "1NG53EmVPsNPkKeEGL82OHuNLhzbGjoYEqxxVIMVIREMSPMCYDb2RYpncKqvCQEwxTJaQoYnZBkRR6iZgpAy8w=="
       },
+      "CSharpMath.Rendering": {
+        "type": "Direct",
+        "requested": "[0.5.1, )",
+        "resolved": "0.5.1",
+        "contentHash": "H4tctQzgpQmLICON1QAJtfm3/dj4exoxEKTuF9oO5YkHXMANWNfOQKwVtAx6n78hcD6WidwF2v2pH8Z/cOw/gg==",
+        "dependencies": {
+          "CSharpMath.Editor": "0.5.1"
+        }
+      },
       "FlyleafLib": {
         "type": "Direct",
         "requested": "[3.12.2, )",
@@ -152,6 +161,19 @@
         "type": "Transitive",
         "resolved": "8.4.2",
         "contentHash": "2hmtrrU18x6NL3mbuAqwy0KpnoEEJOuK6sH5RKQfD/jHijn2pqvqBUC7WGy9dgNBL9BDA7eOC0kirsNPMp2f4Q=="
+      },
+      "CSharpMath": {
+        "type": "Transitive",
+        "resolved": "0.5.1",
+        "contentHash": "CBAtejk24icPQNJWPjUDGUqklNLpfglpRxQljiezn2MQrxL5cIVuouCVnw6ipU3cft9Tq8YfS6f/JPhSjhFtFA=="
+      },
+      "CSharpMath.Editor": {
+        "type": "Transitive",
+        "resolved": "0.5.1",
+        "contentHash": "q5MFAjI7TO41PtGFNHBFwOw3J3IS7Dnm7aJHEgPxMWE5wl1H5byOo0pJnGwXevjhoSRssGRJH2KCXgn0KbGJFQ==",
+        "dependencies": {
+          "CSharpMath": "0.5.1"
+        }
       },
       "Dragablz": {
         "type": "Transitive",

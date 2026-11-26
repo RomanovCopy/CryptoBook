@@ -23,6 +23,8 @@ Fonts, colors and Markdown change chat display while retaining the original repl
 
 **Copy** uses original reply text in either mode. This option does not control formatted transfer into the ordinary editor, which follows its own rules. HTML is not executed and external Markdown images are not loaded. Formatting does not make generated code safe to run.
 
+Formulas in `$...$` and `$$...$$` display fractions, roots, powers, matrices and labelled arrows. They are enlarged by 30% relative to surrounding text and scale with its font size. Original LaTeX remains available in tooltips and when copying a message. Incomplete or unsupported formulas remain text. Transfer to the ordinary editor embeds formula images, preserved in XamlPackage and protected documents. Formatting does not validate the model's calculations.
+
 ## Reset and discard
 
 6. Open the window and click **Reset**: default settings appear — size 14, no borders, Markdown on and theme colors. Click **Save** to apply them.

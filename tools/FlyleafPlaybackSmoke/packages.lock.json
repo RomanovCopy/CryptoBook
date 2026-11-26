@@ -26,6 +26,27 @@
         "resolved": "9.0.20260816",
         "contentHash": "1NG53EmVPsNPkKeEGL82OHuNLhzbGjoYEqxxVIMVIREMSPMCYDb2RYpncKqvCQEwxTJaQoYnZBkRR6iZgpAy8w=="
       },
+      "CSharpMath": {
+        "type": "Transitive",
+        "resolved": "0.5.1",
+        "contentHash": "CBAtejk24icPQNJWPjUDGUqklNLpfglpRxQljiezn2MQrxL5cIVuouCVnw6ipU3cft9Tq8YfS6f/JPhSjhFtFA=="
+      },
+      "CSharpMath.Editor": {
+        "type": "Transitive",
+        "resolved": "0.5.1",
+        "contentHash": "q5MFAjI7TO41PtGFNHBFwOw3J3IS7Dnm7aJHEgPxMWE5wl1H5byOo0pJnGwXevjhoSRssGRJH2KCXgn0KbGJFQ==",
+        "dependencies": {
+          "CSharpMath": "0.5.1"
+        }
+      },
+      "CSharpMath.Rendering": {
+        "type": "Transitive",
+        "resolved": "0.5.1",
+        "contentHash": "H4tctQzgpQmLICON1QAJtfm3/dj4exoxEKTuF9oO5YkHXMANWNfOQKwVtAx6n78hcD6WidwF2v2pH8Z/cOw/gg==",
+        "dependencies": {
+          "CSharpMath.Editor": "0.5.1"
+        }
+      },
       "Dragablz": {
         "type": "Transitive",
         "resolved": "0.0.3.234",
@@ -345,6 +366,7 @@
         "dependencies": {
           "Autofac": "[9.3.4, )",
           "Autofac.Extensions.DependencyInjection": "[11.0.2, )",
+          "CSharpMath.Rendering": "[0.5.1, )",
           "CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64": "[9.0.20260816, )",
           "FlyleafLib": "[3.12.2, )",
           "FlyleafLib.Controls.WPF": "[1.8.0, )",

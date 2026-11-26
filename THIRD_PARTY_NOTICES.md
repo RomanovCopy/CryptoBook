@@ -10,6 +10,27 @@ The GNU GPL v3 text is in `LICENSE`. Other standard license texts are in
 
 ## Components included in application distributions
 
+### Mathematical formula typesetting
+
+- `CSharpMath`, `CSharpMath.Editor`, and `CSharpMath.Rendering` 0.5.1 —
+  Copyright (c) 2017 William Jockusch, Hadrian Tang and CSharpMath contributors.
+  MIT license: `LICENSES/CSHARPMATH-0.5.1-LICENSE.txt`.
+  Project and matching source commit:
+  <https://github.com/verybadcat/CSharpMath/tree/69fb790c40693ae85d2d8679655ee04e88f35aea>.
+- The rendering assembly includes Typography source excerpts from commit
+  `d331968f3ee714332a8ea4fa95a21c15812a8d93` — WinterDev and the contributors
+  listed in `LICENSES/TYPOGRAPHY-LICENSE.txt`.
+  Source: <https://github.com/LayoutFarm/Typography/tree/d331968f3ee714332a8ea4fa95a21c15812a8d93>.
+- The unmodified embedded Latin Modern Math font is under the GUST Font License,
+  incorporating LPPL-1.3c-or-later: `LICENSES/GUST-FONT-LICENSE.txt` and
+  `LICENSES/LPPL-1.3c.txt`. The embedded Cyrillic Modern and AMS Capital Blackboard
+  Bold fonts are under SIL OFL-1.1: `LICENSES/OFL-1.1.txt`.
+  Exact font copyright and reserved-name metadata is reproduced in
+  `LICENSES/CSHARPMATH-0.5.1-FONT-NOTICES.txt`.
+
+These formula component notices were added on 2026-11-26. Formula drawings are
+created locally with WPF; their fonts are embedded in the managed dependency.
+
 ### 7-Zip: LGPL-2.1-or-later, BSD notices and unRAR restriction
 
 - Unmodified `7z.exe` and `7z.dll` 26.06 — Copyright (C) 1999–2026 Igor Pavlov.
