@@ -2,7 +2,10 @@
 
 This Windows-only tool exercises CryptoBook's real `MediaPlayerService` with a
 WPF dispatcher. It verifies that the packaged FFmpeg libraries load, the input
-can be demuxed and decoded, and playback time advances.
+can be demuxed and decoded, and playback time advances. With a media file,
+it also attaches the player to the WPF control to catch incompatible package
+versions and checks that opening with autoplay disabled stays paused before
+reopening with autoplay enabled.
 
 Run it with a short local media file:
 

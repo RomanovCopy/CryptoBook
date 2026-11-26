@@ -27,11 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\third_party\7zip\win-x64\7z.exe" LogicalName="CryptoBook.ArchiveEngine.7z.exe"/>
-    <EmbeddedResource Include="..\third_party\7zip\win-x64\7z.dll" LogicalName="CryptoBook.ArchiveEngine.7z.dll"/>
-    <EmbeddedResource Include="..\third_party\7zip\License.txt" LogicalName="CryptoBook.ArchiveEngine.License.txt"/>
-    <EmbeddedResource Include="..\third_party\7zip\Copying.txt" LogicalName="CryptoBook.ArchiveEngine.Copying.txt"/>
-    <EmbeddedResource Include="..\third_party\7zip\UnRAR-License.txt" LogicalName="CryptoBook.ArchiveEngine.UnRAR-License.txt"/>
+    <EmbeddedResource Include="..\third_party\7zip\win-x64\7z.exe" LogicalName="CryptoBook.ArchiveEngine.7z.exe" />
+    <EmbeddedResource Include="..\third_party\7zip\win-x64\7z.dll" LogicalName="CryptoBook.ArchiveEngine.7z.dll" />
+    <EmbeddedResource Include="..\third_party\7zip\License.txt" LogicalName="CryptoBook.ArchiveEngine.License.txt" />
+    <EmbeddedResource Include="..\third_party\7zip\Copying.txt" LogicalName="CryptoBook.ArchiveEngine.Copying.txt" />
+    <EmbeddedResource Include="..\third_party\7zip\UnRAR-License.txt" LogicalName="CryptoBook.ArchiveEngine.UnRAR-License.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -149,21 +149,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="9.3.2" />
+    <PackageReference Include="Autofac" Version="9.3.4" />
     <PackageReference Include="LLamaSharp" Version="0.30.0" />
     <PackageReference Include="LLamaSharp.Backend.Vulkan.Windows" Version="0.30.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
-    <PackageReference Include="FlyleafLib" Version="3.11.3" />
-    <PackageReference Include="FlyleafLib.Controls.WPF" Version="1.7.3" />
+    <PackageReference Include="FlyleafLib" Version="3.12.2" />
+    <PackageReference Include="FlyleafLib.Controls.WPF" Version="1.8.0" />
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
-    <PackageReference Include="Markdig" Version="1.3.2" />
-    <PackageReference Include="MaterialDesignThemes" Version="5.3.3-ci1443" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.11" />
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.11" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.158" />
+    <PackageReference Include="Markdig" Version="1.6.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.4.1-ci1521" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="11.0.0" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="11.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />
     <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1-preview" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
-    <PackageReference Include="System.Management" Version="10.0.11" />
+    <PackageReference Include="System.Management" Version="11.0.0" />
     <PackageReference Include="CryptoBook.Flyleaf.FFmpeg.Runtime.Windows.X64" Version="9.0.20260816" />
   </ItemGroup>
 

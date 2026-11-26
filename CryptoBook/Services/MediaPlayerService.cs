@@ -129,7 +129,7 @@ namespace CryptoBook.Services
             CancelPendingOpen();
 
             source = sourceName;
-            player.Config.Player.AutoPlay = autoPlay;
+            player.Config.Playback.AutoPlay = autoPlay;
             var completion = new TaskCompletionSource<bool>(
                 TaskCreationOptions.RunContinuationsAsynchronously);
             openCompletion = completion;
@@ -181,8 +181,8 @@ namespace CryptoBook.Services
         // Переход на шаг встроенной настройки Flyleaf. Не вызываем
         // SeekForward/SeekBackward на границах: FFmpeg может отклонить
         // переход ровно в Duration и отбросить позицию к началу.
-        public void FrameForward() => SeekRelative(player.Config.Player.SeekOffset);
-        public void FrameBackward() => SeekRelative(-player.Config.Player.SeekOffset);
+        public void FrameForward() => SeekRelative(player.Config.Playback.SeekOffset);
+        public void FrameBackward() => SeekRelative(-player.Config.Playback.SeekOffset);
 
         public void Seek(TimeSpan position)
         {
@@ -336,7 +336,7 @@ namespace CryptoBook.Services
 
                 // Flyleaf leaves a non-autoplay video paused without rendering a frame.
                 // Render the first frame explicitly so the player has a poster before Play.
-                if(!player.Config.Player.AutoPlay && player.Video.IsOpened)
+                if(!player.Config.Playback.AutoPlay && player.Video.IsOpened)
                     player.ShowFrame(0);
 
                 openCompletion?.TrySetResult(true);

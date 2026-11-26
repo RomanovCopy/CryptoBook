@@ -84,7 +84,7 @@ internal static class Program
             using var mediaPlayer = new MediaPlayerService();
             Engine.Config.LogOutput = ":console";
             Engine.Config.LogLevel = LogLevel.Debug;
-            Engine.Config.FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Warn;
+            Engine.Config.FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Warning;
 
             await mediaPlayer.OpenAsync(
                 first.Content,
@@ -103,15 +103,21 @@ internal static class Program
             }
             await Task.Delay(TimeSpan.FromSeconds(1), timeout.Token);
 
+            mediaPlayer.Pause();
+            TimeSpan seekOrigin = mediaPlayer.Position;
+            TimeSpan seekStep = TimeSpan.FromTicks(
+                flyleafPlayer.Config.Playback.SeekOffset);
             mediaPlayer.FrameForward();
             await Task.Delay(TimeSpan.FromMilliseconds(250), timeout.Token);
-            if(mediaPlayer.Position < TimeSpan.FromSeconds(4.5))
+            if((mediaPlayer.Position - seekOrigin - seekStep).Duration() >
+               TimeSpan.FromMilliseconds(500))
                 throw new InvalidOperationException(
                     $"Secure stream forward button seek failed: {mediaPlayer.Position:c}.");
 
             mediaPlayer.FrameBackward();
             await Task.Delay(TimeSpan.FromMilliseconds(250), timeout.Token);
-            if(mediaPlayer.Position > TimeSpan.FromSeconds(1))
+            if((mediaPlayer.Position - seekOrigin).Duration() >
+               TimeSpan.FromMilliseconds(500))
                 throw new InvalidOperationException(
                     $"Secure stream backward button seek failed: {mediaPlayer.Position:c}.");
 
@@ -171,7 +177,17 @@ internal static class Program
             using var mediaPlayer = new MediaPlayerService();
             Engine.Config.LogOutput = ":console";
             Engine.Config.LogLevel = LogLevel.Debug;
-            Engine.Config.FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Warn;
+            Engine.Config.FFmpegLogLevel = Flyleaf.FFmpeg.LogLevel.Warning;
+
+            ValidateFlyleafControlTemplate(
+                (FlyleafLib.MediaPlayer.Player)mediaPlayer.PlayerInstance);
+            await mediaPlayer.OpenAsync(mediaPath, autoPlay: false, timeout.Token);
+            await Task.Delay(TimeSpan.FromMilliseconds(250), timeout.Token);
+            if(mediaPlayer.IsPlaying)
+            {
+                throw new InvalidOperationException(
+                    "Flyleaf started playback with autoplay disabled.");
+            }
 
             await mediaPlayer.OpenAsync(mediaPath, autoPlay: true, timeout.Token);
 
@@ -210,9 +226,10 @@ internal static class Program
         }
     }
 
-    private static void ValidateFlyleafControlTemplate()
+    private static void ValidateFlyleafControlTemplate(
+        FlyleafLib.MediaPlayer.Player? player = null)
     {
-        var host = new FlyleafME();
+        var host = new FlyleafME { Player = player };
         host.ApplyTemplate();
         host.Measure(new Size(960, 600));
         host.Arrange(new Rect(0, 0, 960, 600));
